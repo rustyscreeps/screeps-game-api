@@ -1,0 +1,8 @@
+username = "your username or email"
+password = "your password"
+branch = "default"
+# optional:
+# ptr = false
+# hostname = "screeps.com"
+# ssl = true
+# port = 443
