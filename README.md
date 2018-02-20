@@ -1,11 +1,11 @@
 #3#: Rust Screeps via WASM
 =====
 
-```
+```sh
 # dependencies:
 
-git clone https://github.com/daboross/pound3pound.git
-cd pound3pound
+git clone https://github.com/daboross/p3p.git
+cd p3p
 rustup override set nightly
 cargo install cargo-web
 
@@ -13,5 +13,5 @@ cargo install cargo-web
 
 (cd build/ && cargo run --release -- --help)
 # or:
-./run --help
+./run.sh --help
 ```
