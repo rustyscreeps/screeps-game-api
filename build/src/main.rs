@@ -294,7 +294,7 @@ fn upload(config: Configuration) -> Result<(), failure::Error> {
     debug!("upload finished: {}", response_text);
     debug!("response: {:#?}", response);
 
-    let response_json: serde_json::Value = response.json()?;
+    let response_json: serde_json::Value = serde_json::from_str(&response_text)?;
 
     if let Some(s) = response_json.get("error") {
         bail!(
