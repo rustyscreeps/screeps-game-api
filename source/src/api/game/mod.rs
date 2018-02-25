@@ -17,14 +17,28 @@ pub mod map {
     } -> stdweb::Object);
 }
 
-pub mod construction_sites {
-    use api::objects::ConstructionSite;
-    get_from_js!(names -> { Object.keys(Game.constructionSites) } -> Vec<String>);
-    get_from_js!(get(name: &str) -> { Game.constructionSites[@{name}]} -> ConstructionSite);
+macro_rules! game_map_access {
+    ($mod_name:ident, $type:path, $js_inner:expr) => (
+        pub mod $mod_name {
+            get_from_js!(names -> { Object.keys($js_inner) } -> Vec<String>);
+            get_from_js!(values -> { Object.values($js_inner) } -> Vec<$type>);
+            get_from_js!(get(name: &str) -> { $js_inner[@{name}]} -> $type);
+        }
+    );
+    ($(
+        ($mod:ident, $type:path, $js:expr)
+    ),* $(,)*) => {
+        $(
+            game_map_access!($mod, $type, $js);
+        )*
+    };
 }
 
-pub mod creeps {
-    use api::objects::Creep;
-    get_from_js!(names -> { Object.keys(Game.creeps) } -> Vec<String>);
-    get_from_js!(get(name: &str) -> { Game.creeps[@{name}] } -> Creep);
+game_map_access! {
+    (construction_sites, ::api::objects::ConstructionSite, Game.constructionSites),
+    (creeps, ::api::objects::Creep, Game.creeps),
+    (flags, ::api::objects::Flag, Game.flags),
+    (rooms, ::api::objects::Room, Game.rooms),
+    (spawns, ::api::objects::StructureSpawn, Game.spawns),
+    (structures, ::api::objects::Structure, Game.structures),
 }

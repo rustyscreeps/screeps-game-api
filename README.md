@@ -1,7 +1,7 @@
 #3#: Rust Screeps via WASM
 =====
 
-All documentation TODO! Use at your own risk.
+Documentation: TODO.
 
 ```sh
 # dependencies:

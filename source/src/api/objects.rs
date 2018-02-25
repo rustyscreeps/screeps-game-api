@@ -1,37 +1,37 @@
 use stdweb::{Value, Reference};
-use stdweb::unstable::TryInto;
+use stdweb::unstable::{TryInto, TryFrom};
 
-pub struct Creep(Reference);
-
-pub struct RoomPosition(Reference);
-
-pub struct Room(Reference);
-
-pub struct ConstructionSite(Reference);
-
-macro_rules! ref_impls {
+macro_rules! reference_wrappers {
     ($name:ident) => {
+        pub struct $name(Reference);
+
         impl AsRef<Reference> for $name {
             fn as_ref(&self) -> &Reference {
                 &self.0
             }
         }
-        impl TryInto<$name> for Value {
+        impl TryFrom<Value> for $name {
             type Error = <Value as TryInto<Reference>>::Error;
 
-            fn try_into(self) -> Result<$name, Self::Error> {
-                Ok($name(self.try_into()?))
+            fn try_from(v: Value) -> Result<$name, Self::Error> {
+                Ok($name(v.try_into()?))
             }
         }
     };
-    ($($name:ident),*) => {
+    ($($name:ident),* $(,)*) => {
         $(
-            ref_impls!($name);
+            reference_wrappers!($name);
         )*
     };
 }
 
-ref_impls!(Creep, RoomPosition, Room, ConstructionSite);
+reference_wrappers!(
+    ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Room, RoomPosition, Source,
+    StructureContainer, StructureController, StructureExtension, StructureExtractor,
+    StructureKeeperLair, StructureLab, StructureLink, StructureNuker, StructureObserver,
+    StructurePowerBank, StructurePowerSpawn, StructurePortal, StructureRampart, StructureRoad,
+    StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Structure,
+);
 
 macro_rules! js_unwrap {
     ($($code:tt)*) => ((js! { $($code)* }).try_into().unwrap())
