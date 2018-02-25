@@ -2,6 +2,30 @@ use std::{fs, process};
 
 use {failure, find_folder};
 
+pub fn check() -> Result<(), failure::Error> {
+    debug!("running check");
+    let source_project = find_folder::Search::Parents(2).for_folder("source")?;
+
+    debug!("running 'cargo check --target=wasm32-unknown-unknown'");
+    let cargo_success = process::Command::new("cargo")
+        .args(&[
+            "check",
+            "--target=wasm32-unknown-unknown",
+        ])
+        .current_dir(&source_project)
+        .spawn()?
+        .wait()?;
+    if !cargo_success.success() {
+        bail!(
+            "'cargo check' exited with a non-zero exit code: {}",
+            cargo_success
+        );
+    }
+
+    debug!("finished 'cargo check'");
+    Ok(())
+}
+
 pub fn compile() -> Result<(), failure::Error> {
     debug!("building");
     let source_project = find_folder::Search::Parents(2).for_folder("source")?;

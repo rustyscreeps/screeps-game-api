@@ -4,4 +4,12 @@ version = "0.1.0"
 authors = ["David Ross <daboross@daboross.net>"]
 
 [dependencies]
-stdweb = "0.3"
+stdweb = "0.4"
+log = "0.4"
+fern = "0.5"
+enum_primitive = "0.1"
+num-traits = "0.2"
+
+[profile.release]
+panic = "abort"
+opt-level = "s"

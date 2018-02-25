@@ -3,6 +3,7 @@ use std::{fs, io};
 use {clap, failure, fern, find_folder, log, toml};
 
 pub enum CliState {
+    Check,
     Build,
     BuildUpload,
 }
@@ -25,6 +26,13 @@ pub fn setup_cli() -> CliState {
                 .help("build files, put in target/ in project root"),
         )
         .arg(
+            clap::Arg::with_name("check")
+                .short("c")
+                .long("check")
+                .takes_value(false)
+                .help("runs 'cargo check' with appropriate target"),
+        )
+        .arg(
             clap::Arg::with_name("upload")
                 .short("u")
                 .long("upload")
@@ -33,8 +41,8 @@ pub fn setup_cli() -> CliState {
         )
         .group(
             clap::ArgGroup::with_name("command")
-                .args(&["build", "upload"])
-                .multiple(true)
+                .args(&["build", "upload", "check"])
+                .multiple(false)
                 .required(true),
         )
         .get_matches();
@@ -52,9 +60,11 @@ pub fn setup_cli() -> CliState {
         .apply()
         .unwrap();
 
-    assert!(args.is_present("build") || args.is_present("upload"));
+    assert!(args.is_present("check") || args.is_present("build") || args.is_present("upload"));
 
-    if args.is_present("upload") {
+    if args.is_present("check") {
+        CliState::Check
+    } else if args.is_present("upload") {
         CliState::BuildUpload
     } else {
         CliState::Build

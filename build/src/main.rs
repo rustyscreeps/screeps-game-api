@@ -24,17 +24,26 @@ fn run() -> Result<(), failure::Error> {
 
     let config = setup::Configuration::setup()?;
 
-    info!("compiling...");
 
-    build::compile()?;
-
-    if let setup::CliState::BuildUpload = state {
-        info!("compiled. uploading...");
-
-        upload::upload(config)?;
+    match state {
+        setup::CliState::Build => {
+            info!("compiling...");
+            build::compile()?;
+            info!("compiled.");
+        }
+        setup::CliState::BuildUpload => {
+            info!("compiling...");
+            build::compile()?;
+            info!("compiled. uploading...");
+            upload::upload(config)?;
+            info!("uploaded.");
+        }
+        setup::CliState::Check => {
+            info!("checking...");
+            build::check()?;
+            info!("checked.");
+        }
     }
-
-    info!("done.");
 
     Ok(())
 }
