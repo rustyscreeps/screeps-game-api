@@ -24,7 +24,6 @@ fn run() -> Result<(), failure::Error> {
 
     let config = setup::Configuration::setup()?;
 
-
     match state {
         setup::CliState::Build => {
             info!("compiling...");

@@ -1,7 +1,7 @@
-use stdweb::{Reference, Value};
+use stdweb::{self, Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
 
-use api::{Direction, Part, ReturnCode};
+use api::{Direction, Find, Part, ReturnCode};
 
 macro_rules! reference_wrappers {
     ($name:ident) => {
@@ -99,17 +99,14 @@ impl Creep {
 }
 
 macro_rules! simple_accessors {
-    ($struct_name:ident; $method_name:ident -> $prop_name:ident -> $ret_type:ty) => (
-        impl $struct_name {
-            pub fn $method_name(&self) -> $ret_type {
-                js_unwrap!(@{&self.0}.$prop_name)
-            }
-        }
-    );
     ($struct_name:ident; $(($method:ident -> $prop:ident -> $ret:ty)),* $(,)*) => (
-        $(
-            simple_accessors!($struct_name; $method -> $prop -> $ret);
-        )*
+        impl $struct_name {
+            $(
+                pub fn $method(&self) -> $ret {
+                    js_unwrap!(@{&self.0}.$prop)
+                }
+            )*
+        }
     )
 }
 simple_accessors! {
@@ -125,21 +122,19 @@ simple_accessors! {
     (ticks_to_live -> ticksToLive -> i32),
 }
 
+// TODO: limit types where appropriate
 macro_rules! creep_simple_action {
-    ($method_name:ident -> $js_name:ident) => (
-        impl Creep {
-            pub fn $method_name<T>(&self, target: &T) -> ReturnCode
-            where
-                T: AsRef<Reference>,
-            {
-                js_unwrap!(@{&self.0}.$js_name(@{target.as_ref()}))
-            }
-        }
-    );
     ($(($method:ident -> $js_name:ident)),* $(,)*) => (
-        $(
-            creep_simple_action!($method -> $js_name);
-        )*
+        impl Creep {
+            $(
+                pub fn $method<T>(&self, target: &T) -> ReturnCode
+                where
+                    T: AsRef<Reference>,
+                {
+                    js_unwrap!(@{&self.0}.$js_name(@{target.as_ref()}))
+                }
+            )*
+        }
     )
 }
 
@@ -239,8 +234,8 @@ impl StructureSpawn {
         ((js! {
             var body = (@{ints}).map((num) => {
                 switch (num) {
-                    case 0: return WORK;
-                    case 1: return MOVE;
+                    case 0: return MOVE;
+                    case 1: return WORK;
                     case 2: return CARRY;
                     case 3: return ATTACK;
                     case 4: return RANGED_ATTACK;
@@ -274,4 +269,43 @@ simple_accessors! {
     (name -> name -> String),
     (storage -> storage -> Option<StructureStorage>),
     (terminal -> terminal -> Option<StructureTerminal>),
+}
+
+impl Room {
+    pub fn find<T>(&self, ty: Find) -> Vec<T>
+    where
+        T: TryFrom<Value, Error = <Value as TryInto<i32>>::Error>,
+    {
+        let value = js_unwrap!(@{&self.0}.find(@{ty as i32}));
+
+        // since find returns not "Array" but array from outside the container,
+        // we need to do an unsafe cast to get stdweb to treat it like an array.
+        let as_arr: stdweb::Array = unsafe {
+            use stdweb::ReferenceType;
+            stdweb::Array::from_reference_unchecked(value)
+        };
+
+        as_arr
+            .try_into()
+            .expect("expected Room.find array contain correct types")
+    }
+}
+// TODO: redo this with Find as a trait with an associated constant.
+macro_rules! room_find_impls {
+    ($(($method:ident -> $find_ty:ident -> $ret:ty)),* $(,)*) => (
+        impl Room {
+            $(
+                pub fn $method(&self) -> Vec<$ret> {
+                    self.find(Find::$find_ty)
+                }
+            )*
+        }
+    )
+}
+
+room_find_impls! {
+    (find_creeps -> Creeps -> Creep),
+    (find_my_creeps -> MyCreeps -> Creep),
+    (find_sources -> Sources -> Source),
+    // TODO
 }

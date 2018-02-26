@@ -28,6 +28,7 @@ fn game_loop() {
 
     for spawn in api::game::spawns::values() {
         if spawn.energy() == spawn.energy_capacity() {
+            info!("spawning worker1");
             let res = spawn.spawn_creep(
                 &[Part::Move, Part::Move, Part::Carry, Part::Work],
                 "worker1",
@@ -39,7 +40,22 @@ fn game_loop() {
     }
 
     for creep in api::game::creeps::values() {
+        if creep.spawning() {
+            continue;
+        }
         if creep.carry_total() == 0 {
+            info!("finding sources");
+            let source = &creep.room().find_sources()[0];
+            if creep.pos().is_near_to(&source) {
+                info!("harvesting source");
+                let r = creep.harvest(&source);
+                if r != ReturnCode::Ok {
+                    warn!("couldn't harvest: {:?}", r);
+                }
+            } else {
+                info!("moving to source");
+                creep.move_to(&source);
+            }
             creep.say("no energy", false);
         } else {
             if let Some(c) = creep.room().controller() {

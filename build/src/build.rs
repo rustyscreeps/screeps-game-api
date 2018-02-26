@@ -8,10 +8,7 @@ pub fn check() -> Result<(), failure::Error> {
 
     debug!("running 'cargo check --target=wasm32-unknown-unknown'");
     let cargo_success = process::Command::new("cargo")
-        .args(&[
-            "check",
-            "--target=wasm32-unknown-unknown",
-        ])
+        .args(&["check", "--target=wasm32-unknown-unknown"])
         .current_dir(&source_project)
         .spawn()?
         .wait()?;
@@ -124,7 +121,8 @@ if( typeof Rust === "undefined" ) {
         "expected 'cargo web' generated JS to end with known JS"
     );
 
-    let initialize_function = &input[expected_prefix.len()..input.len() - expected_suffix.len()];
+    let initialize_function = input[expected_prefix.len()..input.len() - expected_suffix.len()]
+        .replace("console.error", "console.log");
 
     let wrapping_js_file = find_folder::Search::Parents(2)
         .for_folder("js")?

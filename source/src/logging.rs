@@ -35,5 +35,5 @@ pub fn setup_logging(verbosity: u32) {
         })
         .chain(Box::new(JsLog) as Box<log::Log>)
         .apply()
-        .unwrap();
+        .expect("expected fern to initialize");
 }

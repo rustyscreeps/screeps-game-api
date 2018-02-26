@@ -41,6 +41,33 @@ mod utils {
         Claim = 7,
     }
 
+    #[repr(i32)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    pub enum Find {
+        ExitTop = 0,
+        ExitRight = 3,
+        ExitBottom = 5,
+        ExitLeft = 7,
+        Exit = 10,
+        Creeps = 101,
+        MyCreeps = 102,
+        HostileCreeps = 103,
+        SourcesActive = 104,
+        Sources = 105,
+        DroppedResources = 106,
+        Structures = 107,
+        MyStructures = 108,
+        HostileStructures = 109,
+        Flags = 110,
+        ConstructionSites = 111,
+        MySpawns = 112,
+        HostileSpawns = 113,
+        MyConstructionSites = 114,
+        HostileConstructionSites = 115,
+        Minerals = 116,
+        Nukes = 117,
+    }
+
     impl TryFrom<Value> for Part {
         type Error = <Value as TryInto<u32>>::Error;
         fn try_from(v: Value) -> Result<Self, Self::Error> {
