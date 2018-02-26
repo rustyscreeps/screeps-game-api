@@ -23,10 +23,6 @@ macro_rules! reference_wrappers {
     };
 }
 
-macro_rules! js_unwrap {
-    ($($code:tt)*) => ((js! { return $($code)* }).try_into().unwrap())
-}
-
 macro_rules! simple_accessors {
     ($struct_name:ident; $(($method:ident -> $prop:ident -> $ret:ty)),* $(,)*) => (
         impl $struct_name {

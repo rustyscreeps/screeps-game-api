@@ -18,6 +18,6 @@ impl StructureSpawn {
 
             return @{&self.0}.spawnCreep(body, @{name});
         }).try_into()
-            .unwrap())
+            .expect("expected StructureSpawn::spawnCreep to return an integer return code"))
     }
 }

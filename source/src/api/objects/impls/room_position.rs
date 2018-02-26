@@ -48,7 +48,7 @@ impl<T: HasPosition> PartialEq<T> for RoomPosition {
             var b = @{&other.pos().0};
             return a.x == b.x && a.y == b.y && a.roomName == b.roomName;
         }).try_into()
-            .unwrap()
+            .expect("expected a boolean to be a boolean")
     }
 }
 
