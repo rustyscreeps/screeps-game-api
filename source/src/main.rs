@@ -12,6 +12,7 @@ mod logging;
 pub mod api;
 
 use api::{Part, ReturnCode};
+use api::{find, RoomObjectProperties};
 
 fn main() {
     stdweb::initialize();
@@ -53,7 +54,7 @@ fn game_loop() {
             continue;
         }
         if creep.carry_total() == 0 {
-            let source = &creep.room().find_sources()[0];
+            let source = &creep.room().find(find::SOURCES)[0];
             if creep.pos().is_near_to(&source) {
                 let r = creep.harvest(&source);
                 if r != ReturnCode::Ok {
