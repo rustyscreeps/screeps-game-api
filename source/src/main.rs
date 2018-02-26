@@ -28,11 +28,20 @@ fn game_loop() {
 
     for spawn in api::game::spawns::values() {
         if spawn.energy() == spawn.energy_capacity() {
-            info!("spawning worker1");
-            let res = spawn.spawn_creep(
-                &[Part::Move, Part::Move, Part::Carry, Part::Work],
-                "worker1",
-            );
+            let mut name_end = 0;
+            let res = loop {
+                info!("spawning worker{}", name_end);
+                let res = spawn.spawn_creep(
+                    &[Part::Move, Part::Move, Part::Carry, Part::Work],
+                    &format!("worker{}", name_end),
+                );
+
+                if res == ReturnCode::NameExists {
+                    name_end += 1; // todo: actually random stuff here!
+                } else {
+                    break res;
+                }
+            };
             if res != ReturnCode::Ok {
                 warn!("couldn't spawn: {:?}", res);
             }
@@ -44,30 +53,27 @@ fn game_loop() {
             continue;
         }
         if creep.carry_total() == 0 {
-            info!("finding sources");
             let source = &creep.room().find_sources()[0];
             if creep.pos().is_near_to(&source) {
-                info!("harvesting source");
                 let r = creep.harvest(&source);
                 if r != ReturnCode::Ok {
                     warn!("couldn't harvest: {:?}", r);
                 }
             } else {
-                info!("moving to source");
                 creep.move_to(&source);
             }
-            creep.say("no energy", false);
         } else {
             if let Some(c) = creep.room().controller() {
-                if creep.pos().is_near_to(&c) {
-                    let r = creep.upgrade_controller(&c);
-                    if r == ReturnCode::NotInRange {
-                        creep.move_to(&c);
-                    } else if r != ReturnCode::Ok {
-                        warn!("couldn't upgrade: {:?}", r);
-                    }
+                let r = creep.upgrade_controller(&c);
+                if r == ReturnCode::NotInRange {
+                    creep.move_to(&c);
+                } else if r != ReturnCode::Ok {
+                    warn!("couldn't upgrade: {:?}", r);
                 }
+            } else {
+                warn!("creep room has no controller!");
             }
         }
     }
+    info!("ending cpu: {}", api::game::cpu::get_used())
 }
