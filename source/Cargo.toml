@@ -8,6 +8,10 @@ stdweb = "0.4"
 log = "0.4"
 fern = "0.5"
 screeps-game-api = { version = "0.0.1", path = "../screeps-game-api/" }
+serde_derive = "1"
+serde = "1"
+bincode = "1"
+base64 = "0.9"
 
 [profile.release]
 panic = "abort"

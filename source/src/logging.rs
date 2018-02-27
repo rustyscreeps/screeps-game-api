@@ -1,8 +1,9 @@
-use {fern, log};
+use {fern, log, screeps};
 
 pub use log::LevelFilter::*;
 
 struct JsLog;
+struct JsNotify;
 
 impl log::Log for JsLog {
     fn enabled(&self, _: &log::Metadata) -> bool {
@@ -12,6 +13,18 @@ impl log::Log for JsLog {
         let message = format!("{}", record.args());
         js! {
             console.log(@{message});
+        }
+    }
+    fn flush(&self) {}
+}
+impl log::Log for JsNotify {
+    fn enabled(&self, _: &log::Metadata) -> bool {
+        true
+    }
+    fn log(&self, record: &log::Record) {
+        let message = format!("{}", record.args());
+        js! {
+            Game.notify(@{message});
         }
     }
     fn flush(&self) {}
@@ -29,6 +42,15 @@ pub fn setup_logging(verbosity: log::LevelFilter) {
             ))
         })
         .chain(Box::new(JsLog) as Box<log::Log>)
+        .chain(
+            fern::Dispatch::new()
+                .level(log::LevelFilter::Warn)
+                .format(|out, message, _record| {
+                    let time = screeps::game::time();
+                    out.finish(format_args!("[{}] {}", time, message))
+                })
+                .chain(Box::new(JsNotify) as Box<log::Log>),
+        )
         .apply()
         .expect("expected fern to initialize");
 }
