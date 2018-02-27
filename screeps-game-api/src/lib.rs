@@ -33,6 +33,8 @@ macro_rules! get_from_js {
 pub mod game;
 pub mod objects;
 pub mod constants;
+pub mod memory;
+pub mod raw_memory;
 
 pub use self::objects::*;
 pub use self::constants::*;

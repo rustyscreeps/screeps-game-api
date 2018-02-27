@@ -3,11 +3,17 @@
 // Right now, they can all fit in here because they're pretty small.
 pub mod cpu {
     use std::collections;
+
+    use constants::ReturnCode;
+
     get_from_js!(limit -> { Game.cpu.limit } -> f64);
     get_from_js!(tick_limit -> { Game.cpu.tickLimit } -> f64);
     get_from_js!(bucket -> { Game.cpu.bucket } -> f64);
     get_from_js!(shard_limits -> { Game.cpu.shardLimits } -> collections::HashMap<String, f64>);
     get_from_js!(get_used -> { Game.cpu.getUsed() } -> f64);
+    get_from_js!(set_shard_limits(limits: collections::HashMap<String, f32>) -> {
+        Game.cpu.setShardLimits(@{limits})
+    } -> ReturnCode);
 }
 pub mod map {
     use stdweb;
@@ -56,3 +62,5 @@ game_map_access! {
     (spawns, objects::StructureSpawn, Game.spawns),
     (structures, objects::Structure, Game.structures),
 }
+
+get_from_js!(time -> { Game.time } -> u32);
