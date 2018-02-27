@@ -2,7 +2,6 @@
 extern crate base64;
 extern crate bincode;
 extern crate fern;
-extern crate lazy_static;
 #[macro_use]
 extern crate log;
 extern crate screeps;

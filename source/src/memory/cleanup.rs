@@ -5,7 +5,7 @@ use screeps;
 use memory::MemoryRoot;
 
 pub fn run(mem: &mut MemoryRoot) {
-    let alive_creeps: HashSet<i32> = screeps::game::creeps::names()
+    let alive_creeps: HashSet<i32> = screeps::game::creeps::keys()
         .into_iter()
         .flat_map(|s| s.parse().ok())
         .collect();

@@ -153,7 +153,6 @@ simple_accessors! {
 }
 
 creep_simple_generic_action! {
-    // TODO: 'attackable' trait for structures + creeps?
     (attack(Attackable) -> attack),
     (dismantle(StructureProperties) -> dismantle),
     (ranged_attack(Attackable) -> rangedAttack),

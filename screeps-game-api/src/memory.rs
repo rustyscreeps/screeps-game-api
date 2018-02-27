@@ -1,7 +1,6 @@
 use stdweb::{Array, Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
 
-// TODO: rudimentary Memory access so we can clean out caches move_to sets
 /// TODO: do we even need this over just a raw 'Reference'?
 pub struct MemoryReference(Reference);
 

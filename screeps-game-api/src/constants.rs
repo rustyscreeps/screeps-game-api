@@ -179,6 +179,20 @@ enum_from_primitive! {
     }
 }
 
+impl TryFrom<Value> for Direction {
+    type Error = <u32 as TryFrom<Value>>::Error;
+
+    fn try_from(v: Value) -> Result<Self, Self::Error> {
+        use num_traits::FromPrimitive;
+
+        let as_num = u32::try_from(v)?;
+
+        Ok(Self::from_u32(as_num).unwrap_or_else(|| {
+            panic!("encountered a direction code we don't know: {}", as_num);
+        }))
+    }
+}
+
 enum_from_primitive! {
     #[repr(i32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -238,15 +252,6 @@ impl AsRef<str> for Terrain {
         }
     }
 }
-// TODO: some way to distribute this bit of JS code
-//
-// var v = @{self as i32};
-// switch (v) {
-//     case 0: return "plain";
-//     case 1: return "wall";
-//     case 2: return "swamp";
-//     default: throw new Error("unknown terrain integer encoding " + v);
-// }
 
 /// Internal enum representing each LOOK_* constant.
 ///

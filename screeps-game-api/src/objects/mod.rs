@@ -69,7 +69,6 @@ pub trait StructureProperties: RoomObjectProperties {
     fn hits(&self) -> i32;
     fn hits_max(&self) -> i32;
     fn id(&self) -> String;
-    // TODO: StructureType
     fn destroy(&self) -> ReturnCode;
     fn is_active(&self) -> bool;
     fn structure_type(&self) -> StructureType;

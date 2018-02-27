@@ -7,7 +7,11 @@ extern crate num_traits;
 extern crate stdweb;
 
 macro_rules! js_unwrap {
-    ($($code:tt)*) => ((js! { return $($code)* }).try_into().expect(concat!("js_unwrap at ", line!(), " in ", file!())))
+    ($($code:tt)*) => (
+        (js! { return $($code)* })
+            .try_into()
+            .expect(concat!("js_unwrap at ", line!(), " in ", file!()))
+    )
 }
 
 macro_rules! get_from_js {
