@@ -1,11 +1,9 @@
 use stdweb::Reference;
 use stdweb::unstable::TryInto;
 
-use api::{Direction, Part, ReturnCode};
-use api::objects::{Attackable, ConstructionSite, Creep, HasPosition, Resource,
-                   RoomObjectProperties, Source, StructureController, StructureProperties,
-                   Transferable, Withdrawable};
-use api::ResourceType;
+use {Direction, Part, ResourceType, ReturnCode};
+use objects::{Attackable, ConstructionSite, Creep, HasPosition, Resource, Source,
+              StructureController, StructureProperties, Transferable, Withdrawable};
 
 impl Creep {
     pub fn carry_total(&self) -> i32 {

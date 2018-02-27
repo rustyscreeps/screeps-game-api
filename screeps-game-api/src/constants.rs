@@ -1,7 +1,7 @@
 use stdweb::{Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
 
-use api::objects::RoomObject;
+use objects::RoomObject;
 
 enum_from_primitive! {
     #[repr(i32)]
@@ -78,8 +78,8 @@ pub mod find {
     use stdweb::unstable::TryFrom;
     use super::FindConstant;
 
-    use api::objects::{ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource,
-                       RoomPosition, Source, Structure, StructureSpawn};
+    use objects::{ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource,
+                  RoomPosition, Source, Structure, StructureSpawn};
 
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub struct Exit(i32);
@@ -208,22 +208,21 @@ impl TryFrom<Value> for Terrain {
     type Error = <u32 as TryFrom<Value>>::Error;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let v = match u32::try_from(v) {
-            Ok(x) => match x {
+        let v = match v {
+            Value::String(s) => match &*s {
+                "plain" => Terrain::Plain,
+                "wall" => Terrain::Wall,
+                "swamp" => Terrain::Swamp,
+                _ => panic!("unknown terrain string {}", s),
+            },
+            other => match u32::try_from(other)? {
                 0 => Terrain::Plain,
                 1 => Terrain::Wall,
                 2 => Terrain::Swamp,
-                3 => Terrain::Wall, // TODO: describe why we're doing this
-                _ => panic!("unknown terrain encoded integer {}", x),
-            },
-            Err(e1) => match String::try_from(v) {
-                Ok(s) => match &*s {
-                    "plain" => Terrain::Plain,
-                    "wall" => Terrain::Wall,
-                    "swamp" => Terrain::Swamp,
-                    _ => panic!("unknown terrain string {}", s),
-                },
-                Err(_) => return Err(e1),
+                // might not need this, but just in case we try
+                // to decode a game-encoded number and '3' represents swamp + wall
+                3 => Terrain::Wall,
+                x => panic!("unknown terrain encoded integer {}", x),
             },
         };
         Ok(v)
@@ -281,7 +280,7 @@ pub unsafe trait LookConstant {
 
 pub mod look {
     use super::{Look, LookConstant};
-    use api::{ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain};
+    use {ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain};
 
     macro_rules! typesafe_look_constants {
         (

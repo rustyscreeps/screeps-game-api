@@ -1,9 +1,9 @@
 use stdweb;
 use stdweb::unstable::TryInto;
 
-use api::objects::{Room, StructureController, StructureStorage, StructureTerminal};
-use api::constants::{FindConstant, LookConstant};
-use api::HasPosition;
+use objects::{Room, StructureController, StructureStorage, StructureTerminal};
+use constants::{FindConstant, LookConstant};
+use HasPosition;
 
 simple_accessors! {
     Room;

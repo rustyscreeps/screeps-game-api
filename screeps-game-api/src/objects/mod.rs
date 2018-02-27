@@ -1,7 +1,7 @@
 use stdweb::{Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
 
-use api::{ReturnCode, StructureType};
+use {ReturnCode, StructureType};
 
 #[macro_use]
 mod macros;

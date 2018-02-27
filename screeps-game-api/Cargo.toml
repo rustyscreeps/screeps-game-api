@@ -1,0 +1,22 @@
+[package]
+name = "screeps-game-api"
+version = "0.0.1"
+authors = ["David Ross <daboross@daboross.net>"]
+description = "WASM bindings to the in-game Screeps API"
+
+documentation = "https://docs.rs/screeps-game-api/"
+repository = "https://github.com/daboross/p3p/"
+readme = "README.md"
+
+license = "MIT"
+
+include = ["Cargo.toml", "src/**/*", "tests/**/*", "examples/**/*", "LICENSE", "README.md"]
+
+[lib]
+name = "screeps"
+
+[dependencies]
+stdweb = "0.4"
+log = "0.4"
+enum_primitive = "0.1"
+num-traits = "0.2"

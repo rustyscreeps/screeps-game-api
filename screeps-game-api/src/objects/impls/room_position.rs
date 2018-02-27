@@ -2,8 +2,7 @@ use std::cmp::{Eq, PartialEq};
 
 use stdweb::unstable::TryInto;
 
-use api::objects::RoomPosition;
-use api::HasPosition;
+use {HasPosition, RoomPosition};
 
 impl RoomPosition {
     pub fn is_near_to<T>(&self, target: &T) -> bool

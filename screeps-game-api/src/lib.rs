@@ -1,3 +1,11 @@
+#[macro_use]
+extern crate enum_primitive;
+#[macro_use]
+extern crate log;
+extern crate num_traits;
+#[macro_use]
+extern crate stdweb;
+
 macro_rules! js_unwrap {
     ($($code:tt)*) => ((js! { return $($code)* }).try_into().expect(concat!("js_unwrap at ", line!(), " in ", file!())))
 }
@@ -28,9 +36,3 @@ pub mod constants;
 
 pub use self::objects::*;
 pub use self::constants::*;
-
-pub struct BodyPart {
-    pub boost: Option<String>,
-    pub ty: Part,
-    pub hits: i32,
-}

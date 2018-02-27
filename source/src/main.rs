@@ -1,18 +1,15 @@
 #![recursion_limit = "256"]
-#[macro_use]
-extern crate enum_primitive;
 extern crate fern;
 #[macro_use]
-extern crate log;
-extern crate num_traits;
-#[macro_use]
 extern crate stdweb;
+#[macro_use]
+extern crate log;
+extern crate screeps;
 
 mod logging;
-pub mod api;
 
-use api::{Part, ReturnCode};
-use api::{find, RoomObjectProperties};
+use screeps::{Part, ReturnCode};
+use screeps::{find, RoomObjectProperties};
 
 fn main() {
     stdweb::initialize();
@@ -25,10 +22,10 @@ fn main() {
 
 fn game_loop() {
     info!("hello, world!");
-    info!("starting CPU: {:?}", api::game::cpu::get_used());
+    info!("starting CPU: {:?}", screeps::game::cpu::get_used());
 
     debug!("running spawns");
-    for spawn in api::game::spawns::values() {
+    for spawn in screeps::game::spawns::values() {
         debug!("running spawn {}", spawn.name());
         if spawn.energy() == spawn.energy_capacity() {
             let mut name_end = 0;
@@ -52,7 +49,7 @@ fn game_loop() {
     }
 
     debug!("running creeps");
-    for creep in api::game::creeps::values() {
+    for creep in screeps::game::creeps::values() {
         debug!("running creep {}", creep.name());
         if creep.spawning() {
             continue;
@@ -80,5 +77,5 @@ fn game_loop() {
             }
         }
     }
-    info!("ending cpu: {}", api::game::cpu::get_used())
+    info!("ending cpu: {}", screeps::game::cpu::get_used())
 }

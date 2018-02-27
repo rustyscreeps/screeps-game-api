@@ -7,8 +7,7 @@ authors = ["David Ross <daboross@daboross.net>"]
 stdweb = "0.4"
 log = "0.4"
 fern = "0.5"
-enum_primitive = "0.1"
-num-traits = "0.2"
+screeps-game-api = { version = "0.0.1", path = "../screeps-game-api/" }
 
 [profile.release]
 panic = "abort"

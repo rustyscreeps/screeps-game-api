@@ -11,7 +11,7 @@ pub mod cpu {
 }
 pub mod map {
     use stdweb;
-    use api::{RoomPosition, Terrain};
+    use {RoomPosition, Terrain};
 
     get_from_js!(describe_exits(room_name: &str) -> {
         Game.cpu.describeExits(@{room_name})
@@ -33,6 +33,7 @@ pub mod map {
 macro_rules! game_map_access {
     ($mod_name:ident, $type:path, $js_inner:expr) => (
         pub mod $mod_name {
+            use objects;
             get_from_js!(names -> { Object.keys($js_inner) } -> Vec<String>);
             get_from_js!(values -> { Object.values($js_inner) } -> Vec<$type>);
             get_from_js!(get(name: &str) -> { $js_inner[@{name}]} -> $type);
@@ -48,10 +49,10 @@ macro_rules! game_map_access {
 }
 
 game_map_access! {
-    (construction_sites, ::api::objects::ConstructionSite, Game.constructionSites),
-    (creeps, ::api::objects::Creep, Game.creeps),
-    (flags, ::api::objects::Flag, Game.flags),
-    (rooms, ::api::objects::Room, Game.rooms),
-    (spawns, ::api::objects::StructureSpawn, Game.spawns),
-    (structures, ::api::objects::Structure, Game.structures),
+    (construction_sites, objects::ConstructionSite, Game.constructionSites),
+    (creeps, objects::Creep, Game.creeps),
+    (flags, objects::Flag, Game.flags),
+    (rooms, objects::Room, Game.rooms),
+    (spawns, objects::StructureSpawn, Game.spawns),
+    (structures, objects::Structure, Game.structures),
 }

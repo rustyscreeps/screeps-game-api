@@ -1,7 +1,7 @@
 use stdweb::unstable::TryInto;
 
-use api::{Part, ReturnCode};
-use api::objects::StructureSpawn;
+use {Part, ReturnCode};
+use objects::StructureSpawn;
 
 simple_accessors! {
     StructureSpawn;
