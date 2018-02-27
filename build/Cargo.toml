@@ -1,17 +1,26 @@
 [package]
-name = "pound3-build"
+name = "cargo-screeps"
 version = "0.1.0"
 authors = ["David Ross <daboross@daboross.net>"]
+description = "Tool for building Screeps WASM projects using screeps-game-api"
+
+documentation = "https://docs.rs/cargo-screeps/"
+repository = "https://github.com/daboross/p3p/"
+readme = "README.md"
+
+license = "MIT"
+
+include = ["Cargo.toml", "src/**/*", "tests/**/*", "examples/**/*", "LICENSE", "README.md"]
 
 [dependencies]
-clap = "2"
-fern = "0.5"
-log = "0.4"
-find_folder = "0.3"
-failure = "0.1"
-serde = "1"
-serde_json = "1"
-serde_derive = "1"
-reqwest = "0.8"
-toml = "0.4"
 base64 = "0.9"
+clap = "2"
+failure = "0.1"
+fern = "0.5"
+find_folder = "0.3"
+log = "0.4"
+reqwest = "0.8"
+serde = "1"
+serde_derive = "1"
+serde_json = "1"
+toml = "0.4"
