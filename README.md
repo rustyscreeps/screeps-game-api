@@ -14,6 +14,9 @@ cargo install cargo-web
 # building:
 
 (cd build/ && cargo run --release -- --help)
+
 # or:
+
 ./run.sh --help
+run.bat --help
 ```
