@@ -13,3 +13,4 @@ num-traits = "0.2"
 [profile.release]
 panic = "abort"
 opt-level = "s"
+lto = true
