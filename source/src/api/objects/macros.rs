@@ -90,6 +90,9 @@ macro_rules! impl_structure {
             fn destroy(&self) -> ReturnCode {
                 js_unwrap!(@{&self.0}.destroy())
             }
+            fn structure_type(&self) -> StructureType {
+                js_unwrap!(@{&self.0}.structureType)
+            }
         }
     );
 
@@ -113,7 +116,7 @@ macro_rules! impl_owned_structure {
                     } else {
                         return null;
                     }
-                }).try_into().unwrap()
+                }).try_into().expect("expected OwnerStructure.owner.username to be a string")
             }
         }
     );

@@ -2,12 +2,26 @@ use stdweb::Reference;
 use stdweb::unstable::TryInto;
 
 use api::{Direction, Part, ReturnCode};
-use api::objects::{ConstructionSite, Creep, HasPosition, Resource, RoomObjectProperties, Source,
-                   StructureController, StructureProperties};
+use api::objects::{Attackable, ConstructionSite, Creep, HasPosition, Resource,
+                   RoomObjectProperties, Source, StructureController, StructureProperties,
+                   Transferable, Withdrawable};
+use api::ResourceType;
 
 impl Creep {
     pub fn carry_total(&self) -> i32 {
         js_unwrap!(_.sum(@{&self.0}.carry))
+    }
+
+    pub fn carry_types(&self) -> Vec<ResourceType> {
+        js_unwrap!(Object.keys(@{&self.0}).map(__resource_type_str_to_num))
+    }
+
+    pub fn carry_of(&self, ty: ResourceType) -> i32 {
+        js_unwrap!(@{&self.0}.carry[__resource_type_num_to_str(@{ty as i32})] || 0)
+    }
+
+    pub fn energy(&self) -> i32 {
+        js_unwrap!(@{&self.0}.carry[RESOURCE_ENERGY])
     }
 
     pub fn cancel_order(&self, name: &str) -> ReturnCode {
@@ -50,12 +64,55 @@ impl Creep {
     }
 
     pub fn move_to<T: HasPosition>(&self, target: &T) -> ReturnCode {
-        js_unwrap!(@{&self.0}.moveTo(@{&target.pos().0}))
+        let p = target.pos();
+        js_unwrap!(@{&self.0}.moveTo(@{&p.0}))
     }
+
     pub fn ranged_mass_attack(&self) -> ReturnCode {
         js_unwrap!(@{&self.0}.rangedMassAttack())
     }
-    // TODO: need ResourceType before doing transfer, withdraw
+
+    pub fn transfer_amount<T>(&self, target: &T, ty: ResourceType, amount: i32) -> ReturnCode
+    where
+        T: Transferable,
+    {
+        js_unwrap!(@{&self.0}.transfer(
+            @{target.as_ref()},
+            __resource_type_num_to_str(@{ty as i32}),
+            @{amount}
+        ))
+    }
+
+    pub fn transfer_all<T>(&self, target: &T, ty: ResourceType) -> ReturnCode
+    where
+        T: Transferable,
+    {
+        js_unwrap!(@{&self.0}.transfer(
+            @{target.as_ref()},
+            __resource_type_num_to_str(@{ty as i32})
+        ))
+    }
+
+    pub fn withdraw_amount<T>(&self, target: &T, ty: ResourceType, amount: i32) -> ReturnCode
+    where
+        T: Withdrawable,
+    {
+        js_unwrap!(@{&self.0}.withdraw(
+            @{target.as_ref()},
+            __resource_type_num_to_str(@{ty as i32}),
+            @{amount}
+        ))
+    }
+
+    pub fn withdraw_all<T>(&self, target: &T, ty: ResourceType) -> ReturnCode
+    where
+        T: Withdrawable,
+    {
+        js_unwrap!(@{&self.0}.withdraw(
+            @{target.as_ref()},
+            __resource_type_num_to_str(@{ty as i32})
+        ))
+    }
 }
 
 macro_rules! creep_simple_generic_action {
@@ -91,6 +148,7 @@ simple_accessors! {
     (fatigue -> fatigue -> i32),
     (hits -> hits -> i32),
     (hits_max -> hitsMax -> i32),
+    (name -> name -> String),
     (my -> my -> bool),
     (spawning -> spawning -> bool),
     (ticks_to_live -> ticksToLive -> i32),
@@ -98,11 +156,12 @@ simple_accessors! {
 
 creep_simple_generic_action! {
     // TODO: 'attackable' trait for structures + creeps?
-    (attack(RoomObjectProperties) -> attack),
+    (attack(Attackable) -> attack),
     (dismantle(StructureProperties) -> dismantle),
-    (ranged_attack(RoomObjectProperties) -> rangedAttack),
+    (ranged_attack(Attackable) -> rangedAttack),
     (repair(StructureProperties) -> repair),
 }
+
 creep_simple_concrete_action! {
     (attack_controller(StructureController) -> attackController),
     (build(ConstructionSite) -> build),

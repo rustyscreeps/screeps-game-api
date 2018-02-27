@@ -11,10 +11,23 @@ pub mod cpu {
 }
 pub mod map {
     use stdweb;
+    use api::{RoomPosition, Terrain};
 
     get_from_js!(describe_exits(room_name: &str) -> {
         Game.cpu.describeExits(@{room_name})
     } -> stdweb::Object);
+
+    get_from_js!(get_terrain_at(pos: &RoomPosition) -> {
+        __terrain_type_str_to_num(Game.map.getTerrainAt(@{pos.as_ref()}))
+    } -> Terrain);
+
+    get_from_js!(get_world_size -> {
+        Game.map.getWorldSize()
+    } -> i32);
+
+    get_from_js!(is_room_available(room_name: &str) -> {
+        Game.map.isRoomAvailable(@{room_name})
+    } -> bool);
 }
 
 macro_rules! game_map_access {
