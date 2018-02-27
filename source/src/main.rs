@@ -16,7 +16,7 @@ use api::{find, RoomObjectProperties};
 
 fn main() {
     stdweb::initialize();
-    logging::setup_logging(1);
+    logging::setup_logging(logging::Info);
 
     js! {
         module.exports.loop = @{game_loop};
@@ -27,7 +27,9 @@ fn game_loop() {
     info!("hello, world!");
     info!("starting CPU: {:?}", api::game::cpu::get_used());
 
+    debug!("running spawns");
     for spawn in api::game::spawns::values() {
+        debug!("running spawn {}", spawn.name());
         if spawn.energy() == spawn.energy_capacity() {
             let mut name_end = 0;
             let res = loop {
@@ -49,7 +51,9 @@ fn game_loop() {
         }
     }
 
+    debug!("running creeps");
     for creep in api::game::creeps::values() {
+        debug!("running creep {}", creep.name());
         if creep.spawning() {
             continue;
         }

@@ -1,5 +1,7 @@
 use {fern, log};
 
+pub use log::LevelFilter::*;
+
 struct JsLog;
 
 impl log::Log for JsLog {
@@ -15,16 +17,9 @@ impl log::Log for JsLog {
     fn flush(&self) {}
 }
 
-pub fn setup_logging(verbosity: u32) {
-    let level = match verbosity {
-        0 => log::LevelFilter::Warn,
-        1 => log::LevelFilter::Info,
-        2 => log::LevelFilter::Debug,
-        _ => log::LevelFilter::Trace,
-    };
-
+pub fn setup_logging(verbosity: log::LevelFilter) {
     fern::Dispatch::new()
-        .level(level)
+        .level(verbosity)
         .format(|out, message, record| {
             out.finish(format_args!(
                 "({}) {}: {}",
