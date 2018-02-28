@@ -6,11 +6,15 @@ use {Color, Direction, FindConstant, HasPosition, LookConstant, ReturnCode, Room
      StructureType};
 
 impl RoomPosition {
-    pub fn x(&self) -> i32 {
+    pub fn new(x: u8, y: u8, room_name: &str) -> Self {
+        js_unwrap!(new RoomPosition(@{x}, @{y}, @{room_name}))
+    }
+
+    pub fn x(&self) -> u8 {
         js_unwrap!(@{&self.0}.x)
     }
 
-    pub fn y(&self) -> i32 {
+    pub fn y(&self) -> u8 {
         js_unwrap!(@{&self.0}.y)
     }
 
