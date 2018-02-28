@@ -1,6 +1,12 @@
-use std::{fs, process};
+use std::{fs, process, path::Path};
 
 use {failure, find_folder};
+
+// __initialize defined by stdweb.
+// it's signature is 'function __initialize( __wasm_module, __load_asynchronously ) {'
+pub static SCREEPS_JS_INITIALIZE_CALL: &str = r#"
+__initialize(new WebAssembly.Module(require('compiled')), false);
+"#;
 
 pub fn check() -> Result<(), failure::Error> {
     debug!("running check");
@@ -63,13 +69,13 @@ pub fn compile() -> Result<(), failure::Error> {
 
     fs::write(
         out_dir.join("main.js"),
-        process_js(&fs::read_string(generated_js)?)?,
+        process_js(&generated_js, &fs::read_string(&generated_js)?)?,
     )?;
 
     Ok(())
 }
 
-fn process_js(input: &str) -> Result<String, failure::Error> {
+fn process_js(file_name: &Path, input: &str) -> Result<String, failure::Error> {
     // first, strip out bootstrap code which relates to the browser. We don't want
     // to run this, we just want to call `__initialize` ourself.
     //
@@ -114,21 +120,32 @@ if( typeof Rust === "undefined" ) {
 
     ensure!(
         input.starts_with(expected_prefix),
-        "expected 'cargo web' generated JS to start with known JS"
+        "'cargo web' generated unexpected JS prefix! This means it's updated without \
+         'cargo screeps' also having updates. Please report this issue to \
+         https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
+         the first ~30 lines of {}",
+        file_name.display(),
     );
     ensure!(
-        input.ends_with(expected_suffix),
-        "expected 'cargo web' generated JS to end with known JS"
+        input.starts_with(expected_prefix),
+        "'cargo web' generated unexpected JS prefix! This means it's updated without \
+         'cargo screeps' also having updates. Please report this issue to \
+         https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
+         the last ~30 lines of {}",
+        file_name.display(),
     );
 
-    let initialize_function = input[expected_prefix.len()..input.len() - expected_suffix.len()]
-        .replace("console.error", "console.log");
+    ensure!(
+        input.contains("__initialize"),
+        "'cargo web' generated unexpected JS output! It does not \
+         include a '__initialize' function. Please report this issue to \
+         https://github.com/daboross/screeps-in-rust-via-wasm/issues."
+    );
 
-    let wrapping_js_file = find_folder::Search::Parents(2)
-        .for_folder("js")?
-        .join("main.js");
+    let initialize_function = &input[expected_prefix.len()..input.len() - expected_suffix.len()];
 
-    let wrapper_js = fs::read_string(wrapping_js_file)?;
-
-    Ok(format!("{}\n{}", initialize_function, wrapper_js))
+    Ok(format!(
+        "{}\n{}",
+        initialize_function, SCREEPS_JS_INITIALIZE_CALL
+    ))
 }

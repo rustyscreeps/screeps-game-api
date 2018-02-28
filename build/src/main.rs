@@ -1,4 +1,7 @@
-#![feature(fs_read_write)] // it's just a convenience thing, but hey, we're helping try it out!
+// we're literally depending on nightly only for fs_read_write, and it's quite literally a convenience feature.
+// still, we're probably going to be wanting nightly anyways for best WASM support, and this does help test
+// out the feature.
+#![feature(fs_read_write)]
 extern crate base64;
 extern crate clap;
 #[macro_use]
