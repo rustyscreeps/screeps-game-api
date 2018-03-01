@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "screeps-game-api",
+    "cargo-screeps",
+]
