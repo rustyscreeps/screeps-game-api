@@ -1,4 +1,4 @@
-use stdweb::{Array, Reference, Value, JsSerialize};
+use stdweb::{Array, JsSerialize, Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
 
 /// TODO: do we even need this over just a raw 'Reference'?
@@ -47,7 +47,7 @@ impl MemoryReference {
 
     pub fn set<T>(&self, path: &str, value: T)
     where
-        T: JsSerialize
+        T: JsSerialize,
     {
         js! {
             (@{&self.0})[@{path}] = @{value};
