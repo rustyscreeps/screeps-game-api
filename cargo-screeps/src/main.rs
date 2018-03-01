@@ -3,11 +3,11 @@
 // out the feature.
 #![feature(fs_read_write)]
 extern crate base64;
+#[macro_use]
 extern crate clap;
 #[macro_use]
 extern crate failure;
 extern crate fern;
-extern crate find_folder;
 #[macro_use]
 extern crate log;
 extern crate reqwest;
@@ -21,28 +21,31 @@ extern crate toml;
 mod setup;
 mod build;
 mod upload;
+mod orientation;
 
 fn run() -> Result<(), failure::Error> {
-    let state = setup::setup_cli();
+    let state = setup::setup_cli()?;
 
-    let config = setup::Configuration::setup()?;
+    let root = orientation::find_project_root()?;
 
     match state {
         setup::CliState::Build => {
             info!("compiling...");
-            build::compile()?;
+            build::build(&root)?;
             info!("compiled.");
         }
         setup::CliState::BuildUpload => {
+            let config = setup::Configuration::setup(&root)?;
+
             info!("compiling...");
-            build::compile()?;
+            build::build(&root)?;
             info!("compiled. uploading...");
-            upload::upload(config)?;
+            upload::upload(&root, config)?;
             info!("uploaded.");
         }
         setup::CliState::Check => {
             info!("checking...");
-            build::check()?;
+            build::check(&root)?;
             info!("checked.");
         }
     }

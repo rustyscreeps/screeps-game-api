@@ -1,24 +1,18 @@
 use std::collections::HashMap;
+use std::path::Path;
 use std::fs;
 
-use {failure, find_folder, reqwest, serde_json, base64};
+use {failure, reqwest, serde_json, base64};
 
 use setup::Configuration;
 
-pub fn upload(config: Configuration) -> Result<(), failure::Error> {
-    let target_dir = find_folder::Search::Parents(2)
-        .for_folder("source")?
-        .join("../target");
+pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> {
+    let target_dir = root.join("target");
+
     let mut files = HashMap::new();
     for entry in fs::read_dir(target_dir)? {
         let entry = entry?;
         let path = entry.path();
-
-        ensure!(
-            entry.file_type()?.is_file(),
-            "non-file found in 'target' dir: {}",
-            path.display()
-        );
 
         if let (Some(name), Some(extension)) = (path.file_stem(), path.extension()) {
             let contents = if extension == "js" {
@@ -28,7 +22,7 @@ pub fn upload(config: Configuration) -> Result<(), failure::Error> {
                 let data = base64::encode(&fs::read(&path)?);
                 json!({ "binary": data })
             } else {
-                bail!("non-js non-wasm file found in target/");
+                continue;
             };
 
             files.insert(name.to_string_lossy().into_owned(), contents);

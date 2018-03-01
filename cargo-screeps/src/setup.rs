@@ -1,6 +1,6 @@
-use std::{fs, io};
+use std::{fs, io, path::Path};
 
-use {clap, failure, fern, find_folder, log, toml};
+use {clap, failure, fern, log, toml};
 
 pub enum CliState {
     Check,
@@ -8,44 +8,52 @@ pub enum CliState {
     BuildUpload,
 }
 
-pub fn setup_cli() -> CliState {
-    let args = clap::App::new("#3# builder")
-        .version("0.1")
+pub fn setup_cli() -> Result<CliState, failure::Error> {
+    let cargo_args = clap::App::new("cargo screeps")
+        .version(crate_version!())
+        .bin_name("cargo")
         .author("David Ross")
-        .arg(
-            clap::Arg::with_name("verbose")
-                .short("v")
-                .long("verbose")
-                .multiple(true),
-        )
-        .arg(
-            clap::Arg::with_name("build")
-                .short("b")
-                .long("build")
-                .takes_value(false)
-                .help("build files, put in target/ in project root"),
-        )
-        .arg(
-            clap::Arg::with_name("check")
-                .short("c")
-                .long("check")
-                .takes_value(false)
-                .help("runs 'cargo check' with appropriate target"),
-        )
-        .arg(
-            clap::Arg::with_name("upload")
-                .short("u")
-                .long("upload")
-                .takes_value(false)
-                .help("upload files to screeps (implies build)"),
-        )
-        .group(
-            clap::ArgGroup::with_name("command")
-                .args(&["build", "upload", "check"])
-                .multiple(false)
-                .required(true),
+        .subcommand(
+            clap::SubCommand::with_name("screeps")
+                .arg(
+                    clap::Arg::with_name("verbose")
+                        .short("v")
+                        .long("verbose")
+                        .multiple(true),
+                )
+                .arg(
+                    clap::Arg::with_name("build")
+                        .short("b")
+                        .long("build")
+                        .takes_value(false)
+                        .help("build files, put in target/ in project root"),
+                )
+                .arg(
+                    clap::Arg::with_name("check")
+                        .short("c")
+                        .long("check")
+                        .takes_value(false)
+                        .help("runs 'cargo check' with appropriate target"),
+                )
+                .arg(
+                    clap::Arg::with_name("upload")
+                        .short("u")
+                        .long("upload")
+                        .takes_value(false)
+                        .help("upload files to screeps (implies build)"),
+                )
+                .group(
+                    clap::ArgGroup::with_name("command")
+                        .args(&["build", "upload", "check"])
+                        .multiple(false)
+                        .required(true),
+                ),
         )
         .get_matches();
+
+    let args = cargo_args.subcommand_matches("screeps").ok_or_else(|| {
+        format_err!("expected first subcommand to be 'screeps' (please run as 'cargo screeps')")
+    })?;
 
     let verbosity = match args.occurrences_of("verbose") {
         0 => log::LevelFilter::Info,
@@ -62,13 +70,15 @@ pub fn setup_cli() -> CliState {
 
     assert!(args.is_present("check") || args.is_present("build") || args.is_present("upload"));
 
-    if args.is_present("check") {
+    let state = if args.is_present("check") {
         CliState::Check
     } else if args.is_present("upload") {
         CliState::BuildUpload
     } else {
         CliState::Build
-    }
+    };
+
+    Ok(state)
 }
 
 fn default_hostname() -> String {
@@ -109,16 +119,16 @@ pub struct Configuration {
     pub port: i32,
     pub ptr: bool,
 }
+
 impl Configuration {
-    pub fn setup() -> Result<Self, failure::Error> {
-        let parent_dir = find_folder::Search::Parents(2)
-            .for_folder("source")?
-            .join("../");
-        let config_file = parent_dir.join("config.toml");
+    pub fn setup(root: &Path) -> Result<Self, failure::Error> {
+        let config_file = root.join("screeps.toml");
         ensure!(
             config_file.exists(),
-            "please copy config-defaults.toml to config.toml in the project root"
+            "expected screeps.toml to exist in {}",
+            root.display()
         );
+
         let file_config = toml::from_str(&fs::read_string(config_file)?)?;
 
         let FileConfiguration {

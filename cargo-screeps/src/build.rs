@@ -1,6 +1,6 @@
 use std::{fs, process, path::Path};
 
-use {failure, find_folder};
+use failure;
 
 // __initialize defined by stdweb.
 // it's signature is 'function __initialize( __wasm_module, __load_asynchronously ) {'
@@ -8,14 +8,13 @@ pub static SCREEPS_JS_INITIALIZE_CALL: &str = r#"
 __initialize(new WebAssembly.Module(require('compiled')), false);
 "#;
 
-pub fn check() -> Result<(), failure::Error> {
+pub fn check(root: &Path) -> Result<(), failure::Error> {
     debug!("running check");
-    let source_project = find_folder::Search::Parents(2).for_folder("source")?;
 
     debug!("running 'cargo check --target=wasm32-unknown-unknown'");
     let cargo_success = process::Command::new("cargo")
         .args(&["check", "--target=wasm32-unknown-unknown"])
-        .current_dir(&source_project)
+        .current_dir(root)
         .spawn()?
         .wait()?;
     if !cargo_success.success() {
@@ -29,9 +28,8 @@ pub fn check() -> Result<(), failure::Error> {
     Ok(())
 }
 
-pub fn compile() -> Result<(), failure::Error> {
+pub fn build(root: &Path) -> Result<(), failure::Error> {
     debug!("building");
-    let source_project = find_folder::Search::Parents(2).for_folder("source")?;
 
     debug!("running 'cargo web build --target=wasm32-unknown-unknown --release'");
     let cargo_success = process::Command::new("cargo")
@@ -41,7 +39,7 @@ pub fn compile() -> Result<(), failure::Error> {
             "--target=wasm32-unknown-unknown",
             "--release",
         ])
-        .current_dir(&source_project)
+        .current_dir(root)
         .spawn()?
         .wait()?;
     if !cargo_success.success() {
@@ -53,11 +51,11 @@ pub fn compile() -> Result<(), failure::Error> {
 
     debug!("finished 'cargo web'");
 
-    let target_dir = source_project.join("target/wasm32-unknown-unknown/release/");
+    let target_dir = root.join("target/wasm32-unknown-unknown/release/");
     let wasm_file = target_dir.join("pound3pound.wasm");
     let generated_js = target_dir.join("pound3pound.js");
 
-    let out_dir = source_project.join("../target");
+    let out_dir = root.join("target");
 
     debug!("copying wasm file");
 
