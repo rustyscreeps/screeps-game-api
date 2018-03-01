@@ -1,4 +1,4 @@
-use std::{fs, process, path::Path};
+use std::{fs, process, ffi::OsStr, path::Path};
 
 use failure;
 
@@ -52,8 +52,38 @@ pub fn build(root: &Path) -> Result<(), failure::Error> {
     debug!("finished 'cargo web'");
 
     let target_dir = root.join("target/wasm32-unknown-unknown/release/");
-    let wasm_file = target_dir.join("pound3pound.wasm");
-    let generated_js = target_dir.join("pound3pound.js");
+    // TODO: actually use 'cargo metadata' to get exact filename that will be
+    // built, rather than using this hack.
+    let mut wasm_file = None;
+    let mut generated_js = None;
+    for r in fs::read_dir(&target_dir)? {
+        let entry = r?;
+        let file_name = entry.file_name();
+        let file_name = Path::new(&file_name);
+        match file_name.extension().and_then(OsStr::to_str) {
+            Some("wasm") => {
+                ensure!(
+                    wasm_file.is_none(),
+                    "error: multiple wasm files found in {}",
+                    target_dir.display()
+                );
+                wasm_file = Some(entry.path());
+            }
+            Some("js") => {
+                ensure!(
+                    generated_js.is_none(),
+                    "error: multiple js files found in {}",
+                    target_dir.display()
+                );
+                generated_js = Some(entry.path());
+            }
+            _ => {}
+        }
+    }
+    let wasm_file = wasm_file
+        .ok_or_else(|| format_err!("error: no wasm files found in {}", target_dir.display()))?;
+    let generated_js = generated_js
+        .ok_or_else(|| format_err!("error: no js files found in {}", target_dir.display()))?;
 
     let out_dir = root.join("target");
 
