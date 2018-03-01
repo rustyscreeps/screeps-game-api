@@ -31,5 +31,5 @@ cargo install cargo-web
 cargo screeps --help
 ```
 
-[screeps](https://screeps.com/)
-[`stdweb`](https://github.com/koute/stdweb)
+[screeps]: https://screeps.com/
+[`stdweb`]: https://github.com/koute/stdweb
