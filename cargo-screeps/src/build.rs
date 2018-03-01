@@ -113,7 +113,7 @@ fn process_js(file_name: &Path, input: &str) -> Result<String, failure::Error> {
     let make_into_slightly_less_brittle_regex = |input: &str| {
         whitespace_regex
             .replace_all(&regex::escape(input), "\\s*")
-            .replace("XXX", "[A-Za-z0-9_]*")
+            .replace("XXX", "[A-Za-z0-9_-]*")
     };
     let expected_prefix = r#""use strict";
 
@@ -166,18 +166,25 @@ if( typeof Rust === "undefined" ) {
 
     debug!("expected suffix:\n```{}```", expected_suffix);
 
-    let (prefix_match, suffix_match) = expected_prefix
-        .find(input)
-        .and_then(|a| expected_suffix.find(input).map(|b| (a, b)))
-        .ok_or_else(|| {
-            format_err!(
-                "'cargo web' generated unexpected JS prefix! This means it's updated without \
-                 'cargo screeps' also having updates. Please report this issue to \
-                 https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
-                 the first ~30 lines of {}",
-                file_name.display(),
-            )
-        })?;
+    let prefix_match = expected_prefix.find(input).ok_or_else(|| {
+        format_err!(
+            "'cargo web' generated unexpected JS prefix! This means it's updated without \
+             'cargo screeps' also having updates. Please report this issue to \
+             https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
+             the first ~30 lines of {}",
+            file_name.display(),
+        )
+    })?;
+
+    let suffix_match = expected_suffix.find(input).ok_or_else(|| {
+        format_err!(
+            "'cargo web' generated unexpected JS suffix! This means it's updated without \
+             'cargo screeps' also having updates. Please report this issue to \
+             https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
+             the last ~30 lines of {}",
+            file_name.display(),
+        )
+    })?;
 
     ensure!(
         input.contains("__initialize"),
