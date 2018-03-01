@@ -9,24 +9,29 @@ Tools for creating [Screeps] AIs written in Rust.
 `cargo screeps` is a binary program which wraps `cargo web` and lets one directly upload Rust WASM code to the
 Screeps server.
 
-See https://github.com/daboross/p3p for an example screeps AI using these libraries. It's not a *minimal* example at all,
-but feel free to copy the configuration (Cargo.toml, config-default.toml) into your own project to start.
+See https://github.com/daboross/screeps-starter-python/ for an example AI using these libraries.
+[#3#](https://github.com/daboross/p3p) is another example, but it is not a minimal AI.
 
-Here's a minimal quickstart guide. More documentation will be made in the future.
+Here's a quickstart guide. More documentation will be made in the future.
 
 ```sh
-# clone project:
+# clone:
 
-git clone https://github.com/daboross/p3p.git
-cd p3p
+git clone https://github.com/daboross/screeps-starter-rust.git
+cd screeps-starter-rust
 rustup override set nightly
 
-# install cli dependencies:
+# cli dependencies:
 
 cargo install cargo-screeps
 cargo install cargo-web
 
-# build:
+# configure for uploading:
+
+cp example-screeps.toml screeps.toml
+nano screeps.toml
+
+# build tool:
 
 cargo screeps --help
 ```
