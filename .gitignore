@@ -37,4 +37,4 @@ nbproject
 *.iws
 *.sublime-project
 *.sublime-workspace
-config.toml
+screeps.toml

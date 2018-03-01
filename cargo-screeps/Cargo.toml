@@ -1,11 +1,11 @@
 [package]
 name = "cargo-screeps"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["David Ross <daboross@daboross.net>"]
-description = "Tool for building Screeps WASM projects using screeps-game-api"
+description = "Build tool for deploying Rust WASM code to Screeps game servers"
 
-documentation = "https://docs.rs/cargo-screeps/"
-repository = "https://github.com/daboross/p3p/"
+documentation = "https://github.com/daboross/screeps-in-rust-via-wasm/cargo-screeps/"
+repository = "https://github.com/daboross/screeps-in-rust-via-wasm/"
 readme = "README.md"
 
 license = "MIT"

@@ -5,7 +5,7 @@ authors = ["David Ross <daboross@daboross.net>"]
 description = "WASM bindings to the in-game Screeps API"
 
 documentation = "https://docs.rs/screeps-game-api/"
-repository = "https://github.com/daboross/p3p/"
+repository = "https://github.com/daboross/screeps-in-rust-via-wasm/"
 readme = "README.md"
 
 license = "MIT"
