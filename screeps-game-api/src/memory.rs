@@ -5,6 +5,14 @@ use stdweb::unstable::{TryFrom, TryInto};
 pub struct MemoryReference(Reference);
 
 impl MemoryReference {
+    pub fn new() -> Self {
+        js_unwrap!({})
+    }
+
+    pub fn bool(&self, path: &str) -> bool {
+        js_unwrap!(Boolean(@{&self.0}[@{path}]))
+    }
+
     pub fn num(&self, path: &str) -> Option<f64> {
         (js! {
             return (@{&self.0})[@{path}];

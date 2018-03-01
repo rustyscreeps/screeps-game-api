@@ -4,6 +4,7 @@ use stdweb::unstable::TryInto;
 use {Direction, Part, ResourceType, ReturnCode};
 use objects::{Attackable, ConstructionSite, Creep, HasPosition, Resource, Source,
               StructureController, StructureProperties, Transferable, Withdrawable};
+use memory::MemoryReference;
 
 impl Creep {
     pub fn carry_total(&self) -> i32 {
@@ -32,6 +33,10 @@ impl Creep {
 
     pub fn move_to_xy(&self, x: i32, y: i32) -> ReturnCode {
         js_unwrap!(@{&self.0}.moveTo(@{x}, @{y}))
+    }
+
+    pub fn memory(&self) -> MemoryReference {
+        js_unwrap!(@{&self.0}.memory)
     }
 
     pub fn say(&self, msg: &str, public: bool) -> ReturnCode {
