@@ -10,6 +10,7 @@ extern crate failure;
 extern crate fern;
 #[macro_use]
 extern crate log;
+extern crate regex;
 extern crate reqwest;
 extern crate serde;
 #[macro_use]

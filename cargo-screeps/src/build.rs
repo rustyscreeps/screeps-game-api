@@ -1,6 +1,6 @@
 use std::{fs, process, ffi::OsStr, path::Path};
 
-use failure;
+use {failure, regex};
 
 // __initialize defined by stdweb.
 // it's signature is 'function __initialize( __wasm_module, __load_asynchronously ) {'
@@ -109,6 +109,12 @@ fn process_js(file_name: &Path, input: &str) -> Result<String, failure::Error> {
     //
     // TODO: this is currently quite brittle and tied to the
     // version of "cargo web"...
+    let whitespace_regex = regex::Regex::new("\\s+").expect("expected pre-set regex to succeed");
+    let make_into_slightly_less_brittle_regex = |input: &str| {
+        whitespace_regex
+            .replace_all(&regex::escape(input), "\\s*")
+            .replace("XXX", "[A-Za-z0-9_]*")
+    };
     let expected_prefix = r#""use strict";
 
 if( typeof Rust === "undefined" ) {
@@ -121,10 +127,17 @@ if( typeof Rust === "undefined" ) {
     } else if( typeof module === "object" && module.exports ) {
         module.exports = factory();
     } else {
-        Rust.pound3pound = factory();
+        Rust.XXX = factory();
     }
 }( this, function() {
     "#;
+
+    let expected_prefix = regex::Regex::new(&format!(
+        "^{}",
+        make_into_slightly_less_brittle_regex(expected_prefix)
+    ))?;
+
+    debug!("expected prefix:\n```{}```", expected_prefix);
 
     let expected_suffix = r#"
 
@@ -132,13 +145,13 @@ if( typeof Rust === "undefined" ) {
     if( typeof window === "undefined" ) {
         const fs = require( "fs" );
         const path = require( "path" );
-        const wasm_path = path.join( __dirname, "pound3pound.wasm" );
+        const wasm_path = path.join( __dirname, "XXX.wasm" );
         const buffer = fs.readFileSync( wasm_path );
         const mod = new WebAssembly.Module( buffer );
 
         return __initialize( mod, false );
     } else {
-        return fetch( "pound3pound.wasm" )
+        return fetch( "XXX.wasm" )
             .then( response => response.arrayBuffer() )
             .then( bytes => WebAssembly.compile( bytes ) )
             .then( mod => __initialize( mod, true ) );
@@ -146,22 +159,25 @@ if( typeof Rust === "undefined" ) {
 }));
 "#;
 
-    ensure!(
-        input.starts_with(expected_prefix),
-        "'cargo web' generated unexpected JS prefix! This means it's updated without \
-         'cargo screeps' also having updates. Please report this issue to \
-         https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
-         the first ~30 lines of {}",
-        file_name.display(),
-    );
-    ensure!(
-        input.starts_with(expected_prefix),
-        "'cargo web' generated unexpected JS prefix! This means it's updated without \
-         'cargo screeps' also having updates. Please report this issue to \
-         https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
-         the last ~30 lines of {}",
-        file_name.display(),
-    );
+    let expected_suffix = regex::Regex::new(&format!(
+        "{}$",
+        make_into_slightly_less_brittle_regex(expected_suffix)
+    ))?;
+
+    debug!("expected suffix:\n```{}```", expected_suffix);
+
+    let (prefix_match, suffix_match) = expected_prefix
+        .find(input)
+        .and_then(|a| expected_suffix.find(input).map(|b| (a, b)))
+        .ok_or_else(|| {
+            format_err!(
+                "'cargo web' generated unexpected JS prefix! This means it's updated without \
+                 'cargo screeps' also having updates. Please report this issue to \
+                 https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
+                 the first ~30 lines of {}",
+                file_name.display(),
+            )
+        })?;
 
     ensure!(
         input.contains("__initialize"),
@@ -170,7 +186,7 @@ if( typeof Rust === "undefined" ) {
          https://github.com/daboross/screeps-in-rust-via-wasm/issues."
     );
 
-    let initialize_function = &input[expected_prefix.len()..input.len() - expected_suffix.len()];
+    let initialize_function = &input[prefix_match.end()..suffix_match.start()];
 
     Ok(format!(
         "{}\n{}",
