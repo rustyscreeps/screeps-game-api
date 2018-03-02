@@ -93,10 +93,9 @@ impl RoomPosition {
         js_unwrap!(@{&self.0}.isNearTo(@{&target.pos().0}))
     }
 
-    pub fn look_for<T, U>(&self, ty: T) -> Vec<T::Item>
+    pub fn look_for<T>(&self, ty: T) -> Vec<T::Item>
     where
         T: LookConstant,
-        U: HasPosition,
     {
         js_unwrap_array!(@{&self.0}.lookFor(__look_num_to_str(@{ty.look_code() as i32})))
     }

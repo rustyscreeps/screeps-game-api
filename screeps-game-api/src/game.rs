@@ -42,7 +42,7 @@ macro_rules! game_map_access {
             use objects;
             get_from_js!(keys -> { Object.keys($js_inner) } -> Vec<String>);
             get_from_js!(values -> { Object.values($js_inner) } -> Vec<$type>);
-            get_from_js!(get(name: &str) -> { $js_inner[@{name}]} -> $type);
+            get_from_js!(get(name: &str) -> { $js_inner[@{name}]} -> Option<$type>);
         }
     );
     ($(
