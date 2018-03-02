@@ -10,7 +10,7 @@ readme = "README.md"
 
 license = "MIT"
 
-include = ["Cargo.toml", "src/**/*", "tests/**/*", "examples/**/*", "LICENSE", "README.md"]
+include = ["Cargo.toml", "Web.toml", "src/**/*", "tests/**/*", "examples/**/*", "LICENSE", "README.md"]
 
 [lib]
 name = "screeps"
