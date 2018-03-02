@@ -1,6 +1,6 @@
 [package]
 name = "screeps-game-api"
-version = "0.0.4"
+version = "0.0.5"
 authors = ["David Ross <daboross@daboross.net>"]
 description = "WASM bindings to the in-game Screeps API"
 
@@ -10,7 +10,7 @@ readme = "README.md"
 
 license = "MIT"
 
-include = ["Cargo.toml", "Web.toml", "src/**/*", "tests/**/*", "examples/**/*", "LICENSE", "README.md"]
+include = ["Cargo.toml", "Web.toml", "src/**/*", "javascript/**/*", "tests/**/*", "examples/**/*", "LICENSE", "README.md"]
 
 [lib]
 name = "screeps"
