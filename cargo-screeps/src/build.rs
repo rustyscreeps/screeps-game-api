@@ -146,7 +146,7 @@ if( typeof Rust === "undefined" ) {
     let expected_suffix = r#"
 
 
-    if( typeof window === "undefined" ) {
+    if( typeof window === "undefined" && typeof process === "object" ) {
         const fs = require( "fs" );
         const path = require( "path" );
         const wasm_path = path.join( __dirname, "XXX.wasm" );
