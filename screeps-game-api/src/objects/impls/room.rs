@@ -1,5 +1,5 @@
 use objects::{Room, StructureController, StructureStorage, StructureTerminal};
-use constants::{FindConstant, LookConstant};
+use constants::{FindConstant, LookConstant, StructureType, Color, ReturnCode};
 use HasPosition;
 
 simple_accessors! {
@@ -13,6 +13,52 @@ simple_accessors! {
 }
 
 impl Room {
+    pub fn create_construction_site<T>(&self, at: T, ty: StructureType) -> ReturnCode
+    where
+        T: HasPosition, {
+        let pos = at.pos();
+        js_unwrap!(@{self.as_ref()}.createConstructionSite(
+            @{pos.as_ref()},
+            __structure_type_num_to_str(@{ty as i32})
+        ))
+    }
+
+    pub fn create_named_construction_site<T>(
+        &self,
+        at: T,
+        ty: StructureType,
+        name: &str,
+    ) -> ReturnCode
+    where
+        T: HasPosition,
+    {
+        let pos = at.pos();
+        js_unwrap!(@{self.as_ref()}.createConstructionSite(
+            @{pos.as_ref()},
+            __structure_type_num_to_str(@{ty as i32}),
+            @{name}
+        ))
+    }
+
+    pub fn create_flag<T>(
+        &self,
+        at: T,
+        name: &str,
+        main_color: Color,
+        secondary_color: Color,
+    ) -> ReturnCode
+    where
+        T: HasPosition,
+    {
+        let pos = at.pos();
+        js_unwrap!(@{self.as_ref()}.createFlag(
+            @{pos.as_ref()},
+            @{name},
+            @{main_color as i32},
+            @{secondary_color as i32}
+        ))
+    }
+
     pub fn find<T>(&self, ty: T) -> Vec<T::Item>
     where
         T: FindConstant,
