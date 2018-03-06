@@ -8,6 +8,11 @@ macro_rules! reference_wrappers {
                 &self.0
             }
         }
+        impl From<$name> for Reference {
+            fn from(wrapper: $name) -> Reference {
+                wrapper.0
+            }
+        }
         impl TryFrom<Value> for $name {
             type Error = <Value as TryInto<Reference>>::Error;
 
@@ -59,71 +64,5 @@ macro_rules! simple_accessors {
                 $extra_func
             )*
         }
-    )
-}
-
-macro_rules! impl_room_object {
-    ($name:ident) => (
-        simple_accessors! {
-            RoomObjectProperties for $name;
-            (pos -> pos -> RoomPosition),
-            (room -> room -> Room),
-        }
-    );
-
-    ($($name:ident),* $(,)*) => (
-        $(
-            impl_room_object!($name);
-        )*
-    )
-}
-
-macro_rules! impl_structure {
-    ($name:ident) => (
-        simple_accessors! {
-            StructureProperties for $name;
-            (hits -> hits -> i32),
-            (hits_max -> hitsMax -> i32),
-            (id -> id -> String),
-            (is_active -> isActive -> bool);
-
-            fn destroy(&self) -> ReturnCode {
-                js_unwrap!(@{&self.0}.destroy())
-            }
-            fn structure_type(&self) -> StructureType {
-                js_unwrap!(@{&self.0}.structureType)
-            }
-        }
-    );
-
-    ($($name:ident),* $(,)*) => (
-        $(
-            impl_structure!($name);
-        )*
-    )
-}
-
-macro_rules! impl_owned_structure {
-    ($name:ident) => (
-        simple_accessors! {
-            OwnedStructureProperties for $name;
-            (my -> my -> bool);
-            fn owner(&self) -> Option<String> {
-                (js! {
-                    var self = @{&self.0};
-                    if (self.owner) {
-                        return self.owner.username;
-                    } else {
-                        return null;
-                    }
-                }).try_into().expect("expected OwnerStructure.owner.username to be a string")
-            }
-        }
-    );
-
-    ($($name:ident),* $(,)*) => (
-        $(
-            impl_owned_structure!($name);
-        )*
     )
 }
