@@ -1,4 +1,4 @@
-use std::{fs, io, path::Path};
+use std::{fs, io, path::{Path, PathBuf}};
 
 use {clap, failure, fern, log, toml};
 
@@ -88,8 +88,17 @@ fn default_hostname() -> String {
 fn default_ptr() -> bool {
     false
 }
+
 fn default_branch() -> String {
     "default".to_owned()
+}
+
+fn default_wasm_file() -> PathBuf {
+    "compiled.wasm".into()
+}
+
+fn default_js_file() -> PathBuf {
+    "main.js".into()
 }
 
 #[derive(Deserialize)]
@@ -105,6 +114,10 @@ struct FileConfiguration {
     port: Option<i32>,
     #[serde(default = "default_ptr")]
     ptr: bool,
+    #[serde(default = "default_wasm_file")]
+    output_wasm_file: PathBuf,
+    #[serde(default = "default_js_file")]
+    output_js_file: PathBuf,
 }
 
 // separate structure so we can have defaults based off of other config values
@@ -118,6 +131,8 @@ pub struct Configuration {
     pub ssl: bool,
     pub port: i32,
     pub ptr: bool,
+    pub output_wasm_file: PathBuf,
+    pub output_js_file: PathBuf,
 }
 
 impl Configuration {
@@ -139,6 +154,8 @@ impl Configuration {
             ssl,
             port,
             ptr,
+            output_js_file,
+            output_wasm_file,
         } = file_config;
 
         let ssl = ssl.unwrap_or_else(|| hostname == "screeps.com");
@@ -152,6 +169,8 @@ impl Configuration {
             ssl,
             port,
             ptr,
+            output_js_file,
+            output_wasm_file,
         })
     }
 }

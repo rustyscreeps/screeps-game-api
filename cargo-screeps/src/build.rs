@@ -1,12 +1,8 @@
 use std::{fs, process, ffi::OsStr, path::Path};
 
-use {failure, regex};
+use setup::Configuration;
 
-// __initialize defined by stdweb.
-// it's signature is 'function __initialize( __wasm_module, __load_asynchronously ) {'
-pub static SCREEPS_JS_INITIALIZE_CALL: &str = r#"
-__initialize(new WebAssembly.Module(require('compiled')), false);
-"#;
+use {failure, regex};
 
 pub fn check(root: &Path) -> Result<(), failure::Error> {
     debug!("running check");
@@ -28,7 +24,7 @@ pub fn check(root: &Path) -> Result<(), failure::Error> {
     Ok(())
 }
 
-pub fn build(root: &Path) -> Result<(), failure::Error> {
+pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> {
     debug!("building");
 
     debug!("running 'cargo web build --target=wasm32-unknown-unknown --release'");
@@ -91,19 +87,27 @@ pub fn build(root: &Path) -> Result<(), failure::Error> {
 
     fs::create_dir_all(&out_dir)?;
 
-    fs::copy(wasm_file, out_dir.join("compiled.wasm"))?;
+    fs::copy(wasm_file, out_dir.join(&config.output_wasm_file))?;
 
     debug!("processing js file");
 
     fs::write(
-        out_dir.join("main.js"),
-        process_js(&generated_js, &fs::read_string(&generated_js)?)?,
+        out_dir.join(&config.output_js_file),
+        process_js(
+            &generated_js,
+            &fs::read_string(&generated_js)?,
+            &config.output_wasm_file,
+        )?,
     )?;
 
     Ok(())
 }
 
-fn process_js(file_name: &Path, input: &str) -> Result<String, failure::Error> {
+fn process_js(
+    file_name: &Path,
+    input: &str,
+    wasm_filename: &Path,
+) -> Result<String, failure::Error> {
     // first, strip out bootstrap code which relates to the browser. We don't want
     // to run this, we just want to call `__initialize` ourself.
     //
@@ -195,8 +199,25 @@ if( typeof Rust === "undefined" ) {
 
     let initialize_function = &input[prefix_match.end()..suffix_match.start()];
 
+    let wasm_module_name = wasm_filename
+        .file_stem()
+        .ok_or_else(|| {
+            format_err!(
+                "expected output_wasm_file ending in a filename, but found {}",
+                wasm_filename.display()
+            )
+        })?
+        .to_str()
+        .ok_or_else(|| {
+            format_err!(
+                "expected output_wasm_file with UTF8 filename, but found {}",
+                wasm_filename.display()
+            )
+        })?;
+
     Ok(format!(
-        "{}\n{}",
-        initialize_function, SCREEPS_JS_INITIALIZE_CALL
+        "{}\n\
+         __initialize(new WebAssembly.Module(require('{}')), false);\n",
+        initialize_function, wasm_module_name,
     ))
 }

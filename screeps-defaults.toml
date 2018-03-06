@@ -6,3 +6,6 @@ branch = "default"
 # hostname = "screeps.com"
 # ssl = true
 # port = 443
+# # use absolute file path to get out of "target/"
+# ouptut_js_file = "main.js"
+# output_wasm_file = "compiled.wasm"

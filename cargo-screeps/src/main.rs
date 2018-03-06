@@ -29,17 +29,17 @@ fn run() -> Result<(), failure::Error> {
 
     let root = orientation::find_project_root()?;
 
+    let config = setup::Configuration::setup(&root)?;
+
     match state {
         setup::CliState::Build => {
             info!("compiling...");
-            build::build(&root)?;
+            build::build(&root, &config)?;
             info!("compiled.");
         }
         setup::CliState::BuildUpload => {
-            let config = setup::Configuration::setup(&root)?;
-
             info!("compiling...");
-            build::build(&root)?;
+            build::build(&root, &config)?;
             info!("compiled. uploading...");
             upload::upload(&root, config)?;
             info!("uploaded.");
