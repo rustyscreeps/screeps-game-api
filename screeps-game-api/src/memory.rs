@@ -4,18 +4,24 @@ use stdweb::unstable::{TryFrom, TryInto};
 /// TODO: do we even need this over just a raw 'Reference'?
 pub struct MemoryReference(Reference);
 
+impl AsRef<Reference> for MemoryReference {
+    fn as_ref(&self) -> &Reference {
+        &self.0
+    }
+}
+
 impl MemoryReference {
     pub fn new() -> Self {
         js_unwrap!({})
     }
 
     pub fn bool(&self, path: &str) -> bool {
-        js_unwrap!(Boolean(@{&self.0}[@{path}]))
+        js_unwrap!(Boolean(@{self.as_ref()}[@{path}]))
     }
 
     pub fn num(&self, path: &str) -> Option<f64> {
         (js! {
-            return (@{&self.0})[@{path}];
+            return (@{self.as_ref()})[@{path}];
         }).try_into()
             .map(Some)
             .unwrap_or_default()
@@ -23,7 +29,7 @@ impl MemoryReference {
 
     pub fn int(&self, path: &str) -> Option<i32> {
         (js! {
-            return (@{&self.0})[@{path}];
+            return (@{self.as_ref()})[@{path}];
         }).try_into()
             .map(Some)
             .unwrap_or_default()
@@ -31,7 +37,7 @@ impl MemoryReference {
 
     pub fn dict(&self, path: &str) -> Option<MemoryReference> {
         (js! {
-            var v = (@{&self.0})[@{path}];
+            var v = (@{self.as_ref()})[@{path}];
             if (_.isArray(v)) {
                 return null;
             } else {
@@ -44,12 +50,12 @@ impl MemoryReference {
     }
 
     pub fn keys(&self) -> Vec<String> {
-        js_unwrap!(Object.keys(@{&self.0}))
+        js_unwrap!(Object.keys(@{self.as_ref()}))
     }
 
     pub fn del(&self, path: &str) {
         js! {
-            (@{&self.0})[@{path}] = undefined;
+            (@{self.as_ref()})[@{path}] = undefined;
         }
     }
 
@@ -58,7 +64,7 @@ impl MemoryReference {
         T: JsSerialize,
     {
         js! {
-            (@{&self.0})[@{path}] = @{value};
+            (@{self.as_ref()})[@{path}] = @{value};
         }
     }
 
@@ -67,7 +73,7 @@ impl MemoryReference {
         T: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error>,
     {
         let x: Reference = (js! {
-            var v = (@{&self.0})[@{path}];
+            var v = (@{self.as_ref()})[@{path}];
             if (!_.isArray(v)) {
                 return null;
             } else {

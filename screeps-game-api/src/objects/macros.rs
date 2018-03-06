@@ -28,7 +28,7 @@ macro_rules! simple_accessors {
         impl $struct_name {
             $(
                 pub fn $method(&self) -> $ret {
-                    js_unwrap!(@{&self.0}.$prop)
+                    js_unwrap!(@{self.as_ref()}.$prop)
                 }
             )*
         }
@@ -52,7 +52,7 @@ macro_rules! simple_accessors {
         impl $trait_name for $struct_name {
             $(
                 fn $method(&self) -> $ret {
-                    js_unwrap!(@{&self.0}.$prop)
+                    js_unwrap!(@{self.as_ref()}.$prop)
                 }
             )*
             $(

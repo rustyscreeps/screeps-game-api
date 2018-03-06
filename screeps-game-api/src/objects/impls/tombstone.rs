@@ -3,7 +3,7 @@ use constants::ResourceType;
 
 impl Tombstone {
     pub fn creep(&self) -> Creep {
-        js_unwrap!(${&self.0}.creep)
+        js_unwrap!(@{self.as_ref()}.creep)
     }
     pub fn death_time(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.deathTime)

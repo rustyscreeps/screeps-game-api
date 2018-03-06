@@ -16,7 +16,7 @@ impl StructureSpawn {
         ((js! {
             var body = (@{ints}).map(__part_num_to_str);
 
-            return @{&self.0}.spawnCreep(body, @{name});
+            return @{self.as_ref()}.spawnCreep(body, @{name});
         }).try_into()
             .expect("expected StructureSpawn::spawnCreep to return an integer return code"))
     }
