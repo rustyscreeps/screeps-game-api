@@ -43,3 +43,9 @@ pub mod raw_memory;
 
 pub use self::objects::*;
 pub use self::constants::*;
+
+/// Useful for `use screeps::prelude::*;` to bring in screeps traits.
+pub mod prelude {
+    pub use objects::{HasPosition, HasStore, OwnedStructureProperties, RoomObjectProperties,
+                      StructureProperties};
+}
