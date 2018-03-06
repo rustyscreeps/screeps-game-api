@@ -1,6 +1,6 @@
 [package]
 name = "screeps-game-api"
-version = "0.0.5"
+version = "0.0.6"
 authors = ["David Ross <daboross@daboross.net>"]
 description = "WASM bindings to the in-game Screeps API"
 
