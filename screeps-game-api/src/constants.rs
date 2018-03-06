@@ -1,3 +1,6 @@
+//! Constants, most copied from [the game constants](https://github.com/screeps/common/blob/master/lib/constants.js).
+//!
+//! Last updated on 2018-03-06, `c3372fd` on https://github.com/screeps/common/commits/master/lib/constants.js.
 use stdweb::{Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
 
@@ -64,6 +67,7 @@ pub enum FindObject {
     HostileConstructionSites = 115,
     Minerals = 116,
     Nukes = 117,
+    Tombstones = 118,
 }
 
 unsafe impl FindConstant for FindObject {
@@ -79,7 +83,7 @@ pub mod find {
     use super::FindConstant;
 
     use objects::{ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource,
-                  RoomPosition, Source, Structure, StructureSpawn};
+                  RoomPosition, Source, Structure, StructureSpawn, Tombstone};
 
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub struct Exit(i32);
@@ -161,6 +165,7 @@ pub mod find {
         HOSTILE_CONSTRUCTION_SITES, 115, ConstructionSite;
         MINERALS, 116, Mineral;
         NUKES, 117, Nuke;
+        TOMBSTONES, 118, Tombstone;
     }
 }
 
@@ -275,6 +280,7 @@ pub enum Look {
     ConstructionSites = 7,
     Nukes = 8,
     Terrain = 9,
+    Tombstones = 10,
 }
 
 pub unsafe trait LookConstant {
@@ -285,7 +291,8 @@ pub unsafe trait LookConstant {
 
 pub mod look {
     use super::{Look, LookConstant};
-    use {ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain};
+    use {ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain,
+         Tombstone};
 
     macro_rules! typesafe_look_constants {
         (
@@ -316,6 +323,7 @@ pub mod look {
         CONSTRUCTION_SITES, Look::ConstructionSites, ConstructionSite;
         NUKES, Look::Nukes, Nuke;
         TERRAIN, Look::Terrain, Terrain;
+        TOMBSTONES, Look::Tombstones, Tombstone;
     }
 }
 
@@ -597,7 +605,7 @@ pub const LAB_MINERAL_CAPACITY: i32 = 3000;
 pub const LAB_ENERGY_CAPACITY: i32 = 2000;
 pub const LAB_BOOST_ENERGY: i32 = 20;
 pub const LAB_BOOST_MINERAL: i32 = 30;
-pub const LAB_COOLDOWN: i32 = 10;
+
 pub const LAB_REACTION_AMOUNT: i32 = 5;
 
 pub const GCL_POW: f32 = 2.4;
@@ -639,54 +647,144 @@ pub const NUKER_GHODIUM_CAPACITY: i32 = 5000;
 pub const NUKE_LAND_TIME: i32 = 50000;
 pub const NUKE_RANGE: i32 = 10;
 
+pub const TOMBSTONE_DECAY_PER_PART: i32 = 5;
+
 pub const PORTAL_DECAY: i32 = 30000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum ResourceType {
+    /// `"energy"`
     Energy = 1,
+    /// `"power"`
     Power = 2,
+    /// `"H"`
     Hydrogen = 3,
+    /// `"O"`
     Oxygen = 4,
+    /// `"U"`
     Utrium = 5,
+    /// `"L"`
     Lemergium = 6,
+    /// `"K"`
     Keanium = 7,
+    /// `"Z"`
     Zynthium = 8,
+    /// `"X"`
     Catalyst = 9,
+    /// `"G"`
     Ghodium = 10,
+
+    /// `"OH"`
     Hydroxide = 11,
+    /// `"ZK"`
     ZynthiumKeanite = 12,
+    /// `"UL"`
     UtriumLemergite = 13,
+
+    /// `"UH"`
     UtriumHydride = 14,
+    /// `"UO"`
     UtriumOxide = 15,
+    /// `"KH"`
     KeaniumHydride = 16,
+    /// `"KO"`
     KeaniumOxide = 17,
+    /// `"LH"`
     LemergiumHydride = 18,
+    /// `"LO"`
     LemergiumOxide = 19,
+    /// `"ZH"`
     ZynthiumHydride = 20,
+    /// `"ZO"`
     ZynthiumOxide = 21,
+    /// `"GH"`
     GhodiumHydride = 22,
+    /// `"GO"`
     GhodiumOxide = 23,
+    /// `"UH2O"`
     UtriumAcid = 24,
+    /// `"UHO2"`
     UtriumAlkalide = 25,
+    /// `"KH2O"`
     KeaniumAcid = 26,
+    /// `"KHO2"`
     KeaniumAlkalide = 27,
+    /// `"LH2O"`
     LemergiumAcid = 28,
+    /// `"LHO2"`
     LemergiumAlkalide = 29,
+    /// `"ZH2O"`
     ZynthiumAcid = 30,
+    /// `"ZHO2"`
     ZynthiumAlkalide = 31,
+    /// `"GH2O"`
     GhodiumAcid = 32,
+    /// `"GHO2"`
     GhodiumAlkalide = 33,
+    /// `"XUH2O"`
     CatalyzedUtriumAcid = 34,
+    /// `"XUHO2"`
     CatalyzedUtriumAlkalide = 35,
+    /// `"XKH2O"`
     CatalyzedKeaniumAcid = 36,
+    /// `"XKHO2"`
     CatalyzedKeaniumAlkalide = 37,
+    /// `"XLH2O"`
     CatalyzedLemergiumAcid = 38,
+    /// `"XLHO2"`
     CatalyzedLemergiumAlkalide = 39,
+    /// `"XZH2O"`
     CatalyzedZynthiumAcid = 40,
+    /// `"XZHO2"`
     CatalyzedZynthiumAlkalide = 41,
+    /// `"XGH2O"`
     CatalyzedGhodiumAcid = 42,
+    /// `"XGHO2"`
     CatalyzedGhodiumAlkalide = 43,
+}
+
+impl ResourceType {
+    /// Returns `REACTION_TIME` for this resource. 0 for energy and base minerals.
+    pub fn reaction_time(&self) -> i32 {
+        use ResourceType::*;
+        match *self {
+            Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium | Catalyst | Ghodium => 0,
+            Hydroxide => 20,
+            ZynthiumKeanite => 5,
+            UtriumLemergite => 10,
+            UtriumHydride => 10,
+            UtriumAcid => 5,
+            CatalyzedUtriumAcid => 60,
+            UtriumOxide => 10,
+            UtriumAlkalide => 5,
+            CatalyzedUtriumAlkalide => 60,
+            KeaniumHydride => 10,
+            KeaniumAcid => 5,
+            CatalyzedKeaniumAcid => 60,
+            KeaniumOxide => 10,
+            KeaniumAlkalide => 5,
+            CatalyzedKeaniumAlkalide => 60,
+            LemergiumHydride => 15,
+            LemergiumAcid => 10,
+            CatalyzedLemergiumAcid => 65,
+            LemergiumOxide => 10,
+            LemergiumAlkalide => 5,
+            CatalyzedLemergiumAlkalide => 60,
+            ZynthiumHydride => 50,
+            ZynthiumAcid => 100,
+            CatalyzedZynthiumAcid => 180,
+            ZynthiumOxide => 10,
+            ZynthiumAlkalide => 5,
+            CatalyzedZynthiumAlkalide => 80,
+            GhodiumHydride => 10,
+            GhodiumAcid => 15,
+            CatalyzedGhodiumAcid => 80,
+            GhodiumOxide => 10,
+            GhodiumAlkalide => 15,
+            CatalyzedGhodiumAlkalide => 90,
+        }
+    }
 }
 
 impl TryFrom<Value> for ResourceType {

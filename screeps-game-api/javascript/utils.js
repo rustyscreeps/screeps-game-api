@@ -38,6 +38,7 @@ function __look_num_to_str(num) {
         case 7: return LOOK_CONSTRUCTION_SITES;
         case 8: return LOOK_NUKES;
         case 9: return LOOK_TERRAIN;
+        case 10: return LOOK_TOMBSTONES;
         default: throw new Error("unknown look integer encoding " + num);
     }
 }
