@@ -10,11 +10,12 @@ pub enum CliState {
 
 pub fn setup_cli() -> Result<CliState, failure::Error> {
     let cargo_args = clap::App::new("cargo screeps")
-        .version(crate_version!())
         .bin_name("cargo")
-        .author("David Ross")
         .subcommand(
             clap::SubCommand::with_name("screeps")
+                .author("David Ross")
+                .version(crate_version!())
+                .about("Builds WASM-targetting Rust code and deploys to Screeps game servers")
                 .arg(
                     clap::Arg::with_name("verbose")
                         .short("v")
