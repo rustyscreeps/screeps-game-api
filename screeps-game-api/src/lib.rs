@@ -3,13 +3,15 @@ extern crate enum_primitive;
 #[macro_use]
 extern crate log;
 extern crate num_traits;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 #[macro_use]
 extern crate stdweb;
 
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
-        (js! { return $($code)* })
-            .try_into()
+        ::stdweb::unstable::TryInto::try_into(js! { return $($code)* })
             .expect(concat!("js_unwrap at ", line!(), " in ", file!()))
     )
 }
@@ -28,7 +30,6 @@ macro_rules! get_from_js {
         pub fn $name(
             $($param_ident: $param_ty),*
         ) -> $rust_ret_type {
-            use stdweb::unstable::TryInto;
             js_unwrap!($($js_side)*)
         }
     )

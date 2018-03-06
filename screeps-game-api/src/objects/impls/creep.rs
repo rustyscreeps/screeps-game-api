@@ -1,5 +1,4 @@
 use stdweb::Reference;
-use stdweb::unstable::TryInto;
 
 use {Direction, Part, ResourceType, ReturnCode};
 use objects::{Attackable, ConstructionSite, Creep, HasPosition, Resource, Source,

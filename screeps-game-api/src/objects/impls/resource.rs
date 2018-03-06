@@ -1,5 +1,3 @@
-use stdweb::unstable::TryInto;
-
 use objects::Resource;
 use constants::ResourceType;
 

@@ -1,5 +1,3 @@
-use stdweb::unstable::TryInto;
-
 use objects::{Room, StructureController, StructureStorage, StructureTerminal};
 use constants::{FindConstant, LookConstant};
 use HasPosition;
