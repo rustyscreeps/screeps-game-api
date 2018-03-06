@@ -1,6 +1,6 @@
-use objects::Container;
+use objects::StructureContainer;
 
 simple_accessors! {
-    Container;
+    StructureContainer;
     (ticks_to_decay -> ticksToDecay -> u32),
 }
