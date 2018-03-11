@@ -356,10 +356,9 @@ impl Part {
     }
 }
 
-impl TryFrom<Value> for Part {
-    type Error = <Value as TryInto<u32>>::Error;
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: u32 = v.try_into()?;
+impl TryFrom<u32> for Part {
+    type Error = ();
+    fn try_from(x: u32) -> Result<Self, Self::Error> {
         let res = match x {
             0 => Part::Move,
             1 => Part::Work,
@@ -369,9 +368,18 @@ impl TryFrom<Value> for Part {
             5 => Part::Tough,
             6 => Part::Heal,
             7 => Part::Claim,
-            _ => panic!("known JS returned unknown constant {}", x),
+            _ => return Err(()),
         };
         Ok(res)
+    }
+}
+
+impl TryFrom<Value> for Part {
+    type Error = <Value as TryInto<u32>>::Error;
+    fn try_from(v: Value) -> Result<Self, Self::Error> {
+        let x: u32 = v.try_into()?;
+        Ok(Self::try_from(x)
+            .unwrap_or_else(|()| panic!("JavaScript gave unknown part constant {}", x)))
     }
 }
 
