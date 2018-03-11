@@ -8,6 +8,8 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate stdweb;
+#[macro_use]
+extern crate scoped_tls;
 
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
@@ -40,9 +42,12 @@ pub mod objects;
 pub mod constants;
 pub mod memory;
 pub mod raw_memory;
+pub mod pathfinder;
+mod positions;
 
 pub use objects::*;
 pub use constants::*;
+pub use positions::{LocalRoomName, LocalRoomPosition};
 
 /// Useful for `use screeps::prelude::*;` to bring in screeps traits.
 pub mod prelude {
