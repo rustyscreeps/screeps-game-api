@@ -2,8 +2,8 @@ use std::cmp::{Eq, PartialEq};
 
 use stdweb::unstable::TryInto;
 
-use {Color, Direction, FindConstant, HasPosition, LookConstant, ReturnCode, RoomPosition,
-     StructureType};
+use {Color, Direction, FindConstant, HasPosition, LocalRoomPosition, LookConstant, ReturnCode,
+     RoomPosition, StructureType};
 
 impl RoomPosition {
     pub fn new(x: u8, y: u8, room_name: &str) -> Self {
@@ -20,6 +20,14 @@ impl RoomPosition {
 
     pub fn room_name(&self) -> String {
         js_unwrap!(@{self.as_ref()}.roomName)
+    }
+
+    pub fn local(&self) -> LocalRoomPosition {
+        LocalRoomPosition {
+            room_name: js_unwrap!(@{self.as_ref()}.roomName),
+            x: self.x(),
+            y: self.y(),
+        }
     }
 
     pub fn create_construction_site(&self, ty: StructureType) -> ReturnCode {
