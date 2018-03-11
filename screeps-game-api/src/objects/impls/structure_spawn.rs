@@ -35,6 +35,11 @@ impl StructureSpawn {
             directions: Vec::new(),
         }
     }
+
+    // TODO: support actually using Spawning properties.
+    pub fn is_spawning(&self) -> bool {
+        js_unwrap!(Boolean(@{self.as_ref()}.spawning))
+    }
 }
 
 pub struct SpawnOptions<'a> {

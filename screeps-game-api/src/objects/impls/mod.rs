@@ -7,3 +7,5 @@ mod room;
 mod room_position;
 mod structure_spawn;
 mod tombstone;
+
+pub use self::structure_spawn::SpawnOptions;

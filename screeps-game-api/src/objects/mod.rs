@@ -7,6 +7,8 @@ use {ResourceType, ReturnCode, StructureType};
 mod macros;
 mod impls;
 
+pub use self::impls::SpawnOptions;
+
 reference_wrappers!(
     ConstructionSite,
     Creep,
