@@ -57,16 +57,13 @@ where
     T: RoomObjectProperties,
 {
     fn pos(&self) -> RoomPosition {
-        RoomObjectProperties::pos(self)
+        js_unwrap!(@{self.as_ref()}.pos)
     }
 }
 
-pub unsafe trait RoomObjectProperties: AsRef<Reference> + Into<Reference> {
+pub unsafe trait RoomObjectProperties: AsRef<Reference> + Into<Reference> + HasPosition {
     fn try_from(obj: RoomObject) -> Option<Self>;
 
-    fn pos(&self) -> RoomPosition {
-        js_unwrap!(@{self.as_ref()}.pos)
-    }
     fn room(&self) -> Room {
         js_unwrap!(@{self.as_ref()}.room)
     }
