@@ -277,3 +277,50 @@ mod stdweb {
         }
     }
 }
+
+mod room_pos_serde {
+    use serde::de::{Deserialize, Deserializer};
+    use serde::ser::{Serialize, Serializer};
+
+    use super::{LocalRoomName, LocalRoomPosition};
+
+    #[derive(Serialize, Deserialize)]
+    struct SerializedLocalRoomPosition {
+        room_x: i32,
+        room_y: i32,
+        x: u8,
+        y: u8,
+    }
+
+    impl Serialize for LocalRoomPosition {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            SerializedLocalRoomPosition {
+                room_x: self.room_name.x_coord,
+                room_y: self.room_name.y_coord,
+                x: self.x,
+                y: self.y,
+            }.serialize(serializer)
+        }
+    }
+
+    impl<'de> Deserialize<'de> for LocalRoomPosition {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            let data = SerializedLocalRoomPosition::deserialize(deserializer)?;
+
+            Ok(LocalRoomPosition {
+                room_name: LocalRoomName {
+                    x_coord: data.room_x,
+                    y_coord: data.room_y,
+                },
+                x: data.x,
+                y: data.y,
+            })
+        }
+    }
+}
