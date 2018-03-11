@@ -61,7 +61,8 @@ where
     }
 }
 
-pub unsafe trait RoomObjectProperties: AsRef<Reference> + Into<Reference> + HasPosition {
+pub unsafe trait RoomObjectProperties
+    : AsRef<Reference> + Into<Reference> + HasPosition {
     fn try_from(obj: RoomObject) -> Option<Self>;
 
     fn room(&self) -> Room {
