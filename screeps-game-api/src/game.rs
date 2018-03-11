@@ -281,6 +281,6 @@ pub fn time() -> u32 {
 /// See [http://docs.screeps.com/api/#Game.getObjectById]
 ///
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
-pub fn get_object(id: &str) -> ::objects::RoomObject {
+pub fn get_object(id: &str) -> Option<::objects::RoomObject> {
     js_unwrap!(Game.getObjectById(@{id}))
 }
