@@ -252,6 +252,7 @@ pub struct LocalRoomPosition {
     pub x: u8,
     pub y: u8,
 }
+
 impl HasPosition for LocalRoomPosition {
     fn pos(&self) -> RoomPosition {
         RoomPosition::new(self.x, self.y, &self.room_name.to_string())

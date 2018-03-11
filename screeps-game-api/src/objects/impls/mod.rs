@@ -5,6 +5,7 @@ mod creep;
 mod resource;
 mod room;
 mod room_position;
+mod source;
 mod structure_spawn;
 mod tombstone;
 
