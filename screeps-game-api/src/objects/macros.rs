@@ -66,3 +66,23 @@ macro_rules! simple_accessors {
         }
     )
 }
+
+macro_rules! impl_room_object_properties {
+    ($struct_name:ident) => (
+        unsafe impl RoomObjectProperties for $struct_name {
+            fn try_from(obj: RoomObject) -> Option<Self> {
+                let is_me = js_unwrap!(@{obj.as_ref()} instanceof $struct_name);
+                if is_me {
+                    Some($struct_name(obj.0))
+                } else {
+                    None
+                }
+            }
+        }
+    );
+    ($($struct_name:ident),* $(,)*) => (
+        $(
+            impl_room_object_properties!($struct_name);
+        )*
+    );
+}

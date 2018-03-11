@@ -62,6 +62,8 @@ where
 }
 
 pub unsafe trait RoomObjectProperties: AsRef<Reference> + Into<Reference> {
+    fn try_from(obj: RoomObject) -> Option<Self>;
+
     fn pos(&self) -> RoomPosition {
         js_unwrap!(@{self.as_ref()}.pos)
     }
@@ -173,36 +175,38 @@ where
 }
 unsafe impl Attackable for Creep {}
 
-unsafe impl RoomObjectProperties for ConstructionSite {}
-unsafe impl RoomObjectProperties for Creep {}
-unsafe impl RoomObjectProperties for Flag {}
-unsafe impl RoomObjectProperties for Mineral {}
-unsafe impl RoomObjectProperties for Nuke {}
-unsafe impl RoomObjectProperties for OwnedStructure {}
-unsafe impl RoomObjectProperties for Resource {}
-unsafe impl RoomObjectProperties for RoomObject {}
-unsafe impl RoomObjectProperties for Source {}
-unsafe impl RoomObjectProperties for Structure {}
-unsafe impl RoomObjectProperties for StructureContainer {}
-unsafe impl RoomObjectProperties for StructureController {}
-unsafe impl RoomObjectProperties for StructureExtension {}
-unsafe impl RoomObjectProperties for StructureExtractor {}
-unsafe impl RoomObjectProperties for StructureKeeperLair {}
-unsafe impl RoomObjectProperties for StructureLab {}
-unsafe impl RoomObjectProperties for StructureLink {}
-unsafe impl RoomObjectProperties for StructureNuker {}
-unsafe impl RoomObjectProperties for StructureObserver {}
-unsafe impl RoomObjectProperties for StructurePowerBank {}
-unsafe impl RoomObjectProperties for StructurePowerSpawn {}
-unsafe impl RoomObjectProperties for StructurePortal {}
-unsafe impl RoomObjectProperties for StructureRampart {}
-unsafe impl RoomObjectProperties for StructureRoad {}
-unsafe impl RoomObjectProperties for StructureSpawn {}
-unsafe impl RoomObjectProperties for StructureStorage {}
-unsafe impl RoomObjectProperties for StructureTerminal {}
-unsafe impl RoomObjectProperties for StructureTower {}
-unsafe impl RoomObjectProperties for StructureWall {}
-unsafe impl RoomObjectProperties for Tombstone {}
+impl_room_object_properties! {
+    ConstructionSite,
+    Creep,
+    Flag,
+    Mineral,
+    Nuke,
+    OwnedStructure,
+    Resource,
+    RoomObject,
+    Source,
+    Structure,
+    StructureContainer,
+    StructureController,
+    StructureExtension,
+    StructureExtractor,
+    StructureKeeperLair,
+    StructureLab,
+    StructureLink,
+    StructureNuker,
+    StructureObserver,
+    StructurePowerBank,
+    StructurePowerSpawn,
+    StructurePortal,
+    StructureRampart,
+    StructureRoad,
+    StructureSpawn,
+    StructureStorage,
+    StructureTerminal,
+    StructureTower,
+    StructureWall,
+    Tombstone,
+}
 
 unsafe impl StructureProperties for OwnedStructure {}
 unsafe impl StructureProperties for Structure {}
