@@ -383,8 +383,8 @@ impl TryFrom<Value> for Part {
     }
 }
 
-pub const CREEP_LIFE_TIME: i32 = 1500;
-pub const CREEP_CLAIM_LIFE_TIME: i32 = 500;
+pub const CREEP_LIFE_TIME: u32 = 1500;
+pub const CREEP_CLAIM_LIFE_TIME: u32 = 500;
 pub const CREEP_CORPSE_RATE: f32 = 0.2;
 
 pub const CARRY_CAPACITY: i32 = 50;
@@ -404,7 +404,7 @@ pub const REPAIR_COST: f32 = 0.01;
 pub const DISMANTLE_COST: f32 = 0.005;
 
 pub const RAMPART_DECAY_AMOUNT: i32 = 300;
-pub const RAMPART_DECAY_TIME: i32 = 100;
+pub const RAMPART_DECAY_TIME: u32 = 100;
 
 pub const RAMPART_HITS_MAX_RCL2: i32 = 300_000;
 pub const RAMPART_HITS_MAX_RCL3: i32 = 1_000_000;
@@ -428,12 +428,12 @@ pub fn rampart_hits_max(rcl: i32) -> i32 {
     }
 }
 
-pub const ENERGY_REGEN_TIME: i32 = 300;
+pub const ENERGY_REGEN_TIME: u32 = 300;
 pub const ENERGY_DECAY: i32 = 1000;
 
 pub const SPAWN_ENERGY_START: i32 = 300;
 pub const SPAWN_ENERGY_CAPACITY: i32 = 300;
-pub const CREEP_SPAWN_TIME: i32 = 3;
+pub const CREEP_SPAWN_TIME: u32 = 3;
 pub const SPAWN_RENEW_RATION: f32 = 1.2;
 
 pub const SOURCE_ENERGY_CAPACITY: i32 = 3000;
@@ -453,7 +453,7 @@ pub fn extension_energy_capacity(rcl: i32) -> i32 {
 
 pub const ROAD_WEAROUT: i32 = 1;
 pub const ROAD_DECAY_AMOUNT: i32 = 100;
-pub const ROAD_DECAY_TIME: i32 = 1000;
+pub const ROAD_DECAY_TIME: u32 = 1000;
 
 pub const LINK_CAPACITY: i32 = 800;
 pub const LINK_COOLDOWN: i32 = 1;
@@ -627,7 +627,7 @@ pub const TERRAIN_MASK_LAVA: i32 = 4;
 pub const MAX_CONSTRUCTION_SITES: i32 = 100;
 pub const MAX_CREEP_SIZE: i32 = 50;
 
-pub const MINERAL_REGEN_TIME: i32 = 50_000;
+pub const MINERAL_REGEN_TIME: u32 = 50_000;
 
 // TODO: MINERAL_* constants
 
@@ -645,14 +645,14 @@ pub const TERMINAL_COOLDOWN: i32 = 10;
 pub const CONTAINER_HITS: i32 = 250000;
 pub const CONTAINER_CAPACITY: i32 = 2000;
 pub const CONTAINER_DECAY: i32 = 5000;
-pub const CONTAINER_DECAY_TIME: i32 = 100;
-pub const CONTAINER_DECAY_TIME_OWNED: i32 = 500;
+pub const CONTAINER_DECAY_TIME: u32 = 100;
+pub const CONTAINER_DECAY_TIME_OWNED: u32 = 500;
 
 pub const NUKER_HITS: i32 = 1000;
 pub const NUKER_COOLDOWN: i32 = 100000;
 pub const NUKER_ENERGY_CAPACITY: i32 = 300000;
 pub const NUKER_GHODIUM_CAPACITY: i32 = 5000;
-pub const NUKE_LAND_TIME: i32 = 50000;
+pub const NUKE_LAND_TIME: u32 = 50000;
 pub const NUKE_RANGE: i32 = 10;
 
 pub const TOMBSTONE_DECAY_PER_PART: i32 = 5;
@@ -754,7 +754,7 @@ pub enum ResourceType {
 
 impl ResourceType {
     /// Returns `REACTION_TIME` for this resource. 0 for energy and base minerals.
-    pub fn reaction_time(&self) -> i32 {
+    pub fn reaction_time(&self) -> u32 {
         use ResourceType::*;
         match *self {
             Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
