@@ -3,13 +3,13 @@ extern crate enum_primitive;
 #[macro_use]
 extern crate log;
 extern crate num_traits;
+#[macro_use]
+extern crate scoped_tls;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate stdweb;
-#[macro_use]
-extern crate scoped_tls;
 
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
