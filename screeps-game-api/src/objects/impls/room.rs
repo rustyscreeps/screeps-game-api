@@ -1,5 +1,6 @@
 use objects::{Room, StructureController, StructureStorage, StructureTerminal};
 use constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType};
+use positions::LocalRoomName;
 use HasPosition;
 
 simple_accessors! {
@@ -77,5 +78,9 @@ impl Room {
             __look_num_to_str(@{ty.look_code() as i32}),
             @{pos.as_ref()}
         ))
+    }
+
+    pub fn name_local(&self) -> LocalRoomName {
+        js_unwrap!(@{self.as_ref()}.name)
     }
 }
