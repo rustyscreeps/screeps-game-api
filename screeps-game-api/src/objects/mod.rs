@@ -42,7 +42,7 @@ reference_wrappers!(
     Tombstone,
 );
 
-pub trait HasPosition: AsRef<Reference> {
+pub trait HasPosition {
     fn pos(&self) -> RoomPosition;
 }
 

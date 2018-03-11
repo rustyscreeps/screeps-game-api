@@ -1,4 +1,4 @@
-use objects::{Tombstone, Creep};
+use objects::{Creep, Tombstone};
 
 simple_accessors! {
     Tombstone;

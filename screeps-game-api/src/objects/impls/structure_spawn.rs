@@ -60,7 +60,7 @@ impl<'a> SpawnOptions<'a> {
     pub fn energy_structures<T>(&mut self, structures: T)
     where
         T: IntoIterator,
-        <T as IntoIterator>::Item: StructureProperties
+        <T as IntoIterator>::Item: StructureProperties,
     {
         self.energy_structures = structures.into_iter().map(|s| s.as_structure().0).collect();
     }
@@ -74,7 +74,9 @@ impl<'a> SpawnOptions<'a> {
     }
 
     pub fn execute(&self) -> ReturnCode {
-        if self.memory.is_none() && self.energy_structures.is_empty() && !self.dry_run && self.directions.is_empty() {
+        if self.memory.is_none() && self.energy_structures.is_empty() && !self.dry_run
+            && self.directions.is_empty()
+        {
             self.spawn.spawn_creep(self.body, self.name)
         } else {
             let body = self.body.iter().map(|p| *p as i32).collect::<Vec<i32>>();

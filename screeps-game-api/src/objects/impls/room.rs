@@ -1,5 +1,5 @@
 use objects::{Room, StructureController, StructureStorage, StructureTerminal};
-use constants::{FindConstant, LookConstant, StructureType, Color, ReturnCode};
+use constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType};
 use HasPosition;
 
 simple_accessors! {
@@ -15,7 +15,8 @@ simple_accessors! {
 impl Room {
     pub fn create_construction_site<T>(&self, at: T, ty: StructureType) -> ReturnCode
     where
-        T: HasPosition, {
+        T: HasPosition,
+    {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
             @{pos.as_ref()},

@@ -749,7 +749,8 @@ impl ResourceType {
     pub fn reaction_time(&self) -> i32 {
         use ResourceType::*;
         match *self {
-            Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium | Catalyst | Ghodium => 0,
+            Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
+            | Catalyst | Ghodium => 0,
             Hydroxide => 20,
             ZynthiumKeanite => 5,
             UtriumLemergite => 10,

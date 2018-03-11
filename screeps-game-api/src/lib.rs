@@ -41,8 +41,8 @@ pub mod constants;
 pub mod memory;
 pub mod raw_memory;
 
-pub use self::objects::*;
-pub use self::constants::*;
+pub use objects::*;
+pub use constants::*;
 
 /// Useful for `use screeps::prelude::*;` to bring in screeps traits.
 pub mod prelude {
