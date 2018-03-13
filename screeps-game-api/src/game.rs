@@ -22,7 +22,7 @@ pub mod cpu {
         pub malloced_memory: u32,
         pub peak_malloced_memory: u32,
         pub does_zap_garbage: u32,
-        pub external_allocated_size: u32,
+        pub externally_allocated_size: u32,
     }
 
     js_serializable!(HeapStatistics);
