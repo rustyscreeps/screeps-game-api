@@ -14,15 +14,15 @@ pub mod cpu {
     /// [v8_getheapstatistics]: https://nodejs.org/dist/latest-v8.x/docs/api/v8.html#v8_v8_getheapstatistics
     #[derive(Default, Serialize, Deserialize)]
     pub struct HeapStatistics {
-        pub total_heap_size: u32,
-        pub total_heap_size_executable: u32,
-        pub total_physical_size: u32,
-        pub used_heap_size: u32,
-        pub heap_size_limit: u32,
-        pub malloced_memory: u32,
-        pub peak_malloced_memory: u32,
-        pub does_zap_garbage: u32,
-        pub externally_allocated_size: u32,
+        pub total_heap_size: f64,
+        pub total_heap_size_executable: f64,
+        pub total_physical_size: f64,
+        pub used_heap_size: f64,
+        pub heap_size_limit: f64,
+        pub malloced_memory: f64,
+        pub peak_malloced_memory: f64,
+        pub does_zap_garbage: f64,
+        pub externally_allocated_size: f64,
     }
 
     js_serializable!(HeapStatistics);
