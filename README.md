@@ -10,7 +10,7 @@ Tools for creating [Screeps] AIs written in Rust.
 Screeps server.
 
 See https://github.com/daboross/screeps-starter-python/ for an example AI using these libraries.
-[#3#](https://github.com/daboross/p3p) is another example, but it is not a minimal AI.
+[#3#](https://github.com/daboross/ai-3) is another example, but it is not a minimal AI.
 
 Here's a quickstart guide. More documentation will be made in the future.
 
