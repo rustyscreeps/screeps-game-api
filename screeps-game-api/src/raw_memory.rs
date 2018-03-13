@@ -1,4 +1,4 @@
-get_from_js!(active_segments -> { Object.keys(RawMemory.segments) } -> Vec<i32>);
+get_from_js!(active_segments -> { Object.keys(RawMemory.segments).map(Number) } -> Vec<i32>);
 get_from_js!(get_segment(id: i32) -> { RawMemory.segments[@{id}] } -> Option<String>);
 pub fn set_segment(id: i32, data: &str) {
     js! {
