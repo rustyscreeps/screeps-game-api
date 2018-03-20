@@ -35,6 +35,14 @@ impl MemoryReference {
             .unwrap_or_default()
     }
 
+    pub fn string(&self, path: &str) -> Option<String> {
+        (js! {
+            return (@{self.as_ref()})[@{path}];
+        }).try_into()
+            .map(Some)
+            .unwrap_or_default()
+    }
+
     pub fn dict(&self, path: &str) -> Option<MemoryReference> {
         (js! {
             var v = (@{self.as_ref()})[@{path}];
