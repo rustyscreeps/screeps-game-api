@@ -13,7 +13,7 @@ These two tools go together well, but do not depend on eachother. `cargo-screeps
 any screeps WASM project buildable with `stdweb`'s `cargo-web`, and `screeps-game-api` is usable in any
 project built with `cargo-web`.
 
-See https://github.com/daboross/screeps-starter-python/ for an example AI using these libraries.
+See https://github.com/daboross/screeps-starter-rust/ for an example AI using these libraries.
 [#3#](https://github.com/daboross/ai-3) is another example, but it is not a minimal AI.
 
 Here's a quickstart guide. More documentation will be made in the future.
