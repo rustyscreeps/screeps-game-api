@@ -1,4 +1,4 @@
-use std::{fs, process, ffi::OsStr, path::Path};
+use std::{fs, process, ffi::OsStr, io::{Read, Write}, path::Path};
 
 use setup::Configuration;
 
@@ -91,14 +91,22 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 
     debug!("processing js file");
 
-    fs::write(
-        out_dir.join(&config.output_js_file),
+    let generated_js_contents = {
+        let mut buf = String::new();
+        fs::File::open(&generated_js)?.read_to_string(&mut buf)?;
+        buf
+    };
+
+    let mut output_handle = fs::File::open(out_dir.join(&config.output_js_file))?;
+
+    output_handle.write_all(
         process_js(
             &generated_js,
-            &fs::read_string(&generated_js)?,
+            &generated_js_contents,
             &config.output_wasm_file,
-        )?,
+        )?.as_bytes(),
     )?;
+    output_handle.flush()?;
 
     Ok(())
 }

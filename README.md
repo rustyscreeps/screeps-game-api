@@ -23,7 +23,6 @@ Here's a quickstart guide. More documentation will be made in the future.
 
 git clone https://github.com/daboross/screeps-starter-rust.git
 cd screeps-starter-rust
-rustup override set nightly
 
 # cli dependencies:
 

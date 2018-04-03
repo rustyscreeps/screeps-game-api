@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::path::Path;
+use std::io::Read;
 use std::fs;
 
 use {failure, reqwest, serde_json, base64};
@@ -16,10 +17,19 @@ pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> 
 
         if let (Some(name), Some(extension)) = (path.file_stem(), path.extension()) {
             let contents = if extension == "js" {
-                let data = fs::read_string(&path)?;
+                let data = {
+                    let mut buf = String::new();
+                    fs::File::open(&path)?.read_to_string(&mut buf)?;
+                    buf
+                };
                 serde_json::Value::String(data)
             } else if extension == "wasm" {
-                let data = base64::encode(&fs::read(&path)?);
+                let data = {
+                    let mut buf = Vec::new();
+                    fs::File::open(&path)?.read_to_end(&mut buf)?;
+                    buf
+                };
+                let data = base64::encode(&data);
                 json!({ "binary": data })
             } else {
                 continue;

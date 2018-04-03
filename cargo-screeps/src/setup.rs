@@ -145,7 +145,14 @@ impl Configuration {
             root.display()
         );
 
-        let file_config = toml::from_str(&fs::read_string(config_file)?)?;
+        let config_str = {
+            use std::io::Read;
+            let mut buf = String::new();
+            fs::File::open(config_file)?.read_to_string(&mut buf)?;
+            buf
+        };
+
+        let file_config = toml::from_str(&config_str)?;
 
         let FileConfiguration {
             username,
