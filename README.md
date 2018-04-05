@@ -13,10 +13,15 @@ These two tools go together well, but do not depend on eachother. `cargo-screeps
 any screeps WASM project buildable with `stdweb`'s `cargo-web`, and `screeps-game-api` is usable in any
 project built with `cargo-web`.
 
-See https://github.com/daboross/screeps-starter-rust/ for an example AI using these libraries.
-[#3#](https://github.com/daboross/ai-3) is another example, but it is not a minimal AI.
+Writing Screeps code in Rust can be nice, but it can also be annoying. If you have tips, tricks, or other
+things you'd like to share, make an issue! We need to write more documentation, and if we have some ideas
+of things to include, we can start an mdbook in this repository.
 
-Here's a quickstart guide. More documentation will be made in the future.
+---
+
+See https://github.com/daboross/screeps-starter-rust/ for a small example AI using these libraries.
+
+Here's a quickstart for what you *need* to get going. More documentation will be made in the future.
 
 ```sh
 # clone:
