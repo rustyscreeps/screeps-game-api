@@ -97,15 +97,18 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
         buf
     };
 
-    let mut output_handle = fs::File::open(out_dir.join(&config.output_js_file))?;
-
-    output_handle.write_all(
-        process_js(
-            &generated_js,
-            &generated_js_contents,
-            &config.output_wasm_file,
-        )?.as_bytes(),
+    let processed_js = process_js(
+        &generated_js,
+        &generated_js_contents,
+        &config.output_wasm_file,
     )?;
+
+    let out_file = out_dir.join(&config.output_js_file);
+
+    debug!("writing to {}", out_file.display());
+
+    let mut output_handle = fs::File::create(out_file)?;
+    output_handle.write_all(processed_js.as_bytes())?;
     output_handle.flush()?;
 
     Ok(())
