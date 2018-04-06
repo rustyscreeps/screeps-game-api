@@ -47,7 +47,7 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 
     debug!("finished 'cargo web'");
 
-    let target_dir = root.join("target/wasm32-unknown-unknown/release/");
+    let target_dir = root.join("target").join("wasm32-unknown-unknown").join("release");
     // TODO: actually use 'cargo metadata' to get exact filename that will be
     // built, rather than using this hack.
     let mut wasm_file = None;
