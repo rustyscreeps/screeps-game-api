@@ -3,12 +3,6 @@
 
 environment:
     matrix:
-    # Stable
-    - TARGET: x86_64-pc-windows-msvc
-      RUST_VERSION: stable
-    # Beta
-    - TARGET: i686-pc-windows-msvc
-      RUST_VERSION: beta
     # Nightly
     - TARGET: i686-pc-windows-msvc
       RUST_VERSION: nightly
@@ -27,9 +21,9 @@ install:
 - cargo -V
 
 test_script:
-- (cd cargo-screeps; cargo build --verbose)
-- (cd cargo-screeps; cargo test --verbose)
-- (cd screeps-game-api; cargo build --target=wasm32-unknown-unknown --verbose)
+- cd cargo-screeps && cargo build --verbose
+- cd cargo-screeps && cargo test --verbose
+- cd screeps-game-api && cargo build --release --target=wasm32-unknown-unknown --verbose
 
 cache:
 - target
