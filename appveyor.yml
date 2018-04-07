@@ -1,0 +1,38 @@
+# Based on the "trust" template v0.1.1
+# https://github.com/japaric/trust/tree/v0.1.1
+
+environment:
+    matrix:
+    # Stable
+   - TARGET: x86_64-pc-windows-msvc
+      RUST_VERSION: stable
+    # Beta
+    - TARGET: i686-pc-windows-msvc
+      RUST_VERSION: beta
+    # Nightly
+    - TARGET: i686-pc-windows-msvc
+      RUST_VERSION: nightly
+
+matrix:
+    fast_finish: true
+    allow_failures:
+    - RUST_VERSION: nightly
+
+install:
+- curl -sSf -o rustup-init.exe https://win.rustup.rs/
+- rustup-init.exe -y --default-host %TARGET% --default-toolchain %RUST_VERSION%
+- set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
+- rustup target add wasm32-unknown-unknown
+- rustc -Vv
+- cargo -V
+
+test_script:
+- (cd cargo-screeps; cargo build --verbose)
+- (cd cargo-screeps; cargo test --verbose)
+- (cd screeps-game-api; cargo build --target=wasm32-unknown-unknown --verbose)
+
+cache:
+- target
+
+# Disable the appveyor build step so we can just build the rust project instead.
+build: off

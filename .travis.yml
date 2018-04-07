@@ -1,0 +1,16 @@
+language: rust
+sudo: false
+cache: cargo
+rust:
+- stable
+- beta
+- nightly
+os:
+- linux
+- osx
+install:
+- rustup target add wasm32-unknown-unknown
+script:
+- (cd cargo-screeps; cargo build --verbose)
+- (cd cargo-screeps; cargo test --verbose)
+- (cd screeps-game-api; cargo build --target=wasm32-unknown-unknown --verbose)
