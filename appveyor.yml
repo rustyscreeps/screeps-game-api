@@ -4,7 +4,7 @@
 environment:
     matrix:
     # Stable
-   - TARGET: x86_64-pc-windows-msvc
+    - TARGET: x86_64-pc-windows-msvc
       RUST_VERSION: stable
     # Beta
     - TARGET: i686-pc-windows-msvc
