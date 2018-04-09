@@ -15,6 +15,21 @@ impl MemoryReference {
         js_unwrap!({})
     }
 
+    /// Creates a MemoryReference from some JavaScript reference.
+    ///
+    /// Warning: `MemoryReference` is only designed to work with "plain"
+    /// JavaScript objects, and passing an array or a non-plain object
+    /// into this method probably won't be what you want. `MemoryReference`
+    /// also gives access to all properties, so if this is indeed a plain
+    /// object, all of its values should also be plain objects.
+    ///
+    /// Passing a non-plain-object reference into this function won't
+    /// invoke undefined behavior in and of itself, but other functions
+    /// can rely on `MemoryReference` being "plain".
+    pub unsafe fn from_reference_unchecked(reference: Reference) -> Self {
+        MemoryReference(reference)
+    }
+
     pub fn bool(&self, path: &str) -> bool {
         js_unwrap!(Boolean(@{self.as_ref()}[@{path}]))
     }
