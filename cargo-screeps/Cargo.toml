@@ -1,6 +1,6 @@
 [package]
 name = "cargo-screeps"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["David Ross <daboross@daboross.net>"]
 description = "Build tool for deploying Rust WASM code to Screeps game servers"
 
