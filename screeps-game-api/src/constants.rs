@@ -29,6 +29,19 @@ enum_from_primitive! {
     }
 }
 
+impl ReturnCode {
+    /// Turns this return code into a result.
+    ///
+    /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned into
+    /// `Result::Err(code)`
+    pub fn as_result(self) -> Result<(), ReturnCode> {
+        match self {
+            ReturnCode::Ok => Ok(()),
+            other => Err(other),
+        }
+    }
+}
+
 impl TryFrom<Value> for ReturnCode {
     type Error = <i32 as TryFrom<Value>>::Error;
     fn try_from(v: Value) -> Result<Self, Self::Error> {
