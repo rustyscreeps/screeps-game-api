@@ -1,9 +1,9 @@
 use stdweb::Reference;
 
-use {Direction, Part, ResourceType, ReturnCode};
+use memory::MemoryReference;
 use objects::{Attackable, ConstructionSite, Creep, HasPosition, Resource, Source,
               StructureController, StructureProperties, Transferable, Withdrawable};
-use memory::MemoryReference;
+use {Direction, Part, ResourceType, ReturnCode};
 
 impl Creep {
     pub fn carry_total(&self) -> i32 {

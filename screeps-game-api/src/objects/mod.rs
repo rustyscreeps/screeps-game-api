@@ -1,5 +1,5 @@
-use stdweb::{Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
+use stdweb::{Reference, Value};
 
 use {ResourceType, ReturnCode, StructureType};
 
@@ -63,8 +63,9 @@ where
     }
 }
 
-pub unsafe trait RoomObjectProperties
-    : AsRef<Reference> + Into<Reference> + HasPosition {
+pub unsafe trait RoomObjectProperties:
+    AsRef<Reference> + Into<Reference> + HasPosition
+{
     fn try_from(obj: RoomObject) -> Option<Self>;
 
     fn room(&self) -> Room {
@@ -101,7 +102,7 @@ pub unsafe trait StructureProperties: RoomObjectProperties {
     }
 }
 
-pub unsafe trait OwnedStructureProperties: RoomObjectProperties {
+pub unsafe trait OwnedStructureProperties: StructureProperties {
     fn my(&self) -> bool {
         js_unwrap!(@{self.as_ref()}.my)
     }

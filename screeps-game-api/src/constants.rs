@@ -1,8 +1,8 @@
 //! Constants, most copied from [the game constants](https://github.com/screeps/common/blob/master/lib/constants.js).
 //!
 //! Last updated on 2018-03-06, `c3372fd` on https://github.com/screeps/common/commits/master/lib/constants.js.
-use stdweb::{Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
+use stdweb::{Reference, Value};
 
 use objects::RoomObject;
 
@@ -92,8 +92,8 @@ unsafe impl FindConstant for FindObject {
 }
 
 pub mod find {
-    use stdweb::unstable::TryFrom;
     use super::FindConstant;
+    use stdweb::unstable::TryFrom;
 
     use objects::{ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource,
                   RoomPosition, Source, Structure, StructureSpawn, Tombstone};

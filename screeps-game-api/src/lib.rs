@@ -37,16 +37,16 @@ macro_rules! get_from_js {
     )
 }
 
-pub mod game;
-pub mod objects;
 pub mod constants;
+pub mod game;
 pub mod memory;
-pub mod raw_memory;
+pub mod objects;
 pub mod pathfinder;
 mod positions;
+pub mod raw_memory;
 
-pub use objects::*;
 pub use constants::*;
+pub use objects::*;
 pub use positions::{LocalRoomName, LocalRoomPosition};
 
 /// Useful for `use screeps::prelude::*;` to bring in screeps traits.

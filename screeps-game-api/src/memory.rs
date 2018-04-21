@@ -1,5 +1,5 @@
-use stdweb::{Array, JsSerialize, Reference, Value};
 use stdweb::unstable::{TryFrom, TryInto};
+use stdweb::{Array, JsSerialize, Reference, Value};
 
 /// TODO: do we even need this over just a raw 'Reference'?
 pub struct MemoryReference(Reference);

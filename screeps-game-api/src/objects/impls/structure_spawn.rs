@@ -1,8 +1,8 @@
-use stdweb::Reference;
 use stdweb::unstable::TryInto;
+use stdweb::Reference;
 
-use objects::StructureSpawn;
 use memory::MemoryReference;
+use objects::StructureSpawn;
 
 use {Direction, Part, ReturnCode, StructureProperties};
 

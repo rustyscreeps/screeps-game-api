@@ -1,5 +1,7 @@
-use objects::{Room, StructureController, StructureStorage, StructureTerminal};
+use std::ops::Range;
+
 use constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType};
+use objects::{Room, StructureController, StructureStorage, StructureTerminal};
 use positions::LocalRoomName;
 use HasPosition;
 

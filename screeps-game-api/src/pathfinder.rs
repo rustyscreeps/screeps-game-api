@@ -1,8 +1,8 @@
 use std::marker::PhantomData;
 
-use std::{mem, f64};
+use std::{f64, mem};
 
-use stdweb::{Array, Object, Reference, UnsafeTypedArray, unstable::TryInto, web::TypedArray};
+use stdweb::{unstable::TryInto, web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
 use {HasPosition, LocalRoomPosition, RoomPosition};
 
@@ -116,7 +116,7 @@ impl Default for CostMatrix<'static> {
 
 // need custom implementation in order to ensure length of 'bits' is always 2500
 mod serde_impls {
-    use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error as DeError};
+    use serde::{de::Error as DeError, Deserialize, Deserializer, Serialize, Serializer};
 
     use super::LocalCostMatrix;
 

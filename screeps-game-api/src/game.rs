@@ -62,8 +62,8 @@ pub mod cpu {
     ///
     /// Returns object with all 0 values if heap statistics are not available.
     pub fn get_heap_statistics() -> HeapStatistics {
-        use stdweb::Value;
         use stdweb::unstable::TryInto;
+        use stdweb::Value;
 
         let heap_stats: Value =
             js_unwrap!(Game.cpu.getHeapStatistics && Game.cpu.getHeapStatistics());

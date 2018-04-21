@@ -1,5 +1,5 @@
-use stdweb::{Array, Reference, ReferenceType, Value};
 use stdweb::unstable::{TryFrom, TryInto};
+use stdweb::{Array, Reference, ReferenceType, Value};
 
 macro_rules! js_unwrap_array {
     ($($code:tt)*) => ({

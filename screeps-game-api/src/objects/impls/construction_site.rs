@@ -1,6 +1,6 @@
 use stdweb::unstable::TryInto;
 
-use {ConstructionSite, StructureType, ReturnCode};
+use {ConstructionSite, ReturnCode, StructureType};
 
 simple_accessors! {
     ConstructionSite;
