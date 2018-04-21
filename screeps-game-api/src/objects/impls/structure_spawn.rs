@@ -67,7 +67,7 @@ impl<'a> SpawnOptions<'a> {
         T: IntoIterator,
         <T as IntoIterator>::Item: StructureProperties,
     {
-        self.energy_structures = structures.into_iter().map(|s| s.as_structure().0).collect();
+        self.energy_structures = structures.into_iter().map(|s| s.into()).collect();
     }
 
     pub fn dry_run(&mut self, dry_run: bool) {
