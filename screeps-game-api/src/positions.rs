@@ -253,9 +253,15 @@ pub struct LocalRoomPosition {
     pub y: u8,
 }
 
+impl LocalRoomPosition {
+    pub fn remote(&self) -> RoomPosition {
+        RoomPosition::new(self.x, self.y, &self.room_name.to_string())
+    }
+}
+
 impl HasPosition for LocalRoomPosition {
     fn pos(&self) -> RoomPosition {
-        RoomPosition::new(self.x, self.y, &self.room_name.to_string())
+        self.remote()
     }
 }
 
