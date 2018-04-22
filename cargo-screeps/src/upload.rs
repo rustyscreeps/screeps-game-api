@@ -5,13 +5,13 @@ use std::path::Path;
 
 use {base64, failure, reqwest, serde_json};
 
-use config::{Configuration, DeployConfiguration};
+use config::Configuration;
 
 pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> {
-    let upload_config = match config.deploy {
-        DeployConfiguration::Upload(cfg) => cfg,
-        _ => panic!("attempt to upload with a non-upload config"),
-    };
+    let upload_config = config
+        .upload
+        .ok_or_else(|| format_err!("missing upload configuration"))?;
+
     let target_dir = root.join("target");
 
     let mut files = HashMap::new();
