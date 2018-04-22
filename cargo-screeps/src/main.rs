@@ -15,17 +15,18 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate toml;
 
-mod setup;
 mod build;
-mod upload;
+mod config;
 mod orientation;
+mod setup;
+mod upload;
 
 fn run() -> Result<(), failure::Error> {
     let state = setup::setup_cli()?;
 
     let root = orientation::find_project_root()?;
 
-    let config = setup::Configuration::setup(&root)?;
+    let config = config::Configuration::read(&root)?;
 
     match state {
         setup::CliState::Build => {

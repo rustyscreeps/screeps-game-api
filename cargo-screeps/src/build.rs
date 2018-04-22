@@ -1,6 +1,10 @@
-use std::{fs, process, ffi::OsStr, io::{Read, Write}, path::Path};
+use std::{ffi::OsStr,
+          fs,
+          io::{Read, Write},
+          path::Path,
+          process};
 
-use setup::Configuration;
+use config::Configuration;
 
 use {failure, regex};
 

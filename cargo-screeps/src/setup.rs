@@ -1,6 +1,6 @@
-use std::{fs, io, path::{Path, PathBuf}};
+use std::io;
 
-use {clap, failure, fern, log, toml};
+use {clap, failure, fern, log};
 
 pub enum CliState {
     Check,
@@ -80,105 +80,4 @@ pub fn setup_cli() -> Result<CliState, failure::Error> {
     };
 
     Ok(state)
-}
-
-fn default_hostname() -> String {
-    "screeps.com".to_owned()
-}
-
-fn default_ptr() -> bool {
-    false
-}
-
-fn default_branch() -> String {
-    "default".to_owned()
-}
-
-fn default_wasm_file() -> PathBuf {
-    "compiled.wasm".into()
-}
-
-fn default_js_file() -> PathBuf {
-    "main.js".into()
-}
-
-#[derive(Deserialize)]
-struct FileConfiguration {
-    username: String,
-    password: String,
-    #[serde(default = "default_branch")]
-    branch: String,
-    #[serde(default = "default_hostname")]
-    hostname: String,
-    #[serde(default)]
-    ssl: Option<bool>,
-    port: Option<i32>,
-    #[serde(default = "default_ptr")]
-    ptr: bool,
-    #[serde(default = "default_wasm_file")]
-    output_wasm_file: PathBuf,
-    #[serde(default = "default_js_file")]
-    output_js_file: PathBuf,
-}
-
-// separate structure so we can have defaults based off of other config values
-
-#[derive(Debug, Clone)]
-pub struct Configuration {
-    pub username: String,
-    pub password: String,
-    pub branch: String,
-    pub hostname: String,
-    pub ssl: bool,
-    pub port: i32,
-    pub ptr: bool,
-    pub output_wasm_file: PathBuf,
-    pub output_js_file: PathBuf,
-}
-
-impl Configuration {
-    pub fn setup(root: &Path) -> Result<Self, failure::Error> {
-        let config_file = root.join("screeps.toml");
-        ensure!(
-            config_file.exists(),
-            "expected screeps.toml to exist in {}",
-            root.display()
-        );
-
-        let config_str = {
-            use std::io::Read;
-            let mut buf = String::new();
-            fs::File::open(config_file)?.read_to_string(&mut buf)?;
-            buf
-        };
-
-        let file_config = toml::from_str(&config_str)?;
-
-        let FileConfiguration {
-            username,
-            password,
-            branch,
-            hostname,
-            ssl,
-            port,
-            ptr,
-            output_js_file,
-            output_wasm_file,
-        } = file_config;
-
-        let ssl = ssl.unwrap_or_else(|| hostname == "screeps.com");
-        let port = port.unwrap_or_else(|| if ssl { 443 } else { 80 });
-
-        Ok(Configuration {
-            username,
-            password,
-            branch,
-            hostname,
-            ssl,
-            port,
-            ptr,
-            output_js_file,
-            output_wasm_file,
-        })
-    }
 }

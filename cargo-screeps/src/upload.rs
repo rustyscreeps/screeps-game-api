@@ -1,13 +1,17 @@
 use std::collections::HashMap;
-use std::path::Path;
-use std::io::Read;
 use std::fs;
+use std::io::Read;
+use std::path::Path;
 
-use {failure, reqwest, serde_json, base64};
+use {base64, failure, reqwest, serde_json};
 
-use setup::Configuration;
+use config::{Configuration, DeployConfiguration};
 
 pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> {
+    let upload_config = match config.deploy {
+        DeployConfiguration::Upload(cfg) => cfg,
+        _ => panic!("attempt to upload with a non-upload config"),
+    };
     let target_dir = root.join("target");
 
     let mut files = HashMap::new();
@@ -43,10 +47,10 @@ pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> 
 
     let url = format!(
         "{}://{}:{}/{}",
-        if config.ssl { "https" } else { "http" },
-        config.hostname,
-        config.port,
-        if config.ptr {
+        if upload_config.ssl { "https" } else { "http" },
+        upload_config.hostname,
+        upload_config.port,
+        if upload_config.ptr {
             "ptr/api/user/code"
         } else {
             "api/user/code"
@@ -61,7 +65,7 @@ pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> 
 
     let mut response = client
         .post(&*url)
-        .basic_auth(config.username, Some(config.password))
+        .basic_auth(upload_config.username, Some(upload_config.password))
         .header(reqwest::header::ContentType::json())
         .body(serde_json::to_string(&RequestData {
             modules: files,
