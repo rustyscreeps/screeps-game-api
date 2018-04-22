@@ -2,7 +2,7 @@ use failure::{self, ResultExt};
 
 use toml;
 
-use std::{convert::TryFrom,
+use std::{convert::{TryFrom, TryInto},
           fs,
           path::{Path, PathBuf}};
 
@@ -21,7 +21,7 @@ struct FileConfiguration {
     #[serde(default)]
     upload: Option<FileUploadConfiguration>,
     #[serde(default)]
-    copy: Option<FileCopyConfiguration>,
+    copy: Option<CopyConfiguration>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -42,13 +42,6 @@ struct FileUploadConfiguration {
     ptr: bool,
 }
 
-#[derive(Clone, Debug, Deserialize)]
-struct FileCopyConfiguration {
-    dest: PathBuf,
-    #[serde(default)]
-    prune: bool,
-}
-
 #[derive(Debug, Deserialize, Copy, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum DeployMode {
@@ -67,13 +60,9 @@ pub struct Configuration {
     pub branch: String,
     pub output_wasm_file: PathBuf,
     pub output_js_file: PathBuf,
-    pub deploy: DeployConfiguration,
-}
-
-#[derive(Clone, Debug)]
-pub enum DeployConfiguration {
-    Copy(CopyConfiguration),
-    Upload(UploadConfiguration),
+    pub mode: DeployMode,
+    pub copy: Option<CopyConfiguration>,
+    pub upload: Option<UploadConfiguration>,
 }
 
 #[derive(Clone, Debug)]
@@ -86,22 +75,50 @@ pub struct UploadConfiguration {
     pub ptr: bool,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct CopyConfiguration {
     pub dest: PathBuf,
+    #[serde(default)]
     pub prune: bool,
 }
 
 #[derive(Fail, Debug)]
 pub enum ConfigError {
-    #[fail(display = "missing {} section", _0)]
-    MissingSection(&'static str),
     #[fail(display = "missing username")]
     MissingUsername,
     #[fail(display = "missing password")]
     MissingPassword,
 }
 
+impl TryFrom<FileUploadConfiguration> for UploadConfiguration {
+    type Error = ConfigError;
+
+    fn try_from(value: FileUploadConfiguration) -> Result<UploadConfiguration, Self::Error> {
+        let FileUploadConfiguration {
+            username,
+            password,
+            hostname,
+            ssl,
+            port,
+            ptr,
+        } = value;
+
+        let hostname = hostname.unwrap_or_else(|| "screeps.com".into());
+        let ssl = ssl.unwrap_or_else(|| hostname == "screeps.com");
+        let port = port.unwrap_or_else(|| if ssl { 443 } else { 80 });
+        let username = username.ok_or(ConfigError::MissingUsername)?;
+        let password = password.ok_or(ConfigError::MissingPassword)?;
+
+        Ok(UploadConfiguration {
+            username,
+            password,
+            hostname,
+            ssl,
+            port,
+            ptr,
+        })
+    }
+}
 impl TryFrom<FileConfiguration> for Configuration {
     type Error = ConfigError;
 
@@ -116,39 +133,7 @@ impl TryFrom<FileConfiguration> for Configuration {
             output_js_file,
         } = value;
 
-        let deploy = match mode {
-            DeployMode::Copy => {
-                let FileCopyConfiguration { dest, prune } =
-                    copy.ok_or(ConfigError::MissingSection("copy"))?;
-
-                DeployConfiguration::Copy(CopyConfiguration { dest, prune })
-            }
-            DeployMode::Upload => {
-                let FileUploadConfiguration {
-                    username,
-                    password,
-                    hostname,
-                    ssl,
-                    port,
-                    ptr,
-                } = upload.unwrap_or(old_upload);
-
-                let hostname = hostname.unwrap_or_else(|| "screeps.com".into());
-                let ssl = ssl.unwrap_or_else(|| hostname == "screeps.com");
-                let port = port.unwrap_or_else(|| if ssl { 443 } else { 80 });
-                let username = username.ok_or(ConfigError::MissingUsername)?;
-                let password = password.ok_or(ConfigError::MissingPassword)?;
-
-                DeployConfiguration::Upload(UploadConfiguration {
-                    username,
-                    password,
-                    hostname,
-                    ssl,
-                    port,
-                    ptr,
-                })
-            }
-        };
+        let upload = Some(upload.unwrap_or(old_upload).try_into()?);
 
         let branch = branch.unwrap_or_else(|| "default".into());
         let output_js_file = output_js_file.unwrap_or_else(|| "main.js".into());
@@ -156,12 +141,15 @@ impl TryFrom<FileConfiguration> for Configuration {
 
         Ok(Configuration {
             branch,
-            deploy,
+            mode,
+            upload,
+            copy,
             output_js_file,
             output_wasm_file,
         })
     }
 }
+
 impl Configuration {
     pub fn read(root: &Path) -> Result<Self, failure::Error> {
         let config_file = root.join("screeps.toml");
