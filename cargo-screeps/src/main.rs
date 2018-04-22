@@ -16,6 +16,7 @@ extern crate serde_json;
 extern crate toml;
 
 mod build;
+mod config;
 mod orientation;
 mod setup;
 mod upload;
@@ -25,7 +26,7 @@ fn run() -> Result<(), failure::Error> {
 
     let root = orientation::find_project_root()?;
 
-    let config = setup::Configuration::setup(&root)?;
+    let config = config::Configuration::read(&root)?;
 
     match state {
         setup::CliState::Build => {

@@ -6,7 +6,7 @@ use std::{
     process,
 };
 
-use setup::Configuration;
+use config::Configuration;
 
 use {failure, regex};
 
