@@ -6,6 +6,7 @@ extern crate failure;
 extern crate fern;
 #[macro_use]
 extern crate log;
+extern crate pathdiff;
 extern crate regex;
 extern crate reqwest;
 extern crate serde;
@@ -22,11 +23,9 @@ mod setup;
 mod upload;
 
 fn run() -> Result<(), failure::Error> {
-    let state = setup::setup_cli()?;
+    let (state, config) = setup::setup_cli()?;
 
     let root = orientation::find_project_root()?;
-
-    let config = config::Configuration::read(&root)?;
 
     match state {
         setup::CliState::Build => {
@@ -53,7 +52,7 @@ fn run() -> Result<(), failure::Error> {
 
 fn main() {
     if let Err(e) = run() {
-        eprintln!("{}", e.backtrace());
+        // eprintln!("{}", e.backtrace());
         eprintln!("error: {}", e);
         std::process::exit(1);
     }
