@@ -7,7 +7,8 @@ use {base64, failure, reqwest, serde_json};
 
 use config::Configuration;
 
-pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> {
+pub fn upload<P: AsRef<Path>>(root: P, config: Configuration) -> Result<(), failure::Error> {
+    let root = root.as_ref();
     let upload_config = config
         .upload
         .ok_or_else(|| format_err!("missing upload configuration"))?;
