@@ -119,6 +119,7 @@ impl TryFrom<FileUploadConfiguration> for UploadConfiguration {
         })
     }
 }
+
 impl TryFrom<FileConfiguration> for Configuration {
     type Error = ConfigError;
 
@@ -151,12 +152,12 @@ impl TryFrom<FileConfiguration> for Configuration {
 }
 
 impl Configuration {
-    pub fn read(root: &Path) -> Result<Self, failure::Error> {
-        let config_file = root.join("screeps.toml");
+    pub fn read<P: AsRef<Path>>(config_file: P) -> Result<Self, failure::Error> {
+        let config_file = config_file.as_ref();
         ensure!(
             config_file.exists(),
-            "expected screeps.toml to exist in {}",
-            root.display(),
+            "expected configuration to exist at {}",
+            config_file.display(),
         );
 
         let config_str = {

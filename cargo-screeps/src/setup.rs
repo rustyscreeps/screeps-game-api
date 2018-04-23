@@ -1,6 +1,10 @@
 use std::io;
 
-use {clap, failure, fern, log};
+use {clap, failure, fern, log, orientation, pathdiff};
+
+use config::Configuration;
+
+use std::env;
 
 pub enum CliState {
     Check,
@@ -8,7 +12,11 @@ pub enum CliState {
     BuildUpload,
 }
 
-pub fn setup_cli() -> Result<CliState, failure::Error> {
+pub fn setup_cli() -> Result<(CliState, Configuration), failure::Error> {
+    let cwd = env::current_dir()?;
+    let default_config: Option<String> = orientation::find_project_root().ok().and_then(|r| {
+        pathdiff::diff_paths(&r, &cwd).map(|d| format!("{}", d.join("screeps.toml").display()))
+    });
     let cargo_args = clap::App::new("cargo screeps")
         .bin_name("cargo")
         .subcommand(
@@ -22,32 +30,30 @@ pub fn setup_cli() -> Result<CliState, failure::Error> {
                         .long("verbose")
                         .multiple(true),
                 )
-                .arg(
-                    clap::Arg::with_name("build")
-                        .short("b")
-                        .long("build")
-                        .takes_value(false)
-                        .help("build files, put in target/ in project root"),
-                )
-                .arg(
-                    clap::Arg::with_name("check")
+                .arg({
+                    let cfg_arg = clap::Arg::with_name("config")
                         .short("c")
-                        .long("check")
-                        .takes_value(false)
-                        .help("runs 'cargo check' with appropriate target"),
-                )
-                .arg(
-                    clap::Arg::with_name("upload")
-                        .short("u")
-                        .long("upload")
-                        .takes_value(false)
-                        .help("upload files to screeps (implies build)"),
-                )
-                .group(
-                    clap::ArgGroup::with_name("command")
-                        .args(&["build", "upload", "check"])
+                        .long("config")
                         .multiple(false)
-                        .required(true),
+                        .takes_value(true)
+                        .value_name("FILE");
+                    if let Some(ref cfg) = default_config {
+                        cfg_arg.default_value(cfg)
+                    } else {
+                        cfg_arg
+                    }
+                })
+                .subcommand(
+                    clap::SubCommand::with_name("build")
+                        .about("build files, put in target/ in project root"),
+                )
+                .subcommand(
+                    clap::SubCommand::with_name("check")
+                        .about("runs 'cargo check' with appropriate target"),
+                )
+                .subcommand(
+                    clap::SubCommand::with_name("deploy")
+                        .about("deploy files to a screeps server (implies build)"),
                 ),
         )
         .get_matches();
@@ -69,15 +75,16 @@ pub fn setup_cli() -> Result<CliState, failure::Error> {
         .apply()
         .unwrap();
 
-    assert!(args.is_present("check") || args.is_present("build") || args.is_present("upload"));
-
-    let state = if args.is_present("check") {
+    let state = if args.subcommand_matches("check").is_some() {
         CliState::Check
-    } else if args.is_present("upload") {
+    } else if args.subcommand_matches("deploy").is_some() {
         CliState::BuildUpload
     } else {
         CliState::Build
     };
 
-    Ok(state)
+    Ok((
+        state,
+        Configuration::read(args.value_of("config").unwrap())?,
+    ))
 }
