@@ -18,6 +18,8 @@ extern crate toml;
 
 mod build;
 mod config;
+mod copy;
+mod deploy;
 mod orientation;
 mod setup;
 mod upload;
@@ -33,12 +35,12 @@ fn run() -> Result<(), failure::Error> {
             build::build(&root, &config)?;
             info!("compiled.");
         }
-        setup::CliState::BuildUpload => {
+        setup::CliState::Deploy => {
             info!("compiling...");
             build::build(&root, &config)?;
-            info!("compiled. uploading...");
-            upload::upload(&root, config)?;
-            info!("uploaded.");
+            info!("compiled. deploying...");
+            deploy::deploy(&root, config)?;
+            info!("deployed.");
         }
         setup::CliState::Check => {
             info!("checking...");
