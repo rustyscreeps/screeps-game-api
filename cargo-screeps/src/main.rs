@@ -6,6 +6,7 @@ extern crate failure;
 extern crate fern;
 #[macro_use]
 extern crate log;
+extern crate pathdiff;
 extern crate regex;
 extern crate reqwest;
 extern crate serde;
@@ -15,17 +16,18 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate toml;
 
-mod setup;
 mod build;
-mod upload;
+mod config;
+mod copy;
+mod deploy;
 mod orientation;
+mod setup;
+mod upload;
 
 fn run() -> Result<(), failure::Error> {
-    let state = setup::setup_cli()?;
+    let (state, config) = setup::setup_cli()?;
 
     let root = orientation::find_project_root()?;
-
-    let config = setup::Configuration::setup(&root)?;
 
     match state {
         setup::CliState::Build => {
@@ -33,12 +35,12 @@ fn run() -> Result<(), failure::Error> {
             build::build(&root, &config)?;
             info!("compiled.");
         }
-        setup::CliState::BuildUpload => {
+        setup::CliState::Deploy => {
             info!("compiling...");
             build::build(&root, &config)?;
-            info!("compiled. uploading...");
-            upload::upload(&root, config)?;
-            info!("uploaded.");
+            info!("compiled. deploying...");
+            deploy::deploy(&root, config)?;
+            info!("deployed.");
         }
         setup::CliState::Check => {
             info!("checking...");
@@ -52,7 +54,7 @@ fn run() -> Result<(), failure::Error> {
 
 fn main() {
     if let Err(e) = run() {
-        eprintln!("{}", e.backtrace());
+        // eprintln!("{}", e.backtrace());
         eprintln!("error: {}", e);
         std::process::exit(1);
     }
