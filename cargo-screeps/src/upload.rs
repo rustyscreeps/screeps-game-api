@@ -1,9 +1,9 @@
 use std::collections::HashMap;
-use std::path::Path;
-use std::io::Read;
 use std::fs;
+use std::io::Read;
+use std::path::Path;
 
-use {failure, reqwest, serde_json, base64};
+use {base64, failure, reqwest, serde_json};
 
 use setup::Configuration;
 

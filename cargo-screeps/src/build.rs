@@ -1,4 +1,10 @@
-use std::{fs, process, ffi::OsStr, io::{Read, Write}, path::Path};
+use std::{
+    ffi::OsStr,
+    fs,
+    io::{Read, Write},
+    path::Path,
+    process,
+};
 
 use setup::Configuration;
 
@@ -47,7 +53,8 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 
     debug!("finished 'cargo web'");
 
-    let target_dir = root.join("target")
+    let target_dir = root
+        .join("target")
         .join("wasm32-unknown-unknown")
         .join("release");
     // TODO: actually use 'cargo metadata' to get exact filename that will be

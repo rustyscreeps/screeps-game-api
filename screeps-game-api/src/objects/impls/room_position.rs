@@ -2,8 +2,10 @@ use std::cmp::{Eq, PartialEq};
 
 use stdweb::unstable::TryInto;
 
-use {Color, Direction, FindConstant, HasPosition, LocalRoomPosition, LookConstant, ReturnCode,
-     RoomPosition, StructureType};
+use {
+    Color, Direction, FindConstant, HasPosition, LocalRoomPosition, LookConstant, ReturnCode,
+    RoomPosition, StructureType,
+};
 
 impl RoomPosition {
     pub fn new(x: u8, y: u8, room_name: &str) -> Self {

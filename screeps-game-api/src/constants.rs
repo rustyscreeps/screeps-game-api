@@ -95,8 +95,10 @@ pub mod find {
     use super::FindConstant;
     use stdweb::unstable::TryFrom;
 
-    use objects::{ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource,
-                  RoomPosition, Source, Structure, StructureSpawn, Tombstone};
+    use objects::{
+        ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
+        Source, Structure, StructureSpawn, Tombstone,
+    };
 
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub struct Exit(i32);
@@ -304,8 +306,10 @@ pub unsafe trait LookConstant {
 
 pub mod look {
     use super::{Look, LookConstant};
-    use {ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain,
-         Tombstone};
+    use {
+        ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain,
+        Tombstone,
+    };
 
     macro_rules! typesafe_look_constants {
         (

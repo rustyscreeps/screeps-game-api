@@ -314,7 +314,8 @@ where
     I: HasPosition,
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {
-    let goals: Vec<Object> = goal.into_iter()
+    let goals: Vec<Object> = goal
+        .into_iter()
         .map(|(target, range)| {
             let pos = target.pos();
             js_unwrap!({pos: @{pos.as_ref()}, range: @{range}})

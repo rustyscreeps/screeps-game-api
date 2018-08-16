@@ -121,14 +121,16 @@ impl TryFrom<Value> for MemoryReference {
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let r: Reference = v.try_into()?; // fail early.
-        Ok(MemoryReference((js! {
-            var v = (@{r});
-            if (_.isArray(v)) {
-                return null;
-            } else {
-                return v;
-            }
-        }).try_into()?))
+        Ok(MemoryReference(
+            (js! {
+                var v = (@{r});
+                if (_.isArray(v)) {
+                    return null;
+                } else {
+                    return v;
+                }
+            }).try_into()?,
+        ))
     }
 }
 

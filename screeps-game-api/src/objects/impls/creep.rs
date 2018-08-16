@@ -1,8 +1,10 @@
 use stdweb::Reference;
 
 use memory::MemoryReference;
-use objects::{Attackable, ConstructionSite, Creep, HasPosition, Resource, Source,
-              StructureController, StructureProperties, Transferable, Withdrawable};
+use objects::{
+    Attackable, ConstructionSite, Creep, HasPosition, Resource, Source, StructureController,
+    StructureProperties, Transferable, Withdrawable,
+};
 use {Direction, Part, ResourceType, ReturnCode};
 
 impl Creep {

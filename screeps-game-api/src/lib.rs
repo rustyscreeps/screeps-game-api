@@ -51,6 +51,7 @@ pub use positions::{LocalRoomName, LocalRoomPosition};
 
 /// Useful for `use screeps::prelude::*;` to bring in screeps traits.
 pub mod prelude {
-    pub use objects::{HasPosition, HasStore, OwnedStructureProperties, RoomObjectProperties,
-                      StructureProperties};
+    pub use objects::{
+        HasPosition, HasStore, OwnedStructureProperties, RoomObjectProperties, StructureProperties,
+    };
 }

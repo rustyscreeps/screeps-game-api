@@ -15,10 +15,10 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate toml;
 
-mod setup;
 mod build;
-mod upload;
 mod orientation;
+mod setup;
+mod upload;
 
 fn run() -> Result<(), failure::Error> {
     let state = setup::setup_cli()?;

@@ -289,11 +289,7 @@ unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
 
 pub unsafe trait Attackable: RoomObjectProperties {}
-unsafe impl<T> Attackable for T
-where
-    T: StructureProperties,
-{
-}
+unsafe impl<T> Attackable for T where T: StructureProperties {}
 unsafe impl Attackable for Creep {}
 
 impl_room_object_properties! {

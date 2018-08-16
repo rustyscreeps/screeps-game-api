@@ -79,7 +79,9 @@ impl<'a> SpawnOptions<'a> {
     }
 
     pub fn execute(&self) -> ReturnCode {
-        if self.memory.is_none() && self.energy_structures.is_empty() && !self.dry_run
+        if self.memory.is_none()
+            && self.energy_structures.is_empty()
+            && !self.dry_run
             && self.directions.is_empty()
         {
             self.spawn.spawn_creep(self.body, self.name)
