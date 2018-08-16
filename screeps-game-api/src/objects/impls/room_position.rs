@@ -4,8 +4,11 @@ use stdweb::unstable::TryInto;
 
 use {
     Color, Direction, FindConstant, HasPosition, LocalRoomPosition, LookConstant, ReturnCode,
-    RoomPosition, StructureType,
+    StructureType,
 };
+
+// TODO: Use root import after https://github.com/rust-lang/rust/issues/53140 is fixed.
+use super::super::RoomPosition;
 
 impl RoomPosition {
     pub fn new(x: u8, y: u8, room_name: &str) -> Self {
