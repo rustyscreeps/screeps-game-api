@@ -146,8 +146,35 @@ if( typeof Rust === "undefined" ) {
     } else {
         Rust.XXX = factory();
     }
-}( this, function() {
-    "#;
+}   ( this, function() {
+    return (function( module_factory ) {
+        var instance = module_factory();
+
+        if( typeof window === "undefined" && typeof process === "object" ) {
+            var fs = require( "fs" );
+            var path = require( "path" );
+            var wasm_path = path.join( __dirname, "screeps-starter-rust.wasm" );
+            var buffer = fs.readFileSync( wasm_path );
+            var mod = new WebAssembly.Module( buffer );
+            var wasm_instance = new WebAssembly.Instance( mod, instance.imports );
+            return instance.initialize( wasm_instance );
+        } else {
+            return fetch( "screeps-starter-rust.wasm", {credentials: "same-origin"} )
+                .then( function( response ) { return response.arrayBuffer(); } )
+                .then( function( bytes ) { return WebAssembly.compile( bytes ); } )
+                .then( function( mod ) { return WebAssembly.instantiate( mod, instance.imports ) } )
+                .then( function( wasm_instance ) {
+                    var exports = instance.initialize( wasm_instance );
+                    console.log( "Finished loading Rust wasm module 'screeps_starter_rust'" );
+                    return exports;
+                })
+                .catch( function( error ) {
+                    console.log( "Error loading Rust wasm module 'screeps_starter_rust':", error );
+                    throw error;
+                });
+        }
+    }( function() {"#;
+    // this comment is because my editor has bad detection of '#"'
 
     let expected_prefix = regex::Regex::new(&format!(
         "^{}",
@@ -155,33 +182,6 @@ if( typeof Rust === "undefined" ) {
     ))?;
 
     debug!("expected prefix:\n```{}```", expected_prefix);
-
-    let expected_suffix = r#"
-
-
-    if( typeof window === "undefined" && typeof process === "object" ) {
-        const fs = require( "fs" );
-        const path = require( "path" );
-        const wasm_path = path.join( __dirname, "XXX.wasm" );
-        const buffer = fs.readFileSync( wasm_path );
-        const mod = new WebAssembly.Module( buffer );
-
-        return __initialize( mod, false );
-    } else {
-        return fetch( "XXX.wasm", {credentials: "same-origin"} )
-            .then( response => response.arrayBuffer() )
-            .then( bytes => WebAssembly.compile( bytes ) )
-            .then( mod => __initialize( mod, true ) );
-    }
-}));
-"#;
-
-    let expected_suffix = regex::Regex::new(&format!(
-        "{}$",
-        make_into_slightly_less_brittle_regex(expected_suffix)
-    ))?;
-
-    debug!("expected suffix:\n```{}```", expected_suffix);
 
     let prefix_match = expected_prefix.find(input).ok_or_else(|| {
         format_err!(
@@ -193,24 +193,7 @@ if( typeof Rust === "undefined" ) {
         )
     })?;
 
-    let suffix_match = expected_suffix.find(input).ok_or_else(|| {
-        format_err!(
-            "'cargo web' generated unexpected JS suffix! This means it's updated without \
-             'cargo screeps' also having updates. Please report this issue to \
-             https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
-             the last ~30 lines of {}",
-            file_name.display(),
-        )
-    })?;
-
-    ensure!(
-        input.contains("__initialize"),
-        "'cargo web' generated unexpected JS output! It does not \
-         include a '__initialize' function. Please report this issue to \
-         https://github.com/daboross/screeps-in-rust-via-wasm/issues."
-    );
-
-    let initialize_function = &input[prefix_match.end()..suffix_match.start()];
+    let initialize_function = &input[prefix_match.end()..];
 
     // screeps doesn't have `console.error`, so we define our own `console_error` function,
     // and call it.
@@ -233,8 +216,22 @@ if( typeof Rust === "undefined" ) {
         })?;
 
     Ok(format!(
-        "{}\n\
-         __initialize(new WebAssembly.Module(require('{}')), false);\n",
-        initialize_function, wasm_module_name,
+        r#""use strict";
+
+(function( factory ) {{
+    // stripped for screeps usage
+    factory();
+}}( function() {{
+    return (function( module_factory ) {{
+        // replaced with hardcoded grab for screeps usage
+        var instance = module_factory();
+
+        var mod = new WebAssembly.Module( require('{}') );
+        var wasm_instance = new WebAssembly.Instance( mod, instance.imports );
+        return instance.initialize( wasm_instance );
+    }}( function() {{
+{}
+"#,
+        wasm_module_name, initialize_function,
     ))
 }
