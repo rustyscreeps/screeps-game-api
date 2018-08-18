@@ -44,5 +44,18 @@ nano screeps.toml
 cargo screeps --help
 ```
 
+One more note about updating `cargo-screeps`:
+
+`cargo-screeps` is highly dependent on the version of `cargo-web`, so updating both at the same time is usually recommended. Some `cargo-web` versions might be released and break the `cargo-screeps` interface. In this case, building will fail and output a message about creating an issue on this repository.
+
+After I've updated `cargo-screeps` to work with the new `cargo-web`, you'll want to update both, then run `cargo clean` to clean out your old target directory. After all of this, you should be good to go!
+
+```sh
+cargo install -f cargo-web
+cargo install -f cargo-screeps
+cargo clean
+cargo screeps --build
+```
+
 [screeps]: https://screeps.com/
 [`stdweb`]: https://github.com/koute/stdweb
