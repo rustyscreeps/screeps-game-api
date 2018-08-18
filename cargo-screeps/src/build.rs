@@ -160,23 +160,23 @@ if( typeof Rust === "undefined" ) {
         if( typeof window === "undefined" && typeof process === "object" ) {
             var fs = require( "fs" );
             var path = require( "path" );
-            var wasm_path = path.join( __dirname, "screeps-starter-rust.wasm" );
+            var wasm_path = path.join( __dirname, "XXX.wasm" );
             var buffer = fs.readFileSync( wasm_path );
             var mod = new WebAssembly.Module( buffer );
             var wasm_instance = new WebAssembly.Instance( mod, instance.imports );
             return instance.initialize( wasm_instance );
         } else {
-            return fetch( "screeps-starter-rust.wasm", {credentials: "same-origin"} )
+            return fetch( "XXX.wasm", {credentials: "same-origin"} )
                 .then( function( response ) { return response.arrayBuffer(); } )
                 .then( function( bytes ) { return WebAssembly.compile( bytes ); } )
                 .then( function( mod ) { return WebAssembly.instantiate( mod, instance.imports ) } )
                 .then( function( wasm_instance ) {
                     var exports = instance.initialize( wasm_instance );
-                    console.log( "Finished loading Rust wasm module 'screeps_starter_rust'" );
+                    console.log( "Finished loading Rust wasm module 'XXX'" );
                     return exports;
                 })
                 .catch( function( error ) {
-                    console.log( "Error loading Rust wasm module 'screeps_starter_rust':", error );
+                    console.log( "Error loading Rust wasm module 'XXX':", error );
                     throw error;
                 });
         }
