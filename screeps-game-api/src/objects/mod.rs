@@ -8,6 +8,7 @@ mod macros;
 mod impls;
 
 pub use self::impls::SpawnOptions;
+pub use self::impls::{Reservation, Sign};
 
 reference_wrappers!(
     ConstructionSite,

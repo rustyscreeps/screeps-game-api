@@ -7,7 +7,9 @@ mod resource;
 mod room;
 mod room_position;
 mod source;
+mod structure_controller;
 mod structure_spawn;
 mod tombstone;
 
+pub use self::structure_controller::{Reservation, Sign};
 pub use self::structure_spawn::SpawnOptions;
