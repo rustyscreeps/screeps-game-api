@@ -49,9 +49,10 @@ pub use constants::*;
 pub use objects::*;
 pub use positions::{LocalRoomName, LocalRoomPosition};
 
-/// Useful for `use screeps::prelude::*;` to bring in screeps traits.
+/// Useful for `use screeps::prelude::*;` to bring in screeps traits. Does not contain any
+/// structures in order to minimize namespace polution.
 pub mod prelude {
     pub use objects::{
-        HasPosition, HasStore, OwnedStructureProperties, RoomObjectProperties, StructureProperties, Reservation, Sign,
+        HasPosition, HasStore, OwnedStructureProperties, RoomObjectProperties, StructureProperties
     };
 }
