@@ -224,7 +224,7 @@ if( typeof Rust === "undefined" ) {
 
     Ok(format!(
         r#""use strict";
-
+function __initialize() {{
 (function( factory ) {{
     // stripped for screeps usage
     factory();
@@ -238,6 +238,8 @@ if( typeof Rust === "undefined" ) {
         return instance.initialize( wasm_instance );
     }}( function() {{
 {}
+}}
+__initialize();
 "#,
         wasm_module_name, initialize_function,
     ))
