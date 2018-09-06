@@ -44,3 +44,11 @@ pub fn set_public_segments(ids: &[i32]) {
         RawMemory.setPublicSegments(@{ids});
     }
 }
+
+get_from_js!(get() -> {RawMemory.get()} -> Option<String>);
+
+pub fn set(value: String) {
+    js!{
+        RawMemory.set(@{value});
+    }
+}
