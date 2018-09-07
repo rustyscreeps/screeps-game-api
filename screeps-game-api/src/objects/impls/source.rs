@@ -7,3 +7,12 @@ simple_accessors! {
     (id -> id -> String),
     (ticks_to_regeneration -> ticksToRegeneration -> u32),
 }
+
+impl PartialEq for Source {
+    #[inline]
+    fn eq(&self, other: &Source) -> bool{
+        self.id() == other.id()
+    }
+}
+
+impl Eq for Source {}
