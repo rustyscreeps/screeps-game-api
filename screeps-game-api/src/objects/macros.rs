@@ -86,3 +86,19 @@ macro_rules! impl_room_object_properties {
         )*
     );
 }
+
+
+macro_rules! impl_structure_properties {
+    ( $( $struct_name:ty ),+ ) => {$(
+        unsafe impl StructureProperties for $struct_name {}
+        
+        impl PartialEq for $struct_name {
+            #[inline]
+            fn eq(&self, other: &$struct_name) -> bool{
+                self.id() == other.id()
+            }
+        }
+
+        impl Eq for $struct_name {}
+    )*};
+}
