@@ -93,7 +93,6 @@ macro_rules! impl_structure_properties {
         unsafe impl StructureProperties for $struct_name {}
         
         impl PartialEq for $struct_name {
-            #[inline]
             fn eq(&self, other: &$struct_name) -> bool{
                 self.id() == other.id()
             }

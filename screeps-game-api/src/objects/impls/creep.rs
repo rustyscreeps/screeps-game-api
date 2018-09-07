@@ -164,7 +164,6 @@ simple_accessors! {
 }
 
 impl PartialEq for Creep {
-    #[inline]
     fn eq(&self, other: &Creep) -> bool{
         self.id() == other.id()
     }

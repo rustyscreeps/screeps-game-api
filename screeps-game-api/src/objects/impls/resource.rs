@@ -14,7 +14,6 @@ simple_accessors! {
 }
 
 impl PartialEq for Resource {
-    #[inline]
     fn eq(&self, other: &Resource) -> bool{
         self.id() == other.id()
     }

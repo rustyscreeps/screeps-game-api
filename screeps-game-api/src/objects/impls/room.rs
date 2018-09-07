@@ -129,7 +129,6 @@ impl Room {
 }
 
 impl PartialEq for Room {
-    #[inline]
     fn eq(&self, other: &Room) -> bool{
         self.name() == other.name()
     }
