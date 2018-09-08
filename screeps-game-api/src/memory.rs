@@ -1,5 +1,34 @@
-use std::fmt;
+//! Interface with Screeps' `Memory` global variable
+//! 
+//! Screeps' memory lives in the javascript `Memory` global variable and is 
+//! encoded as a javascript object. This object's reference is tracked within 
+//! rust as a `MemoryReference`. The [`root`] function gives access to a 
+//! reference to the `Memory` global object.
+//! 
+//! # Typing
+//! Contrary to accessing the memory in javascript, rust's strong type system, 
+//! requires that read values be assigned a type. To facilitate this, the
+//! `MemoryReference` provides methods to read a part of the memory as a
+//! certain type. If the value read cannot be transformed to the requested
+//! type, the method return `None`.
+//! 
+//! # Accessing the memory
+//! Memory is accessed via _paths_. Those are directly transcribed into a 
+//! javascript object path using [lodash](https://lodash.com/docs/4.17.10#get).
+//! For example, to access a number recorded at 
+//! `Memory.last_tick.cpu_usage`,
+//! you need
+//! ```
+//! let last_tick_cpu_usage = root().num("last_tick.cpu_usage").unwrap();
+//! ```
+//! 
+//! In addition to accessing the memory from the root, it is possible to
+//! access the memory via creeps, spawns, rooms and flags. Accessing the memory
+//! from those objects will also result in a `MemoryReference` which instead
+//! points at the root of this object's memory.
+//! 
 
+use std::fmt;
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Array, JsSerialize, Reference, Value};
 
@@ -13,7 +42,8 @@ impl fmt::Display for UnexpectedTypeError {
     }
 }
 
-/// TODO: do we even need this over just a raw 'Reference'?
+// TODO: do we even need this over just a raw 'Reference'?
+/// A [`Reference`] to a screeps memory object
 pub struct MemoryReference(Reference);
 
 impl AsRef<Reference> for MemoryReference {
@@ -43,12 +73,12 @@ impl MemoryReference {
     }
 
     pub fn bool(&self, path: &str) -> bool {
-        js_unwrap!(Boolean(@{self.as_ref()}[@{path}]))
+        js_unwrap!(Boolean(_.get(@{self.as_ref()}, @{path})))
     }
 
     pub fn num(&self, path: &str) -> Option<f64> {
         (js! {
-            return (@{self.as_ref()})[@{path}];
+            return _.get(@{self.as_ref()}, @{path});
         }).try_into()
             .map(Some)
             .unwrap_or_default()
@@ -56,7 +86,7 @@ impl MemoryReference {
 
     pub fn int(&self, path: &str) -> Option<i32> {
         (js! {
-            return (@{self.as_ref()})[@{path}];
+            return _.get(@{self.as_ref()}, @{path});
         }).try_into()
             .map(Some)
             .unwrap_or_default()
@@ -64,7 +94,7 @@ impl MemoryReference {
 
     pub fn string(&self, path: &str) -> Option<String> {
         (js! {
-            return (@{self.as_ref()})[@{path}];
+            return _.get(@{self.as_ref()}, @{path});
         }).try_into()
             .map(Some)
             .unwrap_or_default()
@@ -72,7 +102,7 @@ impl MemoryReference {
 
     pub fn dict(&self, path: &str) -> Option<MemoryReference> {
         (js! {
-            var v = (@{self.as_ref()})[@{path}];
+            var v = _.get(@{self.as_ref()}, @{path});
             if (_.isArray(v)) {
                 return null;
             } else {
@@ -112,7 +142,7 @@ impl MemoryReference {
 
     pub fn del(&self, path: &str) {
         js! {
-            (@{self.as_ref()})[@{path}] = undefined;
+            _.set(@{self.as_ref()}, @{path}, undefined);
         }
     }
 
@@ -121,7 +151,7 @@ impl MemoryReference {
         T: JsSerialize,
     {
         js! {
-            (@{self.as_ref()})[@{path}] = @{value};
+            _.set(@{self.as_ref()}, @{path}, @{value});
         }
     }
 
@@ -130,7 +160,7 @@ impl MemoryReference {
         T: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error>,
     {
         let x: Reference = (js! {
-            var v = (@{self.as_ref()})[@{path}];
+            var v = _.get(@{self.as_ref()}, @{path});
             if (!_.isArray(v)) {
                 return null;
             } else {
@@ -168,6 +198,7 @@ impl TryFrom<Value> for MemoryReference {
     }
 }
 
+/// Get a reference to the `Memory` global object
 pub fn root() -> MemoryReference {
     js_unwrap!(Memory)
 }
