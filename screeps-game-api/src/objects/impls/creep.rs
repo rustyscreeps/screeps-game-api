@@ -119,66 +119,6 @@ impl Creep {
     }
 }
 
-/// Implements action methods for creeps
-/// 
-/// This macro is used to implement generic `creep` methods that returns a 
-/// `ReturnCode`, a number indicating the status of the action requested. 
-/// 
-/// Macro Syntax:
-/// creep_simple_generic_action!{
-///     ($rust_method_name1($action_target_trait1) -> js_method_name1),
-///     ($rust_method_name2($action_target_trait2) -> js_method_name2),
-///     ...
-/// }
-/// 
-/// For this macro, the last comma is facultative.
-/// 
-/// The generic comes from the fact that this implements the method to be able to
-/// target any object that conforms to the `action_target_trait` trait.
-macro_rules! creep_simple_generic_action {
-    ($(($method:ident($trait:ident) -> $js_name:ident)),* $(,)*) => (
-        impl Creep {
-            $(
-                pub fn $method<T>(&self, target: &T) -> ReturnCode
-                where
-                    T: $trait,
-                {
-                    js_unwrap!(@{self.as_ref()}.$js_name(@{target.as_ref()}))
-                }
-            )*
-        }
-    )
-}
-
-/// Implements action methods for creeps
-/// 
-/// This macro is used to implement concrete `creep` methods that returns a 
-/// `ReturnCode`, a number indicating the status of the action requested. 
-/// 
-/// Macro Syntax:
-/// creep_simple_generic_action!{
-///     ($rust_method_name1($target_type1) -> js_method_name1),
-///     ($rust_method_name2($target_type2) -> js_method_name2),
-///     ...
-/// }
-/// 
-/// For this macro, the last comma is facultative.
-/// 
-/// The concrete comes from the fact that this implements the method to be able to
-/// target only the `type` given.
-macro_rules! creep_simple_concrete_action {
-    ($(($method:ident($type:ty) -> $js_name:ident)),* $(,)*) => (
-        impl Creep {
-            $(
-                pub fn $method(&self, target: &$type) -> ReturnCode
-                {
-                    js_unwrap!(@{self.as_ref()}.$js_name(@{target.as_ref()}))
-                }
-            )*
-        }
-    )
-}
-
 simple_accessors! {
     Creep;
     (carry_capacity -> carryCapacity -> i32),

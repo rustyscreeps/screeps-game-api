@@ -144,24 +144,6 @@ pub mod find {
         }
     }
 
-    macro_rules! typesafe_find_constants {
-        (
-            $($constant_name:ident, $value:expr, $result:path;)*
-        ) => (
-            $(
-                #[allow(bad_style)]
-                pub struct $constant_name;
-                unsafe impl FindConstant for $constant_name {
-                    type Item = $result;
-
-                    fn find_code(&self) -> i32 {
-                        $value
-                    }
-                }
-            )*
-        );
-    }
-
     typesafe_find_constants! {
         CREEPS, 101, Creep;
         MY_CREEPS, 102, Creep;
@@ -310,24 +292,6 @@ pub mod look {
         ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain,
         Tombstone,
     };
-
-    macro_rules! typesafe_look_constants {
-        (
-            $($constant_name:ident, $value:expr, $result:path;)*
-        ) => (
-            $(
-                #[allow(bad_style)]
-                pub struct $constant_name;
-                unsafe impl LookConstant for $constant_name {
-                    type Item = $result;
-
-                    fn look_code(&self) -> Look {
-                        $value
-                    }
-                }
-            )*
-        );
-    }
 
     typesafe_look_constants! {
         CREEPS, Look::Creeps, Creep;

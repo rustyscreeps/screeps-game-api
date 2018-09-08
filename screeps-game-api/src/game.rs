@@ -202,73 +202,34 @@ pub mod shard {
     }
 }
 
-macro_rules! game_map_access {
-    ($(
-            #[$attr:meta]
-    )*
-    $mod_name:ident, $type:path, $js_inner:expr) => (
-        $(
-                #[$attr]
-        )*
-        pub mod $mod_name {
-            use objects;
-
-            /// Retrieve the string keys of this object.
-            pub fn keys() -> Vec<String> {
-                js_unwrap!(Object.keys($js_inner))
-            }
-
-            /// Retrieve all values in this object.
-            pub fn values() -> Vec<$type> {
-                js_unwrap!(Object.values($js_inner))
-            }
-
-            /// Retrieve a specific value by key.
-            pub fn get(name: &str) -> Option<$type> {
-                js_unwrap!($js_inner[@{name}])
-            }
-        }
-    );
-    ($(
-        $(
-            #[$attr:meta]
-        )*
-        ($mod:ident, $type:path, $js:expr)
-    ),* $(,)*) => {
-        $(
-            game_map_access!($(#[$attr])* $mod, $type, $js);
-        )*
-    };
-}
-
 game_map_access! {
     /// See [http://docs.screeps.com/api/#Game.constructionSites]
     ///
     /// [http://docs.screeps.com/api/#Game.constructionSites]: http://docs.screeps.com/api/#Game.constructionSites
-    (construction_sites, objects::ConstructionSite, Game.constructionSites),
+    construction_sites, objects::ConstructionSite, Game.constructionSites;
     /// See [http://docs.screeps.com/api/#Game.creeps]
     ///
     /// [http://docs.screeps.com/api/#Game.creeps]: http://docs.screeps.com/api/#Game.creeps
-    (creeps, objects::Creep, Game.creeps),
+    creeps, objects::Creep, Game.creeps;
     /// See [http://docs.screeps.com/api/#Game.flags]
     ///
     /// [http://docs.screeps.com/api/#Game.flags]: http://docs.screeps.com/api/#Game.flags
-    (flags, objects::Flag, Game.flags),
+    flags, objects::Flag, Game.flags;
     // TODO: See [http://docs.screeps.com/api/#Game.resources]
     ///
     /// [http://docs.screeps.com/api/#Game.resources]: http://docs.screeps.com/api/#Game.resources
     /// See [http://docs.screeps.com/api/#Game.rooms]
     ///
     /// [http://docs.screeps.com/api/#Game.rooms]: http://docs.screeps.com/api/#Game.rooms
-    (rooms, objects::Room, Game.rooms),
+    rooms, objects::Room, Game.rooms;
     /// See [http://docs.screeps.com/api/#Game.spawns]
     ///
     /// [http://docs.screeps.com/api/#Game.spawns]: http://docs.screeps.com/api/#Game.spawns
-    (spawns, objects::StructureSpawn, Game.spawns),
+    spawns, objects::StructureSpawn, Game.spawns;
     /// See [http://docs.screeps.com/api/#Game.structures]
     ///
     /// [http://docs.screeps.com/api/#Game.structures]: http://docs.screeps.com/api/#Game.structures
-    (structures, objects::Structure, Game.structures),
+    structures, objects::Structure, Game.structures;
 }
 
 /// See [http://docs.screeps.com/api/#Game.time]
