@@ -206,30 +206,30 @@ game_map_access! {
     /// See [http://docs.screeps.com/api/#Game.constructionSites]
     ///
     /// [http://docs.screeps.com/api/#Game.constructionSites]: http://docs.screeps.com/api/#Game.constructionSites
-    construction_sites, objects::ConstructionSite, Game.constructionSites;
+    (construction_sites, objects::ConstructionSite, Game.constructionSites),
     /// See [http://docs.screeps.com/api/#Game.creeps]
     ///
     /// [http://docs.screeps.com/api/#Game.creeps]: http://docs.screeps.com/api/#Game.creeps
-    creeps, objects::Creep, Game.creeps;
+    (creeps, objects::Creep, Game.creeps),
     /// See [http://docs.screeps.com/api/#Game.flags]
     ///
     /// [http://docs.screeps.com/api/#Game.flags]: http://docs.screeps.com/api/#Game.flags
-    flags, objects::Flag, Game.flags;
+    (flags, objects::Flag, Game.flags),
     // TODO: See [http://docs.screeps.com/api/#Game.resources]
     ///
     /// [http://docs.screeps.com/api/#Game.resources]: http://docs.screeps.com/api/#Game.resources
     /// See [http://docs.screeps.com/api/#Game.rooms]
     ///
     /// [http://docs.screeps.com/api/#Game.rooms]: http://docs.screeps.com/api/#Game.rooms
-    rooms, objects::Room, Game.rooms;
+    (rooms, objects::Room, Game.rooms),
     /// See [http://docs.screeps.com/api/#Game.spawns]
     ///
     /// [http://docs.screeps.com/api/#Game.spawns]: http://docs.screeps.com/api/#Game.spawns
-    spawns, objects::StructureSpawn, Game.spawns;
+    (spawns, objects::StructureSpawn, Game.spawns),
     /// See [http://docs.screeps.com/api/#Game.structures]
     ///
     /// [http://docs.screeps.com/api/#Game.structures]: http://docs.screeps.com/api/#Game.structures
-    structures, objects::Structure, Game.structures;
+    (structures, objects::Structure, Game.structures)
 }
 
 /// See [http://docs.screeps.com/api/#Game.time]
