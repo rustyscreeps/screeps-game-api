@@ -54,11 +54,11 @@ impl RoomPosition {
             .expect("expected Flag.createFlag to return ReturnCode")
     }
 
-    pub fn find_closest_by_range<T>(&self, ty: T) -> Vec<T::Item>
+    pub fn find_closest_by_range<T>(&self, ty: T) -> T::Item
     where
         T: FindConstant,
     {
-        js_unwrap_array!(@{self.as_ref()}.findClosestByRange(
+        js_unwrap!(@{self.as_ref()}.findClosestByRange(
             __structure_type_num_to_str(@{ty.find_code()}
         )))
     }
