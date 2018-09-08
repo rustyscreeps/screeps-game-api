@@ -227,7 +227,7 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
     fn my(&self) -> bool {
         js_unwrap!(@{self.as_ref()}.my)
     }
-    fn owner(&self) -> Option<String> {
+    fn owner_name(&self) -> Option<String> {
         (js! {
             var self = @{self.as_ref()};
             if (self.owner) {
