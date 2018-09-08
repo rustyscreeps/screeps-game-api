@@ -311,11 +311,13 @@ macro_rules! typesafe_look_constants {
 /// via the `get` function.
 /// 
 macro_rules! game_map_access {
-    ($(
+    (
         $(
-                #[$attr:meta]
-        )*
-        $mod_name:ident, $type:path, $js_inner:expr $(,)*);* $(;)*
+            $(
+                    #[$attr:meta]
+            )*
+            ($mod_name:ident, $type:path, $js_inner:expr) $(,)*
+        ),* $(,)*
     ) => {
         $(
             $(
