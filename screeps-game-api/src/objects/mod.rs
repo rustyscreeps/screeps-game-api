@@ -1,3 +1,17 @@
+//! Screeps object wrappers.
+//!
+//! # Unsafe traits
+//!
+//! This module contains a number of unsafe traits. Each is unsafe purely to
+//! prevent accidental implementations on things which don't uphold the trait
+//! contracts that have not been put into code. There is no unsafe code
+//! in this crate which relies on these traits being implemented correctly,
+//! only code which will panic if they are not.
+//!
+//! Even though this crate does not contain any, other crate unsafe could
+//! rely on these contracts being upheld as long as JavaScript code does not
+//! do anything mischevious, like removing properties from objects or sticking
+//! unexpected thigns into dictionaries which we trust.
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
 
@@ -163,6 +177,9 @@ unsafe impl RoomObjectProperties for Structure {
     }
 }
 
+/// Trait for things which have positions in the Screeps world.
+///
+/// This can be freely implemented for anything with a way to get a position.
 pub trait HasPosition {
     fn pos(&self) -> RoomPosition;
 }
@@ -173,6 +190,7 @@ impl HasPosition for RoomPosition {
     }
 }
 
+// All RoomObjects have positions.
 impl<T> HasPosition for T
 where
     T: RoomObjectProperties,
@@ -182,6 +200,13 @@ where
     }
 }
 
+/// Trait for all wrappers over Screeps JavaScript objects extending
+/// the `RoomObject` class.
+///
+/// # Contracts
+///
+/// The reference returned by the `AsRef<Reference>` implementation must be a
+/// reference to a JavaScript object extending the `RoomObject` class.
 pub unsafe trait RoomObjectProperties:
     AsRef<Reference> + Into<Reference> + HasPosition
 {
@@ -192,6 +217,13 @@ pub unsafe trait RoomObjectProperties:
     }
 }
 
+/// Trait for all wrappers over Screeps JavaScript objects extending
+/// the `Structure` class.
+///
+/// # Contracts
+///
+/// The reference returned by the `AsRef<Reference>` implementation must be a
+/// reference to a JavaScript object extending the `RoomObject` class.
 pub unsafe trait StructureProperties: RoomObjectProperties {
     fn hits(&self) -> i32 {
         js_unwrap!(@{self.as_ref()}.hits)
@@ -221,6 +253,13 @@ pub unsafe trait StructureProperties: RoomObjectProperties {
     }
 }
 
+/// Trait for all wrappers over Screeps JavaScript objects extending
+/// the `OwnedStructure` class.
+///
+/// # Contracts
+///
+/// The reference returned by the `AsRef<Reference>` implementation must be a
+/// reference to a JavaScript object extending the `RoomObject` class.
 pub unsafe trait OwnedStructureProperties: StructureProperties {
     fn my(&self) -> bool {
         js_unwrap!(@{self.as_ref()}.my)
@@ -241,6 +280,19 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
     }
 }
 
+/// Trait for all wrappers over Screeps JavaScript objects with a
+/// `store` property.
+///
+/// # Contracts
+///
+/// The JavaScript object referenced by the reference returned by
+/// `AsRef<Reference>` must have a `store` property. Additionally, if it does
+/// not have a `storeCapacity` property, `HasStore::store_capacity` must be
+/// overridden.
+///
+/// The `store` property must be a dict from string resource types to integers.
+///
+/// If present, the `storeCapacity` property must be an integer.
 pub unsafe trait HasStore: RoomObjectProperties {
     fn store_total(&self) -> i32 {
         js_unwrap!(_.sum(@{self.as_ref()}.store))
@@ -263,7 +315,33 @@ pub unsafe trait HasStore: RoomObjectProperties {
     }
 }
 
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.transfer`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>` must be a valid target
+/// for `Creep.transfer`.
 pub unsafe trait Transferable: RoomObjectProperties {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.withdraw`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>` must be a valid target
+/// for `Creep.withdraw`.
+pub unsafe trait Withdrawable: RoomObjectProperties {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.attack`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>` must be a valid target
+/// for `Creep.attack`.
+pub unsafe trait Attackable: RoomObjectProperties {}
+
 unsafe impl Transferable for StructureExtension {}
 unsafe impl Transferable for Creep {}
 unsafe impl Transferable for StructureContainer {}
@@ -275,7 +353,7 @@ unsafe impl Transferable for StructureStorage {}
 unsafe impl Transferable for StructureTower {}
 unsafe impl Transferable for StructurePowerSpawn {}
 unsafe impl Transferable for StructureTerminal {}
-pub unsafe trait Withdrawable: RoomObjectProperties {}
+
 unsafe impl Withdrawable for StructureExtension {}
 unsafe impl Withdrawable for StructureContainer {}
 unsafe impl Withdrawable for StructureLab {}
@@ -287,7 +365,6 @@ unsafe impl Withdrawable for StructurePowerSpawn {}
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
 
-pub unsafe trait Attackable: RoomObjectProperties {}
 unsafe impl<T> Attackable for T where T: StructureProperties {}
 unsafe impl Attackable for Creep {}
 
