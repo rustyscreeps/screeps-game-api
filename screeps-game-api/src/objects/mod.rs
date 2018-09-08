@@ -3,8 +3,6 @@ use stdweb::{Reference, Value};
 
 use {ResourceType, ReturnCode, StructureType};
 
-#[macro_use]
-mod macros;
 mod impls;
 
 pub use self::impls::SpawnOptions;
