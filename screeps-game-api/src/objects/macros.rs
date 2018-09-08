@@ -1,19 +1,17 @@
-/* Macro used to encapsulate all screeps game objects
-
-Macro syntax: 
-reference_wrapper!{
-    $obj1,
-    $obj2,
-    ...
-}
-
-Screeps game objects, in javascript, can be accessed via stdweb's `Reference`
-object. This macro: 
-  - Creates a struct named `objX`;
-  - Implements traits `AsRef<Reference>`, `TryFrom<Value>` for `objX`
-  - Implements trait `From<objX>` for `Reference`
-
-*/
+/// Macro used to encapsulate all screeps game objects
+/// 
+/// Macro syntax: 
+/// reference_wrapper!{
+///     $obj1,
+///     $obj2,
+///     ...
+/// }
+/// 
+/// Screeps game objects, in javascript, can be accessed via stdweb's `Reference`
+/// object. This macro: 
+///   - Creates a struct named `objX`;
+///   - Implements traits `AsRef<Reference>`, `TryFrom<Value>` for `objX`
+///   - Implements trait `From<objX>` for `Reference`
 macro_rules! reference_wrappers {
     ($($name:ident),* $(,)*) => {
         $(
@@ -41,20 +39,19 @@ macro_rules! reference_wrappers {
     };
 }
 
-/* Automatically creates simple accessors to fields of screep objects
-
-On top of an object created from `reference_wrapper!`, this macro creates an
-implementation of the struct for a collection of fields from the screeps
-object. 
-
-Method Syntax: 
-simple_accessor! {
-    $struct_name;
-    ($rust_method_name1 -> $js_field_name1 -> $rust_type1),
-    ($rust_method_name2 -> $js_field_name2 -> $rust_type2),
-    ...
-}
-*/
+/// Automatically creates simple accessors to fields of screep objects
+/// 
+/// On top of an object created from `reference_wrapper!`, this macro creates an
+/// implementation of the struct for a collection of fields from the screeps
+/// object. 
+/// 
+/// Method Syntax: 
+/// simple_accessor! {
+///     $struct_name;
+///     ($rust_method_name1 -> $js_field_name1 -> $rust_type1),
+///     ($rust_method_name2 -> $js_field_name2 -> $rust_type2),
+///     ...
+/// }
 macro_rules! simple_accessors {
     ($struct_name:ident; $(($method:ident -> $prop:ident -> $ret:ty)),* $(,)*) => (
         impl $struct_name {
@@ -67,15 +64,14 @@ macro_rules! simple_accessors {
     )
 }
 
-/* Implements the unsafe trait RoomObjectProperties for a Structure struct 
-
-Macro Syntax: 
-impl_room_object_properties!{
-    $structure1,
-    $structure2,
-    ...
-}
-*/
+/// Implements the unsafe trait RoomObjectProperties for a Structure struct 
+/// 
+/// Macro Syntax: 
+/// impl_room_object_properties!{
+///     $structure1,
+///     $structure2,
+///     ...
+/// }
 macro_rules! impl_room_object_properties {
     ($($struct_name:ident),* $(,)*) => {
         $(
