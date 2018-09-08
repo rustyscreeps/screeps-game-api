@@ -1,3 +1,12 @@
+//! This file groups all macros used throughout the library. Since interop with
+//! javascript often gets unwieldy, macros are used extensively to follow DRY
+//! principles.
+//! 
+//! The documentation tries to give a good enough picture of how the macros
+//! should be used, but are in no way a formal description. For a better
+//! understanding of the `macro_rule!` arcane yet simple syntax, have a look
+//! at [`Macros, A Methodical Introduction`](https://danielkeep.github.io/tlborm/book/mbe-README.html).
+
 /// Used to get data from a javascript reference back into rust code. 
 /// 
 /// Macro syntax (`$name` are expressions): 
