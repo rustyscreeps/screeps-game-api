@@ -58,9 +58,9 @@ impl RoomPosition {
     where
         T: FindConstant,
     {
-        js!(@{self.as_ref()}.findClosestByRange(
-            __structure_type_num_to_str(@{ty.find_code()})
-            )).try_into().ok()
+        js_unwrap!(@{self.as_ref()}.findClosestByRange(
+            __structure_type_num_to_str(@{ty.find_code()}))
+        )
     }
 
     pub fn find_in_range<T>(&self, ty: T, range: i32) -> Vec<T::Item>

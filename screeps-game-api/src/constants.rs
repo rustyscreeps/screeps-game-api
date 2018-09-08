@@ -55,7 +55,7 @@ impl TryFrom<Value> for ReturnCode {
 }
 
 pub unsafe trait FindConstant {
-    type Item: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error>;
+    type Item: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error> + AsRef<Reference>;
 
     fn find_code(&self) -> i32;
 }
