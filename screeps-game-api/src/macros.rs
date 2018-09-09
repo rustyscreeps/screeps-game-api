@@ -418,12 +418,12 @@ macro_rules! mem_get {
         mem_get!(@so_far { Some(&$memory_reference) } @rest $($rest)*)
     };
     // Access the last part with a variable
-    (@so_far { $reference_so_far:expr } @rest [ $next_part_variable:expr ] . $accessor:ident) => {
-        $reference_so_far.and_then(|v| v.$accessor($next_part_variable))
+    (@so_far { $reference_so_far:expr } @rest [ $final_part_variable:expr ] . $accessor:ident) => {
+        $reference_so_far.and_then(|v| v.$accessor($final_part_variable))
     };
     // Access the last part with a hardcoded ident
-    (@so_far { $reference_so_far:expr } @rest . $next_part:ident . $accessor:ident) => {
-        $reference_so_far.and_then(|v| v.$accessor(stringify!($next_part)))
+    (@so_far { $reference_so_far:expr } @rest . $final_part:ident . $accessor:ident) => {
+        $reference_so_far.and_then(|v| v.$accessor(stringify!($final_part)))
     };
     // Access the next (but not last) part with a variable
     (@so_far { $reference_so_far:expr } @rest [ $next_part_variable:expr ] $($rest:tt)+) => {
@@ -496,17 +496,17 @@ macro_rules! mem_set {
     (
         @path_so_far { $path_so_far:expr }
         @so_far { $reference_so_far:expr }
-        @rest [ $next_part_variable:expr ] = $value:expr
+        @rest [ $final_part_variable:expr ] = $value:expr
     ) => {
-        $reference_so_far.set($next_part_variable, $value)
+        $reference_so_far.set($final_part_variable, $value)
     };
     // Perform the set given a hardcoded ident for the last part of the path.
     (
         @path_so_far { $path_so_far:expr }
         @so_far { $reference_so_far:expr }
-        @rest . $next_part:ident = $value:expr
+        @rest . $final_part:ident = $value:expr
     ) => {
-        $reference_so_far.set(stringify!($next_part), $value)
+        $reference_so_far.set(stringify!($final_part), $value)
     };
     // Access the next (but not last) part with a variable ident.
     (
