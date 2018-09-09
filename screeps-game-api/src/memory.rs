@@ -77,8 +77,8 @@ impl MemoryReference {
     /// If the value exists but is a different type, this will return `None`.
     pub fn dict_or_create(&self, key: &str) -> Option<MemoryReference> {
         (js!{
-            var map = (@{self.as_ref()})
-            var key = (@{key})
+            var map = (@{self.as_ref()});
+            var key = (@{key});
             var value = map[key];
             if (value === null || value === undefined) {
                 map[key] = value = {};
