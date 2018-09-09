@@ -205,8 +205,8 @@ where
 ///
 /// # Contracts
 ///
-/// The reference returned by the `AsRef<Reference>` implementation must be a
-/// reference to a JavaScript object extending the `RoomObject` class.
+/// The reference returned by `AsRef<Reference>::as_ref` must reference a
+/// JavaScript object extending the `RoomObject` class.
 pub unsafe trait RoomObjectProperties:
     AsRef<Reference> + Into<Reference> + HasPosition
 {
@@ -222,8 +222,8 @@ pub unsafe trait RoomObjectProperties:
 ///
 /// # Contracts
 ///
-/// The reference returned by the `AsRef<Reference>` implementation must be a
-/// reference to a JavaScript object extending the `RoomObject` class.
+/// The reference returned by `AsRef<Reference>::as_ref` must reference a
+/// JavaScript object extending the `Structure` class.
 pub unsafe trait StructureProperties: RoomObjectProperties {
     fn hits(&self) -> i32 {
         js_unwrap!(@{self.as_ref()}.hits)
@@ -258,8 +258,8 @@ pub unsafe trait StructureProperties: RoomObjectProperties {
 ///
 /// # Contracts
 ///
-/// The reference returned by the `AsRef<Reference>` implementation must be a
-/// reference to a JavaScript object extending the `RoomObject` class.
+/// The reference returned by `AsRef<Reference>::as_ref` must reference a
+/// JavaScript object extending the `OwnedStructure` class.
 pub unsafe trait OwnedStructureProperties: StructureProperties {
     fn my(&self) -> bool {
         js_unwrap!(@{self.as_ref()}.my)
@@ -285,10 +285,9 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
 ///
 /// # Contracts
 ///
-/// The JavaScript object referenced by the reference returned by
-/// `AsRef<Reference>` must have a `store` property. Additionally, if it does
-/// not have a `storeCapacity` property, `HasStore::store_capacity` must be
-/// overridden.
+/// The JavaScript object referenced by the return of `AsRef<Reference>::as_ref`
+/// must have a `store` property. Additionally, if it does not have a
+/// `storeCapacity` property, `HasStore::store_capacity` must be overridden.
 ///
 /// The `store` property must be a dict from string resource types to integers.
 ///
@@ -320,8 +319,8 @@ pub unsafe trait HasStore: RoomObjectProperties {
 ///
 /// # Contracts
 ///
-/// The reference returned from `AsRef<Reference>` must be a valid target
-/// for `Creep.transfer`.
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.transfer`.
 pub unsafe trait Transferable: RoomObjectProperties {}
 
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
@@ -329,8 +328,8 @@ pub unsafe trait Transferable: RoomObjectProperties {}
 ///
 /// # Contracts
 ///
-/// The reference returned from `AsRef<Reference>` must be a valid target
-/// for `Creep.withdraw`.
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.withdraw`.
 pub unsafe trait Withdrawable: RoomObjectProperties {}
 
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
@@ -338,8 +337,8 @@ pub unsafe trait Withdrawable: RoomObjectProperties {}
 ///
 /// # Contracts
 ///
-/// The reference returned from `AsRef<Reference>` must be a valid target
-/// for `Creep.attack`.
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.attack`.
 pub unsafe trait Attackable: RoomObjectProperties {}
 
 unsafe impl Transferable for StructureExtension {}
