@@ -375,3 +375,73 @@ macro_rules! game_map_access {
         )*
     };
 }
+
+/// Get a value from memory given a path, returning `None` if any thing along the way does not
+/// exist.
+///
+/// # Examples
+///
+/// Get a reference with type u32 at the path 'creeps.John.count'
+///
+/// ```no_run
+/// #[macro_use]
+/// extern crate screeps;
+///
+/// # fn main() {
+/// let mem = screeps::memory::root();
+/// let val = mem_get!(mem.creeps.John.count.int);
+/// # }
+/// ```
+///
+/// Get something using a variable
+///
+/// ```no_run
+/// #[macro_use]
+/// extern crate screeps;
+///
+/// # fn main() {
+/// let mem = screeps::memory::root();
+/// let creep_name = "John";
+/// let what_to_get = "count";
+/// let val = mem_get!(mem.creeps[creep_name][what_to_get].int);
+/// let val = mem_get!(mem.creeps[creep_name].count.int);
+/// # }
+/// ```
+///
+/// Accepted suffixes for type are methods that exist on `MemoryReference`, such as `num`, `int`,
+/// `string`, etc.
+#[macro_export]
+macro_rules! mem_get {
+    ($memory_reference:ident $($rest:tt)*) => {
+        mem_get!(@so_far { Some(&$memory_reference) } @rest $($rest)*)
+    };
+    // Access the last part with a variable
+    (@so_far { $reference_so_far:expr } @rest [ $next_part_variable:expr ] . $accessor:ident) => {
+        $reference_so_far.and_then(|v| v.$accessor($next_part_variable))
+    };
+    // Access the last part with a builtin ident
+    (@so_far { $reference_so_far:expr } @rest . $next_part:ident . $accessor:ident) => {
+        $reference_so_far.and_then(|v| v.$accessor(stringify!($next_part)))
+    };
+    // Access the next (but not last) part with a variable
+    (@so_far { $reference_so_far:expr } @rest [ $next_part_variable:expr ] $($rest:tt)+) => {
+        mem_get!(
+            @so_far {
+                $reference_so_far.and_then(|v| v.dict($next_part_variable))
+            }
+            @rest $($rest)*
+        )
+    };
+    // Access the next (but not last) part with a builtin ident
+    (@so_far { $reference_so_far:expr } @rest . $next_part:ident $($rest:tt)+) => {
+        mem_get!(
+            @so_far {
+                $reference_so_far.and_then(|v| v.dict(stringify!($next_part)))
+            }
+            @rest $($rest)*
+        )
+    };
+    ($($not_valid:tt)*) => {
+        compile_error!(concat!("Unexpected usage of mem_get! usage: ", stringify!($($not_valid)*)))
+    }
+}
