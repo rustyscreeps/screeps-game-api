@@ -2,10 +2,20 @@ use std::{env, path::PathBuf};
 
 use failure;
 
-pub fn find_project_root() -> Result<PathBuf, failure::Error> {
+use setup::CliConfig;
+
+pub fn find_project_root(cli_config: &CliConfig) -> Result<PathBuf, failure::Error> {
+    if let Some(config_path) = cli_config.config_path.as_ref() {
+        return Ok(config_path
+            .canonicalize()?
+            .parent()
+            .ok_or_else(|| format_err!("config option specified which has no parent"))?
+            .to_owned());
+    }
+
     // TODO: is it right to canonicalize here?
     let original = env::current_dir()?.canonicalize()?;
-    let mut current = orig.clone();
+    let mut current = original.clone();
 
     loop {
         if current.join("screeps.toml").exists() {

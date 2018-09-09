@@ -1,17 +1,13 @@
-use std::collections::HashMap;
-use std::fs;
-use std::io::Read;
-use std::path::Path;
+use std::{collections::HashMap, fs, io::Read, path::Path};
 
 use {base64, failure, reqwest, serde_json};
 
 use config::Configuration;
 
-pub fn upload<P: AsRef<Path>>(root: P, config: Configuration) -> Result<(), failure::Error> {
-    let root = root.as_ref();
-    let upload_config = config
-        .upload
-        .ok_or_else(|| format_err!("missing upload configuration"))?;
+pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error> {
+    let upload_config = config.upload.as_ref().ok_or_else(|| {
+        format_err!("must include [upload] section in configuration to deploy using upload")
+    })?;
 
     let target_dir = root.join("target");
 
@@ -66,11 +62,11 @@ pub fn upload<P: AsRef<Path>>(root: P, config: Configuration) -> Result<(), fail
 
     let mut response = client
         .post(&*url)
-        .basic_auth(upload_config.username, Some(upload_config.password))
+        .basic_auth(&*upload_config.username, Some(&*upload_config.password))
         .header(reqwest::header::ContentType::json())
         .body(serde_json::to_string(&RequestData {
             modules: files,
-            branch: config.branch.clone(),
+            branch: upload_config.branch.clone(),
         })?).send()?;
 
     let response_text = response.text()?;
@@ -90,7 +86,7 @@ pub fn upload<P: AsRef<Path>>(root: P, config: Configuration) -> Result<(), fail
     if let Some(s) = response_json.get("error") {
         bail!(
             "error sending to branch '{}' of '{}': {}",
-            config.branch,
+            upload_config.branch,
             response.url(),
             s
         );

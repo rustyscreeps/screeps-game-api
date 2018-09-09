@@ -19,41 +19,13 @@ extern crate toml;
 mod build;
 mod config;
 mod copy;
-mod deploy;
 mod orientation;
+mod run;
 mod setup;
 mod upload;
 
-fn run() -> Result<(), failure::Error> {
-    let (state, config) = setup::setup_cli()?;
-
-    let root = orientation::find_project_root()?;
-
-    match state {
-        setup::CliState::Build => {
-            info!("compiling...");
-            build::build(&root, &config)?;
-            info!("compiled.");
-        }
-        setup::CliState::Deploy => {
-            info!("compiling...");
-            build::build(&root, &config)?;
-            info!("compiled. deploying...");
-            deploy::deploy(&root, config)?;
-            info!("deployed.");
-        }
-        setup::CliState::Check => {
-            info!("checking...");
-            build::check(&root)?;
-            info!("checked.");
-        }
-    }
-
-    Ok(())
-}
-
 fn main() {
-    if let Err(e) = run() {
+    if let Err(e) = run::run() {
         // eprintln!("{}", e.backtrace());
         eprintln!("error: {}", e);
         std::process::exit(1);
