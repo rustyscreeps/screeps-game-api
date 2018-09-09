@@ -1,5 +1,3 @@
-use stdweb::Reference;
-
 use memory::MemoryReference;
 use objects::{
     Attackable, ConstructionSite, Creep, HasPosition, Resource, Source, StructureController,
@@ -48,9 +46,7 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.say(@{msg}, @{public}))
     }
 
-    pub fn sign_controller<T>(&self, target: &T, text: &str) -> ReturnCode
-    where
-        T: AsRef<Reference>,
+    pub fn sign_controller(&self, target: &StructureController, text: &str) -> ReturnCode
     {
         js_unwrap!(@{self.as_ref()}.signController(@{target.as_ref()}, @{text}))
     }
