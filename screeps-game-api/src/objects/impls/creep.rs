@@ -24,6 +24,10 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.carry[RESOURCE_ENERGY])
     }
 
+    pub fn owner_name(&self) -> String {
+        js_unwrap!(@{self.as_ref()}.owner.username)
+    }
+
     pub fn cancel_order(&self, name: &str) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.cancelOrder(@{name}))
     }
@@ -121,6 +125,7 @@ impl Creep {
 
 simple_accessors! {
     Creep;
+    (id -> id -> String),
     (carry_capacity -> carryCapacity -> i32),
     (fatigue -> fatigue -> i32),
     (hits -> hits -> i32),
@@ -130,6 +135,14 @@ simple_accessors! {
     (spawning -> spawning -> bool),
     (ticks_to_live -> ticksToLive -> i32),
 }
+
+impl PartialEq for Creep {
+    fn eq(&self, other: &Creep) -> bool{
+        self.id() == other.id()
+    }
+}
+
+impl Eq for Creep {}
 
 creep_simple_generic_action! {
     (attack(Attackable) -> attack),

@@ -183,6 +183,37 @@ macro_rules! impl_room_object_properties {
     };
 }
 
+/// Macro for mass implementing `StructureProperties`, `PartialEq` and `Eq` for a type. 
+/// 
+/// Macro syntax:
+/// impl_structure_properties!{
+///     $struct1,
+///     $struct2,
+///     ...
+/// }
+/// 
+/// This macro accepts a comma-separated list of types on which to implement the unsafe `StructureProperties` trait on
+/// a screeps object. 
+/// From that implementation, the type gets the `id` method which is used to implement `PartialEq` and `Eq`.
+/// 
+/// # Safety
+/// The macro assumes that it is implementing the trait to a valid `Reference` 
+/// (See `reference_wrapper` macro) which will support all `StructureProperties` methods.
+/// 
+macro_rules! impl_structure_properties {
+    ( $( $struct_name:ty ),+ ) => {$(
+        unsafe impl StructureProperties for $struct_name {}
+        
+        impl PartialEq for $struct_name {
+            fn eq(&self, other: &$struct_name) -> bool{
+                self.id() == other.id()
+            }
+        }
+
+        impl Eq for $struct_name {}
+    )*};
+}
+
 /// Implements action methods for creeps
 /// 
 /// This macro is used to implement generic `creep` methods that returns a 

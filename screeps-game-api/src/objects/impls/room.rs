@@ -127,3 +127,11 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.name)
     }
 }
+
+impl PartialEq for Room {
+    fn eq(&self, other: &Room) -> bool{
+        self.name() == other.name()
+    }
+}
+
+impl Eq for Room {}

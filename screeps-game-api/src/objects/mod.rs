@@ -225,7 +225,7 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
     fn my(&self) -> bool {
         js_unwrap!(@{self.as_ref()}.my)
     }
-    fn owner(&self) -> Option<String> {
+    fn owner_name(&self) -> Option<String> {
         (js! {
             var self = @{self.as_ref()};
             if (self.owner) {
@@ -323,27 +323,29 @@ impl_room_object_properties! {
     Tombstone,
 }
 
-unsafe impl StructureProperties for OwnedStructure {}
-unsafe impl StructureProperties for Structure {}
-unsafe impl StructureProperties for StructureContainer {}
-unsafe impl StructureProperties for StructureController {}
-unsafe impl StructureProperties for StructureExtension {}
-unsafe impl StructureProperties for StructureExtractor {}
-unsafe impl StructureProperties for StructureKeeperLair {}
-unsafe impl StructureProperties for StructureLab {}
-unsafe impl StructureProperties for StructureLink {}
-unsafe impl StructureProperties for StructureNuker {}
-unsafe impl StructureProperties for StructureObserver {}
-unsafe impl StructureProperties for StructurePowerBank {}
-unsafe impl StructureProperties for StructurePowerSpawn {}
-unsafe impl StructureProperties for StructurePortal {}
-unsafe impl StructureProperties for StructureRampart {}
-unsafe impl StructureProperties for StructureRoad {}
-unsafe impl StructureProperties for StructureSpawn {}
-unsafe impl StructureProperties for StructureStorage {}
-unsafe impl StructureProperties for StructureTerminal {}
-unsafe impl StructureProperties for StructureTower {}
-unsafe impl StructureProperties for StructureWall {}
+impl_structure_properties!{
+    OwnedStructure,
+    Structure,
+    StructureContainer,
+    StructureController,
+    StructureExtension,
+    StructureExtractor,
+    StructureKeeperLair,
+    StructureLab,
+    StructureLink,
+    StructureNuker,
+    StructureObserver,
+    StructurePowerBank,
+    StructurePowerSpawn,
+    StructurePortal,
+    StructureRampart,
+    StructureRoad,
+    StructureSpawn,
+    StructureStorage,
+    StructureTerminal,
+    StructureTower,
+    StructureWall
+}
 
 unsafe impl OwnedStructureProperties for OwnedStructure {}
 unsafe impl OwnedStructureProperties for StructureController {}

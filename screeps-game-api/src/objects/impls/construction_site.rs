@@ -15,7 +15,7 @@ simple_accessors! {
 }
 
 impl ConstructionSite {
-    pub fn owner(&self) -> String {
+    pub fn owner_name(&self) -> String {
         (js! {
             var self = @{self.as_ref()};
             if (self.owner) {
