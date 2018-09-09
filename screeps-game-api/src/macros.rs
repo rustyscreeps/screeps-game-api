@@ -447,3 +447,110 @@ macro_rules! mem_get {
         compile_error!(concat!("Unexpected usage of mem_get! usage: ", stringify!($($not_valid)*)))
     }
 }
+
+/// Set a value in memory given a path, creating dicts for intermediate places if they do not exist.
+///
+/// # Panics
+///
+/// This macro will panic if any of the intermediate paths exist but are not dictionaries.
+///
+/// # Examples
+///
+/// Set Memory.creeps.John.count to 42.
+///
+/// ```no_run
+/// #[macro_use]
+/// extern crate screeps;
+///
+/// # fn main() {
+/// let mem = screeps::memory::root();
+/// mem_set!(mem.creeps.John.count = 42);
+/// # }
+/// ```
+///
+/// Set something using a variable path.
+///
+/// ```no_run
+/// #[macro_use]
+/// extern crate screeps;
+///
+/// # fn main() {
+/// let mem = screeps::memory::root();
+/// let creep_name = "John";
+/// let what_to_set = "count";
+/// mem_set!(mem.creeps[creep_name][what_to_set] = 51);
+/// mem_set!(mem.creeps[creep_name].count = 52);
+/// # }
+/// ```
+#[macro_export]
+macro_rules! mem_set {
+    // Macro entry point
+    ($memory_reference:ident $($rest:tt)*) => {
+        mem_set!(
+            @path_so_far { stringify!($memory_reference) }
+            @so_far { (&$memory_reference) }
+            @rest $($rest)*
+        )
+    };
+    // Perform the set given a variable for the last part of the path.
+    (
+        @path_so_far { $path_so_far:expr }
+        @so_far { $reference_so_far:expr }
+        @rest [ $next_part_variable:expr ] = $value:expr
+    ) => {
+        $reference_so_far.set($next_part_variable, $value)
+    };
+    // Perform the set given a hardcoded ident for the last part of the path.
+    (
+        @path_so_far { $path_so_far:expr }
+        @so_far { $reference_so_far:expr }
+        @rest . $next_part:ident = $value:expr
+    ) => {
+        $reference_so_far.set(stringify!($next_part), $value)
+    };
+    // Access the next (but not last) part with a variable ident.
+    (
+        @path_so_far { $path_so_far:expr }
+        @so_far { $reference_so_far:expr }
+        @rest [ $next_part_variable:expr ] $($rest:tt)+
+    ) => {
+        mem_set!(
+            @path_so_far { concat!($path_so_far, ".", stringify!([$next_part_variable])) }
+            @so_far {
+                $reference_so_far.dict_or_create($next_part_variable)
+                    .expect(concat!(
+                        "expected path ",
+                        $path_so_far,
+                        ".",
+                        stringify!([$next_part_variable]),
+                        " to be a dictionary, when it wasn't."
+                    ))
+            }
+            @rest $($rest)*
+        )
+    };
+    // Access the next (but not last) part with a hardcoded ident
+    (
+        @path_so_far { $path_so_far:expr }
+        @so_far { $reference_so_far:expr }
+        @rest . $next_part:ident $($rest:tt)+
+    ) => {
+        mem_set!(
+            @path_so_far { concat!($path_so_far, ".", stringify!($next_part)) }
+            @so_far {
+                $reference_so_far.dict_or_create(stringify!($next_part))
+                    .expect(concat!(
+                        "expected path ",
+                        $path_so_far,
+                        ".",
+                        stringify!($next_part),
+                        " to be a dictionary, when it wasn't."
+                    ))
+            }
+            @rest $($rest)*
+        )
+    };
+    ($($not_valid:tt)*) => {
+        compile_error!(concat!("Unexpected usage of mem_set! usage: ", stringify!($($not_valid)*)))
+    }
+}
