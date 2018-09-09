@@ -40,8 +40,7 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
             "build",
             "--target=wasm32-unknown-unknown",
             "--release",
-        ])
-        .current_dir(root)
+        ]).current_dir(root)
         .spawn()?
         .wait()?;
     if !cargo_success.success() {
@@ -213,8 +212,7 @@ if( typeof Rust === "undefined" ) {
                 "expected output_wasm_file ending in a filename, but found {}",
                 wasm_filename.display()
             )
-        })?
-        .to_str()
+        })?.to_str()
         .ok_or_else(|| {
             format_err!(
                 "expected output_wasm_file with UTF8 filename, but found {}",

@@ -71,8 +71,7 @@ pub fn upload<P: AsRef<Path>>(root: P, config: Configuration) -> Result<(), fail
         .body(serde_json::to_string(&RequestData {
             modules: files,
             branch: config.branch.clone(),
-        })?)
-        .send()?;
+        })?).send()?;
 
     let response_text = response.text()?;
 

@@ -30,8 +30,7 @@ pub fn setup_cli() -> Result<(CliState, Configuration), failure::Error> {
                             .short("v")
                             .long("verbose")
                             .multiple(true),
-                    )
-                    .arg({
+                    ).arg({
                         let cfg_arg = clap::Arg::with_name("config")
                             .short("c")
                             .long("config")
@@ -43,28 +42,22 @@ pub fn setup_cli() -> Result<(CliState, Configuration), failure::Error> {
                         } else {
                             cfg_arg
                         }
-                    })
-                    .subcommand(
+                    }).subcommand(
                         clap::SubCommand::with_name("build")
                             .about("build files, put in target/ in project root"),
-                    )
-                    .subcommand(
+                    ).subcommand(
                         clap::SubCommand::with_name("check")
                             .about("runs 'cargo check' with appropriate target"),
-                    )
-                    .subcommand(
+                    ).subcommand(
                         clap::SubCommand::with_name("deploy")
                             .about("deploy files to a screeps server (implies build)"),
-                    )
-                    .subcommand(clap::SubCommand::with_name("copy").about(
+                    ).subcommand(clap::SubCommand::with_name("copy").about(
                         "copy files to a screeps client deployment directory (implies build)",
-                    ))
-                    .subcommand(
+                    )).subcommand(
                         clap::SubCommand::with_name("upload")
                             .about("upload files to a screeps server (implies build)"),
                     ),
-            )
-            .get_matches();
+            ).get_matches();
 
     let args = cargo_args.subcommand_matches("screeps").ok_or_else(|| {
         format_err!("expected first subcommand to be 'screeps' (please run as 'cargo screeps')")

@@ -2,9 +2,11 @@ use failure::{self, ResultExt};
 
 use toml;
 
-use std::{convert::{TryFrom, TryInto},
-          fs,
-          path::{Path, PathBuf}};
+use std::{
+    convert::{TryFrom, TryInto},
+    fs,
+    path::{Path, PathBuf},
+};
 
 #[derive(Clone, Debug, Deserialize)]
 struct FileConfiguration {
@@ -31,7 +33,6 @@ struct FileUploadConfiguration {
     username: Option<String>,
     #[serde(default)]
     password: Option<String>,
-
     #[serde(default)]
     hostname: Option<String>,
     #[serde(default)]
