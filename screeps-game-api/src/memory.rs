@@ -13,15 +13,38 @@
 //! type, the method return `None`.
 //! 
 //! # Accessing the memory
-//! Memory is accessed via _paths_. Those are directly transcribed into a 
-//! javascript object path using [lodash](https://lodash.com/docs/4.17.10#get).
-//! For example, to access a number recorded at 
-//! `Memory.last_tick.cpu_usage`,
-//! you need
+//! Memory can be accessed in two ways: 
+//!  - via _keys_
+//!  - via _paths_ (methods prefixed with `path_`)
+//! 
+//! In both cases, if the value requested is `undefined`, `null`, or even just
+//! of the wrong type, the method returns `None`.
+//! 
+//! ## Accessing memory with a _key_
+//! Since a `MemoryReference` represents a javascript object, its children can
+//! be accessed using the `object["key"]` javascript syntax using type methods.
+//! ```no_run
+//! let mem = screeps::memory::root();
+//! let cpu_used_last_tick = mem.int("cpu_used_last_tick").unwrap();
 //! ```
-//! let last_tick_cpu_usage = root().num("last_tick.cpu_usage").unwrap();
+//!  
+//! ## Accessing memory with a _path_
+//! A quality of life improvement upon the key access is through full path. In
+//! javascript, it is possible to query a value with a full path: 
+//! ```javascript
+//! var creep_time = Memory.creeps.John.time;
 //! ```
 //! 
+//! To emulate this behavior in rust, you can write such a path to a string and
+//! it will fetch the javascript object using 
+//! [lodash](https://lodash.com/docs/4.17.10#get) and convert the result
+//! depending on the method used. For example,
+//! ```no_run
+//! let mem = screeps::memory::root();
+//! let creep_time = mem.path_num("creeps.John.time").unwrap();
+//! ```
+//! 
+//! # Other methods that provide `MemoryReference`s
 //! In addition to accessing the memory from the root, it is possible to
 //! access the memory via creeps, spawns, rooms and flags. Accessing the memory
 //! from those objects will also result in a `MemoryReference` which instead
@@ -72,11 +95,23 @@ impl MemoryReference {
         MemoryReference(reference)
     }
 
-    pub fn bool(&self, path: &str) -> bool {
+    pub fn bool(&self, key: &str) -> bool {
+        js_unwrap!(Boolean(@{self.as_ref()}[@{key}]))
+    }
+
+    pub fn path_bool(&self, path: &str) -> bool {
         js_unwrap!(Boolean(_.get(@{self.as_ref()}, @{path})))
     }
 
-    pub fn num(&self, path: &str) -> Option<f64> {
+    pub fn num(&self, key: &str) -> Option<f64> {
+        (js! {
+            return (@{self.as_ref()})[@{key}];
+        }).try_into()
+            .map(Some)
+            .unwrap_or_default()
+    }
+
+    pub fn path_num(&self, path: &str) -> Option<f64> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
         }).try_into()
@@ -84,7 +119,15 @@ impl MemoryReference {
             .unwrap_or_default()
     }
 
-    pub fn int(&self, path: &str) -> Option<i32> {
+    pub fn int(&self, key: &str) -> Option<i32> {
+        (js! {
+            return (@{self.as_ref()})[@{key}];
+        }).try_into()
+            .map(Some)
+            .unwrap_or_default()
+    }
+
+    pub fn path_int(&self, path: &str) -> Option<i32> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
         }).try_into()
@@ -92,7 +135,15 @@ impl MemoryReference {
             .unwrap_or_default()
     }
 
-    pub fn string(&self, path: &str) -> Option<String> {
+    pub fn string(&self, key: &str) -> Option<String> {
+        (js! {
+            return (@{self.as_ref()})[@{key}];
+        }).try_into()
+            .map(Some)
+            .unwrap_or_default()
+    }
+
+    pub fn path_string(&self, path: &str) -> Option<String> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
         }).try_into()
@@ -100,7 +151,21 @@ impl MemoryReference {
             .unwrap_or_default()
     }
 
-    pub fn dict(&self, path: &str) -> Option<MemoryReference> {
+    pub fn dict(&self, key: &str) -> Option<MemoryReference> {
+        (js! {
+            var v = (@{self.as_ref()})[@{key}];
+            if (_.isArray(v)) {
+                return null;
+            } else {
+                return v || null;
+            }
+        }).try_into()
+            .map(Some)
+            .unwrap_or_default()
+            .map(MemoryReference)
+    }
+
+    pub fn path_dict(&self, path: &str) -> Option<MemoryReference> {
         (js! {
             var v = _.get(@{self.as_ref()}, @{path});
             if (_.isArray(v)) {
@@ -140,13 +205,28 @@ impl MemoryReference {
         js_unwrap!(Object.keys(@{self.as_ref()}))
     }
 
-    pub fn del(&self, path: &str) {
+    pub fn del(&self, key: &str) {
+        js! {
+            (@{self.as_ref()})[@{key}] = undefined;
+        }
+    }
+
+    pub fn path_del(&self, path: &str) {
         js! {
             _.set(@{self.as_ref()}, @{path}, undefined);
         }
     }
 
-    pub fn set<T>(&self, path: &str, value: T)
+    pub fn set<T>(&self, key: &str, value: T)
+    where
+        T: JsSerialize,
+    {
+        js! {
+            (@{self.as_ref()})[@{key}] = @{value};
+        }
+    }
+
+    pub fn path_set<T>(&self, path: &str, value: T)
     where
         T: JsSerialize,
     {
@@ -155,7 +235,31 @@ impl MemoryReference {
         }
     }
 
-    pub fn arr<T>(&self, path: &str) -> Option<Vec<T>>
+    pub fn arr<T>(&self, key: &str) -> Option<Vec<T>>
+    where
+        T: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error>,
+    {
+        let x: Reference = (js! {
+            var v = (@{self.as_ref()})[@{key}];
+            if (!_.isArray(v)) {
+                return null;
+            } else {
+                return v || null;
+            }
+        }).try_into()
+            .ok()?;
+
+        // Memory arrays don't have the regular Array as their prototype - they
+        // have the 'outside' type.
+        let as_arr: Array = unsafe {
+            use stdweb::ReferenceType;
+            Array::from_reference_unchecked(x)
+        };
+
+        as_arr.try_into().ok()
+    }
+
+    pub fn path_arr<T>(&self, path: &str) -> Option<Vec<T>>
     where
         T: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error>,
     {
