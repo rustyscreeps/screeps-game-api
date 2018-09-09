@@ -3,16 +3,22 @@ use std::{env, path::PathBuf};
 use failure;
 
 pub fn find_project_root() -> Result<PathBuf, failure::Error> {
-    let orig = env::current_dir()?;
+    // TODO: is it right to canonicalize here?
+    let original = env::current_dir()?.canonicalize()?;
     let mut current = orig.clone();
 
     loop {
-        if current.join("Cargo.toml").exists() {
+        if current.join("screeps.toml").exists() {
             return Ok(current);
         }
-        let is_last = !current.pop();
+        let is_last = current.pop();
         if is_last {
-            bail!("could not find crate root {} or parents", orig.display());
+            bail!(
+                "could not find 'screeps.toml' in {} or parents.\n\
+                 Please create 'screeps.toml' in project root. (template at \
+                 https://github.com/daboross/screeps-in-rust-via-wasm/blob/master/screeps.toml)",
+                original.display()
+            );
         }
     }
 }
