@@ -381,7 +381,7 @@ macro_rules! game_map_access {
 ///
 /// # Examples
 ///
-/// Get a reference with type u32 at the path 'creeps.John.count'
+/// Get a reference with type u32 at the path creeps.John.count.
 ///
 /// ```no_run
 /// #[macro_use]
@@ -393,7 +393,7 @@ macro_rules! game_map_access {
 /// # }
 /// ```
 ///
-/// Get something using a variable
+/// Get something using a variable path.
 ///
 /// ```no_run
 /// #[macro_use]
@@ -403,15 +403,17 @@ macro_rules! game_map_access {
 /// let mem = screeps::memory::root();
 /// let creep_name = "John";
 /// let what_to_get = "count";
-/// let val = mem_get!(mem.creeps[creep_name][what_to_get].int);
-/// let val = mem_get!(mem.creeps[creep_name].count.int);
+/// let val1 = mem_get!(mem.creeps[creep_name][what_to_get].int);
+/// let val2 = mem_get!(mem.creeps[creep_name].count.int);
+/// assert_eq!(val1, val2);
 /// # }
 /// ```
 ///
 /// Accepted suffixes for type are methods that exist on `MemoryReference`, such as `num`, `int`,
-/// `string`, etc.
+/// `string`, `bool`, `arr` and `dict`.
 #[macro_export]
 macro_rules! mem_get {
+    // Macro entry point
     ($memory_reference:ident $($rest:tt)*) => {
         mem_get!(@so_far { Some(&$memory_reference) } @rest $($rest)*)
     };
@@ -419,7 +421,7 @@ macro_rules! mem_get {
     (@so_far { $reference_so_far:expr } @rest [ $next_part_variable:expr ] . $accessor:ident) => {
         $reference_so_far.and_then(|v| v.$accessor($next_part_variable))
     };
-    // Access the last part with a builtin ident
+    // Access the last part with a hardcoded ident
     (@so_far { $reference_so_far:expr } @rest . $next_part:ident . $accessor:ident) => {
         $reference_so_far.and_then(|v| v.$accessor(stringify!($next_part)))
     };
@@ -432,7 +434,7 @@ macro_rules! mem_get {
             @rest $($rest)*
         )
     };
-    // Access the next (but not last) part with a builtin ident
+    // Access the next (but not last) part with a hardcoded ident
     (@so_far { $reference_so_far:expr } @rest . $next_part:ident $($rest:tt)+) => {
         mem_get!(
             @so_far {
