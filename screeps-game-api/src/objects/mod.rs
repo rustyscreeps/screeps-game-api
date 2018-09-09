@@ -10,8 +10,8 @@
 //!
 //! Even though this crate does not contain any, other crate unsafe could
 //! rely on these contracts being upheld as long as JavaScript code does not
-//! do anything mischevious, like removing properties from objects or sticking
-//! unexpected thigns into dictionaries which we trust.
+//! do anything mischievous, like removing properties from objects or sticking
+//! unexpected things into dictionaries which we trust.
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
 
@@ -192,7 +192,7 @@ impl HasPosition for RoomPosition {
     }
 }
 
-// All RoomObjects have positions.
+/// All RoomObjects have positions.
 impl<T> HasPosition for T
 where
     T: RoomObjectProperties,
