@@ -72,6 +72,29 @@ impl MemoryReference {
             .map(MemoryReference)
     }
 
+    /// Get a dictionary value or create it if it does not exist.
+    ///
+    /// If the value exists but is a different type, this will return `None`.
+    pub fn dict_or_create(&self, key: &str) -> Option<MemoryReference> {
+        (js!{
+            var map = (@{self.as_ref()})
+            var key = (@{key})
+            var value = map[key];
+            if (value === null || value === undefined) {
+                map[key] = value = {};
+            }
+            if ((typeof value) == "object" && !_.isArray(value)) {
+                return value;
+            } else {
+                return null;
+            }
+        })
+            .try_into()
+            .map(Some)
+            .unwrap_or_default()
+            .map(MemoryReference)
+    }
+
     pub fn keys(&self) -> Vec<String> {
         js_unwrap!(Object.keys(@{self.as_ref()}))
     }
