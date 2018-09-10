@@ -6,7 +6,6 @@ use {
 
 simple_accessors! {
     ConstructionSite;
-    (id -> id -> String),
     (my -> my -> bool),
     (progress -> progress -> i32),
     (progress_total -> progressTotal -> i32),

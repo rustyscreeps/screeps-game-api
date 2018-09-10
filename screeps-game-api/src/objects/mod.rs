@@ -119,6 +119,44 @@ where
     }
 }
 
+/// Trait covering all objects with an id.
+pub unsafe trait HasId: AsRef<Reference> + RoomObjectProperties {
+    fn id(&self) -> String {
+        js_unwrap!(@{self.as_ref()}.id)
+    }
+}
+
+impl_has_id! {
+    ConstructionSite;
+    Creep;
+    Mineral;
+    Nuke;
+    Resource;
+    Source;
+    OwnedStructure;
+    Structure;
+    StructureContainer;
+    StructureController;
+    StructureExtension;
+    StructureExtractor;
+    StructureKeeperLair;
+    StructureLab;
+    StructureLink;
+    StructureNuker;
+    StructureObserver;
+    StructurePowerBank;
+    StructurePowerSpawn;
+    StructurePortal;
+    StructureRampart;
+    StructureRoad;
+    StructureSpawn;
+    StructureStorage;
+    StructureTerminal;
+    StructureTower;
+    StructureWall;
+    Tombstone;
+}
+
 /// Trait for all wrappers over Screeps JavaScript objects extending
 /// the `RoomObject` class.
 ///
@@ -147,9 +185,6 @@ pub unsafe trait RoomObjectProperties:
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `Structure` class.
 pub unsafe trait StructureProperties: RoomObjectProperties {
-    fn id(&self) -> String {
-        js_unwrap!(@{self.as_ref()}.id)
-    }
     fn structure_type(&self) -> StructureType {
         js_unwrap!(@{self.as_ref()}.structureType)
     }
