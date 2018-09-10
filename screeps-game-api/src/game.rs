@@ -60,7 +60,7 @@ pub mod cpu {
     ///
     /// [http://docs.screeps.com/api/#Game.getHeapStatistics]: http://docs.screeps.com/api/#Game.getHeapStatistics
     ///
-    /// Returns object with all 0 values if heap statistics are not available.
+    /// Returns object with all 0 values if heap statistics are not availe.
     pub fn get_heap_statistics() -> HeapStatistics {
         use stdweb::unstable::TryInto;
         use stdweb::Value;
@@ -122,8 +122,10 @@ pub mod gcl {
 /// [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
 pub mod map {
     use std::collections;
+    use stdweb::unstable::{TryInto, TryFrom};
 
-    use {Direction, RoomPosition, Terrain};
+    use {Direction, RoomPosition, Terrain, Room};
+    use constants::{ReturnCode, find::Exit};
 
     /// See [http://docs.screeps.com/api/#Game.map.describeExits]
     ///
@@ -170,11 +172,99 @@ pub mod map {
 
     /// See [http://docs.screeps.com/api/#Game.map.isRoomAvailable]
     ///
-    /// [http://docs.screeps.com/api/#Game.map.isRoomAvailable]: http://docs.screeps.com/api/#Game.map.isRoomAvailable
+    /// [http://docs.screeps.com/api/#Game.map.isRoomAvaile]: http://docs.screeps.com/api/#Game.map.isRoomAvaile
     pub fn is_room_available(room_name: &str) -> bool {
         js_unwrap!(Game.map.isRoomAvailable(@{room_name}))
     }
+
+    /// Implements `Game.map.findExit`.
+    /// 
+    /// Does not yet support callbacks.
+    pub fn find_exit(from_room: Room, to_room: Room) -> Result<Exit, ReturnCode> {
+        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.name()}, @{to_room.name()})};
+        Exit::try_from(code).map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
+    }
+
+    #[allow(unused_variables)]
+    pub fn find_route(from_room: Room, to_room: Room, route_callback: Option<impl Fn(&str, &str) -> u32>) -> !{
+        unimplemented!()
+    }
 }
+
+pub mod market {
+    use {Room};
+    use constants::{ReturnCode, ResourceType};
+
+    pub enum OrderType {
+        Sell,
+        Buy
+    }
+
+    impl OrderType {
+        pub fn as_string(&self) -> String {
+            match self {
+                OrderType::Sell => String::from("sell"),
+                OrderType::Buy => String::from("buy")
+            }
+        }
+    }
+
+    pub fn credits() -> u32 {
+        js_unwrap!(Game.market.credits)
+    }
+
+    pub fn incoming_transactions() -> !{
+        unimplemented!()
+    }
+
+    pub fn outgoing_transactions() -> !{
+        unimplemented!()
+    }
+
+    pub fn orders() -> !{
+        unimplemented!()
+    }
+
+    pub fn calc_transaction_cost(amount: u32, room1: &Room, room2: &Room) -> u32 {
+        js_unwrap!(Game.market.calcTransactionCost(@{amount}, @{room1.name()}, @{room2.name()}))
+    }
+
+    pub fn cancel_order(order_id: &str) -> ReturnCode {
+        js_unwrap!(Game.market.cancelOrder(@{order_id}))
+    }
+
+    pub fn change_order_price(order_id: &str, new_price: u32) -> ReturnCode {
+        js_unwrap!(Game.market.changeOrderPrice(@{order_id}, @{new_price}))
+    }
+
+    pub fn create_order(order_type: OrderType, resource_type: ResourceType, 
+                        price: f64, total_amount: u32, room: &Room) -> ReturnCode {
+        js_unwrap!{
+            Game.market.createOrder(@{order_type.as_string()},
+                                    __resource_type_num_to_str(@{resource_type as i32}),
+                                    @{price},
+                                    @{total_amount},
+                                    @{room.name()})
+        }
+    }
+
+    pub fn deal(order_id: &str, amount: u32, target_room: Room) -> ReturnCode {
+        js_unwrap!{Game.market.deal(@{order_id}, @{amount}, @{target_room.name()})}
+    }
+
+    pub fn extend_order(order_id: &str, add_amount: u32) -> ReturnCode {
+        js_unwrap!{Game.market.extendOrder(@{order_id}, @{add_amount})}
+    }
+
+    pub fn get_all_orders() -> ! {
+        unimplemented!()
+    }
+
+    pub fn get_order() -> ! {
+        unimplemented!()
+    }
+}
+
 
 /// See [http://docs.screeps.com/api/#Game.shard]
 ///
@@ -244,4 +334,8 @@ pub fn time() -> u32 {
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
 pub fn get_object(id: &str) -> Option<::objects::RoomObject> {
     js_unwrap!(Game.getObjectById(@{id}))
+}
+
+pub fn notify(message: &str, group_interval: Option<u32>) {
+    js!{Game.notify(@{message}, @{group_interval.unwrap_or(0)})};
 }

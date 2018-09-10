@@ -18,6 +18,13 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.carry[__resource_type_num_to_str(@{ty as i32})] || 0)
     }
 
+    pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
+        match amount {
+            Some(v) => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32}), @{v})),
+            None => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32})))
+        }
+    }
+
     pub fn energy(&self) -> i32 {
         js_unwrap!(@{self.as_ref()}.carry[RESOURCE_ENERGY])
     }
@@ -38,8 +45,17 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.moveTo(@{x}, @{y}))
     }
 
+    #[allow(unused_variables)]
+    pub fn move_by_path(path: String) -> ! {
+        unimplemented!()
+    }
+
     pub fn memory(&self) -> MemoryReference {
         js_unwrap!(@{self.as_ref()}.memory)
+    }
+
+    pub fn notify_when_attacked(&self, notify_when_attacked: bool) -> ReturnCode {
+        js_unwrap!(@{self.as_ref()}.notifyWhenAttacked(@{notify_when_attacked}))
     }
 
     pub fn say(&self, msg: &str, public: bool) -> ReturnCode {
@@ -128,6 +144,7 @@ simple_accessors! {
     (hits_max -> hitsMax -> i32),
     (name -> name -> String),
     (my -> my -> bool),
+    (saying -> saying -> String),
     (spawning -> spawning -> bool),
     (ticks_to_live -> ticksToLive -> i32),
 }

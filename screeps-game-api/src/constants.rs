@@ -54,6 +54,14 @@ impl TryFrom<Value> for ReturnCode {
     }
 }
 
+impl TryFrom<i32> for ReturnCode {
+    type Error = i32;
+    fn try_from(v: i32) -> Result<Self, Self::Error> {
+        use num_traits::FromPrimitive;
+        Self::from_i32(v).ok_or(v)
+    }
+}
+
 pub unsafe trait FindConstant {
     type Item: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error> + AsRef<Reference>;
 

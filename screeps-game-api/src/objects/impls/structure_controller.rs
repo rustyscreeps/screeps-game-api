@@ -1,5 +1,6 @@
 use stdweb::Value;
 
+use constants::ReturnCode;
 use objects::StructureController;
 
 simple_accessors! {
@@ -29,6 +30,10 @@ pub struct Sign {
 }
 
 impl StructureController {
+    pub fn activate_safe_mode(&self) -> ReturnCode {
+        js_unwrap!{@{self.as_ref()}.activateSafeMode()}
+    }
+    
     pub fn reservation(&self) -> Option<Reservation> {
         if let Value::Reference(r) = js!(return @{self.as_ref()}.reservation;){
             Some(Reservation {
@@ -54,5 +59,9 @@ impl StructureController {
         } else {
             None
         }
+    }
+
+    pub fn unclaim(&self) -> ReturnCode {
+        js_unwrap!{@{self.as_ref()}.unclaim()}
     }
 }

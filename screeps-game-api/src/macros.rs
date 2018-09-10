@@ -43,7 +43,7 @@
 /// (If unavailable: https://docs.rs/stdweb/0.4.8/stdweb/unstable/trait.TryFrom.html )
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
-        ::stdweb::unstable::TryInto::try_into(js! { return $($code)* })
+        ::stdweb::unstable::TryInto::try_into(js! { return $($code)*; })
             .expect(concat!("js_unwrap at ", line!(), " in ", file!()))
     )
 }
