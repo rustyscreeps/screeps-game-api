@@ -103,7 +103,7 @@ impl MemoryReference {
         js_unwrap!(Boolean(_.get(@{self.as_ref()}, @{path})))
     }
 
-    pub fn num(&self, key: &str) -> Option<f64> {
+    pub fn f64(&self, key: &str) -> Option<f64> {
         (js! {
             return (@{self.as_ref()})[@{key}];
         }).try_into()
@@ -111,7 +111,7 @@ impl MemoryReference {
             .unwrap_or_default()
     }
 
-    pub fn path_num(&self, path: &str) -> Option<f64> {
+    pub fn path_f64(&self, path: &str) -> Option<f64> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
         }).try_into()
@@ -119,7 +119,7 @@ impl MemoryReference {
             .unwrap_or_default()
     }
 
-    pub fn int(&self, key: &str) -> Option<i32> {
+    pub fn i32(&self, key: &str) -> Option<i32> {
         (js! {
             return (@{self.as_ref()})[@{key}];
         }).try_into()
@@ -127,7 +127,7 @@ impl MemoryReference {
             .unwrap_or_default()
     }
 
-    pub fn path_int(&self, path: &str) -> Option<i32> {
+    pub fn path_i32(&self, path: &str) -> Option<i32> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
         }).try_into()
