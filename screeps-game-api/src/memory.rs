@@ -1,5 +1,17 @@
+use std::fmt;
+
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Array, JsSerialize, Reference, Value};
+
+#[derive(Clone, Debug)]
+pub struct UnexpectedTypeError;
+
+impl fmt::Display for UnexpectedTypeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // TODO: include &'static str references to the type names in this error...
+        write!(f, "expected one memory type, found another")
+    }
+}
 
 /// TODO: do we even need this over just a raw 'Reference'?
 pub struct MemoryReference(Reference);
@@ -75,7 +87,7 @@ impl MemoryReference {
     /// Get a dictionary value or create it if it does not exist.
     ///
     /// If the value exists but is a different type, this will return `None`.
-    pub fn dict_or_create(&self, key: &str) -> Option<MemoryReference> {
+    pub fn dict_or_create(&self, key: &str) -> Result<MemoryReference, UnexpectedTypeError> {
         (js!{
             var map = (@{self.as_ref()});
             var key = (@{key});
@@ -90,8 +102,7 @@ impl MemoryReference {
             }
         })
             .try_into()
-            .map(Some)
-            .unwrap_or_default()
+            .map_err(|_| UnexpectedTypeError)
             .map(MemoryReference)
     }
 

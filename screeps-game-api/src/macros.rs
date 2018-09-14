@@ -450,9 +450,10 @@ macro_rules! mem_get {
 
 /// Set a value in memory given a path, creating dicts for intermediate places if they do not exist.
 ///
-/// # Panics
+/// # Return
 ///
-/// This macro will panic if any of the intermediate paths exist but are not dictionaries.
+/// This macro produces a `Result<(), ::screeps::memory::UnexpectedTypeError>`. The error path will
+/// trigger if any of the intermediate memory keys exist but are not dictionaries.
 ///
 /// # Examples
 ///
@@ -464,7 +465,7 @@ macro_rules! mem_get {
 ///
 /// # fn main() {
 /// let mem = screeps::memory::root();
-/// mem_set!(mem.creeps.John.count = 42);
+/// mem_set!(mem.creeps.John.count = 42).unwrap();
 /// # }
 /// ```
 ///
@@ -478,8 +479,8 @@ macro_rules! mem_get {
 /// let mem = screeps::memory::root();
 /// let creep_name = "John";
 /// let what_to_set = "count";
-/// mem_set!(mem.creeps[creep_name][what_to_set] = 51);
-/// mem_set!(mem.creeps[creep_name].count = 52);
+/// mem_set!(mem.creeps[creep_name][what_to_set] = 51).unwrap();
+/// mem_set!(mem.creeps[creep_name].count = 52).unwrap();
 /// # }
 /// ```
 #[macro_export]
@@ -488,7 +489,7 @@ macro_rules! mem_set {
     ($memory_reference:ident $($rest:tt)*) => {
         mem_set!(
             @path_so_far { stringify!($memory_reference) }
-            @so_far { (&$memory_reference) }
+            @so_far { Ok(&$memory_reference) }
             @rest $($rest)*
         )
     };
@@ -498,7 +499,7 @@ macro_rules! mem_set {
         @so_far { $reference_so_far:expr }
         @rest [ $final_part_variable:expr ] = $value:expr
     ) => {
-        $reference_so_far.set($final_part_variable, $value)
+        $reference_so_far.map(|v| v.set($final_part_variable, $value))
     };
     // Perform the set given a hardcoded ident for the last part of the path.
     (
@@ -506,7 +507,7 @@ macro_rules! mem_set {
         @so_far { $reference_so_far:expr }
         @rest . $final_part:ident = $value:expr
     ) => {
-        $reference_so_far.set(stringify!($final_part), $value)
+        $reference_so_far.map(|v| v.set(stringify!($final_part), $value))
     };
     // Access the next (but not last) part with a variable ident.
     (
@@ -517,14 +518,7 @@ macro_rules! mem_set {
         mem_set!(
             @path_so_far { concat!($path_so_far, ".", stringify!([$next_part_variable])) }
             @so_far {
-                $reference_so_far.dict_or_create($next_part_variable)
-                    .expect(concat!(
-                        "expected path ",
-                        $path_so_far,
-                        ".",
-                        stringify!([$next_part_variable]),
-                        " to be a dictionary, when it wasn't."
-                    ))
+                $reference_so_far.and_then(|v| v.dict_or_create($next_part_variable))
             }
             @rest $($rest)*
         )
@@ -538,14 +532,7 @@ macro_rules! mem_set {
         mem_set!(
             @path_so_far { concat!($path_so_far, ".", stringify!($next_part)) }
             @so_far {
-                $reference_so_far.dict_or_create(stringify!($next_part))
-                    .expect(concat!(
-                        "expected path ",
-                        $path_so_far,
-                        ".",
-                        stringify!($next_part),
-                        " to be a dictionary, when it wasn't."
-                    ))
+                $reference_so_far.and_then(|v| v.dict_or_create(stringify!($next_part)))
             }
             @rest $($rest)*
         )
