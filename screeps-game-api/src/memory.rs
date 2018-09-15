@@ -105,80 +105,52 @@ impl MemoryReference {
         js_unwrap!(Boolean(_.get(@{self.as_ref()}, @{path})))
     }
 
-    pub fn f64(&self, key: &str) -> Option<f64> {
+    pub fn f64(&self, key: &str) -> Result<Option<f64>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
         }).try_into()
-            .map(Some)
-            .unwrap_or_default()
     }
 
-    pub fn path_f64(&self, path: &str) -> Option<f64> {
+    pub fn path_f64(&self, path: &str) -> Result<Option<f64>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
         }).try_into()
-            .map(Some)
-            .unwrap_or_default()
     }
 
-    pub fn i32(&self, key: &str) -> Option<i32> {
+    pub fn i32(&self, key: &str) -> Result<Option<i32>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
         }).try_into()
-            .map(Some)
-            .unwrap_or_default()
     }
 
-    pub fn path_i32(&self, path: &str) -> Option<i32> {
+    pub fn path_i32(&self, path: &str) -> Result<Option<i32>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
         }).try_into()
-            .map(Some)
-            .unwrap_or_default()
     }
 
-    pub fn string(&self, key: &str) -> Option<String> {
+    pub fn string(&self, key: &str) -> Result<Option<String>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
         }).try_into()
-            .map(Some)
-            .unwrap_or_default()
     }
 
-    pub fn path_string(&self, path: &str) -> Option<String> {
+    pub fn path_string(&self, path: &str) -> Result<Option<String>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
         }).try_into()
-            .map(Some)
-            .unwrap_or_default()
     }
 
-    pub fn dict(&self, key: &str) -> Option<MemoryReference> {
+    pub fn dict(&self, key: &str) -> Result<Option<MemoryReference>, ConversionError> {
         (js! {
-            var v = (@{self.as_ref()})[@{key}];
-            if (_.isArray(v)) {
-                return null;
-            } else {
-                return v || null;
-            }
+            return _.get(@{self.as_ref()}, @{key});
         }).try_into()
-            .map(Some)
-            .unwrap_or_default()
-            .map(MemoryReference)
     }
 
-    pub fn path_dict(&self, path: &str) -> Option<MemoryReference> {
+    pub fn path_dict(&self, path: &str) -> Result<Option<MemoryReference>, ConversionError> {
         (js! {
-            var v = _.get(@{self.as_ref()}, @{path});
-            if (_.isArray(v)) {
-                return null;
-            } else {
-                return v || null;
-            }
+            return _.get(@{self.as_ref()}, @{path});
         }).try_into()
-            .map(Some)
-            .unwrap_or_default()
-            .map(MemoryReference)
     }
 
     /// Get a dictionary value or create it if it does not exist.
@@ -237,52 +209,60 @@ impl MemoryReference {
         }
     }
 
-    pub fn arr<T>(&self, key: &str) -> Option<Vec<T>>
+    pub fn arr<T: TryFrom<Value, Error = ConversionError>>(&self, key: &str) -> Result<Option<Vec<T>>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
-        let x: Reference = (js! {
+        let arr_ref: Option<Reference> = (js! {
             var v = (@{self.as_ref()})[@{key}];
             if (!_.isArray(v)) {
                 return null;
             } else {
-                return v || null;
+                return v;
             }
-        }).try_into()
-            .ok()?;
+        }).try_into()?;
 
-        // Memory arrays don't have the regular Array as their prototype - they
-        // have the 'outside' type.
-        let as_arr: Array = unsafe {
-            use stdweb::ReferenceType;
-            Array::from_reference_unchecked(x)
-        };
+        match arr_ref {
+            Some(arr) => {
+                // Memory arrays don't have the regular Array as their prototype - they
+                // have the 'outside' type.
+                let as_arr: Array = unsafe {
+                    use stdweb::ReferenceType;
+                    Array::from_reference_unchecked(arr)
+                };
 
-        as_arr.try_into().ok()
+                as_arr.try_into().map(Some)
+            },
+            None => Ok(None)
+        }
     }
 
-    pub fn path_arr<T>(&self, path: &str) -> Option<Vec<T>>
+    pub fn path_arr<T: TryFrom<Value, Error = ConversionError>>(&self, path: &str) -> Result<Option<Vec<T>>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
-        let x: Reference = (js! {
+        let arr_ref: Option<Reference> = (js! {
             var v = _.get(@{self.as_ref()}, @{path});
             if (!_.isArray(v)) {
                 return null;
             } else {
-                return v || null;
+                return v;
             }
-        }).try_into()
-            .ok()?;
+        }).try_into()?;
 
-        // Memory arrays don't have the regular Array as their prototype - they
-        // have the 'outside' type.
-        let as_arr: Array = unsafe {
-            use stdweb::ReferenceType;
-            Array::from_reference_unchecked(x)
-        };
+        match arr_ref {
+            Some(arr) => {
+                // Memory arrays don't have the regular Array as their prototype - they
+                // have the 'outside' type.
+                let as_arr: Array = unsafe {
+                    use stdweb::ReferenceType;
+                    Array::from_reference_unchecked(arr)
+                };
 
-        as_arr.try_into().ok()
+                as_arr.try_into().map(Some)
+            },
+            None => Ok(None)
+        }
     }
 }
 
