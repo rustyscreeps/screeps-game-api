@@ -16,7 +16,12 @@ pub fn run() -> Result<(), failure::Error> {
         .config_path
         .unwrap_or_else(|| root.join("screeps.toml").to_owned());
 
-    let config = config::Configuration::read(config_path)?;
+    let config = config::Configuration::read(&config_path)?;
+
+    debug!(
+        "Running {:?} at {:?} using config {:?} with values {:#?}",
+        cli_config.command, root, config_path, config
+    );
 
     match cli_config.command {
         setup::Command::Build => run_build(&root, &config)?,
