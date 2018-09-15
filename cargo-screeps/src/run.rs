@@ -35,7 +35,7 @@ pub fn run() -> Result<(), failure::Error> {
             run_upload(&root, &config)?;
         }
         setup::Command::Deploy => {
-            build::build(&root, &config)?;
+            run_build(&root, &config)?;
             match config.default_deploy_mode.ok_or_else(|| {
                 format_err!("must have default_deploy_mode set to use 'cargo screeps deploy'")
             })? {
