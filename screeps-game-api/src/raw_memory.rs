@@ -1,6 +1,6 @@
 //! Interface for Screeps `RawMemory` global object.
 
-get_from_js!(active_segments -> { 
+get_from_js!(get_active_segments -> { 
     Object.keys(RawMemory.segments).map(Number) 
 } -> Vec<i32>);
 
@@ -15,7 +15,7 @@ pub fn set_active_segments(ids: &[i32]) {
     }
 }
 
-get_from_js!(segment(id: u32) -> { 
+get_from_js!(get_segment(id: u32) -> { 
     RawMemory.segments[@{id}] 
 } -> Option<String>);
 
@@ -68,9 +68,9 @@ pub fn set_public_segments(ids: &[i32]) {
     }
 }
 
-get_from_js!(raw_memory -> {RawMemory.get()} -> String);
+get_from_js!(get -> {RawMemory.get()} -> String);
 
-pub fn set_raw_memory(value: &str) {
+pub fn set(value: &str) {
     js!{
         RawMemory.set(@{value});
     }
