@@ -55,6 +55,8 @@ use std::fmt;
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Array, JsSerialize, Reference, Value};
 
+use ConversionError;
+
 #[derive(Clone, Debug)]
 pub struct UnexpectedTypeError;
 
@@ -237,7 +239,7 @@ impl MemoryReference {
 
     pub fn arr<T>(&self, key: &str) -> Option<Vec<T>>
     where
-        T: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error>,
+        T: TryFrom<Value, Error = ConversionError>,
     {
         let x: Reference = (js! {
             var v = (@{self.as_ref()})[@{key}];
@@ -261,7 +263,7 @@ impl MemoryReference {
 
     pub fn path_arr<T>(&self, path: &str) -> Option<Vec<T>>
     where
-        T: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error>,
+        T: TryFrom<Value, Error = ConversionError>,
     {
         let x: Reference = (js! {
             var v = _.get(@{self.as_ref()}, @{path});
@@ -285,7 +287,7 @@ impl MemoryReference {
 }
 
 impl TryFrom<Value> for MemoryReference {
-    type Error = <Reference as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let r: Reference = v.try_into()?; // fail early.
