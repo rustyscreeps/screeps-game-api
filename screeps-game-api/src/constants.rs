@@ -4,7 +4,7 @@
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
 
-use objects::RoomObject;
+use {objects::RoomObject, ConversionError};
 
 enum_from_primitive! {
     #[repr(i32)]
@@ -43,7 +43,7 @@ impl ReturnCode {
 }
 
 impl TryFrom<Value> for ReturnCode {
-    type Error = <i32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         use num_traits::FromPrimitive;
         let x: i32 = v.try_into()?;
@@ -281,7 +281,7 @@ pub enum Look {
 }
 
 pub unsafe trait LookConstant {
-    type Item: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error>;
+    type Item: TryFrom<Value, Error = ConversionError>;
 
     fn look_code(&self) -> Look;
 }

@@ -15,7 +15,7 @@
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
 
-use {ResourceType, ReturnCode, StructureType};
+use {ResourceType, ReturnCode, StructureType, ConversionError};
 
 mod impls;
 
@@ -159,7 +159,7 @@ impl Structure {
 }
 
 impl TryFrom<Value> for Structure {
-    type Error = <Value as TryInto<Reference>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Structure, Self::Error> {
         Ok(Self::from_reference(v.try_into()?))

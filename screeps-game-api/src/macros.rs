@@ -123,7 +123,7 @@ macro_rules! reference_wrappers {
                 }
             }
             impl TryFrom<Value> for $name {
-                type Error = <Value as TryInto<Reference>>::Error;
+                type Error = ::ConversionError;
 
                 fn try_from(v: Value) -> Result<$name, Self::Error> {
                     Ok($name(v.try_into()?))

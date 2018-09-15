@@ -27,6 +27,8 @@ pub use constants::*;
 pub use objects::*;
 pub use positions::{LocalRoomName, LocalRoomPosition};
 
+pub(crate) use stdweb::private::ConversionError;
+
 /// Useful for `use screeps::prelude::*;` to bring in screeps traits. Does not contain any
 /// structures in order to minimize namespace polution.
 pub mod prelude {
