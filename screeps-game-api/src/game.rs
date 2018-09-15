@@ -192,6 +192,10 @@ pub mod map {
 }
 
 pub mod market {
+    use std::collections::HashMap;
+    
+    use stdweb::unstable::TryInto;
+
     use {Room};
     use constants::{ReturnCode, ResourceType};
 
@@ -201,7 +205,7 @@ pub mod market {
     }
 
     impl OrderType {
-        pub fn as_string(&self) -> String {
+        fn as_string(&self) -> String {
             match self {
                 OrderType::Sell => String::from("sell"),
                 OrderType::Buy => String::from("buy")
@@ -209,20 +213,92 @@ pub mod market {
         }
     }
 
+    #[derive(Deserialize, Debug)]
+    pub struct Player {
+        username: String,
+    }
+    js_deserializable!(Player);
+
+    #[derive(Deserialize, Debug)]
+    pub struct TransactionOrder {
+        id: String,
+        #[serde(rename="type")]
+        order_type: String,
+        price: f64
+    }
+    js_deserializable!(TransactionOrder);
+
+    #[derive(Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Transaction {
+        transaction_id: String,
+        time: u32,
+        sender: Player,
+        recipient: Player,
+        resource_type : String,
+        amount: u32,
+        from: String,
+        to: String,
+        description: String,
+        order: Option<TransactionOrder>,
+    }
+    js_deserializable!(Transaction);
+    
+    #[derive(Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Order {
+        id: String,
+        created: u32,
+        #[serde(rename = "type")]
+        order_type: String,
+        resource_type: String,
+        room_name: String,
+        amount: u32,
+        remaining_amount: u32,
+        price: f64
+    }
+    js_deserializable!(Order);
+
+    #[derive(Deserialize, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct MyOrder {
+        id: String,
+        created: u32,
+        active: bool,
+        #[serde(rename = "type")]
+        order_type: String,
+        resource_type: String,
+        room_name: String,
+        amount: u32,
+        remaining_amount: u32,
+        total_amount: u32,
+        price: f64
+    }
+    js_deserializable!(MyOrder);
+
     pub fn credits() -> u32 {
         js_unwrap!(Game.market.credits)
     }
 
-    pub fn incoming_transactions() -> !{
-        unimplemented!()
+    pub fn incoming_transactions() -> Vec<Transaction>{
+        let arr_transaction_value = js!{
+            return Game.market.incomingTransactions;
+        };
+        arr_transaction_value.try_into().unwrap()
     }
 
-    pub fn outgoing_transactions() -> !{
-        unimplemented!()
+    pub fn outgoing_transactions() -> Vec<Transaction>{
+        let arr_transaction_value = js!{
+            return Game.market.outgoingTransactions;
+        };
+        arr_transaction_value.try_into().unwrap()
     }
 
-    pub fn orders() -> !{
-        unimplemented!()
+    pub fn orders() -> HashMap<String, MyOrder> {
+        let order_book_value = js! {
+            return Game.market.orders;
+        };
+        order_book_value.try_into().unwrap()
     }
 
     pub fn calc_transaction_cost(amount: u32, room1: &Room, room2: &Room) -> u32 {
@@ -256,12 +332,21 @@ pub mod market {
         js_unwrap!{Game.market.extendOrder(@{order_id}, @{add_amount})}
     }
 
-    pub fn get_all_orders() -> ! {
-        unimplemented!()
+    /// Get all orders from the market
+    /// 
+    /// Contrary to the JS version, filtering should be done afterwards.
+    pub fn get_all_orders() -> Vec<Order> {
+        let all_order = js! {
+            return Game.market.getAllOrders();
+        };
+        all_order.try_into().unwrap()
     }
 
-    pub fn get_order() -> ! {
-        unimplemented!()
+    pub fn get_order(id: &str) -> Option<Order> {
+        let order = js! {
+            return Game.marget.getOrder(@{id});
+        };
+        order.try_into().ok()
     }
 }
 
