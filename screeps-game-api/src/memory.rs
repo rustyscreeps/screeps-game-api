@@ -213,56 +213,18 @@ impl MemoryReference {
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
-        let arr_ref: Option<Reference> = (js! {
-            var v = (@{self.as_ref()})[@{key}];
-            if (!_.isArray(v)) {
-                return null;
-            } else {
-                return v;
-            }
-        }).try_into()?;
-
-        match arr_ref {
-            Some(arr) => {
-                // Memory arrays don't have the regular Array as their prototype - they
-                // have the 'outside' type.
-                let as_arr: Array = unsafe {
-                    use stdweb::ReferenceType;
-                    Array::from_reference_unchecked(arr)
-                };
-
-                as_arr.try_into().map(Some)
-            },
-            None => Ok(None)
-        }
+        (js! {
+            return (@{self.as_ref()})[@{key}];
+        }).try_into()
     }
 
     pub fn path_arr<T: TryFrom<Value, Error = ConversionError>>(&self, path: &str) -> Result<Option<Vec<T>>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
-        let arr_ref: Option<Reference> = (js! {
-            var v = _.get(@{self.as_ref()}, @{path});
-            if (!_.isArray(v)) {
-                return null;
-            } else {
-                return v;
-            }
-        }).try_into()?;
-
-        match arr_ref {
-            Some(arr) => {
-                // Memory arrays don't have the regular Array as their prototype - they
-                // have the 'outside' type.
-                let as_arr: Array = unsafe {
-                    use stdweb::ReferenceType;
-                    Array::from_reference_unchecked(arr)
-                };
-
-                as_arr.try_into().map(Some)
-            },
-            None => Ok(None)
-        }
+        (js! {
+            return _.get(@{self.as_ref()}, @{path});
+        }).try_into()
     }
 }
 
