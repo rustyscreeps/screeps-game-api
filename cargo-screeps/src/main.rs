@@ -26,7 +26,7 @@ mod upload;
 
 fn main() {
     if let Err(e) = run::run() {
-        // eprintln!("{}", e.backtrace());
+        eprintln!("{}", e.backtrace());
         eprintln!("error: {}", e);
         std::process::exit(1);
     }
