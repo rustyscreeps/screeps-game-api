@@ -41,10 +41,37 @@
 /// 
 /// For the full list, see the documentation for [`stdweb::unstable::TryFrom`].
 /// (If unavailable: https://docs.rs/stdweb/0.4.8/stdweb/unstable/trait.TryFrom.html )
+///
+/// Note: for unwrapping reference types, use [`js_unwrap_ref!`] to avoid instanceof checks.
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
         ::stdweb::unstable::TryInto::try_into(js! { return $($code)*; })
             .expect(concat!("js_unwrap at ", line!(), " in ", file!()))
+    )
+}
+
+/// Macro similar to [`js_unwrap!`], but with fewer `instanceof` checks.
+///
+/// # Example
+///
+/// ```ignore
+/// let x: Creep = js_unwrap_ref!(Game.creeps.John);
+/// ```
+///
+/// This will generate code
+///
+/// ```
+/// let x: Creep = js!({ return Game.creeps.John; }).cast_expected_type().expect(...);
+/// ```
+///
+/// `cast_expected_type` will ensure that the return value is a [`stdweb::Reference`], but it won't
+/// do any more than that. If the JavaScript behaves incorrectly and returns something other than a
+/// Creep, and the `"check-all-casts"` feature is not enabled, it will silently make a
+/// [`screeps::Creep`] containing the wrong value which will fail when used.
+macro_rules! js_unwrap_ref {
+    ($($code:tt)*) => (
+        ::objects::CastExpectedType::cast_expected_type(js! { return $($code)* })
+            .expect(concat!("js_unwrap_ref at ", line!(), " in ", file!()))
     )
 }
 
@@ -92,43 +119,63 @@ macro_rules! get_from_js {
     )
 }
 
+/// Creates a getter macro to retrieve a field of a JavaScript wrapping struct.
+///
+/// The main difference between this and [`get_from_js!`] is that this calls
+/// [`js_unwrap_ref!`] whereas [`get_from_js!`] calls [`js_unwrap!`].
+///
+/// See [`get_from_js!`] for more information.
+macro_rules! get_ref_from_js {
+    ($name:ident -> { $js_side:expr } -> $rust_ret_type:ty) => (
+        get_from_js!($name() -> { $js_side } -> $rust_ret_type);
+    );
+    (
+        $name:ident(
+            $($param_ident:ident: $param_ty:ty),*
+        ) -> {
+            $($js_side:tt)*
+        } -> $rust_ret_type:ty
+    ) => (
+        pub fn $name(
+            $($param_ident: $param_ty),*
+        ) -> $rust_ret_type {
+            js_unwrap_ref!($($js_side)*)
+        }
+    )
+}
+
 /// Macro used to encapsulate all screeps game objects
-/// 
-/// Macro syntax: 
-/// reference_wrapper!{
-///     $obj1,
-///     $obj2,
-///     ...
+///
+/// Macro syntax:
+///
+/// ```
+/// reference_wrapper! {
+///     #[reference(instance_of = "Creep")]
+///     Creep,
+///     #[reference(instance_of = "Room")],
+///     Room,
+///     // ...
 /// }
-/// 
+/// ```
+///
 /// Screeps game objects, in javascript, can be accessed via stdweb's `Reference`
 /// object. This macro: 
 ///   - Creates a struct named `objX`;
 ///   - Implements traits `AsRef<Reference>`, `TryFrom<Value>` for `objX`
 ///   - Implements trait `From<objX>` for `Reference`
 macro_rules! reference_wrappers {
-    ($($name:ident),* $(,)*) => {
+    (
         $(
-            #[derive(Clone)]
+            $(#[ $attr:meta ])*
+            $name:ident
+        ),* $(,)*
+    ) => {
+        $(
+            #[derive(Clone, ReferenceType)]
+            $(
+                #[$attr]
+            )*
             pub struct $name(Reference);
-
-            impl AsRef<Reference> for $name {
-                fn as_ref(&self) -> &Reference {
-                    &self.0
-                }
-            }
-            impl From<$name> for Reference {
-                fn from(wrapper: $name) -> Reference {
-                    wrapper.0
-                }
-            }
-            impl TryFrom<Value> for $name {
-                type Error = ::ConversionError;
-
-                fn try_from(v: Value) -> Result<$name, Self::Error> {
-                    Ok($name(v.try_into()?))
-                }
-            }
         )*
     };
 }

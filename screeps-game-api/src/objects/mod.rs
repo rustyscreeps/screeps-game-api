@@ -13,7 +13,7 @@
 //! do anything mischievous, like removing properties from objects or sticking
 //! unexpected things into dictionaries which we trust.
 use stdweb::unstable::{TryFrom, TryInto};
-use stdweb::{Reference, Value};
+use stdweb::{Reference, ReferenceType, Value};
 
 use {ResourceType, ReturnCode, StructureType, ConversionError};
 
@@ -29,38 +29,70 @@ pub use self::impls::{
 };
 
 reference_wrappers!(
+    #[reference(instance_of = "ConstructionSite")]
     ConstructionSite,
+    #[reference(instance_of = "Creep")]
     Creep,
+    #[reference(instance_of = "Flag")]
     Flag,
+    #[reference(instance_of = "Mineral")]
     Mineral,
+    #[reference(instance_of = "Nuke")]
     Nuke,
+    #[reference(instance_of = "OwnedStructure")]
     OwnedStructure,
+    #[reference(instance_of = "Resource")]
     Resource,
+    #[reference(instance_of = "Room")]
     Room,
+    #[reference(instance_of = "RoomObject")]
     RoomObject,
+    #[reference(instance_of = "RoomPosition")]
     RoomPosition,
+    #[reference(instance_of = "Source")]
     Source,
+    #[reference(instance_of = "StructureContainer")]
     StructureContainer,
+    #[reference(instance_of = "StructureController")]
     StructureController,
+    #[reference(instance_of = "StructureExtension")]
     StructureExtension,
+    #[reference(instance_of = "StructureExtractor")]
     StructureExtractor,
+    #[reference(instance_of = "StructureKeeperLair")]
     StructureKeeperLair,
+    #[reference(instance_of = "StructureLab")]
     StructureLab,
+    #[reference(instance_of = "StructureLink")]
     StructureLink,
+    #[reference(instance_of = "StructureNuker")]
     StructureNuker,
+    #[reference(instance_of = "StructureObserver")]
     StructureObserver,
+    #[reference(instance_of = "StructurePowerBank")]
     StructurePowerBank,
+    #[reference(instance_of = "StructurePowerSpawn")]
     StructurePowerSpawn,
+    #[reference(instance_of = "StructurePortal")]
     StructurePortal,
+    #[reference(instance_of = "StructureRampart")]
     StructureRampart,
+    #[reference(instance_of = "StructureRoad")]
     StructureRoad,
+    #[reference(instance_of = "StructureSpawn")]
     StructureSpawn,
+    #[reference(instance_of = "StructureStorage")]
     StructureStorage,
+    #[reference(instance_of = "StructureTerminal")]
     StructureTerminal,
+    #[reference(instance_of = "StructureTower")]
     StructureTower,
+    #[reference(instance_of = "StructureWall")]
     StructureWall,
     // this is implemented later
-    //    Structure,
+    // #[reference(instance_of = "Structure")]
+    // Structure,
+    #[reference(instance_of = "Tombstone")]
     Tombstone,
 );
 
@@ -179,6 +211,47 @@ unsafe impl RoomObjectProperties for Structure {
             Some(Self::from_reference(obj.0))
         } else {
             None
+        }
+    }
+}
+
+/// Trait for casting api results which we expect to be the right thing as long as all JS code is
+/// behaving as expected.
+///
+/// This trait allows us to switch between checked and unchecked casts at compile time with the
+/// `"check-all-casts"` feature flag.
+pub(crate) trait CastExpectedType<T> {
+    /// Casts this value as the target type, making the assumption that the types are correct.
+    ///
+    /// # Error conditions
+    ///
+    /// If the types don't match up, and `"check-all-casts"` is enabled, this will return an error.
+    ///
+    /// If this is a non-`Reference` `Value`, this will return an error.
+    fn cast_expected_type(self) -> Result<T, ConversionError>;
+}
+
+impl<T> CastExpectedType<T> for Value
+where
+    Reference: CastExpectedType<T>,
+{
+    fn cast_expected_type(self) -> Result<T, ConversionError> {
+        Reference::try_from(self).and_then(|reference| reference.cast_expected_type())
+    }
+}
+
+impl<T> CastExpectedType<T> for Reference
+where
+    T: ReferenceType,
+{
+    fn cast_expected_type(self) -> Result<T, ConversionError> {
+        #[cfg(feature = "check-all-casts")]
+        {
+            unsafe { T::try_from(self) }
+        }
+        #[cfg(not(feature = "check-all-casts"))]
+        {
+            unsafe { Ok(T::from_reference_unchecked(self)) }
         }
     }
 }
