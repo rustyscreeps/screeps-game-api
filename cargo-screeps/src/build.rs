@@ -6,7 +6,7 @@ use std::{
     process,
 };
 
-use setup::Configuration;
+use config::Configuration;
 
 use {failure, regex};
 
@@ -40,8 +40,7 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
             "build",
             "--target=wasm32-unknown-unknown",
             "--release",
-        ])
-        .current_dir(root)
+        ]).current_dir(root)
         .spawn()?
         .wait()?;
     if !cargo_success.success() {
@@ -96,7 +95,7 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 
     fs::create_dir_all(&out_dir)?;
 
-    fs::copy(wasm_file, out_dir.join(&config.output_wasm_file))?;
+    fs::copy(wasm_file, out_dir.join(&config.build.output_wasm_file))?;
 
     debug!("processing js file");
 
@@ -109,10 +108,10 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
     let processed_js = process_js(
         &generated_js,
         &generated_js_contents,
-        &config.output_wasm_file,
+        &config.build.output_wasm_file,
     )?;
 
-    let out_file = out_dir.join(&config.output_js_file);
+    let out_file = out_dir.join(&config.build.output_js_file);
 
     debug!("writing to {}", out_file.display());
 
@@ -213,8 +212,7 @@ if( typeof Rust === "undefined" ) {
                 "expected output_wasm_file ending in a filename, but found {}",
                 wasm_filename.display()
             )
-        })?
-        .to_str()
+        })?.to_str()
         .ok_or_else(|| {
             format_err!(
                 "expected output_wasm_file with UTF8 filename, but found {}",

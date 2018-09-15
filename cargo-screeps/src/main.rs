@@ -6,6 +6,7 @@ extern crate failure;
 extern crate fern;
 #[macro_use]
 extern crate log;
+extern crate pathdiff;
 extern crate regex;
 extern crate reqwest;
 extern crate serde;
@@ -13,47 +14,28 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+extern crate serde_ignored;
 extern crate toml;
 
 mod build;
+mod config;
+mod copy;
 mod orientation;
+mod run;
 mod setup;
 mod upload;
 
-fn run() -> Result<(), failure::Error> {
-    let state = setup::setup_cli()?;
-
-    let root = orientation::find_project_root()?;
-
-    let config = setup::Configuration::setup(&root)?;
-
-    match state {
-        setup::CliState::Build => {
-            info!("compiling...");
-            build::build(&root, &config)?;
-            info!("compiled.");
-        }
-        setup::CliState::BuildUpload => {
-            info!("compiling...");
-            build::build(&root, &config)?;
-            info!("compiled. uploading...");
-            upload::upload(&root, config)?;
-            info!("uploaded.");
-        }
-        setup::CliState::Check => {
-            info!("checking...");
-            build::check(&root)?;
-            info!("checked.");
-        }
-    }
-
-    Ok(())
-}
-
 fn main() {
-    if let Err(e) = run() {
-        eprintln!("{}", e.backtrace());
+    if let Err(e) = run::run() {
         eprintln!("error: {}", e);
+        for cause in e.iter_causes() {
+            eprintln!("  ⬑ {}", cause);
+        }
+        let backtrace = format!("{}", e.backtrace());
+        // don't print an empty backspace line if it's not enabled.
+        if backtrace.trim() != "" {
+            eprintln!("{}", backtrace);
+        }
         std::process::exit(1);
     }
 }

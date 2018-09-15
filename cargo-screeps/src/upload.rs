@@ -1,13 +1,14 @@
-use std::collections::HashMap;
-use std::fs;
-use std::io::Read;
-use std::path::Path;
+use std::{collections::HashMap, fs, io::Read, path::Path};
 
 use {base64, failure, reqwest, serde_json};
 
-use setup::Configuration;
+use config::Configuration;
 
-pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> {
+pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error> {
+    let upload_config = config.upload.as_ref().ok_or_else(|| {
+        format_err!("must include [upload] section in configuration to deploy using upload")
+    })?;
+
     let target_dir = root.join("target");
 
     let mut files = HashMap::new();
@@ -43,10 +44,10 @@ pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> 
 
     let url = format!(
         "{}://{}:{}/{}",
-        if config.ssl { "https" } else { "http" },
-        config.hostname,
-        config.port,
-        if config.ptr {
+        if upload_config.ssl { "https" } else { "http" },
+        upload_config.hostname,
+        upload_config.port,
+        if upload_config.ptr {
             "ptr/api/user/code"
         } else {
             "api/user/code"
@@ -61,13 +62,12 @@ pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> 
 
     let mut response = client
         .post(&*url)
-        .basic_auth(config.username, Some(config.password))
+        .basic_auth(&*upload_config.username, Some(&*upload_config.password))
         .header(reqwest::header::ContentType::json())
         .body(serde_json::to_string(&RequestData {
             modules: files,
-            branch: config.branch.clone(),
-        })?)
-        .send()?;
+            branch: upload_config.branch.clone(),
+        })?).send()?;
 
     let response_text = response.text()?;
 
@@ -86,7 +86,7 @@ pub fn upload(root: &Path, config: Configuration) -> Result<(), failure::Error> 
     if let Some(s) = response_json.get("error") {
         bail!(
             "error sending to branch '{}' of '{}': {}",
-            config.branch,
+            upload_config.branch,
             response.url(),
             s
         );
