@@ -1,11 +1,12 @@
-use failure::{self, ResultExt};
-
-use toml;
-
 use std::{
+    collections::BTreeSet,
     fs,
     path::{Path, PathBuf},
 };
+
+use failure::{self, ResultExt};
+use serde_ignored;
+use toml;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct BuildConfiguration {
@@ -151,8 +152,16 @@ impl Configuration {
             buf
         };
 
+        let mut unused_paths = BTreeSet::new();
+
         let file_config: FileConfiguration =
-            toml::from_str(&config_str).context("deserializing config")?;
+            serde_ignored::deserialize(&mut toml::Deserializer::new(&config_str), |unused_path| {
+                unused_paths.insert(unused_path.to_string());
+            }).context("deserializing config")?;
+
+        for path in &unused_paths {
+            warn!("unused configuration path: {}", path)
+        }
 
         Configuration::new(file_config)
     }
