@@ -1,7 +1,11 @@
-use std::{io, path::PathBuf, process};
+use std::{io, path::PathBuf};
 
-use {clap, failure, fern, log};
+use {
+    clap::{self, AppSettings},
+    failure, fern, log,
+};
 
+#[derive(Clone, Debug)]
 pub struct CliConfig {
     pub command: Command,
     pub config_path: Option<PathBuf>,
@@ -19,11 +23,13 @@ pub enum Command {
 fn app() -> clap::App<'static, 'static> {
     clap::App::new("cargo screeps")
         .bin_name("cargo")
+        .setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(
             clap::SubCommand::with_name("screeps")
                 .author("David Ross")
                 .version(crate_version!())
                 .about("Builds WASM-targetting Rust code and deploys to Screeps game servers")
+                .setting(AppSettings::ArgRequiredElseHelp)
                 .arg(
                     clap::Arg::with_name("verbose")
                         .short("v")
@@ -81,10 +87,7 @@ pub fn setup_cli() -> Result<CliConfig, failure::Error> {
         Some("deploy") => Command::Deploy,
         Some("copy") => Command::Copy,
         Some("upload") => Command::Upload,
-        _ => {
-            app().print_help()?;
-            process::exit(1);
-        }
+        other => panic!("unexpected subcommand {:?}", other),
     };
     let config = CliConfig {
         command,
