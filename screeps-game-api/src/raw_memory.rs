@@ -1,4 +1,12 @@
 //! Interface for Screeps `RawMemory` global object.
+#[derive(Deserialize, Debug)]
+pub struct ForeignSegment {
+    username: String,
+    id: String,
+    data: String
+}
+
+js_deserializable!(ForeignSegment);
 
 get_from_js!(get_active_segments -> { 
     Object.keys(RawMemory.segments).map(Number) 
@@ -25,17 +33,17 @@ pub fn set_segment(id: i32, data: &str) {
     }
 }
 
-get_from_js!(foreign_segment_username -> {
-    RawMemory.foreignSegment && RawMemory.foreignSegment.username
-} -> Option<String>);
+// pub fn get_foreign_segment() -> ForeignSegment {
+//     let v = js! {
+//         return RawMemory.foreignSegment;
+//     };
+    
+//     v.try_into().unwrap()
+// }
 
-get_from_js!(foreign_segment_id -> {
-    RawMemory.foreignSegment && RawMemory.foreignSegment.id
-} -> Option<i32>);
-
-get_from_js!(foreign_segment_data -> {
-    RawMemory.foreignSegment && RawMemory.foreignSegment.data
-} -> Option<String>);
+get_from_js!(get_foreign_segment -> {
+    RawMemory.foreignSegment
+} -> ForeignSegment);
 
 /// Implements `RawMemory.setActiveForeignSegment`
 /// 
