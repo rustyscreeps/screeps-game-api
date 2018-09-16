@@ -143,7 +143,7 @@ impl MemoryReference {
 
     pub fn dict(&self, key: &str) -> Result<Option<MemoryReference>, ConversionError> {
         (js! {
-            return _.get(@{self.as_ref()}, @{key});
+            return (@{self.as_ref()})[@{key}];
         }).try_into()
     }
 
@@ -209,7 +209,7 @@ impl MemoryReference {
         }
     }
 
-    pub fn arr<T: TryFrom<Value, Error = ConversionError>>(&self, key: &str) -> Result<Option<Vec<T>>, ConversionError>
+    pub fn arr<T>(&self, key: &str) -> Result<Option<Vec<T>>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
@@ -218,7 +218,7 @@ impl MemoryReference {
         }).try_into()
     }
 
-    pub fn path_arr<T: TryFrom<Value, Error = ConversionError>>(&self, path: &str) -> Result<Option<Vec<T>>, ConversionError>
+    pub fn path_arr<T>(&self, path: &str) -> Result<Option<Vec<T>>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
