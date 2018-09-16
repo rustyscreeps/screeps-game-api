@@ -511,7 +511,12 @@ unsafe impl CanDecay for StructureRampart {}
 unsafe impl CanDecay for StructureRoad {}
 unsafe impl CanDecay for Tombstone {}
 
-simple_accessors!{
+simple_accessors! {
     StructureKeeperLair;
     (ticks_to_spawn -> ticksToSpawn -> u32),
+}
+
+simple_accessors! {
+    StructurePowerBank;
+    (power -> power -> u32),
 }
