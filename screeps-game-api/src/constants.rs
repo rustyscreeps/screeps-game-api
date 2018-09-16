@@ -220,6 +220,26 @@ enum_from_primitive! {
     }
 }
 
+impl From<Color> for i32 {
+    fn from(c: Color) -> i32 {
+        c as i32
+    }
+}
+
+impl TryFrom<Value> for Color {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<Self, Self::Error> {
+        use num_traits::FromPrimitive;
+
+        let as_num = i32::try_from(v)?;
+
+        Ok(Self::from_i32(as_num).unwrap_or_else(|| {
+            panic!("encountered a color code we don't know: {}", as_num);
+        }))
+    }
+}
+
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Terrain {
@@ -620,10 +640,30 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 
 // TODO: MINERAL_* constants
 
-pub const DENSITY_LOW: i32 = 1;
-pub const DENSITY_MODERATE: i32 = 2;
-pub const DENSITY_HIGH: i32 = 3;
-pub const DENSITY_ULTRA: i32 = 4;
+enum_from_primitive! {
+    #[repr(i32)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    pub enum Density {
+        DensityLow = 1,
+        DensityModerate = 2,
+        DensityHigh = 3,
+        DensityUltra = 4,
+    }
+}
+
+impl TryFrom<Value> for Density {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<Self, Self::Error> {
+        use num_traits::FromPrimitive;
+
+        let as_num = i32::try_from(v)?;
+
+        Ok(Self::from_i32(as_num).unwrap_or_else(|| {
+            panic!("encountered a color code we don't know: {}", as_num);
+        }))
+    }
+}
 
 pub const TERMINAL_CAPACITY: i32 = 300000;
 pub const TERMINAL_HITS: i32 = 3000;
