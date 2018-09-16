@@ -491,3 +491,8 @@ unsafe impl HasCooldown for StructureLab {}
 unsafe impl HasCooldown for StructureLink {}
 unsafe impl HasCooldown for StructureNuker {}
 unsafe impl HasCooldown for StructureTerminal {}
+
+simple_accessors!{
+    StructureKeeperLair;
+    (ticks_to_spawn -> ticksToSpawn -> u32),
+}
