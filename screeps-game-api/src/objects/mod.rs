@@ -225,12 +225,6 @@ pub unsafe trait RoomObjectProperties:
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `Structure` class.
 pub unsafe trait StructureProperties: RoomObjectProperties {
-    fn hits(&self) -> i32 {
-        js_unwrap!(@{self.as_ref()}.hits)
-    }
-    fn hits_max(&self) -> i32 {
-        js_unwrap!(@{self.as_ref()}.hitsMax)
-    }
     fn id(&self) -> String {
         js_unwrap!(@{self.as_ref()}.id)
     }
@@ -379,7 +373,15 @@ pub unsafe trait Withdrawable: RoomObjectProperties {}
 ///
 /// The reference returned from `AsRef<Reference>::as_ref` must be a valid
 /// target for `Creep.attack`.
-pub unsafe trait Attackable: RoomObjectProperties {}
+pub unsafe trait Attackable: RoomObjectProperties {
+    fn hits(&self) -> u32 {
+        js_unwrap!{ @{self.as_ref()}.hits }
+    }
+
+    fn hits_max(&self) -> u32 {
+        js_unwrap!{ @{self.as_ref()}.hitsMax }
+    }
+}
 
 unsafe impl Transferable for StructureExtension {}
 unsafe impl Transferable for Creep {}

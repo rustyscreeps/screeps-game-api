@@ -140,8 +140,6 @@ simple_accessors! {
     (id -> id -> String),
     (carry_capacity -> carryCapacity -> i32),
     (fatigue -> fatigue -> i32),
-    (hits -> hits -> i32),
-    (hits_max -> hitsMax -> i32),
     (name -> name -> String),
     (my -> my -> bool),
     (saying -> saying -> String),
