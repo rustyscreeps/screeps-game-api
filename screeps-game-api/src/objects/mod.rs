@@ -330,6 +330,18 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
     }
 }
 
+/// Trait for objects which have to cooldown.
+/// 
+/// # Contract
+/// 
+/// The reference returned from `AsRef<Reference>::as_ref` must be have a
+/// `cooldown` properties.
+pub unsafe trait HasCooldown: StructureProperties {
+    fn cooldown(&self) -> u32 {
+        js_unwrap! { @{self.as_ref()}.cooldown}
+    }
+}
+
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
 /// target of `Creep.transfer`.
 ///
@@ -473,3 +485,9 @@ unsafe impl CanStoreEnergy for StructureNuker {}
 unsafe impl CanStoreEnergy for StructurePowerSpawn {}
 unsafe impl CanStoreEnergy for StructureSpawn {}
 unsafe impl CanStoreEnergy for StructureTower {}
+
+unsafe impl HasCooldown for StructureExtractor {}
+unsafe impl HasCooldown for StructureLab {}
+unsafe impl HasCooldown for StructureLink {}
+unsafe impl HasCooldown for StructureNuker {}
+unsafe impl HasCooldown for StructureTerminal {}
