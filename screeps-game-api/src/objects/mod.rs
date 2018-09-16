@@ -322,11 +322,11 @@ pub unsafe trait HasStore: RoomObjectProperties {
 /// `energy` and an `energyCapacity` properties.
 pub unsafe trait CanStoreEnergy: StructureProperties {
     fn energy(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.energy}
+        js_unwrap! { @{self.as_ref()}.energy }
     }
 
     fn energy_capacity(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.energyCapacity}
+        js_unwrap! { @{self.as_ref()}.energyCapacity }
     }
 }
 
@@ -338,7 +338,19 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
 /// `cooldown` properties.
 pub unsafe trait HasCooldown: StructureProperties {
     fn cooldown(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.cooldown}
+        js_unwrap! { @{self.as_ref()}.cooldown }
+    }
+}
+
+/// Trait for objects which can decay.
+/// 
+/// # Contract
+/// 
+/// The reference returned from `AsRef<Reference>::as_ref` must be have a
+/// `ticksToDecay` properties.
+pub unsafe trait CanDecay: RoomObjectProperties {
+    fn ticks_to_decay(&self) -> u32 {
+        js_unwrap! { @{self.as_ref()}.ticksToDecay }
     }
 }
 
@@ -491,6 +503,13 @@ unsafe impl HasCooldown for StructureLab {}
 unsafe impl HasCooldown for StructureLink {}
 unsafe impl HasCooldown for StructureNuker {}
 unsafe impl HasCooldown for StructureTerminal {}
+
+unsafe impl CanDecay for StructureContainer {}
+unsafe impl CanDecay for StructurePowerBank {}
+unsafe impl CanDecay for StructurePortal {}
+unsafe impl CanDecay for StructureRampart {}
+unsafe impl CanDecay for StructureRoad {}
+unsafe impl CanDecay for Tombstone {}
 
 simple_accessors!{
     StructureKeeperLair;
