@@ -33,14 +33,6 @@ pub fn set_segment(id: i32, data: &str) {
     }
 }
 
-// pub fn get_foreign_segment() -> ForeignSegment {
-//     let v = js! {
-//         return RawMemory.foreignSegment;
-//     };
-    
-//     v.try_into().unwrap()
-// }
-
 get_from_js!(get_foreign_segment -> {
     RawMemory.foreignSegment
 } -> ForeignSegment);
