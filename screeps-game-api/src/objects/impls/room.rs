@@ -92,11 +92,13 @@ impl Room {
     }
 
     /// Unimplemented
+    #[allow(unused_variables)]
     pub fn look_at(&self, x: u32, y: u32) -> ! {
         unimplemented!()
     }
 
     /// Unimplemented
+    #[allow(unused_variables)]
     pub fn look_at_area(&self, top: u32, left: u32, bottom: u32, right: u32) -> ! {
         unimplemented!()
     }
