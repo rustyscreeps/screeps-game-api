@@ -63,7 +63,7 @@ impl TryFrom<i32> for ReturnCode {
 }
 
 pub unsafe trait FindConstant {
-    type Item: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error> + AsRef<Reference>;
+    type Item: TryFrom<Value, Error = ConversionError> + AsRef<Reference>;
 
     fn find_code(&self) -> i32;
 }
@@ -190,7 +190,7 @@ enum_from_primitive! {
 }
 
 impl TryFrom<Value> for Direction {
-    type Error = <u32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         use num_traits::FromPrimitive;
@@ -249,7 +249,7 @@ pub enum Terrain {
 }
 
 impl TryFrom<Value> for Terrain {
-    type Error = <u32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let v = match v {
@@ -384,7 +384,7 @@ impl TryFrom<u32> for Part {
 }
 
 impl TryFrom<Value> for Part {
-    type Error = <Value as TryInto<u32>>::Error;
+    type Error = ConversionError;
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: u32 = v.try_into()?;
         Ok(Self::try_from(x)
@@ -544,7 +544,7 @@ impl StructureType {
 }
 
 impl TryFrom<Value> for StructureType {
-    type Error = <i32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: i32 = v.try_into()?;
@@ -873,7 +873,7 @@ impl ResourceType {
 }
 
 impl TryFrom<Value> for ResourceType {
-    type Error = <i32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: i32 = v.try_into()?;
@@ -924,4 +924,58 @@ impl TryFrom<Value> for ResourceType {
             _ => panic!("unknown resource type integer {}", x),
         })
     }
+}
+
+impl TryFrom<String> for ResourceType {
+    type Error = String;
+
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        use ResourceType::*;
+        match s.as_ref() {
+            "energy" => Ok(Energy),
+            "power" => Ok(Power),
+            "H" => Ok(Hydrogen),
+            "O" => Ok(Oxygen),
+            "U" => Ok(Utrium),
+            "L" => Ok(Lemergium),
+            "K" => Ok(Keanium),
+            "Z" => Ok(Zynthium),
+            "X" => Ok(Catalyst),
+            "G" => Ok(Ghodium),
+            "OH" => Ok(Hydroxide),
+            "ZK" => Ok(ZynthiumKeanite),
+            "UL" => Ok(UtriumLemergite),
+            "UH" => Ok(UtriumHydride),
+            "UO" => Ok(UtriumOxide),
+            "KH" => Ok(KeaniumHydride),
+            "KO" => Ok(KeaniumOxide),
+            "LH" => Ok(LemergiumHydride),
+            "LO" => Ok(LemergiumOxide),
+            "ZH" => Ok(ZynthiumHydride),
+            "ZO" => Ok(ZynthiumOxide),
+            "GH" => Ok(GhodiumHydride),
+            "GO" => Ok(GhodiumOxide),
+            "UH2O" => Ok(UtriumAcid),
+            "UHO2" => Ok(UtriumAlkalide),
+            "KH2O" => Ok(KeaniumAcid),
+            "KHO2" => Ok(KeaniumAlkalide),
+            "LH2O" => Ok(LemergiumAcid),
+            "LHO2" => Ok(LemergiumAlkalide),
+            "ZH2O" => Ok(ZynthiumAcid),
+            "ZHO2" => Ok(ZynthiumAlkalide),
+            "GH2O" => Ok(GhodiumAcid),
+            "GHO2" => Ok(GhodiumAlkalide),
+            "XUH2O" => Ok(CatalyzedUtriumAcid),
+            "XUHO2" => Ok(CatalyzedUtriumAlkalide),
+            "XKH2O" => Ok(CatalyzedKeaniumAcid),
+            "XKHO2" => Ok(CatalyzedKeaniumAlkalide),
+            "XLH2O" => Ok(CatalyzedLemergiumAcid),
+            "XLHO2" => Ok(CatalyzedLemergiumAlkalide),
+            "XZH2O" => Ok(CatalyzedZynthiumAcid),
+            "XZHO2" => Ok(CatalyzedZynthiumAlkalide),
+            "XGH2O" => Ok(CatalyzedGhodiumAcid),
+            "XGHO2" => Ok(CatalyzedGhodiumAlkalide),
+            _ => Err(s)
+        }
+    } 
 }
