@@ -314,6 +314,22 @@ pub unsafe trait HasStore: RoomObjectProperties {
     }
 }
 
+/// Trait for objects which can only store energy.
+/// 
+/// # Contract
+/// 
+/// The reference returned from `AsRef<Reference>::as_ref` must be have an 
+/// `energy` and an `energyCapacity` properties.
+pub unsafe trait CanStoreEnergy: StructureProperties {
+    fn energy(&self) -> u32 {
+        js_unwrap! { @{self.as_ref()}.energy}
+    }
+
+    fn energy_capacity(&self) -> u32 {
+        js_unwrap! { @{self.as_ref()}.energyCapacity}
+    }
+}
+
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
 /// target of `Creep.transfer`.
 ///
@@ -449,3 +465,11 @@ unsafe impl HasStore for Tombstone {
         0 // no storeCapacity property
     }
 }
+
+unsafe impl CanStoreEnergy for StructureExtension {}
+unsafe impl CanStoreEnergy for StructureLab {}
+unsafe impl CanStoreEnergy for StructureLink {}
+unsafe impl CanStoreEnergy for StructureNuker {}
+unsafe impl CanStoreEnergy for StructurePowerSpawn {}
+unsafe impl CanStoreEnergy for StructureSpawn {}
+unsafe impl CanStoreEnergy for StructureTower {}
