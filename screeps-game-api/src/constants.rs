@@ -711,14 +711,12 @@ pub enum ResourceType {
     Catalyst = 9,
     /// `"G"`
     Ghodium = 10,
-
     /// `"OH"`
     Hydroxide = 11,
     /// `"ZK"`
     ZynthiumKeanite = 12,
     /// `"UL"`
     UtriumLemergite = 13,
-
     /// `"UH"`
     UtriumHydride = 14,
     /// `"UO"`
@@ -821,6 +819,55 @@ impl ResourceType {
             GhodiumOxide => 10,
             GhodiumAlkalide => 15,
             CatalyzedGhodiumAlkalide => 90,
+        }
+    }
+
+    pub fn to_string(&self) -> String {
+        use ResourceType::*;
+        match *self {
+            Energy => "energy".to_owned(),
+            Power => "power".to_owned(),
+            Hydrogen =>"H".to_owned(),
+            Oxygen =>"O".to_owned(),
+            Utrium =>"U".to_owned(),
+            Lemergium =>"L".to_owned(),
+            Keanium =>"K".to_owned(),
+            Zynthium =>"Z".to_owned(),
+            Catalyst =>"X".to_owned(),
+            Ghodium =>"G".to_owned(),
+            Hydroxide =>"OH".to_owned(),
+            ZynthiumKeanite =>"ZK".to_owned(),
+            UtriumLemergite =>"UL".to_owned(),
+            UtriumHydride =>"UH".to_owned(),
+            UtriumOxide =>"UO".to_owned(),
+            KeaniumHydride =>"KH".to_owned(),
+            KeaniumOxide =>"KO".to_owned(),
+            LemergiumHydride =>"LH".to_owned(),
+            LemergiumOxide =>"LO".to_owned(),
+            ZynthiumHydride =>"ZH".to_owned(),
+            ZynthiumOxide =>"ZO".to_owned(),
+            GhodiumHydride =>"GH".to_owned(),
+            GhodiumOxide =>"GO".to_owned(),
+            UtriumAcid =>"UH2O".to_owned(),
+            UtriumAlkalide =>"UHO2".to_owned(),
+            KeaniumAcid =>"KH2O".to_owned(),
+            KeaniumAlkalide =>"KHO2".to_owned(),
+            LemergiumAcid =>"LH2O".to_owned(),
+            LemergiumAlkalide =>"LHO2".to_owned(),
+            ZynthiumAcid =>"ZH2O".to_owned(),
+            ZynthiumAlkalide =>"ZHO2".to_owned(),
+            GhodiumAcid =>"GH2O".to_owned(),
+            GhodiumAlkalide =>"GHO2".to_owned(),
+            CatalyzedUtriumAcid =>"XUH2O".to_owned(),
+            CatalyzedUtriumAlkalide =>"XUHO2".to_owned(),
+            CatalyzedKeaniumAcid =>"XKH2O".to_owned(),
+            CatalyzedKeaniumAlkalide =>"XKHO2".to_owned(),
+            CatalyzedLemergiumAcid =>"XLH2O".to_owned(),
+            CatalyzedLemergiumAlkalide =>"XLHO2".to_owned(),
+            CatalyzedZynthiumAcid =>"XZH2O".to_owned(),
+            CatalyzedZynthiumAlkalide =>"XZHO2".to_owned(),
+            CatalyzedGhodiumAcid =>"XGH2O".to_owned(),
+            CatalyzedGhodiumAlkalide =>"XGHO2".to_owned(),
         }
     }
 }
