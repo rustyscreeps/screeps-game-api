@@ -13,7 +13,7 @@
 //! do anything mischievous, like removing properties from objects or sticking
 //! unexpected things into dictionaries which we trust.
 use stdweb::unstable::{TryFrom, TryInto};
-use stdweb::{Reference, ReferenceType, Value};
+use stdweb::{Reference, Value};
 
 use {ResourceType, ReturnCode, StructureType, ConversionError};
 
@@ -118,8 +118,6 @@ pub enum Structure {
     Wall(StructureWall),
 }
 
-impl_cast_expected_reference!(Structure);
-
 impl AsRef<Reference> for Structure {
     fn as_ref(&self) -> &Reference {
         match *self {
@@ -171,30 +169,29 @@ impl From<Structure> for Reference {
     }
 }
 
-impl CastExpectedType<Structure> for Reference
-{
-    fn cast_expected_type(self) -> Result<Structure, ConversionError> {
-        let structure_type = js_unwrap!(@{&self}.structureType);
+impl FromExpectedType<Reference> for Structure {
+    fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
+        let structure_type = js_unwrap!(@{&reference}.structureType);
         let structure = match structure_type {
-            StructureType::Container => Structure::Container(self.cast_expected_type()?),
-            StructureType::Controller => Structure::Controller(self.cast_expected_type()?),
-            StructureType::Extension => Structure::Extension(self.cast_expected_type()?),
-            StructureType::Extractor => Structure::Extractor(self.cast_expected_type()?),
-            StructureType::KeeperLair => Structure::KeeperLair(self.cast_expected_type()?),
-            StructureType::Lab => Structure::Lab(self.cast_expected_type()?),
-            StructureType::Link => Structure::Link(self.cast_expected_type()?),
-            StructureType::Nuker => Structure::Nuker(self.cast_expected_type()?),
-            StructureType::Observer => Structure::Observer(self.cast_expected_type()?),
-            StructureType::PowerBank => Structure::PowerBank(self.cast_expected_type()?),
-            StructureType::PowerSpawn => Structure::PowerSpawn(self.cast_expected_type()?),
-            StructureType::Portal => Structure::Portal(self.cast_expected_type()?),
-            StructureType::Rampart => Structure::Rampart(self.cast_expected_type()?),
-            StructureType::Road => Structure::Road(self.cast_expected_type()?),
-            StructureType::Spawn => Structure::Spawn(self.cast_expected_type()?),
-            StructureType::Storage => Structure::Storage(self.cast_expected_type()?),
-            StructureType::Terminal => Structure::Terminal(self.cast_expected_type()?),
-            StructureType::Tower => Structure::Tower(self.cast_expected_type()?),
-            StructureType::Wall => Structure::Wall(self.cast_expected_type()?),
+            StructureType::Container => Structure::Container(reference.into_expected_type()?),
+            StructureType::Controller => Structure::Controller(reference.into_expected_type()?),
+            StructureType::Extension => Structure::Extension(reference.into_expected_type()?),
+            StructureType::Extractor => Structure::Extractor(reference.into_expected_type()?),
+            StructureType::KeeperLair => Structure::KeeperLair(reference.into_expected_type()?),
+            StructureType::Lab => Structure::Lab(reference.into_expected_type()?),
+            StructureType::Link => Structure::Link(reference.into_expected_type()?),
+            StructureType::Nuker => Structure::Nuker(reference.into_expected_type()?),
+            StructureType::Observer => Structure::Observer(reference.into_expected_type()?),
+            StructureType::PowerBank => Structure::PowerBank(reference.into_expected_type()?),
+            StructureType::PowerSpawn => Structure::PowerSpawn(reference.into_expected_type()?),
+            StructureType::Portal => Structure::Portal(reference.into_expected_type()?),
+            StructureType::Rampart => Structure::Rampart(reference.into_expected_type()?),
+            StructureType::Road => Structure::Road(reference.into_expected_type()?),
+            StructureType::Spawn => Structure::Spawn(reference.into_expected_type()?),
+            StructureType::Storage => Structure::Storage(reference.into_expected_type()?),
+            StructureType::Terminal => Structure::Terminal(reference.into_expected_type()?),
+            StructureType::Tower => Structure::Tower(reference.into_expected_type()?),
+            StructureType::Wall => Structure::Wall(reference.into_expected_type()?),
         };
 
         Ok(structure)
@@ -236,13 +233,17 @@ impl TryFrom<Value> for Structure {
     }
 }
 
+/// See [`IntoExpectedType`]
+pub trait FromExpectedType<T>: Sized {
+    fn from_expected_type(v: T) -> Result<Self, ConversionError>;
+}
 
 /// Trait for casting api results which we expect to be the right thing as long as all JS code is
 /// behaving as expected.
 ///
 /// This trait allows us to switch between checked and unchecked casts at compile time with the
 /// `"check-all-casts"` feature flag.
-pub(crate) trait CastExpectedType<T> {
+pub trait IntoExpectedType<T> {
     /// Casts this value as the target type, making the assumption that the types are correct.
     ///
     /// # Error conditions
@@ -250,22 +251,52 @@ pub(crate) trait CastExpectedType<T> {
     /// If the types don't match up, and `"check-all-casts"` is enabled, this will return an error.
     ///
     /// If this is a non-`Reference` `Value`, this will return an error.
-    fn cast_expected_type(self) -> Result<T, ConversionError>;
+    fn into_expected_type(self) -> Result<T, ConversionError>;
 }
 
-impl<T> CastExpectedType<T> for Reference
+impl<T> FromExpectedType<Value> for T
 where
-    T: ReferenceType,
+    T: FromExpectedType<Reference>,
 {
-    fn cast_expected_type(self) -> Result<T, ConversionError> {
-        #[cfg(feature = "check-all-casts")]
-        {
-            unsafe { T::try_from(self) }
-        }
-        #[cfg(not(feature = "check-all-casts"))]
-        {
-            unsafe { Ok(T::from_reference_unchecked(self)) }
-        }
+    fn from_expected_type(v: Value) -> Result<Self, ConversionError> {
+        Reference::try_from(v).and_then(|reference| reference.into_expected_type())
+    }
+}
+
+impl<T> FromExpectedType<Value> for Option<T>
+where
+    T: FromExpectedType<Reference>,
+{
+    fn from_expected_type(v: Value) -> Result<Self, ConversionError> {
+        <Option<Reference>>::try_from(v).and_then(|opt_reference| {
+            opt_reference
+                .map(|reference| reference.into_expected_type().map(Some))
+                .unwrap_or(Ok(None))
+        })
+    }
+}
+
+// TODO: this is inefficient
+impl<T> FromExpectedType<Value> for Vec<T>
+where
+    T: FromExpectedType<Reference>,
+{
+    fn from_expected_type(v: Value) -> Result<Self, ConversionError> {
+        <Vec<Reference>>::try_from(v).and_then(|ref_vec| {
+            ref_vec
+                .into_iter()
+                .map(|reference| reference.into_expected_type())
+                .collect()
+        })
+    }
+}
+
+impl<T, U> IntoExpectedType<U> for T
+where
+    U: FromExpectedType<T>,
+{
+    fn into_expected_type(self) -> Result<U, ConversionError> {
+        U::from_expected_type(self)
     }
 }
 

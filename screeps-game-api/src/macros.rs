@@ -70,7 +70,7 @@ macro_rules! js_unwrap {
 /// [`screeps::Creep`] containing the wrong value which will fail when used.
 macro_rules! js_unwrap_ref {
     ($($code:tt)*) => (
-        ::objects::CastExpectedType::cast_expected_type(js! { return $($code)* })
+        ::objects::IntoExpectedType::into_expected_type(js! { return $($code)* })
             .expect(concat!("js_unwrap_ref at ", line!(), " in ", file!()))
     )
 }
@@ -159,31 +159,16 @@ macro_rules! reference_wrappers {
 
 macro_rules! impl_cast_expected_reference {
     ($name:ident) => {
-        impl CastExpectedType<$name> for Value {
-            fn cast_expected_type(self) -> Result<$name, ConversionError> {
-                Reference::try_from(self).and_then(|reference| reference.cast_expected_type())
-            }
-        }
-
-        impl CastExpectedType<Option<$name>> for Value {
-            fn cast_expected_type(self) -> Result<Option<$name>, ConversionError> {
-                <Option<Reference>>::try_from(self).and_then(|opt_reference| {
-                    opt_reference
-                        .map(|reference| reference.cast_expected_type().map(Some))
-                        .unwrap_or(Ok(None))
-                })
-            }
-        }
-
-        // TODO: this is inefficient
-        impl CastExpectedType<Vec<$name>> for Value {
-            fn cast_expected_type(self) -> Result<Vec<$name>, ConversionError> {
-                <Vec<Reference>>::try_from(self).and_then(|ref_vec| {
-                    ref_vec
-                        .into_iter()
-                        .map(|reference| reference.cast_expected_type())
-                        .collect()
-                })
+        impl FromExpectedType<Reference> for $name {
+            fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
+                #[cfg(feature = "check-all-casts")]
+                {
+                    ::stdweb::unstable::TryFrom::try_from(reference)
+                }
+                #[cfg(not(feature = "check-all-casts"))]
+                {
+                    unsafe { Ok(::stdweb::ReferenceType::from_reference_unchecked(reference)) }
+                }
             }
         }
     };
