@@ -310,13 +310,19 @@ macro_rules! typesafe_find_constants {
 
 macro_rules! typesafe_look_constants {
     (
-        $($constant_name:ident, $value:expr, $result:path;)*
+        $($constant_name:ident, $value:expr, $result:path, $conversion_method:expr;)*
     ) => (
         $(
             #[allow(bad_style)]
             pub struct $constant_name;
             unsafe impl LookConstant for $constant_name {
                 type Item = $result;
+
+                fn convert_and_check_items(reference: ::stdweb::Value) -> Vec<Self::Item> {
+                    ($conversion_method)(reference)
+                        .expect(concat!("LookConstant ", stringify!($constant_name),
+                               "expected correct type at ", line!(), " in ", file!()))
+                }
 
                 fn look_code(&self) -> Look {
                     $value

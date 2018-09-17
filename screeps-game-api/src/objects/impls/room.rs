@@ -103,7 +103,7 @@ impl Room {
     where
         T: FindConstant,
     {
-        js_unwrap!(@{self.as_ref()}.find(@{ty.find_code()}))
+        js_unwrap_ref!(@{self.as_ref()}.find(@{ty.find_code()}))
     }
 
     pub fn find_exit_to(&self, room: &Room) -> Result<Exit, ReturnCode> {
@@ -218,10 +218,10 @@ impl Room {
         U: HasPosition,
     {
         let pos = target.pos();
-        js_unwrap!(@{self.as_ref()}.lookForAt(
+        T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
             __look_num_to_str(@{ty.look_code() as i32}),
             @{pos.as_ref()}
-        ))
+        )))
     }
 
     /// Looks for a given thing over a given area of bounds.
@@ -255,14 +255,14 @@ impl Room {
         assert!(horiz.end <= 50);
         assert!(vert.end <= 50);
 
-        js_unwrap!(@{self.as_ref()}.lookForAtArea(
+        T::convert_and_check_items(js_unwrap!{@{self.as_ref()}.lookForAtArea(
             __look_num_to_str(@{ty.look_code() as i32}),
             @{vert.start},
             @{horiz.start},
             @{vert.end},
             @{horiz.end},
             true
-        ).map((obj) => obj[__look_num_to_str(@{ty.look_code() as i32})]))
+        ).map((obj) => obj[__look_num_to_str(@{ty.look_code() as i32})])})
     }
 
     pub fn memory(&self) -> MemoryReference {

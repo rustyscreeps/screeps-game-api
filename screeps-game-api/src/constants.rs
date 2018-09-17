@@ -4,7 +4,10 @@
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
 
-use {objects::RoomObject, ConversionError};
+use {
+    objects::{FromExpectedType, RoomObject},
+    ConversionError,
+};
 
 enum_from_primitive! {
     #[repr(i32)]
@@ -63,7 +66,7 @@ impl TryFrom<i32> for ReturnCode {
 }
 
 pub unsafe trait FindConstant {
-    type Item: TryFrom<Value, Error = ConversionError> + AsRef<Reference>;
+    type Item: FromExpectedType<Reference>;
 
     fn find_code(&self) -> i32;
 }
@@ -309,7 +312,9 @@ pub enum Look {
 }
 
 pub unsafe trait LookConstant {
-    type Item: TryFrom<Value, Error = ConversionError>;
+    type Item;
+
+    fn convert_and_check_items(reference: Value) -> Vec<Self::Item>;
 
     fn look_code(&self) -> Look;
 }
@@ -322,17 +327,18 @@ pub mod look {
     };
 
     typesafe_look_constants! {
-        CREEPS, Look::Creeps, Creep;
-        ENERGY, Look::Energy, Resource;
-        RESOURCES, Look::Resources, Resource;
-        SOURCES, Look::Sources, Source;
-        MINERALS, Look::Minerals, Mineral;
-        STRUCTURES, Look::Structures, Structure;
-        FLAGS, Look::Flags, Flag;
-        CONSTRUCTION_SITES, Look::ConstructionSites, ConstructionSite;
-        NUKES, Look::Nukes, Nuke;
-        TERRAIN, Look::Terrain, Terrain;
-        TOMBSTONES, Look::Tombstones, Tombstone;
+        CREEPS, Look::Creeps, Creep,  ::objects::IntoExpectedType::into_expected_type;
+        ENERGY, Look::Energy, Resource,  ::objects::IntoExpectedType::into_expected_type;
+        RESOURCES, Look::Resources, Resource,  ::objects::IntoExpectedType::into_expected_type;
+        SOURCES, Look::Sources, Source,  ::objects::IntoExpectedType::into_expected_type;
+        MINERALS, Look::Minerals, Mineral,  ::objects::IntoExpectedType::into_expected_type;
+        STRUCTURES, Look::Structures, Structure,  ::objects::IntoExpectedType::into_expected_type;
+        FLAGS, Look::Flags, Flag,  ::objects::IntoExpectedType::into_expected_type;
+        CONSTRUCTION_SITES, Look::ConstructionSites, ConstructionSite,
+             ::objects::IntoExpectedType::into_expected_type;
+        NUKES, Look::Nukes, Nuke,  ::objects::IntoExpectedType::into_expected_type;
+        TERRAIN, Look::Terrain, Terrain,  ::stdweb::unstable::TryInto::try_into;
+        TOMBSTONES, Look::Tombstones, Tombstone,  ::objects::IntoExpectedType::into_expected_type;
     }
 }
 
