@@ -67,7 +67,7 @@ impl RoomPosition {
     where
         T: FindConstant,
     {
-        js_unwrap_array!(@{self.as_ref()}.findInRange(
+        js_unwrap!(@{self.as_ref()}.findInRange(
             __structure_type_num_to_str(@{ty.find_code()}),
             @{range}
         ))
@@ -112,7 +112,7 @@ impl RoomPosition {
     where
         T: LookConstant,
     {
-        js_unwrap_array!(@{self.as_ref()}.lookFor(__look_num_to_str(@{ty.look_code() as i32})))
+        js_unwrap!(@{self.as_ref()}.lookFor(__look_num_to_str(@{ty.look_code() as i32})))
     }
 }
 
