@@ -67,7 +67,7 @@ impl Room {
     where
         T: FindConstant,
     {
-        js_unwrap_array!(@{self.as_ref()}.find(@{ty.find_code()}))
+        js_unwrap!(@{self.as_ref()}.find(@{ty.find_code()}))
     }
 
     pub fn look_for_at<T, U>(&self, ty: T, target: U) -> Vec<T::Item>
@@ -76,7 +76,7 @@ impl Room {
         U: HasPosition,
     {
         let pos = target.pos();
-        js_unwrap_array!(@{self.as_ref()}.lookForAt(
+        js_unwrap!(@{self.as_ref()}.lookForAt(
             __look_num_to_str(@{ty.look_code() as i32}),
             @{pos.as_ref()}
         ))
@@ -113,7 +113,7 @@ impl Room {
         assert!(horiz.end <= 50);
         assert!(vert.end <= 50);
 
-        js_unwrap_array!(@{self.as_ref()}.lookForAtArea(
+        js_unwrap!(@{self.as_ref()}.lookForAtArea(
             __look_num_to_str(@{ty.look_code() as i32}),
             @{vert.start},
             @{horiz.start},
