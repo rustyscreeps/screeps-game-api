@@ -176,7 +176,41 @@ macro_rules! reference_wrappers {
                 #[$attr]
             )*
             pub struct $name(Reference);
+
+            impl_cast_expected_reference!($name);
         )*
+    };
+}
+
+macro_rules! impl_cast_expected_reference {
+    ($name:ident) => {
+        impl CastExpectedType<$name> for Value {
+            fn cast_expected_type(self) -> Result<$name, ConversionError> {
+                Reference::try_from(self).and_then(|reference| reference.cast_expected_type())
+            }
+        }
+
+        impl CastExpectedType<Option<$name>> for Value {
+            fn cast_expected_type(self) -> Result<Option<$name>, ConversionError> {
+                <Option<Reference>>::try_from(self).and_then(|opt_reference| {
+                    opt_reference
+                        .map(|reference| reference.cast_expected_type().map(Some))
+                        .unwrap_or(Ok(None))
+                })
+            }
+        }
+
+        // TODO: this is inefficient
+        impl CastExpectedType<Vec<$name>> for Value {
+            fn cast_expected_type(self) -> Result<Vec<$name>, ConversionError> {
+                <Vec<Reference>>::try_from(self).and_then(|ref_vec| {
+                    ref_vec
+                        .into_iter()
+                        .map(|reference| reference.cast_expected_type())
+                        .collect()
+                })
+            }
+        }
     };
 }
 

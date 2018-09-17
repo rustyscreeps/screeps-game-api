@@ -118,6 +118,8 @@ pub enum Structure {
     Wall(StructureWall),
 }
 
+impl_cast_expected_reference!(Structure);
+
 impl AsRef<Reference> for Structure {
     fn as_ref(&self) -> &Reference {
         match *self {
@@ -166,6 +168,36 @@ impl From<Structure> for Reference {
             Structure::Tower(v) => v.0,
             Structure::Wall(v) => v.0,
         }
+    }
+}
+
+impl CastExpectedType<Structure> for Reference
+{
+    fn cast_expected_type(self) -> Result<Structure, ConversionError> {
+        let structure_type = js_unwrap!(@{&self}.structureType);
+        let structure = match structure_type {
+            StructureType::Container => Structure::Container(self.cast_expected_type()?),
+            StructureType::Controller => Structure::Controller(self.cast_expected_type()?),
+            StructureType::Extension => Structure::Extension(self.cast_expected_type()?),
+            StructureType::Extractor => Structure::Extractor(self.cast_expected_type()?),
+            StructureType::KeeperLair => Structure::KeeperLair(self.cast_expected_type()?),
+            StructureType::Lab => Structure::Lab(self.cast_expected_type()?),
+            StructureType::Link => Structure::Link(self.cast_expected_type()?),
+            StructureType::Nuker => Structure::Nuker(self.cast_expected_type()?),
+            StructureType::Observer => Structure::Observer(self.cast_expected_type()?),
+            StructureType::PowerBank => Structure::PowerBank(self.cast_expected_type()?),
+            StructureType::PowerSpawn => Structure::PowerSpawn(self.cast_expected_type()?),
+            StructureType::Portal => Structure::Portal(self.cast_expected_type()?),
+            StructureType::Rampart => Structure::Rampart(self.cast_expected_type()?),
+            StructureType::Road => Structure::Road(self.cast_expected_type()?),
+            StructureType::Spawn => Structure::Spawn(self.cast_expected_type()?),
+            StructureType::Storage => Structure::Storage(self.cast_expected_type()?),
+            StructureType::Terminal => Structure::Terminal(self.cast_expected_type()?),
+            StructureType::Tower => Structure::Tower(self.cast_expected_type()?),
+            StructureType::Wall => Structure::Wall(self.cast_expected_type()?),
+        };
+
+        Ok(structure)
     }
 }
 
@@ -229,15 +261,6 @@ pub(crate) trait CastExpectedType<T> {
     ///
     /// If this is a non-`Reference` `Value`, this will return an error.
     fn cast_expected_type(self) -> Result<T, ConversionError>;
-}
-
-impl<T> CastExpectedType<T> for Value
-where
-    Reference: CastExpectedType<T>,
-{
-    fn cast_expected_type(self) -> Result<T, ConversionError> {
-        Reference::try_from(self).and_then(|reference| reference.cast_expected_type())
-    }
 }
 
 impl<T> CastExpectedType<T> for Reference
