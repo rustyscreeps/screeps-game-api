@@ -119,31 +119,6 @@ macro_rules! get_from_js {
     )
 }
 
-/// Creates a getter macro to retrieve a field of a JavaScript wrapping struct.
-///
-/// The main difference between this and [`get_from_js!`] is that this calls
-/// [`js_unwrap_ref!`] whereas [`get_from_js!`] calls [`js_unwrap!`].
-///
-/// See [`get_from_js!`] for more information.
-macro_rules! get_ref_from_js {
-    ($name:ident -> { $js_side:expr } -> $rust_ret_type:ty) => (
-        get_from_js!($name() -> { $js_side } -> $rust_ret_type);
-    );
-    (
-        $name:ident(
-            $($param_ident:ident: $param_ty:ty),*
-        ) -> {
-            $($js_side:tt)*
-        } -> $rust_ret_type:ty
-    ) => (
-        pub fn $name(
-            $($param_ident: $param_ty),*
-        ) -> $rust_ret_type {
-            js_unwrap_ref!($($js_side)*)
-        }
-    )
-}
-
 /// Macro used to encapsulate all screeps game objects
 ///
 /// Macro syntax:
