@@ -239,31 +239,6 @@ macro_rules! simple_accessors {
     )
 }
 
-/// Implements the unsafe trait RoomObjectProperties for a Structure struct 
-/// 
-/// Macro Syntax: 
-/// impl_room_object_properties!{
-///     $structure1,
-///     $structure2,
-///     ...
-/// }
-macro_rules! impl_room_object_properties {
-    ($($struct_name:ident),* $(,)*) => {
-        $(
-            unsafe impl RoomObjectProperties for $struct_name {
-                fn try_from(obj: RoomObject) -> Option<Self> {
-                    let is_me = js_unwrap!(@{obj.as_ref()} instanceof $struct_name);
-                    if is_me {
-                        Some($struct_name(obj.0))
-                    } else {
-                        None
-                    }
-                }
-            }
-        )*
-    };
-}
-
 /// Macro for mass implementing `StructureProperties`, `PartialEq` and `Eq` for a type. 
 /// 
 /// Macro syntax:
