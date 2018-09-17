@@ -419,7 +419,7 @@ pub fn time() -> u32 {
 ///
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
 pub fn get_object(id: &str) -> Option<::objects::RoomObject> {
-    js_unwrap!(Game.getObjectById(@{id}))
+    js_unwrap_ref!(Game.getObjectById(@{id}))
 }
 
 pub fn notify(message: &str, group_interval: Option<u32>) {
