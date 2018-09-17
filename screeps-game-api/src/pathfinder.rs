@@ -336,15 +336,28 @@ where
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {
     // TODO: should we just accept `fn()` and force the user
-    // to do synchronization? it would... greatly simplify all of this.
+    // to do this? it would... greatly simplify all of this.
+
+    // This callback is the one actually passed to JavaScript.
     fn callback(input: String) -> Reference {
         PF_CALLBACK.with(|callback| callback(input))
     }
 
+    // User provided callback: rust String -> CostMatrix
     let raw_callback = opts.room_callback;
 
+    // Wrapped user callback: rust String -> Reference
     let callback_unboxed = move |input| raw_callback(input).inner;
+
+    // Type erased and boxed callback: no longer a type specific to the closure passed in,
+    // now unified as Box<Fn>
     let callback_type_erased: Box<Fn(String) -> Reference + 'a> = Box::new(callback_unboxed);
+
+    // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
+    // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
+    // be entirely safe because we're only sticking it in scoped storage and we control the only use
+    // of it, but it's still necessary because "some lifetime above the current scope but otherwise
+    // unknown" is not a valid lifetime to have PF_CALLBACK have.
     let callback_lifetime_erased: Box<Fn(String) -> Reference + 'static> =
         unsafe { mem::transmute(callback_type_erased) };
 
@@ -358,6 +371,8 @@ where
         ..
     } = opts;
 
+    // Store callback_lifetime_erased in PF_CALLBACK for the duration of the PathFinder call and
+    // make the call to PathFinder.
     PF_CALLBACK.set(&callback_lifetime_erased, || {
         let res: ::stdweb::Reference = js_unwrap!{
             PathFinder.search(@{origin.as_ref()}, @{goal}, {
