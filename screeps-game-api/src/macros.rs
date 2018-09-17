@@ -410,12 +410,12 @@ macro_rules! game_map_access {
 
                 /// Retrieve all values in this object.
                 pub fn values() -> Vec<$type> {
-                    js_unwrap!(Object.values($js_inner))
+                    js_unwrap_ref!(Object.values($js_inner))
                 }
 
                 /// Retrieve a specific value by key.
                 pub fn get(name: &str) -> Option<$type> {
-                    js_unwrap!($js_inner[@{name}])
+                    js_unwrap_ref!($js_inner[@{name}])
                 }
             }
         )*

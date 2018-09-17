@@ -288,7 +288,7 @@ where
     T: RoomObjectProperties,
 {
     fn pos(&self) -> RoomPosition {
-        js_unwrap!(@{self.as_ref()}.pos)
+        js_unwrap_ref!(@{self.as_ref()}.pos)
     }
 }
 
@@ -303,7 +303,7 @@ pub unsafe trait RoomObjectProperties:
     AsRef<Reference> + Into<Reference> + HasPosition
 {
     fn room(&self) -> Room {
-        js_unwrap!(@{self.as_ref()}.room)
+        js_unwrap_ref!(@{self.as_ref()}.room)
     }
 }
 
