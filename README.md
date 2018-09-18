@@ -54,7 +54,7 @@ After I've updated `cargo-screeps` to work with the new `cargo-web`, you'll want
 cargo install -f cargo-web
 cargo install -f cargo-screeps
 cargo clean
-cargo screeps --build
+cargo screeps build
 ```
 
 [screeps]: https://screeps.com/
