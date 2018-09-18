@@ -22,13 +22,17 @@ impl StructurePortal {
         let v = js! {return @{self.as_ref()}.destination;};
 
         let is_inter_room: bool = js_unwrap!{
-            @{self.as_ref()}.destination instanceof RoomPosition
+            @{&v} instanceof RoomPosition
         };
 
         if is_inter_room {
-            PortalDestination::InterRoom(v.try_into().unwrap())
+            PortalDestination::InterRoom(v.try_into().expect(
+                "The inter room portal destination couldn't be converted to a RoomPosition"
+            ))
         } else {
-            PortalDestination::InterShard(v.try_into().unwrap())
+            PortalDestination::InterShard(v.try_into().expect(
+                "Value couldn't be converted into an InterShardPortalDestination"
+            ))
         }
     }
 }

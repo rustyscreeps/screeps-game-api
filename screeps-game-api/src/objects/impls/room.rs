@@ -91,17 +91,13 @@ impl Room {
         js_unwrap!{@{self.as_ref()}.get_position_at(@{x}, @{y})}
     }
 
-    /// Unimplemented
-    #[allow(unused_variables)]
-    pub fn look_at(&self, x: u32, y: u32) -> ! {
-        unimplemented!()
-    }
+    // pub fn look_at(&self, x: u32, y: u32) -> ! {
+    //     unimplemented!()
+    // }
 
-    /// Unimplemented
-    #[allow(unused_variables)]
-    pub fn look_at_area(&self, top: u32, left: u32, bottom: u32, right: u32) -> ! {
-        unimplemented!()
-    }
+    // pub fn look_at_area(&self, top: u32, left: u32, bottom: u32, right: u32) -> ! {
+    //     unimplemented!()
+    // }
 
     pub fn look_for_at<T, U>(&self, ty: T, target: U) -> Vec<T::Item>
     where

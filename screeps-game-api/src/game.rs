@@ -60,7 +60,7 @@ pub mod cpu {
     ///
     /// [http://docs.screeps.com/api/#Game.getHeapStatistics]: http://docs.screeps.com/api/#Game.getHeapStatistics
     ///
-    /// Returns object with all 0 values if heap statistics are not availe.
+    /// Returns object with all 0 values if heap statistics are not available.
     pub fn get_heap_statistics() -> HeapStatistics {
         use stdweb::unstable::TryInto;
         use stdweb::Value;
@@ -172,7 +172,7 @@ pub mod map {
 
     /// See [http://docs.screeps.com/api/#Game.map.isRoomAvailable]
     ///
-    /// [http://docs.screeps.com/api/#Game.map.isRoomAvaile]: http://docs.screeps.com/api/#Game.map.isRoomAvaile
+    /// [http://docs.screeps.com/api/#Game.map.isRoomAvailable]: http://docs.screeps.com/api/#Game.map.isRoomAvailable
     pub fn is_room_available(room_name: &str) -> bool {
         js_unwrap!(Game.map.isRoomAvailable(@{room_name}))
     }
@@ -185,10 +185,9 @@ pub mod map {
         Exit::try_from(code).map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
     }
 
-    #[allow(unused_variables)]
-    pub fn find_route(from_room: Room, to_room: Room, route_callback: Option<impl Fn(&str, &str) -> u32>) -> !{
-        unimplemented!()
-    }
+    // pub fn find_route(from_room: Room, to_room: Room, route_callback: Option<impl Fn(&str, &str) -> u32>) -> !{
+    //     unimplemented!()
+    // }
 }
 
 pub mod market {
@@ -324,7 +323,7 @@ pub mod market {
         }
     }
 
-    pub fn deal(order_id: &str, amount: u32, target_room: Room) -> ReturnCode {
+    pub fn deal(order_id: &str, amount: u32, target_room: &Room) -> ReturnCode {
         js_unwrap!{Game.market.deal(@{order_id}, @{amount}, @{target_room.name()})}
     }
 

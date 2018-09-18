@@ -45,10 +45,9 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.moveTo(@{x}, @{y}))
     }
 
-    #[allow(unused_variables)]
-    pub fn move_by_path(path: String) -> ! {
-        unimplemented!()
-    }
+    // pub fn move_by_path(path: String) -> ! {
+    //     unimplemented!()
+    // }
 
     pub fn memory(&self) -> MemoryReference {
         js_unwrap!(@{self.as_ref()}.memory)
