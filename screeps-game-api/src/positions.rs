@@ -1,7 +1,6 @@
 //! Structures relating to room name parsing.
 
-use std::borrow::Cow;
-use std::{error, fmt, ops};
+use std::{borrow::Cow, error, fmt, ops};
 
 use objects::{HasPosition, RoomPosition};
 

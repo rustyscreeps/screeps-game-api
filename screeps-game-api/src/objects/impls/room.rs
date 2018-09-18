@@ -2,16 +2,18 @@ use std::{marker::PhantomData, mem, ops::Range};
 
 use stdweb::Reference;
 
-use constants::{
-    find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
+use {
+    constants::{
+        find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
+    },
+    memory::MemoryReference,
+    objects::{
+        HasPosition, Room, RoomPosition, StructureController, StructureStorage, StructureTerminal,
+    },
+    pathfinder::CostMatrix,
+    positions::LocalRoomName,
+    traits::TryInto,
 };
-use memory::MemoryReference;
-use objects::{
-    HasPosition, Room, RoomPosition, StructureController, StructureStorage, StructureTerminal,
-};
-use pathfinder::CostMatrix;
-use positions::LocalRoomName;
-use traits::TryInto;
 
 simple_accessors! {
     Room;

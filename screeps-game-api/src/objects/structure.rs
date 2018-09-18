@@ -1,7 +1,10 @@
 use stdweb::{InstanceOf, Reference, ReferenceType, Value};
 
-use traits::{TryFrom, TryInto};
-use {ConversionError, FromExpectedType, StructureType};
+use {
+    constants::StructureType,
+    traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
+    ConversionError,
+};
 
 use super::*;
 

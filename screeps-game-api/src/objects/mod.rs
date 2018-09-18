@@ -14,8 +14,11 @@
 //! unexpected things into dictionaries which we trust.
 use stdweb::{Reference, ReferenceType, Value};
 
-use traits::{TryFrom, TryInto};
-use {ConversionError, IntoExpectedType, ResourceType, ReturnCode, StructureType};
+use {
+    constants::{ResourceType, ReturnCode, StructureType},
+    traits::{IntoExpectedType, TryFrom, TryInto},
+    ConversionError,
+};
 
 mod impls;
 mod structure;

@@ -1,10 +1,11 @@
 use stdweb::Reference;
 
-use memory::MemoryReference;
-use objects::StructureSpawn;
-use traits::TryInto;
-
-use {Creep, Direction, Part, ReturnCode, StructureProperties};
+use {
+    constants::{Direction, Part, ReturnCode},
+    memory::MemoryReference,
+    objects::{Creep, StructureProperties, StructureSpawn},
+    traits::TryInto,
+};
 
 simple_accessors! {
     StructureSpawn;
