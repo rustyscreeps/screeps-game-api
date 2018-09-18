@@ -70,7 +70,7 @@ macro_rules! js_unwrap {
 /// [`screeps::Creep`] containing the wrong value which will fail when used.
 macro_rules! js_unwrap_ref {
     ($($code:tt)*) => (
-        ::objects::IntoExpectedType::into_expected_type(js! { return $($code)* })
+        ::objects::IntoExpectedType::into_expected_type(js! { return $($code)*; })
             .expect(concat!("js_unwrap_ref at ", line!(), " in ", file!()))
     )
 }
