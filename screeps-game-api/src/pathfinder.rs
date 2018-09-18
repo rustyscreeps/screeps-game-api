@@ -373,6 +373,8 @@ where
 
     // Store callback_lifetime_erased in PF_CALLBACK for the duration of the PathFinder call and
     // make the call to PathFinder.
+    //
+    // See https://docs.rs/scoped-tls/0.1/scoped_tls/
     PF_CALLBACK.set(&callback_lifetime_erased, || {
         let res: ::stdweb::Reference = js_unwrap!{
             PathFinder.search(@{origin.as_ref()}, @{goal}, {
