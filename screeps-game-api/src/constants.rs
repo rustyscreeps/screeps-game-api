@@ -320,25 +320,28 @@ pub unsafe trait LookConstant {
 }
 
 pub mod look {
-    use super::{Look, LookConstant};
+    use stdweb::unstable::TryInto;
+
     use {
-        ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain,
-        Tombstone,
+        objects::IntoExpectedType, ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source,
+        Structure, Terrain, Tombstone,
     };
 
+    use super::{Look, LookConstant};
+
     typesafe_look_constants! {
-        CREEPS, Look::Creeps, Creep,  ::objects::IntoExpectedType::into_expected_type;
-        ENERGY, Look::Energy, Resource,  ::objects::IntoExpectedType::into_expected_type;
-        RESOURCES, Look::Resources, Resource,  ::objects::IntoExpectedType::into_expected_type;
-        SOURCES, Look::Sources, Source,  ::objects::IntoExpectedType::into_expected_type;
-        MINERALS, Look::Minerals, Mineral,  ::objects::IntoExpectedType::into_expected_type;
-        STRUCTURES, Look::Structures, Structure,  ::objects::IntoExpectedType::into_expected_type;
-        FLAGS, Look::Flags, Flag,  ::objects::IntoExpectedType::into_expected_type;
+        CREEPS, Look::Creeps, Creep, IntoExpectedType::into_expected_type;
+        ENERGY, Look::Energy, Resource, IntoExpectedType::into_expected_type;
+        RESOURCES, Look::Resources, Resource, IntoExpectedType::into_expected_type;
+        SOURCES, Look::Sources, Source, IntoExpectedType::into_expected_type;
+        MINERALS, Look::Minerals, Mineral, IntoExpectedType::into_expected_type;
+        STRUCTURES, Look::Structures, Structure, IntoExpectedType::into_expected_type;
+        FLAGS, Look::Flags, Flag, IntoExpectedType::into_expected_type;
         CONSTRUCTION_SITES, Look::ConstructionSites, ConstructionSite,
-             ::objects::IntoExpectedType::into_expected_type;
-        NUKES, Look::Nukes, Nuke,  ::objects::IntoExpectedType::into_expected_type;
-        TERRAIN, Look::Terrain, Terrain,  ::stdweb::unstable::TryInto::try_into;
-        TOMBSTONES, Look::Tombstones, Tombstone,  ::objects::IntoExpectedType::into_expected_type;
+            IntoExpectedType::into_expected_type;
+        NUKES, Look::Nukes, Nuke, IntoExpectedType::into_expected_type;
+        TERRAIN, Look::Terrain, Terrain, TryInto::try_into;
+        TOMBSTONES, Look::Tombstones, Tombstone, IntoExpectedType::into_expected_type;
     }
 }
 
