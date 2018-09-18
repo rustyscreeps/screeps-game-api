@@ -43,10 +43,12 @@ pub mod objects;
 pub mod pathfinder;
 mod positions;
 pub mod raw_memory;
+pub mod traits;
 
 pub use constants::*;
 pub use objects::*;
 pub use positions::{LocalRoomName, LocalRoomPosition};
+pub use traits::{FromExpectedType, IntoExpectedType};
 
 pub(crate) use stdweb::private::ConversionError;
 

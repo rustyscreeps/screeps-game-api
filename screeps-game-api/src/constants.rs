@@ -4,10 +4,7 @@
 use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
 
-use {
-    objects::{FromExpectedType, RoomObject},
-    ConversionError,
-};
+use {objects::RoomObject, traits::FromExpectedType, ConversionError};
 
 enum_from_primitive! {
     #[repr(i32)]
@@ -323,7 +320,7 @@ pub mod look {
     use stdweb::unstable::TryInto;
 
     use {
-        objects::IntoExpectedType, ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source,
+        traits::IntoExpectedType, ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source,
         Structure, Terrain, Tombstone,
     };
 

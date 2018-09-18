@@ -70,7 +70,7 @@ macro_rules! js_unwrap {
 /// [`screeps::Creep`] containing the wrong value which will fail when used.
 macro_rules! js_unwrap_ref {
     ($($code:tt)*) => (
-        ::objects::IntoExpectedType::into_expected_type(js! { return $($code)*; })
+        ::traits::IntoExpectedType::into_expected_type(js! { return $($code)*; })
             .expect(concat!("js_unwrap_ref at ", line!(), " in ", file!()))
     )
 }
@@ -152,7 +152,7 @@ macro_rules! reference_wrappers {
             )*
             pub struct $name(Reference);
 
-            impl FromExpectedType<Reference> for $name {
+            impl ::traits::FromExpectedType<Reference> for $name {
                 fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
                     #[cfg(feature = "check-all-casts")]
                     {
