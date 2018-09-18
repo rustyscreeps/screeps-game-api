@@ -32,7 +32,7 @@ This is not fully tested, but feel free to use! Issues are welcome.
 ### `copy`:
 
 1. run build.
-2. copy `target/main.js` and `target/compiled.wasm` to `<destination directory>/<branch name>/`
+2. copy compiled main file and WASM file (default `main.js` and `compiled.wasm`) from `target/` to `<destination directory>/<branch name>/`
 3. if pruning is enabled, delete all other files in `<destination directory>/<branch name>/`
 
 ### `deploy`:
