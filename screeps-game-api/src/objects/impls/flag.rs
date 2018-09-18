@@ -1,8 +1,4 @@
-use {
-    constants::Color,
-    Flag,
-    HasPosition
-};
+use {constants::Color, Flag, HasPosition};
 
 simple_accessors! {
     Flag;
@@ -10,8 +6,6 @@ simple_accessors! {
     (name -> name -> String),
     (secondary_color -> secondaryColor -> Color),
 }
-
-
 
 impl Flag {
     pub fn remove(&self) {
@@ -24,11 +18,11 @@ impl Flag {
             Some(sec_color) => js! {
                 @{self.as_ref()}.setColor(@{i32::from(*color)},
                                           @{i32::from(*sec_color)})
-            }
+            },
         };
     }
 
-    pub fn set_position<T: HasPosition>(&self, pos:T) {
+    pub fn set_position<T: HasPosition>(&self, pos: T) {
         let room_pos = pos.pos();
         js! {@{self.as_ref()}.setPosition(@{room_pos.as_ref()});};
     }

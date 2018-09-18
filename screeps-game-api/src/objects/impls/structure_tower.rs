@@ -1,6 +1,6 @@
 use {
     constants::ReturnCode,
-    {Creep, Structure, StructureTower}
+    {Creep, Structure, StructureTower},
 };
 
 impl StructureTower {
@@ -14,6 +14,5 @@ impl StructureTower {
 
     pub fn repair(&self, target: &Structure) -> ReturnCode {
         js_unwrap!{ @{self.as_ref()}.repair( @{target.as_ref()} ) }
-    }    
-
+    }
 }

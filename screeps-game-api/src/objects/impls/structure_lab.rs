@@ -20,7 +20,7 @@ impl StructureLab {
     pub fn boost_creep(&self, creep: &Creep, body_part_count: Option<u32>) -> ReturnCode {
         match body_part_count {
             None => js_unwrap! {@{self.as_ref()}.boostCreep(@{creep.as_ref()})},
-            Some(count) => js_unwrap! {@{self.as_ref()}.boostCreep(@{creep.as_ref()}, @{count})}
+            Some(count) => js_unwrap! {@{self.as_ref()}.boostCreep(@{creep.as_ref()}, @{count})},
         }
     }
 

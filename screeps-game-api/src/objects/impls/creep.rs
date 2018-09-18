@@ -1,23 +1,9 @@
 use {
-    constants::{
-        Direction, 
-        Part, 
-        ResourceType, 
-        ReturnCode,
-    },
-    memory::MemoryReference, 
+    constants::{Direction, Part, ResourceType, ReturnCode},
+    memory::MemoryReference,
     objects::{
-        Attackable, 
-        ConstructionSite, 
-        Creep, 
-        HasPosition, 
-        Resource, 
-        Source, 
-        Step,
-        StructureController,
-        StructureProperties, 
-        Transferable, 
-        Withdrawable,
+        Attackable, ConstructionSite, Creep, HasPosition, Resource, Source, Step,
+        StructureController, StructureProperties, Transferable, Withdrawable,
     },
     pathfinder::SearchResults,
 };
@@ -37,8 +23,10 @@ impl Creep {
 
     pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
         match amount {
-            Some(v) => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32}), @{v})),
-            None => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32})))
+            Some(v) => {
+                js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32}), @{v}))
+            }
+            None => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32}))),
         }
     }
 
@@ -86,8 +74,7 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.say(@{msg}, @{public}))
     }
 
-    pub fn sign_controller(&self, target: &StructureController, text: &str) -> ReturnCode
-    {
+    pub fn sign_controller(&self, target: &StructureController, text: &str) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.signController(@{target.as_ref()}, @{text}))
     }
 
@@ -172,7 +159,7 @@ simple_accessors! {
 }
 
 impl PartialEq for Creep {
-    fn eq(&self, other: &Creep) -> bool{
+    fn eq(&self, other: &Creep) -> bool {
         self.id() == other.id()
     }
 }

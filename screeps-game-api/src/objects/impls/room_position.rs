@@ -1,24 +1,9 @@
-use std::cmp::{
-    Eq, 
-    PartialEq
-};
+use std::cmp::{Eq, PartialEq};
 
 use {
-    constants::{
-        Color, 
-        Direction, 
-        FindConstant,
-        LookConstant, 
-        ReturnCode,
-    },
+    constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
     game,
-    objects::{
-        FindOptions,
-        HasPosition, 
-        Path,
-        RoomPosition,
-        StructureType,
-    },
+    objects::{FindOptions, HasPosition, Path, RoomPosition, StructureType},
     pathfinder::CostMatrix,
     positions::LocalRoomPosition,
     traits::TryInto,
@@ -65,7 +50,7 @@ impl RoomPosition {
                 return ERR_NOT_IN_RANGE;
             }
         }).try_into()
-            .expect("expected Flag.createFlag to return ReturnCode")
+        .expect("expected Flag.createFlag to return ReturnCode")
     }
 
     pub fn find_closest_by_range<T>(&self, ty: T) -> Option<T::Item>
@@ -87,7 +72,7 @@ impl RoomPosition {
         ))
     }
 
-    pub fn find_path_to<'a, F, T>(&self, target: &T, opts: FindOptions<'a, F>) -> Path 
+    pub fn find_path_to<'a, F, T>(&self, target: &T, opts: FindOptions<'a, F>) -> Path
     where
         F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
         T: HasPosition,
@@ -96,7 +81,7 @@ impl RoomPosition {
         self_room.find_path(self, target, opts)
     }
 
-    pub fn find_path_to_xy<'a, F>(&self, x: u8, y: u8, opts: FindOptions<'a, F>) -> Path 
+    pub fn find_path_to_xy<'a, F>(&self, x: u8, y: u8, opts: FindOptions<'a, F>) -> Path
     where
         F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
     {
@@ -160,7 +145,7 @@ impl<T: HasPosition> PartialEq<T> for RoomPosition {
             var b = @{&other.pos().0};
             return a.x == b.x && a.y == b.y && a.roomName == b.roomName;
         }).try_into()
-            .expect("expected a boolean to be a boolean")
+        .expect("expected a boolean to be a boolean")
     }
 }
 

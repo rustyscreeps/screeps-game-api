@@ -5,8 +5,8 @@ mod flag;
 mod mineral;
 mod nuke;
 mod resource;
-mod room_position;
 mod room;
+mod room_position;
 mod source;
 mod structure_controller;
 mod structure_keeper_lair;
@@ -24,14 +24,7 @@ mod structure_tower;
 mod tombstone;
 
 pub use self::{
-    room::{
-        FindOptions, 
-        Path, 
-        Step,
-    },
-    structure_controller::{
-        Reservation, 
-        Sign,
-    },
+    room::{FindOptions, Path, Step},
+    structure_controller::{Reservation, Sign},
     structure_spawn::SpawnOptions,
 };

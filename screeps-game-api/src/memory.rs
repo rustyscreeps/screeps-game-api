@@ -1,25 +1,25 @@
 //! Interface with Screeps' `Memory` global variable
-//! 
-//! Screeps' memory lives in the javascript `Memory` global variable and is 
-//! encoded as a javascript object. This object's reference is tracked within 
-//! rust as a `MemoryReference`. The [`root`] function gives access to a 
+//!
+//! Screeps' memory lives in the javascript `Memory` global variable and is
+//! encoded as a javascript object. This object's reference is tracked within
+//! rust as a `MemoryReference`. The [`root`] function gives access to a
 //! reference to the `Memory` global object.
-//! 
+//!
 //! # Typing
-//! Contrary to accessing the memory in javascript, rust's strong type system, 
+//! Contrary to accessing the memory in javascript, rust's strong type system,
 //! requires that read values be assigned a type. To facilitate this, the
 //! `MemoryReference` provides methods to read a part of the memory as a
 //! certain type. If the value read cannot be transformed to the requested
 //! type, the method return `None`.
-//! 
+//!
 //! # Accessing the memory
-//! Memory can be accessed in two ways: 
+//! Memory can be accessed in two ways:
 //!  - via _keys_
 //!  - via _paths_ (methods prefixed with `path_`)
-//! 
+//!
 //! In both cases, if the value requested is `undefined`, `null`, or even just
 //! of the wrong type, the method returns `None`.
-//! 
+//!
 //! ## Accessing memory with a _key_
 //! Since a `MemoryReference` represents a javascript object, its children can
 //! be accessed using the `object["key"]` javascript syntax using type methods.
@@ -27,29 +27,29 @@
 //! let mem = screeps::memory::root();
 //! let cpu_used_last_tick = mem.int("cpu_used_last_tick").unwrap();
 //! ```
-//!  
+//!
 //! ## Accessing memory with a _path_
 //! A quality of life improvement upon the key access is through full path. In
-//! javascript, it is possible to query a value with a full path: 
+//! javascript, it is possible to query a value with a full path:
 //! ```javascript
 //! var creep_time = Memory.creeps.John.time;
 //! ```
-//! 
+//!
 //! To emulate this behavior in rust, you can write such a path to a string and
-//! it will fetch the javascript object using 
+//! it will fetch the javascript object using
 //! [lodash](https://lodash.com/docs/4.17.10#get) and convert the result
 //! depending on the method used. For example,
 //! ```no_run
 //! let mem = screeps::memory::root();
 //! let creep_time = mem.path_num("creeps.John.time").unwrap();
 //! ```
-//! 
+//!
 //! # Other methods that provide `MemoryReference`s
 //! In addition to accessing the memory from the root, it is possible to
 //! access the memory via creeps, spawns, rooms and flags. Accessing the memory
 //! from those objects will also result in a `MemoryReference` which instead
 //! points at the root of this object's memory.
-//! 
+//!
 
 use std::fmt;
 use stdweb::{JsSerialize, Reference, Value};
@@ -171,10 +171,9 @@ impl MemoryReference {
             } else {
                 return null;
             }
-        })
-            .try_into()
-            .map_err(|_| UnexpectedTypeError)
-            .map(MemoryReference)
+        }).try_into()
+        .map_err(|_| UnexpectedTypeError)
+        .map(MemoryReference)
     }
 
     pub fn keys(&self) -> Vec<String> {
