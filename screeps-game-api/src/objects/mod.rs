@@ -13,7 +13,7 @@
 //! do anything mischievous, like removing properties from objects or sticking
 //! unexpected things into dictionaries which we trust.
 use stdweb::unstable::{TryFrom, TryInto};
-use stdweb::{Reference, Value};
+use stdweb::{Reference, ReferenceType, Value};
 
 use {ResourceType, ReturnCode, StructureType, ConversionError};
 
@@ -198,7 +198,12 @@ where
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `RoomObject` class.
 pub unsafe trait RoomObjectProperties:
-    AsRef<Reference> + Into<Reference> + HasPosition
+    AsRef<Reference>
+    + Into<Reference>
+    + HasPosition
+    + ReferenceType
+    + TryFrom<Value, Error = ConversionError>
+    + TryFrom<Reference, Error = ConversionError>
 {
     fn room(&self) -> Room {
         js_unwrap_ref!(@{self.as_ref()}.room)
