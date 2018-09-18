@@ -32,6 +32,7 @@ impl AsRef<Reference> for Structure {
         match_structure_variants!(self, v => v.as_ref())
     }
 }
+
 impl From<Structure> for Reference {
     fn from(wrapper: Structure) -> Reference {
         match_structure_variants!(wrapper, v => v.0)
