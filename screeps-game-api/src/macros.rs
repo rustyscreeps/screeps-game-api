@@ -152,25 +152,19 @@ macro_rules! reference_wrappers {
             )*
             pub struct $name(Reference);
 
-            impl_cast_expected_reference!($name);
-        )*
-    };
-}
-
-macro_rules! impl_cast_expected_reference {
-    ($name:ident) => {
-        impl FromExpectedType<Reference> for $name {
-            fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
-                #[cfg(feature = "check-all-casts")]
-                {
-                    ::stdweb::unstable::TryFrom::try_from(reference)
-                }
-                #[cfg(not(feature = "check-all-casts"))]
-                {
-                    unsafe { Ok(::stdweb::ReferenceType::from_reference_unchecked(reference)) }
+            impl FromExpectedType<Reference> for $name {
+                fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
+                    #[cfg(feature = "check-all-casts")]
+                    {
+                        ::stdweb::unstable::TryFrom::try_from(reference)
+                    }
+                    #[cfg(not(feature = "check-all-casts"))]
+                    {
+                        unsafe { Ok(::stdweb::ReferenceType::from_reference_unchecked(reference)) }
+                    }
                 }
             }
-        }
+        )*
     };
 }
 
