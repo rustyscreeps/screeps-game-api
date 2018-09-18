@@ -18,14 +18,18 @@ use stdweb::{Reference, Value};
 use {ResourceType, ReturnCode, StructureType, ConversionError};
 
 mod impls;
+mod structure;
 
-pub use self::impls::{
-    FindOptions,
-    Path,
-    Reservation, 
-    Sign, 
-    SpawnOptions,
-    Step, 
+pub use self::{
+    impls::{
+        FindOptions,
+        Path,
+        Reservation, 
+        Sign, 
+        SpawnOptions,
+        Step, 
+    },
+    structure::Structure,
 };
 
 reference_wrappers!(
@@ -95,143 +99,6 @@ reference_wrappers!(
     #[reference(instance_of = "Tombstone")]
     Tombstone,
 );
-
-pub enum Structure {
-    Container(StructureContainer),
-    Controller(StructureController),
-    Extension(StructureExtension),
-    Extractor(StructureExtractor),
-    KeeperLair(StructureKeeperLair),
-    Lab(StructureLab),
-    Link(StructureLink),
-    Nuker(StructureNuker),
-    Observer(StructureObserver),
-    PowerBank(StructurePowerBank),
-    PowerSpawn(StructurePowerSpawn),
-    Portal(StructurePortal),
-    Rampart(StructureRampart),
-    Road(StructureRoad),
-    Spawn(StructureSpawn),
-    Storage(StructureStorage),
-    Terminal(StructureTerminal),
-    Tower(StructureTower),
-    Wall(StructureWall),
-}
-
-impl AsRef<Reference> for Structure {
-    fn as_ref(&self) -> &Reference {
-        match *self {
-            Structure::Container(ref v) => v.as_ref(),
-            Structure::Controller(ref v) => v.as_ref(),
-            Structure::Extension(ref v) => v.as_ref(),
-            Structure::Extractor(ref v) => v.as_ref(),
-            Structure::KeeperLair(ref v) => v.as_ref(),
-            Structure::Lab(ref v) => v.as_ref(),
-            Structure::Link(ref v) => v.as_ref(),
-            Structure::Nuker(ref v) => v.as_ref(),
-            Structure::Observer(ref v) => v.as_ref(),
-            Structure::PowerBank(ref v) => v.as_ref(),
-            Structure::PowerSpawn(ref v) => v.as_ref(),
-            Structure::Portal(ref v) => v.as_ref(),
-            Structure::Rampart(ref v) => v.as_ref(),
-            Structure::Road(ref v) => v.as_ref(),
-            Structure::Spawn(ref v) => v.as_ref(),
-            Structure::Storage(ref v) => v.as_ref(),
-            Structure::Terminal(ref v) => v.as_ref(),
-            Structure::Tower(ref v) => v.as_ref(),
-            Structure::Wall(ref v) => v.as_ref(),
-        }
-    }
-}
-impl From<Structure> for Reference {
-    fn from(wrapper: Structure) -> Reference {
-        match wrapper {
-            Structure::Container(v) => v.0,
-            Structure::Controller(v) => v.0,
-            Structure::Extension(v) => v.0,
-            Structure::Extractor(v) => v.0,
-            Structure::KeeperLair(v) => v.0,
-            Structure::Lab(v) => v.0,
-            Structure::Link(v) => v.0,
-            Structure::Nuker(v) => v.0,
-            Structure::Observer(v) => v.0,
-            Structure::PowerBank(v) => v.0,
-            Structure::PowerSpawn(v) => v.0,
-            Structure::Portal(v) => v.0,
-            Structure::Rampart(v) => v.0,
-            Structure::Road(v) => v.0,
-            Structure::Spawn(v) => v.0,
-            Structure::Storage(v) => v.0,
-            Structure::Terminal(v) => v.0,
-            Structure::Tower(v) => v.0,
-            Structure::Wall(v) => v.0,
-        }
-    }
-}
-
-impl FromExpectedType<Reference> for Structure {
-    fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
-        let structure_type = js_unwrap!(@{&reference}.structureType);
-        let structure = match structure_type {
-            StructureType::Container => Structure::Container(reference.into_expected_type()?),
-            StructureType::Controller => Structure::Controller(reference.into_expected_type()?),
-            StructureType::Extension => Structure::Extension(reference.into_expected_type()?),
-            StructureType::Extractor => Structure::Extractor(reference.into_expected_type()?),
-            StructureType::KeeperLair => Structure::KeeperLair(reference.into_expected_type()?),
-            StructureType::Lab => Structure::Lab(reference.into_expected_type()?),
-            StructureType::Link => Structure::Link(reference.into_expected_type()?),
-            StructureType::Nuker => Structure::Nuker(reference.into_expected_type()?),
-            StructureType::Observer => Structure::Observer(reference.into_expected_type()?),
-            StructureType::PowerBank => Structure::PowerBank(reference.into_expected_type()?),
-            StructureType::PowerSpawn => Structure::PowerSpawn(reference.into_expected_type()?),
-            StructureType::Portal => Structure::Portal(reference.into_expected_type()?),
-            StructureType::Rampart => Structure::Rampart(reference.into_expected_type()?),
-            StructureType::Road => Structure::Road(reference.into_expected_type()?),
-            StructureType::Spawn => Structure::Spawn(reference.into_expected_type()?),
-            StructureType::Storage => Structure::Storage(reference.into_expected_type()?),
-            StructureType::Terminal => Structure::Terminal(reference.into_expected_type()?),
-            StructureType::Tower => Structure::Tower(reference.into_expected_type()?),
-            StructureType::Wall => Structure::Wall(reference.into_expected_type()?),
-        };
-
-        Ok(structure)
-    }
-}
-
-impl Structure {
-    fn from_reference(reference: Reference) -> Self {
-        let s = js_unwrap!(@{&reference}.structureType);
-        match s {
-            StructureType::Container => Structure::Container(StructureContainer(reference)),
-            StructureType::Controller => Structure::Controller(StructureController(reference)),
-            StructureType::Extension => Structure::Extension(StructureExtension(reference)),
-            StructureType::Extractor => Structure::Extractor(StructureExtractor(reference)),
-            StructureType::KeeperLair => Structure::KeeperLair(StructureKeeperLair(reference)),
-            StructureType::Lab => Structure::Lab(StructureLab(reference)),
-            StructureType::Link => Structure::Link(StructureLink(reference)),
-            StructureType::Nuker => Structure::Nuker(StructureNuker(reference)),
-            StructureType::Observer => Structure::Observer(StructureObserver(reference)),
-            StructureType::PowerBank => Structure::PowerBank(StructurePowerBank(reference)),
-            StructureType::PowerSpawn => Structure::PowerSpawn(StructurePowerSpawn(reference)),
-            StructureType::Portal => Structure::Portal(StructurePortal(reference)),
-            StructureType::Rampart => Structure::Rampart(StructureRampart(reference)),
-            StructureType::Road => Structure::Road(StructureRoad(reference)),
-            StructureType::Spawn => Structure::Spawn(StructureSpawn(reference)),
-            StructureType::Storage => Structure::Storage(StructureStorage(reference)),
-            StructureType::Terminal => Structure::Terminal(StructureTerminal(reference)),
-            StructureType::Tower => Structure::Tower(StructureTower(reference)),
-            StructureType::Wall => Structure::Wall(StructureWall(reference)),
-        }
-    }
-}
-
-impl TryFrom<Value> for Structure {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Structure, Self::Error> {
-        Ok(Self::from_reference(v.try_into()?))
-    }
-}
 
 /// See [`IntoExpectedType`]
 pub trait FromExpectedType<T>: Sized {
@@ -364,7 +231,9 @@ pub unsafe trait StructureProperties: RoomObjectProperties {
         js_unwrap!(@{self.as_ref()}.notifyWhenAttacked(@{notify_when_attacked}))
     }
     fn as_structure(self) -> Structure {
-        Structure::from_reference(self.into())
+        Into::<Reference>::into(self)
+            .into_expected_type()
+            .expect("expected converting a StructureProperties to a Structure would suceed.")
     }
 }
 
