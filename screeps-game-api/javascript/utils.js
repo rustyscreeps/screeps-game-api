@@ -212,3 +212,19 @@ function _hasActiveBodypart(body, type) {
     }
     return false;
 }
+
+function __order_type_str_to_num(str) {
+    switch (str) {
+        case ORDER_SELL: return 0;
+        case ORDER_BUY: return 1;
+        default: throw new Error("unknown order type " + str);
+    }
+}
+
+function __order_type_num_to_str(num) {
+    switch (num) {
+        case 0: return ORDER_SELL;
+        case 1: return ORDER_BUY;
+        default: throw new Error("unknown order type " + num);
+    }
+}

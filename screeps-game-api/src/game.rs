@@ -198,19 +198,21 @@ pub mod market {
     use {Room};
     use constants::{ReturnCode, ResourceType};
 
+    #[repr(u32)]
+    #[derive(Clone, Debug)]
     pub enum OrderType {
-        Sell,
-        Buy
+        Sell = 0,
+        Buy = 1
     }
 
-    impl OrderType {
-        fn as_string(&self) -> String {
-            match self {
-                OrderType::Sell => String::from("sell"),
-                OrderType::Buy => String::from("buy")
-            }
-        }
-    }
+    // impl OrderType {
+    //     fn as_string(&self) -> String {
+    //         match self {
+    //             OrderType::Sell => String::from("sell"),
+    //             OrderType::Buy => String::from("buy")
+    //         }
+    //     }
+    // }
 
     #[derive(Deserialize, Debug)]
     pub struct Player {
@@ -315,8 +317,8 @@ pub mod market {
     pub fn create_order(order_type: OrderType, resource_type: ResourceType, 
                         price: f64, total_amount: u32, room: &Room) -> ReturnCode {
         js_unwrap!{
-            Game.market.createOrder(@{order_type.as_string()},
-                                    __resource_type_num_to_str(@{resource_type as i32}),
+            Game.market.createOrder(__order_type_num_to_str(@{order_type as u32}),
+                                    __resource_type_num_to_str(@{resource_type as u32}),
                                     @{price},
                                     @{total_amount},
                                     @{room.name()})
