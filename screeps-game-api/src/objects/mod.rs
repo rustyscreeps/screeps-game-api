@@ -406,8 +406,27 @@ unsafe impl Withdrawable for StructurePowerSpawn {}
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
 
-unsafe impl<T> Attackable for T where T: StructureProperties {}
 unsafe impl Attackable for Creep {}
+unsafe impl Attackable for OwnedStructure {}
+unsafe impl Attackable for Structure {}
+unsafe impl Attackable for StructureContainer {}
+unsafe impl Attackable for StructureExtension {}
+unsafe impl Attackable for StructureExtractor {}
+unsafe impl Attackable for StructureKeeperLair {}
+unsafe impl Attackable for StructureLab {}
+unsafe impl Attackable for StructureLink {}
+unsafe impl Attackable for StructureNuker {}
+unsafe impl Attackable for StructureObserver {}
+unsafe impl Attackable for StructurePowerBank {}
+unsafe impl Attackable for StructurePowerSpawn {}
+unsafe impl Attackable for StructurePortal {}
+unsafe impl Attackable for StructureRampart {}
+unsafe impl Attackable for StructureRoad {}
+unsafe impl Attackable for StructureSpawn {}
+unsafe impl Attackable for StructureStorage {}
+unsafe impl Attackable for StructureTerminal {}
+unsafe impl Attackable for StructureTower {}
+unsafe impl Attackable for StructureWall {}
 
 impl_room_object_properties! {
     ConstructionSite,
