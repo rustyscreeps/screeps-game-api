@@ -1,14 +1,34 @@
-use std::ops::Range;
-
-use stdweb::unstable::TryInto;
-
-use {
-    constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType, find::Exit},
-    HasPosition,
-    memory::MemoryReference,
-    objects::{Room, RoomPosition, StructureController, StructureStorage, StructureTerminal},
-    positions::LocalRoomName,
+use std::{
+    marker::PhantomData,
+    mem,
+    ops::Range,
 };
+
+use stdweb::{
+    Reference,
+    unstable::TryInto,
+};
+
+use constants::{
+    Color, 
+    Direction,
+    find::Exit,
+    FindConstant, 
+    LookConstant, 
+    ReturnCode, 
+    StructureType, 
+};
+use HasPosition;
+use memory::MemoryReference;
+use objects::{
+    Room, 
+    RoomPosition,
+    StructureController, 
+    StructureStorage, 
+    StructureTerminal
+};
+use pathfinder::CostMatrix;
+use positions::LocalRoomName;
 
 simple_accessors! {
     Room;
@@ -20,6 +40,8 @@ simple_accessors! {
     (terminal -> terminal -> Option<StructureTerminal>),
     // todo: visual
 }
+
+scoped_thread_local!(static COST_CALLBACK: Box<(Fn(String, Reference) -> ())>);
 
 impl Room {
     pub fn create_construction_site<T>(&self, at: T, ty: StructureType) -> ReturnCode
@@ -99,6 +121,86 @@ impl Room {
     //     unimplemented!()
     // }
 
+    pub fn find_path<O, T, F>(
+        &self, 
+        from_pos: &O, 
+        to_pos: &T,
+        opts: FindOptions<F>,
+    ) -> Vec<Step> 
+    where
+        O: HasPosition,
+        T: HasPosition,
+        F: Fn(String, CostMatrix) -> (),
+    {
+        let from = from_pos.pos();
+        let to = to_pos.pos();
+        
+        // This callback is the one actually passed to JavaScript.
+        fn callback(room_name: String, cost_matrix: Reference) -> () {
+            COST_CALLBACK.with(|callback| callback(room_name, cost_matrix))
+        }
+
+        // User provided callback: rust String, CostMatrix -> ()
+        let raw_callback = opts.cost_callback;
+
+        // Wrapped user callback: rust String, Reference -> ()
+        let callback_boxed = move |room_name, cost_matrix_ref| {
+            let cmatrix = CostMatrix {
+                inner: cost_matrix_ref,
+                lifetime: PhantomData,
+            };
+            raw_callback(room_name, cmatrix);
+        };
+
+        // Type erased and boxed callback: no longer a type specific to the closure passed in,
+        // now unified as Box<Fn>
+        let callback_type_erased: Box<Fn(String, Reference) -> ()> = Box::new(callback_boxed);
+
+        // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
+        // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
+        // be entirely safe because we're only sticking it in scoped storage and we control the only use
+        // of it, but it's still necessary because "some lifetime above the current scope but otherwise
+        // unknown" is not a valid lifetime to have PF_CALLBACK have.
+        let callback_lifetime_erased: Box<Fn(String, Reference)> =
+            unsafe { mem::transmute(callback_type_erased) };
+
+        let FindOptions {
+            ignore_creeps,
+            ignore_destructible_structures,
+            max_ops,
+            heuristic_weight,
+            serialize,
+            max_rooms,
+            range,
+            plain_cost,
+            swamp_cost,
+            ..
+        } = opts;
+
+        // Store callback_lifetime_erased in PF_CALLBACK for the duration of the PathFinder call and
+        // make the call to PathFinder.
+        //
+        // See https://docs.rs/scoped-tls/0.1/scoped_tls/
+        COST_CALLBACK.set(&callback_lifetime_erased, || {
+            let v = js!{
+                return @{&self.as_ref()}.search(@{from.as_ref()}, @{to.as_ref()}, {
+                    ignoreCreeps: @{ignore_creeps},
+                    ignoreDestructibleStructures: @{ignore_destructible_structures}
+                    costCallback: @{callback},
+                    maxOps: @{max_ops},
+                    heuristicWeight: @{heuristic_weight},
+                    serialize: @{serialize},
+                    maxRooms: @{max_rooms},
+                    range: @{range},
+                    plainCost: @{plain_cost},
+                    swampCost: @{swamp_cost}
+                });
+            };
+
+            v.try_into().unwrap()
+        })
+    }
+
     pub fn look_for_at<T, U>(&self, ty: T, target: U) -> Vec<T::Item>
     where
         T: LookConstant,
@@ -168,3 +270,148 @@ impl PartialEq for Room {
 }
 
 impl Eq for Room {}
+
+pub struct FindOptions<F>
+where
+    F: Fn(String, CostMatrix) -> ()
+{
+    ignore_creeps: bool,
+    ignore_destructible_structures: bool,
+    cost_callback: F,
+    max_ops: u32,
+    heuristic_weight: f64,
+    serialize: bool,
+    max_rooms: u32,
+    range: u32,
+    plain_cost: u8,
+    swamp_cost: u8,
+}
+
+impl Default for FindOptions<fn(String, CostMatrix) -> ()> {
+    fn default() -> Self {
+        fn cost_matrix(_: String, _: CostMatrix) {}
+
+        // TODO: should we fall back onto the game's default values, or is
+        // it alright to copy them here?
+        FindOptions {
+            ignore_creeps: false,
+            ignore_destructible_structures: false,
+            cost_callback: cost_matrix,
+            max_ops: 2000,
+            heuristic_weight: 1.2,
+            serialize: false,
+            max_rooms: 16,
+            range: 0,
+            plain_cost: 1,
+            swamp_cost: 5,
+        }
+    }
+}
+
+impl FindOptions<fn(String, CostMatrix) -> ()> {
+    /// Creates default SearchOptions
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl<'a, F> FindOptions<F>
+where
+    F: Fn(String, CostMatrix) -> (),
+{
+    /// Sets whether the algorithm considers creeps as walkable. Default: False.
+    pub fn ignore_creeps(mut self, ignore: bool) -> Self {
+        self.ignore_creeps = ignore;
+        self
+    }
+
+    /// Sets whether the algorithm considers destructible structure as
+    /// walkable. Default: False.
+    pub fn ignore_destructible_structures(mut self, ignore: bool) -> Self {
+        self.ignore_destructible_structures = ignore;
+        self
+    }
+
+    /// Sets cost callback - default `|_, _| {}`.
+    pub fn cost_callback<F2>(self, cost_callback: F2) -> FindOptions<F2>
+    where
+        F2: Fn(String, CostMatrix) -> (),
+    {
+        let FindOptions {
+            ignore_creeps,
+            ignore_destructible_structures,
+            cost_callback: _,
+            max_ops,
+            heuristic_weight,
+            serialize,
+            max_rooms,
+            range,
+            plain_cost,
+            swamp_cost,
+        } = self;
+        FindOptions {
+            ignore_creeps,
+            ignore_destructible_structures,
+            cost_callback,
+            max_ops,
+            heuristic_weight,
+            serialize,
+            max_rooms,
+            range,
+            plain_cost,
+            swamp_cost,
+        }
+    }
+
+    /// Sets maximum ops - default `2000`.
+    pub fn max_ops(mut self, ops: u32) -> Self {
+        self.max_ops = ops;
+        self
+    }
+
+    /// Sets heuristic weight - default `1.2`.
+    pub fn heuristic_weight(mut self, weight: f64) -> Self {
+        self.heuristic_weight = weight;
+        self
+    }
+
+    /// Sets whether the returned path should be passed to `Room.serializePath`.
+    pub fn serialize(mut self, s: bool) -> Self {
+        self.serialize = s;
+        self
+    }
+
+    /// Sets maximum rooms - default `16`, max `16`.
+    pub fn max_rooms(mut self, rooms: u32) -> Self {
+        self.max_rooms = rooms;
+        self
+    }
+
+    pub fn range(mut self, k: u32) -> Self {
+        self.range = k;
+        self
+    }
+
+    /// Sets plain cost - default `1`.
+    pub fn plain_cost(mut self, cost: u8) -> Self {
+        self.plain_cost = cost;
+        self
+    }
+
+    /// Sets swamp cost - default `5`.
+    pub fn swamp_cost(mut self, cost: u8) -> Self {
+        self.swamp_cost = cost;
+        self
+    }
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct Step {
+    x: u32,
+    y: u32,
+    dx: i32,
+    dy: i32,
+    direction: Direction
+}
+
+js_deserializable!{Step}
