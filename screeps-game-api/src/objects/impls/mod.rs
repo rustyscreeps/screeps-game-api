@@ -22,8 +22,6 @@ mod structure_spawn;
 mod structure_terminal;
 mod structure_tower;
 mod tombstone;
-#[macro_use]
-mod utils;
 
 pub use self::structure_controller::{Reservation, Sign};
 pub use self::structure_spawn::SpawnOptions;
