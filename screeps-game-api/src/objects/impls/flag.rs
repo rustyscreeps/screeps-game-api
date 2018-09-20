@@ -1,0 +1,39 @@
+use {
+    constants::Color,
+    Flag,
+    HasPosition
+};
+
+simple_accessors! {
+    Flag;
+    (color -> color -> Color),
+    (name -> name -> String),
+    (secondary_color -> secondaryColor -> Color),
+}
+
+
+
+impl Flag {
+    pub fn remove(&self) {
+        js! {@{self.as_ref()}.remove();};
+    }
+
+    pub fn set_color(&self, color: &Color, secondary_color: Option<&Color>) {
+        match secondary_color {
+            None => js! {@{self.as_ref()}.setColor(@{i32::from(*color)})},
+            Some(sec_color) => js! {
+                @{self.as_ref()}.setColor(@{i32::from(*color)},
+                                          @{i32::from(*sec_color)})
+            }
+        };
+    }
+
+    pub fn set_position<T: HasPosition>(&self, pos:T) {
+        let room_pos = pos.pos();
+        js! {@{self.as_ref()}.setPosition(@{room_pos.as_ref()});};
+    }
+
+    pub fn set_position_xy(&self, x: u32, y: u32) {
+        js! {@{self.as_ref()}.setPosition(@{x}, @{y});};
+    }
+}

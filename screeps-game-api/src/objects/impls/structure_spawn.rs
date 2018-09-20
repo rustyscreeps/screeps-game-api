@@ -4,7 +4,7 @@ use stdweb::Reference;
 use memory::MemoryReference;
 use objects::StructureSpawn;
 
-use {Direction, Part, ReturnCode, StructureProperties};
+use {Direction, Part, ReturnCode, StructureProperties, Creep};
 
 simple_accessors! {
     StructureSpawn;
@@ -14,6 +14,10 @@ simple_accessors! {
 }
 
 impl StructureSpawn {
+    pub fn memory(&self) -> MemoryReference {
+        js_unwrap!(@{self.as_ref()}.memory)
+    }
+
     pub fn spawn_creep(&self, body: &[Part], name: &str) -> ReturnCode {
         let ints = body.iter().map(|p| *p as i32).collect::<Vec<i32>>();
         ((js! {
@@ -39,6 +43,14 @@ impl StructureSpawn {
     // TODO: support actually using Spawning properties.
     pub fn is_spawning(&self) -> bool {
         js_unwrap!(Boolean(@{self.as_ref()}.spawning))
+    }
+
+    pub fn recycle_creep(&self, target: &Creep) -> ReturnCode {
+        js_unwrap!{@{self.as_ref()}.recycleCreep(@{target.as_ref()})}
+    }
+
+    pub fn renew_creep(&self, target: &Creep) -> ReturnCode {
+        js_unwrap!{@{self.as_ref()}.renewCreep(@{target.as_ref()})}
     }
 }
 

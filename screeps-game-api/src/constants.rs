@@ -54,8 +54,16 @@ impl TryFrom<Value> for ReturnCode {
     }
 }
 
+impl TryFrom<i32> for ReturnCode {
+    type Error = i32;
+    fn try_from(v: i32) -> Result<Self, Self::Error> {
+        use num_traits::FromPrimitive;
+        Self::from_i32(v).ok_or(v)
+    }
+}
+
 pub unsafe trait FindConstant {
-    type Item: TryFrom<Value, Error = <Reference as TryFrom<Value>>::Error> + AsRef<Reference>;
+    type Item: TryFrom<Value, Error = ConversionError> + AsRef<Reference>;
 
     fn find_code(&self) -> i32;
 }
@@ -182,7 +190,7 @@ enum_from_primitive! {
 }
 
 impl TryFrom<Value> for Direction {
-    type Error = <u32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         use num_traits::FromPrimitive;
@@ -212,6 +220,26 @@ enum_from_primitive! {
     }
 }
 
+impl From<Color> for i32 {
+    fn from(c: Color) -> i32 {
+        c as i32
+    }
+}
+
+impl TryFrom<Value> for Color {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<Self, Self::Error> {
+        use num_traits::FromPrimitive;
+
+        let as_num = i32::try_from(v)?;
+
+        Ok(Self::from_i32(as_num).unwrap_or_else(|| {
+            panic!("encountered a color code we don't know: {}", as_num);
+        }))
+    }
+}
+
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Terrain {
@@ -221,7 +249,7 @@ pub enum Terrain {
 }
 
 impl TryFrom<Value> for Terrain {
-    type Error = <u32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let v = match v {
@@ -356,7 +384,7 @@ impl TryFrom<u32> for Part {
 }
 
 impl TryFrom<Value> for Part {
-    type Error = <Value as TryInto<u32>>::Error;
+    type Error = ConversionError;
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: u32 = v.try_into()?;
         Ok(Self::try_from(x)
@@ -516,7 +544,7 @@ impl StructureType {
 }
 
 impl TryFrom<Value> for StructureType {
-    type Error = <i32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: i32 = v.try_into()?;
@@ -612,10 +640,30 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 
 // TODO: MINERAL_* constants
 
-pub const DENSITY_LOW: i32 = 1;
-pub const DENSITY_MODERATE: i32 = 2;
-pub const DENSITY_HIGH: i32 = 3;
-pub const DENSITY_ULTRA: i32 = 4;
+enum_from_primitive! {
+    #[repr(i32)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    pub enum Density {
+        DensityLow = 1,
+        DensityModerate = 2,
+        DensityHigh = 3,
+        DensityUltra = 4,
+    }
+}
+
+impl TryFrom<Value> for Density {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<Self, Self::Error> {
+        use num_traits::FromPrimitive;
+
+        let as_num = i32::try_from(v)?;
+
+        Ok(Self::from_i32(as_num).unwrap_or_else(|| {
+            panic!("encountered a color code we don't know: {}", as_num);
+        }))
+    }
+}
 
 pub const TERMINAL_CAPACITY: i32 = 300000;
 pub const TERMINAL_HITS: i32 = 3000;
@@ -663,14 +711,12 @@ pub enum ResourceType {
     Catalyst = 9,
     /// `"G"`
     Ghodium = 10,
-
     /// `"OH"`
     Hydroxide = 11,
     /// `"ZK"`
     ZynthiumKeanite = 12,
     /// `"UL"`
     UtriumLemergite = 13,
-
     /// `"UH"`
     UtriumHydride = 14,
     /// `"UO"`
@@ -778,7 +824,7 @@ impl ResourceType {
 }
 
 impl TryFrom<Value> for ResourceType {
-    type Error = <i32 as TryFrom<Value>>::Error;
+    type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: i32 = v.try_into()?;

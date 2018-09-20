@@ -225,12 +225,6 @@ pub unsafe trait RoomObjectProperties:
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `Structure` class.
 pub unsafe trait StructureProperties: RoomObjectProperties {
-    fn hits(&self) -> i32 {
-        js_unwrap!(@{self.as_ref()}.hits)
-    }
-    fn hits_max(&self) -> i32 {
-        js_unwrap!(@{self.as_ref()}.hitsMax)
-    }
     fn id(&self) -> String {
         js_unwrap!(@{self.as_ref()}.id)
     }
@@ -314,6 +308,46 @@ pub unsafe trait HasStore: RoomObjectProperties {
     }
 }
 
+/// Trait for objects which can only store energy.
+/// 
+/// # Contract
+/// 
+/// The reference returned from `AsRef<Reference>::as_ref` must be have an 
+/// `energy` and an `energyCapacity` properties.
+pub unsafe trait CanStoreEnergy: StructureProperties {
+    fn energy(&self) -> u32 {
+        js_unwrap! { @{self.as_ref()}.energy }
+    }
+
+    fn energy_capacity(&self) -> u32 {
+        js_unwrap! { @{self.as_ref()}.energyCapacity }
+    }
+}
+
+/// Trait for objects which have to cooldown.
+/// 
+/// # Contract
+/// 
+/// The reference returned from `AsRef<Reference>::as_ref` must be have a
+/// `cooldown` properties.
+pub unsafe trait HasCooldown: StructureProperties {
+    fn cooldown(&self) -> u32 {
+        js_unwrap! { @{self.as_ref()}.cooldown }
+    }
+}
+
+/// Trait for objects which can decay.
+/// 
+/// # Contract
+/// 
+/// The reference returned from `AsRef<Reference>::as_ref` must be have a
+/// `ticksToDecay` properties.
+pub unsafe trait CanDecay: RoomObjectProperties {
+    fn ticks_to_decay(&self) -> u32 {
+        js_unwrap! { @{self.as_ref()}.ticksToDecay }
+    }
+}
+
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
 /// target of `Creep.transfer`.
 ///
@@ -339,7 +373,15 @@ pub unsafe trait Withdrawable: RoomObjectProperties {}
 ///
 /// The reference returned from `AsRef<Reference>::as_ref` must be a valid
 /// target for `Creep.attack`.
-pub unsafe trait Attackable: RoomObjectProperties {}
+pub unsafe trait Attackable: RoomObjectProperties {
+    fn hits(&self) -> u32 {
+        js_unwrap!{ @{self.as_ref()}.hits }
+    }
+
+    fn hits_max(&self) -> u32 {
+        js_unwrap!{ @{self.as_ref()}.hitsMax }
+    }
+}
 
 unsafe impl Transferable for StructureExtension {}
 unsafe impl Transferable for Creep {}
@@ -364,8 +406,27 @@ unsafe impl Withdrawable for StructurePowerSpawn {}
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
 
-unsafe impl<T> Attackable for T where T: StructureProperties {}
 unsafe impl Attackable for Creep {}
+unsafe impl Attackable for OwnedStructure {}
+unsafe impl Attackable for Structure {}
+unsafe impl Attackable for StructureContainer {}
+unsafe impl Attackable for StructureExtension {}
+unsafe impl Attackable for StructureExtractor {}
+unsafe impl Attackable for StructureKeeperLair {}
+unsafe impl Attackable for StructureLab {}
+unsafe impl Attackable for StructureLink {}
+unsafe impl Attackable for StructureNuker {}
+unsafe impl Attackable for StructureObserver {}
+unsafe impl Attackable for StructurePowerBank {}
+unsafe impl Attackable for StructurePowerSpawn {}
+unsafe impl Attackable for StructurePortal {}
+unsafe impl Attackable for StructureRampart {}
+unsafe impl Attackable for StructureRoad {}
+unsafe impl Attackable for StructureSpawn {}
+unsafe impl Attackable for StructureStorage {}
+unsafe impl Attackable for StructureTerminal {}
+unsafe impl Attackable for StructureTower {}
+unsafe impl Attackable for StructureWall {}
 
 impl_room_object_properties! {
     ConstructionSite,
@@ -449,3 +510,24 @@ unsafe impl HasStore for Tombstone {
         0 // no storeCapacity property
     }
 }
+
+unsafe impl CanStoreEnergy for StructureExtension {}
+unsafe impl CanStoreEnergy for StructureLab {}
+unsafe impl CanStoreEnergy for StructureLink {}
+unsafe impl CanStoreEnergy for StructureNuker {}
+unsafe impl CanStoreEnergy for StructurePowerSpawn {}
+unsafe impl CanStoreEnergy for StructureSpawn {}
+unsafe impl CanStoreEnergy for StructureTower {}
+
+unsafe impl HasCooldown for StructureExtractor {}
+unsafe impl HasCooldown for StructureLab {}
+unsafe impl HasCooldown for StructureLink {}
+unsafe impl HasCooldown for StructureNuker {}
+unsafe impl HasCooldown for StructureTerminal {}
+
+unsafe impl CanDecay for StructureContainer {}
+unsafe impl CanDecay for StructurePowerBank {}
+unsafe impl CanDecay for StructurePortal {}
+unsafe impl CanDecay for StructureRampart {}
+unsafe impl CanDecay for StructureRoad {}
+unsafe impl CanDecay for Tombstone {}

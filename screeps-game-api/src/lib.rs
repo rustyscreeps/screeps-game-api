@@ -33,6 +33,13 @@ pub(crate) use stdweb::private::ConversionError;
 /// structures in order to minimize namespace polution.
 pub mod prelude {
     pub use objects::{
-        HasPosition, HasStore, OwnedStructureProperties, RoomObjectProperties, StructureProperties,
+        HasPosition, 
+        HasStore, 
+        CanStoreEnergy,
+        HasCooldown,
+        CanDecay,
+        OwnedStructureProperties, 
+        RoomObjectProperties, 
+        StructureProperties,
     };
 }

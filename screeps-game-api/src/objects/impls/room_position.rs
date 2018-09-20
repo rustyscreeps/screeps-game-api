@@ -101,6 +101,10 @@ impl RoomPosition {
         js_unwrap!(@{self.as_ref()}.isEqualTo(@{&target.pos().0}))
     }
 
+    pub fn is_equal_to_xy(&self, x: u32, y: u32) -> bool {
+        js_unwrap!{return @{self.as_ref()}.isEqualTo(@{x}, @{y});}
+    }
+
     pub fn is_near_to<T>(&self, target: &T) -> bool
     where
         T: HasPosition,

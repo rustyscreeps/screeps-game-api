@@ -1,9 +1,14 @@
 use std::ops::Range;
 
-use constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType};
-use objects::{Room, StructureController, StructureStorage, StructureTerminal};
-use positions::LocalRoomName;
-use HasPosition;
+use stdweb::unstable::TryInto;
+
+use {
+    constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType, find::Exit},
+    HasPosition,
+    memory::MemoryReference,
+    objects::{Room, RoomPosition, StructureController, StructureStorage, StructureTerminal},
+    positions::LocalRoomName,
+};
 
 simple_accessors! {
     Room;
@@ -13,6 +18,7 @@ simple_accessors! {
     (name -> name -> String),
     (storage -> storage -> Option<StructureStorage>),
     (terminal -> terminal -> Option<StructureTerminal>),
+    // todo: visual
 }
 
 impl Room {
@@ -70,6 +76,29 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.find(@{ty.find_code()}))
     }
 
+    pub fn find_exit_to(&self, room: &Room) -> Result<Exit, ReturnCode> {
+        let code_val = js! {return @{self.as_ref()}.findExitTo(@{room.as_ref()});};
+        let code_int: i32 = code_val.try_into().unwrap();
+        
+        if code_int < 0 {
+            Err(code_int.try_into().unwrap())
+        } else {
+            Ok(code_int.try_into().unwrap())
+        }
+    }
+
+    pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
+        js_unwrap!{@{self.as_ref()}.get_position_at(@{x}, @{y})}
+    }
+
+    // pub fn look_at(&self, x: u32, y: u32) -> ! {
+    //     unimplemented!()
+    // }
+
+    // pub fn look_at_area(&self, top: u32, left: u32, bottom: u32, right: u32) -> ! {
+    //     unimplemented!()
+    // }
+
     pub fn look_for_at<T, U>(&self, ty: T, target: U) -> Vec<T::Item>
     where
         T: LookConstant,
@@ -121,6 +150,10 @@ impl Room {
             @{horiz.end},
             true
         ).map((obj) => obj[__look_num_to_str(@{ty.look_code() as i32})]))
+    }
+
+    pub fn memory(&self) -> MemoryReference {
+        js_unwrap!(@{self.as_ref()}.memory)
     }
 
     pub fn name_local(&self) -> LocalRoomName {
