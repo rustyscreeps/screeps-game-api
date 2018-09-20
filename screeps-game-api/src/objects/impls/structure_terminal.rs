@@ -10,7 +10,7 @@ impl StructureTerminal {
                 destination: &str,
                 description: Option<&str>) -> ReturnCode {
         js_unwrap! {
-            @{self.as_ref()}.send(@{resource_type.to_string()},
+            @{self.as_ref()}.send(__resource_type_num_to_str(@{resource_type as u32}),
                                   @{amount},
                                   @{destination},
                                   @{description} || undefined)

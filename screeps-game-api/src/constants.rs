@@ -821,55 +821,6 @@ impl ResourceType {
             CatalyzedGhodiumAlkalide => 90,
         }
     }
-
-    pub fn to_string(&self) -> String {
-        use ResourceType::*;
-        match *self {
-            Energy => "energy".to_owned(),
-            Power => "power".to_owned(),
-            Hydrogen =>"H".to_owned(),
-            Oxygen =>"O".to_owned(),
-            Utrium =>"U".to_owned(),
-            Lemergium =>"L".to_owned(),
-            Keanium =>"K".to_owned(),
-            Zynthium =>"Z".to_owned(),
-            Catalyst =>"X".to_owned(),
-            Ghodium =>"G".to_owned(),
-            Hydroxide =>"OH".to_owned(),
-            ZynthiumKeanite =>"ZK".to_owned(),
-            UtriumLemergite =>"UL".to_owned(),
-            UtriumHydride =>"UH".to_owned(),
-            UtriumOxide =>"UO".to_owned(),
-            KeaniumHydride =>"KH".to_owned(),
-            KeaniumOxide =>"KO".to_owned(),
-            LemergiumHydride =>"LH".to_owned(),
-            LemergiumOxide =>"LO".to_owned(),
-            ZynthiumHydride =>"ZH".to_owned(),
-            ZynthiumOxide =>"ZO".to_owned(),
-            GhodiumHydride =>"GH".to_owned(),
-            GhodiumOxide =>"GO".to_owned(),
-            UtriumAcid =>"UH2O".to_owned(),
-            UtriumAlkalide =>"UHO2".to_owned(),
-            KeaniumAcid =>"KH2O".to_owned(),
-            KeaniumAlkalide =>"KHO2".to_owned(),
-            LemergiumAcid =>"LH2O".to_owned(),
-            LemergiumAlkalide =>"LHO2".to_owned(),
-            ZynthiumAcid =>"ZH2O".to_owned(),
-            ZynthiumAlkalide =>"ZHO2".to_owned(),
-            GhodiumAcid =>"GH2O".to_owned(),
-            GhodiumAlkalide =>"GHO2".to_owned(),
-            CatalyzedUtriumAcid =>"XUH2O".to_owned(),
-            CatalyzedUtriumAlkalide =>"XUHO2".to_owned(),
-            CatalyzedKeaniumAcid =>"XKH2O".to_owned(),
-            CatalyzedKeaniumAlkalide =>"XKHO2".to_owned(),
-            CatalyzedLemergiumAcid =>"XLH2O".to_owned(),
-            CatalyzedLemergiumAlkalide =>"XLHO2".to_owned(),
-            CatalyzedZynthiumAcid =>"XZH2O".to_owned(),
-            CatalyzedZynthiumAlkalide =>"XZHO2".to_owned(),
-            CatalyzedGhodiumAcid =>"XGH2O".to_owned(),
-            CatalyzedGhodiumAlkalide =>"XGHO2".to_owned(),
-        }
-    }
 }
 
 impl TryFrom<Value> for ResourceType {
@@ -924,58 +875,4 @@ impl TryFrom<Value> for ResourceType {
             _ => panic!("unknown resource type integer {}", x),
         })
     }
-}
-
-impl TryFrom<String> for ResourceType {
-    type Error = String;
-
-    fn try_from(s: String) -> Result<Self, Self::Error> {
-        use ResourceType::*;
-        match s.as_ref() {
-            "energy" => Ok(Energy),
-            "power" => Ok(Power),
-            "H" => Ok(Hydrogen),
-            "O" => Ok(Oxygen),
-            "U" => Ok(Utrium),
-            "L" => Ok(Lemergium),
-            "K" => Ok(Keanium),
-            "Z" => Ok(Zynthium),
-            "X" => Ok(Catalyst),
-            "G" => Ok(Ghodium),
-            "OH" => Ok(Hydroxide),
-            "ZK" => Ok(ZynthiumKeanite),
-            "UL" => Ok(UtriumLemergite),
-            "UH" => Ok(UtriumHydride),
-            "UO" => Ok(UtriumOxide),
-            "KH" => Ok(KeaniumHydride),
-            "KO" => Ok(KeaniumOxide),
-            "LH" => Ok(LemergiumHydride),
-            "LO" => Ok(LemergiumOxide),
-            "ZH" => Ok(ZynthiumHydride),
-            "ZO" => Ok(ZynthiumOxide),
-            "GH" => Ok(GhodiumHydride),
-            "GO" => Ok(GhodiumOxide),
-            "UH2O" => Ok(UtriumAcid),
-            "UHO2" => Ok(UtriumAlkalide),
-            "KH2O" => Ok(KeaniumAcid),
-            "KHO2" => Ok(KeaniumAlkalide),
-            "LH2O" => Ok(LemergiumAcid),
-            "LHO2" => Ok(LemergiumAlkalide),
-            "ZH2O" => Ok(ZynthiumAcid),
-            "ZHO2" => Ok(ZynthiumAlkalide),
-            "GH2O" => Ok(GhodiumAcid),
-            "GHO2" => Ok(GhodiumAlkalide),
-            "XUH2O" => Ok(CatalyzedUtriumAcid),
-            "XUHO2" => Ok(CatalyzedUtriumAlkalide),
-            "XKH2O" => Ok(CatalyzedKeaniumAcid),
-            "XKHO2" => Ok(CatalyzedKeaniumAlkalide),
-            "XLH2O" => Ok(CatalyzedLemergiumAcid),
-            "XLHO2" => Ok(CatalyzedLemergiumAlkalide),
-            "XZH2O" => Ok(CatalyzedZynthiumAcid),
-            "XZHO2" => Ok(CatalyzedZynthiumAlkalide),
-            "XGH2O" => Ok(CatalyzedGhodiumAcid),
-            "XGHO2" => Ok(CatalyzedGhodiumAlkalide),
-            _ => Err(s)
-        }
-    } 
 }
