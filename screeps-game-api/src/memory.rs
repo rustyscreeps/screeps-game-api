@@ -53,7 +53,7 @@
 
 use std::fmt;
 use stdweb::unstable::{TryFrom, TryInto};
-use stdweb::{Array, JsSerialize, Reference, Value};
+use stdweb::{JsSerialize, Reference, Value};
 
 use ConversionError;
 
