@@ -14,8 +14,11 @@ We adhere to the following guidelines:
 
 # Code Formatting
 
-The code formatting should match exactly with the behavior of `rustfmt` on nightly, though, so
-knowing all the intricacies of that shouldn't be necessary. To install `rustfmt`, use `rustup`:
+Please run `rustfmt` on the files you edit when submitting to this repository. This will handle all
+style issues mentioned in the 'fmt-rfcs' guidelines, so you should be able to simply run `cargo fmt`
+and be done with it.
+
+To install `rustfmt`, use `rustup`:
 
 ```console
 $ rustup component add --toolchain nightly rustfmt-preview
@@ -26,7 +29,6 @@ Then to format the code in this repository, use the following:
 ```console
 $ cargo fmt
 ```
-
 
 [screeps slack]: https://chat.screeps.com/
 [fmt-rfcs Rust Style Guide]: https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md
