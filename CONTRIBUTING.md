@@ -34,10 +34,12 @@ $ cargo fmt
 
 ## `use` formatting
 
-`use` statements should be at the top of the file, module or function they are used within.
-Importing at the module level should be prefered to importing within functions, with the
-exception of importing enum variants (`use self::MyEnum::*;` is useful when dealing with
-big enums, but it's best kept only within the function it's used in).
+Private `use` statements should be above all other non-use items within the module or function they
+are declared.
+
+Importing at the module level should be preferred to importing within functions, with the
+exception of importing enum variants. Any statement like `use self::MyEnum::*;` should be used only
+within a function in order to avoid polluting the module namespace.
 
 When importing multiple things, `use` statements should be separated into the following
 newline-separated groups:
@@ -47,11 +49,16 @@ newline-separated groups:
 - imports from the crate root
 - imports from `self` or `super`.
 
-In addition, all imports should use the use [RFC 2128] "nested groups" style. All imports inside
-each of the groups and for each external crate should be grouped under one `use` statement.
+`pub use` statements should all be in one group under any `mod` statements in a file.
 
+All imports should use the use [RFC 2128] "nested groups" style. There should be one top-level
+`use` statement for each of `std`, the current root, `self`, `super` and one for each external
+crate.
 
-Exampe import section:
+In accordance to the `fmt-rfcs`, top-level `use` statements within a group and items within a `use`
+statement should be alphabetically ordered.
+
+Example import section:
 
 ```rust
 use std::{
@@ -68,6 +75,7 @@ use stdweb::{
     unstable::{TryFrom, TryInto},
     Reference, Value,
 };
+use void::Void;
 
 
 use {
