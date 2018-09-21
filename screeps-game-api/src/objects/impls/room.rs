@@ -410,7 +410,7 @@ where
     }
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Step {
     x: u32,
     y: u32,
@@ -420,6 +420,7 @@ pub struct Step {
 }
 
 js_deserializable!{Step}
+js_serializable!{Step}
 
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
