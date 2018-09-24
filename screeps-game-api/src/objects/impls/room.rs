@@ -18,9 +18,9 @@ use constants::{
     ReturnCode, 
     StructureType, 
 };
-use HasPosition;
 use memory::MemoryReference;
 use objects::{
+    HasPosition,
     Room, 
     RoomPosition,
     StructureController, 
