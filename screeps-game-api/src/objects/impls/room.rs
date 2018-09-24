@@ -126,7 +126,7 @@ impl Room {
         from_pos: &O, 
         to_pos: &T,
         opts: FindOptions<'a, F>,
-    ) -> Vec<Step> 
+    ) -> Path 
     where
         O: HasPosition,
         T: HasPosition,
@@ -196,8 +196,11 @@ impl Room {
                     swampCost: @{swamp_cost}
                 });
             };
-
-            v.try_into().unwrap()
+            if serialize {
+                Path::SerializedPath(v.try_into().unwrap())
+            } else {
+                Path::VectorizedPath(v.try_into().unwrap())
+            }
         })
     }
 
@@ -417,3 +420,11 @@ pub struct Step {
 }
 
 js_deserializable!{Step}
+
+#[derive(Debug, Deserialize)]
+pub enum Path {
+    VectorizedPath(Vec<Step>),
+    SerializedPath(String),
+}
+
+js_deserializable!{Path}
