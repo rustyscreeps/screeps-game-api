@@ -197,9 +197,9 @@ impl Room {
                 });
             };
             if serialize {
-                Path::SerializedPath(v.try_into().unwrap())
+                Path::Serialized(v.try_into().unwrap())
             } else {
-                Path::VectorizedPath(v.try_into().unwrap())
+                Path::Vectorized(v.try_into().unwrap())
             }
         })
     }
@@ -422,6 +422,7 @@ pub struct Step {
 js_deserializable!{Step}
 
 #[derive(Debug, Deserialize)]
+#[serde(untagged)]
 pub enum Path {
     Vectorized(Vec<Step>),
     Serialized(String),
