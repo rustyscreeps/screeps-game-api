@@ -6,7 +6,6 @@ use std::{
 
 use stdweb::{
     Reference,
-    unstable::TryInto,
 };
 
 use constants::{
@@ -29,6 +28,7 @@ use objects::{
 };
 use pathfinder::CostMatrix;
 use positions::LocalRoomName;
+use traits::TryInto;
 
 simple_accessors! {
     Room;

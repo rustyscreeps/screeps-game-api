@@ -1,6 +1,4 @@
-use stdweb::unstable::TryInto;
-
-use {ReturnCode, StructureType};
+use {traits::TryInto, ReturnCode, StructureType};
 
 // TODO: Use root import after https://github.com/rust-lang/rust/issues/53140 is fixed.
 use super::super::ConstructionSite;

@@ -3,8 +3,6 @@ use std::cmp::{
     PartialEq
 };
 
-use stdweb::unstable::TryInto;
-
 use {
     constants::{
         Color, 
@@ -23,6 +21,7 @@ use {
     },
     pathfinder::CostMatrix,
     positions::LocalRoomPosition,
+    traits::TryInto,
 };
 
 impl RoomPosition {

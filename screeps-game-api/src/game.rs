@@ -1,5 +1,4 @@
-use stdweb::unstable::TryInto;
-
+use traits::TryInto;
 use {RoomObjectProperties, ConversionError, RoomObject};
 
 // TODO: split these out into separate files once we add documentation.

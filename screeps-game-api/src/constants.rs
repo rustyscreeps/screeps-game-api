@@ -320,11 +320,10 @@ pub unsafe trait LookConstant {
 }
 
 pub mod look {
-    use stdweb::unstable::TryInto;
-
     use {
-        traits::IntoExpectedType, ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source,
-        Structure, Terrain, Tombstone,
+        traits::{IntoExpectedType, TryInto},
+        ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain,
+        Tombstone,
     };
 
     use super::{Look, LookConstant};

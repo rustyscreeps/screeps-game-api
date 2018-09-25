@@ -45,7 +45,7 @@
 /// Note: for unwrapping reference types, use [`js_unwrap_ref!`] to avoid instanceof checks.
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
-        ::stdweb::unstable::TryInto::try_into(js! { return $($code)*; })
+        ::traits::TryInto::try_into(js! { return $($code)*; })
             .expect(concat!("js_unwrap at ", line!(), " in ", file!()))
     )
 }
