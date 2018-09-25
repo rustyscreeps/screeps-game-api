@@ -1,10 +1,13 @@
 //! Constants, most copied from [the game constants](https://github.com/screeps/common/blob/master/lib/constants.js).
 //!
 //! Last updated on 2018-03-06, `c3372fd` on https://github.com/screeps/common/commits/master/lib/constants.js.
-use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
 
-use {objects::RoomObject, ConversionError};
+use {
+    objects::RoomObject,
+    traits::{FromExpectedType, TryFrom, TryInto},
+    ConversionError,
+};
 
 enum_from_primitive! {
     #[repr(i32)]
@@ -63,7 +66,7 @@ impl TryFrom<i32> for ReturnCode {
 }
 
 pub unsafe trait FindConstant {
-    type Item: TryFrom<Value, Error = ConversionError> + AsRef<Reference>;
+    type Item: FromExpectedType<Reference>;
 
     fn find_code(&self) -> i32;
 }
@@ -309,30 +312,35 @@ pub enum Look {
 }
 
 pub unsafe trait LookConstant {
-    type Item: TryFrom<Value, Error = ConversionError>;
+    type Item;
+
+    fn convert_and_check_items(reference: Value) -> Vec<Self::Item>;
 
     fn look_code(&self) -> Look;
 }
 
 pub mod look {
-    use super::{Look, LookConstant};
     use {
+        traits::{IntoExpectedType, TryInto},
         ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain,
         Tombstone,
     };
 
+    use super::{Look, LookConstant};
+
     typesafe_look_constants! {
-        CREEPS, Look::Creeps, Creep;
-        ENERGY, Look::Energy, Resource;
-        RESOURCES, Look::Resources, Resource;
-        SOURCES, Look::Sources, Source;
-        MINERALS, Look::Minerals, Mineral;
-        STRUCTURES, Look::Structures, Structure;
-        FLAGS, Look::Flags, Flag;
-        CONSTRUCTION_SITES, Look::ConstructionSites, ConstructionSite;
-        NUKES, Look::Nukes, Nuke;
-        TERRAIN, Look::Terrain, Terrain;
-        TOMBSTONES, Look::Tombstones, Tombstone;
+        CREEPS, Look::Creeps, Creep, IntoExpectedType::into_expected_type;
+        ENERGY, Look::Energy, Resource, IntoExpectedType::into_expected_type;
+        RESOURCES, Look::Resources, Resource, IntoExpectedType::into_expected_type;
+        SOURCES, Look::Sources, Source, IntoExpectedType::into_expected_type;
+        MINERALS, Look::Minerals, Mineral, IntoExpectedType::into_expected_type;
+        STRUCTURES, Look::Structures, Structure, IntoExpectedType::into_expected_type;
+        FLAGS, Look::Flags, Flag, IntoExpectedType::into_expected_type;
+        CONSTRUCTION_SITES, Look::ConstructionSites, ConstructionSite,
+            IntoExpectedType::into_expected_type;
+        NUKES, Look::Nukes, Nuke, IntoExpectedType::into_expected_type;
+        TERRAIN, Look::Terrain, Terrain, TryInto::try_into;
+        TOMBSTONES, Look::Tombstones, Tombstone, IntoExpectedType::into_expected_type;
     }
 }
 

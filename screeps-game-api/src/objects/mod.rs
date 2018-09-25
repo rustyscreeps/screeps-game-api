@@ -12,176 +12,93 @@
 //! rely on these contracts being upheld as long as JavaScript code does not
 //! do anything mischievous, like removing properties from objects or sticking
 //! unexpected things into dictionaries which we trust.
-use stdweb::unstable::{TryFrom, TryInto};
-use stdweb::{Reference, Value};
+use stdweb::{Reference, ReferenceType, Value};
 
-use {ResourceType, ReturnCode, StructureType, ConversionError};
+use traits::{TryFrom, TryInto};
+use {ConversionError, IntoExpectedType, ResourceType, ReturnCode, StructureType};
 
 mod impls;
+mod structure;
 
-pub use self::impls::{
-    FindOptions,
-    Path,
-    Reservation, 
-    Sign, 
-    SpawnOptions,
-    Step, 
+pub use self::{
+    impls::{
+        FindOptions,
+        Path,
+        Reservation, 
+        Sign, 
+        SpawnOptions,
+        Step, 
+    },
+    structure::Structure,
 };
 
 reference_wrappers!(
+    #[reference(instance_of = "ConstructionSite")]
     ConstructionSite,
+    #[reference(instance_of = "Creep")]
     Creep,
+    #[reference(instance_of = "Flag")]
     Flag,
+    #[reference(instance_of = "Mineral")]
     Mineral,
+    #[reference(instance_of = "Nuke")]
     Nuke,
+    #[reference(instance_of = "OwnedStructure")]
     OwnedStructure,
+    #[reference(instance_of = "Resource")]
     Resource,
+    #[reference(instance_of = "Room")]
     Room,
+    #[reference(instance_of = "RoomObject")]
     RoomObject,
+    #[reference(instance_of = "RoomPosition")]
     RoomPosition,
+    #[reference(instance_of = "Source")]
     Source,
+    #[reference(instance_of = "StructureContainer")]
     StructureContainer,
+    #[reference(instance_of = "StructureController")]
     StructureController,
+    #[reference(instance_of = "StructureExtension")]
     StructureExtension,
+    #[reference(instance_of = "StructureExtractor")]
     StructureExtractor,
+    #[reference(instance_of = "StructureKeeperLair")]
     StructureKeeperLair,
+    #[reference(instance_of = "StructureLab")]
     StructureLab,
+    #[reference(instance_of = "StructureLink")]
     StructureLink,
+    #[reference(instance_of = "StructureNuker")]
     StructureNuker,
+    #[reference(instance_of = "StructureObserver")]
     StructureObserver,
+    #[reference(instance_of = "StructurePowerBank")]
     StructurePowerBank,
+    #[reference(instance_of = "StructurePowerSpawn")]
     StructurePowerSpawn,
+    #[reference(instance_of = "StructurePortal")]
     StructurePortal,
+    #[reference(instance_of = "StructureRampart")]
     StructureRampart,
+    #[reference(instance_of = "StructureRoad")]
     StructureRoad,
+    #[reference(instance_of = "StructureSpawn")]
     StructureSpawn,
+    #[reference(instance_of = "StructureStorage")]
     StructureStorage,
+    #[reference(instance_of = "StructureTerminal")]
     StructureTerminal,
+    #[reference(instance_of = "StructureTower")]
     StructureTower,
+    #[reference(instance_of = "StructureWall")]
     StructureWall,
     // this is implemented later
-    //    Structure,
+    // #[reference(instance_of = "Structure")]
+    // Structure,
+    #[reference(instance_of = "Tombstone")]
     Tombstone,
 );
-
-pub enum Structure {
-    Container(StructureContainer),
-    Controller(StructureController),
-    Extension(StructureExtension),
-    Extractor(StructureExtractor),
-    KeeperLair(StructureKeeperLair),
-    Lab(StructureLab),
-    Link(StructureLink),
-    Nuker(StructureNuker),
-    Observer(StructureObserver),
-    PowerBank(StructurePowerBank),
-    PowerSpawn(StructurePowerSpawn),
-    Portal(StructurePortal),
-    Rampart(StructureRampart),
-    Road(StructureRoad),
-    Spawn(StructureSpawn),
-    Storage(StructureStorage),
-    Terminal(StructureTerminal),
-    Tower(StructureTower),
-    Wall(StructureWall),
-}
-
-impl AsRef<Reference> for Structure {
-    fn as_ref(&self) -> &Reference {
-        match *self {
-            Structure::Container(ref v) => v.as_ref(),
-            Structure::Controller(ref v) => v.as_ref(),
-            Structure::Extension(ref v) => v.as_ref(),
-            Structure::Extractor(ref v) => v.as_ref(),
-            Structure::KeeperLair(ref v) => v.as_ref(),
-            Structure::Lab(ref v) => v.as_ref(),
-            Structure::Link(ref v) => v.as_ref(),
-            Structure::Nuker(ref v) => v.as_ref(),
-            Structure::Observer(ref v) => v.as_ref(),
-            Structure::PowerBank(ref v) => v.as_ref(),
-            Structure::PowerSpawn(ref v) => v.as_ref(),
-            Structure::Portal(ref v) => v.as_ref(),
-            Structure::Rampart(ref v) => v.as_ref(),
-            Structure::Road(ref v) => v.as_ref(),
-            Structure::Spawn(ref v) => v.as_ref(),
-            Structure::Storage(ref v) => v.as_ref(),
-            Structure::Terminal(ref v) => v.as_ref(),
-            Structure::Tower(ref v) => v.as_ref(),
-            Structure::Wall(ref v) => v.as_ref(),
-        }
-    }
-}
-impl From<Structure> for Reference {
-    fn from(wrapper: Structure) -> Reference {
-        match wrapper {
-            Structure::Container(v) => v.0,
-            Structure::Controller(v) => v.0,
-            Structure::Extension(v) => v.0,
-            Structure::Extractor(v) => v.0,
-            Structure::KeeperLair(v) => v.0,
-            Structure::Lab(v) => v.0,
-            Structure::Link(v) => v.0,
-            Structure::Nuker(v) => v.0,
-            Structure::Observer(v) => v.0,
-            Structure::PowerBank(v) => v.0,
-            Structure::PowerSpawn(v) => v.0,
-            Structure::Portal(v) => v.0,
-            Structure::Rampart(v) => v.0,
-            Structure::Road(v) => v.0,
-            Structure::Spawn(v) => v.0,
-            Structure::Storage(v) => v.0,
-            Structure::Terminal(v) => v.0,
-            Structure::Tower(v) => v.0,
-            Structure::Wall(v) => v.0,
-        }
-    }
-}
-
-impl Structure {
-    fn from_reference(reference: Reference) -> Self {
-        let s = js_unwrap!(@{&reference}.structureType);
-        match s {
-            StructureType::Container => Structure::Container(StructureContainer(reference)),
-            StructureType::Controller => Structure::Controller(StructureController(reference)),
-            StructureType::Extension => Structure::Extension(StructureExtension(reference)),
-            StructureType::Extractor => Structure::Extractor(StructureExtractor(reference)),
-            StructureType::KeeperLair => Structure::KeeperLair(StructureKeeperLair(reference)),
-            StructureType::Lab => Structure::Lab(StructureLab(reference)),
-            StructureType::Link => Structure::Link(StructureLink(reference)),
-            StructureType::Nuker => Structure::Nuker(StructureNuker(reference)),
-            StructureType::Observer => Structure::Observer(StructureObserver(reference)),
-            StructureType::PowerBank => Structure::PowerBank(StructurePowerBank(reference)),
-            StructureType::PowerSpawn => Structure::PowerSpawn(StructurePowerSpawn(reference)),
-            StructureType::Portal => Structure::Portal(StructurePortal(reference)),
-            StructureType::Rampart => Structure::Rampart(StructureRampart(reference)),
-            StructureType::Road => Structure::Road(StructureRoad(reference)),
-            StructureType::Spawn => Structure::Spawn(StructureSpawn(reference)),
-            StructureType::Storage => Structure::Storage(StructureStorage(reference)),
-            StructureType::Terminal => Structure::Terminal(StructureTerminal(reference)),
-            StructureType::Tower => Structure::Tower(StructureTower(reference)),
-            StructureType::Wall => Structure::Wall(StructureWall(reference)),
-        }
-    }
-}
-
-impl TryFrom<Value> for Structure {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Structure, Self::Error> {
-        Ok(Self::from_reference(v.try_into()?))
-    }
-}
-
-unsafe impl RoomObjectProperties for Structure {
-    fn try_from(obj: RoomObject) -> Option<Self> {
-        let is_me = js_unwrap!(@{obj.as_ref()} instanceof Structure);
-        if is_me {
-            Some(Self::from_reference(obj.0))
-        } else {
-            None
-        }
-    }
-}
 
 /// Trait for things which have positions in the Screeps world.
 ///
@@ -202,7 +119,7 @@ where
     T: RoomObjectProperties,
 {
     fn pos(&self) -> RoomPosition {
-        js_unwrap!(@{self.as_ref()}.pos)
+        js_unwrap_ref!(@{self.as_ref()}.pos)
     }
 }
 
@@ -214,12 +131,15 @@ where
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `RoomObject` class.
 pub unsafe trait RoomObjectProperties:
-    AsRef<Reference> + Into<Reference> + HasPosition
+    AsRef<Reference>
+    + Into<Reference>
+    + HasPosition
+    + ReferenceType
+    + TryFrom<Value, Error = ConversionError>
+    + TryFrom<Reference, Error = ConversionError>
 {
-    fn try_from(obj: RoomObject) -> Option<Self>;
-
     fn room(&self) -> Room {
-        js_unwrap!(@{self.as_ref()}.room)
+        js_unwrap_ref!(@{self.as_ref()}.room)
     }
 }
 
@@ -249,7 +169,9 @@ pub unsafe trait StructureProperties: RoomObjectProperties {
         js_unwrap!(@{self.as_ref()}.notifyWhenAttacked(@{notify_when_attacked}))
     }
     fn as_structure(self) -> Structure {
-        Structure::from_reference(self.into())
+        Into::<Reference>::into(self)
+            .into_expected_type()
+            .expect("expected converting a StructureProperties to a Structure would suceed.")
     }
 }
 
@@ -434,37 +356,36 @@ unsafe impl Attackable for StructureTerminal {}
 unsafe impl Attackable for StructureTower {}
 unsafe impl Attackable for StructureWall {}
 
-impl_room_object_properties! {
-    ConstructionSite,
-    Creep,
-    Flag,
-    Mineral,
-    Nuke,
-    OwnedStructure,
-    Resource,
-    RoomObject,
-    Source,
-    StructureContainer,
-    StructureController,
-    StructureExtension,
-    StructureExtractor,
-    StructureKeeperLair,
-    StructureLab,
-    StructureLink,
-    StructureNuker,
-    StructureObserver,
-    StructurePowerBank,
-    StructurePowerSpawn,
-    StructurePortal,
-    StructureRampart,
-    StructureRoad,
-    StructureSpawn,
-    StructureStorage,
-    StructureTerminal,
-    StructureTower,
-    StructureWall,
-    Tombstone,
-}
+unsafe impl RoomObjectProperties for ConstructionSite {}
+unsafe impl RoomObjectProperties for Creep {}
+unsafe impl RoomObjectProperties for Flag {}
+unsafe impl RoomObjectProperties for Mineral {}
+unsafe impl RoomObjectProperties for Nuke {}
+unsafe impl RoomObjectProperties for OwnedStructure {}
+unsafe impl RoomObjectProperties for Resource {}
+unsafe impl RoomObjectProperties for RoomObject {}
+unsafe impl RoomObjectProperties for Source {}
+unsafe impl RoomObjectProperties for StructureContainer {}
+unsafe impl RoomObjectProperties for StructureController {}
+unsafe impl RoomObjectProperties for StructureExtension {}
+unsafe impl RoomObjectProperties for StructureExtractor {}
+unsafe impl RoomObjectProperties for StructureKeeperLair {}
+unsafe impl RoomObjectProperties for StructureLab {}
+unsafe impl RoomObjectProperties for StructureLink {}
+unsafe impl RoomObjectProperties for StructureNuker {}
+unsafe impl RoomObjectProperties for StructureObserver {}
+unsafe impl RoomObjectProperties for StructurePowerBank {}
+unsafe impl RoomObjectProperties for StructurePowerSpawn {}
+unsafe impl RoomObjectProperties for StructurePortal {}
+unsafe impl RoomObjectProperties for StructureRampart {}
+unsafe impl RoomObjectProperties for StructureRoad {}
+unsafe impl RoomObjectProperties for StructureSpawn {}
+unsafe impl RoomObjectProperties for StructureStorage {}
+unsafe impl RoomObjectProperties for StructureTerminal {}
+unsafe impl RoomObjectProperties for StructureTower {}
+unsafe impl RoomObjectProperties for StructureWall {}
+unsafe impl RoomObjectProperties for Structure {}
+unsafe impl RoomObjectProperties for Tombstone {}
 
 impl_structure_properties!{
     OwnedStructure,

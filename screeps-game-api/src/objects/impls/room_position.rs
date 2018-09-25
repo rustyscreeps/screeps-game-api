@@ -3,8 +3,6 @@ use std::cmp::{
     PartialEq
 };
 
-use stdweb::unstable::TryInto;
-
 use {
     constants::{
         Color, 
@@ -23,6 +21,7 @@ use {
     },
     pathfinder::CostMatrix,
     positions::LocalRoomPosition,
+    traits::TryInto,
 };
 
 impl RoomPosition {
@@ -73,7 +72,7 @@ impl RoomPosition {
     where
         T: FindConstant,
     {
-        js_unwrap!(@{self.as_ref()}.findClosestByRange(
+        js_unwrap_ref!(@{self.as_ref()}.findClosestByRange(
             __structure_type_num_to_str(@{ty.find_code()}))
         )
     }
@@ -82,7 +81,7 @@ impl RoomPosition {
     where
         T: FindConstant,
     {
-        js_unwrap!(@{self.as_ref()}.findInRange(
+        js_unwrap_ref!(@{self.as_ref()}.findInRange(
             __structure_type_num_to_str(@{ty.find_code()}),
             @{range}
         ))
@@ -148,7 +147,9 @@ impl RoomPosition {
     where
         T: LookConstant,
     {
-        js_unwrap!(@{self.as_ref()}.lookFor(__look_num_to_str(@{ty.look_code() as i32})))
+        T::convert_and_check_items(js_unwrap!{
+            @{self.as_ref()}.lookFor(__look_num_to_str(@{ty.look_code() as i32}))
+        })
     }
 }
 

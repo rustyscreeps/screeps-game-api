@@ -1,8 +1,8 @@
-use stdweb::unstable::TryInto;
 use stdweb::Reference;
 
 use memory::MemoryReference;
 use objects::StructureSpawn;
+use traits::TryInto;
 
 use {Direction, Part, ReturnCode, StructureProperties, Creep};
 

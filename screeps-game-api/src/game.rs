@@ -1,3 +1,6 @@
+use traits::TryInto;
+use {RoomObjectProperties, ConversionError, RoomObject};
+
 // TODO: split these out into separate files once we add documentation.
 //
 // Right now, they can all fit in here because they're pretty small.
@@ -122,10 +125,10 @@ pub mod gcl {
 /// [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
 pub mod map {
     use std::collections;
-    use stdweb::unstable::{TryInto, TryFrom};
 
-    use {Direction, RoomPosition, Terrain, Room};
-    use constants::{ReturnCode, find::Exit};
+    use constants::{find::Exit, ReturnCode};
+    use traits::{TryFrom, TryInto};
+    use {Direction, Room, RoomPosition, Terrain};
 
     /// See [http://docs.screeps.com/api/#Game.map.describeExits]
     ///
@@ -417,9 +420,26 @@ pub fn time() -> u32 {
 
 /// See [http://docs.screeps.com/api/#Game.getObjectById]
 ///
+/// This gets an object expecting a specific type and will return a `ConversionError` if the type
+/// does not match.
+///
+/// If all you want to assume is that something has an ID, use [`get_object_erased`].
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
-pub fn get_object(id: &str) -> Option<::objects::RoomObject> {
-    js_unwrap!(Game.getObjectById(@{id}))
+pub fn get_object_typed<T>(id: &str) -> Result<Option<T>, ConversionError>
+where
+    T: RoomObjectProperties,
+{
+    js!(return Game.getObjectById(@{id});).try_into()
+}
+
+/// See [http://docs.screeps.com/api/#Game.getObjectById]
+///
+/// This gets the object in 'erased' form - all that is known about it is that it's a RoomObject.
+///
+/// If a more specific type is expected, [`get_object_typed`] can be used.
+/// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
+pub fn get_object_erased(id: &str) -> Option<RoomObject> {
+    js_unwrap_ref!(Game.getObjectById(@{id}))
 }
 
 pub fn notify(message: &str, group_interval: Option<u32>) {

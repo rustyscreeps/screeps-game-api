@@ -1,6 +1,5 @@
-use stdweb::unstable::TryInto;
-
 use {
+    traits::TryInto,
     {RoomPosition, StructurePortal},
 };
 

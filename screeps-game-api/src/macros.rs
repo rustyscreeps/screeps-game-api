@@ -41,10 +41,37 @@
 /// 
 /// For the full list, see the documentation for [`stdweb::unstable::TryFrom`].
 /// (If unavailable: https://docs.rs/stdweb/0.4.8/stdweb/unstable/trait.TryFrom.html )
+///
+/// Note: for unwrapping reference types, use [`js_unwrap_ref!`] to avoid instanceof checks.
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
-        ::stdweb::unstable::TryInto::try_into(js! { return $($code)*; })
+        ::traits::TryInto::try_into(js! { return $($code)*; })
             .expect(concat!("js_unwrap at ", line!(), " in ", file!()))
+    )
+}
+
+/// Macro similar to [`js_unwrap!`], but with fewer `instanceof` checks.
+///
+/// # Example
+///
+/// ```ignore
+/// let x: Creep = js_unwrap_ref!(Game.creeps.John);
+/// ```
+///
+/// This will generate code
+///
+/// ```
+/// let x: Creep = js!({ return Game.creeps.John; }).cast_expected_type().expect(...);
+/// ```
+///
+/// `cast_expected_type` will ensure that the return value is a [`stdweb::Reference`], but it won't
+/// do any more than that. If the JavaScript behaves incorrectly and returns something other than a
+/// Creep, and the `"check-all-casts"` feature is not enabled, it will silently make a
+/// [`screeps::Creep`] containing the wrong value which will fail when used.
+macro_rules! js_unwrap_ref {
+    ($($code:tt)*) => (
+        ::traits::IntoExpectedType::into_expected_type(js! { return $($code)*; })
+            .expect(concat!("js_unwrap_ref at ", line!(), " in ", file!()))
     )
 }
 
@@ -93,40 +120,58 @@ macro_rules! get_from_js {
 }
 
 /// Macro used to encapsulate all screeps game objects
-/// 
-/// Macro syntax: 
-/// reference_wrapper!{
-///     $obj1,
-///     $obj2,
-///     ...
+///
+/// Macro syntax:
+///
+/// ```
+/// reference_wrapper! {
+///     #[reference(instance_of = "Creep")]
+///     Creep,
+///     #[reference(instance_of = "Room")],
+///     Room,
+///     // ...
 /// }
-/// 
+/// ```
+///
 /// Screeps game objects, in javascript, can be accessed via stdweb's `Reference`
-/// object. This macro: 
-///   - Creates a struct named `objX`;
-///   - Implements traits `AsRef<Reference>`, `TryFrom<Value>` for `objX`
-///   - Implements trait `From<objX>` for `Reference`
+/// object. For each ident `objJ` mentioned, this macro:
+///
+/// - Creates a struct named `objX`;
+/// - Uses `#[derive(Clone, ReferenceType)]` which implements these traits for `objX`:
+///   - InstanceOf
+///   - AsRef<Reference>
+///   - ReferenceType
+///   - Into<Reference>
+///   - TryInto<Reference>
+///   - TryFrom<Reference>
+///   - TryFrom<&Reference>
+///   - TryFrom<Value>
+///   - TryFrom<&Value>
+/// - Implements FromExpectedType<Reference> for `objJ`
 macro_rules! reference_wrappers {
-    ($($name:ident),* $(,)*) => {
+    (
         $(
-            #[derive(Clone)]
+            $(#[ $attr:meta ])*
+            $name:ident
+        ),* $(,)*
+    ) => {
+        $(
+            #[derive(Clone, ReferenceType)]
+            $(
+                #[$attr]
+            )*
             pub struct $name(Reference);
 
-            impl AsRef<Reference> for $name {
-                fn as_ref(&self) -> &Reference {
-                    &self.0
-                }
-            }
-            impl From<$name> for Reference {
-                fn from(wrapper: $name) -> Reference {
-                    wrapper.0
-                }
-            }
-            impl TryFrom<Value> for $name {
-                type Error = ::ConversionError;
-
-                fn try_from(v: Value) -> Result<$name, Self::Error> {
-                    Ok($name(v.try_into()?))
+            impl ::traits::FromExpectedType<Reference> for $name {
+                fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
+                    #[cfg(feature = "check-all-casts")]
+                    {
+                        ::traits::TryFrom::try_from(reference)
+                    }
+                    #[cfg(not(feature = "check-all-casts"))]
+                    {
+                        unsafe { Ok(::stdweb::ReferenceType::from_reference_unchecked(reference)) }
+                    }
                 }
             }
         )*
@@ -156,31 +201,6 @@ macro_rules! simple_accessors {
             )*
         }
     )
-}
-
-/// Implements the unsafe trait RoomObjectProperties for a Structure struct 
-/// 
-/// Macro Syntax: 
-/// impl_room_object_properties!{
-///     $structure1,
-///     $structure2,
-///     ...
-/// }
-macro_rules! impl_room_object_properties {
-    ($($struct_name:ident),* $(,)*) => {
-        $(
-            unsafe impl RoomObjectProperties for $struct_name {
-                fn try_from(obj: RoomObject) -> Option<Self> {
-                    let is_me = js_unwrap!(@{obj.as_ref()} instanceof $struct_name);
-                    if is_me {
-                        Some($struct_name(obj.0))
-                    } else {
-                        None
-                    }
-                }
-            }
-        )*
-    };
 }
 
 /// Macro for mass implementing `StructureProperties`, `PartialEq` and `Eq` for a type. 
@@ -294,13 +314,19 @@ macro_rules! typesafe_find_constants {
 
 macro_rules! typesafe_look_constants {
     (
-        $($constant_name:ident, $value:expr, $result:path;)*
+        $($constant_name:ident, $value:expr, $result:path, $conversion_method:expr;)*
     ) => (
         $(
             #[allow(bad_style)]
             pub struct $constant_name;
             unsafe impl LookConstant for $constant_name {
                 type Item = $result;
+
+                fn convert_and_check_items(reference: ::stdweb::Value) -> Vec<Self::Item> {
+                    ($conversion_method)(reference)
+                        .expect(concat!("LookConstant ", stringify!($constant_name),
+                               "expected correct type at ", line!(), " in ", file!()))
+                }
 
                 fn look_code(&self) -> Look {
                     $value
@@ -354,16 +380,71 @@ macro_rules! game_map_access {
 
                 /// Retrieve all values in this object.
                 pub fn values() -> Vec<$type> {
-                    js_unwrap!(Object.values($js_inner))
+                    js_unwrap_ref!(Object.values($js_inner))
                 }
 
                 /// Retrieve a specific value by key.
                 pub fn get(name: &str) -> Option<$type> {
-                    js_unwrap!($js_inner[@{name}])
+                    js_unwrap_ref!($js_inner[@{name}])
                 }
             }
         )*
     };
+}
+
+/// Match on all variants of `Structure` and do the same thing for each of them.
+macro_rules! match_structure_variants {
+    ($source:expr, $name:ident => $action:expr) => {
+        match $source {
+            Structure::Container($name) => $action,
+            Structure::Controller($name) => $action,
+            Structure::Extension($name) => $action,
+            Structure::Extractor($name) => $action,
+            Structure::KeeperLair($name) => $action,
+            Structure::Lab($name) => $action,
+            Structure::Link($name) => $action,
+            Structure::Nuker($name) => $action,
+            Structure::Observer($name) => $action,
+            Structure::PowerBank($name) => $action,
+            Structure::PowerSpawn($name) => $action,
+            Structure::Portal($name) => $action,
+            Structure::Rampart($name) => $action,
+            Structure::Road($name) => $action,
+            Structure::Spawn($name) => $action,
+            Structure::Storage($name) => $action,
+            Structure::Terminal($name) => $action,
+            Structure::Tower($name) => $action,
+            Structure::Wall($name) => $action,
+        }
+    }
+}
+
+/// Match on all variants of `StructureType` and construct `Structure` variants from
+/// the same code for each of them.
+macro_rules! construct_structure_variants {
+    ($source:expr => $action:expr) => {
+        match $source {
+            StructureType::Container => Structure::Container($action),
+            StructureType::Controller => Structure::Controller($action),
+            StructureType::Extension => Structure::Extension($action),
+            StructureType::Extractor => Structure::Extractor($action),
+            StructureType::KeeperLair => Structure::KeeperLair($action),
+            StructureType::Lab => Structure::Lab($action),
+            StructureType::Link => Structure::Link($action),
+            StructureType::Nuker => Structure::Nuker($action),
+            StructureType::Observer => Structure::Observer($action),
+            StructureType::PowerBank => Structure::PowerBank($action),
+            StructureType::PowerSpawn => Structure::PowerSpawn($action),
+            StructureType::Portal => Structure::Portal($action),
+            StructureType::Rampart => Structure::Rampart($action),
+            StructureType::Road => Structure::Road($action),
+            StructureType::Spawn => Structure::Spawn($action),
+            StructureType::Storage => Structure::Storage($action),
+            StructureType::Terminal => Structure::Terminal($action),
+            StructureType::Tower => Structure::Tower($action),
+            StructureType::Wall => Structure::Wall($action),
+        }
+    }
 }
 
 /// Get a value from memory given a path, returning `None` if any thing along the way does not
