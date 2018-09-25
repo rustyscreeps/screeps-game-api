@@ -134,10 +134,20 @@ macro_rules! get_from_js {
 /// ```
 ///
 /// Screeps game objects, in javascript, can be accessed via stdweb's `Reference`
-/// object. This macro: 
-///   - Creates a struct named `objX`;
-///   - Implements traits `AsRef<Reference>`, `TryFrom<Value>` for `objX`
-///   - Implements trait `From<objX>` for `Reference`
+/// object. For each ident `objJ` mentioned, this macro:
+///
+/// - Creates a struct named `objX`;
+/// - Uses `#[derive(Clone, ReferenceType)]` which implements these traits for `objX`:
+///   - InstanceOf
+///   - AsRef<Reference>
+///   - ReferenceType
+///   - Into<Reference>
+///   - TryInto<Reference>
+///   - TryFrom<Reference>
+///   - TryFrom<&Reference>
+///   - TryFrom<Value>
+///   - TryFrom<&Value>
+/// - Implements FromExpectedType<Reference> for `objJ`
 macro_rules! reference_wrappers {
     (
         $(
