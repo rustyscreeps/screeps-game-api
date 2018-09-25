@@ -1,4 +1,4 @@
-use StructurePowerBank;
+use objects::StructurePowerBank;
 
 simple_accessors! {
     StructurePowerBank;

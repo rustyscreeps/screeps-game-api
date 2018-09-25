@@ -1,6 +1,6 @@
 use {
     constants::{Density, ResourceType},
-    Mineral,
+    objects::Mineral,
 };
 
 simple_accessors! {

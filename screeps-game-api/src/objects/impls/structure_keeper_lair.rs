@@ -1,4 +1,4 @@
-use StructureKeeperLair;
+use objects::StructureKeeperLair;
 
 simple_accessors! {
     StructureKeeperLair;

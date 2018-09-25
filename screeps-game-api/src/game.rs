@@ -1,5 +1,8 @@
-use traits::TryInto;
-use {ConversionError, RoomObject, RoomObjectProperties};
+use {
+    objects::{RoomObject, RoomObjectProperties},
+    traits::TryInto,
+    ConversionError,
+};
 
 // TODO: split these out into separate files once we add documentation.
 //

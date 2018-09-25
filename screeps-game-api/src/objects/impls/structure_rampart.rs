@@ -1,4 +1,4 @@
-use {constants::ReturnCode, StructureRampart};
+use {constants::ReturnCode, objects::StructureRampart};
 
 simple_accessors!{
     StructureRampart;

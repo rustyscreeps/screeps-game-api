@@ -1,4 +1,4 @@
-use {constants::ReturnCode, StructureObserver};
+use {constants::ReturnCode, objects::StructureObserver};
 
 impl StructureObserver {
     pub fn observe_room(&self, room_name: &str) -> ReturnCode {

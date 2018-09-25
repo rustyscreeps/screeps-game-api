@@ -1,4 +1,4 @@
-use Nuke;
+use objects::Nuke;
 
 simple_accessors! {
     Nuke;
