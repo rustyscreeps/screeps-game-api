@@ -21,6 +21,7 @@ mod impls;
 
 pub use self::impls::{
     FindOptions,
+    Path,
     Reservation, 
     Sign, 
     SpawnOptions,

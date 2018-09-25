@@ -17,8 +17,8 @@ use {
     objects::{
         FindOptions,
         HasPosition, 
+        Path,
         RoomPosition,
-        Step,
         StructureType,
     },
     pathfinder::CostMatrix,
@@ -88,18 +88,18 @@ impl RoomPosition {
         ))
     }
 
-    pub fn find_path_to<F, T>(&self, target: &T, opts: FindOptions<F>) -> Vec<Step> 
+    pub fn find_path_to<'a, F, T>(&self, target: &T, opts: FindOptions<'a, F>) -> Path 
     where
-        F: Fn(String, CostMatrix) -> (),
+        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
         T: HasPosition,
     {
         let self_room = game::rooms::get(&self.room_name()).unwrap();
         self_room.find_path(self, target, opts)
     }
 
-    pub fn find_path_to_xy<F>(&self, x: u8, y: u8, opts: FindOptions<F>) -> Vec<Step> 
+    pub fn find_path_to_xy<'a, F>(&self, x: u8, y: u8, opts: FindOptions<'a, F>) -> Path 
     where
-        F: Fn(String, CostMatrix) -> (),
+        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
     {
         let target = RoomPosition::new(x, y, &self.room_name());
         self.find_path_to(&target, opts)
