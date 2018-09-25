@@ -1,9 +1,26 @@
-use memory::MemoryReference;
-use objects::{
-    Attackable, ConstructionSite, Creep, HasPosition, Resource, Source, StructureController,
-    StructureProperties, Transferable, Withdrawable,
+use {
+    constants::{
+        Direction, 
+        Part, 
+        ResourceType, 
+        ReturnCode,
+    },
+    memory::MemoryReference, 
+    objects::{
+        Attackable, 
+        ConstructionSite, 
+        Creep, 
+        HasPosition, 
+        Resource, 
+        Source, 
+        Step,
+        StructureController,
+        StructureProperties, 
+        Transferable, 
+        Withdrawable,
+    },
+    pathfinder::SearchResults,
 };
-use {Direction, Part, ResourceType, ReturnCode};
 
 impl Creep {
     pub fn carry_total(&self) -> i32 {
@@ -45,9 +62,17 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.moveTo(@{x}, @{y}))
     }
 
-    // pub fn move_by_path(path: String) -> ! {
-    //     unimplemented!()
-    // }
+    pub fn move_by_path_serialized(&self, path: &str) -> ReturnCode {
+        js_unwrap!(@{self.as_ref()}.moveByPath(@{path}))
+    }
+
+    pub fn move_by_path_steps(&self, path: &[Step]) -> ReturnCode {
+        js_unwrap!(@{self.as_ref()}.moveByPath(@{path}))
+    }
+
+    pub fn move_by_path_search_result(&self, path: &SearchResults) -> ReturnCode {
+        js_unwrap!(@{self.as_ref()}.moveByPath(@{path.opaque_path()}))
+    }
 
     pub fn memory(&self) -> MemoryReference {
         js_unwrap!(@{self.as_ref()}.memory)

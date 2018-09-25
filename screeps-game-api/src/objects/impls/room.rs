@@ -44,6 +44,14 @@ simple_accessors! {
 scoped_thread_local!(static COST_CALLBACK: Box<Fn(String, Reference) -> Option<Reference>>);
 
 impl Room {
+    pub fn serialize_path(&self, path: &Vec<Step>) -> String {
+        js_unwrap!{@{self.as_ref()}.serializePath(@{path})}
+    }
+
+    pub fn deserialize_path(&self, path: &str) -> Vec<Step> {
+        js_unwrap!{@{self.as_ref()}.deserializePath(@{path})}
+    }
+
     pub fn create_construction_site<T>(&self, at: T, ty: StructureType) -> ReturnCode
     where
         T: HasPosition,
@@ -410,7 +418,7 @@ where
     }
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Step {
     x: u32,
     y: u32,
@@ -420,6 +428,7 @@ pub struct Step {
 }
 
 js_deserializable!{Step}
+js_serializable!{Step}
 
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]

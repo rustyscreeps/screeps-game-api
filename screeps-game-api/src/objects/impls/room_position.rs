@@ -1,14 +1,29 @@
-use std::cmp::{Eq, PartialEq};
+use std::cmp::{
+    Eq, 
+    PartialEq
+};
 
 use stdweb::unstable::TryInto;
 
 use {
-    Color, Direction, FindConstant, HasPosition, LocalRoomPosition, LookConstant, ReturnCode,
-    StructureType,
+    constants::{
+        Color, 
+        Direction, 
+        FindConstant,
+        LookConstant, 
+        ReturnCode,
+    },
+    game,
+    objects::{
+        FindOptions,
+        HasPosition, 
+        Path,
+        RoomPosition,
+        StructureType,
+    },
+    pathfinder::CostMatrix,
+    positions::LocalRoomPosition,
 };
-
-// TODO: Use root import after https://github.com/rust-lang/rust/issues/53140 is fixed.
-use super::super::RoomPosition;
 
 impl RoomPosition {
     pub fn new(x: u8, y: u8, room_name: &str) -> Self {
@@ -71,6 +86,23 @@ impl RoomPosition {
             __structure_type_num_to_str(@{ty.find_code()}),
             @{range}
         ))
+    }
+
+    pub fn find_path_to<'a, F, T>(&self, target: &T, opts: FindOptions<'a, F>) -> Path 
+    where
+        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        T: HasPosition,
+    {
+        let self_room = game::rooms::get(&self.room_name()).unwrap();
+        self_room.find_path(self, target, opts)
+    }
+
+    pub fn find_path_to_xy<'a, F>(&self, x: u8, y: u8, opts: FindOptions<'a, F>) -> Path 
+    where
+        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+    {
+        let target = RoomPosition::new(x, y, &self.room_name());
+        self.find_path_to(&target, opts)
     }
 
     pub fn get_direction_to<T>(&self, target: &T) -> Direction
