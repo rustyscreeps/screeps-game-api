@@ -3,13 +3,13 @@
 pub struct ForeignSegment {
     username: String,
     id: String,
-    data: String
+    data: String,
 }
 
 js_deserializable!(ForeignSegment);
 
-get_from_js!(get_active_segments -> { 
-    Object.keys(RawMemory.segments).map(Number) 
+get_from_js!(get_active_segments -> {
+    Object.keys(RawMemory.segments).map(Number)
 } -> Vec<i32>);
 
 /// Sets active segments (max 10 ids).
@@ -23,8 +23,8 @@ pub fn set_active_segments(ids: &[i32]) {
     }
 }
 
-get_from_js!(get_segment(id: u32) -> { 
-    RawMemory.segments[@{id}] 
+get_from_js!(get_segment(id: u32) -> {
+    RawMemory.segments[@{id}]
 } -> Option<String>);
 
 pub fn set_segment(id: i32, data: &str) {
@@ -38,23 +38,22 @@ get_from_js!(get_foreign_segment -> {
 } -> ForeignSegment);
 
 /// Implements `RawMemory.setActiveForeignSegment`
-/// 
-/// To use the default public segment of `username` (as set with 
+///
+/// To use the default public segment of `username` (as set with
 /// [`set_default_public_segment`]), Use `None` instead of `Some(id)`.
-/// 
-/// To clear the foreign segment, pass the empty string `""` as a username. 
-/// 
+///
+/// To clear the foreign segment, pass the empty string `""` as a username.
+///
 pub fn set_active_foreign_segment(username: &str, id: Option<u32>) {
     if username == "" {
         js! { RawMemory.setActiveForeignSegment(null); }
-    } else{
+    } else {
         match id {
             Some(id) => js! { RawMemory.setActiveForeignSegment(@{username}, @{id}); },
             None => js! { RawMemory.setActiveForeignSegment(@{username}); },
         };
     };
 }
-
 
 pub fn set_default_public_segment(id: i32) {
     js! {

@@ -46,7 +46,7 @@ impl LocalCostMatrix {
                 matrix._bits = @{bits};
                 return matrix;
             }).try_into()
-                .expect("expected function returning CostMatrix to return a Reference"),
+            .expect("expected function returning CostMatrix to return a Reference"),
             lifetime: PhantomData,
         }
     }
@@ -80,7 +80,7 @@ impl LocalCostMatrix {
 
                 return matrix;
             }).try_into()
-                .expect("expected function returning CostMatrix to return a Reference"),
+            .expect("expected function returning CostMatrix to return a Reference"),
             lifetime: PhantomData,
         }
     }
@@ -319,8 +319,7 @@ where
         .map(|(target, range)| {
             let pos = target.pos();
             js_unwrap!({pos: @{pos.as_ref()}, range: @{range}})
-        })
-        .collect();
+        }).collect();
     let goals_js: Reference = js_unwrap!(@{goals});
     search_real(&origin.pos(), &goals_js, opts)
 }

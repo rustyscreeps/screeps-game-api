@@ -1,5 +1,5 @@
 use traits::TryInto;
-use {RoomObjectProperties, ConversionError, RoomObject};
+use {ConversionError, RoomObject, RoomObjectProperties};
 
 // TODO: split these out into separate files once we add documentation.
 //
@@ -181,11 +181,12 @@ pub mod map {
     }
 
     /// Implements `Game.map.findExit`.
-    /// 
+    ///
     /// Does not yet support callbacks.
     pub fn find_exit(from_room: Room, to_room: Room) -> Result<Exit, ReturnCode> {
         let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.name()}, @{to_room.name()})};
-        Exit::try_from(code).map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
+        Exit::try_from(code)
+            .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
     }
 
     // pub fn find_route(from_room: Room, to_room: Room, route_callback: Option<impl Fn(&str, &str) -> u32>) -> !{
@@ -195,17 +196,17 @@ pub mod map {
 
 pub mod market {
     use std::collections::HashMap;
-    
+
     use stdweb::unstable::TryInto;
 
-    use {Room};
-    use constants::{ReturnCode, ResourceType};
+    use constants::{ResourceType, ReturnCode};
+    use Room;
 
     #[repr(u32)]
     #[derive(Clone, Debug)]
     pub enum OrderType {
         Sell = 0,
-        Buy = 1
+        Buy = 1,
     }
 
     // impl OrderType {
@@ -226,9 +227,9 @@ pub mod market {
     #[derive(Deserialize, Debug)]
     pub struct TransactionOrder {
         id: String,
-        #[serde(rename="type")]
+        #[serde(rename = "type")]
         order_type: String,
-        price: f64
+        price: f64,
     }
     js_deserializable!(TransactionOrder);
 
@@ -239,7 +240,7 @@ pub mod market {
         time: u32,
         sender: Player,
         recipient: Player,
-        resource_type : String,
+        resource_type: String,
         amount: u32,
         from: String,
         to: String,
@@ -247,7 +248,7 @@ pub mod market {
         order: Option<TransactionOrder>,
     }
     js_deserializable!(Transaction);
-    
+
     #[derive(Deserialize, Debug)]
     #[serde(rename_all = "camelCase")]
     pub struct Order {
@@ -259,7 +260,7 @@ pub mod market {
         room_name: String,
         amount: u32,
         remaining_amount: u32,
-        price: f64
+        price: f64,
     }
     js_deserializable!(Order);
 
@@ -276,7 +277,7 @@ pub mod market {
         amount: u32,
         remaining_amount: u32,
         total_amount: u32,
-        price: f64
+        price: f64,
     }
     js_deserializable!(MyOrder);
 
@@ -284,14 +285,14 @@ pub mod market {
         js_unwrap!(Game.market.credits)
     }
 
-    pub fn incoming_transactions() -> Vec<Transaction>{
+    pub fn incoming_transactions() -> Vec<Transaction> {
         let arr_transaction_value = js!{
             return Game.market.incomingTransactions;
         };
         arr_transaction_value.try_into().unwrap()
     }
 
-    pub fn outgoing_transactions() -> Vec<Transaction>{
+    pub fn outgoing_transactions() -> Vec<Transaction> {
         let arr_transaction_value = js!{
             return Game.market.outgoingTransactions;
         };
@@ -317,8 +318,13 @@ pub mod market {
         js_unwrap!(Game.market.changeOrderPrice(@{order_id}, @{new_price}))
     }
 
-    pub fn create_order(order_type: OrderType, resource_type: ResourceType, 
-                        price: f64, total_amount: u32, room: &Room) -> ReturnCode {
+    pub fn create_order(
+        order_type: OrderType,
+        resource_type: ResourceType,
+        price: f64,
+        total_amount: u32,
+        room: &Room,
+    ) -> ReturnCode {
         js_unwrap!{
             Game.market.createOrder(__order_type_num_to_str(@{order_type as u32}),
                                     __resource_type_num_to_str(@{resource_type as u32}),
@@ -337,7 +343,7 @@ pub mod market {
     }
 
     /// Get all orders from the market
-    /// 
+    ///
     /// Contrary to the JS version, filtering should be done afterwards.
     pub fn get_all_orders() -> Vec<Order> {
         let all_order = js! {
@@ -353,7 +359,6 @@ pub mod market {
         order.try_into().ok()
     }
 }
-
 
 /// See [http://docs.screeps.com/api/#Game.shard]
 ///

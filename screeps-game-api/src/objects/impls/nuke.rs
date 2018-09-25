@@ -1,6 +1,4 @@
-use {
-    Nuke,
-};
+use Nuke;
 
 simple_accessors! {
     Nuke;

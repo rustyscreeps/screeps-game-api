@@ -2,28 +2,34 @@
 name = "screeps-game-api"
 version = "0.1.1"
 authors = ["David Ross <daboross@daboross.net>"]
-description = "WASM bindings to the in-game Screeps API"
-
 documentation = "https://docs.rs/screeps-game-api/"
-repository = "https://github.com/daboross/screeps-in-rust-via-wasm/"
-readme = "README.md"
-
+include = [
+    "Cargo.toml",
+    "Web.toml",
+    "src/**/*",
+    "javascript/**/*",
+    "tests/**/*",
+    "examples/**/*",
+    "README.md",
+    "LICENSE",
+]
 license = "MIT"
-
-include = ["Cargo.toml", "Web.toml", "src/**/*", "javascript/**/*", "tests/**/*", "examples/**/*", "LICENSE", "README.md"]
+readme = "README.md"
+repository = "https://github.com/daboross/screeps-in-rust-via-wasm/"
+description = "WASM bindings to the in-game Screeps API"
 
 [lib]
 name = "screeps"
 
 [dependencies]
-stdweb = "0.4"
-stdweb-derive = "0.5"
-log = "0.4"
 enum_primitive = "0.1"
+log = "0.4"
 num-traits = "0.2"
 serde = "1"
 serde_derive = "1"
 scoped-tls = "0.1"
+stdweb = "0.4"
+stdweb-derive = "0.5"
 
 [features]
 check-all-casts = []

@@ -1,30 +1,13 @@
-use std::{
-    marker::PhantomData,
-    mem,
-    ops::Range,
-};
+use std::{marker::PhantomData, mem, ops::Range};
 
-use stdweb::{
-    Reference,
-};
+use stdweb::Reference;
 
 use constants::{
-    Color, 
-    Direction,
-    find::Exit,
-    FindConstant, 
-    LookConstant, 
-    ReturnCode, 
-    StructureType, 
+    find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
 };
 use memory::MemoryReference;
 use objects::{
-    HasPosition,
-    Room, 
-    RoomPosition,
-    StructureController, 
-    StructureStorage, 
-    StructureTerminal
+    HasPosition, Room, RoomPosition, StructureController, StructureStorage, StructureTerminal,
 };
 use pathfinder::CostMatrix;
 use positions::LocalRoomName;
@@ -109,7 +92,7 @@ impl Room {
     pub fn find_exit_to(&self, room: &Room) -> Result<Exit, ReturnCode> {
         let code_val = js! {return @{self.as_ref()}.findExitTo(@{room.as_ref()});};
         let code_int: i32 = code_val.try_into().unwrap();
-        
+
         if code_int < 0 {
             Err(code_int.try_into().unwrap())
         } else {
@@ -129,12 +112,7 @@ impl Room {
     //     unimplemented!()
     // }
 
-    pub fn find_path<'a, O, T, F>(
-        &self, 
-        from_pos: &O, 
-        to_pos: &T,
-        opts: FindOptions<'a, F>,
-    ) -> Path 
+    pub fn find_path<'a, O, T, F>(&self, from_pos: &O, to_pos: &T, opts: FindOptions<'a, F>) -> Path
     where
         O: HasPosition,
         T: HasPosition,
@@ -142,7 +120,7 @@ impl Room {
     {
         let from = from_pos.pos();
         let to = to_pos.pos();
-        
+
         // This callback is the one actually passed to JavaScript.
         fn callback(room_name: String, cost_matrix: Reference) -> Option<Reference> {
             COST_CALLBACK.with(|callback| callback(room_name, cost_matrix))
@@ -162,15 +140,17 @@ impl Room {
 
         // Type erased and boxed callback: no longer a type specific to the closure passed in,
         // now unified as Box<Fn>
-        let callback_type_erased: Box<Fn(String, Reference) -> Option<Reference> + 'a> = Box::new(callback_boxed);
+        let callback_type_erased: Box<Fn(String, Reference) -> Option<Reference> + 'a> =
+            Box::new(callback_boxed);
 
         // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
         // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
         // be entirely safe because we're only sticking it in scoped storage and we control the only use
         // of it, but it's still necessary because "some lifetime above the current scope but otherwise
         // unknown" is not a valid lifetime to have PF_CALLBACK have.
-        let callback_lifetime_erased: Box<Fn(String, Reference) -> Option<Reference> + 'static> =
-            unsafe { mem::transmute(callback_type_erased) };
+        let callback_lifetime_erased: Box<
+            Fn(String, Reference) -> Option<Reference> + 'static,
+        > = unsafe { mem::transmute(callback_type_erased) };
 
         let FindOptions {
             ignore_creeps,
@@ -275,7 +255,7 @@ impl Room {
 }
 
 impl PartialEq for Room {
-    fn eq(&self, other: &Room) -> bool{
+    fn eq(&self, other: &Room) -> bool {
         self.name() == other.name()
     }
 }
@@ -284,7 +264,7 @@ impl Eq for Room {}
 
 pub struct FindOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>
+    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
 {
     ignore_creeps: bool,
     ignore_destructible_structures: bool,
@@ -424,7 +404,7 @@ pub struct Step {
     y: u32,
     dx: i32,
     dy: i32,
-    direction: Direction
+    direction: Direction,
 }
 
 js_deserializable!{Step}

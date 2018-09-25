@@ -9,7 +9,7 @@ simple_accessors! {
 }
 
 impl PartialEq for Tombstone {
-    fn eq(&self, other: &Tombstone) -> bool{
+    fn eq(&self, other: &Tombstone) -> bool {
         self.id() == other.id()
     }
 }

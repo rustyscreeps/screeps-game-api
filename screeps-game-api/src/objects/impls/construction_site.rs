@@ -22,7 +22,7 @@ impl ConstructionSite {
                 return null;
             }
         }).try_into()
-            .expect("expected ConstructionSite.owner.username to be a non-null string")
+        .expect("expected ConstructionSite.owner.username to be a non-null string")
     }
 
     pub fn remove(&self) -> ReturnCode {

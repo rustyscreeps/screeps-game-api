@@ -1,7 +1,4 @@
-use {
-    constants::ReturnCode,
-    StructurePowerSpawn,
-};
+use {constants::ReturnCode, StructurePowerSpawn};
 
 simple_accessors! {
     StructurePowerSpawn;

@@ -4,7 +4,7 @@ use memory::MemoryReference;
 use objects::StructureSpawn;
 use traits::TryInto;
 
-use {Direction, Part, ReturnCode, StructureProperties, Creep};
+use {Creep, Direction, Part, ReturnCode, StructureProperties};
 
 simple_accessors! {
     StructureSpawn;
@@ -25,7 +25,7 @@ impl StructureSpawn {
 
             return @{self.as_ref()}.spawnCreep(body, @{name});
         }).try_into()
-            .expect("expected StructureSpawn::spawnCreep to return an integer return code"))
+        .expect("expected StructureSpawn::spawnCreep to return an integer return code"))
     }
 
     pub fn spawn<'a>(&'a self, body: &'a [Part], name: &'a str) -> SpawnOptions<'a> {

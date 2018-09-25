@@ -21,14 +21,7 @@ mod impls;
 mod structure;
 
 pub use self::{
-    impls::{
-        FindOptions,
-        Path,
-        Reservation, 
-        Sign, 
-        SpawnOptions,
-        Step, 
-    },
+    impls::{FindOptions, Path, Reservation, Sign, SpawnOptions, Step},
     structure::Structure,
 };
 
@@ -195,7 +188,7 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
                 return null;
             }
         }).try_into()
-            .expect("expected OwnedStructure.owner.username to be a string")
+        .expect("expected OwnedStructure.owner.username to be a string")
     }
     fn as_owned_structure(self) -> OwnedStructure {
         OwnedStructure(self.into())
@@ -237,10 +230,10 @@ pub unsafe trait HasStore: RoomObjectProperties {
 }
 
 /// Trait for objects which can only store energy.
-/// 
+///
 /// # Contract
-/// 
-/// The reference returned from `AsRef<Reference>::as_ref` must be have an 
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be have an
 /// `energy` and an `energyCapacity` properties.
 pub unsafe trait CanStoreEnergy: StructureProperties {
     fn energy(&self) -> u32 {
@@ -253,9 +246,9 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
 }
 
 /// Trait for objects which have to cooldown.
-/// 
+///
 /// # Contract
-/// 
+///
 /// The reference returned from `AsRef<Reference>::as_ref` must be have a
 /// `cooldown` properties.
 pub unsafe trait HasCooldown: StructureProperties {
@@ -265,9 +258,9 @@ pub unsafe trait HasCooldown: StructureProperties {
 }
 
 /// Trait for objects which can decay.
-/// 
+///
 /// # Contract
-/// 
+///
 /// The reference returned from `AsRef<Reference>::as_ref` must be have a
 /// `ticksToDecay` properties.
 pub unsafe trait CanDecay: RoomObjectProperties {
