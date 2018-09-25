@@ -266,9 +266,9 @@ impl HasPosition for LocalRoomPosition {
 }
 
 mod stdweb {
-    use stdweb::unstable::{TryFrom, TryInto};
-
     use stdweb::Value;
+
+    use traits::{TryFrom, TryInto};
 
     use super::{LocalRoomName, LocalRoomPosition};
 

@@ -1,10 +1,13 @@
 //! Constants, most copied from [the game constants](https://github.com/screeps/common/blob/master/lib/constants.js).
 //!
 //! Last updated on 2018-03-06, `c3372fd` on https://github.com/screeps/common/commits/master/lib/constants.js.
-use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
 
-use {objects::RoomObject, traits::FromExpectedType, ConversionError};
+use {
+    objects::RoomObject,
+    traits::{FromExpectedType, TryFrom, TryInto},
+    ConversionError,
+};
 
 enum_from_primitive! {
     #[repr(i32)]

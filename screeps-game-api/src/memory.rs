@@ -52,10 +52,12 @@
 //! 
 
 use std::fmt;
-use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{JsSerialize, Reference, Value};
 
-use ConversionError;
+use {
+    traits::{TryFrom, TryInto},
+    ConversionError,
+};
 
 #[derive(Clone, Debug)]
 pub struct UnexpectedTypeError;

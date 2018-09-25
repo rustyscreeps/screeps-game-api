@@ -1,7 +1,7 @@
-use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{InstanceOf, Reference, ReferenceType, Value};
 
-use {ConversionError, StructureType, FromExpectedType};
+use traits::{TryFrom, TryInto};
+use {ConversionError, FromExpectedType, StructureType};
 
 use super::*;
 

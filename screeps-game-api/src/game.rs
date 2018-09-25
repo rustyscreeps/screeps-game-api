@@ -126,10 +126,10 @@ pub mod gcl {
 /// [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
 pub mod map {
     use std::collections;
-    use stdweb::unstable::{TryInto, TryFrom};
 
-    use {Direction, RoomPosition, Terrain, Room};
-    use constants::{ReturnCode, find::Exit};
+    use constants::{find::Exit, ReturnCode};
+    use traits::{TryFrom, TryInto};
+    use {Direction, Room, RoomPosition, Terrain};
 
     /// See [http://docs.screeps.com/api/#Game.map.describeExits]
     ///

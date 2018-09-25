@@ -12,9 +12,9 @@
 //! rely on these contracts being upheld as long as JavaScript code does not
 //! do anything mischievous, like removing properties from objects or sticking
 //! unexpected things into dictionaries which we trust.
-use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, ReferenceType, Value};
 
+use traits::{TryFrom, TryInto};
 use {ConversionError, IntoExpectedType, ResourceType, ReturnCode, StructureType};
 
 mod impls;

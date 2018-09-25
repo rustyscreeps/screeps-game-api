@@ -166,7 +166,7 @@ macro_rules! reference_wrappers {
                 fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
                     #[cfg(feature = "check-all-casts")]
                     {
-                        ::stdweb::unstable::TryFrom::try_from(reference)
+                        ::traits::TryFrom::try_from(reference)
                     }
                     #[cfg(not(feature = "check-all-casts"))]
                     {
