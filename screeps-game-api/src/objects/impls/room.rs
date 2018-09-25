@@ -423,8 +423,8 @@ js_deserializable!{Step}
 
 #[derive(Debug, Deserialize)]
 pub enum Path {
-    VectorizedPath(Vec<Step>),
-    SerializedPath(String),
+    Vectorized(Vec<Step>),
+    Serialized(String),
 }
 
 js_deserializable!{Path}
