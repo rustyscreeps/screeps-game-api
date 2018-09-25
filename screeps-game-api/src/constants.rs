@@ -176,7 +176,7 @@ pub mod find {
 
 enum_from_primitive! {
     #[repr(i32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
     pub enum Direction {
         Top = 1,
         TopRight = 2,
