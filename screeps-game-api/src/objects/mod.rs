@@ -19,8 +19,13 @@ use {ResourceType, ReturnCode, StructureType, ConversionError};
 
 mod impls;
 
-pub use self::impls::SpawnOptions;
-pub use self::impls::{Reservation, Sign};
+pub use self::{
+    impls::{
+        SpawnOptions,
+        Reservation, 
+        Sign,
+    },
+};
 
 reference_wrappers!(
     ConstructionSite,

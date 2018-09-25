@@ -23,5 +23,15 @@ mod structure_terminal;
 mod structure_tower;
 mod tombstone;
 
-pub use self::structure_controller::{Reservation, Sign};
-pub use self::structure_spawn::SpawnOptions;
+pub use self::{
+    room::{
+        FindOptions, 
+        Path, 
+        Step,
+    },
+    structure_controller::{
+        Reservation, 
+        Sign,
+    },
+    structure_spawn::SpawnOptions,
+};
