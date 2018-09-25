@@ -1,5 +1,8 @@
-use traits::TryInto;
-use {ConversionError, RoomObject, RoomObjectProperties};
+use {
+    objects::{RoomObject, RoomObjectProperties},
+    traits::TryInto,
+    ConversionError,
+};
 
 // TODO: split these out into separate files once we add documentation.
 //
@@ -126,9 +129,11 @@ pub mod gcl {
 pub mod map {
     use std::collections;
 
-    use constants::{find::Exit, ReturnCode};
-    use traits::{TryFrom, TryInto};
-    use {Direction, Room, RoomPosition, Terrain};
+    use {
+        constants::{find::Exit, Direction, ReturnCode, Terrain},
+        objects::{Room, RoomPosition},
+        traits::{TryFrom, TryInto},
+    };
 
     /// See [http://docs.screeps.com/api/#Game.map.describeExits]
     ///

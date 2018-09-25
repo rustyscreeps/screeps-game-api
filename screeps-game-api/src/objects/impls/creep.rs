@@ -2,11 +2,13 @@ use {
     constants::{Direction, Part, ResourceType, ReturnCode},
     memory::MemoryReference,
     objects::{
-        Attackable, ConstructionSite, Creep, HasPosition, Resource, Source, Step,
-        StructureController, StructureProperties, Transferable, Withdrawable,
+        Attackable, ConstructionSite, Creep, HasPosition, Resource, Source, StructureController,
+        StructureProperties, Transferable, Withdrawable,
     },
     pathfinder::SearchResults,
 };
+
+use super::room::Step;
 
 impl Creep {
     pub fn carry_total(&self) -> i32 {

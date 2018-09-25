@@ -12,7 +12,9 @@ We adhere to the following guidelines:
 - Code Formatting: [fmt-rfcs Rust Style Guide]
 - API building: [Rust API Guidelines]
 
-# Code Formatting
+In addition, we have the following in-house guidelines:
+
+## Code Formatting
 
 Please run `rustfmt` on the files you edit when submitting to this repository. This will handle all
 style issues mentioned in the 'fmt-rfcs' guidelines, so you should be able to simply run `cargo fmt`
@@ -30,6 +32,87 @@ Then to format the code in this repository, use the following:
 $ cargo fmt
 ```
 
+## Ordering within a module
+
+Items within a module should be order as follows. Each separate group should be newline separated
+with the exception of module documentation. The group immediately following module documentation
+should be directly under it with no double-newline separating it.
+
+- `//!` module documentation
+- `extern crate` declarations
+- private `use` declarations
+- `mod` declarations
+- `pub use` declarations
+- all other [items] in no particular order
+
+## `use` formatting
+
+Private `use` statements should all be together: there should be no non-private-`use` statements
+between two private `use` statements.
+
+Importing at the module level should be preferred to importing within functions, with the
+exception of importing enum variants. Any statement like `use self::MyEnum::*;` should be used only
+within a function in order to avoid polluting the module namespace.
+
+When importing multiple things, `use` statements should be separated into the following
+newline-separated groups:
+
+- imports from `std`
+- imports from external crates
+- imports from the crate root
+- imports from `super::`
+- imports from `self::`
+
+`pub use` statements should be similarly grouped, but should be separate from private `use` as
+mentioned in [Ordering within a module].
+
+All imports within a newline-separated group should use the use [RFC 2128] "nested groups" style.
+There should be one top-level `use` statement for each of `std`, the crate root, `self`, `super`
+and one for each external crate.
+
+In accordance to the `fmt-rfcs`, top-level `use` statements within a group and items within a `use`
+statement should be alphabetically ordered.
+
+Example import section:
+
+```rust
+use std::{
+    borrow::Cow,
+    cmp::{Eq, PartialEq},
+    collections::HashMap,
+    error, f64, fmt,
+    marker::PhantomData,
+    ops,
+};
+
+use serde::de::{Deserialize, Deserializer, Error, Unexpected, Visitor};
+use stdweb::{
+    unstable::{TryFrom, TryInto},
+    Reference, Value,
+};
+use void::Void;
+
+use {
+    constants::{ResourceType, ReturnCode, StructureType},
+    ConversionError,
+};
+```
+
+Last, when importing from within the current crate, try to import from a more specific module rather
+than a less specific one. When the crate re-exports tons of types from inner modules, it can be
+tempting to just import everything from the crate root, but this makes it all more confusing. Import
+from a more specific module which defines the type rather than having
+`use {ResourceType, StructureProperties, LocalRoomPosition};` with each type coming from a different
+module. Things should at minimum use the top-level module, but can also use more specific imports
+for things from within the same top-level module.
+
+To clarify, each import from within the same crate should be qualified by one level of module
+outside of the current module's hierarchy. If in `objects::impl::construction_site`, importing
+`objects::impl::room::Step` should be done with `objects::impl::room::Step` or `super::room::Step`,
+but if in `constants`, then it can just be done with `objects::Step`.
+
 [screeps slack]: https://chat.screeps.com/
 [fmt-rfcs Rust Style Guide]: https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md
 [Rust API Guidelines]: https://rust-lang-nursery.github.io/api-guidelines/
+[RFC 2128]: https://github.com/rust-lang/rfcs/blob/master/text/2128-use-nested-groups.md
+[items]: https://doc.rust-lang.org/reference/items.html

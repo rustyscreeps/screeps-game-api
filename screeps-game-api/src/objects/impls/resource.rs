@@ -1,5 +1,4 @@
-use constants::ResourceType;
-use objects::Resource;
+use {constants::ResourceType, objects::Resource};
 
 impl Resource {
     pub fn resource_type(&self) -> ResourceType {

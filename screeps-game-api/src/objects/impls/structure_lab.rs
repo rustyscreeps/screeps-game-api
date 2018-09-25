@@ -1,6 +1,6 @@
 use {
     constants::{ResourceType, ReturnCode},
-    {Creep, StructureLab},
+    objects::{Creep, StructureLab},
 };
 
 simple_accessors! {

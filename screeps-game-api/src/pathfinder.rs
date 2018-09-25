@@ -1,10 +1,12 @@
-use std::marker::PhantomData;
-
-use std::{f64, mem};
+use std::{f64, marker::PhantomData, mem};
 
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
-use {traits::TryInto, HasPosition, LocalRoomPosition, RoomPosition};
+use {
+    objects::{HasPosition, RoomPosition},
+    positions::LocalRoomPosition,
+    traits::TryInto,
+};
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {

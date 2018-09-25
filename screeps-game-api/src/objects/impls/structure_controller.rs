@@ -1,7 +1,6 @@
 use stdweb::Value;
 
-use constants::ReturnCode;
-use objects::StructureController;
+use {constants::ReturnCode, objects::StructureController};
 
 simple_accessors! {
     StructureController;

@@ -103,13 +103,14 @@ unsafe impl FindConstant for FindObject {
 }
 
 pub mod find {
-    use super::FindConstant;
     use stdweb::unstable::TryFrom;
 
     use objects::{
         ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
         Source, Structure, StructureSpawn, Tombstone,
     };
+
+    use super::FindConstant;
 
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub struct Exit(i32);
@@ -321,12 +322,13 @@ pub unsafe trait LookConstant {
 
 pub mod look {
     use {
+        objects::{
+            ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Tombstone,
+        },
         traits::{IntoExpectedType, TryInto},
-        ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Terrain,
-        Tombstone,
     };
 
-    use super::{Look, LookConstant};
+    use super::{Look, LookConstant, Terrain};
 
     typesafe_look_constants! {
         CREEPS, Look::Creeps, Creep, IntoExpectedType::into_expected_type;

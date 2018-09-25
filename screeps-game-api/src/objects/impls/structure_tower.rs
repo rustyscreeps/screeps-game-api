@@ -1,6 +1,6 @@
 use {
     constants::ReturnCode,
-    {Creep, Structure, StructureTower},
+    objects::{Creep, Structure, StructureTower},
 };
 
 impl StructureTower {

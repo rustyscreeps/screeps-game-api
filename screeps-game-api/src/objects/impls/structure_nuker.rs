@@ -1,6 +1,6 @@
 use {
     constants::ReturnCode,
-    {RoomPosition, StructureNuker},
+    objects::{RoomPosition, StructureNuker},
 };
 
 simple_accessors! {

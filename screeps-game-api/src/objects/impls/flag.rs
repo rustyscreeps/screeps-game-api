@@ -1,4 +1,7 @@
-use {constants::Color, Flag, HasPosition};
+use {
+    constants::Color,
+    objects::{Flag, HasPosition},
+};
 
 simple_accessors! {
     Flag;

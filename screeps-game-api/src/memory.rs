@@ -50,8 +50,8 @@
 //! from those objects will also result in a `MemoryReference` which instead
 //! points at the root of this object's memory.
 //!
-
 use std::fmt;
+
 use stdweb::{JsSerialize, Reference, Value};
 
 use {

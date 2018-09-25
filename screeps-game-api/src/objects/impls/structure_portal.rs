@@ -1,6 +1,6 @@
 use {
+    objects::{RoomPosition, StructurePortal},
     traits::TryInto,
-    {RoomPosition, StructurePortal},
 };
 
 #[derive(Deserialize, Debug)]

@@ -1,6 +1,6 @@
 use {
     constants::{ResourceType, ReturnCode},
-    StructureTerminal,
+    objects::StructureTerminal,
 };
 
 impl StructureTerminal {
