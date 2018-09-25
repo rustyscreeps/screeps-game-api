@@ -63,15 +63,15 @@ impl Creep {
     }
 
     pub fn move_by_path_serialized(&self, path: &str) -> ReturnCode {
-        js_unwrap![@{self.as_ref()}.moveByPath(@{path})]
+        js_unwrap!(@{self.as_ref()}.moveByPath(@{path}))
     }
 
-    pub fn move_by_path_steps(&self, path: &Vec<Step>) -> ReturnCode {
-        js_unwrap![@{self.as_ref()}.moveByPath(@{path})]
+    pub fn move_by_path_steps(&self, path: &[Step]) -> ReturnCode {
+        js_unwrap!(@{self.as_ref()}.moveByPath(@{path}))
     }
 
     pub fn move_by_path_search_result(&self, path: &SearchResults) -> ReturnCode {
-        js_unwrap![@{self.as_ref()}.moveByPath(@{path.opaque_path()})]
+        js_unwrap!(@{self.as_ref()}.moveByPath(@{path.opaque_path()}))
     }
 
     pub fn memory(&self) -> MemoryReference {
