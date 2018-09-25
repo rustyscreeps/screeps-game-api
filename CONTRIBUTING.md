@@ -89,7 +89,13 @@ than a less specific one. When the crate re-exports tons of types from inner mod
 tempting to just import everything from the crate root, but this makes it all more confusing. Import
 from a more specific module which defines the type rather than having
 `use {ResourceType, StructureProperties, LocalRoomPosition};` with each type coming from a different
-module.
+module. Things should at minimum use the top-level module, but can also use more specific imports
+for things from within the same top-level module.
+
+To clarify, each import from within the same crate should be qualified by one level of module
+outside of the current module's hierarchy. If in `objects::impl::construction_site`, importing
+`objects::impl::room::Step` should be done with `objects::impl::room::Step` or `super::room::Step`,
+but if in `constants`, then it can just be done with `objects::Step`.
 
 [screeps slack]: https://chat.screeps.com/
 [fmt-rfcs Rust Style Guide]: https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md

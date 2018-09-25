@@ -3,11 +3,13 @@ use std::cmp::{Eq, PartialEq};
 use {
     constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
     game,
-    objects::{FindOptions, HasPosition, Path, RoomPosition, StructureType},
+    objects::{HasPosition, RoomPosition, StructureType},
     pathfinder::CostMatrix,
     positions::LocalRoomPosition,
     traits::TryInto,
 };
+
+use super::room::{FindOptions, Path};
 
 impl RoomPosition {
     pub fn new(x: u8, y: u8, room_name: &str) -> Self {
