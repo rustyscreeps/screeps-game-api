@@ -32,10 +32,23 @@ Then to format the code in this repository, use the following:
 $ cargo fmt
 ```
 
+## Ordering within a module
+
+Items within a module should be order as follows. Each separate group should be newline separated
+with the exception of module documentation. The group immediately following module documentation
+should be directly under it with no double-newline separating it.
+
+- `//!` module documentation
+- `extern crate` declarations
+- private `use` declarations
+- `mod` declarations
+- `pub use` declarations
+- all other [items] in no particular order
+
 ## `use` formatting
 
-Private `use` statements should be above all other non-use items within the module or function they
-are declared.
+Private `use` statements should all be together: there should be no non-private-`use` statements
+between two private `use` statements.
 
 Importing at the module level should be preferred to importing within functions, with the
 exception of importing enum variants. Any statement like `use self::MyEnum::*;` should be used only
@@ -47,13 +60,15 @@ newline-separated groups:
 - imports from `std`
 - imports from external crates
 - imports from the crate root
-- imports from `self` or `super`.
+- imports from `super::`
+- imports from `self::`
 
-`pub use` statements should all be in one group under any `mod` statements in a file.
+`pub use` statements should be similarly grouped, but should be separate from private `use` as
+mentioned in [Ordering within a module].
 
-All imports should use the use [RFC 2128] "nested groups" style. There should be one top-level
-`use` statement for each of `std`, the current root, `self`, `super` and one for each external
-crate.
+All imports within a newline-separated group should use the use [RFC 2128] "nested groups" style.
+There should be one top-level `use` statement for each of `std`, the crate root, `self`, `super`
+and one for each external crate.
 
 In accordance to the `fmt-rfcs`, top-level `use` statements within a group and items within a `use`
 statement should be alphabetically ordered.
@@ -76,7 +91,6 @@ use stdweb::{
     Reference, Value,
 };
 use void::Void;
-
 
 use {
     constants::{ResourceType, ReturnCode, StructureType},
@@ -101,3 +115,4 @@ but if in `constants`, then it can just be done with `objects::Step`.
 [fmt-rfcs Rust Style Guide]: https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md
 [Rust API Guidelines]: https://rust-lang-nursery.github.io/api-guidelines/
 [RFC 2128]: https://github.com/rust-lang/rfcs/blob/master/text/2128-use-nested-groups.md
+[items]: https://doc.rust-lang.org/reference/items.html
