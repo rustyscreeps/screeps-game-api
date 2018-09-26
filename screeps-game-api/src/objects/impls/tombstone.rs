@@ -7,11 +7,3 @@ simple_accessors! {
     (ticks_to_decay -> ticksToDecay -> u32),
     (id -> id -> String)
 }
-
-impl PartialEq for Tombstone {
-    fn eq(&self, other: &Tombstone) -> bool {
-        self.id() == other.id()
-    }
-}
-
-impl Eq for Tombstone {}

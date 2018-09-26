@@ -223,6 +223,24 @@ macro_rules! simple_accessors {
 macro_rules! impl_structure_properties {
     ( $( $struct_name:ty ),+ ) => {$(
         unsafe impl StructureProperties for $struct_name {}
+    )*};
+}
+
+/// Implements `id` method for Structures and Creep
+///
+/// This generates the implementation, for the structures given, of the `HasId`,
+/// `PartialEq` and `Eq` traits. The last two are implemented using the `id()`
+/// method.
+///
+/// Macro Syntax:
+/// impl_has_id! {
+/// $struct_name1;
+/// $struct_name2;
+/// ...
+/// }
+macro_rules! impl_has_id {
+    ($($struct_name:ty);* $(;)*) => {$(
+        unsafe impl HasId for $struct_name {}
 
         impl PartialEq for $struct_name {
             fn eq(&self, other: &$struct_name) -> bool{

@@ -9,13 +9,4 @@ impl Resource {
 simple_accessors! {
     Resource;
     (amount -> amount -> i32),
-    (id -> id -> String)
 }
-
-impl PartialEq for Resource {
-    fn eq(&self, other: &Resource) -> bool {
-        self.id() == other.id()
-    }
-}
-
-impl Eq for Resource {}
