@@ -1,5 +1,5 @@
 use {
-    objects::{HasId, RoomObject, RoomObjectProperties},
+    objects::{HasId, RoomObject},
     traits::TryInto,
     ConversionError,
 };
