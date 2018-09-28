@@ -465,6 +465,19 @@ macro_rules! construct_structure_variants {
     };
 }
 
+macro_rules! impl_serialize_as_i32 {
+    ($name:ident) => {
+        impl ::serde::Serialize for $name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: ::serde::Serializer,
+            {
+                serializer.serialize_i32(*self as i32)
+            }
+        }
+    };
+}
+
 /// Get a value from memory given a path, returning `None` if any thing along the way does not
 /// exist.
 ///

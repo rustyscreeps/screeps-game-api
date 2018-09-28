@@ -11,7 +11,7 @@ use {
 
 enum_from_primitive! {
     #[repr(i32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Deserialize)]
     pub enum ReturnCode {
         Ok = 0,
         NotOwner = -1,
@@ -31,6 +31,8 @@ enum_from_primitive! {
         Other = 42,
     }
 }
+
+impl_serialize_as_i32!(ReturnCode);
 
 impl ReturnCode {
     /// Turns this return code into a result.
@@ -72,7 +74,7 @@ pub unsafe trait FindConstant {
 }
 
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Deserialize)]
 pub enum FindObject {
     Creeps = 101,
     MyCreeps = 102,
@@ -93,6 +95,8 @@ pub enum FindObject {
     Nukes = 117,
     Tombstones = 118,
 }
+
+impl_serialize_as_i32!(FindObject);
 
 unsafe impl FindConstant for FindObject {
     type Item = RoomObject;
@@ -180,7 +184,7 @@ pub mod find {
 
 enum_from_primitive! {
     #[repr(i32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, Serialize)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
     pub enum Direction {
         Top = 1,
         TopRight = 2,
@@ -192,6 +196,8 @@ enum_from_primitive! {
         TopLeft = 8,
     }
 }
+
+impl_serialize_as_i32!(Direction);
 
 impl TryFrom<Value> for Direction {
     type Error = ConversionError;
@@ -209,7 +215,7 @@ impl TryFrom<Value> for Direction {
 
 enum_from_primitive! {
     #[repr(i32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Deserialize)]
     pub enum Color {
         Red = 1,
         Purple = 2,
@@ -223,6 +229,8 @@ enum_from_primitive! {
         White = 10,
     }
 }
+
+impl_serialize_as_i32!(Color);
 
 impl From<Color> for i32 {
     fn from(c: Color) -> i32 {
@@ -245,12 +253,14 @@ impl TryFrom<Value> for Color {
 }
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
 pub enum Terrain {
     Plain = 0,
     Wall = 1,
     Swamp = 2,
 }
+
+impl_serialize_as_i32!(Terrain);
 
 impl TryFrom<Value> for Terrain {
     type Error = ConversionError;
@@ -296,8 +306,9 @@ impl AsRef<str> for Terrain {
 ///
 /// To use in JS: `__look_num_to_str(@{look as i32})` function
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[doc(hidden)]
+#[serde(rename_all = "camelCase")]
 pub enum Look {
     Creeps = 0,
     Energy = 1,
@@ -347,7 +358,8 @@ pub mod look {
 }
 
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
+#[serde(rename = "snake_case")]
 pub enum Part {
     Move = 0,
     Work = 1,
@@ -481,7 +493,8 @@ pub const LINK_LOSS_RATION: f32 = 0.03;
 pub const STORAGE_CAPACITY: i32 = 1_000_000;
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum StructureType {
     Spawn = 0,
     Extension = 1,
@@ -699,93 +712,93 @@ pub const TOMBSTONE_DECAY_PER_PART: i32 = 5;
 pub const PORTAL_DECAY: i32 = 30000;
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum ResourceType {
-    /// `"energy"`
+    #[serde(rename = "energy")]
     Energy = 1,
-    /// `"power"`
+    #[serde(rename = "power")]
     Power = 2,
-    /// `"H"`
+    #[serde(rename = "H")]
     Hydrogen = 3,
-    /// `"O"`
+    #[serde(rename = "O")]
     Oxygen = 4,
-    /// `"U"`
+    #[serde(rename = "U")]
     Utrium = 5,
-    /// `"L"`
+    #[serde(rename = "L")]
     Lemergium = 6,
-    /// `"K"`
+    #[serde(rename = "K")]
     Keanium = 7,
-    /// `"Z"`
+    #[serde(rename = "Z")]
     Zynthium = 8,
-    /// `"X"`
+    #[serde(rename = "X")]
     Catalyst = 9,
-    /// `"G"`
+    #[serde(rename = "G")]
     Ghodium = 10,
-    /// `"OH"`
+    #[serde(rename = "OH")]
     Hydroxide = 11,
-    /// `"ZK"`
+    #[serde(rename = "ZK")]
     ZynthiumKeanite = 12,
-    /// `"UL"`
+    #[serde(rename = "UL")]
     UtriumLemergite = 13,
-    /// `"UH"`
+    #[serde(rename = "UH")]
     UtriumHydride = 14,
-    /// `"UO"`
+    #[serde(rename = "UO")]
     UtriumOxide = 15,
-    /// `"KH"`
+    #[serde(rename = "KH")]
     KeaniumHydride = 16,
-    /// `"KO"`
+    #[serde(rename = "KO")]
     KeaniumOxide = 17,
-    /// `"LH"`
+    #[serde(rename = "LH")]
     LemergiumHydride = 18,
-    /// `"LO"`
+    #[serde(rename = "LO")]
     LemergiumOxide = 19,
-    /// `"ZH"`
+    #[serde(rename = "ZH")]
     ZynthiumHydride = 20,
-    /// `"ZO"`
+    #[serde(rename = "ZO")]
     ZynthiumOxide = 21,
-    /// `"GH"`
+    #[serde(rename = "GH")]
     GhodiumHydride = 22,
-    /// `"GO"`
+    #[serde(rename = "GO")]
     GhodiumOxide = 23,
-    /// `"UH2O"`
+    #[serde(rename = "UH2O")]
     UtriumAcid = 24,
-    /// `"UHO2"`
+    #[serde(rename = "UHO2")]
     UtriumAlkalide = 25,
-    /// `"KH2O"`
+    #[serde(rename = "KH2O")]
     KeaniumAcid = 26,
-    /// `"KHO2"`
+    #[serde(rename = "KHO2")]
     KeaniumAlkalide = 27,
-    /// `"LH2O"`
+    #[serde(rename = "LH2O")]
     LemergiumAcid = 28,
-    /// `"LHO2"`
+    #[serde(rename = "LHO2")]
     LemergiumAlkalide = 29,
-    /// `"ZH2O"`
+    #[serde(rename = "ZH2O")]
     ZynthiumAcid = 30,
-    /// `"ZHO2"`
+    #[serde(rename = "ZHO2")]
     ZynthiumAlkalide = 31,
-    /// `"GH2O"`
+    #[serde(rename = "GH2O")]
     GhodiumAcid = 32,
-    /// `"GHO2"`
+    #[serde(rename = "GHO2")]
     GhodiumAlkalide = 33,
-    /// `"XUH2O"`
+    #[serde(rename = "XUH2O")]
     CatalyzedUtriumAcid = 34,
-    /// `"XUHO2"`
+    #[serde(rename = "XUHO2")]
     CatalyzedUtriumAlkalide = 35,
-    /// `"XKH2O"`
+    #[serde(rename = "XKH2O")]
     CatalyzedKeaniumAcid = 36,
-    /// `"XKHO2"`
+    #[serde(rename = "XKHO2")]
     CatalyzedKeaniumAlkalide = 37,
-    /// `"XLH2O"`
+    #[serde(rename = "XLH2O")]
     CatalyzedLemergiumAcid = 38,
-    /// `"XLHO2"`
+    #[serde(rename = "XLHO2")]
     CatalyzedLemergiumAlkalide = 39,
-    /// `"XZH2O"`
+    #[serde(rename = "XZH2O")]
     CatalyzedZynthiumAcid = 40,
-    /// `"XZHO2"`
+    #[serde(rename = "XZHO2")]
     CatalyzedZynthiumAlkalide = 41,
-    /// `"XGH2O"`
+    #[serde(rename = "XGH2O")]
     CatalyzedGhodiumAcid = 42,
-    /// `"XGHO2"`
+    #[serde(rename = "XGHO2")]
     CatalyzedGhodiumAlkalide = 43,
 }
 
