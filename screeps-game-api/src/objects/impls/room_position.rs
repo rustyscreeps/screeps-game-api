@@ -42,6 +42,13 @@ impl RoomPosition {
         )
     }
 
+    pub fn create_named_construction_site(&self, ty: StructureType, name: &str) -> ReturnCode {
+        js_unwrap!(
+            @{self.as_ref()}.createConstructionSite(__structure_type_num_to_str(@{ty as i32}),
+                                                    @{name})
+        )
+    }
+
     pub fn create_flag(&self, name: &str, main_color: Color, secondary_color: Color) -> ReturnCode {
         // TODO: determine if ERR_NOT_IN_RANGE is the best choice here
         (js! {
