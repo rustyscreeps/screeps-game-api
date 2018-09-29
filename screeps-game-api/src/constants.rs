@@ -12,6 +12,7 @@ use {
 enum_from_primitive! {
     #[repr(i32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
     pub enum ReturnCode {
         Ok = 0,
         NotOwner = -1,
@@ -31,6 +32,9 @@ enum_from_primitive! {
         Other = 42,
     }
 }
+
+#[cfg(feature = "constants-serde")]
+impl_serialize_as_i32!(ReturnCode);
 
 impl ReturnCode {
     /// Turns this return code into a result.
@@ -73,6 +77,7 @@ pub unsafe trait FindConstant {
 
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
 pub enum FindObject {
     Creeps = 101,
     MyCreeps = 102,
@@ -93,6 +98,9 @@ pub enum FindObject {
     Nukes = 117,
     Tombstones = 118,
 }
+
+#[cfg(feature = "constants-serde")]
+impl_serialize_as_i32!(FindObject);
 
 unsafe impl FindConstant for FindObject {
     type Item = RoomObject;
@@ -180,7 +188,7 @@ pub mod find {
 
 enum_from_primitive! {
     #[repr(i32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, Serialize)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
     pub enum Direction {
         Top = 1,
         TopRight = 2,
@@ -192,6 +200,8 @@ enum_from_primitive! {
         TopLeft = 8,
     }
 }
+
+impl_serialize_as_i32!(Direction);
 
 impl TryFrom<Value> for Direction {
     type Error = ConversionError;
@@ -210,6 +220,7 @@ impl TryFrom<Value> for Direction {
 enum_from_primitive! {
     #[repr(i32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
     pub enum Color {
         Red = 1,
         Purple = 2,
@@ -223,6 +234,9 @@ enum_from_primitive! {
         White = 10,
     }
 }
+
+#[cfg(feature = "constants-serde")]
+impl_serialize_as_i32!(Color);
 
 impl From<Color> for i32 {
     fn from(c: Color) -> i32 {
@@ -246,11 +260,15 @@ impl TryFrom<Value> for Color {
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
 pub enum Terrain {
     Plain = 0,
     Wall = 1,
     Swamp = 2,
 }
+
+#[cfg(feature = "constants-serde")]
+impl_serialize_as_i32!(Terrain);
 
 impl TryFrom<Value> for Terrain {
     type Error = ConversionError;
@@ -298,6 +316,8 @@ impl AsRef<str> for Terrain {
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[doc(hidden)]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
 pub enum Look {
     Creeps = 0,
     Energy = 1,
@@ -348,6 +368,8 @@ pub mod look {
 
 #[repr(u32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "snake_case"))]
 pub enum Part {
     Move = 0,
     Work = 1,
@@ -482,6 +504,8 @@ pub const STORAGE_CAPACITY: i32 = 1_000_000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
 pub enum StructureType {
     Spawn = 0,
     Extension = 1,
@@ -700,92 +724,137 @@ pub const PORTAL_DECAY: i32 = 30000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
 pub enum ResourceType {
     /// `"energy"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "energy"))]
     Energy = 1,
     /// `"power"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "power"))]
     Power = 2,
     /// `"H"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "H"))]
     Hydrogen = 3,
     /// `"O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "O"))]
     Oxygen = 4,
     /// `"U"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "U"))]
     Utrium = 5,
     /// `"L"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "L"))]
     Lemergium = 6,
     /// `"K"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "K"))]
     Keanium = 7,
     /// `"Z"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "Z"))]
     Zynthium = 8,
     /// `"X"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "X"))]
     Catalyst = 9,
     /// `"G"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "G"))]
     Ghodium = 10,
     /// `"OH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "OH"))]
     Hydroxide = 11,
     /// `"ZK"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZK"))]
     ZynthiumKeanite = 12,
     /// `"UL"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UL"))]
     UtriumLemergite = 13,
     /// `"UH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UH"))]
     UtriumHydride = 14,
     /// `"UO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UO"))]
     UtriumOxide = 15,
     /// `"KH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "KH"))]
     KeaniumHydride = 16,
     /// `"KO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "KO"))]
     KeaniumOxide = 17,
     /// `"LH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "LH"))]
     LemergiumHydride = 18,
     /// `"LO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "LO"))]
     LemergiumOxide = 19,
     /// `"ZH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZH"))]
     ZynthiumHydride = 20,
     /// `"ZO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZO"))]
     ZynthiumOxide = 21,
     /// `"GH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "GH"))]
     GhodiumHydride = 22,
     /// `"GO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "GO"))]
     GhodiumOxide = 23,
     /// `"UH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UH2O"))]
     UtriumAcid = 24,
     /// `"UHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UHO2"))]
     UtriumAlkalide = 25,
     /// `"KH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "KH2O"))]
     KeaniumAcid = 26,
     /// `"KHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "KHO2"))]
     KeaniumAlkalide = 27,
     /// `"LH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "LH2O"))]
     LemergiumAcid = 28,
     /// `"LHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "LHO2"))]
     LemergiumAlkalide = 29,
     /// `"ZH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZH2O"))]
     ZynthiumAcid = 30,
     /// `"ZHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZHO2"))]
     ZynthiumAlkalide = 31,
     /// `"GH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "GH2O"))]
     GhodiumAcid = 32,
     /// `"GHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "GHO2"))]
     GhodiumAlkalide = 33,
     /// `"XUH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XUH2O"))]
     CatalyzedUtriumAcid = 34,
     /// `"XUHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XUHO2"))]
     CatalyzedUtriumAlkalide = 35,
     /// `"XKH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XKH2O"))]
     CatalyzedKeaniumAcid = 36,
     /// `"XKHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XKHO2"))]
     CatalyzedKeaniumAlkalide = 37,
     /// `"XLH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XLH2O"))]
     CatalyzedLemergiumAcid = 38,
     /// `"XLHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XLHO2"))]
     CatalyzedLemergiumAlkalide = 39,
     /// `"XZH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XZH2O"))]
     CatalyzedZynthiumAcid = 40,
     /// `"XZHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XZHO2"))]
     CatalyzedZynthiumAlkalide = 41,
     /// `"XGH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XGH2O"))]
     CatalyzedGhodiumAcid = 42,
     /// `"XGHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XGHO2"))]
     CatalyzedGhodiumAlkalide = 43,
 }
 

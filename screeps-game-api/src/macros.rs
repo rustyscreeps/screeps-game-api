@@ -465,6 +465,23 @@ macro_rules! construct_structure_variants {
     };
 }
 
+/// Implements [`serde::Serialize`] for a single given structure name.
+///
+/// The generated implementation unconditionally uses `item as i32` to convert any instance of the
+/// structure into an integer, then uses `serialize_i32` to serialize that number.
+macro_rules! impl_serialize_as_i32 {
+    ($name:ty) => {
+        impl ::serde::Serialize for $name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: ::serde::Serializer,
+            {
+                serializer.serialize_i32(*self as i32)
+            }
+        }
+    };
+}
+
 /// Get a value from memory given a path, returning `None` if any thing along the way does not
 /// exist.
 ///
