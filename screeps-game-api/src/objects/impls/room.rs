@@ -1,5 +1,6 @@
 use std::{marker::PhantomData, mem, ops::Range};
 
+use serde_json;
 use stdweb::Reference;
 
 use {
@@ -100,6 +101,11 @@ impl Room {
         } else {
             Ok(code_int.try_into().unwrap())
         }
+    }
+
+    pub fn get_event_log(&self) -> Vec<Event> {
+        let raw_event_log: String = js_unwrap!{@{self.as_ref()}.getEventLog(true)};
+        serde_json::from_str(&raw_event_log).expect("Malformed Event Log")
     }
 
     pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
@@ -424,3 +430,120 @@ pub enum Path {
 }
 
 js_deserializable!{Path}
+
+#[derive(Deserialize)]
+pub struct Event {
+    #[serde(flatten)]
+    pub event: EventType,
+    #[serde(rename = "objectId")]
+    pub object_id : String,
+}
+
+#[derive(Deserialize)]
+#[serde(tag = "event", content = "data")]
+pub enum EventType {
+    #[serde(rename = "1")]
+    Attack(AttackEvent),
+    #[serde(rename = "2")]
+    ObjectDestroyed(ObjectDestroyedEvent),
+    #[serde(rename = "3")]
+    AttackController,
+    #[serde(rename = "4")]
+    Build(BuildEvent),
+    #[serde(rename = "5")]
+    Harvest(HarvestEvent),
+    #[serde(rename = "6")]
+    Heal(HealEvent),
+    #[serde(rename = "7")]
+    Repair(RepairEvent),
+    #[serde(rename = "8")]
+    ReserveController(ReserveControllerEvent),
+    #[serde(rename = "9")]
+    UpgradeController(UpgradeControllerEvent),
+    #[serde(rename = "10")]
+    Exit(ExitEvent),
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AttackEvent {
+    pub target_id: String,
+    pub damage: u32,
+    pub attack_type: AttackType,
+}
+
+#[derive(Deserialize)]
+#[repr(u32)]
+pub enum AttackType {
+    Melee = 1,
+    Ranged = 2,
+    RangedMass = 3,
+    Dismantle = 4,
+    HitBack =5,
+    Nuke =6,
+}
+
+#[derive(Deserialize)]
+pub struct ObjectDestroyedEvent {
+    #[serde(rename = "type")]
+    pub object_type: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BuildEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub energy_spent: u32,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HarvestEvent {
+    pub target_id: String,
+    pub amount: u32,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HealEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub heal_type: HealType,
+}
+
+#[derive(Deserialize)]
+#[repr(u32)]
+pub enum HealType {
+    Melee = 1,
+    Ranged = 2,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RepairEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub energy_spent: u32,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ReserveControllerEvent {
+    pub amount: u32,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpgradeControllerEvent {
+    pub amount: u32,
+    pub energy_spent: u32
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ExitEvent {
+    pub room: String,
+    pub x: u32,
+    pub y: u32,
+}
