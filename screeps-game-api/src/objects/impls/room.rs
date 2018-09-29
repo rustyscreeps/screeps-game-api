@@ -8,7 +8,7 @@ use {
     },
     memory::MemoryReference,
     objects::{
-        HasPosition, Room, RoomPosition, StructureController, StructureStorage, StructureTerminal,
+        HasPosition, Room, RoomPosition, RoomTerrain, StructureController, StructureStorage, StructureTerminal,
     },
     pathfinder::CostMatrix,
     positions::LocalRoomName,
@@ -104,6 +104,10 @@ impl Room {
 
     pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
         js_unwrap!{@{self.as_ref()}.get_position_at(@{x}, @{y})}
+    }
+
+    pub fn get_terrain(&self) -> RoomTerrain {
+        js_unwrap!(@{self.as_ref()}.getTerrain())
     }
 
     // pub fn look_at(&self, x: u32, y: u32) -> ! {

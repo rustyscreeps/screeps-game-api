@@ -49,6 +49,8 @@ reference_wrappers!(
     RoomObject,
     #[reference(instance_of = "RoomPosition")]
     RoomPosition,
+    #[reference(instance_of = "Room.Terrain")]
+    RoomTerrain,
     #[reference(instance_of = "Source")]
     Source,
     #[reference(instance_of = "StructureContainer")]

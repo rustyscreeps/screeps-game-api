@@ -7,6 +7,7 @@ mod nuke;
 mod resource;
 mod room;
 mod room_position;
+mod room_terrain;
 mod source;
 mod structure_controller;
 mod structure_keeper_lair;

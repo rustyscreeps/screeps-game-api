@@ -192,15 +192,6 @@ function __resource_type_str_to_num(str) {
     }
 }
 
-function __terrain_type_str_to_num(str) {
-    switch (str) {
-        case "plain": return 0;
-        case "wall": return 1;
-        case "swamp": return 2;
-        default: throw new Error("unknown terrain type " + str);
-    }
-}
-
 function _hasActiveBodypart(body, type) {
     for (var i = body.length - 1; i >= 0; i--) {
         if (body[i].hits <= 0) {

@@ -250,6 +250,9 @@ pub enum Terrain {
     Plain = 0,
     Wall = 1,
     Swamp = 2,
+    SwampWall = 3,
+    Lava = 4,
+    // Todo: Implement the other masks when lava becomes a thing
 }
 
 impl TryFrom<Value> for Terrain {
@@ -267,23 +270,12 @@ impl TryFrom<Value> for Terrain {
                 0 => Terrain::Plain,
                 1 => Terrain::Wall,
                 2 => Terrain::Swamp,
-                // might not need this, but just in case we try
-                // to decode a game-encoded number and '3' represents swamp + wall
-                3 => Terrain::Wall,
+                3 => Terrain::SwampWall,
+                4 => Terrain::Lava,
                 x => panic!("unknown terrain encoded integer {}", x),
             },
         };
         Ok(v)
-    }
-}
-
-impl AsRef<str> for Terrain {
-    fn as_ref(&self) -> &str {
-        match *self {
-            Terrain::Plain => "plain",
-            Terrain::Wall => "wall",
-            Terrain::Swamp => "swamp",
-        }
     }
 }
 
