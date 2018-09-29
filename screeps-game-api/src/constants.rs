@@ -11,7 +11,8 @@ use {
 
 enum_from_primitive! {
     #[repr(i32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy, Deserialize)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
     pub enum ReturnCode {
         Ok = 0,
         NotOwner = -1,
@@ -32,6 +33,7 @@ enum_from_primitive! {
     }
 }
 
+#[cfg(feature = "constants-serde")]
 impl_serialize_as_i32!(ReturnCode);
 
 impl ReturnCode {
@@ -74,7 +76,8 @@ pub unsafe trait FindConstant {
 }
 
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
 pub enum FindObject {
     Creeps = 101,
     MyCreeps = 102,
@@ -96,6 +99,7 @@ pub enum FindObject {
     Tombstones = 118,
 }
 
+#[cfg(feature = "constants-serde")]
 impl_serialize_as_i32!(FindObject);
 
 unsafe impl FindConstant for FindObject {
@@ -215,7 +219,8 @@ impl TryFrom<Value> for Direction {
 
 enum_from_primitive! {
     #[repr(i32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy, Deserialize)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
     pub enum Color {
         Red = 1,
         Purple = 2,
@@ -230,6 +235,7 @@ enum_from_primitive! {
     }
 }
 
+#[cfg(feature = "constants-serde")]
 impl_serialize_as_i32!(Color);
 
 impl From<Color> for i32 {
@@ -253,13 +259,15 @@ impl TryFrom<Value> for Color {
 }
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
 pub enum Terrain {
     Plain = 0,
     Wall = 1,
     Swamp = 2,
 }
 
+#[cfg(feature = "constants-serde")]
 impl_serialize_as_i32!(Terrain);
 
 impl TryFrom<Value> for Terrain {
@@ -306,9 +314,10 @@ impl AsRef<str> for Terrain {
 ///
 /// To use in JS: `__look_num_to_str(@{look as i32})` function
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[doc(hidden)]
-#[serde(rename_all = "camelCase")]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
 pub enum Look {
     Creeps = 0,
     Energy = 1,
@@ -358,8 +367,9 @@ pub mod look {
 }
 
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
-#[serde(rename = "snake_case")]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "snake_case"))]
 pub enum Part {
     Move = 0,
     Work = 1,
@@ -493,8 +503,9 @@ pub const LINK_LOSS_RATION: f32 = 0.03;
 pub const STORAGE_CAPACITY: i32 = 1_000_000;
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
 pub enum StructureType {
     Spawn = 0,
     Extension = 1,
@@ -712,93 +723,138 @@ pub const TOMBSTONE_DECAY_PER_PART: i32 = 5;
 pub const PORTAL_DECAY: i32 = 30000;
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
 pub enum ResourceType {
-    #[serde(rename = "energy")]
+    /// `"energy"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "energy"))]
     Energy = 1,
-    #[serde(rename = "power")]
+    /// `"power"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "power"))]
     Power = 2,
-    #[serde(rename = "H")]
+    /// `"H"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "H"))]
     Hydrogen = 3,
-    #[serde(rename = "O")]
+    /// `"O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "O"))]
     Oxygen = 4,
-    #[serde(rename = "U")]
+    /// `"U"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "U"))]
     Utrium = 5,
-    #[serde(rename = "L")]
+    /// `"L"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "L"))]
     Lemergium = 6,
-    #[serde(rename = "K")]
+    /// `"K"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "K"))]
     Keanium = 7,
-    #[serde(rename = "Z")]
+    /// `"Z"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "Z"))]
     Zynthium = 8,
-    #[serde(rename = "X")]
+    /// `"X"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "X"))]
     Catalyst = 9,
-    #[serde(rename = "G")]
+    /// `"G"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "G"))]
     Ghodium = 10,
-    #[serde(rename = "OH")]
+    /// `"OH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "OH"))]
     Hydroxide = 11,
-    #[serde(rename = "ZK")]
+    /// `"ZK"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZK"))]
     ZynthiumKeanite = 12,
-    #[serde(rename = "UL")]
+    /// `"UL"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UL"))]
     UtriumLemergite = 13,
-    #[serde(rename = "UH")]
+    /// `"UH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UH"))]
     UtriumHydride = 14,
-    #[serde(rename = "UO")]
+    /// `"UO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UO"))]
     UtriumOxide = 15,
-    #[serde(rename = "KH")]
+    /// `"KH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "KH"))]
     KeaniumHydride = 16,
-    #[serde(rename = "KO")]
+    /// `"KO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "KO"))]
     KeaniumOxide = 17,
-    #[serde(rename = "LH")]
+    /// `"LH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "LH"))]
     LemergiumHydride = 18,
-    #[serde(rename = "LO")]
+    /// `"LO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "LO"))]
     LemergiumOxide = 19,
-    #[serde(rename = "ZH")]
+    /// `"ZH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZH"))]
     ZynthiumHydride = 20,
-    #[serde(rename = "ZO")]
+    /// `"ZO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZO"))]
     ZynthiumOxide = 21,
-    #[serde(rename = "GH")]
+    /// `"GH"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "GH"))]
     GhodiumHydride = 22,
-    #[serde(rename = "GO")]
+    /// `"GO"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "GO"))]
     GhodiumOxide = 23,
-    #[serde(rename = "UH2O")]
+    /// `"UH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UH2O"))]
     UtriumAcid = 24,
-    #[serde(rename = "UHO2")]
+    /// `"UHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "UHO2"))]
     UtriumAlkalide = 25,
-    #[serde(rename = "KH2O")]
+    /// `"KH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "KH2O"))]
     KeaniumAcid = 26,
-    #[serde(rename = "KHO2")]
+    /// `"KHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "KHO2"))]
     KeaniumAlkalide = 27,
-    #[serde(rename = "LH2O")]
+    /// `"LH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "LH2O"))]
     LemergiumAcid = 28,
-    #[serde(rename = "LHO2")]
+    /// `"LHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "LHO2"))]
     LemergiumAlkalide = 29,
-    #[serde(rename = "ZH2O")]
+    /// `"ZH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZH2O"))]
     ZynthiumAcid = 30,
-    #[serde(rename = "ZHO2")]
+    /// `"ZHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ZHO2"))]
     ZynthiumAlkalide = 31,
-    #[serde(rename = "GH2O")]
+    /// `"GH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "GH2O"))]
     GhodiumAcid = 32,
-    #[serde(rename = "GHO2")]
+    /// `"GHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "GHO2"))]
     GhodiumAlkalide = 33,
-    #[serde(rename = "XUH2O")]
+    /// `"XUH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XUH2O"))]
     CatalyzedUtriumAcid = 34,
-    #[serde(rename = "XUHO2")]
+    /// `"XUHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XUHO2"))]
     CatalyzedUtriumAlkalide = 35,
-    #[serde(rename = "XKH2O")]
+    /// `"XKH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XKH2O"))]
     CatalyzedKeaniumAcid = 36,
-    #[serde(rename = "XKHO2")]
+    /// `"XKHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XKHO2"))]
     CatalyzedKeaniumAlkalide = 37,
-    #[serde(rename = "XLH2O")]
+    /// `"XLH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XLH2O"))]
     CatalyzedLemergiumAcid = 38,
-    #[serde(rename = "XLHO2")]
+    /// `"XLHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XLHO2"))]
     CatalyzedLemergiumAlkalide = 39,
-    #[serde(rename = "XZH2O")]
+    /// `"XZH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XZH2O"))]
     CatalyzedZynthiumAcid = 40,
-    #[serde(rename = "XZHO2")]
+    /// `"XZHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XZHO2"))]
     CatalyzedZynthiumAlkalide = 41,
-    #[serde(rename = "XGH2O")]
+    /// `"XGH2O"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XGH2O"))]
     CatalyzedGhodiumAcid = 42,
-    #[serde(rename = "XGHO2")]
+    /// `"XGHO2"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "XGHO2"))]
     CatalyzedGhodiumAlkalide = 43,
 }
 

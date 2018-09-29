@@ -33,3 +33,4 @@ stdweb-derive = "0.5"
 
 [features]
 check-all-casts = []
+constants-serde = []
