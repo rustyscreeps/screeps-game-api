@@ -5,5 +5,4 @@ simple_accessors! {
     (creep -> creep -> Creep),
     (death_time -> deathTime -> u32),
     (ticks_to_decay -> ticksToDecay -> u32),
-    (id -> id -> String)
 }
