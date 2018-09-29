@@ -25,7 +25,11 @@ mod structure_tower;
 mod tombstone;
 
 pub use self::{
-    room::{FindOptions, Path, Step},
+    room::{
+        AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
+        HarvestEvent, HealEvent, HealType, ObjectDestroyedEvent, Path, RepairEvent,
+        ReserveControllerEvent, Step, UpgradeControllerEvent,
+    },
     structure_controller::{Reservation, Sign},
     structure_spawn::SpawnOptions,
 };

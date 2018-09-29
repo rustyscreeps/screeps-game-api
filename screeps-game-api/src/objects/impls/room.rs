@@ -9,7 +9,8 @@ use {
     },
     memory::MemoryReference,
     objects::{
-        HasPosition, Room, RoomPosition, RoomTerrain, StructureController, StructureStorage, StructureTerminal,
+        HasPosition, Room, RoomPosition, RoomTerrain, StructureController, StructureStorage,
+        StructureTerminal,
     },
     pathfinder::CostMatrix,
     positions::LocalRoomName,
@@ -431,15 +432,15 @@ pub enum Path {
 
 js_deserializable!{Path}
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 pub struct Event {
     #[serde(flatten)]
     pub event: EventType,
     #[serde(rename = "objectId")]
-    pub object_id : String,
+    pub object_id: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(tag = "event", content = "data")]
 pub enum EventType {
     #[serde(rename = "1")]
@@ -464,7 +465,7 @@ pub enum EventType {
     Exit(ExitEvent),
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AttackEvent {
     pub target_id: String,
@@ -472,24 +473,24 @@ pub struct AttackEvent {
     pub attack_type: AttackType,
 }
 
-#[derive(Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
 #[repr(u32)]
 pub enum AttackType {
     Melee = 1,
     Ranged = 2,
     RangedMass = 3,
     Dismantle = 4,
-    HitBack =5,
-    Nuke =6,
+    HitBack = 5,
+    Nuke = 6,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 pub struct ObjectDestroyedEvent {
     #[serde(rename = "type")]
     pub object_type: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BuildEvent {
     pub target_id: String,
@@ -497,14 +498,14 @@ pub struct BuildEvent {
     pub energy_spent: u32,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HarvestEvent {
     pub target_id: String,
     pub amount: u32,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HealEvent {
     pub target_id: String,
@@ -512,14 +513,14 @@ pub struct HealEvent {
     pub heal_type: HealType,
 }
 
-#[derive(Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
 #[repr(u32)]
 pub enum HealType {
     Melee = 1,
     Ranged = 2,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RepairEvent {
     pub target_id: String,
@@ -527,20 +528,20 @@ pub struct RepairEvent {
     pub energy_spent: u32,
 }
 
-#[derive(Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ReserveControllerEvent {
     pub amount: u32,
 }
 
-#[derive(Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UpgradeControllerEvent {
     pub amount: u32,
-    pub energy_spent: u32
+    pub energy_spent: u32,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ExitEvent {
     pub room: String,
