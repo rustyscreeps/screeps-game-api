@@ -1,8 +1,12 @@
+//! [`JsVec`]
 use std::marker::PhantomData;
 
-use stdweb::{Array, Object, Reference, ReferenceType, InstanceOf};
+use stdweb::{Array, InstanceOf, Reference, ReferenceType};
 
-use traits::{ConversionError, FromExpectedType, TryInto};
+use {
+    traits::{FromExpectedType, TryInto, TryFrom},
+    ConversionError,
+};
 
 //   - InstanceOf
 //   - AsRef<Reference>
@@ -14,7 +18,7 @@ use traits::{ConversionError, FromExpectedType, TryInto};
 //   - TryFrom<Value>
 //   - TryFrom<&Value>
 
-struct JsVec<T> {
+pub struct JsVec<T> {
     inner: Array,
     phantom: PhantomData<Vec<T>>,
 }
@@ -180,33 +184,3 @@ where
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-struct JsMap<K, T> {
-    inner: Object,
-    phantom: PhantomData<HashMap<K, V>>,
-}
-
-// impl Index<Nucleotide> for NucleotideCount {
-//     type Output = usize;
-
-//     fn index(&self, nucleotide: Nucleotide) -> &usize {
-//         match nucleotide {
-//             Nucleotide::A => &self.a,
-//             Nucleotide::C => &self.c,
-//             Nucleotide::G => &self.g,
-//             Nucleotide::T => &self.t,
-//         }
-//     }
-// }
