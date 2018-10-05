@@ -38,6 +38,7 @@ mod macros;
 
 pub mod constants;
 pub mod game;
+pub mod js_collections;
 pub mod memory;
 pub mod objects;
 pub mod pathfinder;
@@ -47,6 +48,7 @@ pub mod traits;
 
 pub use {
     constants::*,
+    js_collections::{JsMap, JsVec},
     objects::*,
     positions::{LocalRoomName, LocalRoomPosition},
     traits::{FromExpectedType, IntoExpectedType},
