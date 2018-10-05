@@ -250,9 +250,6 @@ pub enum Terrain {
     Plain = 0,
     Wall = 1,
     Swamp = 2,
-    SwampWall = 3,
-    Lava = 4,
-    // Todo: Implement the other masks when lava becomes a thing
 }
 
 impl TryFrom<Value> for Terrain {
@@ -270,8 +267,7 @@ impl TryFrom<Value> for Terrain {
                 0 => Terrain::Plain,
                 1 => Terrain::Wall,
                 2 => Terrain::Swamp,
-                3 => Terrain::SwampWall,
-                4 => Terrain::Lava,
+                3 => Terrain::Wall,
                 x => panic!("unknown terrain encoded integer {}", x),
             },
         };
