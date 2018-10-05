@@ -1,5 +1,6 @@
-use std::{marker::PhantomData, mem, ops::Range};
+use std::{fmt, marker::PhantomData, mem, ops::Range};
 
+use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
 use serde_json;
 use stdweb::Reference;
 
@@ -105,8 +106,11 @@ impl Room {
     }
 
     pub fn get_event_log(&self) -> Vec<Event> {
-        let raw_event_log: String = js_unwrap!{@{self.as_ref()}.getEventLog(true)};
-        serde_json::from_str(&raw_event_log).expect("Malformed Event Log")
+        serde_json::from_str(&self.get_event_log_raw()).expect("Malformed Event Log")
+    }
+
+    pub fn get_event_log_raw(&self) -> String {
+        js_unwrap!{@{self.as_ref()}.getEventLog(true)}
     }
 
     pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
@@ -432,36 +436,148 @@ pub enum Path {
 
 js_deserializable!{Path}
 
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Event {
-    #[serde(flatten)]
     pub event: EventType,
-    #[serde(rename = "objectId")]
     pub object_id: String,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-#[serde(tag = "event", content = "data")]
+impl<'de> Deserialize<'de> for Event {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(field_identifier, rename_all = "camelCase")]
+        enum Field {
+            Event,
+            ObjectId,
+            Data,
+        };
+
+        struct EventVisitor;
+
+        impl<'de> Visitor<'de> for EventVisitor {
+            type Value = Event;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("struct Event")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> Result<Event, V::Error>
+            where
+                V: MapAccess<'de>,
+            {
+                let mut event_type = None;
+                let mut obj_id = None;
+                let mut data = None;
+                let mut data_buffer: Option<serde_json::Value> = None;
+
+                while let Some(key) = map.next_key()? {
+                    match key {
+                        Field::Event => {
+                            if event_type.is_some() {
+                                return Err(de::Error::duplicate_field("event"));
+                            }
+                            event_type = Some(map.next_value()?);
+                        }
+                        Field::ObjectId => {
+                            if obj_id.is_some() {
+                                return Err(de::Error::duplicate_field("objectId"));
+                            }
+                            obj_id = Some(map.next_value()?);
+                        }
+                        Field::Data => {
+                            if data.is_some() {
+                                return Err(de::Error::duplicate_field("data"));
+                            }
+
+                            match event_type {
+                                None => data_buffer = map.next_value()?,
+                                Some(event_id) => {
+                                    data = match event_id {
+                                        1 => Some(EventType::Attack(map.next_value()?)),
+                                        2 => Some(EventType::ObjectDestroyed(map.next_value()?)),
+                                        3 => Some(EventType::AttackController),
+                                        4 => Some(EventType::Build(map.next_value()?)),
+                                        5 => Some(EventType::Harvest(map.next_value()?)),
+                                        6 => Some(EventType::Heal(map.next_value()?)),
+                                        7 => Some(EventType::Repair(map.next_value()?)),
+                                        8 => Some(EventType::ReserveController(map.next_value()?)),
+                                        9 => Some(EventType::UpgradeController(map.next_value()?)),
+                                        10 => Some(EventType::Exit(map.next_value()?)),
+                                        _ => {
+                                            return Err(de::Error::custom(format!(
+                                                "Event Type Unrecognized: {}",
+                                                event_id
+                                            )))
+                                        }
+                                    };
+                                }
+                            };
+                        }
+                    }
+                }
+
+                if data_buffer.is_some() && event_type.is_some() && data.is_none() {
+                    let val: serde_json::Value = data_buffer.unwrap();
+                    let err = |_| de::Error::custom("Can't parse Event data.");
+                    if let Some(event_id) = event_type {
+                        data = match event_id {
+                            1 => Some(EventType::Attack(serde_json::from_value(val).map_err(err)?)),
+                            2 => Some(EventType::ObjectDestroyed(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            3 => Some(EventType::AttackController),
+                            4 => Some(EventType::Build(serde_json::from_value(val).map_err(err)?)),
+                            5 => Some(EventType::Harvest(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            6 => Some(EventType::Heal(serde_json::from_value(val).map_err(err)?)),
+                            7 => Some(EventType::Repair(serde_json::from_value(val).map_err(err)?)),
+                            8 => Some(EventType::ReserveController(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            9 => Some(EventType::UpgradeController(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            10 => Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
+                            _ => {
+                                return Err(de::Error::custom(format!(
+                                    "Event Type Unrecognized: {}",
+                                    event_id
+                                )))
+                            }
+                        };
+                    }
+                }
+
+                let data = data.ok_or_else(|| de::Error::missing_field("data"))?;
+                let obj_id = obj_id.ok_or_else(|| de::Error::missing_field("objectId"))?;
+
+                Ok(Event {
+                    event: data,
+                    object_id: obj_id,
+                })
+            }
+        }
+
+        const FIELDS: &'static [&'static str] = &["event", "objectId", "data"];
+        deserializer.deserialize_struct("Event", FIELDS, EventVisitor)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventType {
-    #[serde(rename = "1")]
     Attack(AttackEvent),
-    #[serde(rename = "2")]
     ObjectDestroyed(ObjectDestroyedEvent),
-    #[serde(rename = "3")]
     AttackController,
-    #[serde(rename = "4")]
     Build(BuildEvent),
-    #[serde(rename = "5")]
     Harvest(HarvestEvent),
-    #[serde(rename = "6")]
     Heal(HealEvent),
-    #[serde(rename = "7")]
     Repair(RepairEvent),
-    #[serde(rename = "8")]
     ReserveController(ReserveControllerEvent),
-    #[serde(rename = "9")]
     UpgradeController(UpgradeControllerEvent),
-    #[serde(rename = "10")]
     Exit(ExitEvent),
 }
 
@@ -473,16 +589,14 @@ pub struct AttackEvent {
     pub attack_type: AttackType,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
-#[repr(u32)]
-pub enum AttackType {
+enum_number!(AttackType {
     Melee = 1,
     Ranged = 2,
     RangedMass = 3,
     Dismantle = 4,
     HitBack = 5,
     Nuke = 6,
-}
+});
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 pub struct ObjectDestroyedEvent {
@@ -513,12 +627,10 @@ pub struct HealEvent {
     pub heal_type: HealType,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
-#[repr(u32)]
-pub enum HealType {
+enum_number!(HealType {
     Melee = 1,
     Ranged = 2,
-}
+});
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
