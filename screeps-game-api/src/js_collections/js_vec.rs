@@ -27,12 +27,68 @@ impl<T> JsVec<T> {
     pub fn len(&self) -> usize {
         self.inner.len()
     }
+}
+impl<T> JsVec<T>
+where
+    T: TryFrom<Value, Error = ConversionError>,
+{
+    pub fn get(&self, idx: usize) -> Result<Option<T>, ConversionError> {
+        if idx >= self.len() || (idx > (u32::max_value() as usize)) {
+            Ok(None)
+        } else {
+            (js!{
+                return @{self.inner.as_ref()}[@{idx as u32}];
+            })
+            .try_into()
+            .map(Some)
+        }
+    }
 
     pub fn local(self) -> Result<Vec<T>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
         self.try_into()
+    }
+}
+
+pub struct IntoIter<T> {
+    index: u32,
+    inner: JsVec<T>,
+}
+
+pub struct Iter<'a, T> {
+    index: u32,
+    inner: &'a JsVec<T>,
+}
+
+impl_js_vec_iterators!(Iter<'a>, IntoIter);
+
+impl<T> IntoIterator for JsVec<T>
+where
+    T: TryFrom<Value, Error = ConversionError>,
+{
+    type Item = Result<T, ConversionError>;
+    type IntoIter = IntoIter<T>;
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter {
+            index: 0,
+            inner: self,
+        }
+    }
+}
+
+impl<'a, T> IntoIterator for &'a JsVec<T>
+where
+    T: TryFrom<Value, Error = ConversionError>,
+{
+    type Item = Result<T, ConversionError>;
+    type IntoIter = Iter<'a, T>;
+    fn into_iter(self) -> Self::IntoIter {
+        Iter {
+            index: 0,
+            inner: self,
+        }
     }
 }
 
