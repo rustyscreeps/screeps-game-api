@@ -1,7 +1,7 @@
 //! [`JsVec`]
 use std::marker::PhantomData;
 
-use stdweb::{Array, InstanceOf, Reference, ReferenceType};
+use stdweb::{Array, InstanceOf, Reference, ReferenceType, Value};
 
 use {
     traits::{FromExpectedType, TryInto, TryFrom},
@@ -126,14 +126,14 @@ where
     }
 }
 
-impl<T> TryFrom<JsVec<T>> for Vec<T>
+impl<T> TryInto<Vec<T>> for JsVec<T>
 where
-    T: InstanceOf,
+    T: TryFrom<Value>,
 {
     type Error = ConversionError;
 
-    fn try_from(jsv: JsVec<T>) -> Result<Vec<T>, Self::Error> {
-        jsv.inner.try_into()
+    fn try_into(self) -> Result<Vec<T>, Self::Error> {
+        self.inner.try_into()
     }
 }
 
