@@ -519,10 +519,15 @@ impl<'de> Deserialize<'de> for Event {
                     }
                 }
 
-                if data_buffer.is_some() && event_type.is_some() && data.is_none() {
-                    let val: serde_json::Value = data_buffer.unwrap();
-                    let err = |_| de::Error::custom("Can't parse Event data.");
-                    if let Some(event_id) = event_type {
+                if data.is_none() {
+                    let err = |e| {
+                        de::Error::custom(format_args!(
+                            "can't parse event data due to inner error {}",
+                            e
+                        ))
+                    };
+
+                    if let (Some(val), Some(event_id)) = (data_buffer, event_type) {
                         data = match event_id {
                             1 => Some(EventType::Attack(serde_json::from_value(val).map_err(err)?)),
                             2 => Some(EventType::ObjectDestroyed(
