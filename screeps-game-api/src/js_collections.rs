@@ -44,7 +44,7 @@ impl<T> From<JsVec<T>> for Array {
 impl<T> TryFrom<JsVec<T>> for Array {
     type Error = ConversionError;
 
-    pub fn try_from(jsv: JsVec<T>) ->  Result<Array, Self::Error> {
+    pub fn try_from(jsv: JsVec<T>) -> Result<Array, Self::Error> {
         Ok(jsv.inner)
     }
 }
@@ -87,24 +87,32 @@ where
 
 impl<T> TryFrom<Array> for JsVec<T>
 where
-    T: TryFrom<Value>,
+    T: InstanceOf,
 {
     type Error = ConversionError;
 
     pub fn try_from(arr: Array) -> Result<JsVec<T>, Self::Error> {
         if arr.len() == 0 {
-            return Ok(JsVec{inner: arr, phantom: PhantomData})
+            return Ok(JsVec {
+                inner: arr,
+                phantom: PhantomData,
+            });
         }
 
-        // Type check the first array element
-        let v: Result<T, Self::Error> = js!{return @{arr}[0];}.try_into();
-        v.map(|| Ok(JsVec{inner: arr, phantom: PhantomData}))
+        // Type check array elements
+        if !Self::instance_of(arr.as_ref()) {
+            return ConversionError::Custom("reference is of a different type".into());
+        }
+        Ok(JsVec {
+            inner: arr,
+            phantom: PhantomData,
+        })
     }
 }
 
 impl<T> TryFrom<Reference> for JsVec<T>
 where
-    T: TryFrom<Value>,
+    T: InstanceOf,
 {
     type Error = ConversionError;
 
@@ -116,7 +124,7 @@ where
 
 impl<T> TryFrom<JsVec<T>> for Vec<T>
 where
-    T: TryFrom<Value>,
+    T: InstanceOf,
 {
     type Error = ConversionError;
 
@@ -127,7 +135,7 @@ where
 
 impl<T> FromExpectedType<Array> for JsVec<T>
 where
-    T: TryFrom<Value>,
+    T: InstanceOf,
 {
     fn from_expected_type(arr: Array) -> Result<Self, ConversionError> {
         #[cfg(feature = "check-all-casts")]
@@ -136,7 +144,10 @@ where
         }
         #[cfg(not(feature = "check-all-casts"))]
         {
-            Ok(JsVec{inner: arr, phantom: PhantomData})
+            Ok(JsVec {
+                inner: arr,
+                phantom: PhantomData,
+            })
         }
     }
 }
@@ -155,7 +166,7 @@ where
 
 impl<T> FromExpectedType<Reference> for JsVec<T>
 where
-    T: TryFrom<Value>,
+    T: InstanceOf,
 {
     fn from_expected_type(r: Reference) -> Result<Self, ConversionError> {
         #[cfg(feature = "check-all-casts")]
