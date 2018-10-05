@@ -3,7 +3,7 @@ use std::{collections::HashMap, marker::PhantomData};
 
 use stdweb::Object;
 
-pub struct JsMap<K, T> {
+pub struct JsMap<K, V> {
     inner: Object,
     phantom: PhantomData<HashMap<K, V>>,
 }
