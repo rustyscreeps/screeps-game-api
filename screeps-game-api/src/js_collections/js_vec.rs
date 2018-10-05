@@ -28,19 +28,19 @@ impl<T> JsVec<T> {
         self.inner.len()
     }
 
-    pub fn local(&self) -> Result<Vec<T>, Self::Error> {
+    pub fn local(&self) -> Result<Vec<T>, ConversionError> {
         self.try_into()
     }
 }
 
 impl<T> AsRef<Array> for JsVec<T> {
-    pub fn as_ref(&self) -> &Array {
+    fn as_ref(&self) -> &Array {
         &self.inner
     }
 }
 
 impl<T> From<JsVec<T>> for Array {
-    pub fn from(jsv: JsVec<T>) -> Array {
+    fn from(jsv: JsVec<T>) -> Array {
         jsv.inner
     }
 }
@@ -48,13 +48,13 @@ impl<T> From<JsVec<T>> for Array {
 impl<T> TryFrom<JsVec<T>> for Array {
     type Error = ConversionError;
 
-    pub fn try_from(jsv: JsVec<T>) -> Result<Array, Self::Error> {
+    fn try_from(jsv: JsVec<T>) -> Result<Array, Self::Error> {
         Ok(jsv.inner)
     }
 }
 
 impl<T> From<JsVec<T>> for Reference {
-    pub fn from(jsv: JsVec<T>) -> Reference {
+    fn from(jsv: JsVec<T>) -> Reference {
         jsv.inner.into()
     }
 }
@@ -62,7 +62,7 @@ impl<T> From<JsVec<T>> for Reference {
 impl<T> TryFrom<JsVec<T>> for Reference {
     type Error = ConversionError;
 
-    pub fn try_from(jsv: JsVec<T>) -> Result<Reference, Self::Error> {
+    fn try_from(jsv: JsVec<T>) -> Result<Reference, Self::Error> {
         Ok(jsv.inner.into())
     }
 }
@@ -95,7 +95,7 @@ where
 {
     type Error = ConversionError;
 
-    pub fn try_from(arr: Array) -> Result<JsVec<T>, Self::Error> {
+    fn try_from(arr: Array) -> Result<JsVec<T>, Self::Error> {
         if arr.len() == 0 {
             return Ok(JsVec {
                 inner: arr,
@@ -120,7 +120,7 @@ where
 {
     type Error = ConversionError;
 
-    pub fn try_from(r: Reference) -> Result<JsVec<T>, Self::Error> {
+    fn try_from(r: Reference) -> Result<JsVec<T>, Self::Error> {
         let arr = r.try_into()?;
         arr.try_into()
     }
@@ -132,7 +132,7 @@ where
 {
     type Error = ConversionError;
 
-    pub fn try_from(jsv: JsVec<T>) -> Result<Vec<T>, Self::Error> {
+    fn try_from(jsv: JsVec<T>) -> Result<Vec<T>, Self::Error> {
         jsv.inner.try_into()
     }
 }
@@ -183,4 +183,3 @@ where
         }
     }
 }
-
