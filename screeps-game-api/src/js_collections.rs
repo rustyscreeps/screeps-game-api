@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use stdweb::{Array, Object, Reference};
+use stdweb::{Array, Object, Reference, ReferenceType, InstanceOf};
 
 use traits::{ConversionError, FromExpectedType, TryInto};
 
@@ -63,6 +63,28 @@ impl<T> TryFrom<JsVec<T>> for Reference {
     }
 }
 
+impl<T> InstanceOf for JsVec<T>
+where
+    T: InstanceOf,
+{
+    fn instance_of(reference: &Reference) -> bool {
+        (js!{
+            let arr = @{reference};
+            if (!(arr instanceof Array)) {
+                return false;
+            }
+            for (let item of arr) {
+                if (!(@{T::instance_of}(item))) {
+                    return false;
+                }
+            }
+            return true;
+        })
+        .try_into()
+        .expect("expected JsVec instance_of js code returning a bool to return a bool")
+    }
+}
+
 impl<T> TryFrom<Array> for JsVec<T>
 where
     T: TryFrom<Value>,
@@ -119,6 +141,18 @@ where
     }
 }
 
+impl<T> ReferenceType for JsVec<T>
+where
+    T: InstanceOf,
+{
+    unsafe fn from_reference_unchecked(reference: Reference) -> Self {
+        JsVec {
+            inner: Array::from_reference_unchecked(reference),
+            phantom: PhantomData,
+        }
+    }
+}
+
 impl<T> FromExpectedType<Reference> for JsVec<T>
 where
     T: TryFrom<Value>,
@@ -130,8 +164,7 @@ where
         }
         #[cfg(not(feature = "check-all-casts"))]
         {
-            let arr = Array::from_reference_unchecked(r);
-            Ok(JsVec{inner: arr, phantom: PhantomData})
+            unsafe { Self::from_reference_unchecked(r) }
         }
     }
 }
