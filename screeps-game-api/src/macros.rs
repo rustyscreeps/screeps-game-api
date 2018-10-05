@@ -523,6 +523,36 @@ macro_rules! impl_serialize_as_u32 {
     };
 }
 
+/// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`.
+macro_rules! impl_js_vec_iterators {
+    ($($name:ident $(<$single_life_param:lifetime>)*),* $(,)*) => {
+        $(
+            impl<$($single_life_param, )* T> Iterator for $name<$($single_life_param, )* T>
+            where
+                T: TryFrom<Value, Error = ConversionError>,
+            {
+                type Item = Result<T, ConversionError>;
+
+                fn next(&mut self) -> Option<Self::Item> {
+                    if self.index as usize >= self.inner.len() {
+                        None
+                    } else {
+                        let index = self.index;
+                        self.index = self
+                            .index
+                            .checked_add(1)
+                            .expect("bounds overflow in JsVec IntoIter");
+
+                        Some((js!{
+                             return @{AsRef::<Reference>::as_ref(&self.inner)}[@{index}]
+                        }).try_into())
+                    }
+                }
+            }
+        )*
+    }
+}
+
 /// Get a value from memory given a path, returning `None` if any thing along the way does not
 /// exist.
 ///
