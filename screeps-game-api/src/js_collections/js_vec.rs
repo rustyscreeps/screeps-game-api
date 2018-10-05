@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use stdweb::{Array, InstanceOf, Reference, ReferenceType, Value};
 
 use {
-    traits::{FromExpectedType, TryInto, TryFrom},
+    traits::{FromExpectedType, TryFrom, TryInto},
     ConversionError,
 };
 
@@ -28,7 +28,10 @@ impl<T> JsVec<T> {
         self.inner.len()
     }
 
-    pub fn local(&self) -> Result<Vec<T>, ConversionError> {
+    pub fn local(self) -> Result<Vec<T>, ConversionError>
+    where
+        T: TryFrom<Value, Error = ConversionError>,
+    {
         self.try_into()
     }
 }
@@ -78,7 +81,7 @@ where
                 return false;
             }
             for (let item of arr) {
-                if (!(@{T::instance_of}(item))) {
+                if (!(@{|r: Reference| T::instance_of(&r)}(item))) {
                     return false;
                 }
             }
@@ -105,7 +108,9 @@ where
 
         // Type check array elements
         if !Self::instance_of(arr.as_ref()) {
-            return ConversionError::Custom("reference is of a different type".into());
+            return Err(ConversionError::Custom(
+                "reference is of a different type".into(),
+            ));
         }
         Ok(JsVec {
             inner: arr,
@@ -121,19 +126,37 @@ where
     type Error = ConversionError;
 
     fn try_from(r: Reference) -> Result<JsVec<T>, Self::Error> {
-        let arr = r.try_into()?;
+        let arr: Array = r.try_into()?;
+        arr.try_into()
+    }
+}
+
+impl<T> TryFrom<Value> for JsVec<T>
+where
+    T: InstanceOf,
+{
+    type Error = ConversionError;
+
+    fn try_from(r: Value) -> Result<JsVec<T>, Self::Error> {
+        let arr: Array = r.try_into()?;
         arr.try_into()
     }
 }
 
 impl<T> TryInto<Vec<T>> for JsVec<T>
 where
-    T: TryFrom<Value>,
+    T: TryFrom<Value, Error = ConversionError>,
 {
     type Error = ConversionError;
 
     fn try_into(self) -> Result<Vec<T>, Self::Error> {
         self.inner.try_into()
+    }
+}
+
+impl<T> AsRef<Reference> for JsVec<T> {
+    fn as_ref(&self) -> &Reference {
+        self.inner.as_ref()
     }
 }
 
@@ -179,7 +202,7 @@ where
         }
         #[cfg(not(feature = "check-all-casts"))]
         {
-            unsafe { Self::from_reference_unchecked(r) }
+            Ok(unsafe { Self::from_reference_unchecked(r) })
         }
     }
 }
