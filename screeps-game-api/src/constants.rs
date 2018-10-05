@@ -120,7 +120,7 @@ pub mod find {
 
     use super::FindConstant;
 
-    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq)]
     pub struct Exit(i32);
 
     impl Exit {

@@ -127,7 +127,9 @@ pub mod gcl {
 ///
 /// [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
 pub mod map {
-    use std::collections;
+    use std::{collections, mem};
+
+    use stdweb::Value;
 
     use {
         constants::{find::Exit, Direction, ReturnCode},
@@ -191,9 +193,40 @@ pub mod map {
             .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
     }
 
-    // pub fn find_route(from_room: Room, to_room: Room, route_callback: Option<impl Fn(&str, &str) -> u32>) -> !{
-    //     unimplemented!()
-    // }
+    scoped_thread_local!(static FR_CALLBACK: Box<(Fn(String, String) -> f64)>);
+
+    pub fn find_route_callback(from_room: Room, to_room: Room, route_callback: impl Fn(String, String) -> f64) -> Result<Vec<ExitDirection>, ReturnCode> {
+        // Actual callback
+        fn callback(room_name: String, from_room_name: String) -> f64 {
+            FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
+        }
+
+        let callback_type_erased: Box<Fn(String, String) -> f64> = Box::new(route_callback);
+
+        let callback_lifetime_erased: Box<Fn(String, String) -> f64 + 'static> =
+        unsafe { mem::transmute(callback_type_erased) };
+
+        FR_CALLBACK.set(&callback_lifetime_erased, || {
+            let v = js!(return Game.map.findRoute(@{from_room.as_ref()}, @{to_room.as_ref()}, @{callback}););
+
+            match v {
+                Value::Number(x) => {
+                    let i: i32 = x.try_into().unwrap();
+                    Err(i.try_into().expect("Unexpected return code."))
+                },
+                Value::Reference(_) => Ok(v.try_into().expect("Error on parsing exit directions.")),
+                _ => panic!("Game.map.findRoute returned an unexpected Value variant.")
+            }
+        })
+    }
+
+    #[derive(Clone, Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct ExitDirection {
+        exit: Exit,
+        room: String,
+    }
+    js_deserializable!(ExitDirection);
 }
 
 pub mod market {
