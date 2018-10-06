@@ -130,8 +130,8 @@ pub mod map {
     use std::collections;
 
     use {
-        constants::{find::Exit, Direction, ReturnCode, Terrain},
-        objects::{Room, RoomPosition},
+        constants::{find::Exit, Direction, ReturnCode},
+        objects::{Room, RoomTerrain},
         traits::{TryFrom, TryInto},
     };
 
@@ -164,11 +164,8 @@ pub mod map {
         js_unwrap!(Game.map.getRoomLinearDistance(@{room1}, @{room2}, @{continuous}))
     }
 
-    /// See [http://docs.screeps.com/api/#Game.map.getTerrainAt]
-    ///
-    /// [http://docs.screeps.com/api/#Game.map.getTerrainAt]: http://docs.screeps.com/api/#Game.map.getTerrainAt
-    pub fn get_terrain_at(pos: &RoomPosition) -> Terrain {
-        js_unwrap!(__terrain_type_str_to_num(Game.map.getTerrainAt(@{pos.as_ref()})))
+    pub fn get_room_terrain(room_name: &str) -> RoomTerrain {
+        js_unwrap!(Game.map.getRoomTerrain(@{room_name}))
     }
 
     /// See [http://docs.screeps.com/api/#Game.map.getWorldSize]

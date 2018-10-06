@@ -7,6 +7,7 @@ mod nuke;
 mod resource;
 mod room;
 mod room_position;
+mod room_terrain;
 mod source;
 mod structure_controller;
 mod structure_keeper_lair;
@@ -24,7 +25,11 @@ mod structure_tower;
 mod tombstone;
 
 pub use self::{
-    room::{FindOptions, Path, Step},
+    room::{
+        AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
+        HarvestEvent, HealEvent, HealType, ObjectDestroyedEvent, Path, RepairEvent,
+        ReserveControllerEvent, Step, UpgradeControllerEvent,
+    },
     structure_controller::{Reservation, Sign},
     structure_spawn::SpawnOptions,
 };

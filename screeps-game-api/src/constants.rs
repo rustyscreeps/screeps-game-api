@@ -285,23 +285,11 @@ impl TryFrom<Value> for Terrain {
                 0 => Terrain::Plain,
                 1 => Terrain::Wall,
                 2 => Terrain::Swamp,
-                // might not need this, but just in case we try
-                // to decode a game-encoded number and '3' represents swamp + wall
                 3 => Terrain::Wall,
                 x => panic!("unknown terrain encoded integer {}", x),
             },
         };
         Ok(v)
-    }
-}
-
-impl AsRef<str> for Terrain {
-    fn as_ref(&self) -> &str {
-        match *self {
-            Terrain::Plain => "plain",
-            Terrain::Wall => "wall",
-            Terrain::Swamp => "swamp",
-        }
     }
 }
 
