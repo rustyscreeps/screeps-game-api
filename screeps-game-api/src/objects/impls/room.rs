@@ -182,7 +182,7 @@ impl Room {
             ..
         } = opts;
 
-        // Store callback_lifetime_erased in PF_CALLBACK for the duration of the PathFinder call and
+        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call and
         // make the call to PathFinder.
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
