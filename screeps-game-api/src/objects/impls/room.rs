@@ -283,16 +283,16 @@ pub struct FindOptions<'a, F>
 where
     F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
 {
-    ignore_creeps: bool,
-    ignore_destructible_structures: bool,
-    cost_callback: F,
-    max_ops: u32,
-    heuristic_weight: f64,
-    serialize: bool,
-    max_rooms: u32,
-    range: u32,
-    plain_cost: u8,
-    swamp_cost: u8,
+    pub(crate) ignore_creeps: bool,
+    pub(crate) ignore_destructible_structures: bool,
+    pub(crate) cost_callback: F,
+    pub(crate) max_ops: u32,
+    pub(crate) heuristic_weight: f64,
+    pub(crate) serialize: bool,
+    pub(crate) max_rooms: u32,
+    pub(crate) range: u32,
+    pub(crate) plain_cost: u8,
+    pub(crate) swamp_cost: u8,
 }
 
 impl Default for FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
