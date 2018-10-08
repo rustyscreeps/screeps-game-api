@@ -171,6 +171,21 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.moveTo(@{&p.0}))
     }
 
+    pub fn move_to_options<'a, F, T: HasPosition>(
+        &self,
+        target: &T,
+        move_options: MoveToOptions<'a, F>,
+    ) -> ReturnCode
+    where
+        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+    {
+        let rpos = target.pos();
+        let x = rpos.x();
+        let y = rpos.y();
+
+        self.move_to_xy_options(x, y, move_options)
+    }
+
     pub fn move_by_path_serialized(&self, path: &str) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.moveByPath(@{path}))
     }
