@@ -185,8 +185,6 @@ pub mod map {
     }
 
     /// Implements `Game.map.findExit`.
-    ///
-    /// Does not yet support callbacks.
     pub fn find_exit(from_room: &Room, to_room: &Room) -> Result<Exit, ReturnCode> {
         let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.as_ref()}, @{to_room.as_ref()})};
         Exit::try_from(code)
