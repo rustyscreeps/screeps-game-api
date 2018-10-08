@@ -113,10 +113,6 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_str_to_num(@{ty as i32})))
     }
 
-    pub fn has_active_bodyparts(&self, ty: Part) -> i32 {
-        js_unwrap!(_hasActiveBodyparts(@{self.as_ref()}, __part_str_to_num(@{ty as i32})))
-    }
-
     pub fn move_to<T: HasPosition>(&self, target: &T) -> ReturnCode {
         let p = target.pos();
         js_unwrap!(@{self.as_ref()}.moveTo(@{&p.0}))
