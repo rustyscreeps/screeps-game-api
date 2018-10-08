@@ -12,15 +12,15 @@ use {
 use super::room::{FindOptions, Path};
 
 impl RoomPosition {
-    pub fn new(x: u8, y: u8, room_name: &str) -> Self {
+    pub fn new(x: u32, y: u32, room_name: &str) -> Self {
         js_unwrap!(new RoomPosition(@{x}, @{y}, @{room_name}))
     }
 
-    pub fn x(&self) -> u8 {
+    pub fn x(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.x)
     }
 
-    pub fn y(&self) -> u8 {
+    pub fn y(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.y)
     }
 
@@ -90,7 +90,7 @@ impl RoomPosition {
         self_room.find_path(self, target, opts)
     }
 
-    pub fn find_path_to_xy<'a, F>(&self, x: u8, y: u8, opts: FindOptions<'a, F>) -> Path
+    pub fn find_path_to_xy<'a, F>(&self, x: u32, y: u32, opts: FindOptions<'a, F>) -> Path
     where
         F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
     {
