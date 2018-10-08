@@ -1,3 +1,5 @@
+use stdweb::Value;
+
 use {
     constants::{Direction, Part, ResourceType, ReturnCode},
     memory::MemoryReference,
@@ -6,11 +8,34 @@ use {
         StructureProperties, Transferable, Withdrawable,
     },
     pathfinder::SearchResults,
+    traits::TryFrom,
 };
 
 use super::room::Step;
 
 impl Creep {
+    pub fn body(&self) -> Vec<Bodypart> {
+        // Has to be deconstructed manually to avoid converting strings from js to rust
+        let len: u32 = js_unwrap!(@{self.as_ref()}.body.length);
+        let mut body_parts: Vec<Bodypart> = Vec::with_capacity(len as usize);
+
+        for i in 0..len {
+            let boost_v =
+                js!(return __resource_type_str_to_num(@{self.as_ref()}.body[@{i}].boost););
+            let boost = match boost_v {
+                Value::Number(_) => {
+                    Some(ResourceType::try_from(boost_v).expect("Creep boost resource unknown."))
+                }
+                _ => None,
+            };
+            let part: Part = js_unwrap!(__part_str_to_num(@{self.as_ref()}.body[@{i}].type));
+            let hits: u32 = js_unwrap!(@{self.as_ref()}.body[@{i}].hits);
+
+            body_parts.push(Bodypart { boost, part, hits });
+        }
+        body_parts
+    }
+
     pub fn carry_total(&self) -> i32 {
         js_unwrap!(_.sum(@{self.as_ref()}.carry))
     }
@@ -84,10 +109,6 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.suicide())
     }
 
-    pub fn parts(&self) -> Vec<Part> {
-        js_unwrap!(@{self.as_ref()}.body.map(|p| __part_str_to_num(p)))
-    }
-
     pub fn get_active_bodyparts(&self, ty: Part) -> i32 {
         js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_str_to_num(@{ty as i32})))
     }
@@ -146,6 +167,13 @@ impl Creep {
             __resource_type_num_to_str(@{ty as i32})
         ))
     }
+}
+
+#[derive(Clone, Debug)]
+pub struct Bodypart {
+    boost: Option<ResourceType>,
+    part: Part,
+    hits: u32,
 }
 
 simple_accessors! {
