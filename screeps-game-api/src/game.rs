@@ -187,15 +187,38 @@ pub mod map {
     /// Implements `Game.map.findExit`.
     ///
     /// Does not yet support callbacks.
-    pub fn find_exit(from_room: Room, to_room: Room) -> Result<Exit, ReturnCode> {
-        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.name()}, @{to_room.name()})};
+    pub fn find_exit(from_room: &Room, to_room: &Room) -> Result<Exit, ReturnCode> {
+        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.as_ref()}, @{to_room.as_ref()})};
         Exit::try_from(code)
             .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
     }
 
+    pub fn find_exit_callback(from_room: &Room, to_room: &Room, route_callback: impl Fn(String, String) -> f64) -> Result<Exit, ReturnCode> {
+        // Actual callback
+        fn callback(room_name: String, from_room_name: String) -> f64 {
+            FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
+        }
+
+        let callback_type_erased: Box<Fn(String, String) -> f64> = Box::new(route_callback);
+
+        let callback_lifetime_erased: Box<Fn(String, String) -> f64 + 'static> =
+        unsafe { mem::transmute(callback_type_erased) };
+
+        FR_CALLBACK.set(&callback_lifetime_erased, || {
+            let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.as_ref()}, @{to_room.as_ref()}, @{callback})};
+            Exit::try_from(code)
+            .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
+        })
+    }
+
+    pub fn find_route(from_room: &Room, to_room: &Room) -> Result<Vec<ExitDirection>, ReturnCode> {
+        let v = js!(return Game.map.findRoute(@{from_room.as_ref()}, @{to_room.as_ref()}););
+        parse_find_route_returned_value(v)
+    }
+
     scoped_thread_local!(static FR_CALLBACK: Box<(Fn(String, String) -> f64)>);
 
-    pub fn find_route_callback(from_room: Room, to_room: Room, route_callback: impl Fn(String, String) -> f64) -> Result<Vec<ExitDirection>, ReturnCode> {
+    pub fn find_route_callback(from_room: &Room, to_room: &Room, route_callback: impl Fn(String, String) -> f64) -> Result<Vec<ExitDirection>, ReturnCode> {
         // Actual callback
         fn callback(room_name: String, from_room_name: String) -> f64 {
             FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
@@ -208,16 +231,19 @@ pub mod map {
 
         FR_CALLBACK.set(&callback_lifetime_erased, || {
             let v = js!(return Game.map.findRoute(@{from_room.as_ref()}, @{to_room.as_ref()}, @{callback}););
-
-            match v {
-                Value::Number(x) => {
-                    let i: i32 = x.try_into().unwrap();
-                    Err(i.try_into().expect("Unexpected return code."))
-                },
-                Value::Reference(_) => Ok(v.try_into().expect("Error on parsing exit directions.")),
-                _ => panic!("Game.map.findRoute returned an unexpected Value variant.")
-            }
+            parse_find_route_returned_value(v)
         })
+    }
+
+    fn parse_find_route_returned_value(v: Value) -> Result<Vec<ExitDirection>, ReturnCode> {
+        match v {
+            Value::Number(x) => {
+                let i: i32 = x.try_into().unwrap();
+                Err(i.try_into().expect("Unexpected return code."))
+            },
+            Value::Reference(_) => Ok(v.try_into().expect("Error on parsing exit directions.")),
+            _ => panic!("Game.map.findRoute returned an unexpected Value variant.")
+        }
     }
 
     #[derive(Clone, Debug, Deserialize)]
