@@ -523,13 +523,82 @@ macro_rules! impl_serialize_as_u32 {
     };
 }
 
-/// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`.
-macro_rules! impl_js_vec_iterators {
+/// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`, using `FromExpectedType` and
+/// panicking on incorrect types.
+macro_rules! impl_js_vec_iterators_from_expected_type_panic {
     ($($name:ident $(<$single_life_param:lifetime>)*),* $(,)*) => {
         $(
+            impl<$($single_life_param, )* T> $name<$($single_life_param, )* T>
+            where
+                T: FromExpectedType<Value>,
+            {
+                fn new(inner: JsVec<T>) -> Self {
+                    $name {
+                        inner,
+                        index: 0,
+                    }
+                }
+            }
+
             impl<$($single_life_param, )* T> Iterator for $name<$($single_life_param, )* T>
             where
-                T: TryFrom<Value, Error = ConversionError>,
+                T: FromExpectedType<Value>,
+            {
+                type Item = T;
+
+                /// Gets the next item.
+                ///
+                /// # Panics
+                ///
+                /// Panics if the type is incorrect.
+                fn next(&mut self) -> Option<Self::Item> {
+                    if self.index as usize >= self.inner.len() {
+                        None
+                    } else {
+                        let index = self.index;
+                        self.index += 1;
+
+                        Some(js_unwrap_ref!(@{AsRef::<Reference>::as_ref(&self.inner)}[@{index}]))
+                    }
+                }
+
+                fn size_hint(&self) -> (usize, Option<usize>) {
+                    let length = self.inner.len();
+                    (length, Some(length))
+                }
+            }
+
+            impl<$($single_life_param, )* T> ::std::iter::ExactSizeIterator
+                for $name<$($single_life_param, )* T>
+            where
+                T: FromExpectedType<Value>,
+            {
+                fn len(&self) -> usize {
+                    self.inner.len()
+                }
+            }
+        )*
+    }
+}
+
+/// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`.
+macro_rules! impl_js_vec_iterators_from_expected_type_with_result {
+    ($($name:ident $(<$single_life_param:lifetime>)*),* $(,)*) => {
+        $(
+            impl<$($single_life_param, )* T> $name<$($single_life_param, )* T>
+            where
+                T: FromExpectedType<Value>,
+            {
+                fn new(inner: JsVec<T>) -> Self {
+                    $name {
+                        inner,
+                        index: 0,
+                    }
+                }
+            }
+            impl<$($single_life_param, )* T> Iterator for $name<$($single_life_param, )* T>
+            where
+                T: FromExpectedType<Value>,
             {
                 type Item = Result<T, ConversionError>;
 
@@ -540,10 +609,25 @@ macro_rules! impl_js_vec_iterators {
                         let index = self.index;
                         self.index += 1;
 
-                        Some((js!{
-                             return @{AsRef::<Reference>::as_ref(&self.inner)}[@{index}]
-                        }).try_into())
+                        Some(FromExpectedType::from_expected_type(
+                            js!(@{AsRef::<Reference>::as_ref(&self.inner)}[@{index}])
+                        ))
                     }
+                }
+
+                fn size_hint(&self) -> (usize, Option<usize>) {
+                    let length = self.inner.len();
+                    (length, Some(length))
+                }
+            }
+
+            impl<$($single_life_param, )* T> ::std::iter::ExactSizeIterator
+                for $name<$($single_life_param, )* T>
+            where
+                T: FromExpectedType<Value>,
+            {
+                fn len(&self) -> usize {
+                    self.inner.len()
                 }
             }
         )*

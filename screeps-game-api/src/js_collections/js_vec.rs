@@ -55,16 +55,53 @@ where
             .map(Some)
         }
     }
+}
 
-    pub fn local(self) -> Result<Vec<T>, ConversionError>
-    where
-        T: TryFrom<Value, Error = ConversionError>,
-    {
-        self.try_into()
+impl<T> JsVec<T>
+where
+    T: FromExpectedType<Value>,
+{
+    /// Iterates over elements, panicking if any are not the expected type and
+    /// `check-all-casts` is enabled.
+    pub fn iter(&self) -> Iter<T> {
+        Iter::new(self)
+    }
+
+    /// Iterates over elements, returning an error if any are not the expected type and
+    /// `check-all-casts` is enabled.
+    ///
+    /// Use [`IntoIterator::into_iter`] to iterate expecting all types match.
+    pub fn try_iter(&self) -> TryIter<T> {
+        TryIter::new(self)
+    }
+
+    /// Iterates over elements, consuming self and returning a result if any are not the expected
+    /// type.
+    ///
+    /// Use [`IntoIterator::into_iter`] to iterate expecting all types match.
+    pub fn try_into_iter(&self) -> TryIntoIter<T> {
+        TryIntoIter::new(self)
+    }
+
+    /// Turns this remote JS array into a local `Vec`, returning an error if any elements are
+    /// not the expected type and `check-all-casts` is enabled.
+    pub fn try_local(&self) -> Result<Vec<T>, ConversionError> {
+        self.try_iter().collect()
+    }
+
+    /// Turns this remote JS array into a local `Vec`, panicking if any elements are not the
+    /// expected type and `check-all-casts` is enabled.
+    pub fn local(&self) -> Vec<T> {
+        self.iter().collect()
     }
 }
 
 pub struct IntoIter<T> {
+    index: u32,
+    inner: JsVec<T>,
+}
+
+pub struct TryIntoIter<T> {
     index: u32,
     inner: JsVec<T>,
 }
@@ -74,33 +111,33 @@ pub struct Iter<'a, T> {
     inner: &'a JsVec<T>,
 }
 
-impl_js_vec_iterators!(Iter<'a>, IntoIter);
+pub struct TryIter<'a, T> {
+    index: u32,
+    inner: &'a JsVec<T>,
+}
+
+impl_js_vec_iterators_from_expected_type_panic!(Iter<'a>, IntoIter);
+impl_js_vec_iterators_from_expected_type_with_result!(TryIter<'a>, TryIntoIter);
 
 impl<T> IntoIterator for JsVec<T>
 where
-    T: TryFrom<Value, Error = ConversionError>,
+    T: FromExpectedType<Value>,
 {
-    type Item = Result<T, ConversionError>;
+    type Item = T;
     type IntoIter = IntoIter<T>;
     fn into_iter(self) -> Self::IntoIter {
-        IntoIter {
-            index: 0,
-            inner: self,
-        }
+        IntoIter::new(self)
     }
 }
 
 impl<'a, T> IntoIterator for &'a JsVec<T>
 where
-    T: TryFrom<Value, Error = ConversionError>,
+    T: FromExpectedType<Value>,
 {
-    type Item = Result<T, ConversionError>;
+    type Item = T;
     type IntoIter = Iter<'a, T>;
     fn into_iter(self) -> Self::IntoIter {
-        Iter {
-            index: 0,
-            inner: self,
-        }
+        Iter::new(self)
     }
 }
 
@@ -120,7 +157,7 @@ impl<T> TryFrom<JsVec<T>> for Array {
     type Error = ConversionError;
 
     fn try_from(jsv: JsVec<T>) -> Result<Array, Self::Error> {
-        Ok(jsv.inner)
+        Ok(jsv.into())
     }
 }
 
@@ -134,7 +171,7 @@ impl<T> TryFrom<JsVec<T>> for Reference {
     type Error = ConversionError;
 
     fn try_from(jsv: JsVec<T>) -> Result<Reference, Self::Error> {
-        Ok(jsv.inner.into())
+        Ok(jsv.into())
     }
 }
 
