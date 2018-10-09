@@ -18,6 +18,15 @@ use {
 //   - TryFrom<Value>
 //   - TryFrom<&Value>
 
+/// Reference to a JavaScript array which is expected to contain a specific type of item.
+///
+/// All `TryFrom` / `TryInto` conversions use type checking, but `FromExpectedType` /
+/// `IntoExpectedType` possibly don't.
+///
+/// The implementation for `Into<Vec<T>>` uses `IntoExpectedType` internally.
+///
+/// Trait notes: implements `TryInto<Vec<T>>`, but `Vec<T>` does not implement `TryFrom<JsVec<T>>`
+/// due to coherence issues.
 pub struct JsVec<T> {
     inner: Array,
     phantom: PhantomData<Vec<T>>,
@@ -28,6 +37,7 @@ impl<T> JsVec<T> {
         self.inner.len()
     }
 }
+
 impl<T> JsVec<T>
 where
     T: TryFrom<Value, Error = ConversionError>,
