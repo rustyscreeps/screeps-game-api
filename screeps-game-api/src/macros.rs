@@ -538,10 +538,7 @@ macro_rules! impl_js_vec_iterators {
                         None
                     } else {
                         let index = self.index;
-                        self.index = self
-                            .index
-                            .checked_add(1)
-                            .expect("bounds overflow in JsVec IntoIter");
+                        self.index += 1;
 
                         Some((js!{
                              return @{AsRef::<Reference>::as_ref(&self.inner)}[@{index}]
