@@ -43,7 +43,9 @@ where
     T: TryFrom<Value, Error = ConversionError>,
 {
     pub fn get(&self, idx: usize) -> Result<Option<T>, ConversionError> {
-        if idx >= self.len() || (idx > (u32::max_value() as usize)) {
+        // this assumes u32::max_value() == usize::max_value()
+        // (otherwise cast below could overflow).
+        if idx >= self.len() {
             Ok(None)
         } else {
             (js!{
