@@ -1,11 +1,4 @@
-use std::{
-    borrow::Cow,
-    ffi::OsStr,
-    fs,
-    io::{Read, Write},
-    path::Path,
-    process,
-};
+use std::{borrow::Cow, ffi::OsStr, fs, io::Write, path::Path, process};
 
 use config::{BuildConfiguration, Configuration};
 
@@ -41,7 +34,8 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
             "build",
             "--target=wasm32-unknown-unknown",
             "--release",
-        ]).current_dir(root)
+        ])
+        .current_dir(root)
         .spawn()?
         .wait()?;
     if !cargo_success.success() {
@@ -100,17 +94,9 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 
     debug!("processing js file");
 
-    let generated_js_contents = {
-        let mut buf = String::new();
-        fs::File::open(&generated_js)?.read_to_string(&mut buf)?;
-        buf
-    };
+    let generated_js_contents = fs::read_to_string(&generated_js)?;
 
-    let processed_js = process_js(
-        &generated_js,
-        &generated_js_contents,
-        &config.build,
-    )?;
+    let processed_js = process_js(&generated_js, &generated_js_contents, &config.build)?;
 
     let out_file = out_dir.join(&config.build.output_js_file);
 
@@ -212,7 +198,7 @@ if( typeof Rust === "undefined" ) {
     let prefix_match = expected_prefix.find(input).ok_or_else(|| {
         format_err!(
             "'cargo web' generated unexpected JS prefix! This means it's updated without \
-             'cargo screeps' also having updates. Please report this issue to \
+             'cargo screeps' also having updated. Please report this issue to \
              https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
              the first ~30 lines of {}",
             file_name.display(),
@@ -222,7 +208,7 @@ if( typeof Rust === "undefined" ) {
     let suffix_match = expected_suffix.find(input).ok_or_else(|| {
         format_err!(
             "'cargo web' generated unexpected JS suffix! This means it's updated without \
-             'cargo screeps' also having updates. Please report this issue to \
+             'cargo screeps' also having updated. Please report this issue to \
              https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
              the last ~30 lines of {}",
             file_name.display(),
@@ -243,7 +229,8 @@ if( typeof Rust === "undefined" ) {
                 "expected output_wasm_file ending in a filename, but found {}",
                 config.output_wasm_file.display()
             )
-        })?.to_str()
+        })?
+        .to_str()
         .ok_or_else(|| {
             format_err!(
                 "expected output_wasm_file with UTF8 filename, but found {}",

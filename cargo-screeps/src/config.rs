@@ -171,7 +171,8 @@ impl Configuration {
         let file_config: FileConfiguration =
             serde_ignored::deserialize(&mut toml::Deserializer::new(&config_str), |unused_path| {
                 unused_paths.insert(unused_path.to_string());
-            }).context("deserializing config")?;
+            })
+            .context("deserializing config")?;
 
         for path in &unused_paths {
             warn!("unused configuration path: {}", path)

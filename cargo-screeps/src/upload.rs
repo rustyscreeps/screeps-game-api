@@ -66,7 +66,8 @@ pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error>
         .json(&RequestData {
             modules: files,
             branch: upload_config.branch.clone(),
-        }).send()?;
+        })
+        .send()?;
 
     let response_text = response.text()?;
 

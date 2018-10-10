@@ -35,26 +35,32 @@ fn app() -> clap::App<'static, 'static> {
                         .short("v")
                         .long("verbose")
                         .multiple(true),
-                ).arg(
+                )
+                .arg(
                     clap::Arg::with_name("config")
                         .short("c")
                         .long("config")
                         .multiple(false)
                         .takes_value(true)
                         .value_name("CONFIG_FILE"),
-                ).subcommand(
+                )
+                .subcommand(
                     clap::SubCommand::with_name("build")
                         .about("build files, put in target/ in project root"),
-                ).subcommand(
+                )
+                .subcommand(
                     clap::SubCommand::with_name("check")
                         .about("runs 'cargo check' with appropriate target"),
-                ).subcommand(
+                )
+                .subcommand(
                     clap::SubCommand::with_name("deploy")
                         .about("run default deploy action (copy or upload)"),
-                ).subcommand(
+                )
+                .subcommand(
                     clap::SubCommand::with_name("copy")
                         .about("deploy by copying files to a local directory (implies build)"),
-                ).subcommand(
+                )
+                .subcommand(
                     clap::SubCommand::with_name("upload")
                         .about("deploy by uploading files to a remote server (implies build)"),
                 ),
