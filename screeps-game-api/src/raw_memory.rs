@@ -10,10 +10,10 @@ js_deserializable!(ForeignSegment);
 
 get_from_js!(get_active_segments -> {
     Object.keys(RawMemory.segments).map(Number)
-} -> Vec<i32>);
+} -> Vec<u32>);
 
 /// Sets active segments (max 10 ids).
-pub fn set_active_segments(ids: &[i32]) {
+pub fn set_active_segments(ids: &[u32]) {
     assert!(
         ids.len() <= 10,
         "can't set more than 10 active segments at a time"
@@ -27,7 +27,7 @@ get_from_js!(get_segment(id: u32) -> {
     RawMemory.segments[@{id}]
 } -> Option<String>);
 
-pub fn set_segment(id: i32, data: &str) {
+pub fn set_segment(id: u32, data: &str) {
     js! {
         RawMemory.segments[@{id}] = @{data};
     }
@@ -55,13 +55,13 @@ pub fn set_active_foreign_segment(username: &str, id: Option<u32>) {
     };
 }
 
-pub fn set_default_public_segment(id: i32) {
+pub fn set_default_public_segment(id: u32) {
     js! {
         RawMemory.setDefaultPublicSegment(@{id});
     }
 }
 
-pub fn set_public_segments(ids: &[i32]) {
+pub fn set_public_segments(ids: &[u32]) {
     js! {
         RawMemory.setPublicSegments(@{ids});
     }
