@@ -110,6 +110,57 @@ This configures general build options.
 - `output_js_file`: the javascript file to export bindings and bootstrapping as
   (default `"main.js"`)
 - `output_wasm_file`: the WASM file to rename compile WASM to (default `"compiled.wasm"`)
+- `initialize_header_file`: a file containing the JavaScript for starting the WASM instance. See
+  [overriding the default initialization header](#overriding-the-default-initialization-header)
+
+## Overriding the default initialization header
+
+`cargo-screeps` tries to make a reasonable `main.js` file to load the WASM. However, it's pretty
+basic, and you might find you want to do some things in JavaScript before loading the WASM module.
+
+Luckily, you can override this initialization! Set `build.initialize_header_file` to a file containing the JavaScript initialization code.
+
+The code will have access to two utility functions, `wasm_fetch_module_bytes` and `wasm_create_stdweb_vars`:
+
+```js
+/**
+ * Fetches WASM bytes for the wasm module.
+ *
+ * These should be given to `new WebAssembly.Module` to instantiate a WebAssembly module.
+ */
+function wasm_fetch_module_bytes() { /* ... */ }
+
+/**
+ * Creates the stdweb wrapper for a module instance.
+ *
+ * It has two properties, `imports` and `initialize`. `imports` should be passed as the second
+ * argument to `new WebAssembly.Instance` to provide the WASM module with imports, and `initialize`
+ * should be called on the resulting WebAssembly instance.
+ *
+ * Calling `initialize` will finish associating the imports with the wasm module, and will call the
+ * rust module's main function.
+ */
+function wasm_create_stdweb_vars() { /* ... */ }
+```
+
+When you override the initialization, you will need to perform it yourself. Here is the default initialzation header for reference:
+
+```js
+"use strict";
+let wasm_module = null;
+
+function wasm_initialize() {
+    if (wasm_module == null) {
+        let wasm_bytes = wasm_fetch_module_bytes();
+        wasm_module = new WebAssembly.Module(wasm_bytes);
+    }
+    let stdweb_vars = wasm_create_stdweb_vars();
+    let wasm_instance = new WebAssembly.Instance(wasm_module, stdweb_vars.imports);
+    stdweb_vars.initialize(wasm_instance);
+}
+
+module.exports.loop = wasm_initialize;
+```
 
 # Updating `cargo screeps`
 

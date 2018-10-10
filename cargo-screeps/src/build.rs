@@ -1,4 +1,5 @@
 use std::{
+    borrow::Cow,
     ffi::OsStr,
     fs,
     io::{Read, Write},
@@ -6,7 +7,7 @@ use std::{
     process,
 };
 
-use config::Configuration;
+use config::{BuildConfiguration, Configuration};
 
 use {failure, regex};
 
@@ -108,7 +109,7 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
     let processed_js = process_js(
         &generated_js,
         &generated_js_contents,
-        &config.build.output_wasm_file,
+        &config.build,
     )?;
 
     let out_file = out_dir.join(&config.build.output_js_file);
@@ -125,7 +126,7 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 fn process_js(
     file_name: &Path,
     input: &str,
-    wasm_filename: &Path,
+    config: &BuildConfiguration,
 ) -> Result<String, failure::Error> {
     // first, strip out bootstrap code which relates to the browser. We don't want
     // to run this, we just want to call `__initialize` ourself.
@@ -188,14 +189,25 @@ if( typeof Rust === "undefined" ) {
                 });
         }
     }( function() {"#;
-    // this comment is because my editor has bad detection of '#"'
+
+    let expected_suffix = r#"
+    }
+     ));
+    }));
+    "#;
 
     let expected_prefix = regex::Regex::new(&format!(
         "^{}",
         make_into_slightly_less_brittle_regex(expected_prefix)
     ))?;
 
+    let expected_suffix = regex::Regex::new(&format!(
+        "{}$",
+        make_into_slightly_less_brittle_regex(expected_suffix)
+    ))?;
+
     debug!("expected prefix:\n```{}```", expected_prefix);
+    debug!("expected suffix:\n```{}```", expected_suffix);
 
     let prefix_match = expected_prefix.find(input).ok_or_else(|| {
         format_err!(
@@ -207,46 +219,75 @@ if( typeof Rust === "undefined" ) {
         )
     })?;
 
-    let initialize_function = &input[prefix_match.end()..];
+    let suffix_match = expected_suffix.find(input).ok_or_else(|| {
+        format_err!(
+            "'cargo web' generated unexpected JS suffix! This means it's updated without \
+             'cargo screeps' also having updates. Please report this issue to \
+             https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
+             the last ~30 lines of {}",
+            file_name.display(),
+        )
+    })?;
+
+    let initialize_function = &input[prefix_match.end()..suffix_match.start()];
 
     // screeps doesn't have `console.error`, so we define our own `console_error` function,
     // and call it.
     let initialize_function = initialize_function.replace("console.error", "console_error");
 
-    let wasm_module_name = wasm_filename
+    let wasm_module_name = config
+        .output_wasm_file
         .file_stem()
         .ok_or_else(|| {
             format_err!(
                 "expected output_wasm_file ending in a filename, but found {}",
-                wasm_filename.display()
+                config.output_wasm_file.display()
             )
         })?.to_str()
         .ok_or_else(|| {
             format_err!(
                 "expected output_wasm_file with UTF8 filename, but found {}",
-                wasm_filename.display()
+                config.output_wasm_file.display()
             )
         })?;
 
+    let initialization_header: Cow<'static, str> = match config.initialization_header_file.as_ref()
+    {
+        Some(header_file) => fs::read_to_string(header_file)?.into(),
+        None => include_str!("../resources/default_initialization_header.js").into(),
+    };
+
     Ok(format!(
         r#""use strict";
-function __initialize() {{
-(function( factory ) {{
-    // stripped for screeps usage
-    factory();
-}}( function() {{
-    return (function( module_factory ) {{
-        // replaced with hardcoded grab for screeps usage
-        var instance = module_factory();
-
-        var mod = new WebAssembly.Module( require('{}') );
-        var wasm_instance = new WebAssembly.Instance( mod, instance.imports );
-        return instance.initialize( wasm_instance );
-    }}( function() {{
 {}
+
+/**
+ * Fetches WASM bytes for the wasm module.
+ *
+ * These should be given to `new WebAssembly.Module` to instantiate a WebAssembly module.
+ */
+function wasm_fetch_module_bytes() {{
+    "use strict";
+
+    return require('{}');
 }}
-__initialize();
+
+/**
+ * Creates the stdweb wrapper for a module instance.
+ *
+ * It has two properties, `imports` and `initialize`. `imports` should be passed as the second
+ * argument to `new WebAssembly.Instance` to provide the WASM module with imports, and `initialize`
+ * should be called on the resulting WebAssembly instance.
+ *
+ * Calling `initialize` will finish associating the imports with the wasm module, and will call the
+ * rust module's main function.
+ */
+function wasm_create_stdweb_vars() {{
+    "use strict";
+
+    {}
+}}
 "#,
-        wasm_module_name, initialize_function,
+        initialization_header, wasm_module_name, initialize_function,
     ))
 }

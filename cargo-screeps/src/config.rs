@@ -10,16 +10,30 @@ use toml;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct BuildConfiguration {
+    #[serde(default = "BuildConfiguration::default_output_wasm_file")]
     pub output_wasm_file: PathBuf,
+    #[serde(default = "BuildConfiguration::default_output_js_file")]
     pub output_js_file: PathBuf,
+    #[serde(default)]
+    pub initialization_header_file: Option<PathBuf>,
 }
 
 impl Default for BuildConfiguration {
     fn default() -> Self {
         BuildConfiguration {
-            output_wasm_file: "compiled.wasm".into(),
-            output_js_file: "main.js".into(),
+            output_wasm_file: Self::default_output_wasm_file(),
+            output_js_file: Self::default_output_js_file(),
+            initialization_header_file: None,
         }
+    }
+}
+
+impl BuildConfiguration {
+    fn default_output_js_file() -> PathBuf {
+        "main.js".into()
+    }
+    fn default_output_wasm_file() -> PathBuf {
+        "compiled.wasm".into()
     }
 }
 
