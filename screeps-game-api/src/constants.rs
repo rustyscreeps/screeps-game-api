@@ -443,7 +443,7 @@ pub const RAMPART_HITS_MAX_RCL6: i32 = 30_000_000;
 pub const RAMPART_HITS_MAX_RCL7: i32 = 100_000_000;
 pub const RAMPART_HITS_MAX_RCL8: i32 = 300_000_000;
 
-pub fn rampart_hits_max(rcl: i32) -> i32 {
+pub fn rampart_hits_max(rcl: u32) -> i32 {
     match rcl {
         r if r < 2 => 0,
         2 => RAMPART_HITS_MAX_RCL2,
@@ -471,7 +471,7 @@ pub const SOURCE_ENERGY_KEEPER_CAPACITY: u32 = 4000;
 
 pub const WALL_HITS_MAX: i32 = 300_000_000;
 
-pub fn extension_energy_capacity(rcl: i32) -> u32 {
+pub fn extension_energy_capacity(rcl: u32) -> u32 {
     match rcl {
         r if r < 7 => 50,
         7 => 100,
@@ -598,7 +598,7 @@ impl TryFrom<Value> for StructureType {
 pub const CONSTRUCTION_COST_ROAD_SWAMP_RATIO: i32 = 5;
 
 /// Accepts levels 0-7. any other results in 0.
-pub fn controller_levels(current_rcl: i32) -> i32 {
+pub fn controller_levels(current_rcl: u32) -> u32 {
     match current_rcl {
         1 => 200,
         2 => 45_000,
@@ -648,8 +648,8 @@ pub const LAB_BOOST_MINERAL: u32 = 30;
 pub const LAB_REACTION_AMOUNT: u32 = 5;
 
 pub const GCL_POW: f32 = 2.4;
-pub const GCL_MULTIPLY: i32 = 1000000;
-pub const GCL_NOVICE: i32 = 3;
+pub const GCL_MULTIPLY: u32 = 1000000;
+pub const GCL_NOVICE: u32 = 3;
 
 pub const TERRAIN_MASK_WALL: u32 = 1;
 pub const TERRAIN_MASK_SWAMP: u32 = 2;
