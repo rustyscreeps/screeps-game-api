@@ -187,7 +187,7 @@ pub mod find {
 }
 
 enum_from_primitive! {
-    #[repr(i32)]
+    #[repr(u32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
     pub enum Direction {
         Top = 1,
@@ -201,7 +201,7 @@ enum_from_primitive! {
     }
 }
 
-impl_serialize_as_i32!(Direction);
+impl_serialize_as_u32!(Direction);
 
 impl TryFrom<Value> for Direction {
     type Error = ConversionError;
@@ -218,7 +218,7 @@ impl TryFrom<Value> for Direction {
 }
 
 enum_from_primitive! {
-    #[repr(i32)]
+    #[repr(u32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
     #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
     pub enum Color {
@@ -236,11 +236,11 @@ enum_from_primitive! {
 }
 
 #[cfg(feature = "constants-serde")]
-impl_serialize_as_i32!(Color);
+impl_serialize_as_u32!(Color);
 
-impl From<Color> for i32 {
-    fn from(c: Color) -> i32 {
-        c as i32
+impl From<Color> for u32 {
+    fn from(c: Color) -> u32 {
+        c as u32
     }
 }
 
@@ -250,9 +250,9 @@ impl TryFrom<Value> for Color {
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         use num_traits::FromPrimitive;
 
-        let as_num = i32::try_from(v)?;
+        let as_num = u32::try_from(v)?;
 
-        Ok(Self::from_i32(as_num).unwrap_or_else(|| {
+        Ok(Self::from_u32(as_num).unwrap_or_else(|| {
             panic!("encountered a color code we don't know: {}", as_num);
         }))
     }
@@ -268,7 +268,7 @@ pub enum Terrain {
 }
 
 #[cfg(feature = "constants-serde")]
-impl_serialize_as_i32!(Terrain);
+impl_serialize_as_u32!(Terrain);
 
 impl TryFrom<Value> for Terrain {
     type Error = ConversionError;
@@ -300,7 +300,7 @@ impl TryFrom<Value> for Terrain {
 /// In fact, I don't believe this can be used at all without resorting to manually
 /// including JS code.
 ///
-/// To use in JS: `__look_num_to_str(@{look as i32})` function
+/// To use in JS: `__look_num_to_str(@{look as u32})` function
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[doc(hidden)]
@@ -569,7 +569,7 @@ impl TryFrom<Value> for StructureType {
     type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: i32 = v.try_into()?;
+        let x: u32 = v.try_into()?;
         Ok(match x {
             0 => StructureType::Spawn,
             1 => StructureType::Extension,
@@ -651,9 +651,9 @@ pub const GCL_POW: f32 = 2.4;
 pub const GCL_MULTIPLY: i32 = 1000000;
 pub const GCL_NOVICE: i32 = 3;
 
-pub const TERRAIN_MASK_WALL: i32 = 1;
-pub const TERRAIN_MASK_SWAMP: i32 = 2;
-pub const TERRAIN_MASK_LAVA: i32 = 4;
+pub const TERRAIN_MASK_WALL: u32 = 1;
+pub const TERRAIN_MASK_SWAMP: u32 = 2;
+pub const TERRAIN_MASK_LAVA: u32 = 4;
 
 pub const MAX_CONSTRUCTION_SITES: i32 = 100;
 pub const MAX_CREEP_SIZE: i32 = 50;
@@ -663,7 +663,7 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 // TODO: MINERAL_* constants
 
 enum_from_primitive! {
-    #[repr(i32)]
+    #[repr(u32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
     pub enum Density {
         DensityLow = 1,
@@ -679,9 +679,9 @@ impl TryFrom<Value> for Density {
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         use num_traits::FromPrimitive;
 
-        let as_num = i32::try_from(v)?;
+        let as_num = u32::try_from(v)?;
 
-        Ok(Self::from_i32(as_num).unwrap_or_else(|| {
+        Ok(Self::from_u32(as_num).unwrap_or_else(|| {
             panic!("encountered a color code we don't know: {}", as_num);
         }))
     }
@@ -894,7 +894,7 @@ impl TryFrom<Value> for ResourceType {
     type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: i32 = v.try_into()?;
+        let x: u32 = v.try_into()?;
         Ok(match x {
             1 => ResourceType::Energy,
             2 => ResourceType::Power,

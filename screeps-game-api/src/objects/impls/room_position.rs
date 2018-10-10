@@ -38,13 +38,13 @@ impl RoomPosition {
 
     pub fn create_construction_site(&self, ty: StructureType) -> ReturnCode {
         js_unwrap!(
-            @{self.as_ref()}.createConstructionSite(__structure_type_num_to_str(@{ty as i32}))
+            @{self.as_ref()}.createConstructionSite(__structure_type_num_to_str(@{ty as u32}))
         )
     }
 
     pub fn create_named_construction_site(&self, ty: StructureType, name: &str) -> ReturnCode {
         js_unwrap!(
-            @{self.as_ref()}.createConstructionSite(__structure_type_num_to_str(@{ty as i32}),
+            @{self.as_ref()}.createConstructionSite(__structure_type_num_to_str(@{ty as u32}),
                                                     @{name})
         )
     }
@@ -54,7 +54,7 @@ impl RoomPosition {
         (js! {
             var flag = @{self.as_ref()};
             if (flag.roomName in Game.rooms) {
-                return flag.createFlag(@{name}, @{main_color as i32}, @{secondary_color as i32});
+                return flag.createFlag(@{name}, @{main_color as u32}, @{secondary_color as u32});
             } else {
                 return ERR_NOT_IN_RANGE;
             }
@@ -142,7 +142,7 @@ impl RoomPosition {
         T: LookConstant,
     {
         T::convert_and_check_items(js_unwrap!{
-            @{self.as_ref()}.lookFor(__look_num_to_str(@{ty.look_code() as i32}))
+            @{self.as_ref()}.lookFor(__look_num_to_str(@{ty.look_code() as u32}))
         })
     }
 }

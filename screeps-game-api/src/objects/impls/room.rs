@@ -47,7 +47,7 @@ impl Room {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
             @{pos.as_ref()},
-            __structure_type_num_to_str(@{ty as i32})
+            __structure_type_num_to_str(@{ty as u32})
         ))
     }
 
@@ -63,7 +63,7 @@ impl Room {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
             @{pos.as_ref()},
-            __structure_type_num_to_str(@{ty as i32}),
+            __structure_type_num_to_str(@{ty as u32}),
             @{name}
         ))
     }
@@ -82,8 +82,8 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.createFlag(
             @{pos.as_ref()},
             @{name},
-            @{main_color as i32},
-            @{secondary_color as i32}
+            @{main_color as u32},
+            @{secondary_color as u32}
         ))
     }
 
@@ -216,7 +216,7 @@ impl Room {
     {
         let pos = target.pos();
         T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
-            __look_num_to_str(@{ty.look_code() as i32}),
+            __look_num_to_str(@{ty.look_code() as u32}),
             @{pos.as_ref()}
         )))
     }
@@ -253,13 +253,13 @@ impl Room {
         assert!(vert.end <= 50);
 
         T::convert_and_check_items(js_unwrap!{@{self.as_ref()}.lookForAtArea(
-            __look_num_to_str(@{ty.look_code() as i32}),
+            __look_num_to_str(@{ty.look_code() as u32}),
             @{vert.start},
             @{horiz.start},
             @{vert.end},
             @{horiz.end},
             true
-        ).map((obj) => obj[__look_num_to_str(@{ty.look_code() as i32})])})
+        ).map((obj) => obj[__look_num_to_str(@{ty.look_code() as u32})])})
     }
 
     pub fn memory(&self) -> MemoryReference {

@@ -261,7 +261,7 @@ pub unsafe trait HasStore: RoomObjectProperties {
     }
 
     fn store_of(&self, ty: ResourceType) -> i32 {
-        js_unwrap!(@{self.as_ref()}.store[__resource_type_num_to_str(@{ty as i32})] || 0)
+        js_unwrap!(@{self.as_ref()}.store[__resource_type_num_to_str(@{ty as u32})] || 0)
     }
 
     fn energy(&self) -> i32 {
