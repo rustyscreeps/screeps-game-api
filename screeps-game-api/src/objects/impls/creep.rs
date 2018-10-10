@@ -73,7 +73,7 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.move(@{dir as u32}))
     }
 
-    pub fn move_to_xy(&self, x: i32, y: i32) -> ReturnCode {
+    pub fn move_to_xy(&self, x: u32, y: u32) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.moveTo(@{x}, @{y}))
     }
 
