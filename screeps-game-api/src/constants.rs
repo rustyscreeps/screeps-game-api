@@ -418,32 +418,32 @@ pub const CREEP_CORPSE_RATE: f32 = 0.2;
 
 pub const CARRY_CAPACITY: u32 = 50;
 
-pub const HARVEST_POWER: i32 = 2;
-pub const HARVEST_MINERAL_POWER: i32 = 1;
-pub const REPAIR_POWER: i32 = 100;
-pub const DISMANTLE_POWER: i32 = 50;
-pub const BUILD_POWER: i32 = 5;
-pub const ATTACK_POWER: i32 = 30;
-pub const UPGRADE_CONTROLLER_POWER: i32 = 1;
-pub const RANGED_ATTACK_POWER: i32 = 10;
-pub const HEAL_POWER: i32 = 12;
-pub const RANGED_HEAL_POWER: i32 = 4;
+pub const HARVEST_POWER: u32 = 2;
+pub const HARVEST_MINERAL_POWER: u32 = 1;
+pub const REPAIR_POWER: u32 = 100;
+pub const DISMANTLE_POWER: u32 = 50;
+pub const BUILD_POWER: u32 = 5;
+pub const ATTACK_POWER: u32 = 30;
+pub const UPGRADE_CONTROLLER_POWER: u32 = 1;
+pub const RANGED_ATTACK_POWER: u32 = 10;
+pub const HEAL_POWER: u32 = 12;
+pub const RANGED_HEAL_POWER: u32 = 4;
 
 pub const REPAIR_COST: f32 = 0.01;
 pub const DISMANTLE_COST: f32 = 0.005;
 
-pub const RAMPART_DECAY_AMOUNT: i32 = 300;
+pub const RAMPART_DECAY_AMOUNT: u32 = 300;
 pub const RAMPART_DECAY_TIME: u32 = 100;
 
-pub const RAMPART_HITS_MAX_RCL2: i32 = 300_000;
-pub const RAMPART_HITS_MAX_RCL3: i32 = 1_000_000;
-pub const RAMPART_HITS_MAX_RCL4: i32 = 3_000_000;
-pub const RAMPART_HITS_MAX_RCL5: i32 = 5_000_000;
-pub const RAMPART_HITS_MAX_RCL6: i32 = 30_000_000;
-pub const RAMPART_HITS_MAX_RCL7: i32 = 100_000_000;
-pub const RAMPART_HITS_MAX_RCL8: i32 = 300_000_000;
+pub const RAMPART_HITS_MAX_RCL2: u32 = 300_000;
+pub const RAMPART_HITS_MAX_RCL3: u32 = 1_000_000;
+pub const RAMPART_HITS_MAX_RCL4: u32 = 3_000_000;
+pub const RAMPART_HITS_MAX_RCL5: u32 = 5_000_000;
+pub const RAMPART_HITS_MAX_RCL6: u32 = 30_000_000;
+pub const RAMPART_HITS_MAX_RCL7: u32 = 100_000_000;
+pub const RAMPART_HITS_MAX_RCL8: u32 = 300_000_000;
 
-pub fn rampart_hits_max(rcl: u32) -> i32 {
+pub fn rampart_hits_max(rcl: u32) -> u32 {
     match rcl {
         r if r < 2 => 0,
         2 => RAMPART_HITS_MAX_RCL2,
@@ -469,7 +469,7 @@ pub const SOURCE_ENERGY_CAPACITY: u32 = 3000;
 pub const SOURCE_ENERGY_NEUTRAL_CAPACITY: u32 = 1500;
 pub const SOURCE_ENERGY_KEEPER_CAPACITY: u32 = 4000;
 
-pub const WALL_HITS_MAX: i32 = 300_000_000;
+pub const WALL_HITS_MAX: u32 = 300_000_000;
 
 pub fn extension_energy_capacity(rcl: u32) -> u32 {
     match rcl {
@@ -480,8 +480,8 @@ pub fn extension_energy_capacity(rcl: u32) -> u32 {
     }
 }
 
-pub const ROAD_WEAROUT: i32 = 1;
-pub const ROAD_DECAY_AMOUNT: i32 = 100;
+pub const ROAD_WEAROUT: u32 = 1;
+pub const ROAD_DECAY_AMOUNT: u32 = 100;
 pub const ROAD_DECAY_TIME: u32 = 1000;
 
 pub const LINK_CAPACITY: u32 = 800;
@@ -540,7 +540,7 @@ impl StructureType {
         }
     }
 
-    pub fn initial_hits(&self) -> i32 {
+    pub fn initial_hits(&self) -> u32 {
         use self::StructureType::*;
 
         match *self {
@@ -619,9 +619,9 @@ pub const SAFE_MODE_COST: u32 = 1000;
 
 pub const TOWER_CAPACITY: u32 = 1000;
 pub const TOWER_ENERGY_COST: u32 = 10;
-pub const TOWER_POWER_ATTACK: i32 = 600;
-pub const TOWER_POWER_HEAL: i32 = 400;
-pub const TOWER_POWER_REPAIR: i32 = 800;
+pub const TOWER_POWER_ATTACK: u32 = 600;
+pub const TOWER_POWER_HEAL: u32 = 400;
+pub const TOWER_POWER_REPAIR: u32 = 800;
 pub const TOWER_OPTIMAL_RANGE: u32 = 5;
 pub const TOWER_FALLOFF_RANGE: u32 = 20;
 pub const TOWER_FALLOFF: f32 = 0.75;
@@ -631,7 +631,7 @@ pub const OBSERVER_RANGE: u32 = 10;
 pub const POWER_BANK_CAPACITY_MAX: u32 = 5000;
 pub const POWER_BANK_CAPACITY_MIN: u32 = 500;
 pub const POWER_BANK_CAPACITY_CRIT: f32 = 0.3;
-pub const POWER_BANK_DECAY: i32 = 5000;
+pub const POWER_BANK_DECAY: u32 = 5000;
 pub const POWER_BANK_HIT_BACK: f32 = 0.5;
 
 pub const POWER_SPAWN_ENERGY_CAPACITY: u32 = 5000;
@@ -688,18 +688,18 @@ impl TryFrom<Value> for Density {
 }
 
 pub const TERMINAL_CAPACITY: u32 = 300000;
-pub const TERMINAL_HITS: i32 = 3000;
+pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 pub const TERMINAL_MIN_SEND: u32 = 100;
 pub const TERMINAL_COOLDOWN: u32 = 10;
 
-pub const CONTAINER_HITS: i32 = 250000;
+pub const CONTAINER_HITS: u32 = 250000;
 pub const CONTAINER_CAPACITY: u32 = 2000;
-pub const CONTAINER_DECAY: i32 = 5000;
+pub const CONTAINER_DECAY: u32 = 5000;
 pub const CONTAINER_DECAY_TIME: u32 = 100;
 pub const CONTAINER_DECAY_TIME_OWNED: u32 = 500;
 
-pub const NUKER_HITS: i32 = 1000;
+pub const NUKER_HITS: u32 = 1000;
 pub const NUKER_COOLDOWN: u32 = 100000;
 pub const NUKER_ENERGY_CAPACITY: u32 = 300000;
 pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
