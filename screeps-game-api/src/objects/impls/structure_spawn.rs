@@ -9,8 +9,6 @@ use {
 
 simple_accessors! {
     StructureSpawn;
-    (energy -> energy -> i32),
-    (energy_capacity -> energyCapacity -> i32),
     (name -> name -> String),
 }
 
