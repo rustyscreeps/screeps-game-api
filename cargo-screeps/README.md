@@ -79,6 +79,26 @@ This configures general build options.
 - `output_js_file`: the javascript file to export bindings and bootstrapping as (default `"main.js"`)
 - `output_wasm_file`: the WASM file to rename compile WASM to (default `"compiled.wasm"`)
 
+# Updating `cargo screeps`
+
+As it parses the unstable output of `cargo-web`, `cargo-screeps` is highly dependent on `cargo-web`
+version. It is recommended to upgrade both together.
+
+Installing a version of `cargo-web` newer than what `cargo-screeps` supports will cause it to
+output an error on build. If this happens, please create an issue on this repository and we can
+update `cargo-screeps`. Updating it is simple, but it needs to be done every time `cargo-web`
+changes the output format, and we might not realize that has happened.
+
+After updating, you'll want to do a full `cargo clean` to remove any old artifacts which were built
+using the older version of `cargo-web`.
+
+```sh
+cargo install -f cargo-web
+cargo install -f cargo-screeps
+cargo clean
+cargo screeps build
+```
+
 [cratesio-badge]: http://meritbadge.herokuapp.com/cargo-screeps
 [crate]: https://crates.io/crates/cargo-screeps/
 [`screeps-game-api`]: https://github.com/daboross/screeps-in-rust-via-wasm/
