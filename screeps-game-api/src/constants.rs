@@ -655,8 +655,8 @@ pub const TERRAIN_MASK_WALL: u32 = 1;
 pub const TERRAIN_MASK_SWAMP: u32 = 2;
 pub const TERRAIN_MASK_LAVA: u32 = 4;
 
-pub const MAX_CONSTRUCTION_SITES: i32 = 100;
-pub const MAX_CREEP_SIZE: i32 = 50;
+pub const MAX_CONSTRUCTION_SITES: u32 = 100;
+pub const MAX_CREEP_SIZE: u32 = 50;
 
 pub const MINERAL_REGEN_TIME: u32 = 50_000;
 

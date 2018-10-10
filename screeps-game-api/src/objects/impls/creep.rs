@@ -109,7 +109,7 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.suicide())
     }
 
-    pub fn get_active_bodyparts(&self, ty: Part) -> i32 {
+    pub fn get_active_bodyparts(&self, ty: Part) -> u32 {
         js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_str_to_num(@{ty as u32})))
     }
 
