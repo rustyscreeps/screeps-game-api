@@ -485,7 +485,7 @@ pub const ROAD_DECAY_AMOUNT: i32 = 100;
 pub const ROAD_DECAY_TIME: u32 = 1000;
 
 pub const LINK_CAPACITY: u32 = 800;
-pub const LINK_COOLDOWN: i32 = 1;
+pub const LINK_COOLDOWN: u32 = 1;
 pub const LINK_LOSS_RATION: f32 = 0.03;
 
 pub const STORAGE_CAPACITY: u32 = 1_000_000;
@@ -613,8 +613,8 @@ pub fn controller_levels(current_rcl: i32) -> i32 {
 
 // TODO: controller_*
 
-pub const SAFE_MODE_DURATION: i32 = 20_000;
-pub const SAFE_MODE_COOLDOWN: i32 = 50_000;
+pub const SAFE_MODE_DURATION: u32 = 20_000;
+pub const SAFE_MODE_COOLDOWN: u32 = 50_000;
 pub const SAFE_MODE_COST: u32 = 1000;
 
 pub const TOWER_CAPACITY: u32 = 1000;
@@ -638,7 +638,7 @@ pub const POWER_SPAWN_ENERGY_CAPACITY: u32 = 5000;
 pub const POWER_SPAWN_POWER_CAPACITY: u32 = 100;
 pub const POWER_SPAWN_ENERGY_RATIO: u32 = 50;
 
-pub const EXTRACTOR_COOLDOWN: i32 = 5;
+pub const EXTRACTOR_COOLDOWN: u32 = 5;
 
 pub const LAB_MINERAL_CAPACITY: u32 = 3000;
 pub const LAB_ENERGY_CAPACITY: u32 = 2000;
@@ -691,7 +691,7 @@ pub const TERMINAL_CAPACITY: u32 = 300000;
 pub const TERMINAL_HITS: i32 = 3000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 pub const TERMINAL_MIN_SEND: u32 = 100;
-pub const TERMINAL_COOLDOWN: i32 = 10;
+pub const TERMINAL_COOLDOWN: u32 = 10;
 
 pub const CONTAINER_HITS: i32 = 250000;
 pub const CONTAINER_CAPACITY: u32 = 2000;
@@ -708,7 +708,7 @@ pub const NUKE_RANGE: i32 = 10;
 
 pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
 
-pub const PORTAL_DECAY: i32 = 30000;
+pub const PORTAL_DECAY: u32 = 30000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq)]

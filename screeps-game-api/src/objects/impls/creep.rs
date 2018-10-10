@@ -175,12 +175,12 @@ pub struct Bodypart {
 simple_accessors! {
     Creep;
     (carry_capacity -> carryCapacity -> u32),
-    (fatigue -> fatigue -> i32),
+    (fatigue -> fatigue -> u32),
     (name -> name -> String),
     (my -> my -> bool),
     (saying -> saying -> String),
     (spawning -> spawning -> bool),
-    (ticks_to_live -> ticksToLive -> i32),
+    (ticks_to_live -> ticksToLive -> u32),
 }
 
 creep_simple_generic_action! {
