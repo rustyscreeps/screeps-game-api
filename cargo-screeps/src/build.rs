@@ -245,8 +245,7 @@ if( typeof Rust === "undefined" ) {
     };
 
     Ok(format!(
-        r#""use strict";
-{}
+        r#"{}
 
 /**
  * Fetches WASM bytes for the wasm module.
