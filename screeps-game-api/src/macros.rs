@@ -528,18 +528,6 @@ macro_rules! impl_serialize_as_u32 {
 macro_rules! impl_js_vec_iterators_from_expected_type_panic {
     ($($name:ident $(<$single_life_param:lifetime>)*),* $(,)*) => {
         $(
-            impl<$($single_life_param, )* T> $name<$($single_life_param, )* T>
-            where
-                T: FromExpectedType<Value>,
-            {
-                fn new(inner: JsVec<T>) -> Self {
-                    $name {
-                        inner,
-                        index: 0,
-                    }
-                }
-            }
-
             impl<$($single_life_param, )* T> Iterator for $name<$($single_life_param, )* T>
             where
                 T: FromExpectedType<Value>,
@@ -585,17 +573,6 @@ macro_rules! impl_js_vec_iterators_from_expected_type_panic {
 macro_rules! impl_js_vec_iterators_from_expected_type_with_result {
     ($($name:ident $(<$single_life_param:lifetime>)*),* $(,)*) => {
         $(
-            impl<$($single_life_param, )* T> $name<$($single_life_param, )* T>
-            where
-                T: FromExpectedType<Value>,
-            {
-                fn new(inner: JsVec<T>) -> Self {
-                    $name {
-                        inner,
-                        index: 0,
-                    }
-                }
-            }
             impl<$($single_life_param, )* T> Iterator for $name<$($single_life_param, )* T>
             where
                 T: FromExpectedType<Value>,

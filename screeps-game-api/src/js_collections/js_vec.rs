@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use stdweb::{Array, InstanceOf, Reference, ReferenceType, Value};
 
 use {
-    traits::{FromExpectedType, TryFrom, TryInto},
+    traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };
 
@@ -40,9 +40,21 @@ impl<T> JsVec<T> {
 
 impl<T> JsVec<T>
 where
-    T: TryFrom<Value, Error = ConversionError>,
+    T: FromExpectedType<Value>,
 {
-    pub fn get(&self, idx: usize) -> Result<Option<T>, ConversionError> {
+    /// Gets an item, panicking if the types don't match and `check-all-casts` is enabled.
+    pub fn get(&self, idx: usize) -> Option<T> {
+        // this assumes u32::max_value() == usize::max_value()
+        // (otherwise cast below could overflow).
+        if idx >= self.len() {
+            None
+        } else {
+            Some(js_unwrap_ref!(@{self.inner.as_ref()}[@{idx as u32}]))
+        }
+    }
+
+    /// Gets an item, returning an error if the types don't match and `check-all-casts` is enabled.
+    pub fn try_get(&self, idx: usize) -> Result<Option<T>, ConversionError> {
         // this assumes u32::max_value() == usize::max_value()
         // (otherwise cast below could overflow).
         if idx >= self.len() {
@@ -51,16 +63,11 @@ where
             (js!{
                 return @{self.inner.as_ref()}[@{idx as u32}];
             })
-            .try_into()
+            .into_expected_type()
             .map(Some)
         }
     }
-}
 
-impl<T> JsVec<T>
-where
-    T: FromExpectedType<Value>,
-{
     /// Iterates over elements, panicking if any are not the expected type and
     /// `check-all-casts` is enabled.
     pub fn iter(&self) -> Iter<T> {
@@ -79,7 +86,7 @@ where
     /// type.
     ///
     /// Use [`IntoIterator::into_iter`] to iterate expecting all types match.
-    pub fn try_into_iter(&self) -> TryIntoIter<T> {
+    pub fn try_into_iter(self) -> TryIntoIter<T> {
         TryIntoIter::new(self)
     }
 
@@ -101,9 +108,27 @@ pub struct IntoIter<T> {
     inner: JsVec<T>,
 }
 
+impl<T> IntoIter<T> {
+    pub fn new(vec: JsVec<T>) -> Self {
+        IntoIter {
+            inner: vec,
+            index: 0,
+        }
+    }
+}
+
 pub struct TryIntoIter<T> {
     index: u32,
     inner: JsVec<T>,
+}
+
+impl<T> TryIntoIter<T> {
+    pub fn new(vec: JsVec<T>) -> Self {
+        TryIntoIter {
+            inner: vec,
+            index: 0,
+        }
+    }
 }
 
 pub struct Iter<'a, T> {
@@ -111,9 +136,27 @@ pub struct Iter<'a, T> {
     inner: &'a JsVec<T>,
 }
 
+impl<'a, T> Iter<'a, T> {
+    pub fn new(vec: &'a JsVec<T>) -> Self {
+        Iter {
+            inner: vec,
+            index: 0,
+        }
+    }
+}
+
 pub struct TryIter<'a, T> {
     index: u32,
     inner: &'a JsVec<T>,
+}
+
+impl<'a, T> TryIter<'a, T> {
+    pub fn new(vec: &'a JsVec<T>) -> Self {
+        TryIter {
+            inner: vec,
+            index: 0,
+        }
+    }
 }
 
 impl_js_vec_iterators_from_expected_type_panic!(Iter<'a>, IntoIter);
