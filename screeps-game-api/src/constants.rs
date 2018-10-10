@@ -622,11 +622,11 @@ pub const TOWER_ENERGY_COST: u32 = 10;
 pub const TOWER_POWER_ATTACK: i32 = 600;
 pub const TOWER_POWER_HEAL: i32 = 400;
 pub const TOWER_POWER_REPAIR: i32 = 800;
-pub const TOWER_OPTIMAL_RANGE: i32 = 5;
-pub const TOWER_FALLOFF_RANGE: i32 = 20;
+pub const TOWER_OPTIMAL_RANGE: u32 = 5;
+pub const TOWER_FALLOFF_RANGE: u32 = 20;
 pub const TOWER_FALLOFF: f32 = 0.75;
 
-pub const OBSERVER_RANGE: i32 = 10;
+pub const OBSERVER_RANGE: u32 = 10;
 
 pub const POWER_BANK_CAPACITY_MAX: u32 = 5000;
 pub const POWER_BANK_CAPACITY_MIN: u32 = 500;
@@ -704,7 +704,7 @@ pub const NUKER_COOLDOWN: u32 = 100000;
 pub const NUKER_ENERGY_CAPACITY: u32 = 300000;
 pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
 pub const NUKE_LAND_TIME: u32 = 50000;
-pub const NUKE_RANGE: i32 = 10;
+pub const NUKE_RANGE: u32 = 10;
 
 pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
 

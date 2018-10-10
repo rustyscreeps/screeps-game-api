@@ -71,7 +71,7 @@ impl RoomPosition {
         )
     }
 
-    pub fn find_in_range<T>(&self, ty: T, range: i32) -> Vec<T::Item>
+    pub fn find_in_range<T>(&self, ty: T, range: u32) -> Vec<T::Item>
     where
         T: FindConstant,
     {
@@ -105,14 +105,14 @@ impl RoomPosition {
         js_unwrap!(@{self.as_ref()}.getDirectionTo(@{&target.pos().0}))
     }
 
-    pub fn get_range_to<T>(&self, target: &T) -> i32
+    pub fn get_range_to<T>(&self, target: &T) -> u32
     where
         T: HasPosition,
     {
         js_unwrap!(@{self.as_ref()}.getRangeTo(@{&target.pos().0}))
     }
 
-    pub fn in_range_to<T>(&self, target: &T, range: i32) -> bool
+    pub fn in_range_to<T>(&self, target: &T, range: u32) -> bool
     where
         T: HasPosition,
     {

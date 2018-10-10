@@ -292,7 +292,7 @@ impl SearchResults {
 pub fn search<'a, O, G, F>(
     origin: &O,
     goal: &G,
-    range: i32,
+    range: u32,
     opts: SearchOptions<'a, F>,
 ) -> SearchResults
 where
@@ -312,7 +312,7 @@ where
 pub fn search_many<'a, O, G, I, F>(origin: &O, goal: G, opts: SearchOptions<'a, F>) -> SearchResults
 where
     O: HasPosition,
-    G: IntoIterator<Item = (I, i32)>,
+    G: IntoIterator<Item = (I, u32)>,
     I: HasPosition,
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {
