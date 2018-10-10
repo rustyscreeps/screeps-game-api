@@ -517,7 +517,7 @@ pub enum StructureType {
 }
 
 impl StructureType {
-    pub fn construction_cost(&self) -> i32 {
+    pub fn construction_cost(&self) -> u32 {
         use self::StructureType::*;
 
         match *self {
@@ -595,7 +595,7 @@ impl TryFrom<Value> for StructureType {
     }
 }
 
-pub const CONSTRUCTION_COST_ROAD_SWAMP_RATIO: i32 = 5;
+pub const CONSTRUCTION_COST_ROAD_SWAMP_RATIO: u32 = 5;
 
 /// Accepts levels 0-7. any other results in 0.
 pub fn controller_levels(current_rcl: u32) -> u32 {

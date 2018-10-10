@@ -7,8 +7,8 @@ use {
 simple_accessors! {
     ConstructionSite;
     (my -> my -> bool),
-    (progress -> progress -> i32),
-    (progress_total -> progressTotal -> i32),
+    (progress -> progress -> u32),
+    (progress_total -> progressTotal -> u32),
     (structure_type -> structureType -> StructureType),
 }
 
