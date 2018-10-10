@@ -96,7 +96,7 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 
     let generated_js_contents = fs::read_to_string(&generated_js)?;
 
-    let processed_js = process_js(&generated_js, &generated_js_contents, &config.build)?;
+    let processed_js = process_js(&generated_js, &generated_js_contents, &root, &config.build)?;
 
     let out_file = out_dir.join(&config.build.output_js_file);
 
@@ -112,6 +112,7 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 fn process_js(
     file_name: &Path,
     input: &str,
+    root: &Path,
     config: &BuildConfiguration,
 ) -> Result<String, failure::Error> {
     // first, strip out bootstrap code which relates to the browser. We don't want
@@ -240,7 +241,7 @@ if( typeof Rust === "undefined" ) {
 
     let initialization_header: Cow<'static, str> = match config.initialization_header_file.as_ref()
     {
-        Some(header_file) => fs::read_to_string(header_file)?.into(),
+        Some(header_file) => fs::read_to_string(root.join(header_file))?.into(),
         None => include_str!("../resources/default_initialization_header.js").into(),
     };
 
