@@ -252,7 +252,7 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
 ///
 /// If present, the `storeCapacity` property must be an integer.
 pub unsafe trait HasStore: RoomObjectProperties {
-    fn store_total(&self) -> i32 {
+    fn store_total(&self) -> u32 {
         js_unwrap!(_.sum(@{self.as_ref()}.store))
     }
 
@@ -260,15 +260,15 @@ pub unsafe trait HasStore: RoomObjectProperties {
         js_unwrap!(Object.keys(@{self.as_ref()}.store).map(__resource_type_str_to_num))
     }
 
-    fn store_of(&self, ty: ResourceType) -> i32 {
+    fn store_of(&self, ty: ResourceType) -> u32 {
         js_unwrap!(@{self.as_ref()}.store[__resource_type_num_to_str(@{ty as u32})] || 0)
     }
 
-    fn energy(&self) -> i32 {
+    fn energy(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.store[RESOURCE_ENERGY])
     }
 
-    fn store_capacity(&self) -> i32 {
+    fn store_capacity(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.storeCapacity)
     }
 }
@@ -470,7 +470,7 @@ unsafe impl HasStore for StructureContainer {}
 unsafe impl HasStore for StructureStorage {}
 unsafe impl HasStore for StructureTerminal {}
 unsafe impl HasStore for Tombstone {
-    fn store_capacity(&self) -> i32 {
+    fn store_capacity(&self) -> u32 {
         0 // no storeCapacity property
     }
 }

@@ -370,7 +370,7 @@ pub enum Part {
 }
 
 impl Part {
-    pub fn cost(&self) -> i32 {
+    pub fn cost(&self) -> u32 {
         // TODO: compile time feature to switch to dynamically for non-standard servers
         match *self {
             Part::Move => 50,
@@ -416,7 +416,7 @@ pub const CREEP_LIFE_TIME: u32 = 1500;
 pub const CREEP_CLAIM_LIFE_TIME: u32 = 500;
 pub const CREEP_CORPSE_RATE: f32 = 0.2;
 
-pub const CARRY_CAPACITY: i32 = 50;
+pub const CARRY_CAPACITY: u32 = 50;
 
 pub const HARVEST_POWER: i32 = 2;
 pub const HARVEST_MINERAL_POWER: i32 = 1;
@@ -458,20 +458,20 @@ pub fn rampart_hits_max(rcl: i32) -> i32 {
 }
 
 pub const ENERGY_REGEN_TIME: u32 = 300;
-pub const ENERGY_DECAY: i32 = 1000;
+pub const ENERGY_DECAY: u32 = 1000;
 
-pub const SPAWN_ENERGY_START: i32 = 300;
-pub const SPAWN_ENERGY_CAPACITY: i32 = 300;
+pub const SPAWN_ENERGY_START: u32 = 300;
+pub const SPAWN_ENERGY_CAPACITY: u32 = 300;
 pub const CREEP_SPAWN_TIME: u32 = 3;
 pub const SPAWN_RENEW_RATION: f32 = 1.2;
 
-pub const SOURCE_ENERGY_CAPACITY: i32 = 3000;
-pub const SOURCE_ENERGY_NEUTRAL_CAPACITY: i32 = 1500;
-pub const SOURCE_ENERGY_KEEPER_CAPACITY: i32 = 4000;
+pub const SOURCE_ENERGY_CAPACITY: u32 = 3000;
+pub const SOURCE_ENERGY_NEUTRAL_CAPACITY: u32 = 1500;
+pub const SOURCE_ENERGY_KEEPER_CAPACITY: u32 = 4000;
 
 pub const WALL_HITS_MAX: i32 = 300_000_000;
 
-pub fn extension_energy_capacity(rcl: i32) -> i32 {
+pub fn extension_energy_capacity(rcl: i32) -> u32 {
     match rcl {
         r if r < 7 => 50,
         7 => 100,
@@ -484,11 +484,11 @@ pub const ROAD_WEAROUT: i32 = 1;
 pub const ROAD_DECAY_AMOUNT: i32 = 100;
 pub const ROAD_DECAY_TIME: u32 = 1000;
 
-pub const LINK_CAPACITY: i32 = 800;
+pub const LINK_CAPACITY: u32 = 800;
 pub const LINK_COOLDOWN: i32 = 1;
 pub const LINK_LOSS_RATION: f32 = 0.03;
 
-pub const STORAGE_CAPACITY: i32 = 1_000_000;
+pub const STORAGE_CAPACITY: u32 = 1_000_000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -615,10 +615,10 @@ pub fn controller_levels(current_rcl: i32) -> i32 {
 
 pub const SAFE_MODE_DURATION: i32 = 20_000;
 pub const SAFE_MODE_COOLDOWN: i32 = 50_000;
-pub const SAFE_MODE_COST: i32 = 1000;
+pub const SAFE_MODE_COST: u32 = 1000;
 
-pub const TOWER_CAPACITY: i32 = 1000;
-pub const TOWER_ENERGY_COST: i32 = 10;
+pub const TOWER_CAPACITY: u32 = 1000;
+pub const TOWER_ENERGY_COST: u32 = 10;
 pub const TOWER_POWER_ATTACK: i32 = 600;
 pub const TOWER_POWER_HEAL: i32 = 400;
 pub const TOWER_POWER_REPAIR: i32 = 800;
@@ -628,24 +628,24 @@ pub const TOWER_FALLOFF: f32 = 0.75;
 
 pub const OBSERVER_RANGE: i32 = 10;
 
-pub const POWER_BANK_CAPACITY_MAX: i32 = 5000;
-pub const POWER_BANK_CAPACITY_MIN: i32 = 500;
+pub const POWER_BANK_CAPACITY_MAX: u32 = 5000;
+pub const POWER_BANK_CAPACITY_MIN: u32 = 500;
 pub const POWER_BANK_CAPACITY_CRIT: f32 = 0.3;
 pub const POWER_BANK_DECAY: i32 = 5000;
 pub const POWER_BANK_HIT_BACK: f32 = 0.5;
 
-pub const POWER_SPAWN_ENERGY_CAPACITY: i32 = 5000;
-pub const POWER_SPAWN_POWER_CAPACITY: i32 = 100;
-pub const POWER_SPAWN_ENERGY_RATIO: i32 = 50;
+pub const POWER_SPAWN_ENERGY_CAPACITY: u32 = 5000;
+pub const POWER_SPAWN_POWER_CAPACITY: u32 = 100;
+pub const POWER_SPAWN_ENERGY_RATIO: u32 = 50;
 
 pub const EXTRACTOR_COOLDOWN: i32 = 5;
 
-pub const LAB_MINERAL_CAPACITY: i32 = 3000;
-pub const LAB_ENERGY_CAPACITY: i32 = 2000;
-pub const LAB_BOOST_ENERGY: i32 = 20;
-pub const LAB_BOOST_MINERAL: i32 = 30;
+pub const LAB_MINERAL_CAPACITY: u32 = 3000;
+pub const LAB_ENERGY_CAPACITY: u32 = 2000;
+pub const LAB_BOOST_ENERGY: u32 = 20;
+pub const LAB_BOOST_MINERAL: u32 = 30;
 
-pub const LAB_REACTION_AMOUNT: i32 = 5;
+pub const LAB_REACTION_AMOUNT: u32 = 5;
 
 pub const GCL_POW: f32 = 2.4;
 pub const GCL_MULTIPLY: i32 = 1000000;
@@ -687,26 +687,26 @@ impl TryFrom<Value> for Density {
     }
 }
 
-pub const TERMINAL_CAPACITY: i32 = 300000;
+pub const TERMINAL_CAPACITY: u32 = 300000;
 pub const TERMINAL_HITS: i32 = 3000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
-pub const TERMINAL_MIN_SEND: i32 = 100;
+pub const TERMINAL_MIN_SEND: u32 = 100;
 pub const TERMINAL_COOLDOWN: i32 = 10;
 
 pub const CONTAINER_HITS: i32 = 250000;
-pub const CONTAINER_CAPACITY: i32 = 2000;
+pub const CONTAINER_CAPACITY: u32 = 2000;
 pub const CONTAINER_DECAY: i32 = 5000;
 pub const CONTAINER_DECAY_TIME: u32 = 100;
 pub const CONTAINER_DECAY_TIME_OWNED: u32 = 500;
 
 pub const NUKER_HITS: i32 = 1000;
-pub const NUKER_COOLDOWN: i32 = 100000;
-pub const NUKER_ENERGY_CAPACITY: i32 = 300000;
-pub const NUKER_GHODIUM_CAPACITY: i32 = 5000;
+pub const NUKER_COOLDOWN: u32 = 100000;
+pub const NUKER_ENERGY_CAPACITY: u32 = 300000;
+pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
 pub const NUKE_LAND_TIME: u32 = 50000;
 pub const NUKE_RANGE: i32 = 10;
 
-pub const TOMBSTONE_DECAY_PER_PART: i32 = 5;
+pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
 
 pub const PORTAL_DECAY: i32 = 30000;
 

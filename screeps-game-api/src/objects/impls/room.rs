@@ -21,8 +21,8 @@ use {
 simple_accessors! {
     Room;
     (controller -> controller -> Option<StructureController>),
-    (energy_available -> energyAvailable -> i32),
-    (energy_capacity_available -> energyCapacityAvailable -> i32),
+    (energy_available -> energyAvailable -> u32),
+    (energy_capacity_available -> energyCapacityAvailable -> u32),
     (name -> name -> String),
     (storage -> storage -> Option<StructureStorage>),
     (terminal -> terminal -> Option<StructureTerminal>),

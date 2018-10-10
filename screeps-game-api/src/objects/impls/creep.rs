@@ -36,7 +36,7 @@ impl Creep {
         body_parts
     }
 
-    pub fn carry_total(&self) -> i32 {
+    pub fn carry_total(&self) -> u32 {
         js_unwrap!(_.sum(@{self.as_ref()}.carry))
     }
 
@@ -44,7 +44,7 @@ impl Creep {
         js_unwrap!(Object.keys(@{self.as_ref()}.carry).map(__resource_type_str_to_num))
     }
 
-    pub fn carry_of(&self, ty: ResourceType) -> i32 {
+    pub fn carry_of(&self, ty: ResourceType) -> u32 {
         js_unwrap!(@{self.as_ref()}.carry[__resource_type_num_to_str(@{ty as u32})] || 0)
     }
 
@@ -57,7 +57,7 @@ impl Creep {
         }
     }
 
-    pub fn energy(&self) -> i32 {
+    pub fn energy(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.carry[RESOURCE_ENERGY])
     }
 
@@ -122,7 +122,7 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.rangedMassAttack())
     }
 
-    pub fn transfer_amount<T>(&self, target: &T, ty: ResourceType, amount: i32) -> ReturnCode
+    pub fn transfer_amount<T>(&self, target: &T, ty: ResourceType, amount: u32) -> ReturnCode
     where
         T: Transferable,
     {
@@ -143,7 +143,7 @@ impl Creep {
         ))
     }
 
-    pub fn withdraw_amount<T>(&self, target: &T, ty: ResourceType, amount: i32) -> ReturnCode
+    pub fn withdraw_amount<T>(&self, target: &T, ty: ResourceType, amount: u32) -> ReturnCode
     where
         T: Withdrawable,
     {
@@ -174,7 +174,7 @@ pub struct Bodypart {
 
 simple_accessors! {
     Creep;
-    (carry_capacity -> carryCapacity -> i32),
+    (carry_capacity -> carryCapacity -> u32),
     (fatigue -> fatigue -> i32),
     (name -> name -> String),
     (my -> my -> bool),
