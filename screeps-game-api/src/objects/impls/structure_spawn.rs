@@ -20,7 +20,7 @@ impl StructureSpawn {
     }
 
     pub fn spawn_creep(&self, body: &[Part], name: &str) -> ReturnCode {
-        let ints = body.iter().map(|p| *p as i32).collect::<Vec<i32>>();
+        let ints = body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
         ((js! {
             var body = (@{ints}).map(__part_num_to_str);
 
@@ -62,7 +62,7 @@ pub struct SpawnOptions<'a> {
     memory: Option<MemoryReference>,
     energy_structures: Vec<Reference>,
     dry_run: bool,
-    directions: Vec<i32>,
+    directions: Vec<u32>,
 }
 
 impl<'a> SpawnOptions<'a> {
@@ -88,7 +88,7 @@ impl<'a> SpawnOptions<'a> {
     }
 
     pub fn directions(&mut self, directions: &[Direction]) {
-        self.directions = directions.iter().map(|d| *d as i32).collect();
+        self.directions = directions.iter().map(|d| *d as u32).collect();
     }
 
     pub fn execute(&self) -> ReturnCode {
@@ -99,7 +99,7 @@ impl<'a> SpawnOptions<'a> {
         {
             self.spawn.spawn_creep(self.body, self.name)
         } else {
-            let body = self.body.iter().map(|p| *p as i32).collect::<Vec<i32>>();
+            let body = self.body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
 
             let opts = js!({});
             if let Some(mem) = self.memory.as_ref() {

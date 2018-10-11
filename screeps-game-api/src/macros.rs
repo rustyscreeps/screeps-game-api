@@ -469,6 +469,7 @@ macro_rules! construct_structure_variants {
 ///
 /// The generated implementation unconditionally uses `item as i32` to convert any instance of the
 /// structure into an integer, then uses `serialize_i32` to serialize that number.
+#[cfg(feature = "constants-serde")]
 macro_rules! impl_serialize_as_i32 {
     ($name:ty) => {
         impl ::serde::Serialize for $name {
@@ -477,6 +478,23 @@ macro_rules! impl_serialize_as_i32 {
                 S: ::serde::Serializer,
             {
                 serializer.serialize_i32(*self as i32)
+            }
+        }
+    };
+}
+
+/// Implements [`serde::Serialize`] for a single given structure name.
+///
+/// The generated implementation unconditionally uses `item as u32` to convert any instance of the
+/// structure into an integer, then uses `serialize_u32` to serialize that number.
+macro_rules! impl_serialize_as_u32 {
+    ($name:ty) => {
+        impl ::serde::Serialize for $name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: ::serde::Serializer,
+            {
+                serializer.serialize_u32(*self as u32)
             }
         }
     };

@@ -155,8 +155,8 @@ where
     plain_cost: u8,
     swamp_cost: u8,
     flee: bool,
-    max_ops: i32,
-    max_rooms: i32,
+    max_ops: u32,
+    max_rooms: u32,
     max_cost: f64,
     heuristic_weight: f64,
 }
@@ -239,13 +239,13 @@ where
     }
 
     /// Sets maximum ops - default `2000`.
-    pub fn max_ops(mut self, ops: i32) -> Self {
+    pub fn max_ops(mut self, ops: u32) -> Self {
         self.max_ops = ops;
         self
     }
 
     /// Sets maximum rooms - default `16`, max `16`.
-    pub fn max_rooms(mut self, rooms: i32) -> Self {
+    pub fn max_rooms(mut self, rooms: u32) -> Self {
         self.max_rooms = rooms;
         self
     }
@@ -265,8 +265,8 @@ where
 
 pub struct SearchResults {
     path: Array,
-    pub ops: i32,
-    pub cost: i32,
+    pub ops: u32,
+    pub cost: u32,
     pub incomplete: bool,
 }
 
@@ -292,7 +292,7 @@ impl SearchResults {
 pub fn search<'a, O, G, F>(
     origin: &O,
     goal: &G,
-    range: i32,
+    range: u32,
     opts: SearchOptions<'a, F>,
 ) -> SearchResults
 where
@@ -312,7 +312,7 @@ where
 pub fn search_many<'a, O, G, I, F>(origin: &O, goal: G, opts: SearchOptions<'a, F>) -> SearchResults
 where
     O: HasPosition,
-    G: IntoIterator<Item = (I, i32)>,
+    G: IntoIterator<Item = (I, u32)>,
     I: HasPosition,
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {

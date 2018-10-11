@@ -187,7 +187,7 @@ pub mod find {
 }
 
 enum_from_primitive! {
-    #[repr(i32)]
+    #[repr(u32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
     pub enum Direction {
         Top = 1,
@@ -201,7 +201,7 @@ enum_from_primitive! {
     }
 }
 
-impl_serialize_as_i32!(Direction);
+impl_serialize_as_u32!(Direction);
 
 impl TryFrom<Value> for Direction {
     type Error = ConversionError;
@@ -218,7 +218,7 @@ impl TryFrom<Value> for Direction {
 }
 
 enum_from_primitive! {
-    #[repr(i32)]
+    #[repr(u32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
     #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
     pub enum Color {
@@ -236,11 +236,11 @@ enum_from_primitive! {
 }
 
 #[cfg(feature = "constants-serde")]
-impl_serialize_as_i32!(Color);
+impl_serialize_as_u32!(Color);
 
-impl From<Color> for i32 {
-    fn from(c: Color) -> i32 {
-        c as i32
+impl From<Color> for u32 {
+    fn from(c: Color) -> u32 {
+        c as u32
     }
 }
 
@@ -250,9 +250,9 @@ impl TryFrom<Value> for Color {
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         use num_traits::FromPrimitive;
 
-        let as_num = i32::try_from(v)?;
+        let as_num = u32::try_from(v)?;
 
-        Ok(Self::from_i32(as_num).unwrap_or_else(|| {
+        Ok(Self::from_u32(as_num).unwrap_or_else(|| {
             panic!("encountered a color code we don't know: {}", as_num);
         }))
     }
@@ -268,7 +268,7 @@ pub enum Terrain {
 }
 
 #[cfg(feature = "constants-serde")]
-impl_serialize_as_i32!(Terrain);
+impl_serialize_as_u32!(Terrain);
 
 impl TryFrom<Value> for Terrain {
     type Error = ConversionError;
@@ -300,7 +300,7 @@ impl TryFrom<Value> for Terrain {
 /// In fact, I don't believe this can be used at all without resorting to manually
 /// including JS code.
 ///
-/// To use in JS: `__look_num_to_str(@{look as i32})` function
+/// To use in JS: `__look_num_to_str(@{look as u32})` function
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[doc(hidden)]
@@ -370,7 +370,7 @@ pub enum Part {
 }
 
 impl Part {
-    pub fn cost(&self) -> i32 {
+    pub fn cost(&self) -> u32 {
         // TODO: compile time feature to switch to dynamically for non-standard servers
         match *self {
             Part::Move => 50,
@@ -416,34 +416,34 @@ pub const CREEP_LIFE_TIME: u32 = 1500;
 pub const CREEP_CLAIM_LIFE_TIME: u32 = 500;
 pub const CREEP_CORPSE_RATE: f32 = 0.2;
 
-pub const CARRY_CAPACITY: i32 = 50;
+pub const CARRY_CAPACITY: u32 = 50;
 
-pub const HARVEST_POWER: i32 = 2;
-pub const HARVEST_MINERAL_POWER: i32 = 1;
-pub const REPAIR_POWER: i32 = 100;
-pub const DISMANTLE_POWER: i32 = 50;
-pub const BUILD_POWER: i32 = 5;
-pub const ATTACK_POWER: i32 = 30;
-pub const UPGRADE_CONTROLLER_POWER: i32 = 1;
-pub const RANGED_ATTACK_POWER: i32 = 10;
-pub const HEAL_POWER: i32 = 12;
-pub const RANGED_HEAL_POWER: i32 = 4;
+pub const HARVEST_POWER: u32 = 2;
+pub const HARVEST_MINERAL_POWER: u32 = 1;
+pub const REPAIR_POWER: u32 = 100;
+pub const DISMANTLE_POWER: u32 = 50;
+pub const BUILD_POWER: u32 = 5;
+pub const ATTACK_POWER: u32 = 30;
+pub const UPGRADE_CONTROLLER_POWER: u32 = 1;
+pub const RANGED_ATTACK_POWER: u32 = 10;
+pub const HEAL_POWER: u32 = 12;
+pub const RANGED_HEAL_POWER: u32 = 4;
 
 pub const REPAIR_COST: f32 = 0.01;
 pub const DISMANTLE_COST: f32 = 0.005;
 
-pub const RAMPART_DECAY_AMOUNT: i32 = 300;
+pub const RAMPART_DECAY_AMOUNT: u32 = 300;
 pub const RAMPART_DECAY_TIME: u32 = 100;
 
-pub const RAMPART_HITS_MAX_RCL2: i32 = 300_000;
-pub const RAMPART_HITS_MAX_RCL3: i32 = 1_000_000;
-pub const RAMPART_HITS_MAX_RCL4: i32 = 3_000_000;
-pub const RAMPART_HITS_MAX_RCL5: i32 = 5_000_000;
-pub const RAMPART_HITS_MAX_RCL6: i32 = 30_000_000;
-pub const RAMPART_HITS_MAX_RCL7: i32 = 100_000_000;
-pub const RAMPART_HITS_MAX_RCL8: i32 = 300_000_000;
+pub const RAMPART_HITS_MAX_RCL2: u32 = 300_000;
+pub const RAMPART_HITS_MAX_RCL3: u32 = 1_000_000;
+pub const RAMPART_HITS_MAX_RCL4: u32 = 3_000_000;
+pub const RAMPART_HITS_MAX_RCL5: u32 = 5_000_000;
+pub const RAMPART_HITS_MAX_RCL6: u32 = 30_000_000;
+pub const RAMPART_HITS_MAX_RCL7: u32 = 100_000_000;
+pub const RAMPART_HITS_MAX_RCL8: u32 = 300_000_000;
 
-pub fn rampart_hits_max(rcl: i32) -> i32 {
+pub fn rampart_hits_max(rcl: u32) -> u32 {
     match rcl {
         r if r < 2 => 0,
         2 => RAMPART_HITS_MAX_RCL2,
@@ -458,20 +458,20 @@ pub fn rampart_hits_max(rcl: i32) -> i32 {
 }
 
 pub const ENERGY_REGEN_TIME: u32 = 300;
-pub const ENERGY_DECAY: i32 = 1000;
+pub const ENERGY_DECAY: u32 = 1000;
 
-pub const SPAWN_ENERGY_START: i32 = 300;
-pub const SPAWN_ENERGY_CAPACITY: i32 = 300;
+pub const SPAWN_ENERGY_START: u32 = 300;
+pub const SPAWN_ENERGY_CAPACITY: u32 = 300;
 pub const CREEP_SPAWN_TIME: u32 = 3;
 pub const SPAWN_RENEW_RATION: f32 = 1.2;
 
-pub const SOURCE_ENERGY_CAPACITY: i32 = 3000;
-pub const SOURCE_ENERGY_NEUTRAL_CAPACITY: i32 = 1500;
-pub const SOURCE_ENERGY_KEEPER_CAPACITY: i32 = 4000;
+pub const SOURCE_ENERGY_CAPACITY: u32 = 3000;
+pub const SOURCE_ENERGY_NEUTRAL_CAPACITY: u32 = 1500;
+pub const SOURCE_ENERGY_KEEPER_CAPACITY: u32 = 4000;
 
-pub const WALL_HITS_MAX: i32 = 300_000_000;
+pub const WALL_HITS_MAX: u32 = 300_000_000;
 
-pub fn extension_energy_capacity(rcl: i32) -> i32 {
+pub fn extension_energy_capacity(rcl: u32) -> u32 {
     match rcl {
         r if r < 7 => 50,
         7 => 100,
@@ -480,15 +480,15 @@ pub fn extension_energy_capacity(rcl: i32) -> i32 {
     }
 }
 
-pub const ROAD_WEAROUT: i32 = 1;
-pub const ROAD_DECAY_AMOUNT: i32 = 100;
+pub const ROAD_WEAROUT: u32 = 1;
+pub const ROAD_DECAY_AMOUNT: u32 = 100;
 pub const ROAD_DECAY_TIME: u32 = 1000;
 
-pub const LINK_CAPACITY: i32 = 800;
-pub const LINK_COOLDOWN: i32 = 1;
+pub const LINK_CAPACITY: u32 = 800;
+pub const LINK_COOLDOWN: u32 = 1;
 pub const LINK_LOSS_RATION: f32 = 0.03;
 
-pub const STORAGE_CAPACITY: i32 = 1_000_000;
+pub const STORAGE_CAPACITY: u32 = 1_000_000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -517,7 +517,7 @@ pub enum StructureType {
 }
 
 impl StructureType {
-    pub fn construction_cost(&self) -> i32 {
+    pub fn construction_cost(&self) -> u32 {
         use self::StructureType::*;
 
         match *self {
@@ -540,7 +540,7 @@ impl StructureType {
         }
     }
 
-    pub fn initial_hits(&self) -> i32 {
+    pub fn initial_hits(&self) -> u32 {
         use self::StructureType::*;
 
         match *self {
@@ -569,7 +569,7 @@ impl TryFrom<Value> for StructureType {
     type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: i32 = v.try_into()?;
+        let x: u32 = v.try_into()?;
         Ok(match x {
             0 => StructureType::Spawn,
             1 => StructureType::Extension,
@@ -595,10 +595,10 @@ impl TryFrom<Value> for StructureType {
     }
 }
 
-pub const CONSTRUCTION_COST_ROAD_SWAMP_RATIO: i32 = 5;
+pub const CONSTRUCTION_COST_ROAD_SWAMP_RATIO: u32 = 5;
 
 /// Accepts levels 0-7. any other results in 0.
-pub fn controller_levels(current_rcl: i32) -> i32 {
+pub fn controller_levels(current_rcl: u32) -> u32 {
     match current_rcl {
         1 => 200,
         2 => 45_000,
@@ -613,57 +613,57 @@ pub fn controller_levels(current_rcl: i32) -> i32 {
 
 // TODO: controller_*
 
-pub const SAFE_MODE_DURATION: i32 = 20_000;
-pub const SAFE_MODE_COOLDOWN: i32 = 50_000;
-pub const SAFE_MODE_COST: i32 = 1000;
+pub const SAFE_MODE_DURATION: u32 = 20_000;
+pub const SAFE_MODE_COOLDOWN: u32 = 50_000;
+pub const SAFE_MODE_COST: u32 = 1000;
 
-pub const TOWER_CAPACITY: i32 = 1000;
-pub const TOWER_ENERGY_COST: i32 = 10;
-pub const TOWER_POWER_ATTACK: i32 = 600;
-pub const TOWER_POWER_HEAL: i32 = 400;
-pub const TOWER_POWER_REPAIR: i32 = 800;
-pub const TOWER_OPTIMAL_RANGE: i32 = 5;
-pub const TOWER_FALLOFF_RANGE: i32 = 20;
+pub const TOWER_CAPACITY: u32 = 1000;
+pub const TOWER_ENERGY_COST: u32 = 10;
+pub const TOWER_POWER_ATTACK: u32 = 600;
+pub const TOWER_POWER_HEAL: u32 = 400;
+pub const TOWER_POWER_REPAIR: u32 = 800;
+pub const TOWER_OPTIMAL_RANGE: u32 = 5;
+pub const TOWER_FALLOFF_RANGE: u32 = 20;
 pub const TOWER_FALLOFF: f32 = 0.75;
 
-pub const OBSERVER_RANGE: i32 = 10;
+pub const OBSERVER_RANGE: u32 = 10;
 
-pub const POWER_BANK_CAPACITY_MAX: i32 = 5000;
-pub const POWER_BANK_CAPACITY_MIN: i32 = 500;
+pub const POWER_BANK_CAPACITY_MAX: u32 = 5000;
+pub const POWER_BANK_CAPACITY_MIN: u32 = 500;
 pub const POWER_BANK_CAPACITY_CRIT: f32 = 0.3;
-pub const POWER_BANK_DECAY: i32 = 5000;
+pub const POWER_BANK_DECAY: u32 = 5000;
 pub const POWER_BANK_HIT_BACK: f32 = 0.5;
 
-pub const POWER_SPAWN_ENERGY_CAPACITY: i32 = 5000;
-pub const POWER_SPAWN_POWER_CAPACITY: i32 = 100;
-pub const POWER_SPAWN_ENERGY_RATIO: i32 = 50;
+pub const POWER_SPAWN_ENERGY_CAPACITY: u32 = 5000;
+pub const POWER_SPAWN_POWER_CAPACITY: u32 = 100;
+pub const POWER_SPAWN_ENERGY_RATIO: u32 = 50;
 
-pub const EXTRACTOR_COOLDOWN: i32 = 5;
+pub const EXTRACTOR_COOLDOWN: u32 = 5;
 
-pub const LAB_MINERAL_CAPACITY: i32 = 3000;
-pub const LAB_ENERGY_CAPACITY: i32 = 2000;
-pub const LAB_BOOST_ENERGY: i32 = 20;
-pub const LAB_BOOST_MINERAL: i32 = 30;
+pub const LAB_MINERAL_CAPACITY: u32 = 3000;
+pub const LAB_ENERGY_CAPACITY: u32 = 2000;
+pub const LAB_BOOST_ENERGY: u32 = 20;
+pub const LAB_BOOST_MINERAL: u32 = 30;
 
-pub const LAB_REACTION_AMOUNT: i32 = 5;
+pub const LAB_REACTION_AMOUNT: u32 = 5;
 
 pub const GCL_POW: f32 = 2.4;
-pub const GCL_MULTIPLY: i32 = 1000000;
-pub const GCL_NOVICE: i32 = 3;
+pub const GCL_MULTIPLY: u32 = 1000000;
+pub const GCL_NOVICE: u32 = 3;
 
-pub const TERRAIN_MASK_WALL: i32 = 1;
-pub const TERRAIN_MASK_SWAMP: i32 = 2;
-pub const TERRAIN_MASK_LAVA: i32 = 4;
+pub const TERRAIN_MASK_WALL: u32 = 1;
+pub const TERRAIN_MASK_SWAMP: u32 = 2;
+pub const TERRAIN_MASK_LAVA: u32 = 4;
 
-pub const MAX_CONSTRUCTION_SITES: i32 = 100;
-pub const MAX_CREEP_SIZE: i32 = 50;
+pub const MAX_CONSTRUCTION_SITES: u32 = 100;
+pub const MAX_CREEP_SIZE: u32 = 50;
 
 pub const MINERAL_REGEN_TIME: u32 = 50_000;
 
 // TODO: MINERAL_* constants
 
 enum_from_primitive! {
-    #[repr(i32)]
+    #[repr(u32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
     pub enum Density {
         DensityLow = 1,
@@ -679,36 +679,36 @@ impl TryFrom<Value> for Density {
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         use num_traits::FromPrimitive;
 
-        let as_num = i32::try_from(v)?;
+        let as_num = u32::try_from(v)?;
 
-        Ok(Self::from_i32(as_num).unwrap_or_else(|| {
+        Ok(Self::from_u32(as_num).unwrap_or_else(|| {
             panic!("encountered a color code we don't know: {}", as_num);
         }))
     }
 }
 
-pub const TERMINAL_CAPACITY: i32 = 300000;
-pub const TERMINAL_HITS: i32 = 3000;
+pub const TERMINAL_CAPACITY: u32 = 300000;
+pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
-pub const TERMINAL_MIN_SEND: i32 = 100;
-pub const TERMINAL_COOLDOWN: i32 = 10;
+pub const TERMINAL_MIN_SEND: u32 = 100;
+pub const TERMINAL_COOLDOWN: u32 = 10;
 
-pub const CONTAINER_HITS: i32 = 250000;
-pub const CONTAINER_CAPACITY: i32 = 2000;
-pub const CONTAINER_DECAY: i32 = 5000;
+pub const CONTAINER_HITS: u32 = 250000;
+pub const CONTAINER_CAPACITY: u32 = 2000;
+pub const CONTAINER_DECAY: u32 = 5000;
 pub const CONTAINER_DECAY_TIME: u32 = 100;
 pub const CONTAINER_DECAY_TIME_OWNED: u32 = 500;
 
-pub const NUKER_HITS: i32 = 1000;
-pub const NUKER_COOLDOWN: i32 = 100000;
-pub const NUKER_ENERGY_CAPACITY: i32 = 300000;
-pub const NUKER_GHODIUM_CAPACITY: i32 = 5000;
+pub const NUKER_HITS: u32 = 1000;
+pub const NUKER_COOLDOWN: u32 = 100000;
+pub const NUKER_ENERGY_CAPACITY: u32 = 300000;
+pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
 pub const NUKE_LAND_TIME: u32 = 50000;
-pub const NUKE_RANGE: i32 = 10;
+pub const NUKE_RANGE: u32 = 10;
 
-pub const TOMBSTONE_DECAY_PER_PART: i32 = 5;
+pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
 
-pub const PORTAL_DECAY: i32 = 30000;
+pub const PORTAL_DECAY: u32 = 30000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -894,7 +894,7 @@ impl TryFrom<Value> for ResourceType {
     type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: i32 = v.try_into()?;
+        let x: u32 = v.try_into()?;
         Ok(match x {
             1 => ResourceType::Energy,
             2 => ResourceType::Power,

@@ -36,7 +36,7 @@ impl Creep {
         body_parts
     }
 
-    pub fn carry_total(&self) -> i32 {
+    pub fn carry_total(&self) -> u32 {
         js_unwrap!(_.sum(@{self.as_ref()}.carry))
     }
 
@@ -44,20 +44,20 @@ impl Creep {
         js_unwrap!(Object.keys(@{self.as_ref()}.carry).map(__resource_type_str_to_num))
     }
 
-    pub fn carry_of(&self, ty: ResourceType) -> i32 {
-        js_unwrap!(@{self.as_ref()}.carry[__resource_type_num_to_str(@{ty as i32})] || 0)
+    pub fn carry_of(&self, ty: ResourceType) -> u32 {
+        js_unwrap!(@{self.as_ref()}.carry[__resource_type_num_to_str(@{ty as u32})] || 0)
     }
 
     pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
         match amount {
             Some(v) => {
-                js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32}), @{v}))
+                js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as u32}), @{v}))
             }
-            None => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32}))),
+            None => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as u32}))),
         }
     }
 
-    pub fn energy(&self) -> i32 {
+    pub fn energy(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.carry[RESOURCE_ENERGY])
     }
 
@@ -70,10 +70,10 @@ impl Creep {
     }
 
     pub fn move_direction(&self, dir: Direction) -> ReturnCode {
-        js_unwrap!(@{self.as_ref()}.move(@{dir as i32}))
+        js_unwrap!(@{self.as_ref()}.move(@{dir as u32}))
     }
 
-    pub fn move_to_xy(&self, x: i32, y: i32) -> ReturnCode {
+    pub fn move_to_xy(&self, x: u32, y: u32) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.moveTo(@{x}, @{y}))
     }
 
@@ -109,8 +109,8 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.suicide())
     }
 
-    pub fn get_active_bodyparts(&self, ty: Part) -> i32 {
-        js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_str_to_num(@{ty as i32})))
+    pub fn get_active_bodyparts(&self, ty: Part) -> u32 {
+        js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_str_to_num(@{ty as u32})))
     }
 
     pub fn move_to<T: HasPosition>(&self, target: &T) -> ReturnCode {
@@ -122,13 +122,13 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.rangedMassAttack())
     }
 
-    pub fn transfer_amount<T>(&self, target: &T, ty: ResourceType, amount: i32) -> ReturnCode
+    pub fn transfer_amount<T>(&self, target: &T, ty: ResourceType, amount: u32) -> ReturnCode
     where
         T: Transferable,
     {
         js_unwrap!(@{self.as_ref()}.transfer(
             @{target.as_ref()},
-            __resource_type_num_to_str(@{ty as i32}),
+            __resource_type_num_to_str(@{ty as u32}),
             @{amount}
         ))
     }
@@ -139,17 +139,17 @@ impl Creep {
     {
         js_unwrap!(@{self.as_ref()}.transfer(
             @{target.as_ref()},
-            __resource_type_num_to_str(@{ty as i32})
+            __resource_type_num_to_str(@{ty as u32})
         ))
     }
 
-    pub fn withdraw_amount<T>(&self, target: &T, ty: ResourceType, amount: i32) -> ReturnCode
+    pub fn withdraw_amount<T>(&self, target: &T, ty: ResourceType, amount: u32) -> ReturnCode
     where
         T: Withdrawable,
     {
         js_unwrap!(@{self.as_ref()}.withdraw(
             @{target.as_ref()},
-            __resource_type_num_to_str(@{ty as i32}),
+            __resource_type_num_to_str(@{ty as u32}),
             @{amount}
         ))
     }
@@ -160,7 +160,7 @@ impl Creep {
     {
         js_unwrap!(@{self.as_ref()}.withdraw(
             @{target.as_ref()},
-            __resource_type_num_to_str(@{ty as i32})
+            __resource_type_num_to_str(@{ty as u32})
         ))
     }
 }
@@ -174,13 +174,13 @@ pub struct Bodypart {
 
 simple_accessors! {
     Creep;
-    (carry_capacity -> carryCapacity -> i32),
-    (fatigue -> fatigue -> i32),
+    (carry_capacity -> carryCapacity -> u32),
+    (fatigue -> fatigue -> u32),
     (name -> name -> String),
     (my -> my -> bool),
     (saying -> saying -> String),
     (spawning -> spawning -> bool),
-    (ticks_to_live -> ticksToLive -> i32),
+    (ticks_to_live -> ticksToLive -> u32),
 }
 
 creep_simple_generic_action! {

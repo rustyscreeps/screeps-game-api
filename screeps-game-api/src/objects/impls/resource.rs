@@ -8,5 +8,5 @@ impl Resource {
 
 simple_accessors! {
     Resource;
-    (amount -> amount -> i32),
+    (amount -> amount -> u32),
 }
