@@ -247,7 +247,7 @@ pub mod map {
                 let i: i32 = x.try_into().unwrap();
                 Err(i
                     .try_into()
-                    .expect(&format!("Unexpected return code: {:?}.", i)))
+                    .unwrap_or_else(|val| panic!("Unexpected return code: {}", val)))
             }
             Value::Reference(_) => Ok(v.try_into().expect("Error on parsing exit directions.")),
             _ => panic!(
