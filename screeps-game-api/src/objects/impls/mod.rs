@@ -27,8 +27,8 @@ mod tombstone;
 pub use self::{
     room::{
         AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
-        HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path, RepairEvent,
-        ReserveControllerEvent, Step, UpgradeControllerEvent,
+        HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path,
+        PositionedLookResult, RepairEvent, ReserveControllerEvent, Step, UpgradeControllerEvent,
     },
     structure_controller::{Reservation, Sign},
     structure_spawn::SpawnOptions,
