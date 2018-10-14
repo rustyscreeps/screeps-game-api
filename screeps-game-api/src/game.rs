@@ -132,8 +132,8 @@ pub mod map {
     use stdweb::Value;
 
     use {
-        constants::{find::Exit, Direction, ReturnCode, Terrain},
-        objects::RoomPosition,
+        constants::{find::Exit, Direction, ReturnCode},
+        objects::RoomTerrain,
         traits::{TryFrom, TryInto},
     };
 
