@@ -70,7 +70,7 @@ pub struct SpawnOptions {
 }
 
 impl SpawnOptions {
-    pub fn new() -> SpawnOptions {
+    pub fn new() -> Self {
         SpawnOptions {
             memory: None,
             energy_structures: Vec::new(),
@@ -79,25 +79,29 @@ impl SpawnOptions {
         }
     }
 
-    pub fn memory<T: Into<Option<MemoryReference>>>(&mut self, mem: T) {
+    pub fn memory<T: Into<Option<MemoryReference>>>(mut self, mem: T) -> Self {
         self.memory = mem.into();
+        self
     }
 
     /// This is most useful with the `.as_structure()` method on structures.
-    pub fn energy_structures<T>(&mut self, structures: T)
+    pub fn energy_structures<T>(mut self, structures: T) -> Self
     where
         T: IntoIterator,
         <T as IntoIterator>::Item: HasEnergyForSpawn,
     {
         self.energy_structures = structures.into_iter().map(|s| s.into()).collect();
+        self
     }
 
-    pub fn dry_run(&mut self, dry_run: bool) {
+    pub fn dry_run(mut self, dry_run: bool) -> Self {
         self.dry_run = dry_run;
+        self
     }
 
-    pub fn directions(&mut self, directions: &[Direction]) {
+    pub fn directions(mut self, directions: &[Direction]) -> Self {
         self.directions = directions.iter().map(|d| *d as u32).collect();
+        self
     }
 }
 
