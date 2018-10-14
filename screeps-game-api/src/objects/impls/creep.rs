@@ -111,16 +111,20 @@ impl Creep {
             reuse_path,
             serialize_memory,
             no_path_finding,
-            ignore_creeps,
-            ignore_destructible_structures,
-            cost_callback,
-            max_ops,
-            heuristic_weight,
-            serialize,
-            max_rooms,
-            range,
-            plain_cost,
-            swamp_cost,
+            // visualize_path_style,
+            find_options:
+                FindOptions {
+                    ignore_creeps,
+                    ignore_destructible_structures,
+                    cost_callback,
+                    max_ops,
+                    heuristic_weight,
+                    serialize,
+                    max_rooms,
+                    range,
+                    plain_cost,
+                    swamp_cost,
+                },
         } = move_options;
 
         // This callback is the one actually passed to JavaScript.
@@ -313,24 +317,11 @@ where
     pub(crate) serialize_memory: bool,
     pub(crate) no_path_finding: bool,
     // pub(crate) visualize_path_style: PolyStyle,
-    pub(crate) ignore_creeps: bool,
-    pub(crate) ignore_destructible_structures: bool,
-    pub(crate) cost_callback: F,
-    pub(crate) max_ops: u32,
-    pub(crate) heuristic_weight: f64,
-    pub(crate) serialize: bool,
-    pub(crate) max_rooms: u32,
-    pub(crate) range: u32,
-    pub(crate) plain_cost: u8,
-    pub(crate) swamp_cost: u8,
+    pub(crate) find_options: FindOptions<'a, F>,
 }
 
 impl Default for MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
     fn default() -> Self {
-        fn cost_matrix(_: String, _: CostMatrix) -> Option<CostMatrix<'static>> {
-            None
-        }
-
         // TODO: should we fall back onto the game's default values, or is
         // it alright to copy them here?
         MoveToOptions {
@@ -338,16 +329,7 @@ impl Default for MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMat
             serialize_memory: true,
             no_path_finding: false,
             // visualize_path_style: None,
-            ignore_creeps: false,
-            ignore_destructible_structures: false,
-            cost_callback: cost_matrix,
-            max_ops: 2000,
-            heuristic_weight: 1.2,
-            serialize: false,
-            max_rooms: 16,
-            range: 0,
-            plain_cost: 1,
-            swamp_cost: 5,
+            find_options: FindOptions::default(),
         }
     }
 }
@@ -389,14 +371,14 @@ where
 
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
-        self.ignore_creeps = ignore;
+        self.find_options.ignore_creeps = ignore;
         self
     }
 
     /// Sets whether the algorithm considers destructible structure as
     /// walkable. Default: False.
     pub fn ignore_destructible_structures(mut self, ignore: bool) -> Self {
-        self.ignore_destructible_structures = ignore;
+        self.find_options.ignore_destructible_structures = ignore;
         self
     }
 
@@ -405,78 +387,53 @@ where
     where
         F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
     {
-        let MoveToOptions {
-            reuse_path,
-            serialize_memory,
-            no_path_finding,
-            // visualize_path_style,
-            ignore_creeps,
-            ignore_destructible_structures,
-            cost_callback: _,
-            max_ops,
-            heuristic_weight,
-            serialize,
-            max_rooms,
-            range,
-            plain_cost,
-            swamp_cost,
-        } = self;
         MoveToOptions {
-            reuse_path,
-            serialize_memory,
-            no_path_finding,
-            // visualize_path_style,
-            ignore_creeps,
-            ignore_destructible_structures,
-            cost_callback,
-            max_ops,
-            heuristic_weight,
-            serialize,
-            max_rooms,
-            range,
-            plain_cost,
-            swamp_cost,
+            reuse_path: self.reuse_path,
+            serialize_memory: self.serialize_memory,
+            no_path_finding: self.no_path_finding,
+            // self.visualize_path_style,
+            find_options: self.find_options.cost_callback(cost_callback),
         }
     }
 
     /// Sets maximum ops - default `2000`.
     pub fn max_ops(mut self, ops: u32) -> Self {
-        self.max_ops = ops;
+        self.find_options.max_ops = ops;
         self
     }
 
     /// Sets heuristic weight - default `1.2`.
     pub fn heuristic_weight(mut self, weight: f64) -> Self {
-        self.heuristic_weight = weight;
+        self.find_options.heuristic_weight = weight;
         self
     }
 
     /// Sets whether the returned path should be passed to `Room.serializePath`.
     pub fn serialize(mut self, s: bool) -> Self {
-        self.serialize = s;
+        self.find_options.serialize = s;
         self
     }
 
     /// Sets maximum rooms - default `16`, max `16`.
     pub fn max_rooms(mut self, rooms: u32) -> Self {
-        self.max_rooms = rooms;
+        self.find_options.max_rooms = rooms;
         self
     }
 
     pub fn range(mut self, k: u32) -> Self {
-        self.range = k;
+        self.find_options.range = k;
         self
     }
 
     /// Sets plain cost - default `1`.
     pub fn plain_cost(mut self, cost: u8) -> Self {
-        self.plain_cost = cost;
+        self.find_options.plain_cost = cost;
         self
     }
 
     /// Sets swamp cost - default `5`.
     pub fn swamp_cost(mut self, cost: u8) -> Self {
-        self.swamp_cost = cost;
+        self.find_options.swamp_cost = cost;
         self
     }
 
@@ -485,34 +442,12 @@ where
     where
         F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
     {
-        let FindOptions {
-            ignore_creeps,
-            ignore_destructible_structures,
-            cost_callback,
-            max_ops,
-            heuristic_weight,
-            serialize,
-            max_rooms,
-            range,
-            plain_cost,
-            swamp_cost,
-        } = find_options;
-
         MoveToOptions {
             reuse_path: self.reuse_path,
             serialize_memory: self.serialize_memory,
             no_path_finding: self.no_path_finding,
             // self.visualize_path_style,
-            ignore_creeps,
-            ignore_destructible_structures,
-            cost_callback,
-            max_ops,
-            heuristic_weight,
-            serialize,
-            max_rooms,
-            range,
-            plain_cost,
-            swamp_cost,
+            find_options: find_options,
         }
     }
 }
