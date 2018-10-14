@@ -295,8 +295,7 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
 ///
 /// # Contract
 ///
-/// The reference returned from `AsRef<Reference>::as_ref` must be have an
-/// `energy` and an `energyCapacity` properties. Also, that energy can be used
+/// The reference returned from `AsRef<Reference>::as_ref` must be able to be used
 /// by a spawner to create a new creep.
 pub unsafe trait HasEnergyForSpawn: CanStoreEnergy {}
 
