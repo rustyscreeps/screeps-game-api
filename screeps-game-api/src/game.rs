@@ -132,8 +132,8 @@ pub mod map {
     use stdweb::Value;
 
     use {
-        constants::{find::Exit, Direction, ReturnCode},
-        objects::{Room, RoomTerrain},
+        constants::{find::Exit, Direction, ReturnCode, Terrain},
+        objects::RoomPosition,
         traits::{TryFrom, TryInto},
     };
 
@@ -185,15 +185,15 @@ pub mod map {
     }
 
     /// Implements `Game.map.findExit`.
-    pub fn find_exit(from_room: &Room, to_room: &Room) -> Result<Exit, ReturnCode> {
-        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.as_ref()}, @{to_room.as_ref()})};
+    pub fn find_exit(from_room: &str, to_room: &str) -> Result<Exit, ReturnCode> {
+        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room}, @{to_room})};
         Exit::try_from(code)
             .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
     }
 
-    pub fn find_exit_callback(
-        from_room: &Room,
-        to_room: &Room,
+    pub fn find_exit_with_callback(
+        from_room: &str,
+        to_room: &str,
         route_callback: impl Fn(String, String) -> f64,
     ) -> Result<Exit, ReturnCode> {
         // Actual callback
@@ -207,24 +207,24 @@ pub mod map {
             unsafe { mem::transmute(callback_type_erased) };
 
         FR_CALLBACK.set(&callback_lifetime_erased, || {
-            let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.as_ref()}, @{to_room.as_ref()}, @{callback})};
+            let code: i32 = js_unwrap!{Game.map.findExit(@{from_room}, @{to_room}, @{callback})};
             Exit::try_from(code)
-            .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
+                .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
         })
     }
 
-    pub fn find_route(from_room: &Room, to_room: &Room) -> Result<Vec<ExitDirection>, ReturnCode> {
-        let v = js!(return Game.map.findRoute(@{from_room.as_ref()}, @{to_room.as_ref()}););
+    pub fn find_route(from_room: &str, to_room: &str) -> Result<Vec<RoomRouteStep>, ReturnCode> {
+        let v = js!(return Game.map.findRoute(@{from_room}, @{to_room}););
         parse_find_route_returned_value(v)
     }
 
     scoped_thread_local!(static FR_CALLBACK: Box<(Fn(String, String) -> f64)>);
 
-    pub fn find_route_callback(
-        from_room: &Room,
-        to_room: &Room,
+    pub fn find_route_with_callback(
+        from_room: &str,
+        to_room: &str,
         route_callback: impl Fn(String, String) -> f64,
-    ) -> Result<Vec<ExitDirection>, ReturnCode> {
+    ) -> Result<Vec<RoomRouteStep>, ReturnCode> {
         // Actual callback
         fn callback(room_name: String, from_room_name: String) -> f64 {
             FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
@@ -236,29 +236,34 @@ pub mod map {
             unsafe { mem::transmute(callback_type_erased) };
 
         FR_CALLBACK.set(&callback_lifetime_erased, || {
-            let v = js!(return Game.map.findRoute(@{from_room.as_ref()}, @{to_room.as_ref()}, @{callback}););
+            let v = js!(return Game.map.findRoute(@{from_room}, @{to_room}, @{callback}););
             parse_find_route_returned_value(v)
         })
     }
 
-    fn parse_find_route_returned_value(v: Value) -> Result<Vec<ExitDirection>, ReturnCode> {
+    fn parse_find_route_returned_value(v: Value) -> Result<Vec<RoomRouteStep>, ReturnCode> {
         match v {
             Value::Number(x) => {
                 let i: i32 = x.try_into().unwrap();
-                Err(i.try_into().expect("Unexpected return code."))
+                Err(i
+                    .try_into()
+                    .expect(&format!("Unexpected return code: {:?}.", i)))
             }
             Value::Reference(_) => Ok(v.try_into().expect("Error on parsing exit directions.")),
-            _ => panic!("Game.map.findRoute returned an unexpected Value variant."),
+            _ => panic!(
+                "Game.map.findRoute expected Number or Reference, found {:?}.",
+                v
+            ),
         }
     }
 
     #[derive(Clone, Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
-    pub struct ExitDirection {
+    pub struct RoomRouteStep {
         exit: Exit,
         room: String,
     }
-    js_deserializable!(ExitDirection);
+    js_deserializable!(RoomRouteStep);
 }
 
 pub mod market {

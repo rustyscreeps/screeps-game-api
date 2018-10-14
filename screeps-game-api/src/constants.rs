@@ -121,6 +121,7 @@ pub mod find {
     use super::FindConstant;
 
     #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq)]
+    #[serde(transparent)]
     pub struct Exit(i32);
 
     impl Exit {
