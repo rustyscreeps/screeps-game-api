@@ -701,17 +701,19 @@ impl TryFrom<Value> for LookResult {
         let look_type: String = js!(return @{&v}.type;).try_into()?;
 
         let lr = match look_type.as_ref() {
-            "creep" => LookResult::Creep(js_unwrap!(@{v}.creep)),
-            "energy" => LookResult::Energy(js_unwrap!(@{v}.energy)),
-            "resource" => LookResult::Resource(js_unwrap!(@{v}.resource)),
-            "source" => LookResult::Source(js_unwrap!(@{v}.source)),
-            "mineral" => LookResult::Mineral(js_unwrap!(@{v}.mineral)),
-            "structure" => LookResult::Structure(js_unwrap!(@{v}.structure)),
-            "flag" => LookResult::Flag(js_unwrap!(@{v}.flag)),
-            "constructionSite" => LookResult::ConstructionSite(js_unwrap!(@{v}.constructionSite)),
-            "nuke" => LookResult::Nuke(js_unwrap!(@{v}.nuke)),
+            "creep" => LookResult::Creep(js_unwrap_ref!(@{v}.creep)),
+            "energy" => LookResult::Energy(js_unwrap_ref!(@{v}.energy)),
+            "resource" => LookResult::Resource(js_unwrap_ref!(@{v}.resource)),
+            "source" => LookResult::Source(js_unwrap_ref!(@{v}.source)),
+            "mineral" => LookResult::Mineral(js_unwrap_ref!(@{v}.mineral)),
+            "structure" => LookResult::Structure(js_unwrap_ref!(@{v}.structure)),
+            "flag" => LookResult::Flag(js_unwrap_ref!(@{v}.flag)),
+            "constructionSite" => {
+                LookResult::ConstructionSite(js_unwrap_ref!(@{v}.constructionSite))
+            }
+            "nuke" => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
             "terrain" => LookResult::Terrain(js_unwrap!(@{v}.terrain)),
-            "tombstone" => LookResult::Tombstone(js_unwrap!(@{v}.tombstone)),
+            "tombstone" => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
             _ => {
                 return Err(ConversionError::Custom(format!(
                     "Look result type unknown: {:?}",
