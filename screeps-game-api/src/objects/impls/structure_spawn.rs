@@ -3,12 +3,13 @@ use stdweb::Reference;
 use {
     constants::{Direction, Part, ReturnCode},
     memory::MemoryReference,
-    objects::{Creep, StructureSpawn, HasEnergyForSpawn},
+    objects::{Creep, HasEnergyForSpawn, Spawning, StructureSpawn},
 };
 
 simple_accessors! {
     StructureSpawn;
     (name -> name -> String),
+    (spawning -> spawning -> Spawning),
 }
 
 impl StructureSpawn {
@@ -25,7 +26,12 @@ impl StructureSpawn {
         }
     }
 
-    pub fn spawn_creep_with_options(&self, body: &[Part], name: &str, opts: &SpawnOptions) -> ReturnCode {
+    pub fn spawn_creep_with_options(
+        &self,
+        body: &[Part],
+        name: &str,
+        opts: &SpawnOptions,
+    ) -> ReturnCode {
         let body = body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
 
         let js_opts = js!(return {dryRun: @{opts.dry_run}};);
@@ -92,5 +98,25 @@ impl SpawnOptions {
 
     pub fn directions(&mut self, directions: &[Direction]) {
         self.directions = directions.iter().map(|d| *d as u32).collect();
+    }
+}
+
+simple_accessors! {
+    Spawning;
+    (directions -> directions -> Vec<Direction>),
+    (name -> name -> String),
+    (need_time -> needTime -> u32),
+    (remaining_time -> remainingTime -> u32),
+    (spawn -> spawn -> StructureSpawn),
+}
+
+impl Spawning {
+    pub fn cancel(&self) -> ReturnCode {
+        js_unwrap!(@{self.as_ref()}.cancel())
+    }
+
+    pub fn set_directions(&self, directions: &[Direction]) -> ReturnCode {
+        let int_dirs: Vec<u32> = directions.iter().map(|d| *d as u32).collect();
+        js_unwrap!(@{self.as_ref()}.setDirections(@{int_dirs}))
     }
 }

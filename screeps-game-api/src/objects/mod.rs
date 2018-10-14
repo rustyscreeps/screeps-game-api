@@ -87,6 +87,8 @@ reference_wrappers!(
     StructureRoad,
     #[reference(instance_of = "StructureSpawn")]
     StructureSpawn,
+    #[reference(instance_of = "Spawning")]
+    Spawning,
     #[reference(instance_of = "StructureStorage")]
     StructureStorage,
     #[reference(instance_of = "StructureTerminal")]
