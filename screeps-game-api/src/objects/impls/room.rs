@@ -2,20 +2,23 @@ use std::{fmt, marker::PhantomData, mem, ops::Range};
 
 use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
 use serde_json;
-use stdweb::Reference;
+use stdweb::{Reference, Value};
 
 use {
     constants::{
         find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
+        Terrain,
     },
     memory::MemoryReference,
     objects::{
-        HasPosition, Room, RoomPosition, RoomTerrain, StructureController, StructureStorage,
-        StructureTerminal,
+        ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, Resource, Room, RoomPosition,
+        RoomTerrain, Source, Structure, StructureController, StructureStorage, StructureTerminal,
+        Tombstone,
     },
     pathfinder::CostMatrix,
     positions::LocalRoomName,
-    traits::TryInto,
+    traits::{TryFrom, TryInto},
+    ConversionError,
 };
 
 simple_accessors! {
@@ -664,4 +667,47 @@ pub struct ExitEvent {
     pub room: String,
     pub x: u32,
     pub y: u32,
+}
+
+pub enum LookResult {
+    Creep(Creep),
+    Energy(Resource),
+    Resource(Resource),
+    Source(Source),
+    Mineral(Mineral),
+    Structure(Structure),
+    Flag(Flag),
+    ConstructionSite(ConstructionSite),
+    Nuke(Nuke),
+    Terrain(Terrain),
+    Tombstone(Tombstone),
+}
+
+impl TryFrom<Value> for LookResult {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<LookResult, Self::Error> {
+        let look_type: String = js!(return @{&v}.type;).try_into()?;
+
+        let lr = match look_type.as_ref() {
+            "creep" => LookResult::Creep(js_unwrap!(@{v}.creep)),
+            "energy" => LookResult::Energy(js_unwrap!(@{v}.energy)),
+            "resource" => LookResult::Resource(js_unwrap!(@{v}.resource)),
+            "source" => LookResult::Source(js_unwrap!(@{v}.source)),
+            "mineral" => LookResult::Mineral(js_unwrap!(@{v}.mineral)),
+            "structure" => LookResult::Structure(js_unwrap!(@{v}.structure)),
+            "flag" => LookResult::Flag(js_unwrap!(@{v}.flag)),
+            "constructionSite" => LookResult::ConstructionSite(js_unwrap!(@{v}.constructionSite)),
+            "nuke" => LookResult::Nuke(js_unwrap!(@{v}.nuke)),
+            "terrain" => LookResult::Terrain(js_unwrap!(@{v}.terrain)),
+            "tombstone" => LookResult::Tombstone(js_unwrap!(@{v}.tombstone)),
+            _ => {
+                return Err(ConversionError::Custom(format!(
+                    "Look result type unknown: {:?}",
+                    &look_type
+                )))
+            }
+        };
+        Ok(lr)
+    }
 }
