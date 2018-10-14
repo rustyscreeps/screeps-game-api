@@ -1,15 +1,16 @@
 use std::{marker::PhantomData, mem};
 
-use stdweb::Reference;
+use stdweb::{Reference, Value};
 
 use {
     constants::{Direction, Part, ResourceType, ReturnCode},
     memory::MemoryReference,
     objects::{
-        Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, Source,
-        StructureController, StructureProperties, Transferable, Withdrawable,
+        Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, RoomPosition,
+        Source, StructureController, StructureProperties, Transferable, Withdrawable,
     },
     pathfinder::{CostMatrix, SearchResults},
+    traits::TryFrom,
 };
 
 use super::room::Step;
@@ -80,10 +81,27 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.moveTo(@{x}, @{y}))
     }
 
-    pub fn move_to_xy_options<'a, F>(
+    pub fn move_to_xy_with_options<'a, F>(
         &self,
         x: u32,
         y: u32,
+        move_options: MoveToOptions<'a, F>,
+    ) -> ReturnCode
+    where
+        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+    {
+        let rp = RoomPosition::new(x, y, &self.pos().room_name());
+        self.move_to_with_options(&rp, move_options)
+    }
+
+    pub fn move_to<T: HasPosition>(&self, target: &T) -> ReturnCode {
+        let p = target.pos();
+        js_unwrap!(@{self.as_ref()}.moveTo(@{&p.0}))
+    }
+
+    pub fn move_to_with_options<'a, F, T: HasPosition>(
+        &self,
+        target: &T,
         move_options: MoveToOptions<'a, F>,
     ) -> ReturnCode
     where
@@ -141,10 +159,10 @@ impl Creep {
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
+            let rp = target.pos();
             js_unwrap!{
                 @{ self.as_ref() }.moveTo(
-                    @{x},
-                    @{y},
+                    @{rp.as_ref()},
                     {
                         reusePath: @{reuse_path},
                         serializeMemory: @{serialize_memory},
@@ -164,26 +182,6 @@ impl Creep {
                 )
             }
         })
-    }
-
-    pub fn move_to<T: HasPosition>(&self, target: &T) -> ReturnCode {
-        let p = target.pos();
-        js_unwrap!(@{self.as_ref()}.moveTo(@{&p.0}))
-    }
-
-    pub fn move_to_options<'a, F, T: HasPosition>(
-        &self,
-        target: &T,
-        move_options: MoveToOptions<'a, F>,
-    ) -> ReturnCode
-    where
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
-    {
-        let rpos = target.pos();
-        let x = rpos.x();
-        let y = rpos.y();
-
-        self.move_to_xy_options(x, y, move_options)
     }
 
     pub fn move_by_path_serialized(&self, path: &str) -> ReturnCode {
