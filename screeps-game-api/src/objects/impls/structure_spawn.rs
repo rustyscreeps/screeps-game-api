@@ -3,8 +3,7 @@ use stdweb::Reference;
 use {
     constants::{Direction, Part, ReturnCode},
     memory::MemoryReference,
-    objects::{Creep, StructureProperties, StructureSpawn},
-    traits::TryInto,
+    objects::{Creep, StructureSpawn, HasEnergyForSpawn},
 };
 
 simple_accessors! {
@@ -19,24 +18,28 @@ impl StructureSpawn {
 
     pub fn spawn_creep(&self, body: &[Part], name: &str) -> ReturnCode {
         let ints = body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
-        ((js! {
+        js_unwrap! {
             var body = (@{ints}).map(__part_num_to_str);
 
             return @{self.as_ref()}.spawnCreep(body, @{name});
-        }).try_into()
-        .expect("expected StructureSpawn::spawnCreep to return an integer return code"))
+        }
     }
 
-    pub fn spawn<'a>(&'a self, body: &'a [Part], name: &'a str) -> SpawnOptions<'a> {
-        SpawnOptions {
-            spawn: self,
-            body: body,
-            name: name,
-            memory: None,
-            energy_structures: Vec::new(),
-            dry_run: false,
-            directions: Vec::new(),
+    pub fn spawn_creep_with_options(&self, body: &[Part], name: &str, opts: &SpawnOptions) -> ReturnCode {
+        let body = body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
+
+        let js_opts = js!(return {dryRun: @{opts.dry_run}};);
+
+        if let Some(ref mem) = opts.memory {
+            js!(@{&js_opts}.memory = @{mem.as_ref()};);
         }
+        if !opts.energy_structures.is_empty() {
+            js!(@{&js_opts}.energyStructures = @{&opts.energy_structures};);
+        }
+        if !opts.directions.is_empty() {
+            js!(@{&js_opts}.directions = @{&opts.directions};);
+        }
+        js_unwrap!(@{self.as_ref()}.spawnCreep(@{body}, @{name}, @{js_opts}))
     }
 
     // TODO: support actually using Spawning properties.
@@ -53,19 +56,21 @@ impl StructureSpawn {
     }
 }
 
-pub struct SpawnOptions<'a> {
-    spawn: &'a StructureSpawn,
-    body: &'a [Part],
-    name: &'a str,
+pub struct SpawnOptions {
     memory: Option<MemoryReference>,
     energy_structures: Vec<Reference>,
     dry_run: bool,
     directions: Vec<u32>,
 }
 
-impl<'a> SpawnOptions<'a> {
-    pub fn name(&mut self, name: &'a str) {
-        self.name = name;
+impl SpawnOptions {
+    pub fn new() -> SpawnOptions {
+        SpawnOptions {
+            memory: None,
+            energy_structures: Vec::new(),
+            dry_run: false,
+            directions: Vec::new(),
+        }
     }
 
     pub fn memory<T: Into<Option<MemoryReference>>>(&mut self, mem: T) {
@@ -76,7 +81,7 @@ impl<'a> SpawnOptions<'a> {
     pub fn energy_structures<T>(&mut self, structures: T)
     where
         T: IntoIterator,
-        <T as IntoIterator>::Item: StructureProperties,
+        <T as IntoIterator>::Item: HasEnergyForSpawn,
     {
         self.energy_structures = structures.into_iter().map(|s| s.into()).collect();
     }
@@ -87,32 +92,5 @@ impl<'a> SpawnOptions<'a> {
 
     pub fn directions(&mut self, directions: &[Direction]) {
         self.directions = directions.iter().map(|d| *d as u32).collect();
-    }
-
-    pub fn execute(&self) -> ReturnCode {
-        if self.memory.is_none()
-            && self.energy_structures.is_empty()
-            && !self.dry_run
-            && self.directions.is_empty()
-        {
-            self.spawn.spawn_creep(self.body, self.name)
-        } else {
-            let body = self.body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
-
-            let opts = js!({});
-            if let Some(mem) = self.memory.as_ref() {
-                js!(@{&opts}.memory = @{mem.as_ref()});
-            }
-            if !self.energy_structures.is_empty() {
-                js!(@{&opts}.energyStructures = @{&self.energy_structures});
-            }
-            if self.dry_run {
-                js!(@{&opts}.dryRun = @{self.dry_run});
-            }
-            if !self.directions.is_empty() {
-                js!(@{&opts}.directions = @{&self.directions});
-            }
-            js_unwrap!(@{self.spawn.as_ref()}.spawnCreep(@{body}, @{self.name}, @{opts}))
-        }
     }
 }

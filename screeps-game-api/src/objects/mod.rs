@@ -289,6 +289,15 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
     }
 }
 
+/// Used to specify which structures can use their stored energy for spawning creeps.
+///
+/// # Contract
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be have an
+/// `energy` and an `energyCapacity` properties. Also, that energy can be used
+/// by a spawner to create a new creep.
+pub unsafe trait HasEnergyForSpawn: CanStoreEnergy {}
+
 /// Trait for objects which have to cooldown.
 ///
 /// # Contract
@@ -482,6 +491,9 @@ unsafe impl CanStoreEnergy for StructureNuker {}
 unsafe impl CanStoreEnergy for StructurePowerSpawn {}
 unsafe impl CanStoreEnergy for StructureSpawn {}
 unsafe impl CanStoreEnergy for StructureTower {}
+
+unsafe impl HasEnergyForSpawn for StructureExtension {}
+unsafe impl HasEnergyForSpawn for StructureSpawn {}
 
 unsafe impl HasCooldown for StructureExtractor {}
 unsafe impl HasCooldown for StructureLab {}
