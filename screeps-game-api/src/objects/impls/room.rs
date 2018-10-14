@@ -124,13 +124,24 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.getTerrain())
     }
 
-    // pub fn look_at(&self, x: u32, y: u32) -> ! {
-    //     unimplemented!()
-    // }
+    pub fn look_at<T: HasPosition>(&self, target: &T) -> Vec<LookResult> {
+        let rp = target.pos();
+        js_unwrap!(@{self.as_ref()}.lookAt(@{rp.as_ref()}))
+    }
 
-    // pub fn look_at_area(&self, top: u32, left: u32, bottom: u32, right: u32) -> ! {
-    //     unimplemented!()
-    // }
+    pub fn look_at_xy(&self, x: u32, y: u32) -> Vec<LookResult> {
+        js_unwrap!(@{self.as_ref()}.lookAt(@{x}, @{y}))
+    }
+
+    pub fn look_at_area(
+        &self,
+        top: u32,
+        left: u32,
+        bottom: u32,
+        right: u32,
+    ) -> Vec<PositionedLookResult> {
+        js_unwrap!(@{self.as_ref()}.lookAtArea(@{top}, @{left}, @{bottom}, @{right}, true))
+    }
 
     pub fn find_path<'a, O, T, F>(&self, from_pos: &O, to_pos: &T, opts: FindOptions<'a, F>) -> Path
     where
@@ -709,5 +720,23 @@ impl TryFrom<Value> for LookResult {
             }
         };
         Ok(lr)
+    }
+}
+
+pub struct PositionedLookResult {
+    pub x: u32,
+    pub y: u32,
+    pub look_result: LookResult,
+}
+
+impl TryFrom<Value> for PositionedLookResult {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<PositionedLookResult, Self::Error> {
+        let x: u32 = js!(return @{&v}.x;).try_into()?;
+        let y: u32 = js!(return @{&v}.y;).try_into()?;
+        let look_result: LookResult = v.try_into()?;
+
+        Ok(PositionedLookResult { x, y, look_result })
     }
 }

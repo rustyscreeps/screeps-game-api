@@ -3,7 +3,7 @@ use std::cmp::{Eq, PartialEq};
 use {
     constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
     game,
-    objects::{HasPosition, RoomPosition, StructureType},
+    objects::{HasPosition, LookResult, RoomPosition, StructureType},
     pathfinder::CostMatrix,
     positions::LocalRoomPosition,
     traits::TryInto,
@@ -135,6 +135,10 @@ impl RoomPosition {
         T: HasPosition,
     {
         js_unwrap!(@{self.as_ref()}.isNearTo(@{&target.pos().0}))
+    }
+
+    pub fn look(&self) -> Vec<LookResult> {
+        js_unwrap!(@{self.as_ref()}.look())
     }
 
     pub fn look_for<T>(&self, ty: T) -> Vec<T::Item>
