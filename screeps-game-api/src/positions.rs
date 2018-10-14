@@ -248,8 +248,8 @@ mod serde {
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct LocalRoomPosition {
     pub room_name: LocalRoomName,
-    pub x: u8,
-    pub y: u8,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl LocalRoomPosition {
@@ -275,8 +275,8 @@ mod stdweb {
         type Error = <Value as TryInto<String>>::Error;
 
         fn try_from(v: Value) -> Result<LocalRoomPosition, Self::Error> {
-            let x: u8 = (js!{@{&v}.x}).try_into()?;
-            let y: u8 = (js!{@{&v}.y}).try_into()?;
+            let x: u32 = (js!{@{&v}.x}).try_into()?;
+            let y: u32 = (js!{@{&v}.y}).try_into()?;
             let room_name: LocalRoomName = (js!{@{&v}.roomName}).try_into()?;
 
             Ok(LocalRoomPosition { x, y, room_name })
@@ -294,8 +294,8 @@ mod room_pos_serde {
     struct SerializedLocalRoomPosition {
         room_x: i32,
         room_y: i32,
-        x: u8,
-        y: u8,
+        x: u32,
+        y: u32,
     }
 
     impl Serialize for LocalRoomPosition {
