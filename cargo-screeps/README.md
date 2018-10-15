@@ -17,28 +17,30 @@ This is not fully tested, but feel free to use! Issues are welcome.
 
 ### `build`:
 
-1. during build stage, shell out to https://github.com/koute/cargo-web for actual building the rust code.
-2. strip off header / surrounding function `cargo-web` generates for a generic JS file, since we know we're deploying to node
-3. append call to `__initialize` function which cargo-web generates, using `require('compiled')` to get the WASM bytes
-4. create `target/main.js` containing processed JS and copy WASM file to `target/compiled.wasm`
+1. run https://github.com/koute/cargo-web to actually build rust source
+2. strip off header / surrounding function `cargo-web` generates for a generic JS file to load from
+   web or from local filesystem
+3. append initialization call using bytes from `require('<compiled module name>')`
+4. put processed JS into `target/main.js` copy compiled WASM into `target/compiled.wasm`
 
 ### `upload`:
 
-1. run build.
+1. run build
 2. read `target/*.js` and `target/*.wasm`, keeping track of filenames
 3. read `screeps.toml` for upload options
-4. upload all read files to server, using filenames as the filenames on the server.
+4. upload all read files to server, using filenames as the filenames on the server
 
 ### `copy`:
 
-1. run build.
-2. copy compiled main file and WASM file (default `main.js` and `compiled.wasm`) from `target/` to `<destination directory>/<branch name>/`
+1. run build
+2. copy compiled main file and WASM file (default `main.js` and `compiled.wasm`) from `target/` to
+   `<destination directory>/<branch name>/`
 3. if pruning is enabled, delete all other files in `<destination directory>/<branch name>/`
 
 ### `deploy`:
 
-1. run build.
-2. run `upload` or `copy` depending on the `default_deploy_mode` configuration option.
+1. run build
+2. run `upload` or `copy` depending on the `default_deploy_mode` configuration option
 
 ### `check`:
 
@@ -54,29 +56,46 @@ This is not fully tested, but feel free to use! Issues are welcome.
 
 ## `[upload]`
 
-This configures options specific to the `cargo screeps upload` deploy mode.
+Options for the `upload` deploy mode.
+
+This section is required to use `cargo screeps upload`.
 
 - `username`: your Screeps username or email
-- `password`: your Screeps password. For private servers set a password using [screepsmod-auth].
+- `password`: your Screeps password
+
+  For private servers set a password using [screepsmod-auth].
 - `branch`: the branch on the server to upload files to
 - `ptr`: if true, upload to the "ptr" realm
-- `hostname`: the hostname to upload to. For example, `screeps.com` or `localhost` or `server1.screepsplu.us`
-- `ssl`: whether to connect to the server using ssl. Should be false for private servers
-- `port`: port to connect to server with. Should generally be `21025` for private servers
+- `hostname`: the hostname to upload to
+
+  For example, this could be `screeps.com`, `localhost` or `server1.screepsplu.us`.
+- `ssl`: whether to connect to the server using ssl
+
+  This should generally be true for the main server and false for private servers.
+- `port`: port to connect to server with
+
+  This should generally be set to `21025` for private servers.
 
 ## `[copy]`
 
-This configures options specific to the `cargo screeps copy` deploy mode.
+Options for the `copy` deploy mode.
 
-- `destination`: the directory to copy files into. can be relative to `screeps.toml` or absolute
-- `branch`: the "branch" to copy into. This is a subdirectory of `destination` which the js/wasm files will be copied into.
-- `prune`: if true, any files in the destination directory which were not just copied will be deleted after copying.
+This section is required to use `cargo screeps copy`.
+
+- `destination`: the directory to copy files into
+
+  If this path is not absolute, it is interpreted as relative to `screeps.toml`
+- `branch`: the "branch" to copy into
+
+  This is the subdirectory of `destination` which the js/wasm files will be copied into.
+- `prune`: if true, extra files found in the destination/branch directory will be deleted
 
 ## `[build]`
 
 This configures general build options.
 
-- `output_js_file`: the javascript file to export bindings and bootstrapping as (default `"main.js"`)
+- `output_js_file`: the javascript file to export bindings and bootstrapping as
+  (default `"main.js"`)
 - `output_wasm_file`: the WASM file to rename compile WASM to (default `"compiled.wasm"`)
 
 # Updating `cargo screeps`
