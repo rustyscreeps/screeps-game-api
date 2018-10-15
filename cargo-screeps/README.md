@@ -52,7 +52,10 @@ This is not fully tested, but feel free to use! Issues are welcome.
 
 ## No namespace
 
-- `default_deploy_mode`: what `cargo screeps deploy` does: use `"copy"` or `"upload"`
+- `default_deploy_mode`: controls what `cargo screeps deploy` does
+
+  This configuration is required for `cargo screeps deploy`. Possible values are `"copy"`
+  and `"upload"`.
 
 ## `[upload]`
 
