@@ -87,6 +87,8 @@ reference_wrappers!(
     StructureRoad,
     #[reference(instance_of = "StructureSpawn")]
     StructureSpawn,
+    #[reference(instance_of = "Spawning")]
+    Spawning,
     #[reference(instance_of = "StructureStorage")]
     StructureStorage,
     #[reference(instance_of = "StructureTerminal")]
@@ -289,6 +291,14 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
     }
 }
 
+/// Used to specify which structures can use their stored energy for spawning creeps.
+///
+/// # Contract
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be able to be used
+/// by a spawner to create a new creep.
+pub unsafe trait HasEnergyForSpawn: CanStoreEnergy {}
+
 /// Trait for objects which have to cooldown.
 ///
 /// # Contract
@@ -482,6 +492,9 @@ unsafe impl CanStoreEnergy for StructureNuker {}
 unsafe impl CanStoreEnergy for StructurePowerSpawn {}
 unsafe impl CanStoreEnergy for StructureSpawn {}
 unsafe impl CanStoreEnergy for StructureTower {}
+
+unsafe impl HasEnergyForSpawn for StructureExtension {}
+unsafe impl HasEnergyForSpawn for StructureSpawn {}
 
 unsafe impl HasCooldown for StructureExtractor {}
 unsafe impl HasCooldown for StructureLab {}
