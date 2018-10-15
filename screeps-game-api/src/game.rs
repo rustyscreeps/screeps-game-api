@@ -127,11 +127,13 @@ pub mod gcl {
 ///
 /// [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
 pub mod map {
-    use std::collections;
+    use std::{collections, mem};
+
+    use stdweb::Value;
 
     use {
         constants::{find::Exit, Direction, ReturnCode},
-        objects::{Room, RoomTerrain},
+        objects::RoomTerrain,
         traits::{TryFrom, TryInto},
     };
 
@@ -183,17 +185,85 @@ pub mod map {
     }
 
     /// Implements `Game.map.findExit`.
-    ///
-    /// Does not yet support callbacks.
-    pub fn find_exit(from_room: Room, to_room: Room) -> Result<Exit, ReturnCode> {
-        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.name()}, @{to_room.name()})};
+    pub fn find_exit(from_room: &str, to_room: &str) -> Result<Exit, ReturnCode> {
+        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room}, @{to_room})};
         Exit::try_from(code)
             .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
     }
 
-    // pub fn find_route(from_room: Room, to_room: Room, route_callback: Option<impl Fn(&str, &str) -> u32>) -> !{
-    //     unimplemented!()
-    // }
+    pub fn find_exit_with_callback(
+        from_room: &str,
+        to_room: &str,
+        route_callback: impl Fn(String, String) -> f64,
+    ) -> Result<Exit, ReturnCode> {
+        // Actual callback
+        fn callback(room_name: String, from_room_name: String) -> f64 {
+            FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
+        }
+
+        let callback_type_erased: Box<Fn(String, String) -> f64> = Box::new(route_callback);
+
+        let callback_lifetime_erased: Box<Fn(String, String) -> f64 + 'static> =
+            unsafe { mem::transmute(callback_type_erased) };
+
+        FR_CALLBACK.set(&callback_lifetime_erased, || {
+            let code: i32 = js_unwrap!{Game.map.findExit(@{from_room}, @{to_room}, @{callback})};
+            Exit::try_from(code)
+                .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
+        })
+    }
+
+    pub fn find_route(from_room: &str, to_room: &str) -> Result<Vec<RoomRouteStep>, ReturnCode> {
+        let v = js!(return Game.map.findRoute(@{from_room}, @{to_room}););
+        parse_find_route_returned_value(v)
+    }
+
+    scoped_thread_local!(static FR_CALLBACK: Box<(Fn(String, String) -> f64)>);
+
+    pub fn find_route_with_callback(
+        from_room: &str,
+        to_room: &str,
+        route_callback: impl Fn(String, String) -> f64,
+    ) -> Result<Vec<RoomRouteStep>, ReturnCode> {
+        // Actual callback
+        fn callback(room_name: String, from_room_name: String) -> f64 {
+            FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
+        }
+
+        let callback_type_erased: Box<Fn(String, String) -> f64> = Box::new(route_callback);
+
+        let callback_lifetime_erased: Box<Fn(String, String) -> f64 + 'static> =
+            unsafe { mem::transmute(callback_type_erased) };
+
+        FR_CALLBACK.set(&callback_lifetime_erased, || {
+            let v = js!(return Game.map.findRoute(@{from_room}, @{to_room}, @{callback}););
+            parse_find_route_returned_value(v)
+        })
+    }
+
+    fn parse_find_route_returned_value(v: Value) -> Result<Vec<RoomRouteStep>, ReturnCode> {
+        match v {
+            Value::Number(x) => {
+                let i: i32 = x.try_into().unwrap();
+                Err(i
+                    .try_into()
+                    .unwrap_or_else(|val| panic!("Unexpected return code: {}", val)))
+            }
+            Value::Reference(_) => Ok(v.try_into().expect("Error on parsing exit directions.")),
+            _ => panic!(
+                "Game.map.findRoute expected Number or Reference, found {:?}.",
+                v
+            ),
+        }
+    }
+
+    #[derive(Clone, Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct RoomRouteStep {
+        exit: Exit,
+        room: String,
+    }
+    js_deserializable!(RoomRouteStep);
 }
 
 pub mod market {

@@ -120,7 +120,8 @@ pub mod find {
 
     use super::FindConstant;
 
-    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq)]
+    #[serde(transparent)]
     pub struct Exit(i32);
 
     impl Exit {
@@ -357,7 +358,10 @@ pub mod look {
 #[repr(u32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "constants-serde", serde(rename_all = "snake_case"))]
+#[cfg_attr(
+    feature = "constants-serde",
+    serde(rename_all = "snake_case")
+)]
 pub enum Part {
     Move = 0,
     Work = 1,
