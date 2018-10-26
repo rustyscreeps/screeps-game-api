@@ -35,7 +35,7 @@ impl StructureSpawn {
         name: &str,
         opts: &SpawnOptions,
     ) -> ReturnCode {
-        let body = body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
+        let body_ints = body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
 
         let js_opts = js!(return {dryRun: @{opts.dry_run}};);
 
@@ -48,7 +48,13 @@ impl StructureSpawn {
         if !opts.directions.is_empty() {
             js!(@{&js_opts}.directions = @{&opts.directions};);
         }
-        js_unwrap!(@{self.as_ref()}.spawnCreep(@{body}, @{name}, @{js_opts}))
+        (js! {
+            var body = (@{body_ints}).map(__part_num_to_str);
+
+            return @{self.as_ref()}.spawnCreep(body, @{name}, @{js_opts});
+        })
+        .try_into()
+        .expect("expected StructureSpawn::spawnCreep to return an integer return code")
     }
 
     // TODO: support actually using Spawning properties.
