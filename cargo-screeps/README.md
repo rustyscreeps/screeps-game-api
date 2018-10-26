@@ -17,6 +17,8 @@ This is not fully tested, but feel free to use! Issues are welcome.
 
 ### `build`:
 
+Configured in `[build]` config section. No required settings.
+
 1. run https://github.com/koute/cargo-web to actually build rust source
 2. strip off header / surrounding function `cargo-web` generates for a generic JS file to load from
    web or from local filesystem
@@ -25,12 +27,16 @@ This is not fully tested, but feel free to use! Issues are welcome.
 
 ### `upload`:
 
+Requires `[upload]` config section with at minimum username, password and branch.
+
 1. run build
 2. read `target/*.js` and `target/*.wasm`, keeping track of filenames
 3. read `screeps.toml` for upload options
 4. upload all read files to server, using filenames as the filenames on the server
 
 ### `copy`:
+
+Requires `[copy]` config section with at minimum destination and branch.
 
 1. run build
 2. copy compiled main file and WASM file (default `main.js` and `compiled.wasm`) from `target/` to
@@ -39,10 +45,14 @@ This is not fully tested, but feel free to use! Issues are welcome.
 
 ### `deploy`:
 
+Requires `default_deploy_mode` configuration setting.
+
 1. run build
 2. run `upload` or `copy` depending on the `default_deploy_mode` configuration option
 
 ### `check`:
+
+Does not require configuration.
 
 1. perform type checking / lifetime checking without compiling code
   - runs `cargo web --check --target=wasm32-unknown-unknown` which is fairly similar to
