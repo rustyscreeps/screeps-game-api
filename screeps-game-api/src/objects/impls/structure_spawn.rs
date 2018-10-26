@@ -4,6 +4,7 @@ use {
     constants::{Direction, Part, ReturnCode},
     memory::MemoryReference,
     objects::{Creep, HasEnergyForSpawn, Spawning, StructureSpawn},
+    traits::TryInto,
 };
 
 simple_accessors! {
@@ -19,11 +20,13 @@ impl StructureSpawn {
 
     pub fn spawn_creep(&self, body: &[Part], name: &str) -> ReturnCode {
         let ints = body.iter().map(|p| *p as u32).collect::<Vec<u32>>();
-        js_unwrap! {
+        (js! {
             var body = (@{ints}).map(__part_num_to_str);
 
             return @{self.as_ref()}.spawnCreep(body, @{name});
-        }
+        })
+        .try_into()
+        .expect("expected StructureSpawn::spawnCreep to return an integer return code")
     }
 
     pub fn spawn_creep_with_options(
