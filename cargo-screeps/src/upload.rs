@@ -63,11 +63,10 @@ pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error>
     let mut response = client
         .post(&*url)
         .basic_auth(&*upload_config.username, Some(&*upload_config.password))
-        .header(reqwest::header::ContentType::json())
-        .body(serde_json::to_string(&RequestData {
+        .json(&RequestData {
             modules: files,
             branch: upload_config.branch.clone(),
-        })?).send()?;
+        }).send()?;
 
     let response_text = response.text()?;
 
