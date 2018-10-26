@@ -1,6 +1,6 @@
 [package]
 name = "cargo-screeps"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://github.com/daboross/screeps-in-rust-via-wasm/cargo-screeps/"
 include = [
