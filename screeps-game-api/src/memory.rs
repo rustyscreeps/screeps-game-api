@@ -198,7 +198,8 @@ impl MemoryReference {
             return (@{self.as_ref()})[@{key}];
         }).try_into()
     }
-     pub fn get_path<T>(&self, path: &str) -> Result<T, ConversionError>
+
+    pub fn get_path<T>(&self, path: &str) -> Result<T, ConversionError>
     where T: TryFrom<Value, Error = ConversionError>, {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
