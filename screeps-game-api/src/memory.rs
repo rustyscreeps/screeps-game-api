@@ -192,6 +192,19 @@ impl MemoryReference {
         }
     }
 
+    pub fn get<T>(&self, key: &str) -> Result<T, ConversionError>
+    where T: TryFrom<Value, Error = ConversionError>, {
+        (js! {
+            return (@{self.as_ref()})[@{key}];
+        }).try_into()
+    }
+     pub fn get_path<T>(&self, path: &str) -> Result<T, ConversionError>
+    where T: TryFrom<Value, Error = ConversionError>, {
+        (js! {
+            return _.get(@{self.as_ref()}, @{path});
+        }).try_into()
+    }
+
     pub fn set<T>(&self, key: &str, value: T)
     where
         T: JsSerialize,
