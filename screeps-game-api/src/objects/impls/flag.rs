@@ -17,10 +17,12 @@ impl Flag {
 
     pub fn set_color(&self, color: Color, secondary_color: Option<Color>) {
         match secondary_color {
-            None => js! {@{self.as_ref()}.setColor(@{u32::from(color)})},
+            None => js! {@{self.as_ref()}.setColor(@{u32::from(color)});},
             Some(sec_color) => js! {
-                @{self.as_ref()}.setColor(@{u32::from(color)},
-                                          @{u32::from(sec_color)})
+                @{self.as_ref()}.setColor(
+                    @{u32::from(color)},
+                    @{u32::from(sec_color)},
+                );
             },
         };
     }
