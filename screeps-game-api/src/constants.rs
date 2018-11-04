@@ -668,10 +668,10 @@ enum_from_primitive! {
     #[repr(u32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
     pub enum Density {
-        DensityLow = 1,
-        DensityModerate = 2,
-        DensityHigh = 3,
-        DensityUltra = 4,
+        Low = 1,
+        Moderate = 2,
+        High = 3,
+        Ultra = 4,
     }
 }
 
