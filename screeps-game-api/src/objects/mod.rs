@@ -118,7 +118,7 @@ impl HasPosition for RoomPosition {
     }
 }
 
-/// All RoomObjects have positions.
+/// All `RoomObject`s have positions.
 impl<T> HasPosition for T
 where
     T: RoomObjectProperties,

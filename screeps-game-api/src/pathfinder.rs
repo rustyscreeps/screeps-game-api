@@ -14,7 +14,7 @@ pub struct LocalCostMatrix {
     bits: Vec<u8>,
 }
 
-#[inline(always)]
+#[inline]
 fn pos_as_idx(x: u8, y: u8) -> usize {
     (x as usize) * 50 + (y as usize)
 }

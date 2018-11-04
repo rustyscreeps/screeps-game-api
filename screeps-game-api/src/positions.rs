@@ -69,11 +69,11 @@ impl LocalRoomName {
 }
 
 impl ops::Add<(i32, i32)> for LocalRoomName {
-    type Output = LocalRoomName;
+    type Output = Self;
 
     /// Adds an (x, y) coordinate pair to this room name.
     #[inline]
-    fn add(self, (x, y): (i32, i32)) -> LocalRoomName {
+    fn add(self, (x, y): (i32, i32)) -> Self {
         LocalRoomName {
             x_coord: self.x_coord + x,
             y_coord: self.y_coord + y,
@@ -82,11 +82,11 @@ impl ops::Add<(i32, i32)> for LocalRoomName {
 }
 
 impl ops::Sub<(i32, i32)> for LocalRoomName {
-    type Output = LocalRoomName;
+    type Output = Self;
 
     /// Subtracts an (x, y) coordinate pair to this room name.
     #[inline]
-    fn sub(self, (x, y): (i32, i32)) -> LocalRoomName {
+    fn sub(self, (x, y): (i32, i32)) -> Self {
         LocalRoomName {
             x_coord: self.x_coord - x,
             y_coord: self.y_coord - y,

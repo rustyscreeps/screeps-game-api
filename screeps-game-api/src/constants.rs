@@ -1,6 +1,9 @@
-//! Constants, most copied from [the game constants](https://github.com/screeps/common/blob/master/lib/constants.js).
+//! Constants, most copied from [the game constants].
 //!
-//! Last updated on 2018-03-06, `c3372fd` on https://github.com/screeps/common/commits/master/lib/constants.js.
+//! Last updated on 2018-03-06, `c3372fd` on
+//! <https://github.com/screeps/common/commits/master/lib/constants.js>.
+//!
+//! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
 use stdweb::{Reference, Value};
 
 use {
@@ -41,7 +44,7 @@ impl ReturnCode {
     ///
     /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned into
     /// `Result::Err(code)`
-    pub fn as_result(self) -> Result<(), ReturnCode> {
+    pub fn as_result(self) -> Result<(), Self> {
         match self {
             ReturnCode::Ok => Ok(()),
             other => Err(other),
@@ -149,7 +152,7 @@ pub mod find {
     impl TryFrom<i32> for Exit {
         type Error = i32;
 
-        fn try_from(v: i32) -> Result<Exit, Self::Error> {
+        fn try_from(v: i32) -> Result<Self, Self::Error> {
             match v {
                 1 | 3 | 5 | 7 | 10 => Ok(Exit(v)),
                 _ => Err(v),
@@ -453,8 +456,7 @@ pub fn rampart_hits_max(rcl: u32) -> u32 {
         5 => RAMPART_HITS_MAX_RCL5,
         6 => RAMPART_HITS_MAX_RCL6,
         7 => RAMPART_HITS_MAX_RCL7,
-        8 => RAMPART_HITS_MAX_RCL8,
-        _ => RAMPART_HITS_MAX_RCL8,
+        8 | _ => RAMPART_HITS_MAX_RCL8,
     }
 }
 
@@ -476,8 +478,7 @@ pub fn extension_energy_capacity(rcl: u32) -> u32 {
     match rcl {
         r if r < 7 => 50,
         7 => 100,
-        8 => 200,
-        _ => 200,
+        8 | _ => 200,
     }
 }
 
