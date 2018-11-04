@@ -13,3 +13,4 @@ script:
 - (cd cargo-screeps && cargo build --all-features --verbose)
 - (cd cargo-screeps && cargo test --all-features --verbose)
 - (cd screeps-game-api && cargo build --release --target=wasm32-unknown-unknown --verbose)
+- (cd screeps-game-api && cargo test --verbose)
