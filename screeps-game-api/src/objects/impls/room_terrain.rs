@@ -33,7 +33,8 @@ impl RoomTerrain {
             is_success = js!{
                 var bytes = @{arr};
                 return @{self.as_ref()}.getRawBuffer(bytes) === bytes;
-            }.try_into()
+            }
+            .try_into()
             .unwrap();
         }
         if is_success {

@@ -234,7 +234,8 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
             } else {
                 return null;
             }
-        }).try_into()
+        })
+        .try_into()
         .expect("expected OwnedStructure.owner.username to be a string")
     }
     fn as_owned_structure(self) -> OwnedStructure {

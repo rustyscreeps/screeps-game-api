@@ -58,7 +58,8 @@ impl RoomPosition {
             } else {
                 return ERR_NOT_IN_RANGE;
             }
-        }).try_into()
+        })
+        .try_into()
         .expect("expected Flag.createFlag to return ReturnCode")
     }
 
@@ -157,7 +158,8 @@ impl<T: HasPosition> PartialEq<T> for RoomPosition {
             var a = @{self.as_ref()};
             var b = @{&other.pos().0};
             return a.x == b.x && a.y == b.y && a.roomName == b.roomName;
-        }).try_into()
+        })
+        .try_into()
         .expect("expected a boolean to be a boolean")
     }
 }

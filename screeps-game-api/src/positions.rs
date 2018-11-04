@@ -308,7 +308,8 @@ mod room_pos_serde {
                 room_y: self.room_name.y_coord,
                 x: self.x,
                 y: self.y,
-            }.serialize(serializer)
+            }
+            .serialize(serializer)
         }
     }
 

@@ -110,49 +110,57 @@ impl MemoryReference {
     pub fn f64(&self, key: &str) -> Result<Option<f64>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_f64(&self, path: &str) -> Result<Option<f64>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn i32(&self, key: &str) -> Result<Option<i32>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_i32(&self, path: &str) -> Result<Option<i32>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn string(&self, key: &str) -> Result<Option<String>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_string(&self, path: &str) -> Result<Option<String>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn dict(&self, key: &str) -> Result<Option<MemoryReference>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_dict(&self, path: &str) -> Result<Option<MemoryReference>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     /// Get a dictionary value or create it if it does not exist.
@@ -171,7 +179,8 @@ impl MemoryReference {
             } else {
                 return null;
             }
-        }).try_into()
+        })
+        .try_into()
         .map_err(|_| UnexpectedTypeError)
         .map(MemoryReference)
     }
@@ -216,7 +225,8 @@ impl MemoryReference {
     {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_arr<T>(&self, path: &str) -> Result<Option<Vec<T>>, ConversionError>
@@ -225,7 +235,8 @@ impl MemoryReference {
     {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 }
 
@@ -242,7 +253,8 @@ impl TryFrom<Value> for MemoryReference {
                 } else {
                     return v;
                 }
-            }).try_into()?,
+            })
+            .try_into()?,
         ))
     }
 }
