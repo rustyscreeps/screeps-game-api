@@ -66,19 +66,14 @@ impl RoomPosition {
     where
         T: FindConstant,
     {
-        js_unwrap_ref!(@{self.as_ref()}.findClosestByRange(
-            __structure_type_num_to_str(@{ty.find_code()}))
-        )
+        js_unwrap_ref!(@{self.as_ref()}.findClosestByRange(@{ty.find_code()}))
     }
 
     pub fn find_in_range<T>(&self, ty: T, range: u32) -> Vec<T::Item>
     where
         T: FindConstant,
     {
-        js_unwrap_ref!(@{self.as_ref()}.findInRange(
-            __structure_type_num_to_str(@{ty.find_code()}),
-            @{range}
-        ))
+        js_unwrap_ref!(@{self.as_ref()}.findInRange(@{ty.find_code()}, @{range}))
     }
 
     pub fn find_path_to<'a, F, T>(&self, target: &T, opts: FindOptions<'a, F>) -> Path
