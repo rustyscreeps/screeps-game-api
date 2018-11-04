@@ -253,9 +253,10 @@ impl Room {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # let room: ::screeps::Room = unimplemented!();
     /// use screeps::constants::look;
-    /// room.look_for_at_area(look::ENERGY, 20..26, 20..26)
+    /// room.look_for_at_area(look::ENERGY, 20..26, 20..26);
     /// ```
     pub fn look_for_at_area<T>(&self, ty: T, horiz: Range<u8>, vert: Range<u8>) -> Vec<T::Item>
     where

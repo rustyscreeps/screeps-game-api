@@ -25,7 +25,7 @@
 //! be accessed using the `object["key"]` javascript syntax using type methods.
 //! ```no_run
 //! let mem = screeps::memory::root();
-//! let cpu_used_last_tick = mem.int("cpu_used_last_tick").unwrap();
+//! let cpu_used_last_tick = mem.i32("cpu_used_last_tick").unwrap();
 //! ```
 //!
 //! ## Accessing memory with a _path_
@@ -41,7 +41,7 @@
 //! depending on the method used. For example,
 //! ```no_run
 //! let mem = screeps::memory::root();
-//! let creep_time = mem.path_num("creeps.John.time").unwrap();
+//! let creep_time = mem.path_i32("creeps.John.time").unwrap();
 //! ```
 //!
 //! # Other methods that provide `MemoryReference`s

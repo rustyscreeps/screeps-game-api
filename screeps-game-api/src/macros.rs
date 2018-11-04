@@ -536,7 +536,7 @@ macro_rules! impl_serialize_as_u32 {
 ///
 /// # fn main() {
 /// let mem = screeps::memory::root();
-/// let val = mem_get!(mem.creeps.John.count.int);
+/// let val = mem_get!(mem.creeps.John.count.i32);
 /// # }
 /// ```
 ///
@@ -550,8 +550,8 @@ macro_rules! impl_serialize_as_u32 {
 /// let mem = screeps::memory::root();
 /// let creep_name = "John";
 /// let what_to_get = "count";
-/// let val1 = mem_get!(mem.creeps[creep_name][what_to_get].int);
-/// let val2 = mem_get!(mem.creeps[creep_name].count.int);
+/// let val1 = mem_get!(mem.creeps[creep_name][what_to_get].i32);
+/// let val2 = mem_get!(mem.creeps[creep_name].count.i32);
 /// assert_eq!(val1, val2);
 /// # }
 /// ```
