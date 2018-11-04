@@ -19,6 +19,12 @@ fn pos_as_idx(x: u8, y: u8) -> usize {
     (x as usize) * 50 + (y as usize)
 }
 
+impl Default for LocalCostMatrix {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LocalCostMatrix {
     pub fn new() -> Self {
         LocalCostMatrix {

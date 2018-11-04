@@ -447,7 +447,7 @@ where
             serialize_memory: self.serialize_memory,
             no_path_finding: self.no_path_finding,
             // self.visualize_path_style,
-            find_options: find_options,
+            find_options,
         }
     }
 }

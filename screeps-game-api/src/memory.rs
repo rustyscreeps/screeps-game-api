@@ -79,6 +79,12 @@ impl AsRef<Reference> for MemoryReference {
     }
 }
 
+impl Default for MemoryReference {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MemoryReference {
     pub fn new() -> Self {
         js_unwrap!({})

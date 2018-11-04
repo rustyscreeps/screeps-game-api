@@ -371,9 +371,9 @@ pub enum Part {
 }
 
 impl Part {
-    pub fn cost(&self) -> u32 {
+    pub fn cost(self) -> u32 {
         // TODO: compile time feature to switch to dynamically for non-standard servers
-        match *self {
+        match self {
             Part::Move => 50,
             Part::Work => 100,
             Part::Carry => 50,
@@ -518,10 +518,10 @@ pub enum StructureType {
 }
 
 impl StructureType {
-    pub fn construction_cost(&self) -> u32 {
+    pub fn construction_cost(self) -> u32 {
         use self::StructureType::*;
 
-        match *self {
+        match self {
             Spawn => 15_000,
             Extension => 3_000,
             Road => 300,
@@ -541,10 +541,10 @@ impl StructureType {
         }
     }
 
-    pub fn initial_hits(&self) -> u32 {
+    pub fn initial_hits(self) -> u32 {
         use self::StructureType::*;
 
-        match *self {
+        match self {
             Spawn => 5000,
             Extension => 1000,
             Road => 5000,
@@ -649,7 +649,7 @@ pub const LAB_BOOST_MINERAL: u32 = 30;
 pub const LAB_REACTION_AMOUNT: u32 = 5;
 
 pub const GCL_POW: f32 = 2.4;
-pub const GCL_MULTIPLY: u32 = 1000000;
+pub const GCL_MULTIPLY: u32 = 1_000_000;
 pub const GCL_NOVICE: u32 = 3;
 
 pub const TERRAIN_MASK_WALL: u32 = 1;
@@ -688,28 +688,28 @@ impl TryFrom<Value> for Density {
     }
 }
 
-pub const TERMINAL_CAPACITY: u32 = 300000;
+pub const TERMINAL_CAPACITY: u32 = 300_000;
 pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 pub const TERMINAL_MIN_SEND: u32 = 100;
 pub const TERMINAL_COOLDOWN: u32 = 10;
 
-pub const CONTAINER_HITS: u32 = 250000;
+pub const CONTAINER_HITS: u32 = 250_000;
 pub const CONTAINER_CAPACITY: u32 = 2000;
 pub const CONTAINER_DECAY: u32 = 5000;
 pub const CONTAINER_DECAY_TIME: u32 = 100;
 pub const CONTAINER_DECAY_TIME_OWNED: u32 = 500;
 
 pub const NUKER_HITS: u32 = 1000;
-pub const NUKER_COOLDOWN: u32 = 100000;
-pub const NUKER_ENERGY_CAPACITY: u32 = 300000;
+pub const NUKER_COOLDOWN: u32 = 100_000;
+pub const NUKER_ENERGY_CAPACITY: u32 = 300_000;
 pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
-pub const NUKE_LAND_TIME: u32 = 50000;
+pub const NUKE_LAND_TIME: u32 = 50_000;
 pub const NUKE_RANGE: u32 = 10;
 
 pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
 
-pub const PORTAL_DECAY: u32 = 30000;
+pub const PORTAL_DECAY: u32 = 30_000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -849,9 +849,9 @@ pub enum ResourceType {
 
 impl ResourceType {
     /// Returns `REACTION_TIME` for this resource. 0 for energy and base minerals.
-    pub fn reaction_time(&self) -> u32 {
+    pub fn reaction_time(self) -> u32 {
         use ResourceType::*;
-        match *self {
+        match self {
             Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
             | Catalyst | Ghodium => 0,
             Hydroxide => 20,

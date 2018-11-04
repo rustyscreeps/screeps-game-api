@@ -35,7 +35,7 @@ simple_accessors! {
 scoped_thread_local!(static COST_CALLBACK: Box<Fn(String, Reference) -> Option<Reference>>);
 
 impl Room {
-    pub fn serialize_path(&self, path: &Vec<Step>) -> String {
+    pub fn serialize_path(&self, path: &[Step]) -> String {
         js_unwrap!{@{self.as_ref()}.serializePath(@{path})}
     }
 
@@ -581,7 +581,7 @@ impl<'de> Deserialize<'de> for Event {
             }
         }
 
-        const FIELDS: &'static [&'static str] = &["event", "objectId", "data"];
+        const FIELDS: &[&str] = &["event", "objectId", "data"];
         deserializer.deserialize_struct("Event", FIELDS, EventVisitor)
     }
 }
