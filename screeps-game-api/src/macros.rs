@@ -562,21 +562,30 @@ macro_rules! impl_serialize_as_u32 {
 macro_rules! mem_get {
     // Macro entry point
     ($memory_reference:ident $($rest:tt)*) => {
-        mem_get!(@so_far { Some(&$memory_reference) } @rest $($rest)*)
+        mem_get!(@so_far { Ok(Some(&$memory_reference)) } @rest $($rest)*)
     };
     // Access the last part with a variable
     (@so_far { $reference_so_far:expr } @rest [ $final_part_variable:expr ] . $accessor:ident) => {
-        $reference_so_far.and_then(|v| v.$accessor($final_part_variable))
+        $reference_so_far.and_then(|opt| match opt {
+            Some(v) => v.$accessor($final_part_variable),
+            None => Ok(None),
+        })
     };
     // Access the last part with a hardcoded ident
     (@so_far { $reference_so_far:expr } @rest . $final_part:ident . $accessor:ident) => {
-        $reference_so_far.and_then(|v| v.$accessor(stringify!($final_part)))
+        $reference_so_far.and_then(|opt| match opt {
+            Some(v) => v.$accessor(stringify!($final_part)),
+            None => Ok(None),
+        })
     };
     // Access the next (but not last) part with a variable
     (@so_far { $reference_so_far:expr } @rest [ $next_part_variable:expr ] $($rest:tt)+) => {
         mem_get!(
             @so_far {
-                $reference_so_far.and_then(|v| v.dict($next_part_variable))
+                $reference_so_far.and_then(|opt| match opt {
+                    Some(v) => v.dict($next_part_variable),
+                    None => Ok(None),
+                })
             }
             @rest $($rest)*
         )
@@ -585,7 +594,10 @@ macro_rules! mem_get {
     (@so_far { $reference_so_far:expr } @rest . $next_part:ident $($rest:tt)+) => {
         mem_get!(
             @so_far {
-                $reference_so_far.and_then(|v| v.dict(stringify!($next_part)))
+                $reference_so_far.and_then(|opt| match opt {
+                    Some(v) => v.dict(stringify!($next_part)),
+                    None => Ok(None),
+                })
             }
             @rest $($rest)*
         )
