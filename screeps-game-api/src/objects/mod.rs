@@ -118,7 +118,7 @@ impl HasPosition for RoomPosition {
     }
 }
 
-/// All RoomObjects have positions.
+/// All `RoomObject`s have positions.
 impl<T> HasPosition for T
 where
     T: RoomObjectProperties,
@@ -234,7 +234,8 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
             } else {
                 return null;
             }
-        }).try_into()
+        })
+        .try_into()
         .expect("expected OwnedStructure.owner.username to be a string")
     }
     fn as_owned_structure(self) -> OwnedStructure {

@@ -1,6 +1,9 @@
-//! Constants, most copied from [the game constants](https://github.com/screeps/common/blob/master/lib/constants.js).
+//! Constants, most copied from [the game constants].
 //!
-//! Last updated on 2018-03-06, `c3372fd` on https://github.com/screeps/common/commits/master/lib/constants.js.
+//! Last updated on 2018-03-06, `c3372fd` on
+//! <https://github.com/screeps/common/commits/master/lib/constants.js>.
+//!
+//! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
 use stdweb::{Reference, Value};
 
 use {
@@ -41,7 +44,7 @@ impl ReturnCode {
     ///
     /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned into
     /// `Result::Err(code)`
-    pub fn as_result(self) -> Result<(), ReturnCode> {
+    pub fn as_result(self) -> Result<(), Self> {
         match self {
             ReturnCode::Ok => Ok(()),
             other => Err(other),
@@ -149,7 +152,7 @@ pub mod find {
     impl TryFrom<i32> for Exit {
         type Error = i32;
 
-        fn try_from(v: i32) -> Result<Exit, Self::Error> {
+        fn try_from(v: i32) -> Result<Self, Self::Error> {
             match v {
                 1 | 3 | 5 | 7 | 10 => Ok(Exit(v)),
                 _ => Err(v),
@@ -358,10 +361,7 @@ pub mod look {
 #[repr(u32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
-#[cfg_attr(
-    feature = "constants-serde",
-    serde(rename_all = "snake_case")
-)]
+#[cfg_attr(feature = "constants-serde", serde(rename_all = "snake_case"))]
 pub enum Part {
     Move = 0,
     Work = 1,
@@ -374,9 +374,9 @@ pub enum Part {
 }
 
 impl Part {
-    pub fn cost(&self) -> u32 {
+    pub fn cost(self) -> u32 {
         // TODO: compile time feature to switch to dynamically for non-standard servers
-        match *self {
+        match self {
             Part::Move => 50,
             Part::Work => 100,
             Part::Carry => 50,
@@ -456,8 +456,7 @@ pub fn rampart_hits_max(rcl: u32) -> u32 {
         5 => RAMPART_HITS_MAX_RCL5,
         6 => RAMPART_HITS_MAX_RCL6,
         7 => RAMPART_HITS_MAX_RCL7,
-        8 => RAMPART_HITS_MAX_RCL8,
-        _ => RAMPART_HITS_MAX_RCL8,
+        8 | _ => RAMPART_HITS_MAX_RCL8,
     }
 }
 
@@ -479,8 +478,7 @@ pub fn extension_energy_capacity(rcl: u32) -> u32 {
     match rcl {
         r if r < 7 => 50,
         7 => 100,
-        8 => 200,
-        _ => 200,
+        8 | _ => 200,
     }
 }
 
@@ -521,10 +519,10 @@ pub enum StructureType {
 }
 
 impl StructureType {
-    pub fn construction_cost(&self) -> u32 {
+    pub fn construction_cost(self) -> u32 {
         use self::StructureType::*;
 
-        match *self {
+        match self {
             Spawn => 15_000,
             Extension => 3_000,
             Road => 300,
@@ -544,10 +542,10 @@ impl StructureType {
         }
     }
 
-    pub fn initial_hits(&self) -> u32 {
+    pub fn initial_hits(self) -> u32 {
         use self::StructureType::*;
 
-        match *self {
+        match self {
             Spawn => 5000,
             Extension => 1000,
             Road => 5000,
@@ -652,7 +650,7 @@ pub const LAB_BOOST_MINERAL: u32 = 30;
 pub const LAB_REACTION_AMOUNT: u32 = 5;
 
 pub const GCL_POW: f32 = 2.4;
-pub const GCL_MULTIPLY: u32 = 1000000;
+pub const GCL_MULTIPLY: u32 = 1_000_000;
 pub const GCL_NOVICE: u32 = 3;
 
 pub const TERRAIN_MASK_WALL: u32 = 1;
@@ -670,10 +668,10 @@ enum_from_primitive! {
     #[repr(u32)]
     #[derive(Debug, PartialEq, Eq, Clone, Copy)]
     pub enum Density {
-        DensityLow = 1,
-        DensityModerate = 2,
-        DensityHigh = 3,
-        DensityUltra = 4,
+        Low = 1,
+        Moderate = 2,
+        High = 3,
+        Ultra = 4,
     }
 }
 
@@ -691,28 +689,28 @@ impl TryFrom<Value> for Density {
     }
 }
 
-pub const TERMINAL_CAPACITY: u32 = 300000;
+pub const TERMINAL_CAPACITY: u32 = 300_000;
 pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 pub const TERMINAL_MIN_SEND: u32 = 100;
 pub const TERMINAL_COOLDOWN: u32 = 10;
 
-pub const CONTAINER_HITS: u32 = 250000;
+pub const CONTAINER_HITS: u32 = 250_000;
 pub const CONTAINER_CAPACITY: u32 = 2000;
 pub const CONTAINER_DECAY: u32 = 5000;
 pub const CONTAINER_DECAY_TIME: u32 = 100;
 pub const CONTAINER_DECAY_TIME_OWNED: u32 = 500;
 
 pub const NUKER_HITS: u32 = 1000;
-pub const NUKER_COOLDOWN: u32 = 100000;
-pub const NUKER_ENERGY_CAPACITY: u32 = 300000;
+pub const NUKER_COOLDOWN: u32 = 100_000;
+pub const NUKER_ENERGY_CAPACITY: u32 = 300_000;
 pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
-pub const NUKE_LAND_TIME: u32 = 50000;
+pub const NUKE_LAND_TIME: u32 = 50_000;
 pub const NUKE_RANGE: u32 = 10;
 
 pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
 
-pub const PORTAL_DECAY: u32 = 30000;
+pub const PORTAL_DECAY: u32 = 30_000;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -852,9 +850,9 @@ pub enum ResourceType {
 
 impl ResourceType {
     /// Returns `REACTION_TIME` for this resource. 0 for energy and base minerals.
-    pub fn reaction_time(&self) -> u32 {
+    pub fn reaction_time(self) -> u32 {
         use ResourceType::*;
-        match *self {
+        match self {
             Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
             | Catalyst | Ghodium => 0,
             Hydroxide => 20,

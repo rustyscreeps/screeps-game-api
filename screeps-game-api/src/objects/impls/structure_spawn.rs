@@ -71,6 +71,7 @@ impl StructureSpawn {
     }
 }
 
+#[derive(Default)]
 pub struct SpawnOptions {
     memory: Option<MemoryReference>,
     energy_structures: Vec<Reference>,
@@ -80,12 +81,7 @@ pub struct SpawnOptions {
 
 impl SpawnOptions {
     pub fn new() -> Self {
-        SpawnOptions {
-            memory: None,
-            energy_structures: Vec::new(),
-            dry_run: false,
-            directions: Vec::new(),
-        }
+        Self::default()
     }
 
     pub fn memory<T: Into<Option<MemoryReference>>>(mut self, mem: T) -> Self {

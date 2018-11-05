@@ -21,7 +21,8 @@ impl ConstructionSite {
             } else {
                 return null;
             }
-        }).try_into()
+        })
+        .try_into()
         .expect("expected ConstructionSite.owner.username to be a non-null string")
     }
 

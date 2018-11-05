@@ -5,15 +5,20 @@
 //! The documentation tries to give a good enough picture of how the macros
 //! should be used, but are in no way a formal description. For a better
 //! understanding of the `macro_rule!` arcane yet simple syntax, have a look
-//! at [`Macros, A Methodical Introduction`](https://danielkeep.github.io/tlborm/book/mbe-README.html).
+//! at [`Macros, A Methodical Introduction`][macro-book]
+//!
+//! [macro-book]: https://danielkeep.github.io/tlborm/book/mbe-README.html
 
 /// Used to get data from a javascript reference back into rust code.
 ///
 /// Macro syntax (`$name` are expressions):
+///
+/// ```ignore
 /// js_unwrap!($jsExpr)
+/// ```
 ///
 /// For reference, `js!()` is a macro that returns a `stdweb::Value` enum.
-/// https://docs.rs/stdweb/0.4.8/stdweb/enum.Value.html
+/// See <https://docs.rs/stdweb/0.4.8/stdweb/enum.Value.html>.
 ///
 /// Here, `js_unwrap!()` takes any valid javascript expression (expresses a value)
 /// and will attempt conversion to the receiving variable type using `try_into`.
@@ -40,7 +45,7 @@
 /// bool      | Bool
 ///
 /// For the full list, see the documentation for [`stdweb::unstable::TryFrom`].
-/// (If unavailable: https://docs.rs/stdweb/0.4.8/stdweb/unstable/trait.TryFrom.html )
+/// (If unavailable: <https://docs.rs/stdweb/0.4.8/stdweb/unstable/trait.TryFrom.html> )
 ///
 /// Note: for unwrapping reference types, use [`js_unwrap_ref!`] to avoid instanceof checks.
 macro_rules! js_unwrap {
@@ -78,8 +83,11 @@ macro_rules! js_unwrap_ref {
 /// Creates a getter method to unwrap a field of a javascript object.
 ///
 /// Macro Syntax (`$name` are expressions):
+///
+/// ```ignore
 /// get_from_js!($method_name -> {$js_statement} -> $rust_type)
 /// get_from_js!($method_name($param1, $param2, ...) -> {$js_statement} -> $rust_type)
+/// ```
 ///
 /// Building on top of `js_unwrap!()`, this creates an accessor to a javascript
 /// object method or attribute.
@@ -138,16 +146,16 @@ macro_rules! get_from_js {
 ///
 /// - Creates a struct named `objX`;
 /// - Uses `#[derive(Clone, ReferenceType)]` which implements these traits for `objX`:
-///   - InstanceOf
-///   - AsRef<Reference>
-///   - ReferenceType
-///   - Into<Reference>
-///   - TryInto<Reference>
-///   - TryFrom<Reference>
-///   - TryFrom<&Reference>
-///   - TryFrom<Value>
-///   - TryFrom<&Value>
-/// - Implements FromExpectedType<Reference> for `objJ`
+///   - `InstanceOf`
+///   - `AsRef<Reference>`
+///   - `ReferenceType`
+///   - `Into<Reference>`
+///   - `TryInto<Reference>`
+///   - `TryFrom<Reference>`
+///   - `TryFrom<&Reference>`
+///   - `TryFrom<Value>`
+///   - `TryFrom<&Value>`
+/// - Implements `FromExpectedType<Reference>` for `objJ`
 macro_rules! reference_wrappers {
     (
         $(
@@ -185,12 +193,15 @@ macro_rules! reference_wrappers {
 /// object.
 ///
 /// Method Syntax:
+///
+/// ```ignore
 /// simple_accessor! {
 ///     $struct_name;
 ///     ($rust_method_name1 -> $js_field_name1 -> $rust_type1),
 ///     ($rust_method_name2 -> $js_field_name2 -> $rust_type2),
 ///     ...
 /// }
+/// ```
 macro_rules! simple_accessors {
     ($struct_name:ident; $(($method:ident -> $prop:ident -> $ret:ty)),* $(,)*) => (
         impl $struct_name {
@@ -206,15 +217,19 @@ macro_rules! simple_accessors {
 /// Macro for mass implementing `StructureProperties`, `PartialEq` and `Eq` for a type.
 ///
 /// Macro syntax:
+///
+/// ```ignore
 /// impl_structure_properties!{
 ///     $struct1,
 ///     $struct2,
 ///     ...
 /// }
+/// ```
 ///
-/// This macro accepts a comma-separated list of types on which to implement the unsafe `StructureProperties` trait on
-/// a screeps object.
-/// From that implementation, the type gets the `id` method which is used to implement `PartialEq` and `Eq`.
+/// This macro accepts a comma-separated list of types on which to implement the unsafe
+/// `StructureProperties` trait on a screeps object.
+/// From that implementation, the type gets the `id` method which is used to implement `PartialEq`
+/// and `Eq`.
 ///
 /// # Safety
 /// The macro assumes that it is implementing the trait to a valid `Reference`
@@ -233,11 +248,13 @@ macro_rules! impl_structure_properties {
 /// method.
 ///
 /// Macro Syntax:
+/// ```ignore
 /// impl_has_id! {
-/// $struct_name1;
-/// $struct_name2;
-/// ...
+///     $struct_name1;
+///     $struct_name2;
+///     ...
 /// }
+/// ```
 macro_rules! impl_has_id {
     ($($struct_name:ty);* $(;)*) => {$(
         unsafe impl HasId for $struct_name {}
@@ -258,11 +275,13 @@ macro_rules! impl_has_id {
 /// `ReturnCode`, a number indicating the status of the action requested.
 ///
 /// Macro Syntax:
+/// ```ignore
 /// creep_simple_generic_action!{
 ///     ($rust_method_name1($action_target_trait1) -> js_method_name1),
 ///     ($rust_method_name2($action_target_trait2) -> js_method_name2),
 ///     ...
 /// }
+/// ```
 ///
 /// For this macro, the last comma is facultative.
 ///
@@ -289,11 +308,13 @@ macro_rules! creep_simple_generic_action {
 /// `ReturnCode`, a number indicating the status of the action requested.
 ///
 /// Macro Syntax:
+/// ```ignore
 /// creep_simple_generic_action!{
 ///     ($rust_method_name1($target_type1) -> js_method_name1),
 ///     ($rust_method_name2($target_type2) -> js_method_name2),
 ///     ...
 /// }
+/// ```
 ///
 /// For this macro, the last comma is facultative.
 ///
@@ -359,11 +380,13 @@ macro_rules! typesafe_look_constants {
 /// Creates accessors for the main game collections
 ///
 /// Macro syntax:
-/// game_map_access!{
+/// ```ignore
+/// game_map_access! {
 ///     $rust_mod_name1, $rust_object_accessed1, $js_code_to_access1;
 ///     $rust_mod_name2, $rust_object_accessed2, $js_code_to_access2;
 ///     ...
 /// }
+/// ```
 ///
 /// Builds a module for often accessed collections. Those can then be accesed
 /// via functions. For example, to retreive a vector of all creeps names:
@@ -666,7 +689,7 @@ macro_rules! mem_set {
     }
 }
 
-/// Taken from https://serde.rs/enum-number.html
+/// Taken from <https://serde.rs/enum-number.html>
 macro_rules! enum_number {
     ($name:ident { $($variant:ident = $value:expr, )* }) => {
         #[derive(Clone, Copy, Debug, Eq, PartialEq)]

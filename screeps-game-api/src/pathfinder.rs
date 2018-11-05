@@ -14,9 +14,15 @@ pub struct LocalCostMatrix {
     bits: Vec<u8>,
 }
 
-#[inline(always)]
+#[inline]
 fn pos_as_idx(x: u8, y: u8) -> usize {
     (x as usize) * 50 + (y as usize)
+}
+
+impl Default for LocalCostMatrix {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl LocalCostMatrix {
@@ -47,7 +53,8 @@ impl LocalCostMatrix {
                 var matrix = Object.create(CostMatrix.prototype);
                 matrix._bits = @{bits};
                 return matrix;
-            }).try_into()
+            })
+            .try_into()
             .expect("expected function returning CostMatrix to return a Reference"),
             lifetime: PhantomData,
         }
@@ -81,7 +88,8 @@ impl LocalCostMatrix {
                 matrix._bits = bits;
 
                 return matrix;
-            }).try_into()
+            })
+            .try_into()
             .expect("expected function returning CostMatrix to return a Reference"),
             lifetime: PhantomData,
         }
@@ -321,7 +329,8 @@ where
         .map(|(target, range)| {
             let pos = target.pos();
             js_unwrap!({pos: @{pos.as_ref()}, range: @{range}})
-        }).collect();
+        })
+        .collect();
     let goals_js: Reference = js_unwrap!(@{goals});
     search_real(&origin.pos(), &goals_js, opts)
 }

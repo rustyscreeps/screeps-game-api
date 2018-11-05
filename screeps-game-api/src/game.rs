@@ -15,9 +15,9 @@ pub mod cpu {
 
     use constants::ReturnCode;
 
-    /// See [v8_getheapstatistics]
+    /// See [`v8_getheapstatistics`]
     ///
-    /// [v8_getheapstatistics]: https://nodejs.org/dist/latest-v8.x/docs/api/v8.html#v8_v8_getheapstatistics
+    /// [`v8_getheapstatistics`]: https://nodejs.org/dist/latest-v8.x/docs/api/v8.html#v8_v8_getheapstatistics
     #[derive(Default, Serialize, Deserialize)]
     pub struct HeapStatistics {
         pub total_heap_size: u32,
