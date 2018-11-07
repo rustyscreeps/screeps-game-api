@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+
+0.3.0 (2018-11-??)
+==================
+
 - Implement Serialize and Deserialize for constants under `constants-serde` feature flag (#69)
 - Fix Tombstone::get_position_at (#70)
 - Remove duplicate Tombstone::id property (#70)
