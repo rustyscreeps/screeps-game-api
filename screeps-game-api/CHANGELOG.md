@@ -18,6 +18,10 @@ Unreleased
 - Replace use-once builder with more standard options struct in `StructureSpawn::spawn` (#86)
 - Add look, lookAt, lookAtArea support (#87)
 - Add MemoryReference::get<T>, get_path<T> for retrieving arbitrary types from memory (#96)
+- Fix unconditional error in `find_in_range`, `find_closest_by_range` bindings (#99)
+- Unbreak `mem_get!` macro broken in last release (#102)
+- Rename `Density` enum variants to remove `Density` prefix (#101)
+- Make various API functions take `Copy` types by value rather than by reference (#101)
 
 0.2.0 (2018-08-28)
 ==================
