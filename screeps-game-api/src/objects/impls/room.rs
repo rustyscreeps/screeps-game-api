@@ -231,7 +231,18 @@ impl Room {
         let pos = target.pos();
         T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
             __look_num_to_str(@{ty.look_code() as u32}),
-            @{pos.as_ref()}
+            @{pos.as_ref()},
+        )))
+    }
+
+    pub fn look_for_at_xy<T>(&self, ty: T, x: u32, y: u32) -> Vec<T::Item>
+    where
+        T: LookConstant,
+    {
+        T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
+            __look_num_to_str(@{ty.look_code() as u32}),
+            @{x},
+            @{y},
         )))
     }
 
