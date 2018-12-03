@@ -111,6 +111,10 @@ pub trait IntoLocalRoomName {
 }
 
 fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
+    if s == "sim" {
+        return Ok(LocalRoomName { x_coord: 0, y_coord: 0 })
+    }
+
     let mut chars = s.char_indices();
 
     let east = match chars.next() {
