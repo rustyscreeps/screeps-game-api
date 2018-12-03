@@ -43,7 +43,7 @@ impl Room {
         js_unwrap!{@{self.as_ref()}.deserializePath(@{path})}
     }
 
-    pub fn create_construction_site<T>(&self, at: T, ty: StructureType) -> ReturnCode
+    pub fn create_construction_site<T>(&self, at: &T, ty: StructureType) -> ReturnCode
     where
         T: HasPosition,
     {
@@ -56,7 +56,7 @@ impl Room {
 
     pub fn create_named_construction_site<T>(
         &self,
-        at: T,
+        at: &T,
         ty: StructureType,
         name: &str,
     ) -> ReturnCode
@@ -73,7 +73,7 @@ impl Room {
 
     pub fn create_flag<T>(
         &self,
-        at: T,
+        at: &T,
         name: &str,
         main_color: Color,
         secondary_color: Color,
@@ -223,7 +223,7 @@ impl Room {
         })
     }
 
-    pub fn look_for_at<T, U>(&self, ty: T, target: U) -> Vec<T::Item>
+    pub fn look_for_at<T, U>(&self, ty: T, target: &U) -> Vec<T::Item>
     where
         T: LookConstant,
         U: HasPosition,
