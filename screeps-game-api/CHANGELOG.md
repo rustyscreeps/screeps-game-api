@@ -1,8 +1,13 @@
 Unreleased
 ==========
 
+0.3.1 (2018-12-??)
+=================
 
-0.3.0 (2018-11-??)
+- Add `Room::look_for_at_xy`
+- Fix `Room::name_local()` support for sim (thanks [@niksaak]!)
+
+0.3.0 (2018-11-12)
 ==================
 
 - Implement Serialize and Deserialize for constants under `constants-serde` feature flag (#69)
@@ -169,3 +174,4 @@ Thanks to [@ASalvail] for planning and implementing the vast majority of this re
 
 
 [@Asalvail]: https://github.com/Asalvail
+[@niksaak]: https://github.com/niksaak
