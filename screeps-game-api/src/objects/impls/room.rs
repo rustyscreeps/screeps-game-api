@@ -32,7 +32,7 @@ simple_accessors! {
     // todo: visual
 }
 
-scoped_thread_local!(static COST_CALLBACK: Box<Fn(String, Reference) -> Option<Reference>>);
+scoped_thread_local!(static COST_CALLBACK: &'static Fn(String, Reference) -> Option<Reference>);
 
 impl Room {
     pub fn serialize_path(&self, path: &[Step]) -> String {
@@ -170,18 +170,17 @@ impl Room {
         };
 
         // Type erased and boxed callback: no longer a type specific to the closure passed in,
-        // now unified as Box<Fn>
-        let callback_type_erased: Box<Fn(String, Reference) -> Option<Reference> + 'a> =
-            Box::new(callback_boxed);
+        // now unified as &Fn
+        let callback_type_erased: &(Fn(String, Reference) -> Option<Reference> + 'a) =
+            &callback_boxed;
 
-        // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
-        // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
-        // be entirely safe because we're only sticking it in scoped storage and we control the only use
-        // of it, but it's still necessary because "some lifetime above the current scope but otherwise
-        // unknown" is not a valid lifetime to have PF_CALLBACK have.
-        let callback_lifetime_erased: Box<
-            Fn(String, Reference) -> Option<Reference> + 'static,
-        > = unsafe { mem::transmute(callback_type_erased) };
+        // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local
+        // storage: now pretending to be static data so that it can be stuck in scoped_thread_local.
+        // This should be entirely safe because we're only sticking it in scoped storage and we
+        // control the only use of it, but it's still necessary because "some lifetime above the
+        // current scope but otherwise unknown" is not a valid lifetime to have PF_CALLBACK have.
+        let callback_lifetime_erased: &'static Fn(String, Reference) -> Option<Reference> =
+            unsafe { mem::transmute(callback_type_erased) };
 
         let FindOptions {
             ignore_creeps,
@@ -196,8 +195,8 @@ impl Room {
             ..
         } = opts;
 
-        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call and
-        // make the call to PathFinder.
+        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call
+        // and make the call to PathFinder.
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
