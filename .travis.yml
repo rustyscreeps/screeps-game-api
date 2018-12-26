@@ -7,10 +7,22 @@ os:
 - osx
 install:
 - rustup target add wasm32-unknown-unknown
+- | # install cargo-web
+  CARGO_WEB_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/koute/cargo-web/releases/latest)
+  CARGO_WEB_VERSION=$(echo $CARGO_WEB_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+  CARGO_WEB_URL="https://github.com/koute/cargo-web/releases/download/$CARGO_WEB_VERSION/cargo-web-x86_64-unknown-linux-gnu.gz"
+
+  echo "Downloading cargo-web from: $CARGO_WEB_URL"
+  curl -L $CARGO_WEB_URL | gzip -d > cargo-web
+  chmod +x cargo-web
+
+  mkdir -p ~/.cargo/bin
+  mv cargo-web ~/.cargo/bin
 script:
 - (cd cargo-screeps && cargo build --verbose)
 - (cd cargo-screeps && cargo test --verbose)
 - (cd cargo-screeps && cargo build --all-features --verbose)
 - (cd cargo-screeps && cargo test --all-features --verbose)
-- (cd screeps-game-api && cargo build --release --target=wasm32-unknown-unknown --verbose)
+- (cd screeps-game-api && cargo web build --target=wasm32-unknown-unknown --verbose)
+- (cd screeps-game-api && cargo web build --target=wasm32-unknown-unknown --all-features --verbose)
 - (cd screeps-game-api && cargo test --verbose)
