@@ -248,30 +248,13 @@ if( typeof Rust === "undefined" ) {
     Ok(format!(
         r#"{}
 
-/**
- * Fetches WASM bytes for the wasm module.
- *
- * These should be given to `new WebAssembly.Module` to instantiate a WebAssembly module.
- */
 function wasm_fetch_module_bytes() {{
     "use strict";
-
     return require('{}');
 }}
 
-/**
- * Creates the stdweb wrapper for a module instance.
- *
- * It has two properties, `imports` and `initialize`. `imports` should be passed as the second
- * argument to `new WebAssembly.Instance` to provide the WASM module with imports, and `initialize`
- * should be called on the resulting WebAssembly instance.
- *
- * Calling `initialize` will finish associating the imports with the wasm module, and will call the
- * rust module's main function.
- */
 function wasm_create_stdweb_vars() {{
     "use strict";
-
     {}
 }}
 "#,
