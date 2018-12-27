@@ -12,28 +12,26 @@ use {
     ConversionError,
 };
 
-enum_from_primitive! {
-    #[repr(i32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-    #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
-    pub enum ReturnCode {
-        Ok = 0,
-        NotOwner = -1,
-        NoPath = -2,
-        NameExists = -3,
-        Busy = -4,
-        NotFound = -5,
-        NotEnough = -6,
-        InvalidTarget = -7,
-        Full = -8,
-        NotInRange = -9,
-        InvalidArgs = -10,
-        Tired = -11,
-        NoBodypart = -12,
-        RclNotEnough = -14,
-        GclNotEnough = -15,
-        Other = 42,
-    }
+#[repr(i32)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive)]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
+pub enum ReturnCode {
+    Ok = 0,
+    NotOwner = -1,
+    NoPath = -2,
+    NameExists = -3,
+    Busy = -4,
+    NotFound = -5,
+    NotEnough = -6,
+    InvalidTarget = -7,
+    Full = -8,
+    NotInRange = -9,
+    InvalidArgs = -10,
+    Tired = -11,
+    NoBodypart = -12,
+    RclNotEnough = -14,
+    GclNotEnough = -15,
+    Other = 42,
 }
 
 #[cfg(feature = "constants-serde")]
@@ -190,19 +188,17 @@ pub mod find {
     }
 }
 
-enum_from_primitive! {
-    #[repr(u32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize)]
-    pub enum Direction {
-        Top = 1,
-        TopRight = 2,
-        Right = 3,
-        BottomRight = 4,
-        Bottom = 5,
-        BottomLeft = 6,
-        Left = 7,
-        TopLeft = 8,
-    }
+#[repr(u32)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, FromPrimitive)]
+pub enum Direction {
+    Top = 1,
+    TopRight = 2,
+    Right = 3,
+    BottomRight = 4,
+    Bottom = 5,
+    BottomLeft = 6,
+    Left = 7,
+    TopLeft = 8,
 }
 
 impl_serialize_as_u32!(Direction);
@@ -221,22 +217,20 @@ impl TryFrom<Value> for Direction {
     }
 }
 
-enum_from_primitive! {
-    #[repr(u32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-    #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
-    pub enum Color {
-        Red = 1,
-        Purple = 2,
-        Blue = 3,
-        Cyan = 4,
-        Green = 5,
-        Yellow = 6,
-        Orange = 7,
-        Brown = 8,
-        Grey = 9,
-        White = 10,
-    }
+#[repr(u32)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive)]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
+pub enum Color {
+    Red = 1,
+    Purple = 2,
+    Blue = 3,
+    Cyan = 4,
+    Green = 5,
+    Yellow = 6,
+    Orange = 7,
+    Brown = 8,
+    Grey = 9,
+    White = 10,
 }
 
 #[cfg(feature = "constants-serde")]
@@ -664,15 +658,13 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 
 // TODO: MINERAL_* constants
 
-enum_from_primitive! {
-    #[repr(u32)]
-    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-    pub enum Density {
-        Low = 1,
-        Moderate = 2,
-        High = 3,
-        Ultra = 4,
-    }
+#[repr(u32)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive)]
+pub enum Density {
+    Low = 1,
+    Moderate = 2,
+    High = 3,
+    Ultra = 4,
 }
 
 impl TryFrom<Value> for Density {

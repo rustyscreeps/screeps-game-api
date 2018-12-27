@@ -23,8 +23,8 @@ description = "WASM bindings to the in-game Screeps API"
 name = "screeps"
 
 [dependencies]
-enum_primitive = "0.1"
 log = "0.4"
+num-derive = "0.2"
 num-traits = "0.2"
 serde = "1"
 serde_derive = "1"
