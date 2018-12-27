@@ -19,9 +19,9 @@
 //! ```
 #![recursion_limit = "128"]
 #[macro_use]
-extern crate enum_primitive;
-#[macro_use]
 extern crate log;
+#[macro_use]
+extern crate num_derive;
 extern crate num_traits;
 #[macro_use]
 extern crate scoped_tls;
