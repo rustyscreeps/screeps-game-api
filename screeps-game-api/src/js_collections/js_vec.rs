@@ -1,7 +1,7 @@
 //! [`JsVec`]
 use std::marker::PhantomData;
 
-use stdweb::{Array, InstanceOf, Reference, ReferenceType, Value};
+use stdweb::{Array, InstanceOf, JsSerialize, Reference, ReferenceType, Value};
 
 use {
     traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
@@ -60,7 +60,7 @@ where
         if idx >= self.len() {
             Ok(None)
         } else {
-            (js!{
+            (js! {
                 return @{self.inner.as_ref()}[@{idx as u32}];
             })
             .into_expected_type()
@@ -223,7 +223,7 @@ where
     T: InstanceOf,
 {
     fn instance_of(reference: &Reference) -> bool {
-        (js!{
+        (js! {
             let arr = @{reference};
             if (!(arr instanceof Array)) {
                 return false;
@@ -352,5 +352,53 @@ where
         {
             Ok(unsafe { Self::from_reference_unchecked(r) })
         }
+    }
+}
+
+impl<'a, T> From<&'a [T]> for JsVec<T>
+where
+    T: JsSerialize,
+{
+    fn from(v: &'a [T]) -> Self {
+        JsVec {
+            inner: v.into(),
+            phantom: PhantomData,
+        }
+    }
+}
+
+impl<'a, T> From<&'a mut [T]> for JsVec<T>
+where
+    T: JsSerialize,
+{
+    fn from(v: &'a mut [T]) -> Self {
+        (&*v).into()
+    }
+}
+
+impl<'a, T> From<&'a Vec<T>> for JsVec<T>
+where
+    T: JsSerialize,
+{
+    fn from(v: &'a Vec<T>) -> Self {
+        (&**v).into()
+    }
+}
+
+impl<'a, T> From<&'a mut Vec<T>> for JsVec<T>
+where
+    T: JsSerialize,
+{
+    fn from(v: &'a mut Vec<T>) -> Self {
+        (&**v).into()
+    }
+}
+
+impl<T> From<Vec<T>> for JsVec<T>
+where
+    T: JsSerialize,
+{
+    fn from(v: Vec<T>) -> Self {
+        (&*v).into()
     }
 }
