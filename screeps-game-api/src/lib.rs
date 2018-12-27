@@ -49,7 +49,7 @@ pub mod traits;
 
 pub use {
     constants::*,
-    js_collections::{JsMap, JsVec},
+    js_collections::JsVec,
     objects::*,
     positions::{LocalRoomName, LocalRoomPosition},
     traits::{FromExpectedType, IntoExpectedType},
