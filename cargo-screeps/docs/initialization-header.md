@@ -123,11 +123,45 @@ function wasm_initialize() {
 module.exports.loop = wasm_initialize;
 ```
 
+### Example: measuring CPU usage loading WASM.
+
+Exporting to statistics like Graphana will probably be more useful than logging to console, but you
+can see the idea.
+
+```js
+"use strict";
+let wasm_module = null;
+
+function wasm_initialize() {
+    let initial_cpu = Game.cpu.getUsed();
+    if (wasm_module == null) {
+        let wasm_bytes = wasm_fetch_module_bytes();
+        wasm_module = new WebAssembly.Module(wasm_bytes);
+    }
+    let cpu_post_compiling = Game.cpu.getUsed();
+    let stdweb_vars = wasm_create_stdweb_vars();
+    let cpu_post_stdweb_vars_creation = Game.cpu.getUsed();
+    let wasm_instance = new WebAssembly.Instance(wasm_module, stdweb_vars.imports);
+    let cpu_post_instantiation = Game.cpu.getUsed();
+    stdweb_vars.initialize(wasm_instance);
+    let cpu_post_initialization = Game.cpu.getUsed();
+    console.log(`Initialized WASM.
+Module Compilation: ${cpu_post_compiling - initial_cpu} CPU
+stdweb vars creation: ${cpu_post_stdweb_vars_creation - cpu_post_compiling} CPU
+WebAssembly.Instance creation: ${cpu_post_instantiation - cpu_post_stdweb_vars_creation} CPU
+stdweb initialization finish: ${cpu_post_initialization - cpu_post_instantiation} CPU
+total: ${cpu_post_initialization - initial_cpu} CPU`);
+    module.exports.loop();
+}
+
+module.exports.loop = wasm_initialize;
+```
+
 ### Beyond that
 
-I don't have many recommendations from here on out. You can inovate how you'd like, but if you'd
-rather focus on other areas of the game then the above exiting-early initialization_header should
-be fine.
+I don't have many more recommendations from here on out. You can inovate how you'd like, but if
+you'd rather focus on other areas of the game then using the example which exits on low CPU usage
+as is is more than reasonable.
 
 If you have more examples you think would be useful here, however, I'd welcome them! Pull requests
 will be accepted.
