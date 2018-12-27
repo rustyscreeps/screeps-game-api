@@ -17,7 +17,7 @@ repository = "https://github.com/daboross/screeps-in-rust-via-wasm/"
 description = "Build tool for deploying Rust WASM code to Screeps game servers"
 
 [dependencies]
-base64 = "0.9"
+base64 = "0.10"
 clap = "2"
 failure = "0.1"
 fern = "0.5"
