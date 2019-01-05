@@ -1,7 +1,7 @@
 Unreleased
 ==========
 
-- Add `Neg` implementation for `Direction` (`-Top` produces `Bottom`)
+- Add `Neg` implementation for `Direction` allowing unary minus to reverse direction (#113)
 
 0.3.0 (2018-11-??)
 ==================
