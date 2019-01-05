@@ -1,6 +1,7 @@
 Unreleased
 ==========
 
+- Add `Neg` implementation for `Direction` (`-Top` produces `Bottom`)
 
 0.3.0 (2018-11-??)
 ==================
