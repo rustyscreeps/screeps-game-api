@@ -42,10 +42,16 @@ impl From<Structure> for Reference {
     }
 }
 
+fn get_structure_type(structure: &Reference) -> Result<StructureType, ConversionError> {
+    (js! {
+        return __structure_type_str_to_num(@{structure}.structureType);
+    })
+    .try_into()
+}
+
 impl FromExpectedType<Reference> for Structure {
     fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
-        let structure_type = js!(return @{&reference}.structureType;).try_into()?;
-
+        let structure_type = get_structure_type(&reference)?;
         let structure = construct_structure_variants!(
             structure_type => reference.into_expected_type()?
         );
@@ -58,7 +64,7 @@ impl TryFrom<Reference> for Structure {
     type Error = ConversionError;
 
     fn try_from(reference: Reference) -> Result<Self, ConversionError> {
-        let structure_type = js!(return @{&reference}.structureType;).try_into()?;
+        let structure_type = get_structure_type(&reference)?;
 
         let structure = construct_structure_variants!(
             structure_type => reference.try_into()?
@@ -84,7 +90,7 @@ impl TryFrom<Value> for Structure {
 
 impl ReferenceType for Structure {
     unsafe fn from_reference_unchecked(reference: Reference) -> Self {
-        let structure_type = js_unwrap!(@{&reference}.structureType);
+        let structure_type = js_unwrap!(__structure_type_str_to_num(@{&reference}.structureType));
 
         construct_structure_variants!(
             structure_type => ReferenceType::from_reference_unchecked(reference)

@@ -195,7 +195,7 @@ pub unsafe trait RoomObjectProperties:
 /// JavaScript object extending the `Structure` class.
 pub unsafe trait StructureProperties: RoomObjectProperties + HasId {
     fn structure_type(&self) -> StructureType {
-        js_unwrap!(@{self.as_ref()}.structureType)
+        js_unwrap!(__structure_type_str_to_num(@{self.as_ref()}.structureType))
     }
     fn destroy(&self) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.destroy())
