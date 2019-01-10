@@ -91,3 +91,19 @@ impl ReferenceType for Structure {
         )
     }
 }
+
+unsafe impl Attackable for Structure {
+    fn hits(&self) -> u32 {
+        match self {
+            Structure::Controller(_) => 0,
+            _ => js_unwrap! { @{self.as_ref()}.hits },
+        }
+    }
+
+    fn hits_max(&self) -> u32 {
+        match self {
+            Structure::Controller(_) => 0,
+            _ => js_unwrap! { @{self.as_ref()}.hitsMax },
+        }
+    }
+}
