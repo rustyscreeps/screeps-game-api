@@ -2,6 +2,7 @@ use stdweb::{InstanceOf, Reference, ReferenceType, Value};
 
 use {
     constants::StructureType,
+    objects::{Attackable, CanDecay, CanStoreEnergy, HasCooldown, HasEnergyForSpawn, HasStore},
     traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };
@@ -28,6 +29,126 @@ pub enum Structure {
     Terminal(StructureTerminal),
     Tower(StructureTower),
     Wall(StructureWall),
+}
+
+impl Structure {
+    pub fn as_transferable(&self) -> Option<&dyn Transferable> {
+        match_some_structure_variants!(
+            self,
+            {
+                Container, Extension, Lab, Link, Nuker, PowerSpawn, Spawn, Storage, Terminal, Tower
+            },
+            v => v
+        )
+    }
+
+    pub fn as_withdrawable(&self) -> Option<&dyn Withdrawable> {
+        match_some_structure_variants!(
+            self,
+            {
+                Container, Extension, Lab, Link, PowerSpawn, Spawn, Storage, Terminal, Tower
+            },
+            v => v
+        )
+    }
+
+    pub fn as_attackable(&self) -> Option<&dyn Attackable> {
+        match self {
+            Structure::Controller(_) => None,
+            Structure::Container(v) => Some(v),
+            Structure::Extension(v) => Some(v),
+            Structure::Extractor(v) => Some(v),
+            Structure::KeeperLair(v) => Some(v),
+            Structure::Lab(v) => Some(v),
+            Structure::Link(v) => Some(v),
+            Structure::Nuker(v) => Some(v),
+            Structure::Observer(v) => Some(v),
+            Structure::PowerBank(v) => Some(v),
+            Structure::PowerSpawn(v) => Some(v),
+            Structure::Portal(v) => Some(v),
+            Structure::Rampart(v) => Some(v),
+            Structure::Road(v) => Some(v),
+            Structure::Spawn(v) => Some(v),
+            Structure::Storage(v) => Some(v),
+            Structure::Terminal(v) => Some(v),
+            Structure::Tower(v) => Some(v),
+            Structure::Wall(v) => Some(v),
+        }
+    }
+
+    pub fn as_owned(&self) -> Option<&dyn OwnedStructureProperties> {
+        match self {
+            Structure::Container(_) => None,
+            Structure::Controller(v) => Some(v),
+            Structure::Extension(v) => Some(v),
+            Structure::Extractor(v) => Some(v),
+            Structure::KeeperLair(v) => Some(v),
+            Structure::Lab(v) => Some(v),
+            Structure::Link(v) => Some(v),
+            Structure::Nuker(v) => Some(v),
+            Structure::Observer(v) => Some(v),
+            Structure::PowerBank(v) => Some(v),
+            Structure::PowerSpawn(v) => Some(v),
+            Structure::Portal(v) => Some(v),
+            Structure::Rampart(v) => Some(v),
+            Structure::Road(_) => None,
+            Structure::Spawn(v) => Some(v),
+            Structure::Storage(v) => Some(v),
+            Structure::Terminal(v) => Some(v),
+            Structure::Tower(v) => Some(v),
+            Structure::Wall(_) => None,
+        }
+    }
+
+    pub fn as_can_decay(&self) -> Option<&dyn CanDecay> {
+        match_some_structure_variants!(
+            self,
+            {
+                Container, Portal, PowerBank, Rampart, Road
+            },
+            v => v
+        )
+    }
+
+    pub fn as_can_store_energy(&self) -> Option<&dyn CanStoreEnergy> {
+        match_some_structure_variants!(
+            self,
+            {
+                Extension, Lab, Link, Nuker, PowerSpawn, Spawn, Tower
+            },
+            v => v
+        )
+    }
+
+    pub fn as_has_cooldown(&self) -> Option<&dyn HasCooldown> {
+        match_some_structure_variants!(
+            self,
+            {
+                Extractor, Lab, Link, Nuker, Terminal
+            },
+            v => v
+        )
+    }
+
+    pub fn as_has_energy_for_spawn(&self) -> Option<&dyn HasEnergyForSpawn> {
+        match_some_structure_variants!(
+            self,
+            {
+                Extension, Spawn
+            },
+            v => v
+        )
+    }
+
+    pub fn as_has_store(&self) -> Option<&dyn HasStore> {
+        match_some_structure_variants!(
+            self,
+            {
+                Container, Storage, Terminal
+            },
+            v => v
+        )
+    }
 }
 
 impl AsRef<Reference> for Structure {
