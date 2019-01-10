@@ -3,7 +3,7 @@ use stdweb::Reference;
 use {
     constants::{Direction, Part, ReturnCode},
     memory::MemoryReference,
-    objects::{Creep, HasEnergyForSpawn, Spawning, StructureSpawn},
+    objects::{Creep, HasEnergyForSpawn, SizedRoomObject, Spawning, StructureSpawn},
     traits::TryInto,
 };
 
@@ -93,7 +93,7 @@ impl SpawnOptions {
     pub fn energy_structures<T>(mut self, structures: T) -> Self
     where
         T: IntoIterator,
-        <T as IntoIterator>::Item: HasEnergyForSpawn,
+        <T as IntoIterator>::Item: HasEnergyForSpawn + SizedRoomObject,
     {
         self.energy_structures = structures.into_iter().map(|s| s.into()).collect();
         self
