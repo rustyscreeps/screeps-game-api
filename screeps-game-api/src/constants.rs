@@ -174,7 +174,7 @@ pub mod find {
         HOSTILE_CREEPS, 103, Creep;
         SOURCES_ACTIVE, 104, Source;
         SOURCES, 105, Source;
-        DROPPED_RESOUCES, 106, Resource;
+        DROPPED_RESOURCES, 106, Resource;
         STRUCTURES, 107, Structure;
         MY_STRUCTURES, 108, OwnedStructure;
         HOSTILE_STRUCTURES, 109, OwnedStructure;
