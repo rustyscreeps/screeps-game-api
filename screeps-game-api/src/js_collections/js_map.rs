@@ -38,6 +38,9 @@ where
         K: Borrow<Q>,
         for<'a> &'a Q: Into<Value>,
     {
+        // TODO: replace this match with Result::transpose
+        // (https://doc.rust-lang.org/nightly/std/result/enum.Result.html#method.transpose)
+        // once Rust 1.33.0 is released and the method is stabilized.
         match (js! {return @{self.inner.as_ref()}[@{key.into()}].into_expected_type();})
             .into_expected_type()
         {
