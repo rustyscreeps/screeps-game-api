@@ -6,7 +6,7 @@ Unreleased
 - Take `&T` in `Room::create_construction_site` and `look_for_at` rather than `T` for
   `T: HasPosition` (breaking) (#105)
 
-0.3.0 (2018-11-??)
+0.3.0 (2018-11-12)
 ==================
 
 - Implement Serialize and Deserialize for constants under `constants-serde` feature flag (#69)
