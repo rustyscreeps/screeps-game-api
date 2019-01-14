@@ -27,7 +27,7 @@ function wasm_initialize() {
         wasm_module = new WebAssembly.Module(wasm_bytes);
     }
     // Initialize `stdweb`. This returns an object with an `initialize` function and `imports`
-    // object, meant to be used as bellow:
+    // object, meant to be used as below:
     let stdweb_vars = wasm_create_stdweb_vars();
     // Create the WebAssembly instance.
     let wasm_instance = new WebAssembly.Instance(wasm_module, stdweb_vars.imports);
@@ -45,7 +45,8 @@ module.exports.loop = wasm_initialize;
 For reference, see [WebAssembly.Module] and [WebAssembly.Instance] docs.
 
 The two utility functions, `wasm_fetch_module_bytes` and `wasm_create_stdweb_vars` will always be
-generated, regardless of initialization header. Their purpose is to provide an interface to stdweb's internal initialization, and to remain stable between stdweb and cargo-web updates.
+generated, regardless of initialization header. Their purpose is to provide an interface to stdweb's
+internal initialization, and to remain stable between stdweb and cargo-web updates.
 
 They are documented as follows:
 
