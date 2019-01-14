@@ -187,7 +187,7 @@ pub unsafe trait RoomObjectProperties: AsRef<Reference> + HasPosition {
 /// `&dyn Attackable` or `&dyn HasStore`)
 ///
 /// This trait is automatically implemented for all structures implementing the traits
-/// it requires, and everything implement `RoomObjectProperties` and being `Sized
+/// it requires, and everything implement `RoomObjectProperties` and being `Sized`
 /// should also implement this.
 pub trait SizedRoomObject:
     Into<Reference>
