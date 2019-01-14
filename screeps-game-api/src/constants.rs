@@ -217,6 +217,36 @@ impl TryFrom<Value> for Direction {
     }
 }
 
+impl ::std::ops::Neg for Direction {
+    type Output = Direction;
+
+    /// Negates this direction. Top goes to Bottom, TopRight goes to BottomLeft, etc.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::Direction::*;
+    ///
+    /// assert_eq!(-Top, Bottom);
+    /// assert_eq!(-BottomRight, TopLeft);
+    /// assert_eq!(-Left, Right);
+    /// ```
+    fn neg(self) -> Direction {
+        use Direction::*;
+
+        match self {
+            Top => Bottom,
+            TopRight => BottomLeft,
+            Right => Left,
+            BottomRight => TopLeft,
+            Bottom => Top,
+            BottomLeft => TopRight,
+            Left => Right,
+            TopLeft => BottomRight,
+        }
+    }
+}
+
 #[repr(u32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive)]
 #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
