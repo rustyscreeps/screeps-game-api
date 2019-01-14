@@ -24,19 +24,19 @@ where
     Option<V>: FromExpectedType<Value>,
 {
     /// Gets an item, panicking if the types don't match and `check-all-casts` is enabled.
-    pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<V>
+    pub fn get<'a, Q: ?Sized>(&self, key: &'a Q) -> Option<V>
     where
         K: Borrow<Q>,
-        for<'a> &'a Q: Into<Value>,
+        &'a Q: Into<Value>,
     {
         js_unwrap_ref!(@{self.inner.as_ref()}[@{key.into()}])
     }
 
     /// Gets an item, returning an error if the types don't match and `check-all-casts` is enabled.
-    pub fn try_get<Q: ?Sized>(&self, key: &Q) -> Option<Result<V, ConversionError>>
+    pub fn try_get<'a, Q: ?Sized>(&self, key: &'a Q) -> Option<Result<V, ConversionError>>
     where
         K: Borrow<Q>,
-        for<'a> &'a Q: Into<Value>,
+        &'a Q: Into<Value>,
     {
         // TODO: replace this match with Result::transpose
         // (https://doc.rust-lang.org/nightly/std/result/enum.Result.html#method.transpose)
