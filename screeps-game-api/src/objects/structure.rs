@@ -53,6 +53,9 @@ impl Structure {
     }
 
     pub fn as_attackable(&self) -> Option<&dyn Attackable> {
+        // not using match_some_structure_variants! so we won't have a `_ => None` branch and we'll
+        // be forced to add new structures to the match explicitly. Others would be using `_ =>
+        // None` anyways since they have fewer None branches.
         match self {
             Structure::Controller(_) => None,
             Structure::Container(v) => Some(v),
@@ -77,6 +80,9 @@ impl Structure {
     }
 
     pub fn as_owned(&self) -> Option<&dyn OwnedStructureProperties> {
+        // not using match_some_structure_variants! so we won't have a `_ => None` branch and we'll
+        // be forced to add new structures to the match explicitly. Others would be using `_ =>
+        // None` anyways since they have fewer None branches.
         match self {
             Structure::Container(_) => None,
             Structure::Controller(v) => Some(v),
