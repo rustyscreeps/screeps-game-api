@@ -34,7 +34,7 @@ function wasm_initialize() {
     // Run the remaining stdweb initialization. This is fairly short, just some things to make sure
     // callbacks work right and such. This will also run the rust `main` function.
     stdweb_vars.initialize(wasm_instance);
-    // Now we run the actual main loop - this assumes that the rust `main` function overwrites
+    // Now we run the actual game loop - this assumes that the rust `main` function overwrites
     // `module.exports.loop`.
     module.exports.loop();
 }
