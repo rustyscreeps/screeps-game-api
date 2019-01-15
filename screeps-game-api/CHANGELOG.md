@@ -6,6 +6,7 @@ Unreleased
 - Take `&T` in `Room::create_construction_site` and `look_for_at` rather than `T` for
   `T: HasPosition` (breaking) (#105)
 - Add `Neg` implementation for `Direction` allowing unary minus to reverse direction (#113)
+- Remove unnecessary allocation from PathFinder and Room.find calls (#112)
 - Add `JsVec` structure for transparently wrapping typed JavaScript arrays without immediately
   unwrapping them. (#114)
 
