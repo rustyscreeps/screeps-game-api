@@ -110,6 +110,21 @@ This configures general build options.
 - `output_js_file`: the javascript file to export bindings and bootstrapping as
   (default `"main.js"`)
 - `output_wasm_file`: the WASM file to rename compile WASM to (default `"compiled.wasm"`)
+- `initialize_header_file`: a file containing the JavaScript for starting the WASM instance. See
+  [overriding the default initialization header](#overriding-the-default-initialization-header)
+
+## Overriding the default initialization header
+
+`cargo-screeps` tries to make a reasonable `main.js` file to load the WASM. However, it's pretty
+basic, and you might find you want to do some things in JavaScript before loading the WASM module.
+
+Luckily, you can override this initialization! Set `build.initialize_header_file` to a file
+containing the JavaScript initialization code.
+
+Two utility functions `wasm_fetch_module_bytes` and `wasm_create_stdweb_vars` will always be
+created, but the initialization header controls what actually runs.
+
+See [docs/initialization-header.md] for more information on this.
 
 # Updating `cargo screeps`
 
