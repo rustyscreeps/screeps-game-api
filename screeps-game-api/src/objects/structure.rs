@@ -9,6 +9,43 @@ use {
 
 use super::*;
 
+/// Wrapper which can be any of the game Structures.
+///
+/// This is somewhat useful by itself, but has additional utility methods. Some tricks:
+///
+/// To get a particular type, `match` on the structure:
+///
+/// ```no_run
+/// use screeps::Structure;
+///
+/// # let my_struct: Structure = unimplemented!();
+/// match my_struct {
+///     Structure::Container(cont) => {
+///         // cont here is StructureContainer
+///     }
+///     _ => {
+///         // other structure
+///     }
+/// }
+/// ```
+///
+/// To use structures of a particular type, like something that can be attacked, or something that
+/// can be transfered to, use helper methods:
+/// ```no_run
+/// use screeps::Structure;
+///
+/// # let my_struct: Structure = unimplemented!();
+/// match my_struct.as_transferable() {
+///     Some(transf) => {
+///         // transf is a reference to `dyn Transferable`, and you can transfer to it.
+///     }
+///     None => {
+///         // my_struct is not transferable
+///     }
+/// }
+/// ```
+///
+/// See method documentation for a full list of possible helpers.
 pub enum Structure {
     Container(StructureContainer),
     Controller(StructureController),
@@ -32,6 +69,25 @@ pub enum Structure {
 }
 
 impl Structure {
+    /// Cast this structure as something Transferable, or return None if it isn't.
+    ///
+    /// Example usage:
+    ///
+    /// ```no_run
+    /// use screeps::{Creep, Structure, ResourceType};
+    ///
+    /// # let my_struct: Structure = unimplemented!();
+    /// # let my_creep: Creep = unimplemented!();
+    /// match my_struct.as_transferable() {
+    ///     Some(transf) => {
+    ///         // transf is a reference to `dyn Transferable`, and you can transfer to it.
+    ///         my_creep.transfer_all(transf, ResourceType::Energy);
+    ///     }
+    ///     None => {
+    ///         // my_struct cannot be transfered to
+    ///     }
+    /// }
+    /// ```
     pub fn as_transferable(&self) -> Option<&dyn Transferable> {
         match_some_structure_variants!(
             self,
@@ -42,6 +98,7 @@ impl Structure {
         )
     }
 
+    /// Cast this as something which can be withdrawn from
     pub fn as_withdrawable(&self) -> Option<&dyn Withdrawable> {
         match_some_structure_variants!(
             self,
@@ -52,6 +109,9 @@ impl Structure {
         )
     }
 
+    /// Cast this as something which can be attacked and has hit points.
+    ///
+    /// The only Structure which cannot be attacked is `StructureController`.
     pub fn as_attackable(&self) -> Option<&dyn Attackable> {
         // We're not using `match_some_structure_variants!` here or in `as_owned` so we won't have a
         // `_ => None` branch and instead we'll be forced to add new structures to the match
@@ -80,6 +140,16 @@ impl Structure {
         }
     }
 
+    /// Cast this as something which can be owned.
+    ///
+    /// Example:
+    ///
+    /// ```no_run
+    /// use screeps::Structure;
+    ///
+    /// # let my_struct: Structure = unimplemented!();
+    /// let is_my = my_struct.as_owned().map(|os| os.my()).unwrap_or(false);
+    /// ```
     pub fn as_owned(&self) -> Option<&dyn OwnedStructureProperties> {
         match self {
             Structure::Container(_) => None,
