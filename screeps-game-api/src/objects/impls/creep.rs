@@ -154,9 +154,8 @@ impl Creep {
         // be entirely safe because we're only sticking it in scoped storage and we control the only use
         // of it, but it's still necessary because "some lifetime above the current scope but otherwise
         // unknown" is not a valid lifetime to have PF_CALLBACK have.
-        let callback_lifetime_erased: Box<
-            Fn(String, Reference) -> Option<Reference> + 'static,
-        > = unsafe { mem::transmute(callback_type_erased) };
+        let callback_lifetime_erased: Box<Fn(String, Reference) -> Option<Reference> + 'static> =
+            unsafe { mem::transmute(callback_type_erased) };
 
         // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call and
         // make the call to PathFinder.
@@ -164,7 +163,7 @@ impl Creep {
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
             let rp = target.pos();
-            js_unwrap!{
+            js_unwrap! {
                 @{ self.as_ref() }.moveTo(
                     @{rp.as_ref()},
                     {

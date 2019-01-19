@@ -25,7 +25,7 @@ impl StructureLab {
     }
 
     pub fn run_reaction(&self, lab1: &StructureLab, lab2: &StructureLab) -> ReturnCode {
-        js_unwrap!{@{self.as_ref()}.runReaction(@{lab1.as_ref()}, @{lab2.as_ref()})}
+        js_unwrap! {@{self.as_ref()}.runReaction(@{lab1.as_ref()}, @{lab2.as_ref()})}
     }
 
     pub fn unboost_creep(&self, creep: &Creep) -> ReturnCode {

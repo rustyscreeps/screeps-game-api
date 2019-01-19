@@ -70,7 +70,7 @@ pub fn set_public_segments(ids: &[u32]) {
 get_from_js!(get -> {RawMemory.get()} -> String);
 
 pub fn set(value: &str) {
-    js!{
+    js! {
         RawMemory.set(@{value});
     }
 }

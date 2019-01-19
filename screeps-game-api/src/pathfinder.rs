@@ -386,7 +386,7 @@ where
     //
     // See https://docs.rs/scoped-tls/0.1/scoped_tls/
     PF_CALLBACK.set(&callback_lifetime_erased, || {
-        let res: ::stdweb::Reference = js_unwrap!{
+        let res: ::stdweb::Reference = js_unwrap! {
             PathFinder.search(@{origin.as_ref()}, @{goal}, {
                 roomCallback: @{callback},
                 plainCost: @{plain_cost},

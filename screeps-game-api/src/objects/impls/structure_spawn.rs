@@ -63,11 +63,11 @@ impl StructureSpawn {
     }
 
     pub fn recycle_creep(&self, target: &Creep) -> ReturnCode {
-        js_unwrap!{@{self.as_ref()}.recycleCreep(@{target.as_ref()})}
+        js_unwrap! {@{self.as_ref()}.recycleCreep(@{target.as_ref()})}
     }
 
     pub fn renew_creep(&self, target: &Creep) -> ReturnCode {
-        js_unwrap!{@{self.as_ref()}.renewCreep(@{target.as_ref()})}
+        js_unwrap! {@{self.as_ref()}.renewCreep(@{target.as_ref()})}
     }
 }
 

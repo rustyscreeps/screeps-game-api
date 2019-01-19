@@ -36,11 +36,11 @@ scoped_thread_local!(static COST_CALLBACK: &'static Fn(String, Reference) -> Opt
 
 impl Room {
     pub fn serialize_path(&self, path: &[Step]) -> String {
-        js_unwrap!{@{self.as_ref()}.serializePath(@{path})}
+        js_unwrap! {@{self.as_ref()}.serializePath(@{path})}
     }
 
     pub fn deserialize_path(&self, path: &str) -> Vec<Step> {
-        js_unwrap!{@{self.as_ref()}.deserializePath(@{path})}
+        js_unwrap! {@{self.as_ref()}.deserializePath(@{path})}
     }
 
     pub fn create_construction_site<T>(&self, at: &T, ty: StructureType) -> ReturnCode
@@ -113,11 +113,11 @@ impl Room {
     }
 
     pub fn get_event_log_raw(&self) -> String {
-        js_unwrap!{@{self.as_ref()}.getEventLog(true)}
+        js_unwrap! {@{self.as_ref()}.getEventLog(true)}
     }
 
     pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
-        js_unwrap!{@{self.as_ref()}.getPositionAt(@{x}, @{y})}
+        js_unwrap! {@{self.as_ref()}.getPositionAt(@{x}, @{y})}
     }
 
     pub fn get_terrain(&self) -> RoomTerrain {
@@ -200,7 +200,7 @@ impl Room {
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
-            let v = js!{
+            let v = js! {
                 return @{&self.as_ref()}.search(@{from.as_ref()}, @{to.as_ref()}, {
                     ignoreCreeps: @{ignore_creeps},
                     ignoreDestructibleStructures: @{ignore_destructible_structures}
@@ -277,7 +277,7 @@ impl Room {
         assert!(horiz.end <= 50);
         assert!(vert.end <= 50);
 
-        T::convert_and_check_items(js_unwrap!{@{self.as_ref()}.lookForAtArea(
+        T::convert_and_check_items(js_unwrap! {@{self.as_ref()}.lookForAtArea(
             __look_num_to_str(@{ty.look_code() as u32}),
             @{vert.start},
             @{horiz.start},
@@ -449,8 +449,8 @@ pub struct Step {
     direction: Direction,
 }
 
-js_deserializable!{Step}
-js_serializable!{Step}
+js_deserializable! {Step}
+js_serializable! {Step}
 
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
@@ -459,7 +459,7 @@ pub enum Path {
     Serialized(String),
 }
 
-js_deserializable!{Path}
+js_deserializable! {Path}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Event {
@@ -535,7 +535,7 @@ impl<'de> Deserialize<'de> for Event {
                                             return Err(de::Error::custom(format!(
                                                 "Event Type Unrecognized: {}",
                                                 event_id
-                                            )))
+                                            )));
                                         }
                                     };
                                 }
@@ -576,7 +576,7 @@ impl<'de> Deserialize<'de> for Event {
                                 return Err(de::Error::custom(format!(
                                     "Event Type Unrecognized: {}",
                                     event_id
-                                )))
+                                )));
                             }
                         };
                     }
@@ -729,7 +729,7 @@ impl TryFrom<Value> for LookResult {
                 return Err(ConversionError::Custom(format!(
                     "Look result type unknown: {:?}",
                     &look_type
-                )))
+                )));
             }
         };
         Ok(lr)

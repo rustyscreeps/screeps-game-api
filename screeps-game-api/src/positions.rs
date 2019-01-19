@@ -112,7 +112,10 @@ pub trait IntoLocalRoomName {
 
 fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
     if s == "sim" {
-        return Ok(LocalRoomName { x_coord: 0, y_coord: 0 })
+        return Ok(LocalRoomName {
+            x_coord: 0,
+            y_coord: 0,
+        });
     }
 
     let mut chars = s.char_indices();
@@ -279,9 +282,9 @@ mod stdweb {
         type Error = <Value as TryInto<String>>::Error;
 
         fn try_from(v: Value) -> Result<LocalRoomPosition, Self::Error> {
-            let x: u32 = (js!{@{&v}.x}).try_into()?;
-            let y: u32 = (js!{@{&v}.y}).try_into()?;
-            let room_name: LocalRoomName = (js!{@{&v}.roomName}).try_into()?;
+            let x: u32 = (js! {@{&v}.x}).try_into()?;
+            let y: u32 = (js! {@{&v}.y}).try_into()?;
+            let room_name: LocalRoomName = (js! {@{&v}.roomName}).try_into()?;
 
             Ok(LocalRoomPosition { x, y, room_name })
         }

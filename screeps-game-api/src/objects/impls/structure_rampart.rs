@@ -1,12 +1,12 @@
 use {constants::ReturnCode, objects::StructureRampart};
 
-simple_accessors!{
+simple_accessors! {
     StructureRampart;
     (is_public -> isPublic -> bool),
 }
 
 impl StructureRampart {
     pub fn set_public(&self, is_public: bool) -> ReturnCode {
-        js_unwrap!{ @{self.as_ref()}.setPublic( @{is_public} ) }
+        js_unwrap! { @{self.as_ref()}.setPublic( @{is_public} ) }
     }
 }
