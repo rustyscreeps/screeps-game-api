@@ -173,7 +173,7 @@ impl MemoryReference {
     ///
     /// If the value exists but is a different type, this will return `None`.
     pub fn dict_or_create(&self, key: &str) -> Result<MemoryReference, UnexpectedTypeError> {
-        (js!{
+        (js! {
             var map = (@{self.as_ref()});
             var key = (@{key});
             var value = map[key];
@@ -208,17 +208,23 @@ impl MemoryReference {
     }
 
     pub fn get<T>(&self, key: &str) -> Result<T, ConversionError>
-    where T: TryFrom<Value, Error = ConversionError>, {
+    where
+        T: TryFrom<Value, Error = ConversionError>,
+    {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn get_path<T>(&self, path: &str) -> Result<T, ConversionError>
-    where T: TryFrom<Value, Error = ConversionError>, {
+    where
+        T: TryFrom<Value, Error = ConversionError>,
+    {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn set<T>(&self, key: &str, value: T)

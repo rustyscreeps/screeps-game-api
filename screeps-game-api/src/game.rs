@@ -186,7 +186,7 @@ pub mod map {
 
     /// Implements `Game.map.findExit`.
     pub fn find_exit(from_room: &str, to_room: &str) -> Result<Exit, ReturnCode> {
-        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room}, @{to_room})};
+        let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room})};
         Exit::try_from(code)
             .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
     }
@@ -207,7 +207,7 @@ pub mod map {
             unsafe { mem::transmute(callback_type_erased) };
 
         FR_CALLBACK.set(&callback_lifetime_erased, || {
-            let code: i32 = js_unwrap!{Game.map.findExit(@{from_room}, @{to_room}, @{callback})};
+            let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room}, @{callback})};
             Exit::try_from(code)
                 .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
         })
@@ -358,14 +358,14 @@ pub mod market {
     }
 
     pub fn incoming_transactions() -> Vec<Transaction> {
-        let arr_transaction_value = js!{
+        let arr_transaction_value = js! {
             return Game.market.incomingTransactions;
         };
         arr_transaction_value.try_into().unwrap()
     }
 
     pub fn outgoing_transactions() -> Vec<Transaction> {
-        let arr_transaction_value = js!{
+        let arr_transaction_value = js! {
             return Game.market.outgoingTransactions;
         };
         arr_transaction_value.try_into().unwrap()
@@ -397,7 +397,7 @@ pub mod market {
         total_amount: u32,
         room: &Room,
     ) -> ReturnCode {
-        js_unwrap!{
+        js_unwrap! {
             Game.market.createOrder(__order_type_num_to_str(@{order_type as u32}),
                                     __resource_type_num_to_str(@{resource_type as u32}),
                                     @{price},
@@ -407,11 +407,11 @@ pub mod market {
     }
 
     pub fn deal(order_id: &str, amount: u32, target_room: &Room) -> ReturnCode {
-        js_unwrap!{Game.market.deal(@{order_id}, @{amount}, @{target_room.name()})}
+        js_unwrap! {Game.market.deal(@{order_id}, @{amount}, @{target_room.name()})}
     }
 
     pub fn extend_order(order_id: &str, add_amount: u32) -> ReturnCode {
-        js_unwrap!{Game.market.extendOrder(@{order_id}, @{add_amount})}
+        js_unwrap! {Game.market.extendOrder(@{order_id}, @{add_amount})}
     }
 
     /// Get all orders from the market
@@ -520,5 +520,5 @@ pub fn get_object_erased(id: &str) -> Option<RoomObject> {
 }
 
 pub fn notify(message: &str, group_interval: Option<u32>) {
-    js!{Game.notify(@{message}, @{group_interval.unwrap_or(0)})};
+    js! {Game.notify(@{message}, @{group_interval.unwrap_or(0)})};
 }

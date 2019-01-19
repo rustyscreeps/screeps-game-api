@@ -19,7 +19,7 @@ impl StructurePortal {
     pub fn destination(&self) -> PortalDestination {
         let v = js! {return @{self.as_ref()}.destination;};
 
-        let is_inter_room: bool = js_unwrap!{
+        let is_inter_room: bool = js_unwrap! {
             @{&v} instanceof RoomPosition
         };
 

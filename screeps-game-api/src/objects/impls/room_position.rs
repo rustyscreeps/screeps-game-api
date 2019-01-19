@@ -123,7 +123,7 @@ impl RoomPosition {
     }
 
     pub fn is_equal_to_xy(&self, x: u32, y: u32) -> bool {
-        js_unwrap!{return @{self.as_ref()}.isEqualTo(@{x}, @{y});}
+        js_unwrap! {return @{self.as_ref()}.isEqualTo(@{x}, @{y});}
     }
 
     pub fn is_near_to<T>(&self, target: &T) -> bool
@@ -141,7 +141,7 @@ impl RoomPosition {
     where
         T: LookConstant,
     {
-        T::convert_and_check_items(js_unwrap!{
+        T::convert_and_check_items(js_unwrap! {
             @{self.as_ref()}.lookFor(__look_num_to_str(@{ty.look_code() as u32}))
         })
     }
@@ -149,7 +149,7 @@ impl RoomPosition {
 
 impl<T: HasPosition> PartialEq<T> for RoomPosition {
     fn eq(&self, other: &T) -> bool {
-        (js!{
+        (js! {
             var a = @{self.as_ref()};
             var b = @{&other.pos().0};
             return a.x == b.x && a.y == b.y && a.roomName == b.roomName;

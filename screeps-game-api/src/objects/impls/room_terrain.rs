@@ -30,7 +30,7 @@ impl RoomTerrain {
         {
             let arr: UnsafeTypedArray<u8> = unsafe { UnsafeTypedArray::new(buffer.as_mut_slice()) };
 
-            is_success = js!{
+            is_success = js! {
                 var bytes = @{arr};
                 return @{self.as_ref()}.getRawBuffer(bytes) === bytes;
             }

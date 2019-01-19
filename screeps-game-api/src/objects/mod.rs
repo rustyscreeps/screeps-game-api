@@ -378,11 +378,11 @@ pub unsafe trait Withdrawable: RoomObjectProperties {}
 /// target for `Creep.attack`.
 pub unsafe trait Attackable: RoomObjectProperties {
     fn hits(&self) -> u32 {
-        js_unwrap!{ @{self.as_ref()}.hits }
+        js_unwrap! { @{self.as_ref()}.hits }
     }
 
     fn hits_max(&self) -> u32 {
-        js_unwrap!{ @{self.as_ref()}.hitsMax }
+        js_unwrap! { @{self.as_ref()}.hitsMax }
     }
 }
 
@@ -468,7 +468,7 @@ unsafe impl RoomObjectProperties for StructureWall {}
 unsafe impl RoomObjectProperties for Structure {}
 unsafe impl RoomObjectProperties for Tombstone {}
 
-impl_structure_properties!{
+impl_structure_properties! {
     OwnedStructure,
     Structure,
     StructureContainer,

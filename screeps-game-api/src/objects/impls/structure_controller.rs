@@ -30,7 +30,7 @@ pub struct Sign {
 
 impl StructureController {
     pub fn activate_safe_mode(&self) -> ReturnCode {
-        js_unwrap!{@{self.as_ref()}.activateSafeMode()}
+        js_unwrap! {@{self.as_ref()}.activateSafeMode()}
     }
 
     pub fn reservation(&self) -> Option<Reservation> {
@@ -58,6 +58,6 @@ impl StructureController {
     }
 
     pub fn unclaim(&self) -> ReturnCode {
-        js_unwrap!{@{self.as_ref()}.unclaim()}
+        js_unwrap! {@{self.as_ref()}.unclaim()}
     }
 }

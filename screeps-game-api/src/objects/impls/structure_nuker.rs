@@ -11,6 +11,6 @@ simple_accessors! {
 
 impl StructureNuker {
     pub fn launch_nuke(&self, pos: &RoomPosition) -> ReturnCode {
-        js_unwrap!{@{self.as_ref()}.launchNuke(@{pos.as_ref()})}
+        js_unwrap! {@{self.as_ref()}.launchNuke(@{pos.as_ref()})}
     }
 }
