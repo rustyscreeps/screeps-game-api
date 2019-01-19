@@ -1,5 +1,5 @@
 use {
-    objects::{HasId, RoomObject},
+    objects::{HasId, RoomObject, SizedRoomObject},
     traits::TryInto,
     ConversionError,
 };
@@ -504,7 +504,7 @@ pub fn time() -> u32 {
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
 pub fn get_object_typed<T>(id: &str) -> Result<Option<T>, ConversionError>
 where
-    T: HasId,
+    T: HasId + SizedRoomObject,
 {
     js!(return Game.getObjectById(@{id});).try_into()
 }

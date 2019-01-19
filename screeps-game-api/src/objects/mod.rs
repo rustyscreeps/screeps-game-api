@@ -173,17 +173,37 @@ impl_has_id! {
 ///
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `RoomObject` class.
-pub unsafe trait RoomObjectProperties:
-    AsRef<Reference>
-    + Into<Reference>
-    + HasPosition
+pub unsafe trait RoomObjectProperties: AsRef<Reference> + HasPosition {
+    fn room(&self) -> Room {
+        js_unwrap_ref!(@{self.as_ref()}.room)
+    }
+}
+
+/// Trait representing things that are both `RoomObjectProperties` and `Sized`.
+///
+/// These bounds would be on `RoomObjectProperties`, but for the fact that they
+/// then require all `T: RoomObjectProperties` to be `T: Sized`, and thus disallow
+/// creating trait objects like `&dyn RoomObjectProperties` (or more usefully,
+/// `&dyn Attackable` or `&dyn HasStore`)
+///
+/// This trait is automatically implemented for all structures implementing the traits
+/// it requires, and everything implement `RoomObjectProperties` and being `Sized`
+/// should also implement this.
+pub trait SizedRoomObject:
+    Into<Reference>
     + ReferenceType
     + TryFrom<Value, Error = ConversionError>
     + TryFrom<Reference, Error = ConversionError>
 {
-    fn room(&self) -> Room {
-        js_unwrap_ref!(@{self.as_ref()}.room)
-    }
+}
+
+impl<T> SizedRoomObject for T where
+    T: RoomObjectProperties
+        + Into<Reference>
+        + ReferenceType
+        + TryFrom<Value, Error = ConversionError>
+        + TryFrom<Reference, Error = ConversionError>
+{
 }
 
 /// Trait for all wrappers over Screeps JavaScript objects extending
@@ -208,7 +228,10 @@ pub unsafe trait StructureProperties: RoomObjectProperties + HasId {
     fn notify_when_attacked(&self, notify_when_attacked: bool) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.notifyWhenAttacked(@{notify_when_attacked}))
     }
-    fn as_structure(self) -> Structure {
+    fn as_structure(self) -> Structure
+    where
+        Self: SizedRoomObject,
+    {
         Into::<Reference>::into(self)
             .into_expected_type()
             .expect("expected converting a StructureProperties to a Structure would suceed.")
@@ -238,7 +261,10 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
         .try_into()
         .expect("expected OwnedStructure.owner.username to be a string")
     }
-    fn as_owned_structure(self) -> OwnedStructure {
+    fn as_owned_structure(self) -> OwnedStructure
+    where
+        Self: SizedRoomObject,
+    {
         OwnedStructure(self.into())
     }
 }
@@ -360,6 +386,8 @@ pub unsafe trait Attackable: RoomObjectProperties {
     }
 }
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl Transferable for StructureExtension {}
 unsafe impl Transferable for Creep {}
 unsafe impl Transferable for StructureContainer {}
@@ -372,6 +400,8 @@ unsafe impl Transferable for StructureTower {}
 unsafe impl Transferable for StructurePowerSpawn {}
 unsafe impl Transferable for StructureTerminal {}
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl Withdrawable for StructureExtension {}
 unsafe impl Withdrawable for StructureContainer {}
 unsafe impl Withdrawable for StructureLab {}
@@ -382,6 +412,8 @@ unsafe impl Withdrawable for StructureTower {}
 unsafe impl Withdrawable for StructurePowerSpawn {}
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
 
 unsafe impl Attackable for Creep {}
 unsafe impl Attackable for OwnedStructure {}
@@ -478,6 +510,8 @@ unsafe impl OwnedStructureProperties for StructureStorage {}
 unsafe impl OwnedStructureProperties for StructureTerminal {}
 unsafe impl OwnedStructureProperties for StructureTower {}
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl HasStore for StructureContainer {}
 unsafe impl HasStore for StructureStorage {}
 unsafe impl HasStore for StructureTerminal {}
@@ -487,6 +521,8 @@ unsafe impl HasStore for Tombstone {
     }
 }
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl CanStoreEnergy for StructureExtension {}
 unsafe impl CanStoreEnergy for StructureLab {}
 unsafe impl CanStoreEnergy for StructureLink {}
@@ -495,14 +531,20 @@ unsafe impl CanStoreEnergy for StructurePowerSpawn {}
 unsafe impl CanStoreEnergy for StructureSpawn {}
 unsafe impl CanStoreEnergy for StructureTower {}
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl HasEnergyForSpawn for StructureExtension {}
 unsafe impl HasEnergyForSpawn for StructureSpawn {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
 
 unsafe impl HasCooldown for StructureExtractor {}
 unsafe impl HasCooldown for StructureLab {}
 unsafe impl HasCooldown for StructureLink {}
 unsafe impl HasCooldown for StructureNuker {}
 unsafe impl HasCooldown for StructureTerminal {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
 
 unsafe impl CanDecay for StructureContainer {}
 unsafe impl CanDecay for StructurePowerBank {}

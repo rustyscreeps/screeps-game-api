@@ -488,6 +488,19 @@ macro_rules! construct_structure_variants {
     };
 }
 
+/// Match on all variants of `Structure`, doing something wrapped in Some() for some of them,
+/// and None for others.
+macro_rules! match_some_structure_variants {
+    ($source:expr, { $($allowed:ident),* $(,)* }, $name:ident => $action:expr) => {
+        match $source {
+            $(
+                Structure::$allowed($name) => Some($action),
+            )*
+            _ => None,
+        }
+    };
+}
+
 /// Implements [`serde::Serialize`] for a single given structure name.
 ///
 /// The generated implementation unconditionally uses `item as i32` to convert any instance of the
