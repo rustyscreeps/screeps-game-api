@@ -293,7 +293,7 @@ macro_rules! creep_simple_generic_action {
             $(
                 pub fn $method<T>(&self, target: &T) -> ReturnCode
                 where
-                    T: $trait,
+                    T: ?Sized + $trait,
                 {
                     js_unwrap!(@{self.as_ref()}.$js_name(@{target.as_ref()}))
                 }

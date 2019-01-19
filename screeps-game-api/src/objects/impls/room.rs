@@ -45,7 +45,7 @@ impl Room {
 
     pub fn create_construction_site<T>(&self, at: &T, ty: StructureType) -> ReturnCode
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
@@ -61,7 +61,7 @@ impl Room {
         name: &str,
     ) -> ReturnCode
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
@@ -79,7 +79,7 @@ impl Room {
         secondary_color: Color,
     ) -> ReturnCode
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createFlag(
@@ -124,7 +124,7 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.getTerrain())
     }
 
-    pub fn look_at<T: HasPosition>(&self, target: &T) -> Vec<LookResult> {
+    pub fn look_at<T: ?Sized + HasPosition>(&self, target: &T) -> Vec<LookResult> {
         let rp = target.pos();
         js_unwrap!(@{self.as_ref()}.lookAt(@{rp.as_ref()}))
     }
@@ -145,8 +145,8 @@ impl Room {
 
     pub fn find_path<'a, O, T, F>(&self, from_pos: &O, to_pos: &T, opts: FindOptions<'a, F>) -> Path
     where
-        O: HasPosition,
-        T: HasPosition,
+        O: ?Sized + HasPosition,
+        T: ?Sized + HasPosition,
         F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
     {
         let from = from_pos.pos();

@@ -304,8 +304,8 @@ pub fn search<'a, O, G, F>(
     opts: SearchOptions<'a, F>,
 ) -> SearchResults
 where
-    O: HasPosition,
-    G: HasPosition,
+    O: ?Sized + HasPosition,
+    G: ?Sized + HasPosition,
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {
     let pos = goal.pos();
