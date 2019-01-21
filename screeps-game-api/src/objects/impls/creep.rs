@@ -94,17 +94,18 @@ impl Creep {
         self.move_to_with_options(&rp, move_options)
     }
 
-    pub fn move_to<T: HasPosition>(&self, target: &T) -> ReturnCode {
+    pub fn move_to<T: ?Sized + HasPosition>(&self, target: &T) -> ReturnCode {
         let p = target.pos();
         js_unwrap!(@{self.as_ref()}.moveTo(@{&p.0}))
     }
 
-    pub fn move_to_with_options<'a, F, T: HasPosition>(
+    pub fn move_to_with_options<'a, F, T>(
         &self,
         target: &T,
         move_options: MoveToOptions<'a, F>,
     ) -> ReturnCode
     where
+        T: ?Sized + HasPosition,
         F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
     {
         let MoveToOptions {
@@ -229,7 +230,7 @@ impl Creep {
 
     pub fn transfer_amount<T>(&self, target: &T, ty: ResourceType, amount: u32) -> ReturnCode
     where
-        T: Transferable,
+        T: ?Sized + Transferable,
     {
         js_unwrap!(@{self.as_ref()}.transfer(
             @{target.as_ref()},
@@ -240,7 +241,7 @@ impl Creep {
 
     pub fn transfer_all<T>(&self, target: &T, ty: ResourceType) -> ReturnCode
     where
-        T: Transferable,
+        T: ?Sized + Transferable,
     {
         js_unwrap!(@{self.as_ref()}.transfer(
             @{target.as_ref()},
@@ -250,7 +251,7 @@ impl Creep {
 
     pub fn withdraw_amount<T>(&self, target: &T, ty: ResourceType, amount: u32) -> ReturnCode
     where
-        T: Withdrawable,
+        T: ?Sized + Withdrawable,
     {
         js_unwrap!(@{self.as_ref()}.withdraw(
             @{target.as_ref()},
@@ -261,7 +262,7 @@ impl Creep {
 
     pub fn withdraw_all<T>(&self, target: &T, ty: ResourceType) -> ReturnCode
     where
-        T: Withdrawable,
+        T: ?Sized + Withdrawable,
     {
         js_unwrap!(@{self.as_ref()}.withdraw(
             @{target.as_ref()},

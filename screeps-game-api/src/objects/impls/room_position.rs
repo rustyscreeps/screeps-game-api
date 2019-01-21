@@ -80,7 +80,7 @@ impl RoomPosition {
     pub fn find_path_to<'a, F, T>(&self, target: &T, opts: FindOptions<'a, F>) -> Path
     where
         F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         let self_room = game::rooms::get(&self.room_name()).unwrap();
         self_room.find_path(self, target, opts)
@@ -110,14 +110,14 @@ impl RoomPosition {
 
     pub fn in_range_to<T>(&self, target: &T, range: u32) -> bool
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         js_unwrap!(@{self.as_ref()}.inRangeTo(@{&target.pos().0}, @{range}))
     }
 
     pub fn is_equal_to<T>(&self, target: &T) -> bool
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         js_unwrap!(@{self.as_ref()}.isEqualTo(@{&target.pos().0}))
     }
@@ -128,7 +128,7 @@ impl RoomPosition {
 
     pub fn is_near_to<T>(&self, target: &T) -> bool
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         js_unwrap!(@{self.as_ref()}.isNearTo(@{&target.pos().0}))
     }

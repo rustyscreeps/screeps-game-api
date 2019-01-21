@@ -417,7 +417,6 @@ unsafe impl Withdrawable for Tombstone {}
 
 unsafe impl Attackable for Creep {}
 unsafe impl Attackable for OwnedStructure {}
-unsafe impl Attackable for Structure {}
 unsafe impl Attackable for StructureContainer {}
 unsafe impl Attackable for StructureExtension {}
 unsafe impl Attackable for StructureExtractor {}
