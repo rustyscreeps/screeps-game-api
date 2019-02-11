@@ -32,7 +32,7 @@ pub fn run() -> Result<(), failure::Error> {
         }
         setup::Command::Copy => {
             run_build(&root, &config)?;
-            run_upload(&root, &config)?;
+            run_copy(&root, &config)?;
         }
         setup::Command::Deploy => {
             run_build(&root, &config)?;
