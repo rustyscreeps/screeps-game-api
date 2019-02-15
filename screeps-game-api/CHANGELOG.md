@@ -5,10 +5,19 @@ Unreleased
 - Add `Room::look_for_at_xy` (#104)
 - Take `&T` in `Room::create_construction_site` and `look_for_at` rather than `T` for
   `T: HasPosition` (breaking) (#105)
-- Add `Neg` implementation for `Direction` allowing unary minus to reverse direction (#113)
 - Remove unnecessary allocation from PathFinder and Room.find calls (#112)
+- Add `Neg` implementation for `Direction` allowing unary minus to reverse direction (#113)
 - Add `JsVec` structure for transparently wrapping typed JavaScript arrays without immediately
   unwrapping them. (#114)
+- Switch to `num-derive` for deriving number->enum transitions (previously `enum-primitive`)
+  (#116)
+- Fix inability to decode `Structure` at all (#119)
+- Remove `Sized` bound on `RoomObjectProperties` and add `SizedRoomObject` trait
+- Add utility methods for turning `Structure` into `Option<&SomeTrait>` for a variety of traits -
+  for instance, see `as_attackable()` (#122)
+- Fix constant name `DROPPED_RESOURCES` (previously: `DROPPED_RESOUCES`) (#126)
+- Remove `Attackable` implementation for `Structure` (`StructureController` and `StructurePortal`
+  are _not_ attackable). Use `as_attackable()` instead. (#129)
 
 0.3.0 (2018-11-12)
 ==================
