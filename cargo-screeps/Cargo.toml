@@ -8,6 +8,7 @@ include = [
     "src/**/*",
     "tests/**/*",
     "examples/**/*",
+    "resources/**/*",
     "LICENSE",
     "README.md",
 ]
