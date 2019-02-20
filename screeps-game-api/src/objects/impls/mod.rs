@@ -25,11 +25,13 @@ mod structure_tower;
 mod tombstone;
 
 pub use self::{
+    creep::{Bodypart, MoveToOptions},
     room::{
         AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
         HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path,
         PositionedLookResult, RepairEvent, ReserveControllerEvent, Step, UpgradeControllerEvent,
     },
     structure_controller::{Reservation, Sign},
+    structure_portal::PortalDestination,
     structure_spawn::SpawnOptions,
 };
