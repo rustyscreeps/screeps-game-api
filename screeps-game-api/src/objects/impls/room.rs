@@ -94,7 +94,7 @@ impl Room {
     where
         T: FindConstant,
     {
-        js_unwrap_ref!(@{self.as_ref()}.find(@{ty.find_code()}))
+        js_unwrap_ref!(Object.values(@{self.as_ref()}.find(@{ty.find_code()})))
     }
 
     pub fn find_exit_to(&self, room: &Room) -> Result<Exit, ReturnCode> {
