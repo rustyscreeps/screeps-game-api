@@ -73,10 +73,11 @@ Options for the `upload` deploy mode.
 
 This section is required to use `cargo screeps upload`.
 
+- `auth_token`: an auth token for your Screeps account
 - `username`: your Screeps username or email
 - `password`: your Screeps password
 
-  For private servers set a password using [screepsmod-auth].
+  Either an auth_token or your username/password can be supplied. When both are set the auth token is used. For private servers set a password using [screepsmod-auth].
 - `branch`: the branch on the server to upload files to
 - `ptr`: if true, upload to the "ptr" realm
 - `hostname`: the hostname to upload to

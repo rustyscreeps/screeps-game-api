@@ -1,9 +1,10 @@
 default_deploy_mode = "upload"
 
 [upload]
-username = "your username or email"
-password = "your password"
+auth_token = "your auth token"
 branch = "default"
+# username = "your username or email"
+# password = "your password"
 # ptr = false
 # hostname = "screeps.com"
 # ssl = true

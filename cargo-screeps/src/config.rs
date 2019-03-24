@@ -39,8 +39,9 @@ impl BuildConfiguration {
 
 #[derive(Clone, Debug, Deserialize)]
 struct FileUploadConfiguration {
-    username: String,
-    password: String,
+    auth_token: Option<String>,
+    username: Option<String>,
+    password: Option<String>,
     branch: String,
     #[serde(default = "default_hostname")]
     hostname: String,
@@ -61,8 +62,9 @@ fn default_ptr() -> bool {
 
 #[derive(Clone, Debug)]
 pub struct UploadConfiguration {
-    pub username: String,
-    pub password: String,
+    pub auth_token: Option<String>,
+    pub username: Option<String>,
+    pub password: Option<String>,
     pub hostname: String,
     pub branch: String,
     pub ssl: bool,
@@ -109,6 +111,7 @@ pub struct Configuration {
 impl UploadConfiguration {
     fn new(config: FileUploadConfiguration) -> Result<UploadConfiguration, failure::Error> {
         let FileUploadConfiguration {
+            auth_token,
             username,
             password,
             branch,
@@ -122,6 +125,7 @@ impl UploadConfiguration {
         let port = port.unwrap_or_else(|| if ssl { 443 } else { 80 });
 
         Ok(UploadConfiguration {
+            auth_token,
             username,
             password,
             branch,
