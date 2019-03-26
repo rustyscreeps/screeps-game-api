@@ -51,7 +51,7 @@ pub use {
     constants::*,
     js_collections::JsVec,
     objects::*,
-    positions::{LocalRoomName, LocalRoomPosition},
+    positions::{LocalRoomName, LocalRoomNameParseError, LocalRoomPosition},
     traits::{FromExpectedType, IntoExpectedType},
 };
 

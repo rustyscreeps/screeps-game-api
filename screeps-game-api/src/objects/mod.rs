@@ -25,10 +25,10 @@ mod structure;
 
 pub use self::{
     impls::{
-        AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
-        HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path,
-        PositionedLookResult, RepairEvent, Reservation, ReserveControllerEvent, Sign, SpawnOptions,
-        Step, UpgradeControllerEvent,
+        AttackEvent, AttackType, Bodypart, BuildEvent, Event, EventType, ExitEvent, FindOptions,
+        HarvestEvent, HealEvent, HealType, LookResult, MoveToOptions, ObjectDestroyedEvent, Path,
+        PortalDestination, PositionedLookResult, RepairEvent, Reservation, ReserveControllerEvent,
+        Sign, SpawnOptions, Step, UpgradeControllerEvent,
     },
     structure::Structure,
 };
