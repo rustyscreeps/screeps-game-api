@@ -73,7 +73,7 @@ pub struct UploadConfiguration {
 #[derive(Clone, Debug)]
 pub enum Authentication {
     Token(String),
-    Basic {username: String, password: String},
+    Basic { username: String, password: String },
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -131,7 +131,10 @@ impl UploadConfiguration {
         let authentication = if auth_token.is_some() {
             Authentication::Token(auth_token.unwrap())
         } else if username.is_some() && password.is_some() {
-            Authentication::Basic {username: username.unwrap(), password: password.unwrap()}
+            Authentication::Basic {
+                username: username.unwrap(),
+                password: password.unwrap(),
+            }
         } else {
             bail!("either auth_token or username/password must be set in the [upload] section of the configuration");
         };
