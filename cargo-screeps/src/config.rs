@@ -62,14 +62,18 @@ fn default_ptr() -> bool {
 
 #[derive(Clone, Debug)]
 pub struct UploadConfiguration {
-    pub auth_token: Option<String>,
-    pub username: Option<String>,
-    pub password: Option<String>,
+    pub authentication: Authentication,
     pub hostname: String,
     pub branch: String,
     pub ssl: bool,
     pub port: i32,
     pub ptr: bool,
+}
+
+#[derive(Clone, Debug)]
+pub enum Authentication {
+    Token(String),
+    Basic {username: String, password: String},
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -124,10 +128,16 @@ impl UploadConfiguration {
         let ssl = ssl.unwrap_or_else(|| hostname == "screeps.com");
         let port = port.unwrap_or_else(|| if ssl { 443 } else { 80 });
 
+        let authentication = if auth_token.is_some() {
+            Authentication::Token(auth_token.unwrap())
+        } else if username.is_some() && password.is_some() {
+            Authentication::Basic {username: username.unwrap(), password: password.unwrap()}
+        } else {
+            bail!("either auth_token or username/password must be set in the [upload] section of the configuration");
+        };
+
         Ok(UploadConfiguration {
-            auth_token,
-            username,
-            password,
+            authentication,
             branch,
             hostname,
             ssl,
