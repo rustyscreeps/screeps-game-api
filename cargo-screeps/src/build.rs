@@ -140,11 +140,11 @@ if( typeof Rust === "undefined" ) {
     } else {
         Rust.XXX = factory();
     }
-}   ( this, function() {
+}( this, function() {
     return (function( module_factory ) {
         var instance = module_factory();
 
-        if( typeof window === "undefined" && typeof process === "object" ) {
+        if( typeof process === "object" && typeof process.versions === "object" && typeof process.versions.node === "string" ) {
             var fs = require( "fs" );
             var path = require( "path" );
             var wasm_path = path.join( __dirname, "XXX.wasm" );
