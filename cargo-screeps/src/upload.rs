@@ -2,7 +2,7 @@ use std::{collections::HashMap, fs, io::Read, path::Path};
 
 use {base64, failure, reqwest, serde_json};
 
-use config::Configuration;
+use config::{Authentication, Configuration};
 
 pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error> {
     let upload_config = config.upload.as_ref().ok_or_else(|| {
@@ -60,9 +60,7 @@ pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error>
         branch: String,
     }
 
-    let mut response = client
-        .post(&*url)
-        .basic_auth(&*upload_config.username, Some(&*upload_config.password))
+    let mut response = authenticate(client.post(&url), &upload_config.authentication)
         .json(&RequestData {
             modules: files,
             branch: upload_config.branch.clone(),
@@ -93,4 +91,17 @@ pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error>
     }
 
     Ok(())
+}
+
+fn authenticate(
+    request: reqwest::RequestBuilder,
+    authentication: &Authentication,
+) -> reqwest::RequestBuilder {
+    match authentication {
+        Authentication::Token(ref token) => request.header("X-Token", token.as_str()),
+        Authentication::Basic {
+            ref username,
+            ref password,
+        } => request.basic_auth(username, Some(password)),
+    }
 }
