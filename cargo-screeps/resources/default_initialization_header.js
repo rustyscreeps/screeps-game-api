@@ -3,7 +3,7 @@ let wasm_module = null;
 
 function wasm_initialize() {
     
-    if(Game.cpu.bucket < 500){
+    if (Game.cpu.bucket < 500) {
         console.log("we are running out of time, pausing compile!" + JSON.stringify(Game.cpu));
         return;
     }
