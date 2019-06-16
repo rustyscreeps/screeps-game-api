@@ -2,6 +2,12 @@
 let wasm_module = null;
 
 function wasm_initialize() {
+    
+    if (Game.cpu.bucket < 500) {
+        console.log("we are running out of time, pausing compile!" + JSON.stringify(Game.cpu));
+        return;
+    }
+    
     if (wasm_module == null) {
         let wasm_bytes = wasm_fetch_module_bytes();
         wasm_module = new WebAssembly.Module(wasm_bytes);
