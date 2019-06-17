@@ -201,9 +201,9 @@ pub mod map {
             FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
         }
 
-        let callback_type_erased: Box<Fn(String, String) -> f64> = Box::new(route_callback);
+        let callback_type_erased: Box<dyn Fn(String, String) -> f64> = Box::new(route_callback);
 
-        let callback_lifetime_erased: Box<Fn(String, String) -> f64 + 'static> =
+        let callback_lifetime_erased: Box<dyn Fn(String, String) -> f64 + 'static> =
             unsafe { mem::transmute(callback_type_erased) };
 
         FR_CALLBACK.set(&callback_lifetime_erased, || {
@@ -218,7 +218,7 @@ pub mod map {
         parse_find_route_returned_value(v)
     }
 
-    scoped_thread_local!(static FR_CALLBACK: Box<(Fn(String, String) -> f64)>);
+    scoped_thread_local!(static FR_CALLBACK: Box<(dyn Fn(String, String) -> f64)>);
 
     pub fn find_route_with_callback(
         from_room: &str,
@@ -230,9 +230,9 @@ pub mod map {
             FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
         }
 
-        let callback_type_erased: Box<Fn(String, String) -> f64> = Box::new(route_callback);
+        let callback_type_erased: Box<dyn Fn(String, String) -> f64> = Box::new(route_callback);
 
-        let callback_lifetime_erased: Box<Fn(String, String) -> f64 + 'static> =
+        let callback_lifetime_erased: Box<dyn Fn(String, String) -> f64 + 'static> =
             unsafe { mem::transmute(callback_type_erased) };
 
         FR_CALLBACK.set(&callback_lifetime_erased, || {
