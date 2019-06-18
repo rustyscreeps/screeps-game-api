@@ -335,7 +335,7 @@ where
     search_real(&origin.pos(), &goals_js, opts)
 }
 
-scoped_thread_local!(static PF_CALLBACK: &'static Fn(String) -> Reference);
+scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Reference);
 
 fn search_real<'a, F>(
     origin: &RoomPosition,
@@ -361,14 +361,14 @@ where
 
     // Type erased and boxed callback: no longer a type specific to the closure passed in,
     // now unified as &Fn
-    let callback_type_erased: &(Fn(String) -> Reference + 'a) = &callback_unboxed;
+    let callback_type_erased: &(dyn Fn(String) -> Reference + 'a) = &callback_unboxed;
 
     // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
     // storage: it's now pretending to be static data. This should be entirely safe because we're
     // only sticking it in scoped storage and we control the only use of it, but it's still
     // necessary because "some lifetime above the current scope but otherwise unknown" is not a
     // valid lifetime to have PF_CALLBACK have.
-    let callback_lifetime_erased: &'static Fn(String) -> Reference =
+    let callback_lifetime_erased: &'static dyn Fn(String) -> Reference =
         unsafe { mem::transmute(callback_type_erased) };
 
     let SearchOptions {

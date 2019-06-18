@@ -32,7 +32,7 @@ simple_accessors! {
     // todo: visual
 }
 
-scoped_thread_local!(static COST_CALLBACK: &'static Fn(String, Reference) -> Option<Reference>);
+scoped_thread_local!(static COST_CALLBACK: &'static dyn Fn(String, Reference) -> Option<Reference>);
 
 impl Room {
     pub fn serialize_path(&self, path: &[Step]) -> String {
@@ -171,7 +171,7 @@ impl Room {
 
         // Type erased and boxed callback: no longer a type specific to the closure passed in,
         // now unified as &Fn
-        let callback_type_erased: &(Fn(String, Reference) -> Option<Reference> + 'a) =
+        let callback_type_erased: &(dyn Fn(String, Reference) -> Option<Reference> + 'a) =
             &callback_boxed;
 
         // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
@@ -179,7 +179,7 @@ impl Room {
         // we're only sticking it in scoped storage and we control the only use of it, but it's
         // still necessary because "some lifetime above the  current scope but otherwise unknown" is
         // not a valid lifetime to have PF_CALLBACK have.
-        let callback_lifetime_erased: &'static Fn(String, Reference) -> Option<Reference> =
+        let callback_lifetime_erased: &'static dyn Fn(String, Reference) -> Option<Reference> =
             unsafe { mem::transmute(callback_type_erased) };
 
         let FindOptions {

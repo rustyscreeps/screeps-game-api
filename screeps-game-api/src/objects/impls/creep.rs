@@ -15,7 +15,7 @@ use {
 
 use super::room::Step;
 
-scoped_thread_local!(static COST_CALLBACK: Box<Fn(String, Reference) -> Option<Reference>>);
+scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(String, Reference) -> Option<Reference>>);
 
 impl Creep {
     pub fn body(&self) -> Vec<Bodypart> {
@@ -147,7 +147,7 @@ impl Creep {
 
         // Type erased and boxed callback: no longer a type specific to the closure passed in,
         // now unified as Box<Fn>
-        let callback_type_erased: Box<Fn(String, Reference) -> Option<Reference> + 'a> =
+        let callback_type_erased: Box<dyn Fn(String, Reference) -> Option<Reference> + 'a> =
             Box::new(callback_boxed);
 
         // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
@@ -155,7 +155,7 @@ impl Creep {
         // be entirely safe because we're only sticking it in scoped storage and we control the only use
         // of it, but it's still necessary because "some lifetime above the current scope but otherwise
         // unknown" is not a valid lifetime to have PF_CALLBACK have.
-        let callback_lifetime_erased: Box<Fn(String, Reference) -> Option<Reference> + 'static> =
+        let callback_lifetime_erased: Box<dyn Fn(String, Reference) -> Option<Reference> + 'static> =
             unsafe { mem::transmute(callback_type_erased) };
 
         // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call and
