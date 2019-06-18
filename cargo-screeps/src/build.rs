@@ -7,9 +7,9 @@ use {failure, regex};
 pub fn check(root: &Path) -> Result<(), failure::Error> {
     debug!("running check");
 
-    debug!("running 'cargo check --target=wasm32-unknown-unknown'");
+    debug!("running 'cargo web check --target=wasm32-unknown-unknown'");
     let cargo_success = process::Command::new("cargo")
-        .args(&["check", "--target=wasm32-unknown-unknown"])
+        .args(&["web", "check", "--target=wasm32-unknown-unknown"])
         .current_dir(root)
         .spawn()?
         .wait()?;
