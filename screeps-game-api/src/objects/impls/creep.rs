@@ -221,7 +221,7 @@ impl Creep {
     }
 
     pub fn get_active_bodyparts(&self, ty: Part) -> u32 {
-        js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_str_to_num(@{ty as u32})))
+        js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_num_to_str(@{ty as u32})))
     }
 
     pub fn ranged_mass_attack(&self) -> ReturnCode {
