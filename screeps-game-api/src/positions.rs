@@ -205,6 +205,62 @@ impl<'a> fmt::Display for LocalRoomNameParseError<'a> {
     }
 }
 
+impl PartialEq<&str> for LocalRoomName {
+    fn eq(&self, other: &&str) -> bool {
+        let s = format!("{}", &self);
+        s.eq_ignore_ascii_case(other)
+    }
+}
+impl PartialEq<LocalRoomName> for &str {
+    fn eq(&self, other: &LocalRoomName) -> bool {
+        other.eq(self)
+    }
+}
+
+impl PartialEq<String> for LocalRoomName {
+    fn eq(&self, other: &String) -> bool {
+        let s = format!("{}", &self);
+        s.eq_ignore_ascii_case(other.as_str())
+    }
+}
+impl PartialEq<LocalRoomName> for String {
+    fn eq(&self, other: &LocalRoomName) -> bool {
+        other.eq(&self.as_str())
+    }
+}
+
+impl PartialEq<&String> for LocalRoomName {
+    fn eq(&self, other: &&String) -> bool {
+        let s = format!("{}", &self);
+        s.eq_ignore_ascii_case(other.as_str())
+    }
+}
+impl PartialEq<LocalRoomName> for &String {
+    fn eq(&self, other: &LocalRoomName) -> bool {
+        other.eq(&self.as_str())
+    }
+}
+
+#[cfg(test)]
+mod local_room_name_tests {
+    #[test]
+    fn test_string_equality() {
+        use super::LocalRoomName;
+        let room_names = vec![
+            "E21N4",
+            "w6S42",
+            "W17s5",
+            "e2n5",
+        ];
+        for room_name in room_names {
+            assert_eq!(room_name, LocalRoomName::new(room_name).unwrap());
+            assert_eq!(LocalRoomName::new(room_name).unwrap(), room_name);
+            assert_eq!(LocalRoomName::new(room_name).unwrap(), &room_name.to_string());
+            assert_eq!(&room_name.to_string(), LocalRoomName::new(room_name).unwrap());
+        }
+    }
+}
+
 mod serde {
     use super::{parse_or_cheap_failure, LocalRoomName};
 
