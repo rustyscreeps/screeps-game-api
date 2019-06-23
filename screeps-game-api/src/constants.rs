@@ -13,7 +13,7 @@ use {
 };
 
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
 pub enum ReturnCode {
     Ok = 0,
@@ -77,7 +77,7 @@ pub unsafe trait FindConstant {
 }
 
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
 pub enum FindObject {
     Creeps = 101,
@@ -121,7 +121,7 @@ pub mod find {
 
     use super::FindConstant;
 
-    #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq)]
+    #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, Hash)]
     #[serde(transparent)]
     pub struct Exit(i32);
 
@@ -248,7 +248,7 @@ impl ::std::ops::Neg for Direction {
 }
 
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
 pub enum Color {
     Red = 1,
@@ -287,7 +287,7 @@ impl TryFrom<Value> for Color {
 }
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
 pub enum Terrain {
     Plain = 0,
@@ -330,7 +330,7 @@ impl TryFrom<Value> for Terrain {
 ///
 /// To use in JS: `__look_num_to_str(@{look as u32})` function
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 #[doc(hidden)]
 #[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
@@ -383,7 +383,7 @@ pub mod look {
 }
 
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "constants-serde", serde(rename_all = "snake_case"))]
 pub enum Part {
@@ -517,7 +517,7 @@ pub const LINK_LOSS_RATION: f32 = 0.03;
 pub const STORAGE_CAPACITY: u32 = 1_000_000;
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
 pub enum StructureType {
@@ -689,7 +689,7 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 // TODO: MINERAL_* constants
 
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
 pub enum Density {
     Low = 1,
     Moderate = 2,
@@ -735,7 +735,7 @@ pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
 pub const PORTAL_DECAY: u32 = 30_000;
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
 pub enum ResourceType {
