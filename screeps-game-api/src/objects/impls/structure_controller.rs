@@ -7,9 +7,9 @@ simple_accessors! {
     (level -> level -> u32),
     (progress -> progress -> u32),
     (progress_total -> progressTotal -> u32),
-    (safe_mode -> sameMode -> u32),
-    (safe_mode_available -> sameModeAvailable -> u32),
-    (safe_mode_cooldown -> sameModeCooldown -> u32),
+    (safe_mode -> safeMode -> u32),
+    (safe_mode_available -> safeModeAvailable -> u32),
+    (safe_mode_cooldown -> safeModeCooldown -> u32),
     (ticks_to_downgrade -> ticksToDowngrade -> u32),
     (upgrade_blocked -> upgradeBlocked -> u32)
 }
