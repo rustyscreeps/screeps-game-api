@@ -520,5 +520,7 @@ pub fn get_object_erased(id: &str) -> Option<RoomObject> {
 }
 
 pub fn notify(message: &str, group_interval: Option<u32>) {
-    js! {Game.notify(@{message}, @{group_interval.unwrap_or(0)})};
+    js! { @(no_return)
+        Game.notify(@{message}, @{group_interval.unwrap_or(0)});
+    }
 }

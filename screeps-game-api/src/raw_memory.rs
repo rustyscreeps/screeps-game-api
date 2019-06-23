@@ -18,7 +18,7 @@ pub fn set_active_segments(ids: &[u32]) {
         ids.len() <= 10,
         "can't set more than 10 active segments at a time"
     );
-    js! {
+    js! { @(no_return)
         RawMemory.setActiveSegments(@{ids});
     }
 }
@@ -28,7 +28,7 @@ get_from_js!(get_segment(id: u32) -> {
 } -> Option<String>);
 
 pub fn set_segment(id: u32, data: &str) {
-    js! {
+    js! { @(no_return)
         RawMemory.segments[@{id}] = @{data};
     }
 }
@@ -46,23 +46,29 @@ get_from_js!(get_foreign_segment -> {
 ///
 pub fn set_active_foreign_segment(username: &str, id: Option<u32>) {
     if username == "" {
-        js! { RawMemory.setActiveForeignSegment(null); }
+        js! { @(no_return)
+            RawMemory.setActiveForeignSegment(null);
+        }
     } else {
         match id {
-            Some(id) => js! { RawMemory.setActiveForeignSegment(@{username}, @{id}); },
-            None => js! { RawMemory.setActiveForeignSegment(@{username}); },
+            Some(id) => js! { @(no_return)
+                RawMemory.setActiveForeignSegment(@{username}, @{id});
+            },
+            None => js! { @(no_return)
+                RawMemory.setActiveForeignSegment(@{username});
+            },
         };
     };
 }
 
 pub fn set_default_public_segment(id: u32) {
-    js! {
+    js! { @(no_return)
         RawMemory.setDefaultPublicSegment(@{id});
     }
 }
 
 pub fn set_public_segments(ids: &[u32]) {
-    js! {
+    js! { @(no_return)
         RawMemory.setPublicSegments(@{ids});
     }
 }
@@ -70,7 +76,7 @@ pub fn set_public_segments(ids: &[u32]) {
 get_from_js!(get -> {RawMemory.get()} -> String);
 
 pub fn set(value: &str) {
-    js! {
+    js! { @(no_return)
         RawMemory.set(@{value});
     }
 }

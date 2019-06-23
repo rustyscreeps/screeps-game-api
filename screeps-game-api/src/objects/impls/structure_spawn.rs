@@ -40,13 +40,19 @@ impl StructureSpawn {
         let js_opts = js!(return {dryRun: @{opts.dry_run}};);
 
         if let Some(ref mem) = opts.memory {
-            js!(@{&js_opts}.memory = @{mem.as_ref()};);
+            js! { @(no_return)
+                @{&js_opts}.memory = @{mem.as_ref()};
+            }
         }
         if !opts.energy_structures.is_empty() {
-            js!(@{&js_opts}.energyStructures = @{&opts.energy_structures};);
+            js! { @(no_return)
+                @{&js_opts}.energyStructures = @{&opts.energy_structures};
+            }
         }
         if !opts.directions.is_empty() {
-            js!(@{&js_opts}.directions = @{&opts.directions};);
+            js! { @(no_return)
+                @{&js_opts}.directions = @{&opts.directions};
+            }
         }
         (js! {
             var body = (@{body_ints}).map(__part_num_to_str);
