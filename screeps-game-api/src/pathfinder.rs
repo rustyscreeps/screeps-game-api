@@ -50,7 +50,7 @@ impl LocalCostMatrix {
 
         CostMatrix {
             inner: (js! {
-                var matrix = Object.create(CostMatrix.prototype);
+                var matrix = Object.create(PathFinder.CostMatrix.prototype);
                 matrix._bits = @{bits};
                 return matrix;
             })
@@ -84,7 +84,7 @@ impl LocalCostMatrix {
                 // `UnsafeTypedArray`.
                 var bits = @{bits};
 
-                var matrix = Object.create(CostMatrix.prototype);
+                var matrix = Object.create(PathFinder.CostMatrix.prototype);
                 matrix._bits = bits;
 
                 return matrix;
