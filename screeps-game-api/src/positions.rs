@@ -338,9 +338,9 @@ mod stdweb {
         type Error = <Value as TryInto<String>>::Error;
 
         fn try_from(v: Value) -> Result<LocalRoomPosition, Self::Error> {
-            let x: u32 = (js! {@{&v}.x}).try_into()?;
-            let y: u32 = (js! {@{&v}.y}).try_into()?;
-            let room_name: LocalRoomName = (js! {@{&v}.roomName}).try_into()?;
+            let x: u32 = (js! {return @{&v}.x}).try_into()?;
+            let y: u32 = (js! {return @{&v}.y}).try_into()?;
+            let room_name: LocalRoomName = (js! {return @{&v}.roomName}).try_into()?;
 
             Ok(LocalRoomPosition { x, y, room_name })
         }
