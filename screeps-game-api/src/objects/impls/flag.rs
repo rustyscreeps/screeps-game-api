@@ -12,13 +12,17 @@ simple_accessors! {
 
 impl Flag {
     pub fn remove(&self) {
-        js! {@{self.as_ref()}.remove();};
+        js! { @(no_return)
+            @{self.as_ref()}.remove();
+        }
     }
 
     pub fn set_color(&self, color: Color, secondary_color: Option<Color>) {
         match secondary_color {
-            None => js! {@{self.as_ref()}.setColor(@{u32::from(color)});},
-            Some(sec_color) => js! {
+            None => js! { @(no_return)
+                @{self.as_ref()}.setColor(@{u32::from(color)});
+            },
+            Some(sec_color) => js! { @(no_return)
                 @{self.as_ref()}.setColor(
                     @{u32::from(color)},
                     @{u32::from(sec_color)},
@@ -29,10 +33,14 @@ impl Flag {
 
     pub fn set_position<T: HasPosition>(&self, pos: T) {
         let room_pos = pos.pos();
-        js! {@{self.as_ref()}.setPosition(@{room_pos.as_ref()});};
+        js! { @(no_return)
+            @{self.as_ref()}.setPosition(@{room_pos.as_ref()});
+        }
     }
 
     pub fn set_position_xy(&self, x: u32, y: u32) {
-        js! {@{self.as_ref()}.setPosition(@{x}, @{y});};
+        js! { @(no_return)
+            @{self.as_ref()}.setPosition(@{x}, @{y});
+        }
     }
 }

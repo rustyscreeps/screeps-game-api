@@ -196,7 +196,7 @@ impl MemoryReference {
     }
 
     pub fn del(&self, key: &str) {
-        js! {
+        js! { @(no_return)
             (@{self.as_ref()})[@{key}] = undefined;
         }
     }
@@ -231,7 +231,7 @@ impl MemoryReference {
     where
         T: JsSerialize,
     {
-        js! {
+        js! { @(no_return)
             (@{self.as_ref()})[@{key}] = @{value};
         }
     }
@@ -240,7 +240,7 @@ impl MemoryReference {
     where
         T: JsSerialize,
     {
-        js! {
+        js! { @(no_return)
             _.set(@{self.as_ref()}, @{path}, @{value});
         }
     }
