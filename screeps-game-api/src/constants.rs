@@ -4,7 +4,7 @@
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
-use stdweb::{Reference, Value};
+use stdweb::{Number, Reference, Value};
 
 use {
     objects::RoomObject,
@@ -53,6 +53,18 @@ impl ReturnCode {
 impl TryFrom<Value> for ReturnCode {
     type Error = ConversionError;
     fn try_from(v: Value) -> Result<Self, Self::Error> {
+        use num_traits::FromPrimitive;
+        let x: i32 = v.try_into()?;
+        Ok(Self::from_i32(x).unwrap_or_else(|| {
+            error!("encountered a return code we don't know: {}", x);
+            ReturnCode::Other
+        }))
+    }
+}
+
+impl TryFrom<Number> for ReturnCode {
+    type Error = ConversionError;
+    fn try_from(v: Number) -> Result<Self, Self::Error> {
         use num_traits::FromPrimitive;
         let x: i32 = v.try_into()?;
         Ok(Self::from_i32(x).unwrap_or_else(|| {

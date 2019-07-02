@@ -77,17 +77,20 @@ impl Room {
         name: &str,
         main_color: Color,
         secondary_color: Color,
-    ) -> ReturnCode
+    ) -> Result<String, ReturnCode>
     where
         T: ?Sized + HasPosition,
     {
         let pos = at.pos();
-        js_unwrap!(@{self.as_ref()}.createFlag(
-            @{pos.as_ref()},
-            @{name},
-            @{main_color as u32},
-            @{secondary_color as u32}
-        ))
+        Flag::interpret_creation_ret_value(js! {
+            return @{self.as_ref()}.createFlag(
+                @{pos.as_ref()},
+                @{name},
+                @{main_color as u32},
+                @{secondary_color as u32}
+            );
+        })
+        .expect("expected Room.createFlag to return ReturnCode or String name")
     }
 
     pub fn find<T>(&self, ty: T) -> Vec<T::Item>

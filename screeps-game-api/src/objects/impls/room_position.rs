@@ -3,7 +3,7 @@ use std::cmp::{Eq, PartialEq};
 use {
     constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
     game,
-    objects::{HasPosition, LookResult, RoomPosition, StructureType},
+    objects::{Flag, HasPosition, LookResult, RoomPosition, StructureType},
     pathfinder::CostMatrix,
     positions::LocalRoomPosition,
     traits::TryInto,
@@ -57,18 +57,24 @@ impl RoomPosition {
         )
     }
 
-    pub fn create_flag(&self, name: &str, main_color: Color, secondary_color: Color) -> ReturnCode {
+    pub fn create_flag(
+        &self,
+        name: &str,
+        main_color: Color,
+        secondary_color: Color,
+    ) -> Result<String, ReturnCode> {
         // TODO: determine if ERR_NOT_IN_RANGE is the best choice here
-        (js! {
-            var flag = @{self.as_ref()};
-            if (flag.roomName in Game.rooms) {
-                return flag.createFlag(@{name}, @{main_color as u32}, @{secondary_color as u32});
+        //
+        // JavaScript code simply throws an error on unknown rooms, which isn't ideal.
+        Flag::interpret_creation_ret_value(js! {
+            var pos = @{self.as_ref()};
+            if (pos.roomName in Game.rooms) {
+                return pos.createFlag(@{name}, @{main_color as u32}, @{secondary_color as u32});
             } else {
                 return ERR_NOT_IN_RANGE;
             }
         })
-        .try_into()
-        .expect("expected Flag.createFlag to return ReturnCode")
+        .expect("expected RoomPosition.createFlag to return ReturnCode or String name")
     }
 
     pub fn find_closest_by_range<T>(&self, ty: T) -> Option<T::Item>
