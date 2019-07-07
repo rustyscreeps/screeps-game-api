@@ -33,6 +33,12 @@ pub fn set_segment(id: u32, data: &str) {
     }
 }
 
+pub fn drop_segment(id: u32) {
+    js! { @(no_return)
+        delete RawMemory.segments[@{id}];
+    }
+}
+
 get_from_js!(get_foreign_segment -> {
     RawMemory.foreignSegment
 } -> ForeignSegment);
