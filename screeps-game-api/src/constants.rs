@@ -6,7 +6,7 @@
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
 use stdweb::{Number, Reference, Value};
 
-use {
+use crate::{
     objects::RoomObject,
     traits::{FromExpectedType, TryFrom, TryInto},
     ConversionError,
@@ -126,7 +126,7 @@ unsafe impl FindConstant for FindObject {
 pub mod find {
     use stdweb::unstable::TryFrom;
 
-    use objects::{
+    use crate::objects::{
         ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
         Source, Structure, StructureSpawn, Tombstone,
     };
@@ -244,7 +244,7 @@ impl ::std::ops::Neg for Direction {
     /// assert_eq!(-Left, Right);
     /// ```
     fn neg(self) -> Direction {
-        use Direction::*;
+        use crate::Direction::*;
 
         match self {
             Top => Bottom,
@@ -369,7 +369,7 @@ pub unsafe trait LookConstant {
 }
 
 pub mod look {
-    use {
+    use crate::{
         objects::{
             ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Tombstone,
         },
@@ -885,7 +885,7 @@ pub enum ResourceType {
 impl ResourceType {
     /// Returns `REACTION_TIME` for this resource. 0 for energy and base minerals.
     pub fn reaction_time(self) -> u32 {
-        use ResourceType::*;
+        use crate::ResourceType::*;
         match self {
             Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
             | Catalyst | Ghodium => 0,

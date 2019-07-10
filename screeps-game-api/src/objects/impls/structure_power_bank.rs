@@ -1,4 +1,4 @@
-use objects::StructurePowerBank;
+use crate::objects::StructurePowerBank;
 
 simple_accessors! {
     StructurePowerBank;

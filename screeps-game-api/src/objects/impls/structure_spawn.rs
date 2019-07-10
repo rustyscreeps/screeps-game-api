@@ -1,6 +1,6 @@
 use stdweb::Reference;
 
-use {
+use crate::{
     constants::{Direction, Part, ReturnCode},
     memory::MemoryReference,
     objects::{Creep, HasEnergyForSpawn, SizedRoomObject, Spawning, StructureSpawn},

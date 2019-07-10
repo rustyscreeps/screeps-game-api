@@ -1,6 +1,6 @@
 use stdweb::Value;
 
-use {
+use crate::{
     constants::{Color, ReturnCode},
     objects::{Flag, HasPosition},
     traits::TryFrom,

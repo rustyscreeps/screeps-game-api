@@ -1,4 +1,4 @@
-use {
+use crate::{
     constants::{ReturnCode, StructureType},
     objects::ConstructionSite,
     traits::TryInto,

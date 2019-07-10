@@ -4,7 +4,7 @@ use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
 use serde_json;
 use stdweb::{Reference, Value};
 
-use {
+use crate::{
     constants::{
         find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
         Terrain,

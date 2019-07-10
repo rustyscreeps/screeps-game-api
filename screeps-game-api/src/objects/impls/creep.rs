@@ -2,7 +2,7 @@ use std::{marker::PhantomData, mem};
 
 use stdweb::{Reference, Value};
 
-use {
+use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
     memory::MemoryReference,
     objects::{

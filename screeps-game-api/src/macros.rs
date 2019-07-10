@@ -50,7 +50,7 @@
 /// Note: for unwrapping reference types, use [`js_unwrap_ref!`] to avoid instanceof checks.
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
-        ::traits::TryInto::try_into(js! { return $($code)*; })
+        crate::traits::TryInto::try_into(js! { return $($code)*; })
             .expect(concat!("js_unwrap at ", line!(), " in ", file!()))
     )
 }
@@ -75,7 +75,7 @@ macro_rules! js_unwrap {
 /// [`screeps::Creep`] containing the wrong value which will fail when used.
 macro_rules! js_unwrap_ref {
     ($($code:tt)*) => (
-        ::traits::IntoExpectedType::into_expected_type(js! { return $($code)*; })
+        crate::traits::IntoExpectedType::into_expected_type(js! { return $($code)*; })
             .expect(concat!("js_unwrap_ref at ", line!(), " in ", file!()))
     )
 }
@@ -170,7 +170,7 @@ macro_rules! reference_wrappers {
             )*
             pub struct $name(Reference);
 
-            impl ::traits::FromExpectedType<Reference> for $name {
+            impl crate::traits::FromExpectedType<Reference> for $name {
                 fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
                     #[cfg(feature = "check-all-casts")]
                     {
@@ -412,7 +412,7 @@ macro_rules! game_map_access {
                     #[$attr]
             )*
             pub mod $mod_name {
-                use objects;
+                use crate::objects;
 
                 /// Retrieve the string keys of this object.
                 pub fn keys() -> Vec<String> {

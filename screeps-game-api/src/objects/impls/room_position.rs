@@ -1,6 +1,6 @@
 use std::cmp::{Eq, PartialEq};
 
-use {
+use crate::{
     constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
     game,
     objects::{Flag, HasPosition, LookResult, RoomPosition, StructureType},

@@ -14,7 +14,7 @@
 //! unexpected things into dictionaries which we trust.
 use stdweb::{Reference, ReferenceType, Value};
 
-use {
+use crate::{
     constants::{ResourceType, ReturnCode, StructureType},
     traits::{IntoExpectedType, TryFrom, TryInto},
     ConversionError,

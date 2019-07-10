@@ -1,6 +1,6 @@
 use stdweb::UnsafeTypedArray;
 
-use {
+use crate::{
     constants::{ReturnCode, Terrain},
     objects::RoomTerrain,
     traits::TryInto,

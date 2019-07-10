@@ -1,6 +1,6 @@
 use stdweb::{InstanceOf, Reference, ReferenceType, Value};
 
-use {
+use crate::{
     constants::StructureType,
     objects::{Attackable, CanDecay, CanStoreEnergy, HasCooldown, HasEnergyForSpawn, HasStore},
     traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},

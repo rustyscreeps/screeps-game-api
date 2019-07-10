@@ -1,4 +1,4 @@
-use {
+use crate::{
     constants::{ResourceType, ReturnCode},
     objects::StructureTerminal,
 };

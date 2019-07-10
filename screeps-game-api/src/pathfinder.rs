@@ -2,7 +2,7 @@ use std::{f64, marker::PhantomData, mem};
 
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
-use {
+use crate::{
     objects::{HasPosition, RoomPosition},
     positions::LocalRoomPosition,
     traits::TryInto,

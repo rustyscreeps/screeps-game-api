@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 
 use stdweb::{Array, InstanceOf, JsSerialize, Reference, ReferenceType, Value};
 
-use {
+use crate::{
     traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };

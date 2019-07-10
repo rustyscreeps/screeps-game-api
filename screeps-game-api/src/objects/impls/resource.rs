@@ -1,4 +1,4 @@
-use {constants::ResourceType, objects::Resource};
+use crate::{constants::ResourceType, objects::Resource};
 
 impl Resource {
     pub fn resource_type(&self) -> ResourceType {

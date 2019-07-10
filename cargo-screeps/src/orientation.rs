@@ -5,7 +5,7 @@ use std::{
 
 use failure;
 
-use setup::CliConfig;
+use crate::setup::CliConfig;
 
 pub fn find_project_root(cli_config: &CliConfig) -> Result<PathBuf, failure::Error> {
     if let Some(config_path) = cli_config.config_path.as_ref() {

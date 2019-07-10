@@ -2,7 +2,7 @@ use std::path::Path;
 
 use failure;
 
-use {
+use crate::{
     build,
     config::{self, Configuration},
     copy, orientation, setup, upload,

@@ -2,7 +2,7 @@
 
 use std::{borrow::Cow, error, fmt, ops};
 
-use objects::{HasPosition, RoomPosition};
+use crate::objects::{HasPosition, RoomPosition};
 
 /// A structure representing a room name.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
@@ -330,7 +330,7 @@ impl HasPosition for LocalRoomPosition {
 mod stdweb {
     use stdweb::Value;
 
-    use traits::{TryFrom, TryInto};
+    use crate::traits::{TryFrom, TryInto};
 
     use super::{LocalRoomName, LocalRoomPosition};
 

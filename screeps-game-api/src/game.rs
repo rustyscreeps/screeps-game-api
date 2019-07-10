@@ -1,4 +1,4 @@
-use {
+use crate::{
     objects::{HasId, RoomObject, SizedRoomObject},
     traits::TryInto,
     ConversionError,
@@ -13,7 +13,7 @@ use {
 pub mod cpu {
     use std::collections;
 
-    use constants::ReturnCode;
+    use crate::constants::ReturnCode;
 
     /// See [`v8_getheapstatistics`]
     ///
@@ -131,7 +131,7 @@ pub mod map {
 
     use stdweb::Value;
 
-    use {
+    use crate::{
         constants::{find::Exit, Direction, ReturnCode},
         objects::RoomTerrain,
         traits::{TryFrom, TryInto},
@@ -271,8 +271,8 @@ pub mod market {
 
     use stdweb::unstable::TryInto;
 
-    use constants::{ResourceType, ReturnCode};
-    use Room;
+    use crate::constants::{ResourceType, ReturnCode};
+    use crate::Room;
 
     #[repr(u32)]
     #[derive(Clone, Debug)]

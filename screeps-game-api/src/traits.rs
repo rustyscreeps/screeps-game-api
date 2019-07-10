@@ -1,7 +1,7 @@
 //! Useful traits for interacting with JavaScript above what [`stdweb`] provides.
 use stdweb::{Reference, Value};
 
-use ConversionError;
+use crate::ConversionError;
 
 pub use stdweb::unstable::{TryFrom, TryInto};
 

@@ -47,7 +47,7 @@ mod positions;
 pub mod raw_memory;
 pub mod traits;
 
-pub use {
+pub use crate::{
     constants::*,
     js_collections::JsVec,
     objects::*,
@@ -60,7 +60,7 @@ pub(crate) use stdweb::private::ConversionError;
 /// Useful for `use screeps::prelude::*;` to bring in screeps traits. Does not contain any
 /// structures in order to minimize namespace polution.
 pub mod prelude {
-    pub use objects::{
+    pub use crate::objects::{
         CanDecay, CanStoreEnergy, HasCooldown, HasId, HasPosition, HasStore,
         OwnedStructureProperties, RoomObjectProperties, StructureProperties,
     };
