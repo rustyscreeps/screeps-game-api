@@ -5,13 +5,13 @@ use {constants::ReturnCode, objects::StructureController};
 simple_accessors! {
     StructureController;
     (level -> level -> u32),
-    (progress -> progress -> u32),
-    (progress_total -> progressTotal -> u32),
-    (safe_mode -> safeMode -> u32),
+    (progress -> progress -> Option<u32>),
+    (progress_total -> progressTotal -> Option<u32>),
+    (safe_mode -> safeMode -> Option<u32>),
     (safe_mode_available -> safeModeAvailable -> u32),
-    (safe_mode_cooldown -> safeModeCooldown -> u32),
+    (safe_mode_cooldown -> safeModeCooldown -> Option<u32>),
     (ticks_to_downgrade -> ticksToDowngrade -> u32),
-    (upgrade_blocked -> upgradeBlocked -> u32)
+    (upgrade_blocked -> upgradeBlocked -> Option<u32>)
 }
 
 #[derive(Debug)]
