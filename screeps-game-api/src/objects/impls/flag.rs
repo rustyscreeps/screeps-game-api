@@ -1,10 +1,10 @@
-use stdweb::Value;
-
 use crate::{
     constants::{Color, ReturnCode},
+    macros::*,
     objects::{Flag, HasPosition},
     traits::TryFrom,
 };
+use stdweb::Value;
 
 simple_accessors! {
     Flag;
@@ -14,11 +14,11 @@ simple_accessors! {
 }
 
 impl Flag {
-    /// Useful method for constructing Flag from the result of `RoomPosition.createFlag`
-    /// or `Room.createFlag`.
+    /// Useful method for constructing Flag from the result of
+    /// `RoomPosition.createFlag` or `Room.createFlag`.
     ///
-    /// String names are mapped to Ok(Ok(s)), return codes are mapped to Ok(Err(e)), other
-    /// unknown inputs are mapped to Err(e).
+    /// String names are mapped to Ok(Ok(s)), return codes are mapped to
+    /// Ok(Err(e)), other unknown inputs are mapped to Err(e).
     pub(crate) fn interpret_creation_ret_value(
         value: Value,
     ) -> Result<Result<String, ReturnCode>, crate::ConversionError> {

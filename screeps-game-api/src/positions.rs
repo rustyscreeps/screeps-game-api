@@ -48,7 +48,8 @@ impl fmt::Display for LocalRoomName {
 impl LocalRoomName {
     /// Creates a new room name from the given input.
     ///
-    /// This will parse the input, and return an error if it is in an invalid format.
+    /// This will parse the input, and return an error if it is in an invalid
+    /// format.
     #[inline]
     pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError<'_>>
     where
@@ -106,7 +107,8 @@ impl ops::Sub<LocalRoomName> for LocalRoomName {
 
 /// Something that can be turned into a room name.
 pub trait IntoLocalRoomName {
-    /// Turns this data into a room name, erroring if the format is not as expected.
+    /// Turns this data into a room name, erroring if the format is not as
+    /// expected.
     fn into_room_name(&self) -> Result<LocalRoomName, LocalRoomNameParseError<'_>>;
 }
 
@@ -162,7 +164,8 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
     Ok(LocalRoomName::from_coords(east, north, x_coord, y_coord))
 }
 
-/// An error representing when a string can't be parsed into a [`LocalRoomName`].
+/// An error representing when a string can't be parsed into a
+/// [`LocalRoomName`].
 ///
 /// [`LocalRoomName`]: struct.LocalRoomName.html
 #[derive(Clone, Debug)]
@@ -174,8 +177,8 @@ impl<'a> LocalRoomNameParseError<'a> {
         LocalRoomNameParseError(failed_room_name.into())
     }
 
-    /// Turns this error into a 'static error, cloning any inner data that represents
-    /// what failed.
+    /// Turns this error into a 'static error, cloning any inner data that
+    /// represents what failed.
     pub fn into_owned(self) -> LocalRoomNameParseError<'static> {
         let LocalRoomNameParseError(cow) = self;
         LocalRoomNameParseError(cow.into_owned().into())
@@ -246,17 +249,18 @@ mod local_room_name_tests {
     #[test]
     fn test_string_equality() {
         use super::LocalRoomName;
-        let room_names = vec![
-            "E21N4",
-            "w6S42",
-            "W17s5",
-            "e2n5",
-        ];
+        let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5"];
         for room_name in room_names {
             assert_eq!(room_name, LocalRoomName::new(room_name).unwrap());
             assert_eq!(LocalRoomName::new(room_name).unwrap(), room_name);
-            assert_eq!(LocalRoomName::new(room_name).unwrap(), &room_name.to_string());
-            assert_eq!(&room_name.to_string(), LocalRoomName::new(room_name).unwrap());
+            assert_eq!(
+                LocalRoomName::new(room_name).unwrap(),
+                &room_name.to_string()
+            );
+            assert_eq!(
+                &room_name.to_string(),
+                LocalRoomName::new(room_name).unwrap()
+            );
         }
     }
 }
@@ -266,8 +270,11 @@ mod serde {
 
     use std::fmt;
 
-    use serde::de::{Deserialize, Deserializer, Error, Unexpected, Visitor};
-    use serde::ser::{Serialize, Serializer};
+    use crate::macros::*;
+    use serde::{
+        de::{Error, Unexpected, Visitor},
+        Deserialize, Deserializer, Serialize, Serializer,
+    };
 
     impl Serialize for LocalRoomName {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -328,9 +335,11 @@ impl HasPosition for LocalRoomPosition {
 }
 
 mod stdweb {
+    use crate::{
+        macros::*,
+        traits::{TryFrom, TryInto},
+    };
     use stdweb::Value;
-
-    use crate::traits::{TryFrom, TryInto};
 
     use super::{LocalRoomName, LocalRoomPosition};
 
@@ -348,10 +357,9 @@ mod stdweb {
 }
 
 mod room_pos_serde {
-    use serde::de::{Deserialize, Deserializer};
-    use serde::ser::{Serialize, Serializer};
 
     use super::{LocalRoomName, LocalRoomPosition};
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
     #[derive(Serialize, Deserialize)]
     struct SerializedLocalRoomPosition {

@@ -1,10 +1,10 @@
-use stdweb::UnsafeTypedArray;
-
 use crate::{
     constants::{ReturnCode, Terrain},
+    macros::*,
     objects::RoomTerrain,
     traits::TryInto,
 };
+use stdweb::UnsafeTypedArray;
 
 impl RoomTerrain {
     pub fn constructor(room_name: &str) -> Self {
@@ -28,7 +28,8 @@ impl RoomTerrain {
     ) -> Result<&'a mut Vec<u8>, ReturnCode> {
         let is_success: bool;
         {
-            let arr: UnsafeTypedArray<'_, u8> = unsafe { UnsafeTypedArray::new(buffer.as_mut_slice()) };
+            let arr: UnsafeTypedArray<'_, u8> =
+                unsafe { UnsafeTypedArray::new(buffer.as_mut_slice()) };
 
             is_success = js! {
                 var bytes = @{arr};

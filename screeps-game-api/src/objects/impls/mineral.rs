@@ -1,8 +1,8 @@
 use crate::{
     constants::{Density, ResourceType},
+    macros::*,
     objects::Mineral,
 };
-
 simple_accessors! {
     Mineral;
     (density -> density -> u32),

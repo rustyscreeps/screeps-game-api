@@ -1,8 +1,8 @@
 use crate::{
     constants::{ResourceType, ReturnCode},
+    macros::*,
     objects::StructureTerminal,
 };
-
 impl StructureTerminal {
     pub fn send(
         &self,

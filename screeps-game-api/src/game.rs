@@ -1,4 +1,5 @@
 use crate::{
+    macros::*,
     objects::{HasId, RoomObject, SizedRoomObject},
     traits::TryInto,
     ConversionError,
@@ -11,9 +12,9 @@ use crate::{
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
 pub mod cpu {
+    use crate::{constants::ReturnCode, macros::*, traits::TryInto};
+    use serde::{Deserialize, Serialize};
     use std::collections;
-
-    use crate::constants::ReturnCode;
 
     /// See [`v8_getheapstatistics`]
     ///
@@ -68,7 +69,6 @@ pub mod cpu {
     ///
     /// Returns object with all 0 values if heap statistics are not available.
     pub fn get_heap_statistics() -> HeapStatistics {
-        use stdweb::unstable::TryInto;
         use stdweb::Value;
 
         let heap_stats: Value =
@@ -101,6 +101,7 @@ pub mod cpu {
 ///
 /// [http://docs.screeps.com/api/#Game.gcl]: http://docs.screeps.com/api/#Game.gcl
 pub mod gcl {
+    use crate::macros::*;
     /// See [http://docs.screeps.com/api/#Game.gcl]
     ///
     /// [http://docs.screeps.com/api/#Game.gcl]: http://docs.screeps.com/api/#Game.gcl
@@ -127,14 +128,17 @@ pub mod gcl {
 ///
 /// [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
 pub mod map {
+    use crate::macros::*;
+    use serde::Deserialize;
     use std::{collections, mem};
 
+    use crate::traits::{TryFrom, TryInto};
+    use scoped_tls::scoped_thread_local;
     use stdweb::Value;
 
     use crate::{
         constants::{find::Exit, Direction, ReturnCode},
         objects::RoomTerrain,
-        traits::{TryFrom, TryInto},
     };
 
     /// See [http://docs.screeps.com/api/#Game.map.describeExits]
@@ -267,12 +271,14 @@ pub mod map {
 }
 
 pub mod market {
+    use crate::{macros::*, traits::TryInto};
+    use serde::Deserialize;
     use std::collections::HashMap;
 
-    use stdweb::unstable::TryInto;
-
-    use crate::constants::{ResourceType, ReturnCode};
-    use crate::Room;
+    use crate::{
+        constants::{ResourceType, ReturnCode},
+        Room,
+    };
 
     #[repr(u32)]
     #[derive(Clone, Debug)]
@@ -436,6 +442,8 @@ pub mod market {
 ///
 /// [http://docs.screeps.com/api/#Game.shard]: http://docs.screeps.com/api/#Game.shard
 pub mod shard {
+    use crate::macros::*;
+
     /// See [http://docs.screeps.com/api/#Game.shard]
     ///
     /// [http://docs.screeps.com/api/#Game.shard]: http://docs.screeps.com/api/#Game.shard
@@ -497,11 +505,11 @@ pub fn time() -> u32 {
 
 /// See [http://docs.screeps.com/api/#Game.getObjectById]
 ///
-/// This gets an object expecting a specific type and will return a `ConversionError` if the type
-/// does not match.
+/// This gets an object expecting a specific type and will return a
+/// `ConversionError` if the type does not match.
 ///
-/// If all you want to assume is that something has an ID, use [`get_object_erased`].
-/// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
+/// If all you want to assume is that something has an ID, use
+/// [`get_object_erased`]. [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
 pub fn get_object_typed<T>(id: &str) -> Result<Option<T>, ConversionError>
 where
     T: HasId + SizedRoomObject,
@@ -511,7 +519,8 @@ where
 
 /// See [http://docs.screeps.com/api/#Game.getObjectById]
 ///
-/// This gets the object in 'erased' form - all that is known about it is that it's a RoomObject.
+/// This gets the object in 'erased' form - all that is known about it is that
+/// it's a RoomObject.
 ///
 /// If a more specific type is expected, [`get_object_typed`] can be used.
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById

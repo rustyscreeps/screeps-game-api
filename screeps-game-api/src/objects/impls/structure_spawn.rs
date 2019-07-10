@@ -2,11 +2,11 @@ use stdweb::Reference;
 
 use crate::{
     constants::{Direction, Part, ReturnCode},
+    macros::*,
     memory::MemoryReference,
     objects::{Creep, HasEnergyForSpawn, SizedRoomObject, Spawning, StructureSpawn},
     traits::TryInto,
 };
-
 simple_accessors! {
     StructureSpawn;
     (name -> name -> String),

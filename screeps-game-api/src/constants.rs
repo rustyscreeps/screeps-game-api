@@ -12,6 +12,10 @@ use crate::{
     ConversionError,
 };
 
+use log::error;
+use num_derive::FromPrimitive;
+use serde::Deserialize;
+
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Deserialize))]
@@ -40,8 +44,8 @@ impl_serialize_as_i32!(ReturnCode);
 impl ReturnCode {
     /// Turns this return code into a result.
     ///
-    /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned into
-    /// `Result::Err(code)`
+    /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned
+    /// into `Result::Err(code)`
     pub fn as_result(self) -> Result<(), Self> {
         match self {
             ReturnCode::Ok => Ok(()),
@@ -124,11 +128,14 @@ unsafe impl FindConstant for FindObject {
 }
 
 pub mod find {
-    use stdweb::unstable::TryFrom;
+    use serde::Deserialize;
 
-    use crate::objects::{
-        ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
-        Source, Structure, StructureSpawn, Tombstone,
+    use crate::{
+        objects::{
+            ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
+            Source, Structure, StructureSpawn, Tombstone,
+        },
+        traits::TryFrom,
     };
 
     use super::FindConstant;
@@ -232,7 +239,8 @@ impl TryFrom<Value> for Direction {
 impl ::std::ops::Neg for Direction {
     type Output = Direction;
 
-    /// Negates this direction. Top goes to Bottom, TopRight goes to BottomLeft, etc.
+    /// Negates this direction. Top goes to Bottom, TopRight goes to BottomLeft,
+    /// etc.
     ///
     /// Example usage:
     ///
@@ -335,10 +343,11 @@ impl TryFrom<Value> for Terrain {
 
 /// Internal enum representing each LOOK_* constant.
 ///
-/// It's recommended to use the constants in the `look` module instead for type safety.
+/// It's recommended to use the constants in the `look` module instead for type
+/// safety.
 ///
-/// In fact, I don't believe this can be used at all without resorting to manually
-/// including JS code.
+/// In fact, I don't believe this can be used at all without resorting to
+/// manually including JS code.
 ///
 /// To use in JS: `__look_num_to_str(@{look as u32})` function
 #[repr(u32)]
@@ -369,14 +378,13 @@ pub unsafe trait LookConstant {
 }
 
 pub mod look {
+    use super::{Look, LookConstant, Terrain};
     use crate::{
         objects::{
             ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Tombstone,
         },
         traits::{IntoExpectedType, TryInto},
     };
-
-    use super::{Look, LookConstant, Terrain};
 
     typesafe_look_constants! {
         CREEPS, Look::Creeps, Creep, IntoExpectedType::into_expected_type;
@@ -883,7 +891,8 @@ pub enum ResourceType {
 }
 
 impl ResourceType {
-    /// Returns `REACTION_TIME` for this resource. 0 for energy and base minerals.
+    /// Returns `REACTION_TIME` for this resource. 0 for energy and base
+    /// minerals.
     pub fn reaction_time(self) -> u32 {
         use crate::ResourceType::*;
         match self {

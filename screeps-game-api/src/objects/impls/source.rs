@@ -1,5 +1,4 @@
-use crate::objects::Source;
-
+use crate::{macros::*, objects::Source};
 simple_accessors! {
     Source;
     (energy -> energy -> u32),

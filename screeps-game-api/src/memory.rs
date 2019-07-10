@@ -52,12 +52,12 @@
 //!
 use std::fmt;
 
-use stdweb::{JsSerialize, Reference, Value};
-
 use crate::{
+    macros::*,
     traits::{TryFrom, TryInto},
     ConversionError,
 };
+use stdweb::{JsSerialize, Reference, Value};
 
 #[derive(Clone, Debug)]
 pub struct UnexpectedTypeError;

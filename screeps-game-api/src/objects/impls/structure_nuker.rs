@@ -1,8 +1,8 @@
 use crate::{
     constants::ReturnCode,
+    macros::*,
     objects::{RoomPosition, StructureNuker},
 };
-
 simple_accessors! {
     StructureNuker;
     (ghodium -> ghodium -> u32),

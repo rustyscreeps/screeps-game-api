@@ -1,4 +1,8 @@
 //! Interface for Screeps `RawMemory` global object.
+
+use crate::macros::*;
+use serde::Deserialize;
+
 #[derive(Deserialize, Debug)]
 pub struct ForeignSegment {
     username: String,
@@ -33,11 +37,13 @@ pub fn set_segment(id: u32, data: &str) {
     }
 }
 
-/// This drops the reference to a segment; it doesn't affect the content of the segment.
+/// This drops the reference to a segment; it doesn't affect the content of the
+/// segment.
 ///
-/// This is the equivalent of doing `delete RawMemory.segments[id]`. Again, this only
-/// deletes the local view of the segment, not the serialized one. It may be used to
-/// `set_segment` a new segment that wasn't part of the original 10 active segments.
+/// This is the equivalent of doing `delete RawMemory.segments[id]`. Again, this
+/// only deletes the local view of the segment, not the serialized one. It may
+/// be used to `set_segment` a new segment that wasn't part of the original 10
+/// active segments.
 pub fn drop_segment(id: u32) {
     js! { @(no_return)
         delete RawMemory.segments[@{id}];
@@ -54,7 +60,6 @@ get_from_js!(get_foreign_segment -> {
 /// [`set_default_public_segment`]), Use `None` instead of `Some(id)`.
 ///
 /// To clear the foreign segment, pass the empty string `""` as a username.
-///
 pub fn set_active_foreign_segment(username: &str, id: Option<u32>) {
     if username == "" {
         js! { @(no_return)

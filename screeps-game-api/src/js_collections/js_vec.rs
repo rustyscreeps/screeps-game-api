@@ -4,10 +4,12 @@ use std::marker::PhantomData;
 use stdweb::{Array, InstanceOf, JsSerialize, Reference, ReferenceType, Value};
 
 use crate::{
+    macros::*,
     traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };
 
+//
 //   - InstanceOf
 //   - AsRef<Reference>
 //   - ReferenceType
@@ -18,15 +20,16 @@ use crate::{
 //   - TryFrom<Value>
 //   - TryFrom<&Value>
 
-/// Reference to a JavaScript array which is expected to contain a specific type of item.
+/// Reference to a JavaScript array which is expected to contain a specific type
+/// of item.
 ///
-/// All `TryFrom` / `TryInto` conversions use type checking, but `FromExpectedType` /
-/// `IntoExpectedType` possibly don't.
+/// All `TryFrom` / `TryInto` conversions use type checking, but
+/// `FromExpectedType` / `IntoExpectedType` possibly don't.
 ///
 /// The implementation for `Into<Vec<T>>` uses `IntoExpectedType` internally.
 ///
-/// Trait notes: implements `TryInto<Vec<T>>`, but `Vec<T>` does not implement `TryFrom<JsVec<T>>`
-/// due to coherence issues.
+/// Trait notes: implements `TryInto<Vec<T>>`, but `Vec<T>` does not implement
+/// `TryFrom<JsVec<T>>` due to coherence issues.
 pub struct JsVec<T> {
     inner: Array,
     phantom: PhantomData<Vec<T>>,
@@ -42,7 +45,8 @@ impl<T> JsVec<T>
 where
     T: FromExpectedType<Value>,
 {
-    /// Gets an item, panicking if the types don't match and `check-all-casts` is enabled.
+    /// Gets an item, panicking if the types don't match and `check-all-casts`
+    /// is enabled.
     pub fn get(&self, idx: usize) -> Option<T> {
         // this assumes u32::max_value() == usize::max_value()
         // (otherwise cast below could overflow).
@@ -53,7 +57,8 @@ where
         }
     }
 
-    /// Gets an item, returning an error if the types don't match and `check-all-casts` is enabled.
+    /// Gets an item, returning an error if the types don't match and
+    /// `check-all-casts` is enabled.
     pub fn try_get(&self, idx: usize) -> Result<Option<T>, ConversionError> {
         // this assumes u32::max_value() == usize::max_value()
         // (otherwise cast below could overflow).
@@ -74,30 +79,30 @@ where
         Iter::new(self)
     }
 
-    /// Iterates over elements, returning an error if any are not the expected type and
-    /// `check-all-casts` is enabled.
+    /// Iterates over elements, returning an error if any are not the expected
+    /// type and `check-all-casts` is enabled.
     ///
     /// Use [`IntoIterator::into_iter`] to iterate expecting all types match.
     pub fn try_iter(&self) -> TryIter<'_, T> {
         TryIter::new(self)
     }
 
-    /// Iterates over elements, consuming self and returning a result if any are not the expected
-    /// type.
+    /// Iterates over elements, consuming self and returning a result if any are
+    /// not the expected type.
     ///
     /// Use [`IntoIterator::into_iter`] to iterate expecting all types match.
     pub fn try_into_iter(self) -> TryIntoIter<T> {
         TryIntoIter::new(self)
     }
 
-    /// Turns this remote JS array into a local `Vec`, returning an error if any elements are
-    /// not the expected type and `check-all-casts` is enabled.
+    /// Turns this remote JS array into a local `Vec`, returning an error if any
+    /// elements are not the expected type and `check-all-casts` is enabled.
     pub fn try_local(&self) -> Result<Vec<T>, ConversionError> {
         self.try_iter().collect()
     }
 
-    /// Turns this remote JS array into a local `Vec`, panicking if any elements are not the
-    /// expected type and `check-all-casts` is enabled.
+    /// Turns this remote JS array into a local `Vec`, panicking if any elements
+    /// are not the expected type and `check-all-casts` is enabled.
     pub fn local(&self) -> Vec<T> {
         self.iter().collect()
     }

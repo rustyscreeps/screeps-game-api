@@ -1,13 +1,13 @@
-use std::cmp::{Eq, PartialEq};
-
 use crate::{
     constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
     game,
+    macros::*,
     objects::{Flag, HasPosition, LookResult, RoomPosition, StructureType},
     pathfinder::CostMatrix,
     positions::LocalRoomPosition,
     traits::TryInto,
 };
+use std::cmp::{Eq, PartialEq};
 
 use super::room::{FindOptions, Path};
 

@@ -1,17 +1,17 @@
 use stdweb::{InstanceOf, Reference, ReferenceType, Value};
 
+use super::*;
 use crate::{
     constants::StructureType,
     objects::{Attackable, CanDecay, CanStoreEnergy, HasCooldown, HasEnergyForSpawn, HasStore},
-    traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
+    traits::FromExpectedType,
     ConversionError,
 };
 
-use super::*;
-
 /// Wrapper which can be any of the game Structures.
 ///
-/// This is somewhat useful by itself, but has additional utility methods. Some tricks:
+/// This is somewhat useful by itself, but has additional utility methods. Some
+/// tricks:
 ///
 /// To get a particular type, `match` on the structure:
 ///
@@ -29,8 +29,8 @@ use super::*;
 /// }
 /// ```
 ///
-/// To use structures of a particular type, like something that can be attacked, or something that
-/// can be transfered to, use helper methods:
+/// To use structures of a particular type, like something that can be attacked,
+/// or something that can be transfered to, use helper methods:
 /// ```no_run
 /// use screeps::Structure;
 ///
@@ -69,7 +69,8 @@ pub enum Structure {
 }
 
 impl Structure {
-    /// Cast this structure as something Transferable, or return None if it isn't.
+    /// Cast this structure as something Transferable, or return None if it
+    /// isn't.
     ///
     /// Example usage:
     ///
@@ -113,10 +114,10 @@ impl Structure {
     ///
     /// The only Structure which cannot be attacked is `StructureController`.
     pub fn as_attackable(&self) -> Option<&dyn Attackable> {
-        // We're not using `match_some_structure_variants!` here or in `as_owned` so we won't have a
-        // `_ => None` branch and instead we'll be forced to add new structures to the match
-        // explicitly. The other functions would be using `_ => None` anyways since they have more
-        // `None` branches.
+        // We're not using `match_some_structure_variants!` here or in `as_owned` so we
+        // won't have a `_ => None` branch and instead we'll be forced to add
+        // new structures to the match explicitly. The other functions would be
+        // using `_ => None` anyways since they have more `None` branches.
         match self {
             Structure::Controller(_) => None,
             Structure::Container(v) => Some(v),

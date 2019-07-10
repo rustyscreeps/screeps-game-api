@@ -1,4 +1,4 @@
-use crate::objects::StructureContainer;
+use crate::{macros::*, objects::StructureContainer};
 
 simple_accessors! {
     StructureContainer;

@@ -9,6 +9,11 @@
 //!
 //! [macro-book]: https://danielkeep.github.io/tlborm/book/mbe-README.html
 
+pub use stdweb::{
+    __js_deserializable_serde_boilerplate, __js_raw_asm, __js_serializable_boilerplate,
+    __js_serializable_serde_boilerplate, _js_impl, js, js_deserializable, js_serializable,
+};
+
 /// Used to get data from a javascript reference back into rust code.
 ///
 /// Macro syntax (`$name` are expressions):
@@ -20,9 +25,9 @@
 /// For reference, `js!()` is a macro that returns a `stdweb::Value` enum.
 /// See <https://docs.rs/stdweb/0.4.8/stdweb/enum.Value.html>.
 ///
-/// Here, `js_unwrap!()` takes any valid javascript expression (expresses a value)
-/// and will attempt conversion to the receiving variable type using `try_into`.
-/// For example:
+/// Here, `js_unwrap!()` takes any valid javascript expression (expresses a
+/// value) and will attempt conversion to the receiving variable type using
+/// `try_into`. For example:
 /// ```
 /// let s: u32 = js_unwrap!(Game.time);
 /// ```
@@ -33,8 +38,8 @@
 /// ```
 ///
 /// Since `Game.time` returns a javascript `number`, `js!` spits out a
-/// `stdweb::Value::Number` which is convertible to a u32 and should work without
-/// problem.
+/// `stdweb::Value::Number` which is convertible to a u32 and should work
+/// without problem.
 ///
 /// A non-exhaustive list of types that work (use your judgement)
 ///
@@ -47,7 +52,8 @@
 /// For the full list, see the documentation for [`stdweb::unstable::TryFrom`].
 /// (If unavailable: <https://docs.rs/stdweb/0.4.8/stdweb/unstable/trait.TryFrom.html> )
 ///
-/// Note: for unwrapping reference types, use [`js_unwrap_ref!`] to avoid instanceof checks.
+/// Note: for unwrapping reference types, use [`js_unwrap_ref!`] to avoid
+/// instanceof checks.
 macro_rules! js_unwrap {
     ($($code:tt)*) => (
         crate::traits::TryInto::try_into(js! { return $($code)*; })
@@ -69,9 +75,10 @@ macro_rules! js_unwrap {
 /// let x: Creep = js!({ return Game.creeps.John; }).cast_expected_type().expect(...);
 /// ```
 ///
-/// `cast_expected_type` will ensure that the return value is a [`stdweb::Reference`], but it won't
-/// do any more than that. If the JavaScript behaves incorrectly and returns something other than a
-/// Creep, and the `"check-all-casts"` feature is not enabled, it will silently make a
+/// `cast_expected_type` will ensure that the return value is a
+/// [`stdweb::Reference`], but it won't do any more than that. If the JavaScript
+/// behaves incorrectly and returns something other than a Creep, and the
+/// `"check-all-casts"` feature is not enabled, it will silently make a
 /// [`screeps::Creep`] containing the wrong value which will fail when used.
 macro_rules! js_unwrap_ref {
     ($($code:tt)*) => (
@@ -141,11 +148,12 @@ macro_rules! get_from_js {
 /// }
 /// ```
 ///
-/// Screeps game objects, in javascript, can be accessed via stdweb's `Reference`
-/// object. For each ident `objJ` mentioned, this macro:
+/// Screeps game objects, in javascript, can be accessed via stdweb's
+/// `Reference` object. For each ident `objJ` mentioned, this macro:
 ///
 /// - Creates a struct named `objX`;
-/// - Uses `#[derive(Clone, ReferenceType)]` which implements these traits for `objX`:
+/// - Uses `#[derive(Clone, ReferenceType)]` which implements these traits for
+///   `objX`:
 ///   - `InstanceOf`
 ///   - `AsRef<Reference>`
 ///   - `ReferenceType`
@@ -214,7 +222,8 @@ macro_rules! simple_accessors {
     )
 }
 
-/// Macro for mass implementing `StructureProperties`, `PartialEq` and `Eq` for a type.
+/// Macro for mass implementing `StructureProperties`, `PartialEq` and `Eq` for
+/// a type.
 ///
 /// Macro syntax:
 ///
@@ -226,15 +235,15 @@ macro_rules! simple_accessors {
 /// }
 /// ```
 ///
-/// This macro accepts a comma-separated list of types on which to implement the unsafe
-/// `StructureProperties` trait on a screeps object.
-/// From that implementation, the type gets the `id` method which is used to implement `PartialEq`
-/// and `Eq`.
+/// This macro accepts a comma-separated list of types on which to implement the
+/// unsafe `StructureProperties` trait on a screeps object.
+/// From that implementation, the type gets the `id` method which is used to
+/// implement `PartialEq` and `Eq`.
 ///
 /// # Safety
 /// The macro assumes that it is implementing the trait to a valid `Reference`
-/// (See `reference_wrapper` macro) which will support all `StructureProperties` methods.
-///
+/// (See `reference_wrapper` macro) which will support all `StructureProperties`
+/// methods.
 macro_rules! impl_structure_properties {
     ( $( $struct_name:ty ),+ ) => {$(
         unsafe impl StructureProperties for $struct_name {}
@@ -285,8 +294,8 @@ macro_rules! impl_has_id {
 ///
 /// For this macro, the last comma is facultative.
 ///
-/// The generic comes from the fact that this implements the method to be able to
-/// target any object that conforms to the `action_target_trait` trait.
+/// The generic comes from the fact that this implements the method to be able
+/// to target any object that conforms to the `action_target_trait` trait.
 macro_rules! creep_simple_generic_action {
     ($(($method:ident($trait:ident) -> $js_name:ident)),* $(,)*) => (
         impl Creep {
@@ -318,8 +327,8 @@ macro_rules! creep_simple_generic_action {
 ///
 /// For this macro, the last comma is facultative.
 ///
-/// The concrete comes from the fact that this implements the method to be able to
-/// target only the `type` given.
+/// The concrete comes from the fact that this implements the method to be able
+/// to target only the `type` given.
 macro_rules! creep_simple_concrete_action {
     ($(($method:ident($type:ty) -> $js_name:ident)),* $(,)*) => (
         impl Creep {
@@ -397,7 +406,6 @@ macro_rules! typesafe_look_constants {
 /// This macro defines functions for retreiving the `keys` (names) of the
 /// collection, the `values` as `rust_object_accessedX` and a single object
 /// via the `get` function.
-///
 macro_rules! game_map_access {
     (
         $(
@@ -413,6 +421,8 @@ macro_rules! game_map_access {
             )*
             pub mod $mod_name {
                 use crate::objects;
+                use crate::macros::*;
+
 
                 /// Retrieve the string keys of this object.
                 pub fn keys() -> Vec<String> {
@@ -460,8 +470,8 @@ macro_rules! match_structure_variants {
     };
 }
 
-/// Match on all variants of `StructureType` and construct `Structure` variants from
-/// the same code for each of them.
+/// Match on all variants of `StructureType` and construct `Structure` variants
+/// from the same code for each of them.
 macro_rules! construct_structure_variants {
     ($source:expr => $action:expr) => {
         match $source {
@@ -488,8 +498,8 @@ macro_rules! construct_structure_variants {
     };
 }
 
-/// Match on all variants of `Structure`, doing something wrapped in Some() for some of them,
-/// and None for others.
+/// Match on all variants of `Structure`, doing something wrapped in Some() for
+/// some of them, and None for others.
 macro_rules! match_some_structure_variants {
     ($source:expr, { $($allowed:ident),* $(,)* }, $name:ident => $action:expr) => {
         match $source {
@@ -503,12 +513,13 @@ macro_rules! match_some_structure_variants {
 
 /// Implements [`serde::Serialize`] for a single given structure name.
 ///
-/// The generated implementation unconditionally uses `item as i32` to convert any instance of the
-/// structure into an integer, then uses `serialize_i32` to serialize that number.
+/// The generated implementation unconditionally uses `item as i32` to convert
+/// any instance of the structure into an integer, then uses `serialize_i32` to
+/// serialize that number.
 #[cfg(feature = "constants-serde")]
 macro_rules! impl_serialize_as_i32 {
     ($name:ty) => {
-        impl ::serde::Serialize for $name {
+        impl serde::Serialize for $name {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
                 S: ::serde::Serializer,
@@ -521,11 +532,12 @@ macro_rules! impl_serialize_as_i32 {
 
 /// Implements [`serde::Serialize`] for a single given structure name.
 ///
-/// The generated implementation unconditionally uses `item as u32` to convert any instance of the
-/// structure into an integer, then uses `serialize_u32` to serialize that number.
+/// The generated implementation unconditionally uses `item as u32` to convert
+/// any instance of the structure into an integer, then uses `serialize_u32` to
+/// serialize that number.
 macro_rules! impl_serialize_as_u32 {
     ($name:ty) => {
-        impl ::serde::Serialize for $name {
+        impl serde::Serialize for $name {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
                 S: ::serde::Serializer,
@@ -536,8 +548,8 @@ macro_rules! impl_serialize_as_u32 {
     };
 }
 
-/// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`, using `FromExpectedType` and
-/// panicking on incorrect types.
+/// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`, using
+/// `FromExpectedType` and panicking on incorrect types.
 macro_rules! impl_js_vec_iterators_from_expected_type_panic {
     ($($name:ident $(<$single_life_param:lifetime>)*),* $(,)*) => {
         $(
@@ -624,8 +636,8 @@ macro_rules! impl_js_vec_iterators_from_expected_type_with_result {
     }
 }
 
-/// Get a value from memory given a path, returning `None` if any thing along the way does not
-/// exist.
+/// Get a value from memory given a path, returning `None` if any thing along
+/// the way does not exist.
 ///
 /// # Examples
 ///
@@ -657,8 +669,8 @@ macro_rules! impl_js_vec_iterators_from_expected_type_with_result {
 /// # }
 /// ```
 ///
-/// Accepted suffixes for type are methods that exist on `MemoryReference`, such as `num`, `int`,
-/// `string`, `bool`, `arr` and `dict`.
+/// Accepted suffixes for type are methods that exist on `MemoryReference`, such
+/// as `num`, `int`, `string`, `bool`, `arr` and `dict`.
 #[macro_export]
 macro_rules! mem_get {
     // Macro entry point
@@ -708,12 +720,14 @@ macro_rules! mem_get {
     }
 }
 
-/// Set a value in memory given a path, creating dicts for intermediate places if they do not exist.
+/// Set a value in memory given a path, creating dicts for intermediate places
+/// if they do not exist.
 ///
 /// # Return
 ///
-/// This macro produces a `Result<(), ::screeps::memory::UnexpectedTypeError>`. The error path will
-/// trigger if any of the intermediate memory keys exist but are not dictionaries.
+/// This macro produces a `Result<(), ::screeps::memory::UnexpectedTypeError>`.
+/// The error path will trigger if any of the intermediate memory keys exist but
+/// are not dictionaries.
 ///
 /// # Examples
 ///
@@ -811,24 +825,24 @@ macro_rules! enum_number {
             $($variant = $value,)*
         }
 
-        impl ::serde::Serialize for $name {
+        impl serde::Serialize for $name {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
-                S: ::serde::Serializer,
+                S: serde::Serializer,
             {
                 // Serialize the enum as a u64.
                 serializer.serialize_u64(*self as u64)
             }
         }
 
-        impl<'de> ::serde::Deserialize<'de> for $name {
+        impl<'de> serde::Deserialize<'de> for $name {
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where
-                D: ::serde::Deserializer<'de>,
+                D: serde::Deserializer<'de>,
             {
                 struct Visitor;
 
-                impl<'de> ::serde::de::Visitor<'de> for Visitor {
+                impl<'de> serde::de::Visitor<'de> for Visitor {
                     type Value = $name;
 
                     fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -837,7 +851,7 @@ macro_rules! enum_number {
 
                     fn visit_u64<E>(self, value: u64) -> Result<$name, E>
                     where
-                        E: ::serde::de::Error,
+                        E: serde::de::Error,
                     {
                         // Rust does not come with a simple way of converting a
                         // number to an enum, so use a big `match`.

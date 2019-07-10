@@ -1,5 +1,4 @@
-use crate::objects::Nuke;
-
+use crate::{macros::*, objects::Nuke};
 simple_accessors! {
     Nuke;
     // id from HasID

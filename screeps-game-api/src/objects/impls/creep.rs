@@ -1,9 +1,8 @@
 use std::{marker::PhantomData, mem};
 
-use stdweb::{Reference, Value};
-
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
+    macros::*,
     memory::MemoryReference,
     objects::{
         Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, RoomPosition,
@@ -12,6 +11,8 @@ use crate::{
     pathfinder::{CostMatrix, SearchResults},
     traits::TryFrom,
 };
+use scoped_tls::scoped_thread_local;
+use stdweb::{Reference, Value};
 
 use super::room::Step;
 
@@ -145,21 +146,24 @@ impl Creep {
             raw_callback(room_name, cmatrix).map(|cm| cm.inner)
         };
 
-        // Type erased and boxed callback: no longer a type specific to the closure passed in,
-        // now unified as Box<Fn>
+        // Type erased and boxed callback: no longer a type specific to the closure
+        // passed in, now unified as Box<Fn>
         let callback_type_erased: Box<dyn Fn(String, Reference) -> Option<Reference> + 'a> =
             Box::new(callback_boxed);
 
-        // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
-        // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
-        // be entirely safe because we're only sticking it in scoped storage and we control the only use
-        // of it, but it's still necessary because "some lifetime above the current scope but otherwise
-        // unknown" is not a valid lifetime to have PF_CALLBACK have.
-        let callback_lifetime_erased: Box<dyn Fn(String, Reference) -> Option<Reference> + 'static> =
-            unsafe { mem::transmute(callback_type_erased) };
+        // Overwrite lifetime of box inside closure so it can be stuck in
+        // scoped_thread_local storage: now pretending to be static data so that
+        // it can be stuck in scoped_thread_local. This should be entirely safe
+        // because we're only sticking it in scoped storage and we control the only use
+        // of it, but it's still necessary because "some lifetime above the current
+        // scope but otherwise unknown" is not a valid lifetime to have
+        // PF_CALLBACK have.
+        let callback_lifetime_erased: Box<
+            dyn Fn(String, Reference) -> Option<Reference> + 'static,
+        > = unsafe { mem::transmute(callback_type_erased) };
 
-        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call and
-        // make the call to PathFinder.
+        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the
+        // PathFinder call and make the call to PathFinder.
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
