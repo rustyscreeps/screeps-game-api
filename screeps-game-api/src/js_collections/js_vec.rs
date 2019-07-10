@@ -7,6 +7,7 @@ use crate::{
 use std::marker::PhantomData;
 use stdweb::{Array, InstanceOf, JsSerialize, Reference, ReferenceType, Value};
 
+//
 //   - InstanceOf
 //   - AsRef<Reference>
 //   - ReferenceType

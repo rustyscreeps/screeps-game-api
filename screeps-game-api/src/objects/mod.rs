@@ -12,14 +12,16 @@
 //! rely on these contracts being upheld as long as JavaScript code does not
 //! do anything mischievous, like removing properties from objects or sticking
 //! unexpected things into dictionaries which we trust.
+
+use stdweb::{Reference, ReferenceType, Value};
+use stdweb_derive::ReferenceType;
+
 use crate::{
     constants::{ResourceType, ReturnCode, StructureType},
     macros::*,
     traits::{IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };
-use stdweb::{Reference, ReferenceType, Value};
-use stdweb_derive::ReferenceType;
 
 mod impls;
 mod structure;

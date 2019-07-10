@@ -1,10 +1,11 @@
+use stdweb::Value;
+
 use crate::{
     constants::{Color, ReturnCode},
     macros::*,
     objects::{Flag, HasPosition},
     traits::TryFrom,
 };
-use stdweb::Value;
 
 simple_accessors! {
     Flag;

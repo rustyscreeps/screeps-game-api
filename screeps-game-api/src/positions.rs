@@ -1,7 +1,8 @@
 //! Structures relating to room name parsing.
 
-use crate::objects::{HasPosition, RoomPosition};
 use std::{borrow::Cow, error, fmt, ops};
+
+use crate::objects::{HasPosition, RoomPosition};
 
 /// A structure representing a room name.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
@@ -265,13 +266,15 @@ mod local_room_name_tests {
 }
 
 mod serde {
-    use super::{parse_or_cheap_failure, LocalRoomName};
-    use crate::macros::*;
+    use std::fmt;
+
     use serde::{
         de::{Error, Unexpected, Visitor},
         Deserialize, Deserializer, Serialize, Serializer,
     };
-    use std::fmt;
+
+    use super::{parse_or_cheap_failure, LocalRoomName};
+    use crate::macros::*;
 
     impl Serialize for LocalRoomName {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -332,12 +335,13 @@ impl HasPosition for LocalRoomPosition {
 }
 
 mod stdweb {
+    use stdweb::Value;
+
     use super::{LocalRoomName, LocalRoomPosition};
     use crate::{
         macros::*,
         traits::{TryFrom, TryInto},
     };
-    use stdweb::Value;
 
     impl TryFrom<Value> for LocalRoomPosition {
         type Error = <Value as TryInto<String>>::Error;
@@ -353,8 +357,9 @@ mod stdweb {
 }
 
 mod room_pos_serde {
-    use super::{LocalRoomName, LocalRoomPosition};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+    use super::{LocalRoomName, LocalRoomPosition};
 
     #[derive(Serialize, Deserialize)]
     struct SerializedLocalRoomPosition {

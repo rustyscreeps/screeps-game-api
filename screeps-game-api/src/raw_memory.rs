@@ -1,7 +1,8 @@
 //! Interface for Screeps `RawMemory` global object.
 
-use crate::macros::*;
 use serde::Deserialize;
+
+use crate::macros::*;
 
 #[derive(Deserialize, Debug)]
 pub struct ForeignSegment {

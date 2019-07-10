@@ -1,10 +1,11 @@
+use stdweb::UnsafeTypedArray;
+
 use crate::{
     constants::{ReturnCode, Terrain},
     macros::*,
     objects::RoomTerrain,
     traits::TryInto,
 };
-use stdweb::UnsafeTypedArray;
 
 impl RoomTerrain {
     pub fn constructor(room_name: &str) -> Self {

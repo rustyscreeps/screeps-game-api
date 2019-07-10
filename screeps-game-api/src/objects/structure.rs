@@ -1,3 +1,5 @@
+use stdweb::{InstanceOf, Reference, ReferenceType, Value};
+
 use super::*;
 use crate::{
     constants::StructureType,
@@ -5,7 +7,6 @@ use crate::{
     traits::FromExpectedType,
     ConversionError,
 };
-use stdweb::{InstanceOf, Reference, ReferenceType, Value};
 
 /// Wrapper which can be any of the game Structures.
 ///

@@ -12,9 +12,10 @@ use crate::{
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
 pub mod cpu {
-    use crate::{constants::ReturnCode, macros::*, traits::TryInto};
     use serde::{Deserialize, Serialize};
     use std::collections;
+
+    use crate::{constants::ReturnCode, macros::*, traits::TryInto};
 
     /// See [`v8_getheapstatistics`]
     ///
@@ -129,16 +130,18 @@ pub mod gcl {
 ///
 /// [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
 pub mod map {
+    use std::{collections, mem};
+
+    use scoped_tls::scoped_thread_local;
+    use serde::Deserialize;
+    use stdweb::Value;
+
     use crate::{
         constants::{find::Exit, Direction, ReturnCode},
         macros::*,
         objects::RoomTerrain,
         traits::{TryFrom, TryInto},
     };
-    use scoped_tls::scoped_thread_local;
-    use serde::Deserialize;
-    use std::{collections, mem};
-    use stdweb::Value;
 
     /// See [http://docs.screeps.com/api/#Game.map.describeExits]
     ///
@@ -270,14 +273,16 @@ pub mod map {
 }
 
 pub mod market {
+    use std::collections::HashMap;
+
+    use serde::Deserialize;
+
     use crate::{
         constants::{ResourceType, ReturnCode},
         macros::*,
         traits::TryInto,
         Room,
     };
-    use serde::Deserialize;
-    use std::collections::HashMap;
 
     #[repr(u32)]
     #[derive(Clone, Debug)]

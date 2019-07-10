@@ -1,8 +1,10 @@
 //! Useful traits for interacting with JavaScript above what [`stdweb`]
 //! provides.
-use crate::ConversionError;
+
 pub use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
+
+use crate::ConversionError;
 
 /// See [`IntoExpectedType`]
 pub trait FromExpectedType<T>: Sized {

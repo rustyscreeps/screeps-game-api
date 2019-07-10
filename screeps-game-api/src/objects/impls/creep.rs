@@ -1,3 +1,8 @@
+use std::{marker::PhantomData, mem};
+
+use scoped_tls::scoped_thread_local;
+use stdweb::{Reference, Value};
+
 use super::room::Step;
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
@@ -10,9 +15,6 @@ use crate::{
     pathfinder::{CostMatrix, SearchResults},
     traits::TryFrom,
 };
-use scoped_tls::scoped_thread_local;
-use std::{marker::PhantomData, mem};
-use stdweb::{Reference, Value};
 
 scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(String, Reference) -> Option<Reference>>);
 

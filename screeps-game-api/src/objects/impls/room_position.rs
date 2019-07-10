@@ -1,3 +1,5 @@
+use std::cmp::{Eq, PartialEq};
+
 use super::room::{FindOptions, Path};
 use crate::{
     constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
@@ -8,7 +10,6 @@ use crate::{
     positions::LocalRoomPosition,
     traits::TryInto,
 };
-use std::cmp::{Eq, PartialEq};
 
 impl RoomPosition {
     pub fn new(x: u32, y: u32, room_name: &str) -> Self {

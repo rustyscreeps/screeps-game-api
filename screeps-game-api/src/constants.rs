@@ -4,16 +4,18 @@
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
-use crate::{
-    objects::RoomObject,
-    traits::{FromExpectedType, TryFrom, TryInto},
-    ConversionError,
-};
+
 use log::error;
 use num_derive::FromPrimitive;
 #[allow(unused_imports)]
 use serde::{Deserialize, Serialize};
 use stdweb::{Number, Reference, Value};
+
+use crate::{
+    objects::RoomObject,
+    traits::{FromExpectedType, TryFrom, TryInto},
+    ConversionError,
+};
 
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]

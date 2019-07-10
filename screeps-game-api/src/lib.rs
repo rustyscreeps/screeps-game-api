@@ -32,6 +32,8 @@ mod positions;
 pub mod raw_memory;
 pub mod traits;
 
+pub use stdweb::private::ConversionError;
+
 pub use crate::{
     constants::*,
     js_collections::JsVec,
@@ -39,7 +41,6 @@ pub use crate::{
     positions::{LocalRoomName, LocalRoomNameParseError, LocalRoomPosition},
     traits::{FromExpectedType, IntoExpectedType},
 };
-pub use stdweb::private::ConversionError;
 
 /// Useful for `use screeps::prelude::*;` to bring in screeps traits. Does not
 /// contain any structures in order to minimize namespace polution.
