@@ -182,11 +182,11 @@ macro_rules! reference_wrappers {
                 fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
                     #[cfg(feature = "check-all-casts")]
                     {
-                        ::traits::TryFrom::try_from(reference)
+                        $crate::traits::TryFrom::try_from(reference)
                     }
                     #[cfg(not(feature = "check-all-casts"))]
                     {
-                        unsafe { Ok(::stdweb::ReferenceType::from_reference_unchecked(reference)) }
+                        unsafe { Ok(stdweb::ReferenceType::from_reference_unchecked(reference)) }
                     }
                 }
             }

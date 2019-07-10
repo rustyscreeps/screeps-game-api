@@ -14,7 +14,7 @@ use crate::{
 
 use log::error;
 use num_derive::FromPrimitive;
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
