@@ -150,7 +150,7 @@ impl Room {
     where
         O: ?Sized + HasPosition,
         T: ?Sized + HasPosition,
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let from = from_pos.pos();
         let to = to_pos.pos();
@@ -309,7 +309,7 @@ impl Eq for Room {}
 
 pub struct FindOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+    F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     pub(crate) ignore_creeps: bool,
     pub(crate) ignore_destructible_structures: bool,
@@ -323,9 +323,9 @@ where
     pub(crate) swamp_cost: u8,
 }
 
-impl Default for FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+impl Default for FindOptions<'static, fn(String, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     fn default() -> Self {
-        fn cost_matrix(_: String, _: CostMatrix) -> Option<CostMatrix<'static>> {
+        fn cost_matrix(_: String, _: CostMatrix<'_>) -> Option<CostMatrix<'static>> {
             None
         }
 
@@ -346,7 +346,7 @@ impl Default for FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatri
     }
 }
 
-impl FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+impl FindOptions<'static, fn(String, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -355,7 +355,7 @@ impl FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>>
 
 impl<'a, F> FindOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+    F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
@@ -373,7 +373,7 @@ where
     /// Sets cost callback - default `|_, _| {}`.
     pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> FindOptions<'b, F2>
     where
-        F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
+        F2: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         let FindOptions {
             ignore_creeps,
@@ -488,7 +488,7 @@ impl<'de> Deserialize<'de> for Event {
         impl<'de> Visitor<'de> for EventVisitor {
             type Value = Event;
 
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
                 formatter.write_str("struct Event")
             }
 

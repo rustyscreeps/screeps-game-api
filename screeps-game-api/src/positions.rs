@@ -28,7 +28,7 @@ impl fmt::Display for LocalRoomName {
     /// in the same LocalRoomName if passed into [`LocalRoomName::new`].
     ///
     /// [`LocalRoomName::new`]: struct.LocalRoomName.html#method.new
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.x_coord >= 0 {
             write!(f, "E{}", self.x_coord)?;
         } else {
@@ -50,7 +50,7 @@ impl LocalRoomName {
     ///
     /// This will parse the input, and return an error if it is in an invalid format.
     #[inline]
-    pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError>
+    pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError<'_>>
     where
         T: AsRef<str> + ?Sized,
     {
@@ -107,7 +107,7 @@ impl ops::Sub<LocalRoomName> for LocalRoomName {
 /// Something that can be turned into a room name.
 pub trait IntoLocalRoomName {
     /// Turns this data into a room name, erroring if the format is not as expected.
-    fn into_room_name(&self) -> Result<LocalRoomName, LocalRoomNameParseError>;
+    fn into_room_name(&self) -> Result<LocalRoomName, LocalRoomNameParseError<'_>>;
 }
 
 fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
@@ -196,7 +196,7 @@ impl<'a> error::Error for LocalRoomNameParseError<'a> {
 }
 
 impl<'a> fmt::Display for LocalRoomNameParseError<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "expected room name formatted `(E|W)[0-9]+(N|S)[0-9]+`, found `{}`",
@@ -283,7 +283,7 @@ mod serde {
     impl<'de> Visitor<'de> for LocalRoomNameVisitor {
         type Value = LocalRoomName;
 
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
             formatter.write_str("room name formatted `(E|W)[0-9]+(N|S)[0-9]+`")
         }
 

@@ -63,7 +63,7 @@ use crate::{
 pub struct UnexpectedTypeError;
 
 impl fmt::Display for UnexpectedTypeError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // TODO: include &'static str references to the type names in this error...
         write!(f, "expected one memory type, found another")
     }

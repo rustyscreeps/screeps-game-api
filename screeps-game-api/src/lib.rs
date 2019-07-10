@@ -22,13 +22,13 @@
 extern crate log;
 #[macro_use]
 extern crate num_derive;
-extern crate num_traits;
+
 #[macro_use]
 extern crate scoped_tls;
-extern crate serde;
+
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
+
 #[macro_use]
 extern crate stdweb;
 #[macro_use]

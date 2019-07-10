@@ -70,7 +70,7 @@ where
 
     /// Iterates over elements, panicking if any are not the expected type and
     /// `check-all-casts` is enabled.
-    pub fn iter(&self) -> Iter<T> {
+    pub fn iter(&self) -> Iter<'_, T> {
         Iter::new(self)
     }
 
@@ -78,7 +78,7 @@ where
     /// `check-all-casts` is enabled.
     ///
     /// Use [`IntoIterator::into_iter`] to iterate expecting all types match.
-    pub fn try_iter(&self) -> TryIter<T> {
+    pub fn try_iter(&self) -> TryIter<'_, T> {
         TryIter::new(self)
     }
 

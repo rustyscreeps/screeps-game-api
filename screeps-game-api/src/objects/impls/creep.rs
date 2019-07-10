@@ -88,7 +88,7 @@ impl Creep {
         move_options: MoveToOptions<'a, F>,
     ) -> ReturnCode
     where
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let rp = RoomPosition::new(x, y, &self.pos().room_name());
         self.move_to_with_options(&rp, move_options)
@@ -106,7 +106,7 @@ impl Creep {
     ) -> ReturnCode
     where
         T: ?Sized + HasPosition,
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let MoveToOptions {
             reuse_path,
@@ -311,7 +311,7 @@ creep_simple_concrete_action! {
 
 pub struct MoveToOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+    F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     pub(crate) reuse_path: u32,
     pub(crate) serialize_memory: bool,
@@ -320,7 +320,7 @@ where
     pub(crate) find_options: FindOptions<'a, F>,
 }
 
-impl Default for MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+impl Default for MoveToOptions<'static, fn(String, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     fn default() -> Self {
         // TODO: should we fall back onto the game's default values, or is
         // it alright to copy them here?
@@ -334,7 +334,7 @@ impl Default for MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMat
     }
 }
 
-impl MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+impl MoveToOptions<'static, fn(String, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -343,7 +343,7 @@ impl MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>
 
 impl<'a, F> MoveToOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+    F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     /// Enables caching of the calculated path. Default: 5 ticks
     pub fn reuse_path(mut self, n_ticks: u32) -> Self {
@@ -385,7 +385,7 @@ where
     /// Sets cost callback - default `|_, _| {}`.
     pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> MoveToOptions<'b, F2>
     where
-        F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
+        F2: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,
@@ -440,7 +440,7 @@ where
     /// Sets options related to FindOptions. Defaults to FindOptions default.
     pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2>) -> MoveToOptions<'b, F2>
     where
-        F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
+        F2: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,

@@ -76,7 +76,7 @@ impl LocalCostMatrix {
     ///
     /// The CostMatrix returned will _reference the internal data of this `LocalCostMatrix`_.
     pub unsafe fn as_uploaded<'a>(&'a self) -> CostMatrix<'a> {
-        let bits: UnsafeTypedArray<u8> = UnsafeTypedArray::new(&self.bits);
+        let bits: UnsafeTypedArray<'_, u8> = UnsafeTypedArray::new(&self.bits);
 
         CostMatrix {
             inner: (js! {

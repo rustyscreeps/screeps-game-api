@@ -28,7 +28,7 @@ impl RoomTerrain {
     ) -> Result<&'a mut Vec<u8>, ReturnCode> {
         let is_success: bool;
         {
-            let arr: UnsafeTypedArray<u8> = unsafe { UnsafeTypedArray::new(buffer.as_mut_slice()) };
+            let arr: UnsafeTypedArray<'_, u8> = unsafe { UnsafeTypedArray::new(buffer.as_mut_slice()) };
 
             is_success = js! {
                 var bytes = @{arr};

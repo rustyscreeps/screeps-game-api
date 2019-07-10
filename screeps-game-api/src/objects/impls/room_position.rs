@@ -93,7 +93,7 @@ impl RoomPosition {
 
     pub fn find_path_to<'a, F, T>(&self, target: &T, opts: FindOptions<'a, F>) -> Path
     where
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
         T: ?Sized + HasPosition,
     {
         let self_room = game::rooms::get(&self.room_name()).unwrap();
@@ -102,7 +102,7 @@ impl RoomPosition {
 
     pub fn find_path_to_xy<'a, F>(&self, x: u32, y: u32, opts: FindOptions<'a, F>) -> Path
     where
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let target = RoomPosition::new(x, y, &self.room_name());
         self.find_path_to(&target, opts)
