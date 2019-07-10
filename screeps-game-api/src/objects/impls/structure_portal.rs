@@ -3,7 +3,6 @@ use crate::{
     objects::{RoomPosition, StructurePortal},
     traits::TryInto,
 };
-
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]

@@ -3,6 +3,7 @@ use crate::{
     macros::*,
     objects::StructureTerminal,
 };
+
 impl StructureTerminal {
     pub fn send(
         &self,

@@ -3,6 +3,7 @@ use crate::{
     macros::*,
     objects::{Creep, StructureLab},
 };
+
 simple_accessors! {
     StructureLab;
     (mineral_amount -> mineralAmount -> u32),

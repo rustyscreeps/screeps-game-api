@@ -39,7 +39,6 @@ pub use crate::{
     positions::{LocalRoomName, LocalRoomNameParseError, LocalRoomPosition},
     traits::{FromExpectedType, IntoExpectedType},
 };
-
 pub use stdweb::private::ConversionError;
 
 /// Useful for `use screeps::prelude::*;` to bring in screeps traits. Does not

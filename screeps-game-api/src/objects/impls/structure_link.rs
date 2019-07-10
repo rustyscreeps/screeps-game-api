@@ -1,4 +1,5 @@
 use crate::{constants::ReturnCode, macros::*, objects::StructureLink};
+
 impl StructureLink {
     pub fn transfer_energy(&self, target: &StructureLink, amount: Option<u32>) -> ReturnCode {
         match amount {

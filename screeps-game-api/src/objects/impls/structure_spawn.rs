@@ -1,5 +1,3 @@
-use stdweb::Reference;
-
 use crate::{
     constants::{Direction, Part, ReturnCode},
     macros::*,
@@ -7,6 +5,8 @@ use crate::{
     objects::{Creep, HasEnergyForSpawn, SizedRoomObject, Spawning, StructureSpawn},
     traits::TryInto,
 };
+use stdweb::Reference;
+
 simple_accessors! {
     StructureSpawn;
     (name -> name -> String),

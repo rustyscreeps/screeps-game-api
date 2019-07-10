@@ -3,6 +3,7 @@ use crate::{
     macros::*,
     objects::Mineral,
 };
+
 simple_accessors! {
     Mineral;
     (density -> density -> u32),

@@ -1,13 +1,11 @@
 //! [`JsVec`]
-use std::marker::PhantomData;
-
-use stdweb::{Array, InstanceOf, JsSerialize, Reference, ReferenceType, Value};
-
 use crate::{
     macros::*,
     traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };
+use std::marker::PhantomData;
+use stdweb::{Array, InstanceOf, JsSerialize, Reference, ReferenceType, Value};
 
 //
 //   - InstanceOf

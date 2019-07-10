@@ -1,3 +1,4 @@
+use super::room::{FindOptions, Path};
 use crate::{
     constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
     game,
@@ -8,8 +9,6 @@ use crate::{
     traits::TryInto,
 };
 use std::cmp::{Eq, PartialEq};
-
-use super::room::{FindOptions, Path};
 
 impl RoomPosition {
     pub fn new(x: u32, y: u32, room_name: &str) -> Self {

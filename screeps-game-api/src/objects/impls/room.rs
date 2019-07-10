@@ -1,14 +1,3 @@
-use std::{fmt, marker::PhantomData, mem, ops::Range};
-
-use scoped_tls::scoped_thread_local;
-use serde::{
-    self,
-    de::{self, Deserializer, MapAccess, Visitor},
-    Deserialize, Serialize,
-};
-use serde_json;
-use stdweb::{Reference, Value};
-
 use crate::{
     constants::{
         find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
@@ -26,6 +15,15 @@ use crate::{
     traits::{TryFrom, TryInto},
     ConversionError,
 };
+use scoped_tls::scoped_thread_local;
+use serde::{
+    self,
+    de::{self, Deserializer, MapAccess, Visitor},
+    Deserialize, Serialize,
+};
+use serde_json;
+use std::{fmt, marker::PhantomData, mem, ops::Range};
+use stdweb::{Reference, Value};
 
 simple_accessors! {
     Room;

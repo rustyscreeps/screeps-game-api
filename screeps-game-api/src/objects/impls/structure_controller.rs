@@ -1,6 +1,5 @@
-use stdweb::Value;
-
 use crate::{constants::ReturnCode, macros::*, objects::StructureController};
+use stdweb::Value;
 simple_accessors! {
     StructureController;
     (level -> level -> u32),

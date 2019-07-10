@@ -4,17 +4,15 @@
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
-use stdweb::{Number, Reference, Value};
-
 use crate::{
     objects::RoomObject,
     traits::{FromExpectedType, TryFrom, TryInto},
     ConversionError,
 };
-
 use log::error;
 use num_derive::FromPrimitive;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use stdweb::{Number, Reference, Value};
 
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
@@ -128,8 +126,7 @@ unsafe impl FindConstant for FindObject {
 }
 
 pub mod find {
-    use serde::Deserialize;
-
+    use super::FindConstant;
     use crate::{
         objects::{
             ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
@@ -137,8 +134,7 @@ pub mod find {
         },
         traits::TryFrom,
     };
-
-    use super::FindConstant;
+    use serde::Deserialize;
 
     #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, Hash)]
     #[serde(transparent)]

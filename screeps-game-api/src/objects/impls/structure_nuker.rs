@@ -3,6 +3,7 @@ use crate::{
     macros::*,
     objects::{RoomPosition, StructureNuker},
 };
+
 simple_accessors! {
     StructureNuker;
     (ghodium -> ghodium -> u32),

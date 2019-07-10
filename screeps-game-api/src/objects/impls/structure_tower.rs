@@ -3,6 +3,7 @@ use crate::{
     macros::*,
     objects::{Creep, Structure, StructureTower},
 };
+
 impl StructureTower {
     pub fn attack(&self, target: &Creep) -> ReturnCode {
         js_unwrap! { @{self.as_ref()}.attack( @{target.as_ref()} ) }
