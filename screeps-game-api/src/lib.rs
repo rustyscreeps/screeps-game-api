@@ -20,7 +20,7 @@
 #![recursion_limit = "128"]
 
 #[macro_use]
-pub(crate) mod macros;
+pub mod macros;
 
 pub mod constants;
 pub mod game;

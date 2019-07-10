@@ -11,6 +11,7 @@ use crate::{
 };
 use log::error;
 use num_derive::FromPrimitive;
+#[allow(unused_imports)]
 use serde::{Deserialize, Serialize};
 use stdweb::{Number, Reference, Value};
 

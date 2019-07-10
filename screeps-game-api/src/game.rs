@@ -508,7 +508,8 @@ pub fn time() -> u32 {
 /// `ConversionError` if the type does not match.
 ///
 /// If all you want to assume is that something has an ID, use
-/// [`get_object_erased`]. [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
+/// [`get_object_erased`].
+/// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
 pub fn get_object_typed<T>(id: &str) -> Result<Option<T>, ConversionError>
 where
     T: HasId + SizedRoomObject,
