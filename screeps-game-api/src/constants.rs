@@ -4,6 +4,7 @@
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
+use std::fmt;
 
 use log::error;
 use num_derive::FromPrimitive;
@@ -258,6 +259,22 @@ impl ::std::ops::Neg for Direction {
             Left => Right,
             TopLeft => BottomRight,
         }
+    }
+}
+
+impl fmt::Display for Direction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let ch = match *self {
+            Direction::Top => "↑",
+            Direction::TopRight => "↗",
+            Direction::Right => "→",
+            Direction::BottomRight => "↘",
+            Direction::Bottom => "↓",
+            Direction::BottomLeft => "↙",
+            Direction::Left => "←",
+            Direction::TopLeft => "↖",
+        };
+        f.write_str(ch)
     }
 }
 
