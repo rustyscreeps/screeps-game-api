@@ -125,15 +125,17 @@ unsafe impl FindConstant for FindObject {
 }
 
 pub mod find {
+    use serde::Deserialize;
+    use stdweb::unstable::TryFrom;
+
     use super::FindConstant;
     use crate::{
         objects::{
-            ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
-            Source, Structure, StructureSpawn, Tombstone,
+            ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, PowerCreep, Resource,
+            RoomPosition, Source, Structure, StructureSpawn, Tombstone,
         },
         traits::TryFrom,
     };
-    use serde::Deserialize;
 
     #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, Hash)]
     #[serde(transparent)]
@@ -199,6 +201,9 @@ pub mod find {
         MINERALS, 116, Mineral;
         NUKES, 117, Nuke;
         TOMBSTONES, 118, Tombstone;
+        POWER_CREEPS, 119, PowerCreep;
+        MY_POWER_CREEPS, 120, PowerCreep;
+        HOSTILE_POWER_CREEPS, 121, PowerCreep;
     }
 }
 
@@ -372,6 +377,7 @@ pub enum Look {
     Nukes = 8,
     Terrain = 9,
     Tombstones = 10,
+    PowerCreeps = 11,
 }
 
 pub unsafe trait LookConstant {
@@ -386,7 +392,8 @@ pub mod look {
     use super::{Look, LookConstant, Terrain};
     use crate::{
         objects::{
-            ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Tombstone,
+            ConstructionSite, Creep, Flag, Mineral, Nuke, PowerCreep, Resource, Source, Structure,
+            Tombstone,
         },
         traits::{IntoExpectedType, TryInto},
     };
@@ -404,6 +411,7 @@ pub mod look {
         NUKES, Look::Nukes, Nuke, IntoExpectedType::into_expected_type;
         TERRAIN, Look::Terrain, Terrain, TryInto::try_into;
         TOMBSTONES, Look::Tombstones, Tombstone, IntoExpectedType::into_expected_type;
+        POWER_CREEPS, Look::PowerCreeps, PowerCreep, IntoExpectedType::into_expected_type;
     }
 }
 
@@ -532,6 +540,7 @@ pub fn extension_energy_capacity(rcl: u32) -> u32 {
 }
 
 pub const ROAD_WEAROUT: u32 = 1;
+pub const ROAD_WEAROUT_POWER_CREEP: u32 = 100;
 pub const ROAD_DECAY_AMOUNT: u32 = 100;
 pub const ROAD_DECAY_TIME: u32 = 1000;
 
@@ -893,6 +902,9 @@ pub enum ResourceType {
     /// `"XGHO2"`
     #[cfg_attr(feature = "constants-serde", serde(rename = "XGHO2"))]
     CatalyzedGhodiumAlkalide = 43,
+    /// `"ops"`
+    #[cfg_attr(feature = "constants-serde", serde(rename = "ops"))]
+    Ops = 44,
 }
 
 impl ResourceType {

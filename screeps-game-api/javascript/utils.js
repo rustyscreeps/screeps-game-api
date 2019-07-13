@@ -39,6 +39,7 @@ function __look_num_to_str(num) {
         case 8: return LOOK_NUKES;
         case 9: return LOOK_TERRAIN;
         case 10: return LOOK_TOMBSTONES;
+        case 11: return LOOK_POWER_CREEPS;
         default: throw new Error("unknown look integer encoding " + num);
     }
 }
@@ -139,6 +140,7 @@ function __resource_type_num_to_str(num) {
         case 41: return RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE;
         case 42: return RESOURCE_CATALYZED_GHODIUM_ACID;
         case 43: return RESOURCE_CATALYZED_GHODIUM_ALKALIDE;
+        case 44: return RESOURCE_OPS;
         default: throw new Error("unknown resource type integer encoding " + num);
     }
 }
@@ -188,6 +190,7 @@ function __resource_type_str_to_num(str) {
         case RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE: return 41;
         case RESOURCE_CATALYZED_GHODIUM_ACID: return 42;
         case RESOURCE_CATALYZED_GHODIUM_ALKALIDE: return 43;
+        case RESOURCE_OPS: return 44;
         default: throw new Error("unknown resource type " + str);
     }
 }

@@ -18,9 +18,9 @@ use crate::{
     macros::*,
     memory::MemoryReference,
     objects::{
-        ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, Resource, Room, RoomPosition,
-        RoomTerrain, Source, Structure, StructureController, StructureStorage, StructureTerminal,
-        Tombstone,
+        ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource, Room,
+        RoomPosition, RoomTerrain, Source, Structure, StructureController, StructureStorage,
+        StructureTerminal, Tombstone,
     },
     pathfinder::CostMatrix,
     positions::LocalRoomName,
@@ -720,6 +720,7 @@ pub enum LookResult {
     Nuke(Nuke),
     Terrain(Terrain),
     Tombstone(Tombstone),
+    PowerCreep(PowerCreep),
 }
 
 impl TryFrom<Value> for LookResult {
@@ -742,6 +743,7 @@ impl TryFrom<Value> for LookResult {
             "nuke" => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
             "terrain" => LookResult::Terrain(js_unwrap!(@{v}.terrain)),
             "tombstone" => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
+            "powerCreep" => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
             _ => {
                 return Err(ConversionError::Custom(format!(
                     "Look result type unknown: {:?}",

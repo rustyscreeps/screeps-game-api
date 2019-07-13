@@ -106,6 +106,8 @@ reference_wrappers!(
     // Structure,
     #[reference(instance_of = "Tombstone")]
     Tombstone,
+    #[reference(instance_of = "PowerCreep")]
+    PowerCreep,
 );
 
 /// Trait for things which have positions in the Screeps world.
@@ -167,6 +169,7 @@ impl_has_id! {
     StructureTower;
     StructureWall;
     Tombstone;
+    PowerCreep;
 }
 
 /// Trait for all wrappers over Screeps JavaScript objects extending
@@ -473,6 +476,7 @@ unsafe impl RoomObjectProperties for StructureTower {}
 unsafe impl RoomObjectProperties for StructureWall {}
 unsafe impl RoomObjectProperties for Structure {}
 unsafe impl RoomObjectProperties for Tombstone {}
+unsafe impl RoomObjectProperties for PowerCreep {}
 
 impl_structure_properties! {
     OwnedStructure,
