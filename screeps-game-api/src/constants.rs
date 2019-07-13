@@ -1,6 +1,6 @@
 //! Constants, most copied from [the game constants].
 //!
-//! Last updated on 2018-03-06, `c3372fd` on
+//! Last updated on 2019-07-13, `068343753adf090fd1991944d2292be9e236b7dd` from
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
@@ -453,8 +453,9 @@ impl TryFrom<Value> for Part {
 }
 
 pub const CREEP_LIFE_TIME: u32 = 1500;
-pub const CREEP_CLAIM_LIFE_TIME: u32 = 500;
+pub const CREEP_CLAIM_LIFE_TIME: u32 = 600;
 pub const CREEP_CORPSE_RATE: f32 = 0.2;
+pub const CREEP_PART_MAX_ENERGY: u32 = 125;
 
 pub const CARRY_CAPACITY: u32 = 50;
 
@@ -634,6 +635,7 @@ impl TryFrom<Value> for StructureType {
 }
 
 pub const CONSTRUCTION_COST_ROAD_SWAMP_RATIO: u32 = 5;
+pub const CONSTRUCTION_COST_ROAD_WALL_RATIO: u32 = 150;
 
 /// Accepts levels 0-7. any other results in 0.
 pub fn controller_levels(current_rcl: u32) -> u32 {
@@ -682,6 +684,8 @@ pub const LAB_MINERAL_CAPACITY: u32 = 3000;
 pub const LAB_ENERGY_CAPACITY: u32 = 2000;
 pub const LAB_BOOST_ENERGY: u32 = 20;
 pub const LAB_BOOST_MINERAL: u32 = 30;
+pub const LAB_UNBOOST_ENERGY: u32 = 0;
+pub const LAB_UNBOOST_MINERAL: u32 = 15;
 
 pub const LAB_REACTION_AMOUNT: u32 = 5;
 
