@@ -30,6 +30,7 @@ pub mod objects;
 pub mod pathfinder;
 mod positions;
 pub mod raw_memory;
+pub mod inter_shard_memory;
 pub mod traits;
 
 pub use stdweb::private::ConversionError;
