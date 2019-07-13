@@ -90,7 +90,7 @@ function __structure_type_str_to_num(str) {
         case STRUCTURE_TERMINAL: return 16;
         case STRUCTURE_CONTAINER: return 17;
         case STRUCTURE_NUKER: return 18;
-        default: throw new Error("unknown resource type " + str);
+        default: throw new Error("unknown structure type " + str);
     }
 }
 
