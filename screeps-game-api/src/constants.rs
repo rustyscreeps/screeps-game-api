@@ -844,18 +844,15 @@ impl Density {
 pub const MINERAL_DENSITY_CHANGE: u32 = 0.05;
 
 pub const TERMINAL_CAPACITY: u32 = 300_000;
-pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 pub const TERMINAL_MIN_SEND: u32 = 100;
 pub const TERMINAL_COOLDOWN: u32 = 10;
 
-pub const CONTAINER_HITS: u32 = 250_000;
 pub const CONTAINER_CAPACITY: u32 = 2000;
 pub const CONTAINER_DECAY: u32 = 5000;
 pub const CONTAINER_DECAY_TIME: u32 = 100;
 pub const CONTAINER_DECAY_TIME_OWNED: u32 = 500;
 
-pub const NUKER_HITS: u32 = 1000;
 pub const NUKER_COOLDOWN: u32 = 100_000;
 pub const NUKER_ENERGY_CAPACITY: u32 = 300_000;
 pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
