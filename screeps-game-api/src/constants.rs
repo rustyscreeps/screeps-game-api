@@ -17,6 +17,7 @@ use std::fmt;
 
 use log::error;
 use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 #[allow(unused_imports)]
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -67,8 +68,8 @@ impl ReturnCode {
 impl TryFrom<Value> for ReturnCode {
     type Error = ConversionError;
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        use num_traits::FromPrimitive;
         let x: i32 = v.try_into()?;
+
         Ok(Self::from_i32(x).unwrap_or_else(|| {
             error!("encountered a return code we don't know: {}", x);
             ReturnCode::Other
@@ -79,8 +80,8 @@ impl TryFrom<Value> for ReturnCode {
 impl TryFrom<Number> for ReturnCode {
     type Error = ConversionError;
     fn try_from(v: Number) -> Result<Self, Self::Error> {
-        use num_traits::FromPrimitive;
         let x: i32 = v.try_into()?;
+
         Ok(Self::from_i32(x).unwrap_or_else(|| {
             error!("encountered a return code we don't know: {}", x);
             ReturnCode::Other
@@ -91,7 +92,6 @@ impl TryFrom<Number> for ReturnCode {
 impl TryFrom<i32> for ReturnCode {
     type Error = i32;
     fn try_from(v: i32) -> Result<Self, Self::Error> {
-        use num_traits::FromPrimitive;
         Self::from_i32(v).ok_or(v)
     }
 }
@@ -234,8 +234,6 @@ impl TryFrom<Value> for Direction {
     type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        use num_traits::FromPrimitive;
-
         let as_num = u32::try_from(v)?;
 
         Ok(Self::from_u32(as_num).unwrap_or_else(|| {
@@ -318,8 +316,6 @@ impl TryFrom<Value> for Color {
     type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        use num_traits::FromPrimitive;
-
         let as_num = u32::try_from(v)?;
 
         Ok(Self::from_u32(as_num).unwrap_or_else(|| {
@@ -438,7 +434,7 @@ pub mod look {
 }
 
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize, Deserialize, FromPrimitive)]
 #[serde(rename_all = "snake_case")]
 pub enum Part {
     Move = 0,
@@ -468,30 +464,12 @@ impl Part {
     }
 }
 
-impl TryFrom<u32> for Part {
-    type Error = ();
-    fn try_from(x: u32) -> Result<Self, Self::Error> {
-        let res = match x {
-            0 => Part::Move,
-            1 => Part::Work,
-            2 => Part::Carry,
-            3 => Part::Attack,
-            4 => Part::RangedAttack,
-            5 => Part::Tough,
-            6 => Part::Heal,
-            7 => Part::Claim,
-            _ => return Err(()),
-        };
-        Ok(res)
-    }
-}
-
 impl TryFrom<Value> for Part {
     type Error = ConversionError;
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: u32 = v.try_into()?;
-        Ok(Self::try_from(x)
-            .unwrap_or_else(|()| panic!("JavaScript gave unknown part constant {}", x)))
+        Ok(Self::from_u32(x)
+            .unwrap_or_else(|| panic!("JavaScript gave unknown part constant {}", x)))
     }
 }
 
@@ -591,7 +569,7 @@ pub const STORAGE_HITS: u32 = 10_000;
 
 /// Translates `STRUCTURE_*` constants.
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum StructureType {
     Spawn = 0,
@@ -672,28 +650,7 @@ impl TryFrom<Value> for StructureType {
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: u32 = v.try_into()?;
-        Ok(match x {
-            0 => StructureType::Spawn,
-            1 => StructureType::Extension,
-            2 => StructureType::Road,
-            3 => StructureType::Wall,
-            4 => StructureType::Rampart,
-            5 => StructureType::KeeperLair,
-            6 => StructureType::Portal,
-            7 => StructureType::Controller,
-            8 => StructureType::Link,
-            9 => StructureType::Storage,
-            10 => StructureType::Tower,
-            11 => StructureType::Observer,
-            12 => StructureType::PowerBank,
-            13 => StructureType::PowerSpawn,
-            14 => StructureType::Extractor,
-            15 => StructureType::Lab,
-            16 => StructureType::Terminal,
-            17 => StructureType::Container,
-            18 => StructureType::Nuker,
-            _ => panic!("unknown structure type integer {}", x),
-        })
+        Ok(Self::from_u32(x).unwrap_or_else(|| panic!("unknown structure type integer {}", x)))
     }
 }
 
@@ -831,8 +788,6 @@ impl TryFrom<Value> for Density {
     type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
-        use num_traits::FromPrimitive;
-
         let as_num = u32::try_from(v)?;
 
         Ok(Self::from_u32(as_num).unwrap_or_else(|| {
@@ -910,7 +865,7 @@ pub enum IntershardResourceType {
 }
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ResourceType {
     /// `"energy"`
@@ -1132,52 +1087,8 @@ impl TryFrom<Value> for ResourceType {
 
     fn try_from(v: Value) -> Result<Self, Self::Error> {
         let x: u32 = v.try_into()?;
-        Ok(match x {
-            1 => ResourceType::Energy,
-            2 => ResourceType::Power,
-            3 => ResourceType::Hydrogen,
-            4 => ResourceType::Oxygen,
-            5 => ResourceType::Utrium,
-            6 => ResourceType::Lemergium,
-            7 => ResourceType::Keanium,
-            8 => ResourceType::Zynthium,
-            9 => ResourceType::Catalyst,
-            10 => ResourceType::Ghodium,
-            11 => ResourceType::Hydroxide,
-            12 => ResourceType::ZynthiumKeanite,
-            13 => ResourceType::UtriumLemergite,
-            14 => ResourceType::UtriumHydride,
-            15 => ResourceType::UtriumOxide,
-            16 => ResourceType::KeaniumHydride,
-            17 => ResourceType::KeaniumOxide,
-            18 => ResourceType::LemergiumHydride,
-            19 => ResourceType::LemergiumOxide,
-            20 => ResourceType::ZynthiumHydride,
-            21 => ResourceType::ZynthiumOxide,
-            22 => ResourceType::GhodiumHydride,
-            23 => ResourceType::GhodiumOxide,
-            24 => ResourceType::UtriumAcid,
-            25 => ResourceType::UtriumAlkalide,
-            26 => ResourceType::KeaniumAcid,
-            27 => ResourceType::KeaniumAlkalide,
-            28 => ResourceType::LemergiumAcid,
-            29 => ResourceType::LemergiumAlkalide,
-            30 => ResourceType::ZynthiumAcid,
-            31 => ResourceType::ZynthiumAlkalide,
-            32 => ResourceType::GhodiumAcid,
-            33 => ResourceType::GhodiumAlkalide,
-            34 => ResourceType::CatalyzedUtriumAcid,
-            35 => ResourceType::CatalyzedUtriumAlkalide,
-            36 => ResourceType::CatalyzedKeaniumAcid,
-            37 => ResourceType::CatalyzedKeaniumAlkalide,
-            38 => ResourceType::CatalyzedLemergiumAcid,
-            39 => ResourceType::CatalyzedLemergiumAlkalide,
-            40 => ResourceType::CatalyzedZynthiumAcid,
-            41 => ResourceType::CatalyzedZynthiumAlkalide,
-            42 => ResourceType::CatalyzedGhodiumAcid,
-            43 => ResourceType::CatalyzedGhodiumAlkalide,
-            _ => panic!("unknown resource type integer {}", x),
-        })
+
+        Ok(Self::from_u32(x).unwrap_or_else(|| panic!("unknown resource type integer {}", x)))
     }
 }
 
@@ -1211,8 +1122,9 @@ pub enum PowerClass {
 }
 
 /// Traslates the `PWR_*` constants.
-// Serialize_repr / Deserialize_repr serialize/deserialize as numbers
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
+#[derive(
+    Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
+)]
 #[repr(u32)]
 pub enum PowerType {
     GenerateOps = 1,
@@ -1233,4 +1145,14 @@ pub enum PowerType {
     Fortify = 17,
     OperateController = 18,
     OperateFactory = 19,
+}
+
+impl TryFrom<Value> for PowerType {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<Self, Self::Error> {
+        let x: u32 = v.try_into()?;
+
+        Ok(Self::from_u32(x).unwrap_or_else(|| panic!("unknown power type integer {}", x)))
+    }
 }
