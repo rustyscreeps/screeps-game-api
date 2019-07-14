@@ -9,6 +9,7 @@ use log::error;
 use num_derive::FromPrimitive;
 #[allow(unused_imports)]
 use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 use stdweb::{Number, Reference, Value};
 
 use crate::{
@@ -17,9 +18,9 @@ use crate::{
     ConversionError,
 };
 
-#[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize_repr, Serialize_repr))]
+#[repr(i32)]
 pub enum ReturnCode {
     Ok = 0,
     NotOwner = -1,
@@ -38,9 +39,6 @@ pub enum ReturnCode {
     GclNotEnough = -15,
     Other = 42,
 }
-
-#[cfg(feature = "constants-serde")]
-impl_serialize_as_i32!(ReturnCode);
 
 impl ReturnCode {
     /// Turns this return code into a result.
@@ -93,9 +91,9 @@ pub unsafe trait FindConstant {
     fn find_code(&self) -> i32;
 }
 
-#[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize_repr, Serialize_repr))]
+#[repr(i32)]
 pub enum FindObject {
     Creeps = 101,
     MyCreeps = 102,
@@ -116,9 +114,6 @@ pub enum FindObject {
     Nukes = 117,
     Tombstones = 118,
 }
-
-#[cfg(feature = "constants-serde")]
-impl_serialize_as_i32!(FindObject);
 
 unsafe impl FindConstant for FindObject {
     type Item = RoomObject;
@@ -206,8 +201,10 @@ pub mod find {
     }
 }
 
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
+)]
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, FromPrimitive)]
 pub enum Direction {
     Top = 1,
     TopRight = 2,
@@ -218,8 +215,6 @@ pub enum Direction {
     Left = 7,
     TopLeft = 8,
 }
-
-impl_serialize_as_u32!(Direction);
 
 impl TryFrom<Value> for Direction {
     type Error = ConversionError;
@@ -266,9 +261,9 @@ impl ::std::ops::Neg for Direction {
     }
 }
 
-#[repr(u32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize_repr, Serialize_repr))]
+#[repr(u32)]
 pub enum Color {
     Red = 1,
     Purple = 2,
@@ -281,9 +276,6 @@ pub enum Color {
     Grey = 9,
     White = 10,
 }
-
-#[cfg(feature = "constants-serde")]
-impl_serialize_as_u32!(Color);
 
 impl From<Color> for u32 {
     fn from(c: Color) -> u32 {
@@ -305,17 +297,14 @@ impl TryFrom<Value> for Color {
     }
 }
 
-#[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Deserialize))]
+#[cfg_attr(feature = "constants-serde", derive(Deserialize_repr, Serialize_repr))]
+#[repr(u32)]
 pub enum Terrain {
     Plain = 0,
     Wall = 1,
     Swamp = 2,
 }
-
-#[cfg(feature = "constants-serde")]
-impl_serialize_as_u32!(Terrain);
 
 impl TryFrom<Value> for Terrain {
     type Error = ConversionError;
