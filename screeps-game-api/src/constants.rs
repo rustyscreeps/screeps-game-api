@@ -15,13 +15,12 @@
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
 use std::fmt;
 
-use log::error;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 #[allow(unused_imports)]
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use stdweb::{Number, Reference, Value};
+use stdweb::{Number, Reference, Value, __js_deserializable_serde_boilerplate, js_deserializable};
 
 use crate::{
     objects::RoomObject,
@@ -65,36 +64,21 @@ impl ReturnCode {
     }
 }
 
-impl TryFrom<Value> for ReturnCode {
-    type Error = ConversionError;
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: i32 = v.try_into()?;
-
-        Ok(Self::from_i32(x).unwrap_or_else(|| {
-            error!("encountered a return code we don't know: {}", x);
-            ReturnCode::Other
-        }))
-    }
-}
-
-impl TryFrom<Number> for ReturnCode {
-    type Error = ConversionError;
-    fn try_from(v: Number) -> Result<Self, Self::Error> {
-        let x: i32 = v.try_into()?;
-
-        Ok(Self::from_i32(x).unwrap_or_else(|| {
-            error!("encountered a return code we don't know: {}", x);
-            ReturnCode::Other
-        }))
-    }
-}
-
 impl TryFrom<i32> for ReturnCode {
     type Error = i32;
     fn try_from(v: i32) -> Result<Self, Self::Error> {
         Self::from_i32(v).ok_or(v)
     }
 }
+
+impl TryFrom<Number> for ReturnCode {
+    type Error = <ReturnCode as TryFrom<Value>>::Error;
+    fn try_from(v: Number) -> Result<Self, Self::Error> {
+        Value::Number(v).try_into()
+    }
+}
+
+js_deserializable!(ReturnCode);
 
 pub unsafe trait FindConstant {
     type Item: FromExpectedType<Reference>;
@@ -234,17 +218,7 @@ pub enum Direction {
     TopLeft = 8,
 }
 
-impl TryFrom<Value> for Direction {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let as_num = u32::try_from(v)?;
-
-        Ok(Self::from_u32(as_num).unwrap_or_else(|| {
-            panic!("encountered a direction code we don't know: {}", as_num);
-        }))
-    }
-}
+js_deserializable!(Direction);
 
 impl ::std::ops::Neg for Direction {
     type Output = Direction;
@@ -316,17 +290,7 @@ impl From<Color> for u32 {
     }
 }
 
-impl TryFrom<Value> for Color {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let as_num = u32::try_from(v)?;
-
-        Ok(Self::from_u32(as_num).unwrap_or_else(|| {
-            panic!("encountered a color code we don't know: {}", as_num);
-        }))
-    }
-}
+js_deserializable!(Color);
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize_repr, Serialize_repr)]
 #[repr(u32)]
@@ -402,6 +366,8 @@ pub enum Look {
     PowerCreeps = 11,
 }
 
+js_deserializable!(Look);
+
 pub unsafe trait LookConstant {
     type Item;
 
@@ -468,14 +434,7 @@ impl Part {
     }
 }
 
-impl TryFrom<Value> for Part {
-    type Error = ConversionError;
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: u32 = v.try_into()?;
-        Ok(Self::from_u32(x)
-            .unwrap_or_else(|| panic!("JavaScript gave unknown part constant {}", x)))
-    }
-}
+js_deserializable!(Part);
 
 pub const CREEP_LIFE_TIME: u32 = 1500;
 pub const CREEP_CLAIM_LIFE_TIME: u32 = 600;
@@ -649,14 +608,7 @@ impl StructureType {
     }
 }
 
-impl TryFrom<Value> for StructureType {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: u32 = v.try_into()?;
-        Ok(Self::from_u32(x).unwrap_or_else(|| panic!("unknown structure type integer {}", x)))
-    }
-}
+js_deserializable!(StructureType);
 
 pub const CONSTRUCTION_COST_ROAD_SWAMP_RATIO: u32 = 5;
 pub const CONSTRUCTION_COST_ROAD_WALL_RATIO: u32 = 150;
@@ -788,17 +740,7 @@ pub enum Density {
     Ultra = 4,
 }
 
-impl TryFrom<Value> for Density {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let as_num = u32::try_from(v)?;
-
-        Ok(Self::from_u32(as_num).unwrap_or_else(|| {
-            panic!("encountered a color code we don't know: {}", as_num);
-        }))
-    }
-}
+js_deserializable!(Density);
 
 impl Density {
     /// Translates the `MINERAL_DENSITY` constant.
@@ -1086,15 +1028,7 @@ impl ResourceType {
     }
 }
 
-impl TryFrom<Value> for ResourceType {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: u32 = v.try_into()?;
-
-        Ok(Self::from_u32(x).unwrap_or_else(|| panic!("unknown resource type integer {}", x)))
-    }
-}
+js_deserializable!(ResourceType);
 
 pub const PORTAL_UNSTABLE: u32 = 10 * 24 * 3600 * 1000;
 pub const PORTAL_MIN_TIMEOUT: u32 = 12 * 24 * 3600 * 1000;
@@ -1151,12 +1085,4 @@ pub enum PowerType {
     OperateFactory = 19,
 }
 
-impl TryFrom<Value> for PowerType {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let x: u32 = v.try_into()?;
-
-        Ok(Self::from_u32(x).unwrap_or_else(|| panic!("unknown power type integer {}", x)))
-    }
-}
+js_deserializable!(PowerType);
