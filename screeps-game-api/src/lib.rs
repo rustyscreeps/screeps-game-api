@@ -24,6 +24,7 @@ pub mod macros;
 
 pub mod constants;
 pub mod game;
+pub mod inter_shard_memory;
 pub mod js_collections;
 pub mod memory;
 pub mod objects;
