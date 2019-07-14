@@ -12,8 +12,9 @@ use crate::{
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
 pub mod cpu {
-    use serde::{Deserialize, Serialize};
     use std::collections;
+
+    use serde::{Deserialize, Serialize};
 
     use crate::{constants::ReturnCode, macros::*, traits::TryInto};
 
