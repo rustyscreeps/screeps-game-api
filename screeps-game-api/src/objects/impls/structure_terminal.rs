@@ -1,5 +1,6 @@
-use {
+use crate::{
     constants::{ResourceType, ReturnCode},
+    macros::*,
     objects::StructureTerminal,
 };
 

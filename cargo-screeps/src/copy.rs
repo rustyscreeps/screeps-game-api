@@ -6,7 +6,7 @@ use std::collections::HashSet;
 
 use failure;
 
-use config::Configuration;
+use crate::config::Configuration;
 
 pub fn copy<P: AsRef<Path>>(root: P, config: &Configuration) -> Result<(), failure::Error> {
     let root = root.as_ref();

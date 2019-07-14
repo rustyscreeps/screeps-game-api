@@ -12,10 +12,13 @@
 //! rely on these contracts being upheld as long as JavaScript code does not
 //! do anything mischievous, like removing properties from objects or sticking
 //! unexpected things into dictionaries which we trust.
-use stdweb::{Reference, ReferenceType, Value};
 
-use {
+use stdweb::{Reference, ReferenceType, Value};
+use stdweb_derive::ReferenceType;
+
+use crate::{
     constants::{ResourceType, ReturnCode, StructureType},
+    macros::*,
     traits::{IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };
@@ -182,13 +185,13 @@ pub unsafe trait RoomObjectProperties: AsRef<Reference> + HasPosition {
 /// Trait representing things that are both `RoomObjectProperties` and `Sized`.
 ///
 /// These bounds would be on `RoomObjectProperties`, but for the fact that they
-/// then require all `T: RoomObjectProperties` to be `T: Sized`, and thus disallow
-/// creating trait objects like `&dyn RoomObjectProperties` (or more usefully,
-/// `&dyn Attackable` or `&dyn HasStore`)
+/// then require all `T: RoomObjectProperties` to be `T: Sized`, and thus
+/// disallow creating trait objects like `&dyn RoomObjectProperties` (or more
+/// usefully, `&dyn Attackable` or `&dyn HasStore`)
 ///
-/// This trait is automatically implemented for all structures implementing the traits
-/// it requires, and everything implement `RoomObjectProperties` and being `Sized`
-/// should also implement this.
+/// This trait is automatically implemented for all structures implementing the
+/// traits it requires, and everything implement `RoomObjectProperties` and
+/// being `Sized` should also implement this.
 pub trait SizedRoomObject:
     Into<Reference>
     + ReferenceType
@@ -319,12 +322,13 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
     }
 }
 
-/// Used to specify which structures can use their stored energy for spawning creeps.
+/// Used to specify which structures can use their stored energy for spawning
+/// creeps.
 ///
 /// # Contract
 ///
-/// The reference returned from `AsRef<Reference>::as_ref` must be able to be used
-/// by a spawner to create a new creep.
+/// The reference returned from `AsRef<Reference>::as_ref` must be able to be
+/// used by a spawner to create a new creep.
 pub unsafe trait HasEnergyForSpawn: CanStoreEnergy {}
 
 /// Trait for objects which have to cooldown.
@@ -386,7 +390,8 @@ pub unsafe trait Attackable: RoomObjectProperties {
     }
 }
 
-// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
 
 unsafe impl Transferable for StructureExtension {}
 unsafe impl Transferable for Creep {}
@@ -400,7 +405,8 @@ unsafe impl Transferable for StructureTower {}
 unsafe impl Transferable for StructurePowerSpawn {}
 unsafe impl Transferable for StructureTerminal {}
 
-// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
 
 unsafe impl Withdrawable for StructureExtension {}
 unsafe impl Withdrawable for StructureContainer {}
@@ -413,7 +419,8 @@ unsafe impl Withdrawable for StructurePowerSpawn {}
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
 
-// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
 
 unsafe impl Attackable for Creep {}
 unsafe impl Attackable for OwnedStructure {}
@@ -509,7 +516,8 @@ unsafe impl OwnedStructureProperties for StructureStorage {}
 unsafe impl OwnedStructureProperties for StructureTerminal {}
 unsafe impl OwnedStructureProperties for StructureTower {}
 
-// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
 
 unsafe impl HasStore for StructureContainer {}
 unsafe impl HasStore for StructureStorage {}
@@ -520,7 +528,8 @@ unsafe impl HasStore for Tombstone {
     }
 }
 
-// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
 
 unsafe impl CanStoreEnergy for StructureExtension {}
 unsafe impl CanStoreEnergy for StructureLab {}
@@ -530,12 +539,14 @@ unsafe impl CanStoreEnergy for StructurePowerSpawn {}
 unsafe impl CanStoreEnergy for StructureSpawn {}
 unsafe impl CanStoreEnergy for StructureTower {}
 
-// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
 
 unsafe impl HasEnergyForSpawn for StructureExtension {}
 unsafe impl HasEnergyForSpawn for StructureSpawn {}
 
-// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
 
 unsafe impl HasCooldown for StructureExtractor {}
 unsafe impl HasCooldown for StructureLab {}
@@ -543,7 +554,8 @@ unsafe impl HasCooldown for StructureLink {}
 unsafe impl HasCooldown for StructureNuker {}
 unsafe impl HasCooldown for StructureTerminal {}
 
-// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
 
 unsafe impl CanDecay for StructureContainer {}
 unsafe impl CanDecay for StructurePowerBank {}

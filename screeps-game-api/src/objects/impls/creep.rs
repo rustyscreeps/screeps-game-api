@@ -1,9 +1,12 @@
 use std::{marker::PhantomData, mem};
 
+use scoped_tls::scoped_thread_local;
 use stdweb::{Reference, Value};
 
-use {
+use super::room::Step;
+use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
+    macros::*,
     memory::MemoryReference,
     objects::{
         Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, RoomPosition,
@@ -12,8 +15,6 @@ use {
     pathfinder::{CostMatrix, SearchResults},
     traits::TryFrom,
 };
-
-use super::room::Step;
 
 scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(String, Reference) -> Option<Reference>>);
 
@@ -88,7 +89,7 @@ impl Creep {
         move_options: MoveToOptions<'a, F>,
     ) -> ReturnCode
     where
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let rp = RoomPosition::new(x, y, &self.pos().room_name());
         self.move_to_with_options(&rp, move_options)
@@ -106,7 +107,7 @@ impl Creep {
     ) -> ReturnCode
     where
         T: ?Sized + HasPosition,
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let MoveToOptions {
             reuse_path,
@@ -145,21 +146,24 @@ impl Creep {
             raw_callback(room_name, cmatrix).map(|cm| cm.inner)
         };
 
-        // Type erased and boxed callback: no longer a type specific to the closure passed in,
-        // now unified as Box<Fn>
+        // Type erased and boxed callback: no longer a type specific to the closure
+        // passed in, now unified as Box<Fn>
         let callback_type_erased: Box<dyn Fn(String, Reference) -> Option<Reference> + 'a> =
             Box::new(callback_boxed);
 
-        // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
-        // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
-        // be entirely safe because we're only sticking it in scoped storage and we control the only use
-        // of it, but it's still necessary because "some lifetime above the current scope but otherwise
-        // unknown" is not a valid lifetime to have PF_CALLBACK have.
-        let callback_lifetime_erased: Box<dyn Fn(String, Reference) -> Option<Reference> + 'static> =
-            unsafe { mem::transmute(callback_type_erased) };
+        // Overwrite lifetime of box inside closure so it can be stuck in
+        // scoped_thread_local storage: now pretending to be static data so that
+        // it can be stuck in scoped_thread_local. This should be entirely safe
+        // because we're only sticking it in scoped storage and we control the only use
+        // of it, but it's still necessary because "some lifetime above the current
+        // scope but otherwise unknown" is not a valid lifetime to have
+        // PF_CALLBACK have.
+        let callback_lifetime_erased: Box<
+            dyn Fn(String, Reference) -> Option<Reference> + 'static,
+        > = unsafe { mem::transmute(callback_type_erased) };
 
-        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call and
-        // make the call to PathFinder.
+        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the
+        // PathFinder call and make the call to PathFinder.
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
@@ -311,7 +315,7 @@ creep_simple_concrete_action! {
 
 pub struct MoveToOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+    F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     pub(crate) reuse_path: u32,
     pub(crate) serialize_memory: bool,
@@ -320,7 +324,7 @@ where
     pub(crate) find_options: FindOptions<'a, F>,
 }
 
-impl Default for MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+impl Default for MoveToOptions<'static, fn(String, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     fn default() -> Self {
         // TODO: should we fall back onto the game's default values, or is
         // it alright to copy them here?
@@ -334,7 +338,7 @@ impl Default for MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMat
     }
 }
 
-impl MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+impl MoveToOptions<'static, fn(String, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -343,7 +347,7 @@ impl MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>
 
 impl<'a, F> MoveToOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+    F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     /// Enables caching of the calculated path. Default: 5 ticks
     pub fn reuse_path(mut self, n_ticks: u32) -> Self {
@@ -385,7 +389,7 @@ where
     /// Sets cost callback - default `|_, _| {}`.
     pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> MoveToOptions<'b, F2>
     where
-        F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
+        F2: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,
@@ -440,7 +444,7 @@ where
     /// Sets options related to FindOptions. Defaults to FindOptions default.
     pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2>) -> MoveToOptions<'b, F2>
     where
-        F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
+        F2: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,

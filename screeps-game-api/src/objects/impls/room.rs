@@ -1,14 +1,20 @@
 use std::{fmt, marker::PhantomData, mem, ops::Range};
 
-use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
+use scoped_tls::scoped_thread_local;
+use serde::{
+    self,
+    de::{self, Deserializer, MapAccess, Visitor},
+    Deserialize, Serialize,
+};
 use serde_json;
 use stdweb::{Reference, Value};
 
-use {
+use crate::{
     constants::{
         find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
         Terrain,
     },
+    macros::*,
     memory::MemoryReference,
     objects::{
         ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, Resource, Room, RoomPosition,
@@ -150,7 +156,7 @@ impl Room {
     where
         O: ?Sized + HasPosition,
         T: ?Sized + HasPosition,
-        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let from = from_pos.pos();
         let to = to_pos.pos();
@@ -172,16 +178,17 @@ impl Room {
             raw_callback(room_name, cmatrix).map(|cm| cm.inner)
         };
 
-        // Type erased and boxed callback: no longer a type specific to the closure passed in,
-        // now unified as &Fn
+        // Type erased and boxed callback: no longer a type specific to the closure
+        // passed in, now unified as &Fn
         let callback_type_erased: &(dyn Fn(String, Reference) -> Option<Reference> + 'a) =
             &callback_boxed;
 
         // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
-        // storage: it's now pretending to be static data. This should be entirely safe because
-        // we're only sticking it in scoped storage and we control the only use of it, but it's
-        // still necessary because "some lifetime above the  current scope but otherwise unknown" is
-        // not a valid lifetime to have PF_CALLBACK have.
+        // storage: it's now pretending to be static data. This should be entirely safe
+        // because we're only sticking it in scoped storage and we control the
+        // only use of it, but it's still necessary because "some lifetime above
+        // the  current scope but otherwise unknown" is not a valid lifetime to
+        // have PF_CALLBACK have.
         let callback_lifetime_erased: &'static dyn Fn(String, Reference) -> Option<Reference> =
             unsafe { mem::transmute(callback_type_erased) };
 
@@ -198,8 +205,8 @@ impl Room {
             ..
         } = opts;
 
-        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call
-        // and make the call to PathFinder.
+        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the
+        // PathFinder call and make the call to PathFinder.
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
@@ -253,12 +260,14 @@ impl Room {
     /// To keep with `Range` convention, the start is inclusive, and the end
     /// is _exclusive_.
     ///
-    /// Note: to ease the implementation and efficiency of the rust interface, this is limited to
-    /// returning an array of values without their positions. If position data is needed, all room
-    /// objects *should* contain positions alongside them. (for terrain data, I would recommend
+    /// Note: to ease the implementation and efficiency of the rust interface,
+    /// this is limited to returning an array of values without their
+    /// positions. If position data is needed, all room objects *should*
+    /// contain positions alongside them. (for terrain data, I would recommend
     /// using a different method?)
     ///
-    /// If you really do need more information here, I would recommend making a PR to add it!
+    /// If you really do need more information here, I would recommend making a
+    /// PR to add it!
     ///
     /// # Panics
     ///
@@ -309,7 +318,7 @@ impl Eq for Room {}
 
 pub struct FindOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+    F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     pub(crate) ignore_creeps: bool,
     pub(crate) ignore_destructible_structures: bool,
@@ -323,9 +332,9 @@ where
     pub(crate) swamp_cost: u8,
 }
 
-impl Default for FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+impl Default for FindOptions<'static, fn(String, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     fn default() -> Self {
-        fn cost_matrix(_: String, _: CostMatrix) -> Option<CostMatrix<'static>> {
+        fn cost_matrix(_: String, _: CostMatrix<'_>) -> Option<CostMatrix<'static>> {
             None
         }
 
@@ -346,7 +355,7 @@ impl Default for FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatri
     }
 }
 
-impl FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+impl FindOptions<'static, fn(String, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -355,7 +364,7 @@ impl FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>>
 
 impl<'a, F> FindOptions<'a, F>
 where
-    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+    F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
@@ -373,7 +382,7 @@ where
     /// Sets cost callback - default `|_, _| {}`.
     pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> FindOptions<'b, F2>
     where
-        F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
+        F2: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         let FindOptions {
             ignore_creeps,
@@ -488,7 +497,7 @@ impl<'de> Deserialize<'de> for Event {
         impl<'de> Visitor<'de> for EventVisitor {
             type Value = Event;
 
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
                 formatter.write_str("struct Event")
             }
 

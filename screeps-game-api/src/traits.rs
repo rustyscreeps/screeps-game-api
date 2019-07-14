@@ -1,26 +1,29 @@
-//! Useful traits for interacting with JavaScript above what [`stdweb`] provides.
-use stdweb::{Reference, Value};
-
-use ConversionError;
+//! Useful traits for interacting with JavaScript above what [`stdweb`]
+//! provides.
 
 pub use stdweb::unstable::{TryFrom, TryInto};
+use stdweb::{Reference, Value};
+
+use crate::ConversionError;
 
 /// See [`IntoExpectedType`]
 pub trait FromExpectedType<T>: Sized {
     fn from_expected_type(v: T) -> Result<Self, ConversionError>;
 }
 
-/// Trait for casting api results which we expect to be the right thing as long as all JS code is
-/// behaving as expected.
+/// Trait for casting api results which we expect to be the right thing as long
+/// as all JS code is behaving as expected.
 ///
-/// This trait allows us to switch between checked and unchecked casts at compile time with the
-/// `"check-all-casts"` feature flag.
+/// This trait allows us to switch between checked and unchecked casts at
+/// compile time with the `"check-all-casts"` feature flag.
 pub trait IntoExpectedType<T> {
-    /// Casts this value as the target type, making the assumption that the types are correct.
+    /// Casts this value as the target type, making the assumption that the
+    /// types are correct.
     ///
     /// # Error conditions
     ///
-    /// If the types don't match up, and `"check-all-casts"` is enabled, this will return an error.
+    /// If the types don't match up, and `"check-all-casts"` is enabled, this
+    /// will return an error.
     ///
     /// If this is a non-`Reference` `Value`, this will return an error.
     fn into_expected_type(self) -> Result<T, ConversionError>;

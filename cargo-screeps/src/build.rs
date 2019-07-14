@@ -1,6 +1,6 @@
 use std::{borrow::Cow, ffi::OsStr, fs, io::Write, path::Path, process};
 
-use config::{BuildConfiguration, Configuration};
+use crate::config::{BuildConfiguration, Configuration};
 
 use {failure, regex};
 

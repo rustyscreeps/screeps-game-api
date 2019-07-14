@@ -49,12 +49,13 @@
 //! access the memory via creeps, spawns, rooms and flags. Accessing the memory
 //! from those objects will also result in a `MemoryReference` which instead
 //! points at the root of this object's memory.
-//!
+
 use std::fmt;
 
 use stdweb::{JsSerialize, Reference, Value};
 
-use {
+use crate::{
+    macros::*,
     traits::{TryFrom, TryInto},
     ConversionError,
 };
@@ -63,7 +64,7 @@ use {
 pub struct UnexpectedTypeError;
 
 impl fmt::Display for UnexpectedTypeError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // TODO: include &'static str references to the type names in this error...
         write!(f, "expected one memory type, found another")
     }

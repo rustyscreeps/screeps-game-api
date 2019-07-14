@@ -1,4 +1,4 @@
-use objects::Source;
+use crate::{macros::*, objects::Source};
 
 simple_accessors! {
     Source;

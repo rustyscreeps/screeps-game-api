@@ -1,4 +1,7 @@
-use {
+use serde::Deserialize;
+
+use crate::{
+    macros::*,
     objects::{RoomPosition, StructurePortal},
     traits::TryInto,
 };

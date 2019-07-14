@@ -2,7 +2,7 @@
 
 use std::{borrow::Cow, error, fmt, ops};
 
-use objects::{HasPosition, RoomPosition};
+use crate::objects::{HasPosition, RoomPosition};
 
 /// A structure representing a room name.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
@@ -28,7 +28,7 @@ impl fmt::Display for LocalRoomName {
     /// in the same LocalRoomName if passed into [`LocalRoomName::new`].
     ///
     /// [`LocalRoomName::new`]: struct.LocalRoomName.html#method.new
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.x_coord >= 0 {
             write!(f, "E{}", self.x_coord)?;
         } else {
@@ -48,9 +48,10 @@ impl fmt::Display for LocalRoomName {
 impl LocalRoomName {
     /// Creates a new room name from the given input.
     ///
-    /// This will parse the input, and return an error if it is in an invalid format.
+    /// This will parse the input, and return an error if it is in an invalid
+    /// format.
     #[inline]
-    pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError>
+    pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError<'_>>
     where
         T: AsRef<str> + ?Sized,
     {
@@ -106,8 +107,9 @@ impl ops::Sub<LocalRoomName> for LocalRoomName {
 
 /// Something that can be turned into a room name.
 pub trait IntoLocalRoomName {
-    /// Turns this data into a room name, erroring if the format is not as expected.
-    fn into_room_name(&self) -> Result<LocalRoomName, LocalRoomNameParseError>;
+    /// Turns this data into a room name, erroring if the format is not as
+    /// expected.
+    fn into_room_name(&self) -> Result<LocalRoomName, LocalRoomNameParseError<'_>>;
 }
 
 fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
@@ -162,7 +164,8 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
     Ok(LocalRoomName::from_coords(east, north, x_coord, y_coord))
 }
 
-/// An error representing when a string can't be parsed into a [`LocalRoomName`].
+/// An error representing when a string can't be parsed into a
+/// [`LocalRoomName`].
 ///
 /// [`LocalRoomName`]: struct.LocalRoomName.html
 #[derive(Clone, Debug)]
@@ -174,8 +177,8 @@ impl<'a> LocalRoomNameParseError<'a> {
         LocalRoomNameParseError(failed_room_name.into())
     }
 
-    /// Turns this error into a 'static error, cloning any inner data that represents
-    /// what failed.
+    /// Turns this error into a 'static error, cloning any inner data that
+    /// represents what failed.
     pub fn into_owned(self) -> LocalRoomNameParseError<'static> {
         let LocalRoomNameParseError(cow) = self;
         LocalRoomNameParseError(cow.into_owned().into())
@@ -196,7 +199,7 @@ impl<'a> error::Error for LocalRoomNameParseError<'a> {
 }
 
 impl<'a> fmt::Display for LocalRoomNameParseError<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "expected room name formatted `(E|W)[0-9]+(N|S)[0-9]+`, found `{}`",
@@ -246,28 +249,32 @@ mod local_room_name_tests {
     #[test]
     fn test_string_equality() {
         use super::LocalRoomName;
-        let room_names = vec![
-            "E21N4",
-            "w6S42",
-            "W17s5",
-            "e2n5",
-        ];
+        let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5"];
         for room_name in room_names {
             assert_eq!(room_name, LocalRoomName::new(room_name).unwrap());
             assert_eq!(LocalRoomName::new(room_name).unwrap(), room_name);
-            assert_eq!(LocalRoomName::new(room_name).unwrap(), &room_name.to_string());
-            assert_eq!(&room_name.to_string(), LocalRoomName::new(room_name).unwrap());
+            assert_eq!(
+                LocalRoomName::new(room_name).unwrap(),
+                &room_name.to_string()
+            );
+            assert_eq!(
+                &room_name.to_string(),
+                LocalRoomName::new(room_name).unwrap()
+            );
         }
     }
 }
 
 mod serde {
-    use super::{parse_or_cheap_failure, LocalRoomName};
-
     use std::fmt;
 
-    use serde::de::{Deserialize, Deserializer, Error, Unexpected, Visitor};
-    use serde::ser::{Serialize, Serializer};
+    use serde::{
+        de::{Error, Unexpected, Visitor},
+        Deserialize, Deserializer, Serialize, Serializer,
+    };
+
+    use super::{parse_or_cheap_failure, LocalRoomName};
+    use crate::macros::*;
 
     impl Serialize for LocalRoomName {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -283,7 +290,7 @@ mod serde {
     impl<'de> Visitor<'de> for LocalRoomNameVisitor {
         type Value = LocalRoomName;
 
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
             formatter.write_str("room name formatted `(E|W)[0-9]+(N|S)[0-9]+`")
         }
 
@@ -330,9 +337,11 @@ impl HasPosition for LocalRoomPosition {
 mod stdweb {
     use stdweb::Value;
 
-    use traits::{TryFrom, TryInto};
-
     use super::{LocalRoomName, LocalRoomPosition};
+    use crate::{
+        macros::*,
+        traits::{TryFrom, TryInto},
+    };
 
     impl TryFrom<Value> for LocalRoomPosition {
         type Error = <Value as TryInto<String>>::Error;
@@ -348,8 +357,7 @@ mod stdweb {
 }
 
 mod room_pos_serde {
-    use serde::de::{Deserialize, Deserializer};
-    use serde::ser::{Serialize, Serializer};
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
     use super::{LocalRoomName, LocalRoomPosition};
 

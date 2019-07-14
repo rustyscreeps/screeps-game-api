@@ -1,4 +1,4 @@
-use {constants::ReturnCode, objects::StructurePowerSpawn};
+use crate::{constants::ReturnCode, macros::*, objects::StructurePowerSpawn};
 
 simple_accessors! {
     StructurePowerSpawn;

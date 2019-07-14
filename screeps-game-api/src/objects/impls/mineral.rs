@@ -1,5 +1,6 @@
-use {
+use crate::{
     constants::{Density, ResourceType},
+    macros::*,
     objects::Mineral,
 };
 

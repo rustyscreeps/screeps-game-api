@@ -1,8 +1,10 @@
 use std::{f64, marker::PhantomData, mem};
 
+use scoped_tls::scoped_thread_local;
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
-use {
+use crate::{
+    macros::*,
     objects::{HasPosition, RoomPosition},
     positions::LocalRoomPosition,
     traits::TryInto,
@@ -66,17 +68,20 @@ impl LocalCostMatrix {
     ///
     /// There are two main invariants you must uphold after using this function:
     ///
-    /// 1. The `CostMatrix` can only be used in JS code as long as this `LocalCostMatrix` is alive.
-    ///    Doing otherwise will result in undefined behavior, mainly JS being allowed to read/
-    ///    manipulate uninitialized rust memory or rust memory that's been repurposed.
+    /// 1. The `CostMatrix` can only be used in JS code as long as this
+    /// `LocalCostMatrix` is alive.    Doing otherwise will result in
+    /// undefined behavior, mainly JS being allowed to read/    manipulate
+    /// uninitialized rust memory or rust memory that's been repurposed.
     ///
-    /// 2. The `set` method of the cost matrix must not be used - it must be read only. This takes
-    ///    &self, but technically allows mutation of the inner Vec via JavaScript access. You
-    ///    should not use this method, or you will invoke Rust undefined behavior.
+    /// 2. The `set` method of the cost matrix must not be used - it must be
+    /// read only. This takes    &self, but technically allows mutation of
+    /// the inner Vec via JavaScript access. You    should not use this
+    /// method, or you will invoke Rust undefined behavior.
     ///
-    /// The CostMatrix returned will _reference the internal data of this `LocalCostMatrix`_.
+    /// The CostMatrix returned will _reference the internal data of this
+    /// `LocalCostMatrix`_.
     pub unsafe fn as_uploaded<'a>(&'a self) -> CostMatrix<'a> {
-        let bits: UnsafeTypedArray<u8> = UnsafeTypedArray::new(&self.bits);
+        let bits: UnsafeTypedArray<'_, u8> = UnsafeTypedArray::new(&self.bits);
 
         CostMatrix {
             inner: (js! {
@@ -104,12 +109,14 @@ impl Into<Vec<u8>> for LocalCostMatrix {
     }
 }
 
-/// A `CostMatrix` that's valid to pass as a result from a `PathFinder.search` room callback.
+/// A `CostMatrix` that's valid to pass as a result from a `PathFinder.search`
+/// room callback.
 ///
-/// Lives as long as `'a` lifetime. It's unsound to leak to JS past this lifetime if this matrix
-/// was created by [`LocalCostMatrix::as_uploaded`].
+/// Lives as long as `'a` lifetime. It's unsound to leak to JS past this
+/// lifetime if this matrix was created by [`LocalCostMatrix::as_uploaded`].
 ///
-/// [`LocalCostMatrix::as_uploaded`]: struct.LocalCostMatrix.html#method.as_uploaded
+/// [`LocalCostMatrix::as_uploaded`]:
+/// struct.LocalCostMatrix.html#method.as_uploaded
 pub struct CostMatrix<'a> {
     pub(crate) inner: Reference,
     pub(crate) lifetime: PhantomData<&'a ()>,
@@ -126,7 +133,7 @@ impl Default for CostMatrix<'static> {
 
 // need custom implementation in order to ensure length of 'bits' is always 2500
 mod serde_impls {
-    use serde::{de::Error as DeError, Deserialize, Deserializer, Serialize, Serializer};
+    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
     use super::LocalCostMatrix;
 
@@ -147,7 +154,10 @@ mod serde_impls {
             let bits: Vec<u8> = Vec::deserialize(deserializer)?;
 
             if bits.len() != 2500 {
-                return Err(DeError::invalid_length(bits.len(), &"a vec of length 2500"));
+                return Err(D::Error::invalid_length(
+                    bits.len(),
+                    &"a vec of length 2500",
+                ));
             }
 
             Ok(LocalCostMatrix { bits })
@@ -359,15 +369,16 @@ where
     // Wrapped user callback: rust String -> Reference
     let callback_unboxed = move |input| raw_callback(input).inner;
 
-    // Type erased and boxed callback: no longer a type specific to the closure passed in,
-    // now unified as &Fn
+    // Type erased and boxed callback: no longer a type specific to the closure
+    // passed in, now unified as &Fn
     let callback_type_erased: &(dyn Fn(String) -> Reference + 'a) = &callback_unboxed;
 
     // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
-    // storage: it's now pretending to be static data. This should be entirely safe because we're
-    // only sticking it in scoped storage and we control the only use of it, but it's still
-    // necessary because "some lifetime above the current scope but otherwise unknown" is not a
-    // valid lifetime to have PF_CALLBACK have.
+    // storage: it's now pretending to be static data. This should be entirely safe
+    // because we're only sticking it in scoped storage and we control the only
+    // use of it, but it's still necessary because "some lifetime above the
+    // current scope but otherwise unknown" is not a valid lifetime to have
+    // PF_CALLBACK have.
     let callback_lifetime_erased: &'static dyn Fn(String) -> Reference =
         unsafe { mem::transmute(callback_type_erased) };
 
@@ -381,8 +392,8 @@ where
         ..
     } = opts;
 
-    // Store callback_lifetime_erased in PF_CALLBACK for the duration of the PathFinder call and
-    // make the call to PathFinder.
+    // Store callback_lifetime_erased in PF_CALLBACK for the duration of the
+    // PathFinder call and make the call to PathFinder.
     //
     // See https://docs.rs/scoped-tls/0.1/scoped_tls/
     PF_CALLBACK.set(&callback_lifetime_erased, || {

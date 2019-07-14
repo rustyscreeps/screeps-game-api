@@ -4,9 +4,14 @@
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
+
+use log::error;
+use num_derive::FromPrimitive;
+#[allow(unused_imports)]
+use serde::{Deserialize, Serialize};
 use stdweb::{Number, Reference, Value};
 
-use {
+use crate::{
     objects::RoomObject,
     traits::{FromExpectedType, TryFrom, TryInto},
     ConversionError,
@@ -40,8 +45,8 @@ impl_serialize_as_i32!(ReturnCode);
 impl ReturnCode {
     /// Turns this return code into a result.
     ///
-    /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned into
-    /// `Result::Err(code)`
+    /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned
+    /// into `Result::Err(code)`
     pub fn as_result(self) -> Result<(), Self> {
         match self {
             ReturnCode::Ok => Ok(()),
@@ -124,14 +129,15 @@ unsafe impl FindConstant for FindObject {
 }
 
 pub mod find {
-    use stdweb::unstable::TryFrom;
-
-    use objects::{
-        ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
-        Source, Structure, StructureSpawn, Tombstone,
-    };
-
     use super::FindConstant;
+    use crate::{
+        objects::{
+            ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, Resource, RoomPosition,
+            Source, Structure, StructureSpawn, Tombstone,
+        },
+        traits::TryFrom,
+    };
+    use serde::Deserialize;
 
     #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, Hash)]
     #[serde(transparent)]
@@ -232,7 +238,8 @@ impl TryFrom<Value> for Direction {
 impl ::std::ops::Neg for Direction {
     type Output = Direction;
 
-    /// Negates this direction. Top goes to Bottom, TopRight goes to BottomLeft, etc.
+    /// Negates this direction. Top goes to Bottom, TopRight goes to BottomLeft,
+    /// etc.
     ///
     /// Example usage:
     ///
@@ -244,7 +251,7 @@ impl ::std::ops::Neg for Direction {
     /// assert_eq!(-Left, Right);
     /// ```
     fn neg(self) -> Direction {
-        use Direction::*;
+        use crate::Direction::*;
 
         match self {
             Top => Bottom,
@@ -335,10 +342,11 @@ impl TryFrom<Value> for Terrain {
 
 /// Internal enum representing each LOOK_* constant.
 ///
-/// It's recommended to use the constants in the `look` module instead for type safety.
+/// It's recommended to use the constants in the `look` module instead for type
+/// safety.
 ///
-/// In fact, I don't believe this can be used at all without resorting to manually
-/// including JS code.
+/// In fact, I don't believe this can be used at all without resorting to
+/// manually including JS code.
 ///
 /// To use in JS: `__look_num_to_str(@{look as u32})` function
 #[repr(u32)]
@@ -369,14 +377,13 @@ pub unsafe trait LookConstant {
 }
 
 pub mod look {
-    use {
+    use super::{Look, LookConstant, Terrain};
+    use crate::{
         objects::{
             ConstructionSite, Creep, Flag, Mineral, Nuke, Resource, Source, Structure, Tombstone,
         },
         traits::{IntoExpectedType, TryInto},
     };
-
-    use super::{Look, LookConstant, Terrain};
 
     typesafe_look_constants! {
         CREEPS, Look::Creeps, Creep, IntoExpectedType::into_expected_type;
@@ -883,9 +890,10 @@ pub enum ResourceType {
 }
 
 impl ResourceType {
-    /// Returns `REACTION_TIME` for this resource. 0 for energy and base minerals.
+    /// Returns `REACTION_TIME` for this resource. 0 for energy and base
+    /// minerals.
     pub fn reaction_time(self) -> u32 {
-        use ResourceType::*;
+        use crate::ResourceType::*;
         match self {
             Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
             | Catalyst | Ghodium => 0,

@@ -2,7 +2,7 @@ use std::{collections::HashMap, fs, io::Read, path::Path};
 
 use {base64, failure, reqwest, serde_json};
 
-use config::{Authentication, Configuration};
+use crate::config::{Authentication, Configuration};
 
 pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error> {
     let upload_config = config.upload.as_ref().ok_or_else(|| {

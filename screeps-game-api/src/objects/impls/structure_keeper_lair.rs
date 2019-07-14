@@ -1,4 +1,4 @@
-use objects::StructureKeeperLair;
+use crate::{macros::*, objects::StructureKeeperLair};
 
 simple_accessors! {
     StructureKeeperLair;

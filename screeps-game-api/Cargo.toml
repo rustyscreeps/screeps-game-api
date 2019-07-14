@@ -1,6 +1,7 @@
 [package]
 name = "screeps-game-api"
 version = "0.4.0"
+edition = "2018"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://docs.rs/screeps-game-api/"
 include = [
@@ -26,8 +27,7 @@ name = "screeps"
 log = "0.4"
 num-derive = "0.2"
 num-traits = "0.2"
-serde = "1"
-serde_derive = "1"
+serde = {version = "1", features = ["derive"]}
 serde_json = "1"
 scoped-tls = "0.1"
 stdweb = "0.4"
