@@ -23,8 +23,7 @@ use stdweb::{Number, Reference, Value, __js_deserializable_serde_boilerplate, js
 
 use crate::{
     objects::RoomObject,
-    traits::{FromExpectedType, TryFrom, TryInto},
-    ConversionError,
+    traits::{FromExpectedType, TryFrom},
 };
 
 #[derive(
@@ -73,7 +72,7 @@ impl TryFrom<i32> for ReturnCode {
 impl TryFrom<Number> for ReturnCode {
     type Error = <ReturnCode as TryFrom<Value>>::Error;
     fn try_from(v: Number) -> Result<Self, Self::Error> {
-        Value::Number(v).try_into()
+        Self::try_from(Value::Number(v))
     }
 }
 
