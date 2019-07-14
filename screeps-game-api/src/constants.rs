@@ -28,8 +28,9 @@ use crate::{
     ConversionError,
 };
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Deserialize_repr, Serialize_repr))]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
+)]
 #[repr(i32)]
 pub enum ReturnCode {
     Ok = 0,
@@ -101,8 +102,7 @@ pub unsafe trait FindConstant {
     fn find_code(&self) -> i32;
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Deserialize_repr, Serialize_repr))]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize_repr, Serialize_repr)]
 #[repr(i32)]
 pub enum FindObject {
     Creeps = 101,
@@ -291,8 +291,9 @@ impl fmt::Display for Direction {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Deserialize_repr, Serialize_repr))]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
+)]
 #[repr(u32)]
 pub enum Color {
     Red = 1,
@@ -327,8 +328,7 @@ impl TryFrom<Value> for Color {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Deserialize_repr, Serialize_repr))]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize_repr, Serialize_repr)]
 #[repr(u32)]
 pub enum Terrain {
     Plain = 0,
@@ -372,10 +372,9 @@ impl TryFrom<Value> for Terrain {
 ///
 /// To use in JS: `__look_num_to_str(@{look as u32})` function
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[doc(hidden)]
-#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
+#[serde(rename_all = "camelCase")]
 pub enum Look {
     Creeps = 0,
     Energy = 1,
@@ -427,9 +426,8 @@ pub mod look {
 }
 
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "constants-serde", serde(rename_all = "snake_case"))]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Part {
     Move = 0,
     Work = 1,
@@ -581,9 +579,8 @@ pub const STORAGE_HITS: u32 = 10_000;
 
 /// Translates `STRUCTURE_*` constants.
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "constants-serde", serde(rename_all = "camelCase"))]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum StructureType {
     Spawn = 0,
     Extension = 1,
@@ -1193,10 +1190,9 @@ pub const POWER_CREEP_DELETE_COOLDOWN: u32 = 24 * 3600 * 1000;
 pub const POWER_CREEP_MAX_LEVEL: u32 = 25;
 pub const POWER_CREEP_LIFE_TIME: u32 = 5000;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum PowerClass {
-    #[cfg_attr(feature = "constants-serde", serde(rename = "operator"))]
+    #[serde(rename = "operator")]
     Operator,
 }
 
