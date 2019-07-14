@@ -85,7 +85,9 @@ pub unsafe trait FindConstant {
     fn find_code(&self) -> i32;
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize_repr, Serialize_repr)]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
+)]
 #[repr(i32)]
 pub enum FindObject {
     Creeps = 101,
@@ -119,7 +121,7 @@ unsafe impl FindConstant for FindObject {
 pub mod find {
     use num_derive::FromPrimitive;
     use num_traits::FromPrimitive;
-    use serde_repr::Deserialize_repr;
+    use serde_repr::{Deserialize_repr, Serialize_repr};
 
     use super::FindConstant;
     use crate::{
@@ -130,7 +132,9 @@ pub mod find {
         traits::TryFrom,
     };
 
-    #[derive(Copy, Clone, Debug, FromPrimitive, Deserialize_repr, PartialEq, Eq, Hash)]
+    #[derive(
+        Copy, Clone, Debug, FromPrimitive, Deserialize_repr, Serialize_repr, PartialEq, Eq, Hash,
+    )]
     #[repr(i32)]
     pub enum Exit {
         Top = 1,
@@ -530,7 +534,7 @@ pub const STORAGE_HITS: u32 = 10_000;
 
 /// Translates `STRUCTURE_*` constants.
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum StructureType {
     Spawn = 0,
@@ -809,7 +813,7 @@ pub enum IntershardResourceType {
 }
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ResourceType {
     /// `"energy"`
