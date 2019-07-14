@@ -15,19 +15,20 @@
 //! ```toml
 //! [dependencies]
 //! # ...
-//! screeps-game-api = { version = "0.2", features = ["check-all-casts"] }
+//! screeps-game-api = { version = "0.3", features = ["check-all-casts"] }
 //! ```
 #![recursion_limit = "128"]
 #[macro_use]
-extern crate enum_primitive;
-#[macro_use]
 extern crate log;
+#[macro_use]
+extern crate num_derive;
 extern crate num_traits;
 #[macro_use]
 extern crate scoped_tls;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_json;
 #[macro_use]
 extern crate stdweb;
 #[macro_use]
@@ -50,7 +51,7 @@ pub use {
     constants::*,
     js_collections::{JsMap, JsVec},
     objects::*,
-    positions::{LocalRoomName, LocalRoomPosition},
+    positions::{LocalRoomName, LocalRoomNameParseError, LocalRoomPosition},
     traits::{FromExpectedType, IntoExpectedType},
 };
 

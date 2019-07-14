@@ -1,21 +1,15 @@
-use std::{
-    ffi::OsStr,
-    fs,
-    io::{Read, Write},
-    path::Path,
-    process,
-};
+use std::{borrow::Cow, ffi::OsStr, fs, io::Write, path::Path, process};
 
-use config::Configuration;
+use config::{BuildConfiguration, Configuration};
 
 use {failure, regex};
 
 pub fn check(root: &Path) -> Result<(), failure::Error> {
     debug!("running check");
 
-    debug!("running 'cargo check --target=wasm32-unknown-unknown'");
+    debug!("running 'cargo web check --target=wasm32-unknown-unknown'");
     let cargo_success = process::Command::new("cargo")
-        .args(&["check", "--target=wasm32-unknown-unknown"])
+        .args(&["web", "check", "--target=wasm32-unknown-unknown"])
         .current_dir(root)
         .spawn()?
         .wait()?;
@@ -40,7 +34,8 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
             "build",
             "--target=wasm32-unknown-unknown",
             "--release",
-        ]).current_dir(root)
+        ])
+        .current_dir(root)
         .spawn()?
         .wait()?;
     if !cargo_success.success() {
@@ -99,17 +94,9 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 
     debug!("processing js file");
 
-    let generated_js_contents = {
-        let mut buf = String::new();
-        fs::File::open(&generated_js)?.read_to_string(&mut buf)?;
-        buf
-    };
+    let generated_js_contents = fs::read_to_string(&generated_js)?;
 
-    let processed_js = process_js(
-        &generated_js,
-        &generated_js_contents,
-        &config.build.output_wasm_file,
-    )?;
+    let processed_js = process_js(&generated_js, &generated_js_contents, &root, &config.build)?;
 
     let out_file = out_dir.join(&config.build.output_js_file);
 
@@ -125,7 +112,8 @@ pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> 
 fn process_js(
     file_name: &Path,
     input: &str,
-    wasm_filename: &Path,
+    root: &Path,
+    config: &BuildConfiguration,
 ) -> Result<String, failure::Error> {
     // first, strip out bootstrap code which relates to the browser. We don't want
     // to run this, we just want to call `__initialize` ourself.
@@ -152,11 +140,11 @@ if( typeof Rust === "undefined" ) {
     } else {
         Rust.XXX = factory();
     }
-}   ( this, function() {
+}( this, function() {
     return (function( module_factory ) {
         var instance = module_factory();
 
-        if( typeof window === "undefined" && typeof process === "object" ) {
+        if( typeof process === "object" && typeof process.versions === "object" && typeof process.versions.node === "string" ) {
             var fs = require( "fs" );
             var path = require( "path" );
             var wasm_path = path.join( __dirname, "XXX.wasm" );
@@ -165,10 +153,18 @@ if( typeof Rust === "undefined" ) {
             var wasm_instance = new WebAssembly.Instance( mod, instance.imports );
             return instance.initialize( wasm_instance );
         } else {
-            return fetch( "XXX.wasm", {credentials: "same-origin"} )
-                .then( function( response ) { return response.arrayBuffer(); } )
-                .then( function( bytes ) { return WebAssembly.compile( bytes ); } )
-                .then( function( mod ) { return WebAssembly.instantiate( mod, instance.imports ) } )
+            var file = fetch( "XXX.wasm", {credentials: "same-origin"} );
+
+            var wasm_instance = ( typeof WebAssembly.instantiateStreaming === "function"
+                ? WebAssembly.instantiateStreaming( file, instance.imports )
+                    .then( function( result ) { return result.instance; } )
+
+                : file
+                    .then( function( response ) { return response.arrayBuffer(); } )
+                    .then( function( bytes ) { return WebAssembly.compile( bytes ); } )
+                    .then( function( mod ) { return WebAssembly.instantiate( mod, instance.imports ) } ) );
+
+            return wasm_instance
                 .then( function( wasm_instance ) {
                     var exports = instance.initialize( wasm_instance );
                     console.log( "Finished loading Rust wasm module 'XXX'" );
@@ -180,65 +176,88 @@ if( typeof Rust === "undefined" ) {
                 });
         }
     }( function() {"#;
-    // this comment is because my editor has bad detection of '#"'
+
+    let expected_suffix = r#"
+    }
+     ));
+    }));
+    "#;
 
     let expected_prefix = regex::Regex::new(&format!(
         "^{}",
         make_into_slightly_less_brittle_regex(expected_prefix)
     ))?;
 
+    let expected_suffix = regex::Regex::new(&format!(
+        "{}$",
+        make_into_slightly_less_brittle_regex(expected_suffix)
+    ))?;
+
     debug!("expected prefix:\n```{}```", expected_prefix);
+    debug!("expected suffix:\n```{}```", expected_suffix);
 
     let prefix_match = expected_prefix.find(input).ok_or_else(|| {
         format_err!(
             "'cargo web' generated unexpected JS prefix! This means it's updated without \
-             'cargo screeps' also having updates. Please report this issue to \
+             'cargo screeps' also having updated. Please report this issue to \
              https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
              the first ~30 lines of {}",
             file_name.display(),
         )
     })?;
 
-    let initialize_function = &input[prefix_match.end()..];
+    let suffix_match = expected_suffix.find(input).ok_or_else(|| {
+        format_err!(
+            "'cargo web' generated unexpected JS suffix! This means it's updated without \
+             'cargo screeps' also having updated. Please report this issue to \
+             https://github.com/daboross/screeps-in-rust-via-wasm/issues and include \
+             the last ~30 lines of {}",
+            file_name.display(),
+        )
+    })?;
+
+    let initialize_function = &input[prefix_match.end()..suffix_match.start()];
 
     // screeps doesn't have `console.error`, so we define our own `console_error` function,
     // and call it.
     let initialize_function = initialize_function.replace("console.error", "console_error");
 
-    let wasm_module_name = wasm_filename
+    let wasm_module_name = config
+        .output_wasm_file
         .file_stem()
         .ok_or_else(|| {
             format_err!(
                 "expected output_wasm_file ending in a filename, but found {}",
-                wasm_filename.display()
+                config.output_wasm_file.display()
             )
-        })?.to_str()
+        })?
+        .to_str()
         .ok_or_else(|| {
             format_err!(
                 "expected output_wasm_file with UTF8 filename, but found {}",
-                wasm_filename.display()
+                config.output_wasm_file.display()
             )
         })?;
 
-    Ok(format!(
-        r#""use strict";
-function __initialize() {{
-(function( factory ) {{
-    // stripped for screeps usage
-    factory();
-}}( function() {{
-    return (function( module_factory ) {{
-        // replaced with hardcoded grab for screeps usage
-        var instance = module_factory();
+    let initialization_header: Cow<'static, str> = match config.initialization_header_file.as_ref()
+    {
+        Some(header_file) => fs::read_to_string(root.join(header_file))?.into(),
+        None => include_str!("../resources/default_initialization_header.js").into(),
+    };
 
-        var mod = new WebAssembly.Module( require('{}') );
-        var wasm_instance = new WebAssembly.Instance( mod, instance.imports );
-        return instance.initialize( wasm_instance );
-    }}( function() {{
-{}
+    Ok(format!(
+        r#"{}
+
+function wasm_fetch_module_bytes() {{
+    "use strict";
+    return require('{}');
 }}
-__initialize();
+
+function wasm_create_stdweb_vars() {{
+    "use strict";
+    {}
+}}
 "#,
-        wasm_module_name, initialize_function,
+        initialization_header, wasm_module_name, initialize_function,
     ))
 }

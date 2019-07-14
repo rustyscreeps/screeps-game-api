@@ -1,6 +1,6 @@
 [package]
 name = "cargo-screeps"
-version = "0.2.0"
+version = "0.3.2"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://github.com/daboross/screeps-in-rust-via-wasm/cargo-screeps/"
 include = [
@@ -8,6 +8,7 @@ include = [
     "src/**/*",
     "tests/**/*",
     "examples/**/*",
+    "resources/**/*",
     "LICENSE",
     "README.md",
 ]
@@ -17,16 +18,16 @@ repository = "https://github.com/daboross/screeps-in-rust-via-wasm/"
 description = "Build tool for deploying Rust WASM code to Screeps game servers"
 
 [dependencies]
-base64 = "0.9"
+base64 = "0.10"
 clap = "2"
 failure = "0.1"
 fern = "0.5"
 log = "0.4"
 pathdiff = "0.1"
 regex = "1"
-reqwest = "0.8"
+reqwest = "0.9"
 serde = "1"
 serde_derive = "1"
 serde_ignored = "0.0.4"
 serde_json = "1"
-toml = "0.4"
+toml = "0.5"

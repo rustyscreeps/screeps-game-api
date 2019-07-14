@@ -10,23 +10,38 @@ use toml;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct BuildConfiguration {
+    #[serde(default = "BuildConfiguration::default_output_wasm_file")]
     pub output_wasm_file: PathBuf,
+    #[serde(default = "BuildConfiguration::default_output_js_file")]
     pub output_js_file: PathBuf,
+    #[serde(default)]
+    pub initialization_header_file: Option<PathBuf>,
 }
 
 impl Default for BuildConfiguration {
     fn default() -> Self {
         BuildConfiguration {
-            output_wasm_file: "compiled.wasm".into(),
-            output_js_file: "main.js".into(),
+            output_wasm_file: Self::default_output_wasm_file(),
+            output_js_file: Self::default_output_js_file(),
+            initialization_header_file: None,
         }
+    }
+}
+
+impl BuildConfiguration {
+    fn default_output_js_file() -> PathBuf {
+        "main.js".into()
+    }
+    fn default_output_wasm_file() -> PathBuf {
+        "compiled.wasm".into()
     }
 }
 
 #[derive(Clone, Debug, Deserialize)]
 struct FileUploadConfiguration {
-    username: String,
-    password: String,
+    auth_token: Option<String>,
+    username: Option<String>,
+    password: Option<String>,
     branch: String,
     #[serde(default = "default_hostname")]
     hostname: String,
@@ -47,13 +62,18 @@ fn default_ptr() -> bool {
 
 #[derive(Clone, Debug)]
 pub struct UploadConfiguration {
-    pub username: String,
-    pub password: String,
+    pub authentication: Authentication,
     pub hostname: String,
     pub branch: String,
     pub ssl: bool,
     pub port: i32,
     pub ptr: bool,
+}
+
+#[derive(Clone, Debug)]
+pub enum Authentication {
+    Token(String),
+    Basic { username: String, password: String },
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -95,6 +115,7 @@ pub struct Configuration {
 impl UploadConfiguration {
     fn new(config: FileUploadConfiguration) -> Result<UploadConfiguration, failure::Error> {
         let FileUploadConfiguration {
+            auth_token,
             username,
             password,
             branch,
@@ -107,9 +128,19 @@ impl UploadConfiguration {
         let ssl = ssl.unwrap_or_else(|| hostname == "screeps.com");
         let port = port.unwrap_or_else(|| if ssl { 443 } else { 80 });
 
+        let authentication = if auth_token.is_some() {
+            Authentication::Token(auth_token.unwrap())
+        } else if username.is_some() && password.is_some() {
+            Authentication::Basic {
+                username: username.unwrap(),
+                password: password.unwrap(),
+            }
+        } else {
+            bail!("either auth_token or username/password must be set in the [upload] section of the configuration");
+        };
+
         Ok(UploadConfiguration {
-            username,
-            password,
+            authentication,
             branch,
             hostname,
             ssl,
@@ -157,7 +188,8 @@ impl Configuration {
         let file_config: FileConfiguration =
             serde_ignored::deserialize(&mut toml::Deserializer::new(&config_str), |unused_path| {
                 unused_paths.insert(unused_path.to_string());
-            }).context("deserializing config")?;
+            })
+            .context("deserializing config")?;
 
         for path in &unused_paths {
             warn!("unused configuration path: {}", path)

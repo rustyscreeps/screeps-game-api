@@ -25,7 +25,7 @@
 //! be accessed using the `object["key"]` javascript syntax using type methods.
 //! ```no_run
 //! let mem = screeps::memory::root();
-//! let cpu_used_last_tick = mem.int("cpu_used_last_tick").unwrap();
+//! let cpu_used_last_tick = mem.i32("cpu_used_last_tick").unwrap();
 //! ```
 //!
 //! ## Accessing memory with a _path_
@@ -41,7 +41,7 @@
 //! depending on the method used. For example,
 //! ```no_run
 //! let mem = screeps::memory::root();
-//! let creep_time = mem.path_num("creeps.John.time").unwrap();
+//! let creep_time = mem.path_i32("creeps.John.time").unwrap();
 //! ```
 //!
 //! # Other methods that provide `MemoryReference`s
@@ -79,6 +79,12 @@ impl AsRef<Reference> for MemoryReference {
     }
 }
 
+impl Default for MemoryReference {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MemoryReference {
     pub fn new() -> Self {
         js_unwrap!({})
@@ -110,56 +116,64 @@ impl MemoryReference {
     pub fn f64(&self, key: &str) -> Result<Option<f64>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_f64(&self, path: &str) -> Result<Option<f64>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn i32(&self, key: &str) -> Result<Option<i32>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_i32(&self, path: &str) -> Result<Option<i32>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn string(&self, key: &str) -> Result<Option<String>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_string(&self, path: &str) -> Result<Option<String>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn dict(&self, key: &str) -> Result<Option<MemoryReference>, ConversionError> {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_dict(&self, path: &str) -> Result<Option<MemoryReference>, ConversionError> {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 
     /// Get a dictionary value or create it if it does not exist.
     ///
     /// If the value exists but is a different type, this will return `None`.
     pub fn dict_or_create(&self, key: &str) -> Result<MemoryReference, UnexpectedTypeError> {
-        (js!{
+        (js! {
             var map = (@{self.as_ref()});
             var key = (@{key});
             var value = map[key];
@@ -171,7 +185,8 @@ impl MemoryReference {
             } else {
                 return null;
             }
-        }).try_into()
+        })
+        .try_into()
         .map_err(|_| UnexpectedTypeError)
         .map(MemoryReference)
     }
@@ -181,7 +196,7 @@ impl MemoryReference {
     }
 
     pub fn del(&self, key: &str) {
-        js! {
+        js! { @(no_return)
             (@{self.as_ref()})[@{key}] = undefined;
         }
     }
@@ -192,11 +207,31 @@ impl MemoryReference {
         }
     }
 
+    pub fn get<T>(&self, key: &str) -> Result<T, ConversionError>
+    where
+        T: TryFrom<Value, Error = ConversionError>,
+    {
+        (js! {
+            return (@{self.as_ref()})[@{key}];
+        })
+        .try_into()
+    }
+
+    pub fn get_path<T>(&self, path: &str) -> Result<T, ConversionError>
+    where
+        T: TryFrom<Value, Error = ConversionError>,
+    {
+        (js! {
+            return _.get(@{self.as_ref()}, @{path});
+        })
+        .try_into()
+    }
+
     pub fn set<T>(&self, key: &str, value: T)
     where
         T: JsSerialize,
     {
-        js! {
+        js! { @(no_return)
             (@{self.as_ref()})[@{key}] = @{value};
         }
     }
@@ -205,7 +240,7 @@ impl MemoryReference {
     where
         T: JsSerialize,
     {
-        js! {
+        js! { @(no_return)
             _.set(@{self.as_ref()}, @{path}, @{value});
         }
     }
@@ -216,7 +251,8 @@ impl MemoryReference {
     {
         (js! {
             return (@{self.as_ref()})[@{key}];
-        }).try_into()
+        })
+        .try_into()
     }
 
     pub fn path_arr<T>(&self, path: &str) -> Result<Option<Vec<T>>, ConversionError>
@@ -225,7 +261,8 @@ impl MemoryReference {
     {
         (js! {
             return _.get(@{self.as_ref()}, @{path});
-        }).try_into()
+        })
+        .try_into()
     }
 }
 
@@ -242,7 +279,8 @@ impl TryFrom<Value> for MemoryReference {
                 } else {
                     return v;
                 }
-            }).try_into()?,
+            })
+            .try_into()?,
         ))
     }
 }

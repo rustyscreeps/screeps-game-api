@@ -5,15 +5,20 @@
 //! The documentation tries to give a good enough picture of how the macros
 //! should be used, but are in no way a formal description. For a better
 //! understanding of the `macro_rule!` arcane yet simple syntax, have a look
-//! at [`Macros, A Methodical Introduction`](https://danielkeep.github.io/tlborm/book/mbe-README.html).
+//! at [`Macros, A Methodical Introduction`][macro-book]
+//!
+//! [macro-book]: https://danielkeep.github.io/tlborm/book/mbe-README.html
 
 /// Used to get data from a javascript reference back into rust code.
 ///
 /// Macro syntax (`$name` are expressions):
+///
+/// ```ignore
 /// js_unwrap!($jsExpr)
+/// ```
 ///
 /// For reference, `js!()` is a macro that returns a `stdweb::Value` enum.
-/// https://docs.rs/stdweb/0.4.8/stdweb/enum.Value.html
+/// See <https://docs.rs/stdweb/0.4.8/stdweb/enum.Value.html>.
 ///
 /// Here, `js_unwrap!()` takes any valid javascript expression (expresses a value)
 /// and will attempt conversion to the receiving variable type using `try_into`.
@@ -40,7 +45,7 @@
 /// bool      | Bool
 ///
 /// For the full list, see the documentation for [`stdweb::unstable::TryFrom`].
-/// (If unavailable: https://docs.rs/stdweb/0.4.8/stdweb/unstable/trait.TryFrom.html )
+/// (If unavailable: <https://docs.rs/stdweb/0.4.8/stdweb/unstable/trait.TryFrom.html> )
 ///
 /// Note: for unwrapping reference types, use [`js_unwrap_ref!`] to avoid instanceof checks.
 macro_rules! js_unwrap {
@@ -78,8 +83,11 @@ macro_rules! js_unwrap_ref {
 /// Creates a getter method to unwrap a field of a javascript object.
 ///
 /// Macro Syntax (`$name` are expressions):
+///
+/// ```ignore
 /// get_from_js!($method_name -> {$js_statement} -> $rust_type)
 /// get_from_js!($method_name($param1, $param2, ...) -> {$js_statement} -> $rust_type)
+/// ```
 ///
 /// Building on top of `js_unwrap!()`, this creates an accessor to a javascript
 /// object method or attribute.
@@ -138,16 +146,16 @@ macro_rules! get_from_js {
 ///
 /// - Creates a struct named `objX`;
 /// - Uses `#[derive(Clone, ReferenceType)]` which implements these traits for `objX`:
-///   - InstanceOf
-///   - AsRef<Reference>
-///   - ReferenceType
-///   - Into<Reference>
-///   - TryInto<Reference>
-///   - TryFrom<Reference>
-///   - TryFrom<&Reference>
-///   - TryFrom<Value>
-///   - TryFrom<&Value>
-/// - Implements FromExpectedType<Reference> for `objJ`
+///   - `InstanceOf`
+///   - `AsRef<Reference>`
+///   - `ReferenceType`
+///   - `Into<Reference>`
+///   - `TryInto<Reference>`
+///   - `TryFrom<Reference>`
+///   - `TryFrom<&Reference>`
+///   - `TryFrom<Value>`
+///   - `TryFrom<&Value>`
+/// - Implements `FromExpectedType<Reference>` for `objJ`
 macro_rules! reference_wrappers {
     (
         $(
@@ -185,12 +193,15 @@ macro_rules! reference_wrappers {
 /// object.
 ///
 /// Method Syntax:
+///
+/// ```ignore
 /// simple_accessor! {
 ///     $struct_name;
 ///     ($rust_method_name1 -> $js_field_name1 -> $rust_type1),
 ///     ($rust_method_name2 -> $js_field_name2 -> $rust_type2),
 ///     ...
 /// }
+/// ```
 macro_rules! simple_accessors {
     ($struct_name:ident; $(($method:ident -> $prop:ident -> $ret:ty)),* $(,)*) => (
         impl $struct_name {
@@ -206,15 +217,19 @@ macro_rules! simple_accessors {
 /// Macro for mass implementing `StructureProperties`, `PartialEq` and `Eq` for a type.
 ///
 /// Macro syntax:
+///
+/// ```ignore
 /// impl_structure_properties!{
 ///     $struct1,
 ///     $struct2,
 ///     ...
 /// }
+/// ```
 ///
-/// This macro accepts a comma-separated list of types on which to implement the unsafe `StructureProperties` trait on
-/// a screeps object.
-/// From that implementation, the type gets the `id` method which is used to implement `PartialEq` and `Eq`.
+/// This macro accepts a comma-separated list of types on which to implement the unsafe
+/// `StructureProperties` trait on a screeps object.
+/// From that implementation, the type gets the `id` method which is used to implement `PartialEq`
+/// and `Eq`.
 ///
 /// # Safety
 /// The macro assumes that it is implementing the trait to a valid `Reference`
@@ -233,11 +248,13 @@ macro_rules! impl_structure_properties {
 /// method.
 ///
 /// Macro Syntax:
+/// ```ignore
 /// impl_has_id! {
-/// $struct_name1;
-/// $struct_name2;
-/// ...
+///     $struct_name1;
+///     $struct_name2;
+///     ...
 /// }
+/// ```
 macro_rules! impl_has_id {
     ($($struct_name:ty);* $(;)*) => {$(
         unsafe impl HasId for $struct_name {}
@@ -258,11 +275,13 @@ macro_rules! impl_has_id {
 /// `ReturnCode`, a number indicating the status of the action requested.
 ///
 /// Macro Syntax:
+/// ```ignore
 /// creep_simple_generic_action!{
 ///     ($rust_method_name1($action_target_trait1) -> js_method_name1),
 ///     ($rust_method_name2($action_target_trait2) -> js_method_name2),
 ///     ...
 /// }
+/// ```
 ///
 /// For this macro, the last comma is facultative.
 ///
@@ -274,7 +293,7 @@ macro_rules! creep_simple_generic_action {
             $(
                 pub fn $method<T>(&self, target: &T) -> ReturnCode
                 where
-                    T: $trait,
+                    T: ?Sized + $trait,
                 {
                     js_unwrap!(@{self.as_ref()}.$js_name(@{target.as_ref()}))
                 }
@@ -289,11 +308,13 @@ macro_rules! creep_simple_generic_action {
 /// `ReturnCode`, a number indicating the status of the action requested.
 ///
 /// Macro Syntax:
+/// ```ignore
 /// creep_simple_generic_action!{
 ///     ($rust_method_name1($target_type1) -> js_method_name1),
 ///     ($rust_method_name2($target_type2) -> js_method_name2),
 ///     ...
 /// }
+/// ```
 ///
 /// For this macro, the last comma is facultative.
 ///
@@ -359,11 +380,13 @@ macro_rules! typesafe_look_constants {
 /// Creates accessors for the main game collections
 ///
 /// Macro syntax:
-/// game_map_access!{
+/// ```ignore
+/// game_map_access! {
 ///     $rust_mod_name1, $rust_object_accessed1, $js_code_to_access1;
 ///     $rust_mod_name2, $rust_object_accessed2, $js_code_to_access2;
 ///     ...
 /// }
+/// ```
 ///
 /// Builds a module for often accessed collections. Those can then be accesed
 /// via functions. For example, to retreive a vector of all creeps names:
@@ -465,10 +488,24 @@ macro_rules! construct_structure_variants {
     };
 }
 
+/// Match on all variants of `Structure`, doing something wrapped in Some() for some of them,
+/// and None for others.
+macro_rules! match_some_structure_variants {
+    ($source:expr, { $($allowed:ident),* $(,)* }, $name:ident => $action:expr) => {
+        match $source {
+            $(
+                Structure::$allowed($name) => Some($action),
+            )*
+            _ => None,
+        }
+    };
+}
+
 /// Implements [`serde::Serialize`] for a single given structure name.
 ///
 /// The generated implementation unconditionally uses `item as i32` to convert any instance of the
 /// structure into an integer, then uses `serialize_i32` to serialize that number.
+#[cfg(feature = "constants-serde")]
 macro_rules! impl_serialize_as_i32 {
     ($name:ty) => {
         impl ::serde::Serialize for $name {
@@ -477,6 +514,23 @@ macro_rules! impl_serialize_as_i32 {
                 S: ::serde::Serializer,
             {
                 serializer.serialize_i32(*self as i32)
+            }
+        }
+    };
+}
+
+/// Implements [`serde::Serialize`] for a single given structure name.
+///
+/// The generated implementation unconditionally uses `item as u32` to convert any instance of the
+/// structure into an integer, then uses `serialize_u32` to serialize that number.
+macro_rules! impl_serialize_as_u32 {
+    ($name:ty) => {
+        impl ::serde::Serialize for $name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: ::serde::Serializer,
+            {
+                serializer.serialize_u32(*self as u32)
             }
         }
     };
@@ -583,7 +637,7 @@ macro_rules! impl_js_vec_iterators_from_expected_type_with_result {
 ///
 /// # fn main() {
 /// let mem = screeps::memory::root();
-/// let val = mem_get!(mem.creeps.John.count.int);
+/// let val = mem_get!(mem.creeps.John.count.i32);
 /// # }
 /// ```
 ///
@@ -597,8 +651,8 @@ macro_rules! impl_js_vec_iterators_from_expected_type_with_result {
 /// let mem = screeps::memory::root();
 /// let creep_name = "John";
 /// let what_to_get = "count";
-/// let val1 = mem_get!(mem.creeps[creep_name][what_to_get].int);
-/// let val2 = mem_get!(mem.creeps[creep_name].count.int);
+/// let val1 = mem_get!(mem.creeps[creep_name][what_to_get].i32);
+/// let val2 = mem_get!(mem.creeps[creep_name].count.i32);
 /// assert_eq!(val1, val2);
 /// # }
 /// ```
@@ -609,21 +663,30 @@ macro_rules! impl_js_vec_iterators_from_expected_type_with_result {
 macro_rules! mem_get {
     // Macro entry point
     ($memory_reference:ident $($rest:tt)*) => {
-        mem_get!(@so_far { Some(&$memory_reference) } @rest $($rest)*)
+        mem_get!(@so_far { Ok(Some(&$memory_reference)) } @rest $($rest)*)
     };
     // Access the last part with a variable
     (@so_far { $reference_so_far:expr } @rest [ $final_part_variable:expr ] . $accessor:ident) => {
-        $reference_so_far.and_then(|v| v.$accessor($final_part_variable))
+        $reference_so_far.and_then(|opt| match opt {
+            Some(v) => v.$accessor($final_part_variable),
+            None => Ok(None),
+        })
     };
     // Access the last part with a hardcoded ident
     (@so_far { $reference_so_far:expr } @rest . $final_part:ident . $accessor:ident) => {
-        $reference_so_far.and_then(|v| v.$accessor(stringify!($final_part)))
+        $reference_so_far.and_then(|opt| match opt {
+            Some(v) => v.$accessor(stringify!($final_part)),
+            None => Ok(None),
+        })
     };
     // Access the next (but not last) part with a variable
     (@so_far { $reference_so_far:expr } @rest [ $next_part_variable:expr ] $($rest:tt)+) => {
         mem_get!(
             @so_far {
-                $reference_so_far.and_then(|v| v.dict($next_part_variable))
+                $reference_so_far.and_then(|opt| match opt {
+                    Some(v) => v.dict($next_part_variable),
+                    None => Ok(None),
+                })
             }
             @rest $($rest)*
         )
@@ -632,7 +695,10 @@ macro_rules! mem_get {
     (@so_far { $reference_so_far:expr } @rest . $next_part:ident $($rest:tt)+) => {
         mem_get!(
             @so_far {
-                $reference_so_far.and_then(|v| v.dict(stringify!($next_part)))
+                $reference_so_far.and_then(|opt| match opt {
+                    Some(v) => v.dict(stringify!($next_part)),
+                    None => Ok(None),
+                })
             }
             @rest $($rest)*
         )
@@ -733,5 +799,60 @@ macro_rules! mem_set {
     };
     ($($not_valid:tt)*) => {
         compile_error!(concat!("Unexpected usage of mem_set! usage: ", stringify!($($not_valid)*)))
+    }
+}
+
+/// Taken from <https://serde.rs/enum-number.html>
+macro_rules! enum_number {
+    ($name:ident { $($variant:ident = $value:expr, )* }) => {
+        #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+        #[repr(u32)]
+        pub enum $name {
+            $($variant = $value,)*
+        }
+
+        impl ::serde::Serialize for $name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: ::serde::Serializer,
+            {
+                // Serialize the enum as a u64.
+                serializer.serialize_u64(*self as u64)
+            }
+        }
+
+        impl<'de> ::serde::Deserialize<'de> for $name {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: ::serde::Deserializer<'de>,
+            {
+                struct Visitor;
+
+                impl<'de> ::serde::de::Visitor<'de> for Visitor {
+                    type Value = $name;
+
+                    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                        formatter.write_str("positive integer")
+                    }
+
+                    fn visit_u64<E>(self, value: u64) -> Result<$name, E>
+                    where
+                        E: ::serde::de::Error,
+                    {
+                        // Rust does not come with a simple way of converting a
+                        // number to an enum, so use a big `match`.
+                        match value {
+                            $( $value => Ok($name::$variant), )*
+                            _ => Err(E::custom(
+                                format!("unknown {} value: {}",
+                                stringify!($name), value))),
+                        }
+                    }
+                }
+
+                // Deserialize the enum from a u64.
+                deserializer.deserialize_u64(Visitor)
+            }
+        }
     }
 }

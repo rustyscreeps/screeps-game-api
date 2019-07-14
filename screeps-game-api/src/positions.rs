@@ -69,11 +69,11 @@ impl LocalRoomName {
 }
 
 impl ops::Add<(i32, i32)> for LocalRoomName {
-    type Output = LocalRoomName;
+    type Output = Self;
 
     /// Adds an (x, y) coordinate pair to this room name.
     #[inline]
-    fn add(self, (x, y): (i32, i32)) -> LocalRoomName {
+    fn add(self, (x, y): (i32, i32)) -> Self {
         LocalRoomName {
             x_coord: self.x_coord + x,
             y_coord: self.y_coord + y,
@@ -82,11 +82,11 @@ impl ops::Add<(i32, i32)> for LocalRoomName {
 }
 
 impl ops::Sub<(i32, i32)> for LocalRoomName {
-    type Output = LocalRoomName;
+    type Output = Self;
 
     /// Subtracts an (x, y) coordinate pair to this room name.
     #[inline]
-    fn sub(self, (x, y): (i32, i32)) -> LocalRoomName {
+    fn sub(self, (x, y): (i32, i32)) -> Self {
         LocalRoomName {
             x_coord: self.x_coord - x,
             y_coord: self.y_coord - y,
@@ -111,6 +111,13 @@ pub trait IntoLocalRoomName {
 }
 
 fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
+    if s == "sim" {
+        return Ok(LocalRoomName {
+            x_coord: 0,
+            y_coord: 0,
+        });
+    }
+
     let mut chars = s.char_indices();
 
     let east = match chars.next() {
@@ -198,6 +205,62 @@ impl<'a> fmt::Display for LocalRoomNameParseError<'a> {
     }
 }
 
+impl PartialEq<&str> for LocalRoomName {
+    fn eq(&self, other: &&str) -> bool {
+        let s = format!("{}", &self);
+        s.eq_ignore_ascii_case(other)
+    }
+}
+impl PartialEq<LocalRoomName> for &str {
+    fn eq(&self, other: &LocalRoomName) -> bool {
+        other.eq(self)
+    }
+}
+
+impl PartialEq<String> for LocalRoomName {
+    fn eq(&self, other: &String) -> bool {
+        let s = format!("{}", &self);
+        s.eq_ignore_ascii_case(other.as_str())
+    }
+}
+impl PartialEq<LocalRoomName> for String {
+    fn eq(&self, other: &LocalRoomName) -> bool {
+        other.eq(&self.as_str())
+    }
+}
+
+impl PartialEq<&String> for LocalRoomName {
+    fn eq(&self, other: &&String) -> bool {
+        let s = format!("{}", &self);
+        s.eq_ignore_ascii_case(other.as_str())
+    }
+}
+impl PartialEq<LocalRoomName> for &String {
+    fn eq(&self, other: &LocalRoomName) -> bool {
+        other.eq(&self.as_str())
+    }
+}
+
+#[cfg(test)]
+mod local_room_name_tests {
+    #[test]
+    fn test_string_equality() {
+        use super::LocalRoomName;
+        let room_names = vec![
+            "E21N4",
+            "w6S42",
+            "W17s5",
+            "e2n5",
+        ];
+        for room_name in room_names {
+            assert_eq!(room_name, LocalRoomName::new(room_name).unwrap());
+            assert_eq!(LocalRoomName::new(room_name).unwrap(), room_name);
+            assert_eq!(LocalRoomName::new(room_name).unwrap(), &room_name.to_string());
+            assert_eq!(&room_name.to_string(), LocalRoomName::new(room_name).unwrap());
+        }
+    }
+}
+
 mod serde {
     use super::{parse_or_cheap_failure, LocalRoomName};
 
@@ -248,8 +311,8 @@ mod serde {
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct LocalRoomPosition {
     pub room_name: LocalRoomName,
-    pub x: u8,
-    pub y: u8,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl LocalRoomPosition {
@@ -275,9 +338,9 @@ mod stdweb {
         type Error = <Value as TryInto<String>>::Error;
 
         fn try_from(v: Value) -> Result<LocalRoomPosition, Self::Error> {
-            let x: u8 = (js!{@{&v}.x}).try_into()?;
-            let y: u8 = (js!{@{&v}.y}).try_into()?;
-            let room_name: LocalRoomName = (js!{@{&v}.roomName}).try_into()?;
+            let x: u32 = (js! {return @{&v}.x}).try_into()?;
+            let y: u32 = (js! {return @{&v}.y}).try_into()?;
+            let room_name: LocalRoomName = (js! {return @{&v}.roomName}).try_into()?;
 
             Ok(LocalRoomPosition { x, y, room_name })
         }
@@ -294,8 +357,8 @@ mod room_pos_serde {
     struct SerializedLocalRoomPosition {
         room_x: i32,
         room_y: i32,
-        x: u8,
-        y: u8,
+        x: u32,
+        y: u32,
     }
 
     impl Serialize for LocalRoomPosition {
@@ -308,7 +371,8 @@ mod room_pos_serde {
                 room_y: self.room_name.y_coord,
                 x: self.x,
                 y: self.y,
-            }.serialize(serializer)
+            }
+            .serialize(serializer)
         }
     }
 

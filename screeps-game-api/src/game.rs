@@ -1,5 +1,5 @@
 use {
-    objects::{HasId, RoomObject},
+    objects::{HasId, RoomObject, SizedRoomObject},
     traits::TryInto,
     ConversionError,
 };
@@ -15,9 +15,9 @@ pub mod cpu {
 
     use constants::ReturnCode;
 
-    /// See [v8_getheapstatistics]
+    /// See [`v8_getheapstatistics`]
     ///
-    /// [v8_getheapstatistics]: https://nodejs.org/dist/latest-v8.x/docs/api/v8.html#v8_v8_getheapstatistics
+    /// [`v8_getheapstatistics`]: https://nodejs.org/dist/latest-v8.x/docs/api/v8.html#v8_v8_getheapstatistics
     #[derive(Default, Serialize, Deserialize)]
     pub struct HeapStatistics {
         pub total_heap_size: u32,
@@ -127,11 +127,13 @@ pub mod gcl {
 ///
 /// [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
 pub mod map {
-    use std::collections;
+    use std::{collections, mem};
+
+    use stdweb::Value;
 
     use {
-        constants::{find::Exit, Direction, ReturnCode, Terrain},
-        objects::{Room, RoomPosition},
+        constants::{find::Exit, Direction, ReturnCode},
+        objects::RoomTerrain,
         traits::{TryFrom, TryInto},
     };
 
@@ -164,11 +166,8 @@ pub mod map {
         js_unwrap!(Game.map.getRoomLinearDistance(@{room1}, @{room2}, @{continuous}))
     }
 
-    /// See [http://docs.screeps.com/api/#Game.map.getTerrainAt]
-    ///
-    /// [http://docs.screeps.com/api/#Game.map.getTerrainAt]: http://docs.screeps.com/api/#Game.map.getTerrainAt
-    pub fn get_terrain_at(pos: &RoomPosition) -> Terrain {
-        js_unwrap!(__terrain_type_str_to_num(Game.map.getTerrainAt(@{pos.as_ref()})))
+    pub fn get_room_terrain(room_name: &str) -> RoomTerrain {
+        js_unwrap!(Game.map.getRoomTerrain(@{room_name}))
     }
 
     /// See [http://docs.screeps.com/api/#Game.map.getWorldSize]
@@ -186,17 +185,85 @@ pub mod map {
     }
 
     /// Implements `Game.map.findExit`.
-    ///
-    /// Does not yet support callbacks.
-    pub fn find_exit(from_room: Room, to_room: Room) -> Result<Exit, ReturnCode> {
-        let code: i32 = js_unwrap!{Game.map.findExit(@{from_room.name()}, @{to_room.name()})};
+    pub fn find_exit(from_room: &str, to_room: &str) -> Result<Exit, ReturnCode> {
+        let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room})};
         Exit::try_from(code)
             .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
     }
 
-    // pub fn find_route(from_room: Room, to_room: Room, route_callback: Option<impl Fn(&str, &str) -> u32>) -> !{
-    //     unimplemented!()
-    // }
+    pub fn find_exit_with_callback(
+        from_room: &str,
+        to_room: &str,
+        route_callback: impl Fn(String, String) -> f64,
+    ) -> Result<Exit, ReturnCode> {
+        // Actual callback
+        fn callback(room_name: String, from_room_name: String) -> f64 {
+            FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
+        }
+
+        let callback_type_erased: Box<dyn Fn(String, String) -> f64> = Box::new(route_callback);
+
+        let callback_lifetime_erased: Box<dyn Fn(String, String) -> f64 + 'static> =
+            unsafe { mem::transmute(callback_type_erased) };
+
+        FR_CALLBACK.set(&callback_lifetime_erased, || {
+            let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room}, @{callback})};
+            Exit::try_from(code)
+                .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
+        })
+    }
+
+    pub fn find_route(from_room: &str, to_room: &str) -> Result<Vec<RoomRouteStep>, ReturnCode> {
+        let v = js!(return Game.map.findRoute(@{from_room}, @{to_room}););
+        parse_find_route_returned_value(v)
+    }
+
+    scoped_thread_local!(static FR_CALLBACK: Box<(dyn Fn(String, String) -> f64)>);
+
+    pub fn find_route_with_callback(
+        from_room: &str,
+        to_room: &str,
+        route_callback: impl Fn(String, String) -> f64,
+    ) -> Result<Vec<RoomRouteStep>, ReturnCode> {
+        // Actual callback
+        fn callback(room_name: String, from_room_name: String) -> f64 {
+            FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
+        }
+
+        let callback_type_erased: Box<dyn Fn(String, String) -> f64> = Box::new(route_callback);
+
+        let callback_lifetime_erased: Box<dyn Fn(String, String) -> f64 + 'static> =
+            unsafe { mem::transmute(callback_type_erased) };
+
+        FR_CALLBACK.set(&callback_lifetime_erased, || {
+            let v = js!(return Game.map.findRoute(@{from_room}, @{to_room}, @{callback}););
+            parse_find_route_returned_value(v)
+        })
+    }
+
+    fn parse_find_route_returned_value(v: Value) -> Result<Vec<RoomRouteStep>, ReturnCode> {
+        match v {
+            Value::Number(x) => {
+                let i: i32 = x.try_into().unwrap();
+                Err(i
+                    .try_into()
+                    .unwrap_or_else(|val| panic!("Unexpected return code: {}", val)))
+            }
+            Value::Reference(_) => Ok(v.try_into().expect("Error on parsing exit directions.")),
+            _ => panic!(
+                "Game.map.findRoute expected Number or Reference, found {:?}.",
+                v
+            ),
+        }
+    }
+
+    #[derive(Clone, Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct RoomRouteStep {
+        exit: Exit,
+        room: String,
+    }
+    js_deserializable!(RoomRouteStep);
 }
 
 pub mod market {
@@ -291,14 +358,14 @@ pub mod market {
     }
 
     pub fn incoming_transactions() -> Vec<Transaction> {
-        let arr_transaction_value = js!{
+        let arr_transaction_value = js! {
             return Game.market.incomingTransactions;
         };
         arr_transaction_value.try_into().unwrap()
     }
 
     pub fn outgoing_transactions() -> Vec<Transaction> {
-        let arr_transaction_value = js!{
+        let arr_transaction_value = js! {
             return Game.market.outgoingTransactions;
         };
         arr_transaction_value.try_into().unwrap()
@@ -330,7 +397,7 @@ pub mod market {
         total_amount: u32,
         room: &Room,
     ) -> ReturnCode {
-        js_unwrap!{
+        js_unwrap! {
             Game.market.createOrder(__order_type_num_to_str(@{order_type as u32}),
                                     __resource_type_num_to_str(@{resource_type as u32}),
                                     @{price},
@@ -340,11 +407,11 @@ pub mod market {
     }
 
     pub fn deal(order_id: &str, amount: u32, target_room: &Room) -> ReturnCode {
-        js_unwrap!{Game.market.deal(@{order_id}, @{amount}, @{target_room.name()})}
+        js_unwrap! {Game.market.deal(@{order_id}, @{amount}, @{target_room.name()})}
     }
 
     pub fn extend_order(order_id: &str, add_amount: u32) -> ReturnCode {
-        js_unwrap!{Game.market.extendOrder(@{order_id}, @{add_amount})}
+        js_unwrap! {Game.market.extendOrder(@{order_id}, @{add_amount})}
     }
 
     /// Get all orders from the market
@@ -437,7 +504,7 @@ pub fn time() -> u32 {
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
 pub fn get_object_typed<T>(id: &str) -> Result<Option<T>, ConversionError>
 where
-    T: HasId,
+    T: HasId + SizedRoomObject,
 {
     js!(return Game.getObjectById(@{id});).try_into()
 }
@@ -453,5 +520,7 @@ pub fn get_object_erased(id: &str) -> Option<RoomObject> {
 }
 
 pub fn notify(message: &str, group_interval: Option<u32>) {
-    js!{Game.notify(@{message}, @{group_interval.unwrap_or(0)})};
+    js! { @(no_return)
+        Game.notify(@{message}, @{group_interval.unwrap_or(0)});
+    }
 }

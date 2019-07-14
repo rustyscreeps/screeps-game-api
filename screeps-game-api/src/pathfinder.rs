@@ -14,9 +14,15 @@ pub struct LocalCostMatrix {
     bits: Vec<u8>,
 }
 
-#[inline(always)]
+#[inline]
 fn pos_as_idx(x: u8, y: u8) -> usize {
     (x as usize) * 50 + (y as usize)
+}
+
+impl Default for LocalCostMatrix {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl LocalCostMatrix {
@@ -44,10 +50,11 @@ impl LocalCostMatrix {
 
         CostMatrix {
             inner: (js! {
-                var matrix = Object.create(CostMatrix.prototype);
+                var matrix = Object.create(PathFinder.CostMatrix.prototype);
                 matrix._bits = @{bits};
                 return matrix;
-            }).try_into()
+            })
+            .try_into()
             .expect("expected function returning CostMatrix to return a Reference"),
             lifetime: PhantomData,
         }
@@ -77,11 +84,12 @@ impl LocalCostMatrix {
                 // `UnsafeTypedArray`.
                 var bits = @{bits};
 
-                var matrix = Object.create(CostMatrix.prototype);
+                var matrix = Object.create(PathFinder.CostMatrix.prototype);
                 matrix._bits = bits;
 
                 return matrix;
-            }).try_into()
+            })
+            .try_into()
             .expect("expected function returning CostMatrix to return a Reference"),
             lifetime: PhantomData,
         }
@@ -155,8 +163,8 @@ where
     plain_cost: u8,
     swamp_cost: u8,
     flee: bool,
-    max_ops: i32,
-    max_rooms: i32,
+    max_ops: u32,
+    max_rooms: u32,
     max_cost: f64,
     heuristic_weight: f64,
 }
@@ -239,13 +247,13 @@ where
     }
 
     /// Sets maximum ops - default `2000`.
-    pub fn max_ops(mut self, ops: i32) -> Self {
+    pub fn max_ops(mut self, ops: u32) -> Self {
         self.max_ops = ops;
         self
     }
 
     /// Sets maximum rooms - default `16`, max `16`.
-    pub fn max_rooms(mut self, rooms: i32) -> Self {
+    pub fn max_rooms(mut self, rooms: u32) -> Self {
         self.max_rooms = rooms;
         self
     }
@@ -265,8 +273,8 @@ where
 
 pub struct SearchResults {
     path: Array,
-    pub ops: i32,
-    pub cost: i32,
+    pub ops: u32,
+    pub cost: u32,
     pub incomplete: bool,
 }
 
@@ -292,12 +300,12 @@ impl SearchResults {
 pub fn search<'a, O, G, F>(
     origin: &O,
     goal: &G,
-    range: i32,
+    range: u32,
     opts: SearchOptions<'a, F>,
 ) -> SearchResults
 where
-    O: HasPosition,
-    G: HasPosition,
+    O: ?Sized + HasPosition,
+    G: ?Sized + HasPosition,
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {
     let pos = goal.pos();
@@ -312,7 +320,7 @@ where
 pub fn search_many<'a, O, G, I, F>(origin: &O, goal: G, opts: SearchOptions<'a, F>) -> SearchResults
 where
     O: HasPosition,
-    G: IntoIterator<Item = (I, i32)>,
+    G: IntoIterator<Item = (I, u32)>,
     I: HasPosition,
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {
@@ -321,12 +329,13 @@ where
         .map(|(target, range)| {
             let pos = target.pos();
             js_unwrap!({pos: @{pos.as_ref()}, range: @{range}})
-        }).collect();
+        })
+        .collect();
     let goals_js: Reference = js_unwrap!(@{goals});
     search_real(&origin.pos(), &goals_js, opts)
 }
 
-scoped_thread_local!(static PF_CALLBACK: Box<(Fn(String) -> Reference)>);
+scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Reference);
 
 fn search_real<'a, F>(
     origin: &RoomPosition,
@@ -351,15 +360,15 @@ where
     let callback_unboxed = move |input| raw_callback(input).inner;
 
     // Type erased and boxed callback: no longer a type specific to the closure passed in,
-    // now unified as Box<Fn>
-    let callback_type_erased: Box<Fn(String) -> Reference + 'a> = Box::new(callback_unboxed);
+    // now unified as &Fn
+    let callback_type_erased: &(dyn Fn(String) -> Reference + 'a) = &callback_unboxed;
 
-    // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
-    // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
-    // be entirely safe because we're only sticking it in scoped storage and we control the only use
-    // of it, but it's still necessary because "some lifetime above the current scope but otherwise
-    // unknown" is not a valid lifetime to have PF_CALLBACK have.
-    let callback_lifetime_erased: Box<Fn(String) -> Reference + 'static> =
+    // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
+    // storage: it's now pretending to be static data. This should be entirely safe because we're
+    // only sticking it in scoped storage and we control the only use of it, but it's still
+    // necessary because "some lifetime above the current scope but otherwise unknown" is not a
+    // valid lifetime to have PF_CALLBACK have.
+    let callback_lifetime_erased: &'static dyn Fn(String) -> Reference =
         unsafe { mem::transmute(callback_type_erased) };
 
     let SearchOptions {
@@ -377,7 +386,7 @@ where
     //
     // See https://docs.rs/scoped-tls/0.1/scoped_tls/
     PF_CALLBACK.set(&callback_lifetime_erased, || {
-        let res: ::stdweb::Reference = js_unwrap!{
+        let res: ::stdweb::Reference = js_unwrap! {
             PathFinder.search(@{origin.as_ref()}, @{goal}, {
                 roomCallback: @{callback},
                 plainCost: @{plain_cost},

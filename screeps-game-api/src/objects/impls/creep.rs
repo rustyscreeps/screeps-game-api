@@ -1,17 +1,46 @@
+use std::{marker::PhantomData, mem};
+
+use stdweb::{Reference, Value};
+
 use {
     constants::{Direction, Part, ResourceType, ReturnCode},
     memory::MemoryReference,
     objects::{
-        Attackable, ConstructionSite, Creep, HasPosition, Resource, Source, StructureController,
-        StructureProperties, Transferable, Withdrawable,
+        Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, RoomPosition,
+        Source, StructureController, StructureProperties, Transferable, Withdrawable,
     },
-    pathfinder::SearchResults,
+    pathfinder::{CostMatrix, SearchResults},
+    traits::TryFrom,
 };
 
 use super::room::Step;
 
+scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(String, Reference) -> Option<Reference>>);
+
 impl Creep {
-    pub fn carry_total(&self) -> i32 {
+    pub fn body(&self) -> Vec<Bodypart> {
+        // Has to be deconstructed manually to avoid converting strings from js to rust
+        let len: u32 = js_unwrap!(@{self.as_ref()}.body.length);
+        let mut body_parts: Vec<Bodypart> = Vec::with_capacity(len as usize);
+
+        for i in 0..len {
+            let boost_v =
+                js!(return __resource_type_str_to_num(@{self.as_ref()}.body[@{i}].boost););
+            let boost = match boost_v {
+                Value::Number(_) => {
+                    Some(ResourceType::try_from(boost_v).expect("Creep boost resource unknown."))
+                }
+                _ => None,
+            };
+            let part: Part = js_unwrap!(__part_str_to_num(@{self.as_ref()}.body[@{i}].type));
+            let hits: u32 = js_unwrap!(@{self.as_ref()}.body[@{i}].hits);
+
+            body_parts.push(Bodypart { boost, part, hits });
+        }
+        body_parts
+    }
+
+    pub fn carry_total(&self) -> u32 {
         js_unwrap!(_.sum(@{self.as_ref()}.carry))
     }
 
@@ -19,20 +48,20 @@ impl Creep {
         js_unwrap!(Object.keys(@{self.as_ref()}.carry).map(__resource_type_str_to_num))
     }
 
-    pub fn carry_of(&self, ty: ResourceType) -> i32 {
-        js_unwrap!(@{self.as_ref()}.carry[__resource_type_num_to_str(@{ty as i32})] || 0)
+    pub fn carry_of(&self, ty: ResourceType) -> u32 {
+        js_unwrap!(@{self.as_ref()}.carry[__resource_type_num_to_str(@{ty as u32})] || 0)
     }
 
     pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
         match amount {
             Some(v) => {
-                js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32}), @{v}))
+                js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as u32}), @{v}))
             }
-            None => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as i32}))),
+            None => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as u32}))),
         }
     }
 
-    pub fn energy(&self) -> i32 {
+    pub fn energy(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.carry[RESOURCE_ENERGY])
     }
 
@@ -45,11 +74,118 @@ impl Creep {
     }
 
     pub fn move_direction(&self, dir: Direction) -> ReturnCode {
-        js_unwrap!(@{self.as_ref()}.move(@{dir as i32}))
+        js_unwrap!(@{self.as_ref()}.move(@{dir as u32}))
     }
 
-    pub fn move_to_xy(&self, x: i32, y: i32) -> ReturnCode {
+    pub fn move_to_xy(&self, x: u32, y: u32) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.moveTo(@{x}, @{y}))
+    }
+
+    pub fn move_to_xy_with_options<'a, F>(
+        &self,
+        x: u32,
+        y: u32,
+        move_options: MoveToOptions<'a, F>,
+    ) -> ReturnCode
+    where
+        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+    {
+        let rp = RoomPosition::new(x, y, &self.pos().room_name());
+        self.move_to_with_options(&rp, move_options)
+    }
+
+    pub fn move_to<T: ?Sized + HasPosition>(&self, target: &T) -> ReturnCode {
+        let p = target.pos();
+        js_unwrap!(@{self.as_ref()}.moveTo(@{&p.0}))
+    }
+
+    pub fn move_to_with_options<'a, F, T>(
+        &self,
+        target: &T,
+        move_options: MoveToOptions<'a, F>,
+    ) -> ReturnCode
+    where
+        T: ?Sized + HasPosition,
+        F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
+    {
+        let MoveToOptions {
+            reuse_path,
+            serialize_memory,
+            no_path_finding,
+            // visualize_path_style,
+            find_options:
+                FindOptions {
+                    ignore_creeps,
+                    ignore_destructible_structures,
+                    cost_callback,
+                    max_ops,
+                    heuristic_weight,
+                    serialize,
+                    max_rooms,
+                    range,
+                    plain_cost,
+                    swamp_cost,
+                },
+        } = move_options;
+
+        // This callback is the one actually passed to JavaScript.
+        fn callback(room_name: String, cost_matrix: Reference) -> Option<Reference> {
+            COST_CALLBACK.with(|callback| callback(room_name, cost_matrix))
+        }
+
+        // User provided callback: rust String, CostMatrix -> Option<CostMatrix>
+        let raw_callback = cost_callback;
+
+        // Wrapped user callback: rust String, Reference -> Option<Reference>
+        let callback_boxed = move |room_name, cost_matrix_ref| {
+            let cmatrix = CostMatrix {
+                inner: cost_matrix_ref,
+                lifetime: PhantomData,
+            };
+            raw_callback(room_name, cmatrix).map(|cm| cm.inner)
+        };
+
+        // Type erased and boxed callback: no longer a type specific to the closure passed in,
+        // now unified as Box<Fn>
+        let callback_type_erased: Box<dyn Fn(String, Reference) -> Option<Reference> + 'a> =
+            Box::new(callback_boxed);
+
+        // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
+        // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
+        // be entirely safe because we're only sticking it in scoped storage and we control the only use
+        // of it, but it's still necessary because "some lifetime above the current scope but otherwise
+        // unknown" is not a valid lifetime to have PF_CALLBACK have.
+        let callback_lifetime_erased: Box<dyn Fn(String, Reference) -> Option<Reference> + 'static> =
+            unsafe { mem::transmute(callback_type_erased) };
+
+        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call and
+        // make the call to PathFinder.
+        //
+        // See https://docs.rs/scoped-tls/0.1/scoped_tls/
+        COST_CALLBACK.set(&callback_lifetime_erased, || {
+            let rp = target.pos();
+            js_unwrap! {
+                @{ self.as_ref() }.moveTo(
+                    @{rp.as_ref()},
+                    {
+                        reusePath: @{reuse_path},
+                        serializeMemory: @{serialize_memory},
+                        noPathFinding: @{no_path_finding},
+                        visualizePathStyle: undefined,  // todo
+                        ignoreCreeps: @{ignore_creeps},
+                        ignoreDestructibleStructures: @{ignore_destructible_structures}
+                        costCallback: @{callback},
+                        maxOps: @{max_ops},
+                        heuristicWeight: @{heuristic_weight},
+                        serialize: @{serialize},
+                        maxRooms: @{max_rooms},
+                        range: @{range},
+                        plainCost: @{plain_cost},
+                        swampCost: @{swamp_cost},
+                    }
+                )
+            }
+        })
     }
 
     pub fn move_by_path_serialized(&self, path: &str) -> ReturnCode {
@@ -84,79 +220,73 @@ impl Creep {
         js_unwrap!(@{self.as_ref()}.suicide())
     }
 
-    pub fn parts(&self) -> Vec<Part> {
-        js_unwrap!(@{self.as_ref()}.body.map(|p| __part_str_to_num(p)))
-    }
-
-    pub fn get_active_bodyparts(&self, ty: Part) -> i32 {
-        js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_str_to_num(@{ty as i32})))
-    }
-
-    pub fn has_active_bodyparts(&self, ty: Part) -> i32 {
-        js_unwrap!(_hasActiveBodyparts(@{self.as_ref()}, __part_str_to_num(@{ty as i32})))
-    }
-
-    pub fn move_to<T: HasPosition>(&self, target: &T) -> ReturnCode {
-        let p = target.pos();
-        js_unwrap!(@{self.as_ref()}.moveTo(@{&p.0}))
+    pub fn get_active_bodyparts(&self, ty: Part) -> u32 {
+        js_unwrap!(@{self.as_ref()}.getActiveBodyparts(__part_num_to_str(@{ty as u32})))
     }
 
     pub fn ranged_mass_attack(&self) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.rangedMassAttack())
     }
 
-    pub fn transfer_amount<T>(&self, target: &T, ty: ResourceType, amount: i32) -> ReturnCode
+    pub fn transfer_amount<T>(&self, target: &T, ty: ResourceType, amount: u32) -> ReturnCode
     where
-        T: Transferable,
+        T: ?Sized + Transferable,
     {
         js_unwrap!(@{self.as_ref()}.transfer(
             @{target.as_ref()},
-            __resource_type_num_to_str(@{ty as i32}),
+            __resource_type_num_to_str(@{ty as u32}),
             @{amount}
         ))
     }
 
     pub fn transfer_all<T>(&self, target: &T, ty: ResourceType) -> ReturnCode
     where
-        T: Transferable,
+        T: ?Sized + Transferable,
     {
         js_unwrap!(@{self.as_ref()}.transfer(
             @{target.as_ref()},
-            __resource_type_num_to_str(@{ty as i32})
+            __resource_type_num_to_str(@{ty as u32})
         ))
     }
 
-    pub fn withdraw_amount<T>(&self, target: &T, ty: ResourceType, amount: i32) -> ReturnCode
+    pub fn withdraw_amount<T>(&self, target: &T, ty: ResourceType, amount: u32) -> ReturnCode
     where
-        T: Withdrawable,
+        T: ?Sized + Withdrawable,
     {
         js_unwrap!(@{self.as_ref()}.withdraw(
             @{target.as_ref()},
-            __resource_type_num_to_str(@{ty as i32}),
+            __resource_type_num_to_str(@{ty as u32}),
             @{amount}
         ))
     }
 
     pub fn withdraw_all<T>(&self, target: &T, ty: ResourceType) -> ReturnCode
     where
-        T: Withdrawable,
+        T: ?Sized + Withdrawable,
     {
         js_unwrap!(@{self.as_ref()}.withdraw(
             @{target.as_ref()},
-            __resource_type_num_to_str(@{ty as i32})
+            __resource_type_num_to_str(@{ty as u32})
         ))
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct Bodypart {
+    boost: Option<ResourceType>,
+    part: Part,
+    hits: u32,
+}
+
 simple_accessors! {
     Creep;
-    (carry_capacity -> carryCapacity -> i32),
-    (fatigue -> fatigue -> i32),
+    (carry_capacity -> carryCapacity -> u32),
+    (fatigue -> fatigue -> u32),
     (name -> name -> String),
     (my -> my -> bool),
     (saying -> saying -> String),
     (spawning -> spawning -> bool),
-    (ticks_to_live -> ticksToLive -> i32),
+    (ticks_to_live -> ticksToLive -> u32),
 }
 
 creep_simple_generic_action! {
@@ -177,4 +307,147 @@ creep_simple_concrete_action! {
     (ranged_heal(Creep) -> rangedHeal),
     (reserve_controller(StructureController) -> reserveController),
     (upgrade_controller(StructureController) -> upgradeController),
+}
+
+pub struct MoveToOptions<'a, F>
+where
+    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+{
+    pub(crate) reuse_path: u32,
+    pub(crate) serialize_memory: bool,
+    pub(crate) no_path_finding: bool,
+    // pub(crate) visualize_path_style: PolyStyle,
+    pub(crate) find_options: FindOptions<'a, F>,
+}
+
+impl Default for MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+    fn default() -> Self {
+        // TODO: should we fall back onto the game's default values, or is
+        // it alright to copy them here?
+        MoveToOptions {
+            reuse_path: 5,
+            serialize_memory: true,
+            no_path_finding: false,
+            // visualize_path_style: None,
+            find_options: FindOptions::default(),
+        }
+    }
+}
+
+impl MoveToOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
+    /// Creates default SearchOptions
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl<'a, F> MoveToOptions<'a, F>
+where
+    F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
+{
+    /// Enables caching of the calculated path. Default: 5 ticks
+    pub fn reuse_path(mut self, n_ticks: u32) -> Self {
+        self.reuse_path = n_ticks;
+        self
+    }
+
+    /// Whether to use the short serialized form. Default: True
+    pub fn serialize_memory(mut self, serialize: bool) -> Self {
+        self.serialize_memory = serialize;
+        self
+    }
+
+    /// Return an `ERR_NOT_FOUND` if no path is already cached. Default: False
+    pub fn no_path_finding(mut self, no_finding: bool) -> Self {
+        self.no_path_finding = no_finding;
+        self
+    }
+
+    // /// Sets the style to trace the path used by this creep. See doc for default.
+    // pub fn visualize_path_style(mut self, style: ) -> Self {
+    //     self.visualize_path_style = style;
+    //     self
+    // }
+
+    /// Sets whether the algorithm considers creeps as walkable. Default: False.
+    pub fn ignore_creeps(mut self, ignore: bool) -> Self {
+        self.find_options.ignore_creeps = ignore;
+        self
+    }
+
+    /// Sets whether the algorithm considers destructible structure as
+    /// walkable. Default: False.
+    pub fn ignore_destructible_structures(mut self, ignore: bool) -> Self {
+        self.find_options.ignore_destructible_structures = ignore;
+        self
+    }
+
+    /// Sets cost callback - default `|_, _| {}`.
+    pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> MoveToOptions<'b, F2>
+    where
+        F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
+    {
+        MoveToOptions {
+            reuse_path: self.reuse_path,
+            serialize_memory: self.serialize_memory,
+            no_path_finding: self.no_path_finding,
+            // self.visualize_path_style,
+            find_options: self.find_options.cost_callback(cost_callback),
+        }
+    }
+
+    /// Sets maximum ops - default `2000`.
+    pub fn max_ops(mut self, ops: u32) -> Self {
+        self.find_options.max_ops = ops;
+        self
+    }
+
+    /// Sets heuristic weight - default `1.2`.
+    pub fn heuristic_weight(mut self, weight: f64) -> Self {
+        self.find_options.heuristic_weight = weight;
+        self
+    }
+
+    /// Sets whether the returned path should be passed to `Room.serializePath`.
+    pub fn serialize(mut self, s: bool) -> Self {
+        self.find_options.serialize = s;
+        self
+    }
+
+    /// Sets maximum rooms - default `16`, max `16`.
+    pub fn max_rooms(mut self, rooms: u32) -> Self {
+        self.find_options.max_rooms = rooms;
+        self
+    }
+
+    pub fn range(mut self, k: u32) -> Self {
+        self.find_options.range = k;
+        self
+    }
+
+    /// Sets plain cost - default `1`.
+    pub fn plain_cost(mut self, cost: u8) -> Self {
+        self.find_options.plain_cost = cost;
+        self
+    }
+
+    /// Sets swamp cost - default `5`.
+    pub fn swamp_cost(mut self, cost: u8) -> Self {
+        self.find_options.swamp_cost = cost;
+        self
+    }
+
+    /// Sets options related to FindOptions. Defaults to FindOptions default.
+    pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2>) -> MoveToOptions<'b, F2>
+    where
+        F2: Fn(String, CostMatrix) -> Option<CostMatrix<'b>>,
+    {
+        MoveToOptions {
+            reuse_path: self.reuse_path,
+            serialize_memory: self.serialize_memory,
+            no_path_finding: self.no_path_finding,
+            // self.visualize_path_style,
+            find_options,
+        }
+    }
 }

@@ -24,7 +24,12 @@ mod impls;
 mod structure;
 
 pub use self::{
-    impls::{FindOptions, Path, Reservation, Sign, SpawnOptions, Step},
+    impls::{
+        AttackEvent, AttackType, Bodypart, BuildEvent, Event, EventType, ExitEvent, FindOptions,
+        HarvestEvent, HealEvent, HealType, LookResult, MoveToOptions, ObjectDestroyedEvent, Path,
+        PortalDestination, PositionedLookResult, RepairEvent, Reservation, ReserveControllerEvent,
+        Sign, SpawnOptions, Step, UpgradeControllerEvent,
+    },
     structure::Structure,
 };
 
@@ -49,6 +54,8 @@ reference_wrappers!(
     RoomObject,
     #[reference(instance_of = "RoomPosition")]
     RoomPosition,
+    #[reference(instance_of = "Room.Terrain")]
+    RoomTerrain,
     #[reference(instance_of = "Source")]
     Source,
     #[reference(instance_of = "StructureContainer")]
@@ -81,6 +88,8 @@ reference_wrappers!(
     StructureRoad,
     #[reference(instance_of = "StructureSpawn")]
     StructureSpawn,
+    #[reference(instance_of = "Spawning")]
+    Spawning,
     #[reference(instance_of = "StructureStorage")]
     StructureStorage,
     #[reference(instance_of = "StructureTerminal")]
@@ -109,7 +118,7 @@ impl HasPosition for RoomPosition {
     }
 }
 
-/// All RoomObjects have positions.
+/// All `RoomObject`s have positions.
 impl<T> HasPosition for T
 where
     T: RoomObjectProperties,
@@ -164,17 +173,37 @@ impl_has_id! {
 ///
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `RoomObject` class.
-pub unsafe trait RoomObjectProperties:
-    AsRef<Reference>
-    + Into<Reference>
-    + HasPosition
+pub unsafe trait RoomObjectProperties: AsRef<Reference> + HasPosition {
+    fn room(&self) -> Room {
+        js_unwrap_ref!(@{self.as_ref()}.room)
+    }
+}
+
+/// Trait representing things that are both `RoomObjectProperties` and `Sized`.
+///
+/// These bounds would be on `RoomObjectProperties`, but for the fact that they
+/// then require all `T: RoomObjectProperties` to be `T: Sized`, and thus disallow
+/// creating trait objects like `&dyn RoomObjectProperties` (or more usefully,
+/// `&dyn Attackable` or `&dyn HasStore`)
+///
+/// This trait is automatically implemented for all structures implementing the traits
+/// it requires, and everything implement `RoomObjectProperties` and being `Sized`
+/// should also implement this.
+pub trait SizedRoomObject:
+    Into<Reference>
     + ReferenceType
     + TryFrom<Value, Error = ConversionError>
     + TryFrom<Reference, Error = ConversionError>
 {
-    fn room(&self) -> Room {
-        js_unwrap_ref!(@{self.as_ref()}.room)
-    }
+}
+
+impl<T> SizedRoomObject for T where
+    T: RoomObjectProperties
+        + Into<Reference>
+        + ReferenceType
+        + TryFrom<Value, Error = ConversionError>
+        + TryFrom<Reference, Error = ConversionError>
+{
 }
 
 /// Trait for all wrappers over Screeps JavaScript objects extending
@@ -186,7 +215,7 @@ pub unsafe trait RoomObjectProperties:
 /// JavaScript object extending the `Structure` class.
 pub unsafe trait StructureProperties: RoomObjectProperties + HasId {
     fn structure_type(&self) -> StructureType {
-        js_unwrap!(@{self.as_ref()}.structureType)
+        js_unwrap!(__structure_type_str_to_num(@{self.as_ref()}.structureType))
     }
     fn destroy(&self) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.destroy())
@@ -199,7 +228,10 @@ pub unsafe trait StructureProperties: RoomObjectProperties + HasId {
     fn notify_when_attacked(&self, notify_when_attacked: bool) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.notifyWhenAttacked(@{notify_when_attacked}))
     }
-    fn as_structure(self) -> Structure {
+    fn as_structure(self) -> Structure
+    where
+        Self: SizedRoomObject,
+    {
         Into::<Reference>::into(self)
             .into_expected_type()
             .expect("expected converting a StructureProperties to a Structure would suceed.")
@@ -225,10 +257,14 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
             } else {
                 return null;
             }
-        }).try_into()
+        })
+        .try_into()
         .expect("expected OwnedStructure.owner.username to be a string")
     }
-    fn as_owned_structure(self) -> OwnedStructure {
+    fn as_owned_structure(self) -> OwnedStructure
+    where
+        Self: SizedRoomObject,
+    {
         OwnedStructure(self.into())
     }
 }
@@ -246,7 +282,7 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
 ///
 /// If present, the `storeCapacity` property must be an integer.
 pub unsafe trait HasStore: RoomObjectProperties {
-    fn store_total(&self) -> i32 {
+    fn store_total(&self) -> u32 {
         js_unwrap!(_.sum(@{self.as_ref()}.store))
     }
 
@@ -254,15 +290,15 @@ pub unsafe trait HasStore: RoomObjectProperties {
         js_unwrap!(Object.keys(@{self.as_ref()}.store).map(__resource_type_str_to_num))
     }
 
-    fn store_of(&self, ty: ResourceType) -> i32 {
-        js_unwrap!(@{self.as_ref()}.store[__resource_type_num_to_str(@{ty as i32})] || 0)
+    fn store_of(&self, ty: ResourceType) -> u32 {
+        js_unwrap!(@{self.as_ref()}.store[__resource_type_num_to_str(@{ty as u32})] || 0)
     }
 
-    fn energy(&self) -> i32 {
+    fn energy(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.store[RESOURCE_ENERGY])
     }
 
-    fn store_capacity(&self) -> i32 {
+    fn store_capacity(&self) -> u32 {
         js_unwrap!(@{self.as_ref()}.storeCapacity)
     }
 }
@@ -282,6 +318,14 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
         js_unwrap! { @{self.as_ref()}.energyCapacity }
     }
 }
+
+/// Used to specify which structures can use their stored energy for spawning creeps.
+///
+/// # Contract
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be able to be used
+/// by a spawner to create a new creep.
+pub unsafe trait HasEnergyForSpawn: CanStoreEnergy {}
 
 /// Trait for objects which have to cooldown.
 ///
@@ -334,13 +378,15 @@ pub unsafe trait Withdrawable: RoomObjectProperties {}
 /// target for `Creep.attack`.
 pub unsafe trait Attackable: RoomObjectProperties {
     fn hits(&self) -> u32 {
-        js_unwrap!{ @{self.as_ref()}.hits }
+        js_unwrap! { @{self.as_ref()}.hits }
     }
 
     fn hits_max(&self) -> u32 {
-        js_unwrap!{ @{self.as_ref()}.hitsMax }
+        js_unwrap! { @{self.as_ref()}.hitsMax }
     }
 }
+
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
 
 unsafe impl Transferable for StructureExtension {}
 unsafe impl Transferable for Creep {}
@@ -354,6 +400,8 @@ unsafe impl Transferable for StructureTower {}
 unsafe impl Transferable for StructurePowerSpawn {}
 unsafe impl Transferable for StructureTerminal {}
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl Withdrawable for StructureExtension {}
 unsafe impl Withdrawable for StructureContainer {}
 unsafe impl Withdrawable for StructureLab {}
@@ -365,9 +413,10 @@ unsafe impl Withdrawable for StructurePowerSpawn {}
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl Attackable for Creep {}
 unsafe impl Attackable for OwnedStructure {}
-unsafe impl Attackable for Structure {}
 unsafe impl Attackable for StructureContainer {}
 unsafe impl Attackable for StructureExtension {}
 unsafe impl Attackable for StructureExtractor {}
@@ -418,7 +467,7 @@ unsafe impl RoomObjectProperties for StructureWall {}
 unsafe impl RoomObjectProperties for Structure {}
 unsafe impl RoomObjectProperties for Tombstone {}
 
-impl_structure_properties!{
+impl_structure_properties! {
     OwnedStructure,
     Structure,
     StructureContainer,
@@ -460,14 +509,18 @@ unsafe impl OwnedStructureProperties for StructureStorage {}
 unsafe impl OwnedStructureProperties for StructureTerminal {}
 unsafe impl OwnedStructureProperties for StructureTower {}
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl HasStore for StructureContainer {}
 unsafe impl HasStore for StructureStorage {}
 unsafe impl HasStore for StructureTerminal {}
 unsafe impl HasStore for Tombstone {
-    fn store_capacity(&self) -> i32 {
+    fn store_capacity(&self) -> u32 {
         0 // no storeCapacity property
     }
 }
+
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
 
 unsafe impl CanStoreEnergy for StructureExtension {}
 unsafe impl CanStoreEnergy for StructureLab {}
@@ -477,11 +530,20 @@ unsafe impl CanStoreEnergy for StructurePowerSpawn {}
 unsafe impl CanStoreEnergy for StructureSpawn {}
 unsafe impl CanStoreEnergy for StructureTower {}
 
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
+unsafe impl HasEnergyForSpawn for StructureExtension {}
+unsafe impl HasEnergyForSpawn for StructureSpawn {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
+
 unsafe impl HasCooldown for StructureExtractor {}
 unsafe impl HasCooldown for StructureLab {}
 unsafe impl HasCooldown for StructureLink {}
 unsafe impl HasCooldown for StructureNuker {}
 unsafe impl HasCooldown for StructureTerminal {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in src/objects/structure.rs
 
 unsafe impl CanDecay for StructureContainer {}
 unsafe impl CanDecay for StructurePowerBank {}

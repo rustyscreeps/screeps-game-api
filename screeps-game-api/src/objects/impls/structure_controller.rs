@@ -5,13 +5,13 @@ use {constants::ReturnCode, objects::StructureController};
 simple_accessors! {
     StructureController;
     (level -> level -> u32),
-    (progress -> progress -> u32),
-    (progress_total -> progressTotal -> u32),
-    (safe_mode -> sameMode -> u32),
-    (safe_mode_available -> sameModeAvailable -> u32),
-    (safe_mode_cooldown -> sameModeCooldown -> u32),
+    (progress -> progress -> Option<u32>),
+    (progress_total -> progressTotal -> Option<u32>),
+    (safe_mode -> safeMode -> Option<u32>),
+    (safe_mode_available -> safeModeAvailable -> u32),
+    (safe_mode_cooldown -> safeModeCooldown -> Option<u32>),
     (ticks_to_downgrade -> ticksToDowngrade -> u32),
-    (upgrade_blocked -> upgradeBlocked -> u32)
+    (upgrade_blocked -> upgradeBlocked -> Option<u32>)
 }
 
 #[derive(Debug)]
@@ -30,7 +30,7 @@ pub struct Sign {
 
 impl StructureController {
     pub fn activate_safe_mode(&self) -> ReturnCode {
-        js_unwrap!{@{self.as_ref()}.activateSafeMode()}
+        js_unwrap! {@{self.as_ref()}.activateSafeMode()}
     }
 
     pub fn reservation(&self) -> Option<Reservation> {
@@ -58,6 +58,6 @@ impl StructureController {
     }
 
     pub fn unclaim(&self) -> ReturnCode {
-        js_unwrap!{@{self.as_ref()}.unclaim()}
+        js_unwrap! {@{self.as_ref()}.unclaim()}
     }
 }

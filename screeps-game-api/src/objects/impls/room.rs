@@ -1,87 +1,96 @@
-use std::{marker::PhantomData, mem, ops::Range};
+use std::{fmt, marker::PhantomData, mem, ops::Range};
 
-use stdweb::Reference;
+use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
+use serde_json;
+use stdweb::{Reference, Value};
 
 use {
     constants::{
         find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
+        Terrain,
     },
     memory::MemoryReference,
     objects::{
-        HasPosition, Room, RoomPosition, StructureController, StructureStorage, StructureTerminal,
+        ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, Resource, Room, RoomPosition,
+        RoomTerrain, Source, Structure, StructureController, StructureStorage, StructureTerminal,
+        Tombstone,
     },
     pathfinder::CostMatrix,
     positions::LocalRoomName,
-    traits::TryInto,
+    traits::{TryFrom, TryInto},
+    ConversionError,
 };
 
 simple_accessors! {
     Room;
     (controller -> controller -> Option<StructureController>),
-    (energy_available -> energyAvailable -> i32),
-    (energy_capacity_available -> energyCapacityAvailable -> i32),
+    (energy_available -> energyAvailable -> u32),
+    (energy_capacity_available -> energyCapacityAvailable -> u32),
     (name -> name -> String),
     (storage -> storage -> Option<StructureStorage>),
     (terminal -> terminal -> Option<StructureTerminal>),
     // todo: visual
 }
 
-scoped_thread_local!(static COST_CALLBACK: Box<Fn(String, Reference) -> Option<Reference>>);
+scoped_thread_local!(static COST_CALLBACK: &'static dyn Fn(String, Reference) -> Option<Reference>);
 
 impl Room {
-    pub fn serialize_path(&self, path: &Vec<Step>) -> String {
-        js_unwrap!{@{self.as_ref()}.serializePath(@{path})}
+    pub fn serialize_path(&self, path: &[Step]) -> String {
+        js_unwrap! {@{self.as_ref()}.serializePath(@{path})}
     }
 
     pub fn deserialize_path(&self, path: &str) -> Vec<Step> {
-        js_unwrap!{@{self.as_ref()}.deserializePath(@{path})}
+        js_unwrap! {@{self.as_ref()}.deserializePath(@{path})}
     }
 
-    pub fn create_construction_site<T>(&self, at: T, ty: StructureType) -> ReturnCode
+    pub fn create_construction_site<T>(&self, at: &T, ty: StructureType) -> ReturnCode
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
             @{pos.as_ref()},
-            __structure_type_num_to_str(@{ty as i32})
+            __structure_type_num_to_str(@{ty as u32})
         ))
     }
 
     pub fn create_named_construction_site<T>(
         &self,
-        at: T,
+        at: &T,
         ty: StructureType,
         name: &str,
     ) -> ReturnCode
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
             @{pos.as_ref()},
-            __structure_type_num_to_str(@{ty as i32}),
+            __structure_type_num_to_str(@{ty as u32}),
             @{name}
         ))
     }
 
     pub fn create_flag<T>(
         &self,
-        at: T,
+        at: &T,
         name: &str,
         main_color: Color,
         secondary_color: Color,
-    ) -> ReturnCode
+    ) -> Result<String, ReturnCode>
     where
-        T: HasPosition,
+        T: ?Sized + HasPosition,
     {
         let pos = at.pos();
-        js_unwrap!(@{self.as_ref()}.createFlag(
-            @{pos.as_ref()},
-            @{name},
-            @{main_color as i32},
-            @{secondary_color as i32}
-        ))
+        Flag::interpret_creation_ret_value(js! {
+            return @{self.as_ref()}.createFlag(
+                @{pos.as_ref()},
+                @{name},
+                @{main_color as u32},
+                @{secondary_color as u32}
+            );
+        })
+        .expect("expected Room.createFlag to return ReturnCode or String name")
     }
 
     pub fn find<T>(&self, ty: T) -> Vec<T::Item>
@@ -102,22 +111,45 @@ impl Room {
         }
     }
 
-    pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
-        js_unwrap!{@{self.as_ref()}.getPositionAt(@{x}, @{y})}
+    pub fn get_event_log(&self) -> Vec<Event> {
+        serde_json::from_str(&self.get_event_log_raw()).expect("Malformed Event Log")
     }
 
-    // pub fn look_at(&self, x: u32, y: u32) -> ! {
-    //     unimplemented!()
-    // }
+    pub fn get_event_log_raw(&self) -> String {
+        js_unwrap! {@{self.as_ref()}.getEventLog(true)}
+    }
 
-    // pub fn look_at_area(&self, top: u32, left: u32, bottom: u32, right: u32) -> ! {
-    //     unimplemented!()
-    // }
+    pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
+        js_unwrap! {@{self.as_ref()}.getPositionAt(@{x}, @{y})}
+    }
+
+    pub fn get_terrain(&self) -> RoomTerrain {
+        js_unwrap!(@{self.as_ref()}.getTerrain())
+    }
+
+    pub fn look_at<T: ?Sized + HasPosition>(&self, target: &T) -> Vec<LookResult> {
+        let rp = target.pos();
+        js_unwrap!(@{self.as_ref()}.lookAt(@{rp.as_ref()}))
+    }
+
+    pub fn look_at_xy(&self, x: u32, y: u32) -> Vec<LookResult> {
+        js_unwrap!(@{self.as_ref()}.lookAt(@{x}, @{y}))
+    }
+
+    pub fn look_at_area(
+        &self,
+        top: u32,
+        left: u32,
+        bottom: u32,
+        right: u32,
+    ) -> Vec<PositionedLookResult> {
+        js_unwrap!(@{self.as_ref()}.lookAtArea(@{top}, @{left}, @{bottom}, @{right}, true))
+    }
 
     pub fn find_path<'a, O, T, F>(&self, from_pos: &O, to_pos: &T, opts: FindOptions<'a, F>) -> Path
     where
-        O: HasPosition,
-        T: HasPosition,
+        O: ?Sized + HasPosition,
+        T: ?Sized + HasPosition,
         F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>> + 'a,
     {
         let from = from_pos.pos();
@@ -141,18 +173,17 @@ impl Room {
         };
 
         // Type erased and boxed callback: no longer a type specific to the closure passed in,
-        // now unified as Box<Fn>
-        let callback_type_erased: Box<Fn(String, Reference) -> Option<Reference> + 'a> =
-            Box::new(callback_boxed);
+        // now unified as &Fn
+        let callback_type_erased: &(dyn Fn(String, Reference) -> Option<Reference> + 'a) =
+            &callback_boxed;
 
-        // Overwrite lifetime of box inside closure so it can be stuck in scoped_thread_local storage:
-        // now pretending to be static data so that it can be stuck in scoped_thread_local. This should
-        // be entirely safe because we're only sticking it in scoped storage and we control the only use
-        // of it, but it's still necessary because "some lifetime above the current scope but otherwise
-        // unknown" is not a valid lifetime to have PF_CALLBACK have.
-        let callback_lifetime_erased: Box<
-            Fn(String, Reference) -> Option<Reference> + 'static,
-        > = unsafe { mem::transmute(callback_type_erased) };
+        // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
+        // storage: it's now pretending to be static data. This should be entirely safe because
+        // we're only sticking it in scoped storage and we control the only use of it, but it's
+        // still necessary because "some lifetime above the  current scope but otherwise unknown" is
+        // not a valid lifetime to have PF_CALLBACK have.
+        let callback_lifetime_erased: &'static dyn Fn(String, Reference) -> Option<Reference> =
+            unsafe { mem::transmute(callback_type_erased) };
 
         let FindOptions {
             ignore_creeps,
@@ -167,12 +198,12 @@ impl Room {
             ..
         } = opts;
 
-        // Store callback_lifetime_erased in PF_CALLBACK for the duration of the PathFinder call and
-        // make the call to PathFinder.
+        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the PathFinder call
+        // and make the call to PathFinder.
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
-            let v = js!{
+            let v = js! {
                 return @{&self.as_ref()}.search(@{from.as_ref()}, @{to.as_ref()}, {
                     ignoreCreeps: @{ignore_creeps},
                     ignoreDestructibleStructures: @{ignore_destructible_structures}
@@ -194,15 +225,26 @@ impl Room {
         })
     }
 
-    pub fn look_for_at<T, U>(&self, ty: T, target: U) -> Vec<T::Item>
+    pub fn look_for_at<T, U>(&self, ty: T, target: &U) -> Vec<T::Item>
     where
         T: LookConstant,
         U: HasPosition,
     {
         let pos = target.pos();
         T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
-            __look_num_to_str(@{ty.look_code() as i32}),
-            @{pos.as_ref()}
+            __look_num_to_str(@{ty.look_code() as u32}),
+            @{pos.as_ref()},
+        )))
+    }
+
+    pub fn look_for_at_xy<T>(&self, ty: T, x: u32, y: u32) -> Vec<T::Item>
+    where
+        T: LookConstant,
+    {
+        T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
+            __look_num_to_str(@{ty.look_code() as u32}),
+            @{x},
+            @{y},
         )))
     }
 
@@ -224,9 +266,10 @@ impl Room {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # let room: ::screeps::Room = unimplemented!();
     /// use screeps::constants::look;
-    /// room.look_for_at_area(look::ENERGY, 20..26, 20..26)
+    /// room.look_for_at_area(look::ENERGY, 20..26, 20..26);
     /// ```
     pub fn look_for_at_area<T>(&self, ty: T, horiz: Range<u8>, vert: Range<u8>) -> Vec<T::Item>
     where
@@ -237,14 +280,14 @@ impl Room {
         assert!(horiz.end <= 50);
         assert!(vert.end <= 50);
 
-        T::convert_and_check_items(js_unwrap!{@{self.as_ref()}.lookForAtArea(
-            __look_num_to_str(@{ty.look_code() as i32}),
+        T::convert_and_check_items(js_unwrap! {@{self.as_ref()}.lookForAtArea(
+            __look_num_to_str(@{ty.look_code() as u32}),
             @{vert.start},
             @{horiz.start},
             @{vert.end},
             @{horiz.end},
             true
-        ).map((obj) => obj[__look_num_to_str(@{ty.look_code() as i32})])})
+        ).map((obj) => obj[__look_num_to_str(@{ty.look_code() as u32})])})
     }
 
     pub fn memory(&self) -> MemoryReference {
@@ -268,16 +311,16 @@ pub struct FindOptions<'a, F>
 where
     F: Fn(String, CostMatrix) -> Option<CostMatrix<'a>>,
 {
-    ignore_creeps: bool,
-    ignore_destructible_structures: bool,
-    cost_callback: F,
-    max_ops: u32,
-    heuristic_weight: f64,
-    serialize: bool,
-    max_rooms: u32,
-    range: u32,
-    plain_cost: u8,
-    swamp_cost: u8,
+    pub(crate) ignore_creeps: bool,
+    pub(crate) ignore_destructible_structures: bool,
+    pub(crate) cost_callback: F,
+    pub(crate) max_ops: u32,
+    pub(crate) heuristic_weight: f64,
+    pub(crate) serialize: bool,
+    pub(crate) max_rooms: u32,
+    pub(crate) range: u32,
+    pub(crate) plain_cost: u8,
+    pub(crate) swamp_cost: u8,
 }
 
 impl Default for FindOptions<'static, fn(String, CostMatrix) -> Option<CostMatrix<'static>>> {
@@ -409,8 +452,8 @@ pub struct Step {
     direction: Direction,
 }
 
-js_deserializable!{Step}
-js_serializable!{Step}
+js_deserializable! {Step}
+js_serializable! {Step}
 
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
@@ -419,4 +462,297 @@ pub enum Path {
     Serialized(String),
 }
 
-js_deserializable!{Path}
+js_deserializable! {Path}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Event {
+    pub event: EventType,
+    pub object_id: String,
+}
+
+impl<'de> Deserialize<'de> for Event {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(field_identifier, rename_all = "camelCase")]
+        enum Field {
+            Event,
+            ObjectId,
+            Data,
+        };
+
+        struct EventVisitor;
+
+        impl<'de> Visitor<'de> for EventVisitor {
+            type Value = Event;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("struct Event")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> Result<Event, V::Error>
+            where
+                V: MapAccess<'de>,
+            {
+                let mut event_type = None;
+                let mut obj_id = None;
+                let mut data = None;
+                let mut data_buffer: Option<serde_json::Value> = None;
+
+                while let Some(key) = map.next_key()? {
+                    match key {
+                        Field::Event => {
+                            if event_type.is_some() {
+                                return Err(de::Error::duplicate_field("event"));
+                            }
+                            event_type = Some(map.next_value()?);
+                        }
+                        Field::ObjectId => {
+                            if obj_id.is_some() {
+                                return Err(de::Error::duplicate_field("objectId"));
+                            }
+                            obj_id = Some(map.next_value()?);
+                        }
+                        Field::Data => {
+                            if data.is_some() {
+                                return Err(de::Error::duplicate_field("data"));
+                            }
+
+                            match event_type {
+                                None => data_buffer = map.next_value()?,
+                                Some(event_id) => {
+                                    data = match event_id {
+                                        1 => Some(EventType::Attack(map.next_value()?)),
+                                        2 => Some(EventType::ObjectDestroyed(map.next_value()?)),
+                                        3 => Some(EventType::AttackController),
+                                        4 => Some(EventType::Build(map.next_value()?)),
+                                        5 => Some(EventType::Harvest(map.next_value()?)),
+                                        6 => Some(EventType::Heal(map.next_value()?)),
+                                        7 => Some(EventType::Repair(map.next_value()?)),
+                                        8 => Some(EventType::ReserveController(map.next_value()?)),
+                                        9 => Some(EventType::UpgradeController(map.next_value()?)),
+                                        10 => Some(EventType::Exit(map.next_value()?)),
+                                        _ => {
+                                            return Err(de::Error::custom(format!(
+                                                "Event Type Unrecognized: {}",
+                                                event_id
+                                            )));
+                                        }
+                                    };
+                                }
+                            };
+                        }
+                    }
+                }
+
+                if data.is_none() {
+                    let err = |e| {
+                        de::Error::custom(format_args!(
+                            "can't parse event data due to inner error {}",
+                            e
+                        ))
+                    };
+
+                    if let (Some(val), Some(event_id)) = (data_buffer, event_type) {
+                        data = match event_id {
+                            1 => Some(EventType::Attack(serde_json::from_value(val).map_err(err)?)),
+                            2 => Some(EventType::ObjectDestroyed(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            3 => Some(EventType::AttackController),
+                            4 => Some(EventType::Build(serde_json::from_value(val).map_err(err)?)),
+                            5 => Some(EventType::Harvest(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            6 => Some(EventType::Heal(serde_json::from_value(val).map_err(err)?)),
+                            7 => Some(EventType::Repair(serde_json::from_value(val).map_err(err)?)),
+                            8 => Some(EventType::ReserveController(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            9 => Some(EventType::UpgradeController(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            10 => Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
+                            _ => {
+                                return Err(de::Error::custom(format!(
+                                    "Event Type Unrecognized: {}",
+                                    event_id
+                                )));
+                            }
+                        };
+                    }
+                }
+
+                let data = data.ok_or_else(|| de::Error::missing_field("data"))?;
+                let obj_id = obj_id.ok_or_else(|| de::Error::missing_field("objectId"))?;
+
+                Ok(Event {
+                    event: data,
+                    object_id: obj_id,
+                })
+            }
+        }
+
+        const FIELDS: &[&str] = &["event", "objectId", "data"];
+        deserializer.deserialize_struct("Event", FIELDS, EventVisitor)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum EventType {
+    Attack(AttackEvent),
+    ObjectDestroyed(ObjectDestroyedEvent),
+    AttackController,
+    Build(BuildEvent),
+    Harvest(HarvestEvent),
+    Heal(HealEvent),
+    Repair(RepairEvent),
+    ReserveController(ReserveControllerEvent),
+    UpgradeController(UpgradeControllerEvent),
+    Exit(ExitEvent),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AttackEvent {
+    pub target_id: String,
+    pub damage: u32,
+    pub attack_type: AttackType,
+}
+
+enum_number!(AttackType {
+    Melee = 1,
+    Ranged = 2,
+    RangedMass = 3,
+    Dismantle = 4,
+    HitBack = 5,
+    Nuke = 6,
+});
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+pub struct ObjectDestroyedEvent {
+    #[serde(rename = "type")]
+    pub object_type: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BuildEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub energy_spent: u32,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HarvestEvent {
+    pub target_id: String,
+    pub amount: u32,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HealEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub heal_type: HealType,
+}
+
+enum_number!(HealType {
+    Melee = 1,
+    Ranged = 2,
+});
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RepairEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub energy_spent: u32,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ReserveControllerEvent {
+    pub amount: u32,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpgradeControllerEvent {
+    pub amount: u32,
+    pub energy_spent: u32,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ExitEvent {
+    pub room: String,
+    pub x: u32,
+    pub y: u32,
+}
+
+pub enum LookResult {
+    Creep(Creep),
+    Energy(Resource),
+    Resource(Resource),
+    Source(Source),
+    Mineral(Mineral),
+    Structure(Structure),
+    Flag(Flag),
+    ConstructionSite(ConstructionSite),
+    Nuke(Nuke),
+    Terrain(Terrain),
+    Tombstone(Tombstone),
+}
+
+impl TryFrom<Value> for LookResult {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<LookResult, Self::Error> {
+        let look_type: String = js!(return @{&v}.type;).try_into()?;
+
+        let lr = match look_type.as_ref() {
+            "creep" => LookResult::Creep(js_unwrap_ref!(@{v}.creep)),
+            "energy" => LookResult::Energy(js_unwrap_ref!(@{v}.energy)),
+            "resource" => LookResult::Resource(js_unwrap_ref!(@{v}.resource)),
+            "source" => LookResult::Source(js_unwrap_ref!(@{v}.source)),
+            "mineral" => LookResult::Mineral(js_unwrap_ref!(@{v}.mineral)),
+            "structure" => LookResult::Structure(js_unwrap_ref!(@{v}.structure)),
+            "flag" => LookResult::Flag(js_unwrap_ref!(@{v}.flag)),
+            "constructionSite" => {
+                LookResult::ConstructionSite(js_unwrap_ref!(@{v}.constructionSite))
+            }
+            "nuke" => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
+            "terrain" => LookResult::Terrain(js_unwrap!(@{v}.terrain)),
+            "tombstone" => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
+            _ => {
+                return Err(ConversionError::Custom(format!(
+                    "Look result type unknown: {:?}",
+                    &look_type
+                )));
+            }
+        };
+        Ok(lr)
+    }
+}
+
+pub struct PositionedLookResult {
+    pub x: u32,
+    pub y: u32,
+    pub look_result: LookResult,
+}
+
+impl TryFrom<Value> for PositionedLookResult {
+    type Error = ConversionError;
+
+    fn try_from(v: Value) -> Result<PositionedLookResult, Self::Error> {
+        let x: u32 = js!(return @{&v}.x;).try_into()?;
+        let y: u32 = js!(return @{&v}.y;).try_into()?;
+        let look_result: LookResult = v.try_into()?;
+
+        Ok(PositionedLookResult { x, y, look_result })
+    }
+}

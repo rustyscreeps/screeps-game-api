@@ -7,8 +7,8 @@ use {
 simple_accessors! {
     ConstructionSite;
     (my -> my -> bool),
-    (progress -> progress -> i32),
-    (progress_total -> progressTotal -> i32),
+    (progress -> progress -> u32),
+    (progress_total -> progressTotal -> u32),
     (structure_type -> structureType -> StructureType),
 }
 
@@ -21,7 +21,8 @@ impl ConstructionSite {
             } else {
                 return null;
             }
-        }).try_into()
+        })
+        .try_into()
         .expect("expected ConstructionSite.owner.username to be a non-null string")
     }
 
