@@ -1010,3 +1010,60 @@ impl TryFrom<Value> for ResourceType {
         })
     }
 }
+
+// TODO: reactions
+// TODO: boosts
+
+pub const PORTAL_UNSTABLE: u32 = 10 * 24 * 3600 * 1000;
+pub const PORTAL_MIN_TIMEOUT: u32 = 12 * 24 * 3600 * 1000;
+pub const PORTAL_MAX_TIMEOUT: u32 = 22 * 24 * 3600 * 1000;
+
+pub const POWER_BANK_RESPAWN_TIME: u32 = 50000;
+
+pub const INVADERS_ENERGY_GOAL: u32 = 100000;
+
+pub const SYSTEM_USERNAME: &str = "Screeps";
+
+pub const SIGN_PLANNED_AREA: &str =
+    "A new Novice or Respawn Area is being planned somewhere \
+     in this sector. Please make sure all important rooms are reserved.";
+
+pub const POWER_LEVEL_MULTIPLY: u32 = 1000;
+pub const POWER_LEVEL_POW: u32 = 2;
+pub const POWER_CREEP_SPAWN_COOLDOWN: u32 = 8 * 3600 * 1000;
+pub const POWER_CREEP_DELETE_COOLDOWN: u32 = 24 * 3600 * 1000;
+pub const POWER_CREEP_MAX_LEVEL: u32 = 25;
+pub const POWER_CREEP_LIFE_TIME: u32 = 5000;
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
+pub enum PowerClass {
+    #[cfg_attr(feature = "constants-serde", serde(rename = "operator"))]
+    Operator,
+}
+
+// Serialize_repr / Deserialize_repr serialize/deserialize as numbers
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
+#[repr(u32)]
+pub enum PowerType {
+    GenerateOps = 1,
+    OperateSpawn = 2,
+    OperateTower = 3,
+    OperateStorage = 4,
+    OperateLab = 5,
+    OperateExtension = 6,
+    OperateObserve = 7,
+    OperateTerminal = 8,
+    DisruptSpawn = 9,
+    DisruptTower = 10,
+    Shield = 12,
+    RegenSource = 13,
+    RegenMineral = 14,
+    DisruptTerminal = 15,
+    OperatePower = 16,
+    Fortify = 17,
+    OperateController = 18,
+    OperateFactory = 19,
+}
+
+// TODO: POWER_INFO

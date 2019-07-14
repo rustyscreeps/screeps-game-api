@@ -12,8 +12,8 @@ use stdweb::{Reference, Value};
 
 use crate::{
     constants::{
-        find::Exit, Color, Direction, FindConstant, LookConstant, ResourceType, ReturnCode,
-        StructureType, Terrain,
+        find::Exit, Color, Direction, FindConstant, LookConstant, PowerType, ResourceType,
+        ReturnCode, StructureType, Terrain,
     },
     macros::*,
     memory::MemoryReference,
@@ -585,6 +585,7 @@ impl<'de> Deserialize<'de> for Event {
                                 serde_json::from_value(val).map_err(err)?,
                             )),
                             10 => Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
+                            11 => Some(EventType::Power(serde_json::from_value(val).map_err(err)?)),
                             12 => Some(EventType::Transfer(
                                 serde_json::from_value(val).map_err(err)?,
                             )),
@@ -625,6 +626,7 @@ pub enum EventType {
     ReserveController(ReserveControllerEvent),
     UpgradeController(UpgradeControllerEvent),
     Exit(ExitEvent),
+    Power(PowerEvent),
     Transfer(TransferEvent),
 }
 
@@ -718,6 +720,13 @@ pub struct TransferEvent {
     pub target_id: String,
     pub resource_type: ResourceType,
     pub amount: u32,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PowerEvent {
+    pub target_id: String,
+    pub power: PowerType,
 }
 
 pub enum LookResult {
