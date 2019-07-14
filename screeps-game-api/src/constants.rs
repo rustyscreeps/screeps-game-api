@@ -134,7 +134,9 @@ unsafe impl FindConstant for FindObject {
 }
 
 pub mod find {
-    use serde::Deserialize;
+    use num_derive::FromPrimitive;
+    use num_traits::FromPrimitive;
+    use serde_repr::Deserialize_repr;
 
     use super::FindConstant;
     use crate::{
@@ -145,40 +147,42 @@ pub mod find {
         traits::TryFrom,
     };
 
-    #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, Hash)]
-    #[serde(transparent)]
-    pub struct Exit(i32);
+    #[derive(Copy, Clone, Debug, FromPrimitive, Deserialize_repr, PartialEq, Eq, Hash)]
+    #[repr(i32)]
+    pub enum Exit {
+        Top = 1,
+        Right = 3,
+        Bottom = 5,
+        Left = 7,
+        All = 10,
+    }
 
     impl Exit {
         pub fn top() -> Self {
-            Exit(1)
+            Exit::Top
         }
 
         pub fn right() -> Self {
-            Exit(3)
+            Exit::Right
         }
 
         pub fn bottom() -> Self {
-            Exit(5)
+            Exit::Bottom
         }
 
         pub fn left() -> Self {
-            Exit(7)
+            Exit::Left
         }
 
         pub fn all() -> Self {
-            Exit(10)
+            Exit::All
         }
     }
 
     impl TryFrom<i32> for Exit {
         type Error = i32;
-
         fn try_from(v: i32) -> Result<Self, Self::Error> {
-            match v {
-                1 | 3 | 5 | 7 | 10 => Ok(Exit(v)),
-                _ => Err(v),
-            }
+            Self::from_i32(v).ok_or(v)
         }
     }
 
@@ -186,7 +190,7 @@ pub mod find {
         type Item = RoomPosition;
 
         fn find_code(&self) -> i32 {
-            self.0
+            *self as i32
         }
     }
 
