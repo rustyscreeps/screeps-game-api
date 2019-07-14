@@ -509,6 +509,7 @@ pub const DISMANTLE_COST: f32 = 0.005;
 
 pub const RAMPART_DECAY_AMOUNT: u32 = 300;
 pub const RAMPART_DECAY_TIME: u32 = 100;
+pub const RAMPART_HITS: u32 = 1;
 // Consider using the [`rampart_hits_max`] function.
 pub const RAMPART_HITS_MAX_RCL2: u32 = 300_000;
 // Consider using the [`rampart_hits_max`] function.
@@ -541,6 +542,7 @@ pub fn rampart_hits_max(rcl: u32) -> u32 {
 pub const ENERGY_REGEN_TIME: u32 = 300;
 pub const ENERGY_DECAY: u32 = 1000;
 
+pub const SPAWN_HITS: u32 = 5000;
 pub const SPAWN_ENERGY_START: u32 = 300;
 pub const SPAWN_ENERGY_CAPACITY: u32 = 300;
 pub const CREEP_SPAWN_TIME: u32 = 3;
@@ -550,7 +552,10 @@ pub const SOURCE_ENERGY_CAPACITY: u32 = 3000;
 pub const SOURCE_ENERGY_NEUTRAL_CAPACITY: u32 = 1500;
 pub const SOURCE_ENERGY_KEEPER_CAPACITY: u32 = 4000;
 
+pub const WALL_HITS: u32 = 1;
 pub const WALL_HITS_MAX: u32 = 300_000_000;
+
+pub const EXTENSION_HITS: u32 = 1000;
 
 /// Translates the `EXTENSION_ENERGY_CAPACITY` constant.
 pub fn extension_energy_capacity(rcl: u32) -> u32 {
@@ -561,16 +566,19 @@ pub fn extension_energy_capacity(rcl: u32) -> u32 {
     }
 }
 
+pub const ROAD_HITS: u32 = 5000;
 pub const ROAD_WEAROUT: u32 = 1;
 pub const ROAD_WEAROUT_POWER_CREEP: u32 = 100;
 pub const ROAD_DECAY_AMOUNT: u32 = 100;
 pub const ROAD_DECAY_TIME: u32 = 1000;
 
+pub const LINK_HITS: u32 = 1000;
 pub const LINK_CAPACITY: u32 = 800;
 pub const LINK_COOLDOWN: u32 = 1;
 pub const LINK_LOSS_RATION: f32 = 0.03;
 
 pub const STORAGE_CAPACITY: u32 = 1_000_000;
+pub const STORAGE_HITS: u32 = 10_000;
 
 /// Translates `STRUCTURE_*` constants.
 #[repr(u32)]
@@ -629,22 +637,22 @@ impl StructureType {
         use self::StructureType::*;
 
         let hits = match self {
-            Spawn => 5000,
-            Extension => 1000,
-            Road => 5000,
-            Wall => 1,
-            Rampart => 1,
-            Link => 1000,
-            Storage => 10_000,
-            Tower => 3000,
-            Observer => 500,
-            PowerBank => 2_000_000,
-            PowerSpawn => 5000,
-            Extractor => 500,
-            Lab => 500,
-            Terminal => 3000,
-            Container => 250_000,
-            Nuker => 1000,
+            Spawn => SPAWN_HITS,
+            Extension => EXTENSION_HITS,
+            Road => ROAD_HITS,
+            Wall => WALL_HITS,
+            Rampart => RAMPART_HITS,
+            Link => LINK_HITS,
+            Storage => STORAGE_HITS,
+            Tower => TOWER_HITS,
+            Observer => OBSERVER_HITS,
+            PowerBank => POWER_BANK_HITS,
+            PowerSpawn => POWER_SPAWN_HITS,
+            Extractor => EXTENSION_HITS,
+            Lab => LAB_HITS,
+            Terminal => TOWER_HITS,
+            Container => CONTAINER_HITS,
+            Nuker => NUKER_HITS,
             KeeperLair | Portal | Controller => return None,
         };
         Some(hits)
@@ -730,6 +738,7 @@ pub const SAFE_MODE_DURATION: u32 = 20_000;
 pub const SAFE_MODE_COOLDOWN: u32 = 50_000;
 pub const SAFE_MODE_COST: u32 = 1000;
 
+pub const TOWER_HITS: u32 = 3000;
 pub const TOWER_CAPACITY: u32 = 1000;
 pub const TOWER_ENERGY_COST: u32 = 10;
 pub const TOWER_POWER_ATTACK: u32 = 600;
@@ -739,20 +748,25 @@ pub const TOWER_OPTIMAL_RANGE: u32 = 5;
 pub const TOWER_FALLOFF_RANGE: u32 = 20;
 pub const TOWER_FALLOFF: f32 = 0.75;
 
+pub const OBSERVER_HITS: u32 = 500;
 pub const OBSERVER_RANGE: u32 = 10;
 
+pub const POWER_BANK_HITS: u32 = 2_000_000;
 pub const POWER_BANK_CAPACITY_MAX: u32 = 5000;
 pub const POWER_BANK_CAPACITY_MIN: u32 = 500;
 pub const POWER_BANK_CAPACITY_CRIT: f32 = 0.3;
 pub const POWER_BANK_DECAY: u32 = 5000;
 pub const POWER_BANK_HIT_BACK: f32 = 0.5;
 
+pub const POWER_SPAWN_HITS: u32 = 1;
 pub const POWER_SPAWN_ENERGY_CAPACITY: u32 = 5000;
 pub const POWER_SPAWN_POWER_CAPACITY: u32 = 100;
 pub const POWER_SPAWN_ENERGY_RATIO: u32 = 50;
 
+pub const EXTRACTOR_HITS: u32 = 500;
 pub const EXTRACTOR_COOLDOWN: u32 = 5;
 
+pub const LAB_HITS: u32 = 500;
 pub const LAB_MINERAL_CAPACITY: u32 = 3000;
 pub const LAB_ENERGY_CAPACITY: u32 = 2000;
 pub const LAB_BOOST_ENERGY: u32 = 20;
@@ -844,16 +858,19 @@ impl Density {
 
 pub const MINERAL_DENSITY_CHANGE: u32 = 0.05;
 
+pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_CAPACITY: u32 = 300_000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 pub const TERMINAL_MIN_SEND: u32 = 100;
 pub const TERMINAL_COOLDOWN: u32 = 10;
 
+pub const CONTAINER_HITS: u32 = 250_000;
 pub const CONTAINER_CAPACITY: u32 = 2000;
 pub const CONTAINER_DECAY: u32 = 5000;
 pub const CONTAINER_DECAY_TIME: u32 = 100;
 pub const CONTAINER_DECAY_TIME_OWNED: u32 = 500;
 
+pub const NUKER_HITS: u32 = 1000;
 pub const NUKER_COOLDOWN: u32 = 100_000;
 pub const NUKER_ENERGY_CAPACITY: u32 = 300_000;
 pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
