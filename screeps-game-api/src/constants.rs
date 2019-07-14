@@ -46,7 +46,6 @@ pub enum ReturnCode {
     NoBodypart = -12,
     RclNotEnough = -14,
     GclNotEnough = -15,
-    Other = 42,
 }
 
 impl ReturnCode {
