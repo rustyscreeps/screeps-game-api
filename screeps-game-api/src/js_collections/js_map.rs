@@ -1,10 +1,10 @@
 //! [`JsMap`]
 use std::{borrow::Borrow, collections::HashMap, marker::PhantomData};
 
-use stdweb::{InstanceOf, Object, Reference, ReferenceType, Value};
+use stdweb::{JsSerialize, Object, Value};
 
 use {
-    traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
+    traits::{FromExpectedType, IntoExpectedType},
     ConversionError,
 };
 
@@ -38,16 +38,11 @@ where
         K: Borrow<Q>,
         &'a Q: Into<Value>,
     {
-        // TODO: replace this match with Result::transpose
-        // (https://doc.rust-lang.org/nightly/std/result/enum.Result.html#method.transpose)
-        // once Rust 1.33.0 is released and the method is stabilized.
-        match (js! {return @{self.inner.as_ref()}[@{key.into()}].into_expected_type();})
-            .into_expected_type()
-        {
-            Ok(Some(v)) => Some(Ok(v)),
-            Ok(None) => None,
-            Err(e) => Some(Err(e)),
-        }
+        (js! {
+            return @{self.inner.as_ref()}[@{key.into()}].into_expected_type();
+        })
+        .into_expected_type()
+        .transpose()
     }
 }
 
