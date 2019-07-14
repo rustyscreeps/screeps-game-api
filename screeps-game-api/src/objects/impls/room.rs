@@ -7,6 +7,7 @@ use serde::{
     Deserialize, Serialize,
 };
 use serde_json;
+use serde_repr::{Deserialize_repr, Serialize_repr};
 use stdweb::{Reference, Value};
 
 use crate::{
@@ -631,14 +632,16 @@ pub struct AttackEvent {
     pub attack_type: AttackType,
 }
 
-enum_number!(AttackType {
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
+#[repr(u32)]
+pub enum AttackType {
     Melee = 1,
     Ranged = 2,
     RangedMass = 3,
     Dismantle = 4,
     HitBack = 5,
     Nuke = 6,
-});
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 pub struct ObjectDestroyedEvent {
@@ -669,10 +672,12 @@ pub struct HealEvent {
     pub heal_type: HealType,
 }
 
-enum_number!(HealType {
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
+#[repr(u32)]
+pub enum HealType {
     Melee = 1,
     Ranged = 2,
-});
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]

@@ -511,43 +511,6 @@ macro_rules! match_some_structure_variants {
     };
 }
 
-/// Implements [`serde::Serialize`] for a single given structure name.
-///
-/// The generated implementation unconditionally uses `item as i32` to convert
-/// any instance of the structure into an integer, then uses `serialize_i32` to
-/// serialize that number.
-#[cfg(feature = "constants-serde")]
-macro_rules! impl_serialize_as_i32 {
-    ($name:ty) => {
-        impl serde::Serialize for $name {
-            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-            where
-                S: ::serde::Serializer,
-            {
-                serializer.serialize_i32(*self as i32)
-            }
-        }
-    };
-}
-
-/// Implements [`serde::Serialize`] for a single given structure name.
-///
-/// The generated implementation unconditionally uses `item as u32` to convert
-/// any instance of the structure into an integer, then uses `serialize_u32` to
-/// serialize that number.
-macro_rules! impl_serialize_as_u32 {
-    ($name:ty) => {
-        impl serde::Serialize for $name {
-            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-            where
-                S: ::serde::Serializer,
-            {
-                serializer.serialize_u32(*self as u32)
-            }
-        }
-    };
-}
-
 /// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`, using
 /// `FromExpectedType` and panicking on incorrect types.
 macro_rules! impl_js_vec_iterators_from_expected_type_panic {
@@ -813,60 +776,5 @@ macro_rules! mem_set {
     };
     ($($not_valid:tt)*) => {
         compile_error!(concat!("Unexpected usage of mem_set! usage: ", stringify!($($not_valid)*)))
-    }
-}
-
-/// Taken from <https://serde.rs/enum-number.html>
-macro_rules! enum_number {
-    ($name:ident { $($variant:ident = $value:expr, )* }) => {
-        #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-        #[repr(u32)]
-        pub enum $name {
-            $($variant = $value,)*
-        }
-
-        impl serde::Serialize for $name {
-            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-            where
-                S: serde::Serializer,
-            {
-                // Serialize the enum as a u64.
-                serializer.serialize_u64(*self as u64)
-            }
-        }
-
-        impl<'de> serde::Deserialize<'de> for $name {
-            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct Visitor;
-
-                impl<'de> serde::de::Visitor<'de> for Visitor {
-                    type Value = $name;
-
-                    fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-                        formatter.write_str("positive integer")
-                    }
-
-                    fn visit_u64<E>(self, value: u64) -> Result<$name, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        // Rust does not come with a simple way of converting a
-                        // number to an enum, so use a big `match`.
-                        match value {
-                            $( $value => Ok($name::$variant), )*
-                            _ => Err(E::custom(
-                                format!("unknown {} value: {}",
-                                stringify!($name), value))),
-                        }
-                    }
-                }
-
-                // Deserialize the enum from a u64.
-                deserializer.deserialize_u64(Visitor)
-            }
-        }
     }
 }

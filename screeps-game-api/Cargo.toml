@@ -29,6 +29,7 @@ num-derive = "0.2"
 num-traits = "0.2"
 serde = {version = "1", features = ["derive"]}
 serde_json = "1"
+serde_repr = "0.1"
 scoped-tls = "0.1"
 stdweb = "0.4"
 stdweb-derive = "0.5"
