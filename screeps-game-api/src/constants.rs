@@ -295,39 +295,22 @@ impl From<Color> for u32 {
 
 js_deserializable!(Color);
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize_repr, Serialize_repr)]
+/// Terrain constant.
+///
+/// This constant is in a unique position of being represented both by strings
+/// and by integers in various parts of the API. Deserialization and conversion
+/// from `Value` should work for both, while the `FromPrimitive` impl can only
+/// handle integers.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize, Serialize_repr, FromPrimitive)]
 #[repr(u32)]
+#[serde(rename_all = "snake_case")]
 pub enum Terrain {
     Plain = 0,
     Wall = TERRAIN_MASK_WALL,
     Swamp = TERRAIN_MASK_SWAMP,
 }
 
-impl TryFrom<Value> for Terrain {
-    type Error = ConversionError;
-
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let v = match v {
-            Value::String(s) => match &*s {
-                "plain" => Terrain::Plain,
-                "wall" => Terrain::Wall,
-                "swamp" => Terrain::Swamp,
-                _ => panic!("unknown terrain string {}", s),
-            },
-            other => match u32::try_from(other)? {
-                0 => Terrain::Plain,
-                // TERRAIN_MASK_WALL
-                1 => Terrain::Wall,
-                // TERRAIN_MASK_SWAMP
-                2 => Terrain::Swamp,
-                // TERRAIN_MASK_WALL | TERRAIN_MASK_SWAMP
-                3 => Terrain::Wall,
-                x => panic!("unknown terrain encoded integer {}", x),
-            },
-        };
-        Ok(v)
-    }
-}
+js_deserializable!(Terrain);
 
 /// Internal enum representing each LOOK_* constant.
 ///
