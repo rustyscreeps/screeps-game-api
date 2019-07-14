@@ -28,5 +28,5 @@ pub fn set_local(value: &str) {
 ///
 /// Consider using [`game::cpu::shard_limits`] to retrieve shard names.
 pub fn get_remote(shard: &str) -> String {
-    js_unwrap!(InterShardMemory.getRemote(shard))
+    js_unwrap!(InterShardMemory.getRemote(@{shard}))
 }
