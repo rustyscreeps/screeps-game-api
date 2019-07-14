@@ -913,47 +913,82 @@ pub enum ResourceType {
 }
 
 impl ResourceType {
-    /// Returns `REACTION_TIME` for this resource. 0 for energy and base
-    /// minerals.
-    pub fn reaction_time(self) -> u32 {
+    /// Translates the `REACTION_TIME` constant.
+    pub fn reaction_time(self) -> Option<u32> {
         use crate::ResourceType::*;
-        match self {
+        let time = match self {
             Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
-            | Catalyst | Ghodium | Ops => 0,
+            | Catalyst | Ops => return None,
+            // OH: 20,
             Hydroxide => 20,
+            // ZK: 5,
             ZynthiumKeanite => 5,
-            UtriumLemergite => 10,
+            // UL: 5,
+            UtriumLemergite => 5,
+            // G: 5,
+            Ghodium => 5,
+            // UH: 10,
             UtriumHydride => 10,
+            // UH2O: 5,
             UtriumAcid => 5,
+            // XUH2O: 60,
             CatalyzedUtriumAcid => 60,
+            // UO: 10,
             UtriumOxide => 10,
+            // UHO2: 5,
             UtriumAlkalide => 5,
+            // XUHO2: 60,
             CatalyzedUtriumAlkalide => 60,
+            // KH: 10,
             KeaniumHydride => 10,
+            // KH2O: 5,
             KeaniumAcid => 5,
+            // XKH2O: 60,
             CatalyzedKeaniumAcid => 60,
+            // KO: 10,
             KeaniumOxide => 10,
+            // KHO2: 5,
             KeaniumAlkalide => 5,
+            // XKHO2: 60,
             CatalyzedKeaniumAlkalide => 60,
+            // LH: 15,
             LemergiumHydride => 15,
+            // LH2O: 10,
             LemergiumAcid => 10,
+            // XLH2O: 65,
             CatalyzedLemergiumAcid => 65,
+            // LO: 10,
             LemergiumOxide => 10,
+            // LHO2: 5,
             LemergiumAlkalide => 5,
+            // XLHO2: 60,
             CatalyzedLemergiumAlkalide => 60,
+            // ZH: 20,
             ZynthiumHydride => 50,
+            // ZH2O: 40,
             ZynthiumAcid => 100,
+            // XZH2O: 160,
             CatalyzedZynthiumAcid => 180,
+            // ZO: 10,
             ZynthiumOxide => 10,
+            // ZHO2: 5,
             ZynthiumAlkalide => 5,
+            // XZHO2: 60,
             CatalyzedZynthiumAlkalide => 80,
+            // GH: 10,
             GhodiumHydride => 10,
+            // GH2O: 15,
             GhodiumAcid => 15,
+            // XGH2O: 80,
             CatalyzedGhodiumAcid => 80,
+            // GO: 10,
             GhodiumOxide => 10,
-            GhodiumAlkalide => 15,
-            CatalyzedGhodiumAlkalide => 90,
-        }
+            // GHO2: 30,
+            GhodiumAlkalide => 30,
+            // XGHO2: 150,
+            CatalyzedGhodiumAlkalide => 150,
+        };
+        Some(time)
     }
 }
 
