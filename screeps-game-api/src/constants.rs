@@ -376,17 +376,29 @@ impl TryFrom<Value> for Terrain {
 #[doc(hidden)]
 #[serde(rename_all = "camelCase")]
 pub enum Look {
+    #[serde(rename = "creep")]
     Creeps = 0,
+    #[serde(rename = "energy")]
     Energy = 1,
+    #[serde(rename = "resource")]
     Resources = 2,
+    #[serde(rename = "source")]
     Sources = 3,
+    #[serde(rename = "mineral")]
     Minerals = 4,
+    #[serde(rename = "structure")]
     Structures = 5,
+    #[serde(rename = "flag")]
     Flags = 6,
+    #[serde(rename = "constructionSite")]
     ConstructionSites = 7,
+    #[serde(rename = "nuke")]
     Nukes = 8,
+    #[serde(rename = "terrain")]
     Terrain = 9,
+    #[serde(rename = "tombstone")]
     Tombstones = 10,
+    #[serde(rename = "powerCreep")]
     PowerCreeps = 11,
 }
 
@@ -805,7 +817,9 @@ pub const MINERAL_RANDOM_FACTOR: u32 = 2;
 
 /// Translates the `DENSITY_*` constants.
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Serialize_repr, Deserialize_repr,
+)]
 pub enum Density {
     Low = 1,
     Moderate = 2,
@@ -1191,8 +1205,8 @@ pub const POWER_CREEP_MAX_LEVEL: u32 = 25;
 pub const POWER_CREEP_LIFE_TIME: u32 = 5000;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum PowerClass {
-    #[serde(rename = "operator")]
     Operator,
 }
 
