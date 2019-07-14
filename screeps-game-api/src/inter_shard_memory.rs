@@ -10,6 +10,7 @@
 //! own data, other shards' data is read-only.
 //!
 //! This data has nothing to do with Memory contents, it's a separate data container.
+use crate::macros::*;
 
 /// Returns the string contents of the current shard's data.
 pub fn get_local() -> String {
