@@ -24,13 +24,13 @@ pub mod macros;
 
 pub mod constants;
 pub mod game;
+pub mod inter_shard_memory;
 pub mod js_collections;
 pub mod memory;
 pub mod objects;
 pub mod pathfinder;
 mod positions;
 pub mod raw_memory;
-pub mod inter_shard_memory;
 pub mod traits;
 
 pub use stdweb::private::ConversionError;

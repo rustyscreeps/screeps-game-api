@@ -13,15 +13,13 @@
 
 /// Returns the string contents of the current shard's data.
 pub fn get_local() -> String {
-    js_unwrap! {
-        InterShardMemory.getLocal()
-    }
+    js_unwrap!(InterShardMemory.getLocal())
 }
 
 /// Replace the current shard's data with the new value.
 pub fn set_local(value: &str) {
-    js! { @(no_return)
-        InterShardMemory.setLocal(@{value})
+    js! {
+        InterShardMemory.setLocal(@{value});
     }
 }
 
@@ -29,7 +27,5 @@ pub fn set_local(value: &str) {
 ///
 /// Consider using [`game::cpu::shard_limits`] to retrieve shard names.
 pub fn get_remote(shard: &str) -> String {
-    js_unwrap! {
-        InterShardMemory.getRemote(shard)
-    }
+    js_unwrap!(InterShardMemory.getRemote(shard))
 }
