@@ -601,10 +601,10 @@ pub enum StructureType {
 
 impl StructureType {
     /// Translates the `CONSTRUCTION_COST` constant.
-    pub fn construction_cost(self) -> u32 {
+    pub fn construction_cost(self) -> Option<u32> {
         use self::StructureType::*;
 
-        match self {
+        let cost = match self {
             Spawn => 15_000,
             Extension => 3_000,
             Road => 300,
@@ -620,14 +620,15 @@ impl StructureType {
             Terminal => 100_000,
             Container => 5_000,
             Nuker => 100_000,
-            KeeperLair | PowerBank | Portal | Controller => 0,
-        }
+            KeeperLair | PowerBank | Portal | Controller => return None,
+        };
+        Some(cost)
     }
 
-    pub fn initial_hits(self) -> u32 {
+    pub fn initial_hits(self) -> Option<u32> {
         use self::StructureType::*;
 
-        match self {
+        let hits = match self {
             Spawn => 5000,
             Extension => 1000,
             Road => 5000,
@@ -644,8 +645,9 @@ impl StructureType {
             Terminal => 3000,
             Container => 250_000,
             Nuker => 1000,
-            KeeperLair | Portal | Controller => 0,
-        }
+            KeeperLair | Portal | Controller => return None,
+        };
+        Some(hits)
     }
 }
 
@@ -685,16 +687,16 @@ pub const CONSTRUCTION_COST_ROAD_WALL_RATIO: u32 = 150;
 /// Translates the `CONTROLLER_LEVELS` constant.
 ///
 /// Accepts levels 1-7.
-pub fn controller_levels(current_rcl: u32) -> u32 {
+pub fn controller_levels(current_rcl: u32) -> Option<u32> {
     match current_rcl {
-        1 => 200,
-        2 => 45_000,
-        3 => 135_000,
-        4 => 405_000,
-        5 => 1_215_000,
-        6 => 3_645_000,
-        7 => 10_935_000,
-        _ => 0,
+        1 => Some(200),
+        2 => Some(45_000),
+        3 => Some(135_000),
+        4 => Some(405_000),
+        5 => Some(1_215_000),
+        6 => Some(3_645_000),
+        7 => Some(10_935_000),
+        _ => None,
     }
 }
 
@@ -777,17 +779,16 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 ///
 /// Currently always returns 35_000 for all minerals...
 pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
-    let amount = match mineral {
-        ResourceType::Hydrogen => 35_000,
-        ResourceType::Oxygen => 35_000,
-        ResourceType::Lemergium => 35_000,
-        ResourceType::Keanium => 35_000,
-        ResourceType::Zynthium => 35_000,
-        ResourceType::Utrium => 35_000,
-        ResourceType::Catalyst => 35_000,
-        _ => return None,
-    };
-    Some(amount)
+    match mineral {
+        ResourceType::Hydrogen => Some(35_000),
+        ResourceType::Oxygen => Some(35_000),
+        ResourceType::Lemergium => Some(35_000),
+        ResourceType::Keanium => Some(35_000),
+        ResourceType::Zynthium => Some(35_000),
+        ResourceType::Utrium => Some(35_000),
+        ResourceType::Catalyst => Some(35_000),
+        _ => None,
+    }
 }
 
 pub const MINERAL_RANDOM_FACTOR: u32 = 2;
