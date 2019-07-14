@@ -135,7 +135,6 @@ unsafe impl FindConstant for FindObject {
 
 pub mod find {
     use serde::Deserialize;
-    use stdweb::unstable::TryFrom;
 
     use super::FindConstant;
     use crate::{
@@ -856,7 +855,7 @@ impl Density {
     }
 }
 
-pub const MINERAL_DENSITY_CHANGE: u32 = 0.05;
+pub const MINERAL_DENSITY_CHANGE: f32 = 0.05;
 
 pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_CAPACITY: u32 = 300_000;
