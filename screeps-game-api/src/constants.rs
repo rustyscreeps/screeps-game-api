@@ -17,7 +17,6 @@ use std::fmt;
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-#[allow(unused_imports)]
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use stdweb::{Number, Reference, Value, __js_deserializable_serde_boilerplate, js_deserializable};
@@ -420,7 +419,6 @@ pub enum Part {
 impl Part {
     /// Translates the `BODYPART_COST` constant.
     pub fn cost(self) -> u32 {
-        // TODO: compile time feature to switch to dynamically for non-standard servers
         match self {
             Part::Move => 50,
             Part::Work => 100,
