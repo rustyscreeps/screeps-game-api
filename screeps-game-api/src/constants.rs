@@ -3,6 +3,15 @@
 //! Last updated on 2019-07-13, `068343753adf090fd1991944d2292be9e236b7dd` from
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
+//! Currently missing:
+//! - FIND_DROPPED_ENERGY (deprecated in Screeps)
+//! - OBSTACLE_OBJECT_TYPES
+//! - WORLD_WIDTH / WORLD_HEIGHT (deprecated in Screeps)
+//! - CONTROLLER_STRUCTURES
+//! - REACTIONS
+//! - BOOSTS
+//! - POWER_INFO
+//!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
 use std::fmt;
 
@@ -324,8 +333,8 @@ impl TryFrom<Value> for Color {
 #[repr(u32)]
 pub enum Terrain {
     Plain = 0,
-    Wall = 1,
-    Swamp = 2,
+    Wall = TERRAIN_MASK_WALL,
+    Swamp = TERRAIN_MASK_SWAMP,
 }
 
 impl TryFrom<Value> for Terrain {
@@ -341,8 +350,11 @@ impl TryFrom<Value> for Terrain {
             },
             other => match u32::try_from(other)? {
                 0 => Terrain::Plain,
+                // TERRAIN_MASK_WALL
                 1 => Terrain::Wall,
+                // TERRAIN_MASK_SWAMP
                 2 => Terrain::Swamp,
+                // TERRAIN_MASK_WALL | TERRAIN_MASK_SWAMP
                 3 => Terrain::Wall,
                 x => panic!("unknown terrain encoded integer {}", x),
             },
@@ -431,6 +443,7 @@ pub enum Part {
 }
 
 impl Part {
+    /// Translates the `BODYPART_COST` constant.
     pub fn cost(self) -> u32 {
         // TODO: compile time feature to switch to dynamically for non-standard servers
         match self {
@@ -479,7 +492,6 @@ pub const CREEP_CORPSE_RATE: f32 = 0.2;
 pub const CREEP_PART_MAX_ENERGY: u32 = 125;
 
 pub const CARRY_CAPACITY: u32 = 50;
-
 pub const HARVEST_POWER: u32 = 2;
 pub const HARVEST_MINERAL_POWER: u32 = 1;
 pub const REPAIR_POWER: u32 = 100;
@@ -490,21 +502,29 @@ pub const UPGRADE_CONTROLLER_POWER: u32 = 1;
 pub const RANGED_ATTACK_POWER: u32 = 10;
 pub const HEAL_POWER: u32 = 12;
 pub const RANGED_HEAL_POWER: u32 = 4;
-
 pub const REPAIR_COST: f32 = 0.01;
 pub const DISMANTLE_COST: f32 = 0.005;
 
+// *_HITS constants translated as StructureType::initial_hits().
+
 pub const RAMPART_DECAY_AMOUNT: u32 = 300;
 pub const RAMPART_DECAY_TIME: u32 = 100;
-
+// Consider using the [`rampart_hits_max`] function.
 pub const RAMPART_HITS_MAX_RCL2: u32 = 300_000;
+// Consider using the [`rampart_hits_max`] function.
 pub const RAMPART_HITS_MAX_RCL3: u32 = 1_000_000;
+// Consider using the [`rampart_hits_max`] function.
 pub const RAMPART_HITS_MAX_RCL4: u32 = 3_000_000;
+// Consider using the [`rampart_hits_max`] function.
 pub const RAMPART_HITS_MAX_RCL5: u32 = 5_000_000;
+// Consider using the [`rampart_hits_max`] function.
 pub const RAMPART_HITS_MAX_RCL6: u32 = 30_000_000;
+// Consider using the [`rampart_hits_max`] function.
 pub const RAMPART_HITS_MAX_RCL7: u32 = 100_000_000;
+// Consider using the [`rampart_hits_max`] function.
 pub const RAMPART_HITS_MAX_RCL8: u32 = 300_000_000;
 
+/// Translates the `RAMPART_HITS_MAX` constant
 pub fn rampart_hits_max(rcl: u32) -> u32 {
     match rcl {
         r if r < 2 => 0,
@@ -532,6 +552,7 @@ pub const SOURCE_ENERGY_KEEPER_CAPACITY: u32 = 4000;
 
 pub const WALL_HITS_MAX: u32 = 300_000_000;
 
+/// Translates the `EXTENSION_ENERGY_CAPACITY` constant.
 pub fn extension_energy_capacity(rcl: u32) -> u32 {
     match rcl {
         r if r < 7 => 50,
@@ -551,6 +572,7 @@ pub const LINK_LOSS_RATION: f32 = 0.03;
 
 pub const STORAGE_CAPACITY: u32 = 1_000_000;
 
+/// Translates `STRUCTURE_*` constants.
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "constants-serde", derive(Serialize, Deserialize))]
@@ -578,6 +600,7 @@ pub enum StructureType {
 }
 
 impl StructureType {
+    /// Translates the `CONSTRUCTION_COST` constant.
     pub fn construction_cost(self) -> u32 {
         use self::StructureType::*;
 
@@ -659,7 +682,9 @@ impl TryFrom<Value> for StructureType {
 pub const CONSTRUCTION_COST_ROAD_SWAMP_RATIO: u32 = 5;
 pub const CONSTRUCTION_COST_ROAD_WALL_RATIO: u32 = 150;
 
-/// Accepts levels 0-7. any other results in 0.
+/// Translates the `CONTROLLER_LEVELS` constant.
+///
+/// Accepts levels 1-7.
 pub fn controller_levels(current_rcl: u32) -> u32 {
     match current_rcl {
         1 => 200,
@@ -673,7 +698,31 @@ pub fn controller_levels(current_rcl: u32) -> u32 {
     }
 }
 
-// TODO: controller_*
+/// Translates the `CONTROLLER_DOWNGRADE` constant.
+///
+/// Accepts levels 1-7.
+pub fn controller_downgrade(rcl: u32) -> Option<u32> {
+    match rcl {
+        1 => Some(20_000),
+        2 => Some(10_000),
+        3 => Some(20_000),
+        4 => Some(40_000),
+        5 => Some(80_000),
+        6 => Some(120_000),
+        7 => Some(150_000),
+        8 => Some(200_000),
+        _ => None,
+    }
+}
+
+pub const CONTROLLER_DOWNGRADE_RESTORE: u32 = 100;
+pub const CONTROLLER_DOWNGRADE_SAFEMODE_THRESHOLD: u32 = 5000;
+pub const CONTROLLER_CLAIM_DOWNGRADE: u32 = 300;
+pub const CONTROLLER_RESERVE: u32 = 1;
+pub const CONTROLLER_RESERVE_MAX: u32 = 5000;
+pub const CONTROLLER_MAX_UPGRADE_PER_TICK: u32 = 15;
+pub const CONTROLLER_ATTACK_BLOCKED_UPGRADE: u32 = 1000;
+pub const CONTROLLER_NUKE_BLOCKED_UPGRADE: u32 = 200;
 
 pub const SAFE_MODE_DURATION: u32 = 20_000;
 pub const SAFE_MODE_COOLDOWN: u32 = 50_000;
@@ -724,8 +773,26 @@ pub const MAX_CREEP_SIZE: u32 = 50;
 
 pub const MINERAL_REGEN_TIME: u32 = 50_000;
 
-// TODO: MINERAL_* constants
+/// Translates the `MINERAL_MIN_AMOUNT` constant.
+///
+/// Currently always returns 35_000 for all minerals...
+pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
+    let amount = match mineral {
+        ResourceType::Hydrogen => 35_000,
+        ResourceType::Oxygen => 35_000,
+        ResourceType::Lemergium => 35_000,
+        ResourceType::Keanium => 35_000,
+        ResourceType::Zynthium => 35_000,
+        ResourceType::Utrium => 35_000,
+        ResourceType::Catalyst => 35_000,
+        _ => return None,
+    };
+    Some(amount)
+}
 
+pub const MINERAL_RANDOM_FACTOR: u32 = 2;
+
+/// Translates the `DENSITY_*` constants.
 #[repr(u32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash)]
 pub enum Density {
@@ -749,6 +816,33 @@ impl TryFrom<Value> for Density {
     }
 }
 
+impl Density {
+    /// Translates the `MINERAL_DENSITY` constant.
+    pub fn amount(self) -> u32 {
+        match self {
+            Density::Low => 15_000,
+            Density::Moderate => 35_000,
+            Density::High => 70_000,
+            Density::Ultra => 100_000,
+        }
+    }
+
+    /// Translates the `MINERAL_DENSITY_PROBABILITY` constant.
+    ///
+    /// All values are between 0 and 1, but the total is roughly `2.5` so these
+    /// aren't percentages.
+    pub fn probabilitiy(self) -> f32 {
+        match self {
+            Density::Low => 0.1,
+            Density::Moderate => 0.5,
+            Density::High => 0.9,
+            Density::Ultra => 1.0,
+        }
+    }
+}
+
+pub const MINERAL_DENSITY_CHANGE: u32 = 0.05;
+
 pub const TERMINAL_CAPACITY: u32 = 300_000;
 pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
@@ -767,12 +861,28 @@ pub const NUKER_ENERGY_CAPACITY: u32 = 300_000;
 pub const NUKER_GHODIUM_CAPACITY: u32 = 5000;
 pub const NUKE_LAND_TIME: u32 = 50_000;
 pub const NUKE_RANGE: u32 = 10;
+pub const NUKE_DAMAGE_RANGE_0: u32 = 10_000_000;
+pub const NUKE_DAMAGE_RANGE_2: u32 = 5_000_000;
 
 pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
+pub const TOMBSTONE_DECAY_POWER_CREEP: u32 = 500;
 
 pub const PORTAL_DECAY: u32 = 30_000;
 
+// ORDER_SELL / ORDER_BUY defined in `src/game.rs`
+
+pub const MARKET_FEE: f32 = 0.05;
+
 pub const FLAGS_LIMIT: u32 = 10_000;
+
+/// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[repr(u32)]
+pub enum IntershardResourceType {
+    #[serde(rename = "token")]
+    SubscriptionToken = 1,
+}
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -1046,9 +1156,6 @@ impl TryFrom<Value> for ResourceType {
     }
 }
 
-// TODO: reactions
-// TODO: boosts
-
 pub const PORTAL_UNSTABLE: u32 = 10 * 24 * 3600 * 1000;
 pub const PORTAL_MIN_TIMEOUT: u32 = 12 * 24 * 3600 * 1000;
 pub const PORTAL_MAX_TIMEOUT: u32 = 22 * 24 * 3600 * 1000;
@@ -1062,6 +1169,8 @@ pub const SYSTEM_USERNAME: &str = "Screeps";
 pub const SIGN_PLANNED_AREA: &str =
     "A new Novice or Respawn Area is being planned somewhere \
      in this sector. Please make sure all important rooms are reserved.";
+
+// EVENT_* constants in src/objects/impls/room.rs
 
 pub const POWER_LEVEL_MULTIPLY: u32 = 1000;
 pub const POWER_LEVEL_POW: u32 = 2;
@@ -1077,6 +1186,7 @@ pub enum PowerClass {
     Operator,
 }
 
+/// Traslates the `PWR_*` constants.
 // Serialize_repr / Deserialize_repr serialize/deserialize as numbers
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]
@@ -1100,5 +1210,3 @@ pub enum PowerType {
     OperateController = 18,
     OperateFactory = 19,
 }
-
-// TODO: POWER_INFO

@@ -94,6 +94,20 @@ function __structure_type_str_to_num(str) {
     }
 }
 
+function __intershard_resource_type_num_to_str(num) {
+    switch (num) {
+        case 1: return SUBSCRIPTION_TOKEN;
+        default: throw new Error("unknown inter-shard resource type integer encoding " + num);
+    }
+}
+
+function __intershard_resource_type_str_to_num(str) {
+    switch (str) {
+        case SUBSCRIPTION_TOKEN: return 1;
+        default: throw new Error("unknown inter-shard resource type " + str);
+    }
+}
+
 
 function __resource_type_num_to_str(num) {
     switch (num) {
