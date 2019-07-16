@@ -22,6 +22,11 @@ enough ideas, we can start an mdbook for this repository.
 - [screeps-game-api api docs](https://docs.rs/screeps-game-api/)
 - [screeps-starter-rust example project](https://github.com/daboross/screeps-starter-rust/)
 
+If you need help or want to share feedback, feel free to open an
+[issue](https://github.com/daboross/screeps-in-rust-via-wasm/issues)
+or come say "_Hi!_" on [the official Screeps Slack](https://chat.screeps.com/) in the `#rust-wasm`
+channel!
+
 ---
 
 Here's a quickstart for what you *need* to get going. More documentation will be made in the future.
