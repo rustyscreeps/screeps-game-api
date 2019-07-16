@@ -364,16 +364,88 @@ mod stdweb {
 }
 
 mod room_pos_serde {
-    use serde::{Deserialize, Deserializer, Serialize, Serializer};
+    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
     use super::{LocalRoomName, LocalRoomPosition};
 
     #[derive(Serialize, Deserialize)]
-    struct SerializedLocalRoomPosition {
+    #[serde(rename = "SerializedLocalRoomPosition")]
+    struct EfficientFormat {
         room_x: i32,
         room_y: i32,
         x: u32,
         y: u32,
+    }
+
+    #[derive(Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct ReadableFormat {
+        room_name: LocalRoomName,
+        x: u32,
+        y: u32,
+    }
+
+    #[derive(Deserialize)]
+    // efficient way of storing "either format works"
+    //
+    // This should be faster than using an untagged enum since this way serde knows
+    // exactly what fields are possible in all variants at compile time.
+    struct EitherFormat {
+        // like EfficientFormat
+        #[serde(default)]
+        room_x: Option<i32>,
+        #[serde(default)]
+        room_y: Option<i32>,
+        // like ReadableFormat
+        #[serde(default)]
+        #[serde(rename = "camelCase")]
+        room_name: Option<LocalRoomName>,
+        // in both
+        x: u32,
+        y: u32,
+    }
+
+    impl From<EfficientFormat> for LocalRoomPosition {
+        fn from(
+            EfficientFormat {
+                room_x,
+                room_y,
+                x,
+                y,
+            }: EfficientFormat,
+        ) -> Self {
+            LocalRoomPosition {
+                room_name: LocalRoomName {
+                    x_coord: room_x,
+                    y_coord: room_y,
+                },
+                x,
+                y,
+            }
+        }
+    }
+
+    impl From<LocalRoomPosition> for EfficientFormat {
+        fn from(LocalRoomPosition { room_name, x, y }: LocalRoomPosition) -> Self {
+            EfficientFormat {
+                room_x: room_name.x_coord,
+                room_y: room_name.y_coord,
+                x,
+                y,
+            }
+        }
+    }
+
+    impl From<ReadableFormat> for LocalRoomPosition {
+        fn from(ReadableFormat { room_name, x, y }: ReadableFormat) -> Self {
+            LocalRoomPosition { room_name, x, y }
+        }
+    }
+
+    impl From<LocalRoomPosition> for ReadableFormat {
+        fn from(LocalRoomPosition { room_name, x, y }: LocalRoomPosition) -> Self {
+            ReadableFormat { room_name, x, y }
+        }
     }
 
     impl Serialize for LocalRoomPosition {
@@ -381,13 +453,11 @@ mod room_pos_serde {
         where
             S: Serializer,
         {
-            SerializedLocalRoomPosition {
-                room_x: self.room_name.x_coord,
-                room_y: self.room_name.y_coord,
-                x: self.x,
-                y: self.y,
+            if serializer.is_human_readable() {
+                ReadableFormat::from(*self).serialize(serializer)
+            } else {
+                EfficientFormat::from(*self).serialize(serializer)
             }
-            .serialize(serializer)
         }
     }
 
@@ -396,16 +466,33 @@ mod room_pos_serde {
         where
             D: Deserializer<'de>,
         {
-            let data = SerializedLocalRoomPosition::deserialize(deserializer)?;
-
-            Ok(LocalRoomPosition {
-                room_name: LocalRoomName {
-                    x_coord: data.room_x,
-                    y_coord: data.room_y,
-                },
-                x: data.x,
-                y: data.y,
-            })
+            if deserializer.is_human_readable() {
+                // an older version of the library always serialized as 'EfficientFormat' - this
+                // keeps compatibility with that.
+                let either = EitherFormat::deserialize(deserializer)?;
+                match (either.room_name, either.room_x, either.room_y) {
+                    (Some(room_name), _, _) => Ok(LocalRoomPosition {
+                        x: either.x,
+                        y: either.y,
+                        room_name,
+                    }),
+                    (_, Some(room_x), Some(room_y)) => Ok(EfficientFormat {
+                        x: either.x,
+                        y: either.y,
+                        room_x,
+                        room_y,
+                    }
+                    .into()),
+                    (None, Some(_), None) => Err(D::Error::missing_field("room_y")),
+                    (None, None, Some(_)) => Err(D::Error::missing_field("room_x")),
+                    (None, None, None) => Err(D::Error::missing_field("roomName")),
+                }
+            } else {
+                // we don't use EitherFormat here because in some binary formats like bincode,
+                // there isn't the metadata necessary to figure out that a field with a given
+                // name isn't present.
+                EfficientFormat::deserialize(deserializer).map(Into::into)
+            }
         }
     }
 }
