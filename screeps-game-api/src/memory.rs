@@ -208,24 +208,38 @@ impl MemoryReference {
         }
     }
 
-    pub fn get<T>(&self, key: &str) -> Result<T, ConversionError>
+    /// Gets a custom type. Will return `None` if `null` or `undefined`, and
+    /// `Err` if incorrect type.
+    pub fn get<T>(&self, key: &str) -> Result<Option<T>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
-        (js! {
+        let val = js! {
             return (@{self.as_ref()})[@{key}];
-        })
-        .try_into()
+        };
+        if val == Value::Null || val == Value::Undefined {
+            Ok(None)
+        } else {
+            Some(val.try_into()).transpose()
+        }
     }
 
-    pub fn get_path<T>(&self, path: &str) -> Result<T, ConversionError>
+    /// Gets a custom type at a memory path. Will return `None` if `null` or
+    /// `undefined`, and `Err` if incorrect type.
+    ///
+    /// Uses lodash in JavaScript to evaluate the path. See https://lodash.com/docs/#get.
+    pub fn get_path<T>(&self, path: &str) -> Result<Option<T>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
     {
-        (js! {
+        let val = js! {
             return _.get(@{self.as_ref()}, @{path});
-        })
-        .try_into()
+        };
+        if val == Value::Null || val == Value::Undefined {
+            Ok(None)
+        } else {
+            Some(val.try_into()).transpose()
+        }
     }
 
     pub fn set<T>(&self, key: &str, value: T)
