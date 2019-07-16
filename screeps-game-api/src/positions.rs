@@ -322,6 +322,13 @@ pub struct LocalRoomPosition {
     pub y: u32,
 }
 
+impl fmt::Display for LocalRoomPosition {
+    /// Formats this into a nice looking string mimicking `RoomPosition`'s `toString`.
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[room {} pos {},{}]", self.room_name, self.x, self.y)
+    }
+}
+
 impl LocalRoomPosition {
     pub fn remote(&self) -> RoomPosition {
         RoomPosition::new(self.x, self.y, &self.room_name.to_string())
