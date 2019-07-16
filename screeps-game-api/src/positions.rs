@@ -315,6 +315,45 @@ mod serde {
     js_serializable!(LocalRoomName);
 }
 
+/// This is a room position located in Rust memory.
+///
+/// It's "local" in the sense that while `RoomPosition` always references a room
+/// position allocated by and managed by the JavaScript VM, this is a
+/// self-contained plain-data struct in Rust memory.
+///
+/// # Using LocalRoomPosition
+///
+/// A `LocalRoomPosition` can be retrieved at any point by using
+/// [`RoomPosition::local`]. It can then be copied around freely, and have its
+/// values modified.
+///
+/// `&LocalRoomPosition` can be passed into any game method taking an object,
+/// and will be automatically uploaded to JavaScript as a `RoomPosition`.
+///
+/// If you need to manually create a `RoomPosition` from a `LocalRoomPosition`,
+/// use [`LocalRoomPosition::remote`].
+///
+/// # Serialization
+///
+/// `LocalRoomPosition` implements both `serde::Serialize` and
+/// `serde::Deserialize`.
+///
+/// When serializing, it will use the obvious format of `{roomName: String, x:
+/// u32, y: u32}` in "human readable" formats like JSON, and a less obvious
+/// format `{room_x: u32, room_y: u32, x: u32, y: u32}` in "non-human readable"
+/// formats like [`bincode`].
+///
+/// You can also pass `LocalRoomPosition` into JavaScript using the `js!{}`
+/// macro provided by `stdweb`, or helper methods using the same code like
+/// [`MemoryReference::set`][crate::memory::MemoryReference::set].  It will be
+/// serialized the same as in JSON, as an object with `roomName`, `x` and `y`
+/// properties.
+///
+/// *Note:* serializing using `js!{}` or `MemoryReference::set` will _not_
+/// create a `RoomPosition`, only something with the same properties. Use
+/// `.remote()` if you need a `RoomPosition`.
+///
+/// [`bincode`]: https://github.com/servo/bincode
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct LocalRoomPosition {
     pub room_name: LocalRoomName,
