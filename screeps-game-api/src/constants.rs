@@ -18,12 +18,9 @@ use std::fmt;
 use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use stdweb::{Number, Reference, Value, __js_deserializable_serde_boilerplate, js_deserializable};
+use stdweb::{Reference, Value};
 
-use crate::{
-    objects::RoomObject,
-    traits::{FromExpectedType, TryFrom},
-};
+use crate::{macros::*, objects::RoomObject, traits::FromExpectedType};
 
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
