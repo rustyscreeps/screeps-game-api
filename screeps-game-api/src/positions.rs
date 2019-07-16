@@ -361,6 +361,17 @@ mod stdweb {
             Ok(LocalRoomPosition { x, y, room_name })
         }
     }
+
+    // We don't use `js_deserializable!` since it would generate pretty much exactly
+    // the code above, but with slightly extra cost since our `serde::Deserialize`
+    // implementation has extra code to be backwards compatible with a different
+    // format.
+    //
+    // On the other hand, we do want `js_serializable!()` since it does more than
+    // just implement `TryFrom<LocalRoomPosition> for Value` - it also gives us
+    // `JsSerializable` and other impls.
+
+    js_serializable!(LocalRoomPosition);
 }
 
 mod room_pos_serde {
