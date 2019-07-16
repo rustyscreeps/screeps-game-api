@@ -24,7 +24,7 @@ impl Flag {
         value: Value,
     ) -> Result<Result<String, ReturnCode>, crate::ConversionError> {
         match value {
-            Value::Number(num) => Ok(Err(ReturnCode::try_from(num)?)),
+            num @ Value::Number(_) => Ok(Err(ReturnCode::try_from(num)?)),
             other => String::try_from(other).map(Ok),
         }
     }

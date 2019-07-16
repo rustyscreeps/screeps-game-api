@@ -1,5 +1,6 @@
 use std::{fmt, marker::PhantomData, mem, ops::Range};
 
+use num_traits::FromPrimitive;
 use scoped_tls::scoped_thread_local;
 use serde::{
     self,
@@ -112,9 +113,11 @@ impl Room {
         let code_int: i32 = code_val.try_into().unwrap();
 
         if code_int < 0 {
-            Err(code_int.try_into().unwrap())
+            Err(ReturnCode::from_i32(code_int)
+                .expect("expected find_exit_to return value < 0 to be a valid ReturnCode"))
         } else {
-            Ok(code_int.try_into().unwrap())
+            Ok(Exit::from_i32(code_int)
+                .expect("expected find_exit_to return value >= 0 to be a valid Exit"))
         }
     }
 

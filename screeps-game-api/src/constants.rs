@@ -16,7 +16,6 @@
 use std::fmt;
 
 use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use stdweb::{Number, Reference, Value, __js_deserializable_serde_boilerplate, js_deserializable};
@@ -58,20 +57,6 @@ impl ReturnCode {
             ReturnCode::Ok => Ok(()),
             other => Err(other),
         }
-    }
-}
-
-impl TryFrom<i32> for ReturnCode {
-    type Error = i32;
-    fn try_from(v: i32) -> Result<Self, Self::Error> {
-        Self::from_i32(v).ok_or(v)
-    }
-}
-
-impl TryFrom<Number> for ReturnCode {
-    type Error = <ReturnCode as TryFrom<Value>>::Error;
-    fn try_from(v: Number) -> Result<Self, Self::Error> {
-        Self::try_from(Value::Number(v))
     }
 }
 
@@ -118,16 +103,12 @@ unsafe impl FindConstant for FindObject {
 
 pub mod find {
     use num_derive::FromPrimitive;
-    use num_traits::FromPrimitive;
     use serde_repr::{Deserialize_repr, Serialize_repr};
 
     use super::FindConstant;
-    use crate::{
-        objects::{
-            ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, PowerCreep, Resource,
-            RoomPosition, Source, Structure, StructureSpawn, Tombstone,
-        },
-        traits::TryFrom,
+    use crate::objects::{
+        ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, PowerCreep, Resource,
+        RoomPosition, Source, Structure, StructureSpawn, Tombstone,
     };
 
     #[derive(
@@ -161,13 +142,6 @@ pub mod find {
 
         pub fn all() -> Self {
             Exit::All
-        }
-    }
-
-    impl TryFrom<i32> for Exit {
-        type Error = i32;
-        fn try_from(v: i32) -> Result<Self, Self::Error> {
-            Self::from_i32(v).ok_or(v)
         }
     }
 
