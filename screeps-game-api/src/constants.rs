@@ -282,6 +282,49 @@ impl fmt::Display for Direction {
     }
 }
 
+/// Type used for when the game returns a direction to an exit.
+///
+/// Restricted more than `Direction` in that it can't be diagonal. Used as the
+/// result of [`Room::find_exit_to`].
+///
+/// Can be converted to both [`find::Exit`] for immediate use of [`Room::find`]
+/// and [`Direction`].
+///
+/// [`Room::find`]: [crate::objects::Room::find]
+/// [`Room::find_exit_to`]: [crate::objects::Room::find_exit_to]
+#[derive(
+    Copy, Clone, Debug, FromPrimitive, Deserialize_repr, Serialize_repr, PartialEq, Eq, Hash,
+)]
+#[repr(i32)]
+pub enum ExitDirection {
+    Top = Direction::Top as i32,
+    Right = Direction::Right as i32,
+    Bottom = Direction::Bottom as i32,
+    Left = Direction::Left as i32,
+}
+
+impl From<ExitDirection> for find::Exit {
+    fn from(dir: ExitDirection) -> Self {
+        match dir {
+            ExitDirection::Top => find::Exit::Top,
+            ExitDirection::Right => find::Exit::Right,
+            ExitDirection::Bottom => find::Exit::Bottom,
+            ExitDirection::Left => find::Exit::Left,
+        }
+    }
+}
+
+impl From<ExitDirection> for Direction {
+    fn from(dir: ExitDirection) -> Self {
+        match dir {
+            ExitDirection::Top => Direction::Top,
+            ExitDirection::Right => Direction::Right,
+            ExitDirection::Bottom => Direction::Bottom,
+            ExitDirection::Left => Direction::Left,
+        }
+    }
+}
+
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
 )]

@@ -13,7 +13,7 @@ use stdweb::{Reference, Value};
 
 use crate::{
     constants::{
-        find::Exit, Color, Direction, FindConstant, LookConstant, PowerType, ResourceType,
+        Color, Direction, ExitDirection, FindConstant, LookConstant, PowerType, ResourceType,
         ReturnCode, StructureType, Terrain,
     },
     macros::*,
@@ -108,7 +108,7 @@ impl Room {
         js_unwrap_ref!(@{self.as_ref()}.find(@{ty.find_code()}))
     }
 
-    pub fn find_exit_to(&self, room: &Room) -> Result<Exit, ReturnCode> {
+    pub fn find_exit_to(&self, room: &Room) -> Result<ExitDirection, ReturnCode> {
         let code_val = js! {return @{self.as_ref()}.findExitTo(@{room.as_ref()});};
         let code_int: i32 = code_val.try_into().unwrap();
 
@@ -116,7 +116,7 @@ impl Room {
             Err(ReturnCode::from_i32(code_int)
                 .expect("expected find_exit_to return value < 0 to be a valid ReturnCode"))
         } else {
-            Ok(Exit::from_i32(code_int)
+            Ok(ExitDirection::from_i32(code_int)
                 .expect("expected find_exit_to return value >= 0 to be a valid Exit"))
         }
     }

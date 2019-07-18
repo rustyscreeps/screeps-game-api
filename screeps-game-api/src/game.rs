@@ -139,7 +139,7 @@ pub mod map {
     use stdweb::Value;
 
     use crate::{
-        constants::{find::Exit, Direction, ReturnCode},
+        constants::{Direction, ExitDirection, ReturnCode},
         macros::*,
         objects::RoomTerrain,
         traits::{TryFrom, TryInto},
@@ -191,9 +191,9 @@ pub mod map {
     }
 
     /// Implements `Game.map.findExit`.
-    pub fn find_exit(from_room: &str, to_room: &str) -> Result<Exit, ReturnCode> {
+    pub fn find_exit(from_room: &str, to_room: &str) -> Result<ExitDirection, ReturnCode> {
         let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room})};
-        Exit::from_i32(code).ok_or_else(|| {
+        ExitDirection::from_i32(code).ok_or_else(|| {
             ReturnCode::from_i32(code).expect("find_exit: Error code not recognized.")
         })
     }
@@ -202,7 +202,7 @@ pub mod map {
         from_room: &str,
         to_room: &str,
         route_callback: impl Fn(String, String) -> f64,
-    ) -> Result<Exit, ReturnCode> {
+    ) -> Result<ExitDirection, ReturnCode> {
         // Actual callback
         fn callback(room_name: String, from_room_name: String) -> f64 {
             FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
@@ -215,7 +215,7 @@ pub mod map {
 
         FR_CALLBACK.set(&callback_lifetime_erased, || {
             let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room}, @{callback})};
-            Exit::from_i32(code)
+            ExitDirection::from_i32(code)
                 .map(Ok)
                 .or_else(|| ReturnCode::from_i32(code).map(Err))
                 .unwrap_or_else(|| {
@@ -274,7 +274,7 @@ pub mod map {
     #[derive(Clone, Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct RoomRouteStep {
-        exit: Exit,
+        exit: ExitDirection,
         room: String,
     }
     js_deserializable!(RoomRouteStep);
