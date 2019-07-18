@@ -342,13 +342,44 @@ macro_rules! creep_simple_concrete_action {
     )
 }
 
-macro_rules! typesafe_find_constants {
+/// Declares a unit structure with a doc attribute which is computed by a macro
+/// expression. This allows documentation to be dynamically generated, for
+/// instance. Necessary to work around https://github.com/rust-lang/rust/issues/52607.
+macro_rules! unit_struct_with_doc {
     (
-        $($constant_name:ident, $value:expr, $result:path;)*
+        $(
+            #[doc = $doc:expr]
+            $(
+                #[$attr:meta]
+            )*
+            $vis:vis struct $name:ident;
+        )*
     ) => (
         $(
-            #[allow(bad_style)]
-            pub struct $constant_name;
+            #[doc = $doc]
+            $(#[$attr])*
+            $vis struct $name;
+        )*
+    );
+}
+
+macro_rules! typesafe_find_constants {
+    (
+        $(
+            $constant_name:ident, $value:expr, $result:path;
+        )*
+    ) => (
+        $(
+            unit_struct_with_doc! {
+                #[doc = concat!(
+                    "Zero-sized constant representing the `FIND_",
+                    stringify!($constant_name),
+                    "` constant."
+                )]
+                #[allow(bad_style)]
+                #[derive(Copy, Clone, Debug, Default)]
+                pub struct $constant_name;
+            }
             unsafe impl FindConstant for $constant_name {
                 type Item = $result;
 

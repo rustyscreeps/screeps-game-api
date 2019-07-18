@@ -18,9 +18,11 @@ use std::fmt;
 use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use stdweb::{Reference, Value};
+use stdweb::Value;
 
-use crate::{macros::*, objects::RoomObject, traits::FromExpectedType};
+use crate::macros::*;
+
+pub use self::find::FindConstant;
 
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
@@ -59,54 +61,91 @@ impl ReturnCode {
 
 js_deserializable!(ReturnCode);
 
-pub unsafe trait FindConstant {
-    type Item: FromExpectedType<Reference>;
-
-    fn find_code(&self) -> i32;
-}
-
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
-)]
-#[repr(i32)]
-pub enum FindObject {
-    Creeps = 101,
-    MyCreeps = 102,
-    HostileCreeps = 103,
-    SourcesActive = 104,
-    Sources = 105,
-    DroppedResources = 106,
-    Structures = 107,
-    MyStructures = 108,
-    HostileStructures = 109,
-    Flags = 110,
-    ConstructionSites = 111,
-    MySpawns = 112,
-    HostileSpawns = 113,
-    MyConstructionSites = 114,
-    HostileConstructionSites = 115,
-    Minerals = 116,
-    Nukes = 117,
-    Tombstones = 118,
-}
-
-unsafe impl FindConstant for FindObject {
-    type Item = RoomObject;
-
-    fn find_code(&self) -> i32 {
-        *self as i32
-    }
-}
-
+/// Constants for use with the [`Room::find`] function.
+///
+/// *Note:* Types in this module have purposefully ambiguous names, and are
+/// intended to be used as, for example, `find::CREEPS`, not `CREEPS`.
+///
+/// You can do this my importing the module itself, rather than any indvidiual
+/// constant, and then just referring to the constants relative to the module.
+///
+/// # Example
+///
+/// ```no_run
+/// use screeps::{find, game, Room};
+///
+/// let room: Room = game::rooms().get("E23S55").unwrap();
+///
+/// let creeps = room.find(find::CREEPS);
+/// # let _ = creeps;
+/// ```
+///
+/// [`Room::find`]: crate::Room::find
+/// [`objects::RoomObject`]: crate::RoomObject
 pub mod find {
     use num_derive::FromPrimitive;
     use serde_repr::{Deserialize_repr, Serialize_repr};
+    use stdweb::Reference;
 
-    use super::FindConstant;
-    use crate::objects::{
-        ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, PowerCreep, Resource,
-        RoomPosition, Source, Structure, StructureSpawn, Tombstone,
+    use crate::{
+        objects::{
+            ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, PowerCreep, Resource,
+            RoomPosition, Source, Structure, StructureSpawn, Tombstone,
+        },
+        traits::FromExpectedType,
     };
+
+    /// Trait representing things which can be used in the 'find' function.
+    ///
+    /// Typically used with zero-sized structs in the
+    /// [`find`][crate::constants::find] module.
+    pub unsafe trait FindConstant {
+        type Item: FromExpectedType<Reference>;
+
+        fn find_code(&self) -> i32;
+    }
+
+    /// Useful for finding any [`RoomObject`][crate::objects::RoomObject] with
+    /// a dynamically-chosen find constant.
+    ///
+    /// If you know ahead of time what constant you'll use, then the
+    /// all-upper-case constants in [this module](crate::constants::find) will
+    /// be more helpful, and won't require casting the result types.
+    ///
+    /// If you do use this constant, I recommend just importing the `find`
+    /// module and referring to it as `find::RoomObject`.
+    #[derive(
+        Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
+    )]
+    #[repr(i32)]
+    pub enum RoomObject {
+        Creeps = 101,
+        MyCreeps = 102,
+        HostileCreeps = 103,
+        SourcesActive = 104,
+        Sources = 105,
+        DroppedResources = 106,
+        Structures = 107,
+        MyStructures = 108,
+        HostileStructures = 109,
+        Flags = 110,
+        ConstructionSites = 111,
+        MySpawns = 112,
+        HostileSpawns = 113,
+        MyConstructionSites = 114,
+        HostileConstructionSites = 115,
+        Minerals = 116,
+        Nukes = 117,
+        Tombstones = 118,
+    }
+
+    unsafe impl FindConstant for RoomObject {
+        type Item = crate::objects::RoomObject;
+
+        fn find_code(&self) -> i32 {
+            *self as i32
+        }
+    }
 
     #[derive(
         Copy, Clone, Debug, FromPrimitive, Deserialize_repr, Serialize_repr, PartialEq, Eq, Hash,
@@ -172,6 +211,10 @@ pub mod find {
         POWER_CREEPS, 119, PowerCreep;
         MY_POWER_CREEPS, 120, PowerCreep;
         HOSTILE_POWER_CREEPS, 121, PowerCreep;
+        EXIT_TOP, Exit::Top as i32, RoomPosition;
+        EXIT_RIGHT, Exit::Right as i32, RoomPosition;
+        EXIT_BOTTOM, Exit::Bottom as i32, RoomPosition;
+        EXIT, Exit::All as i32, RoomPosition;
     }
 }
 
