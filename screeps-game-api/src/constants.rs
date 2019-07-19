@@ -291,8 +291,8 @@ impl fmt::Display for Direction {
 /// Can be converted to both [`find::Exit`] for immediate use of [`Room::find`]
 /// and [`Direction`].
 ///
-/// [`Room::find`]: [crate::objects::Room::find]
-/// [`Room::find_exit_to`]: [crate::objects::Room::find_exit_to]
+/// [`Room::find`]: crate::objects::Room::find
+/// [`Room::find_exit_to`]: crate::objects::Room::find_exit_to
 #[derive(
     Copy, Clone, Debug, FromPrimitive, Deserialize_repr, Serialize_repr, PartialEq, Eq, Hash,
 )]
