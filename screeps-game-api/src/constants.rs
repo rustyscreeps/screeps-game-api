@@ -465,9 +465,7 @@ pub mod look {
 /// using these impls manually, use the `__part_num_to_str` and
 /// `__part_str_to_num` JavaScript functions to convert.
 #[repr(u32)]
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr, FromPrimitive,
-)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr)]
 #[serde(rename_all = "snake_case")]
 pub enum Part {
     Move = 0,
