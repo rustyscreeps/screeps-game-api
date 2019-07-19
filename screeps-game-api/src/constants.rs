@@ -15,6 +15,7 @@
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
 use std::fmt;
 
+use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -771,7 +772,16 @@ pub const MINERAL_RANDOM_FACTOR: u32 = 2;
 /// Translates the `DENSITY_*` constants.
 #[repr(u32)]
 #[derive(
-    Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Serialize_repr, Deserialize_repr,
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    FromPrimitive,
+    Hash,
+    Serialize_repr,
+    Deserialize_repr,
+    IntoEnumIterator,
 )]
 pub enum Density {
     Low = 1,
@@ -795,8 +805,9 @@ impl Density {
 
     /// Translates the `MINERAL_DENSITY_PROBABILITY` constant.
     ///
-    /// All values are between 0 and 1, but the total is roughly `2.5` so these
-    /// aren't percentages.
+    /// These are values intended for subsequent percentage checks
+    /// in the order `Low` -> `Medium` -> `High` -> `Ultra`. Use the
+    /// [`Density::iter_values`] iterator to iterate in this order.
     pub fn probabilitiy(self) -> f32 {
         match self {
             Density::Low => 0.1,
@@ -804,6 +815,10 @@ impl Density {
             Density::High => 0.9,
             Density::Ultra => 1.0,
         }
+    }
+
+    pub fn iter_values() -> impl Iterator<Item = Density> {
+        <Density as enum_iterator::IntoEnumIterator>::into_enum_iter()
     }
 }
 
