@@ -210,6 +210,31 @@ impl MemoryReference {
 
     /// Gets a custom type. Will return `None` if `null` or `undefined`, and
     /// `Err` if incorrect type.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// use log::info;
+    /// use screeps::{prelude::*, LocalRoomPosition};
+    ///
+    /// let creep = screeps::game::creeps::get("mycreepname").unwrap();
+    /// let mem = creep.memory();
+    /// let pos = mem.get::<LocalRoomPosition>("saved_pos").unwrap();
+    /// let pos = match pos {
+    ///     Some(pos) => {
+    ///         info!("found position: {}", pos);
+    ///         pos
+    ///     }
+    ///     None => {
+    ///         info!("no position. saving new one!");
+    ///         let pos = creep.pos().local();
+    ///         mem.set("saved_pos", pos);
+    ///         pos
+    ///     }
+    /// };
+    /// info!("final position: {}", pos);
+    /// creep.move_to(&pos);
+    /// ```
     pub fn get<T>(&self, key: &str) -> Result<Option<T>, ConversionError>
     where
         T: TryFrom<Value, Error = ConversionError>,
