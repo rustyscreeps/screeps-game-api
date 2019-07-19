@@ -12,7 +12,51 @@
 //! - BOOSTS
 //! - POWER_INFO
 //!
+//! # Notes on Deserialization
+//!
+//! There are two general types of enum constants in this file. Some are
+//! represented by integers in the game - and those are represented by integers
+//! in screeps. Their [`serde::Deserialize`], `TryFrom<Value>` and
+//! [`num_traits::FromPrimitive`] implementations will convert from these
+//! integers.
+//!
+//! The other type is enums represented by strings in the game, but integers in
+//! this repository. This change in representation is done for efficiency, as
+//! transferring strings from JavaScript to Rust is much slower than a single
+//! integer.
+//!
+//! This second type of enum will also implement [`serde::Deserialize`],
+//! `TryFrom<Value>`, but these will not convert from the made-up integer
+//! values, and will fail converting from the constant strings from the game.
+//!
+//! To convert from constant strings, you have two options, depending on the
+//! context.
+//!
+//! If you need to manually consume from a value in JavaScript, there are two
+//! utility JavaScript functions per enum. They generally take the form
+//! `__TYPE_num_to_str` and `__TYPE_str_to_num`. For example,
+//! `__structure_type_num_to_str` and `__structure_type_str_to_num` convert
+//! between [`StructureType`] integer representations and string
+//! representations. See documentation on enums for more conversion functions.
+//!
+//! To use these, call the functions in JavaScript, like so:
+//!
+//! ```no_run
+//! use screeps::{game, traits::TryInto, StructureType};
+//! use stdweb::js;
+//!
+//! let spawns = game::spawns::values();
+//! let r: StructureType = (js! {
+//!     return __structure_type_str_to_num(@{spawns[0].as_ref()}.structureType);
+//! }).try_into().expect("expected structure type to convert successfully");
+//! ```
+//!
+//! If you need to consume strings already in Rust, use either the [`FromStr`]
+//! trait, or one of the `deserialize_from_str` functions on each of these
+//! constants.
+//!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
+//! [`FromStr`]: std::str::FromStr
 use std::{borrow::Cow, fmt, str::FromStr};
 
 use enum_iterator::IntoEnumIterator;
@@ -114,7 +158,7 @@ pub mod find {
     /// a dynamically-chosen find constant.
     ///
     /// If you know ahead of time what constant you'll use, then the
-    /// all-upper-case constants in [this module](crate::constants::find) will
+    /// all-upper-case constants in [this module][crate::constants::find] will
     /// be more helpful, and won't require casting the result types.
     ///
     /// *Note*: To avoid ambiguity with [`RoomObject`], you should refer to this
@@ -360,10 +404,10 @@ js_deserializable!(Color);
 /// *Note:* This constant's `TryFrom<Value>` and `Deserialize` implementations
 /// _only work with the integer constants_. If you're ever consuming strings
 /// such as `"plain"`, `"swamp"`, `"wall"`, you can use the
-/// `__terrain_str_to_num` JavaScript function.
+/// `__terrain_str_to_num` JavaScript function, [`FromStr`][std::str::FromStr]
+/// or [`Look::deserialize_from_str`].
 ///
-/// To convert from a string representation directly, use
-/// [`FromStr`][std::str::FromStr] or [`Look::deserialize_from_str`] .
+/// See the [module-level documentation][crate::constants] for more details.
 #[derive(
     Copy,
     Clone,
@@ -402,18 +446,13 @@ js_deserializable!(Terrain);
 /// It's recommended to use the constants in the `look` module instead for type
 /// safety.
 ///
-/// In fact, I don't believe this can be used at all without resorting to
-/// manually including JS code.
-///
-/// To use in JS: `__look_num_to_str(@{look as u8})` function
-///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
 /// using these impls manually, use the `__look_num_to_str` and
-/// `__look_str_to_num` JavaScript functions to convert.
+/// `__look_str_to_num` JavaScript functions, [`FromStr`][std::str::FromStr] or
+/// [`Look::deserialize_from_str`].
 ///
-/// To convert from a string representation directly, use
-/// [`FromStr`][std::str::FromStr] or [`Look::deserialize_from_str`] .
+/// See the [module-level documentation][crate::constants] for more details.
 #[doc(hidden)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[repr(u8)]
@@ -497,10 +536,10 @@ pub mod look {
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
 /// using these impls manually, use the `__part_num_to_str` and
-/// `__part_str_to_num` JavaScript functions to convert.
+/// `__part_str_to_num` JavaScript functions, [`FromStr`][std::str::FromStr] or
+/// [`Part::deserialize_from_str`].
 ///
-/// To convert from a string representation directly, use
-/// [`FromStr`][std::str::FromStr] or [`Part::deserialize_from_str`] .
+/// See the [module-level documentation][crate::constants] for more details.
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[repr(u8)]
 #[display(style = "snake_case")]
@@ -643,13 +682,11 @@ pub const STORAGE_HITS: u32 = 10_000;
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, use the
-/// `__structure_type_num_to_str` and `__structure_type_str_to_num` JavaScript
-/// functions to convert.
+/// using these impls manually, use the `__structure_type_num_to_str` and
+/// `__structure_type_str_to_num` JavaScript functions,
+/// [`FromStr`][std::str::FromStr] or [`StructureType::deserialize_from_str`].
 ///
-/// To convert from a string representation directly, use
-/// [`FromStr`][std::str::FromStr] or
-/// [`StructureType::deserialize_from_str`] .
+/// See the [module-level documentation][crate::constants] for more details.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[repr(u8)]
 #[display(style = "camelCase")]
@@ -948,11 +985,11 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
 /// using these impls manually, use the `__intershard_resource_num_to_str` and
-/// `__intershard_resource_str_to_num` JavaScript functions to convert.
-///
-/// To convert from a string representation directly, use
+/// `__intershard_resource_str_to_num` JavaScript functions,
 /// [`FromStr`][std::str::FromStr] or
-/// [`IntershardResourceType::deserialize_from_str`] .
+/// [`IntershardResourceType::deserialize_from_str`].
+///
+/// See the [module-level documentation][crate::constants] for more details.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[repr(u8)]
 pub enum IntershardResourceType {
@@ -979,11 +1016,10 @@ impl IntershardResourceType {
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
 /// using these impls manually, use the `__resource_type_num_to_str`
-/// and `__resource_type_str_to_num` JavaScript functions to convert.
+/// and `__resource_type_str_to_num` JavaScript functions,
+/// [`FromStr`][std::str::FromStr] or [`ResourceType::deserialize_from_str`].
 ///
-/// To convert from a string representation directly, use
-/// [`FromStr`][std::str::FromStr] or
-/// [`ResourceType::deserialize_from_str`] .
+/// See the [module-level documentation][crate::constants] for more details.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[repr(u16)]
 pub enum ResourceType {
