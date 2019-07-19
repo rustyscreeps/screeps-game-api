@@ -357,10 +357,15 @@ js_deserializable!(Color);
 /// Terrain constant.
 ///
 /// This constant is in a unique position of being represented both by strings
-/// and by integers in various parts of the API. Deserialization and conversion
-/// from `Value` should work for both, while the `FromPrimitive` impl can only
-/// handle integers.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize, Serialize_repr, FromPrimitive)]
+/// and by integers in various parts of the API.
+///
+/// *Note:* This constant's `TryFrom<Value>` and `Deserialize` implementations
+/// _only work with the integer constants_. If you're ever consuming strings
+/// such as `"plain"`, `"swamp"`, `"wall"`, you must convert those manually into
+/// `0`, `1` and `2` respectively.
+#[derive(
+    Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize_repr, Serialize_repr, FromPrimitive,
+)]
 #[repr(u32)]
 #[serde(rename_all = "snake_case")]
 pub enum Terrain {
@@ -380,8 +385,13 @@ js_deserializable!(Terrain);
 /// manually including JS code.
 ///
 /// To use in JS: `__look_num_to_str(@{look as u32})` function
+///
+/// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
+/// implementations only operate on made-up integer constants. If you're ever
+/// using these impls manually, you need to use the `__look_num_to_str` and
+/// `__look_str_to_num` JavaScript functions to convert.
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[doc(hidden)]
 #[serde(rename_all = "camelCase")]
 pub enum Look {
@@ -448,8 +458,16 @@ pub mod look {
     }
 }
 
+/// Creep part types.
+///
+/// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
+/// implementations only operate on made-up integer constants. If you're ever
+/// using these impls manually, you need to use the `__part_num_to_str` and
+/// `__part_str_to_num` JavaScript functions to convert.
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize, Deserialize, FromPrimitive)]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr, FromPrimitive,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum Part {
     Move = 0,
@@ -575,8 +593,14 @@ pub const STORAGE_CAPACITY: u32 = 1_000_000;
 pub const STORAGE_HITS: u32 = 10_000;
 
 /// Translates `STRUCTURE_*` constants.
+///
+/// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
+/// implementations only operate on made-up integer constants. If you're ever
+/// using these impls manually, you need to use the
+/// `__structure_type_num_to_str` and `__structure_type_str_to_num` JavaScript
+/// functions to convert.
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[serde(rename_all = "camelCase")]
 pub enum StructureType {
     Spawn = 0,
@@ -860,7 +884,13 @@ pub const MARKET_FEE: f32 = 0.05;
 pub const FLAGS_LIMIT: u32 = 10_000;
 
 /// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+///
+/// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
+/// implementations only operate on made-up integer constants. If you're ever
+/// using these impls manually, you need to use the
+/// `__intershard_resource_num_to_str` and `__intershard_resource_str_to_num`
+/// JavaScript functions to convert.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[serde(rename_all = "camelCase")]
 #[repr(u32)]
 pub enum IntershardResourceType {
@@ -868,8 +898,14 @@ pub enum IntershardResourceType {
     SubscriptionToken = 1,
 }
 
+/// Resource type constant for all possible types of resources.
+///
+/// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
+/// implementations only operate on made-up integer constants. If you're ever
+/// using these impls manually, you need to use the `__resource_type_num_to_str`
+/// and `__resource_type_str_to_num` JavaScript functions to convert.
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[serde(rename_all = "camelCase")]
 pub enum ResourceType {
     /// `"energy"`
