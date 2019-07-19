@@ -13,11 +13,15 @@
 //! - POWER_INFO
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
-use std::fmt;
+use std::{borrow::Cow, fmt, str::FromStr};
 
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
-use serde::{Deserialize, Serialize};
+use parse_display::FromStr;
+use serde::{
+    de::{Deserializer, Error as _, Unexpected},
+    Deserialize, Serialize,
+};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use stdweb::Value;
 
@@ -390,38 +394,52 @@ js_deserializable!(Terrain);
 /// implementations only operate on made-up integer constants. If you're ever
 /// using these impls manually, use the `__look_num_to_str` and
 /// `__look_str_to_num` JavaScript functions to convert.
+///
+/// To convert from a string representation directly, use
+/// [`FromStr`][std::str::FromStr] or [`Look::deserialize_from_str`] .
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[doc(hidden)]
 #[serde(rename_all = "camelCase")]
 pub enum Look {
-    #[serde(rename = "creep")]
+    #[display("creep")]
     Creeps = 0,
-    #[serde(rename = "energy")]
+    #[display("energy")]
     Energy = 1,
-    #[serde(rename = "resource")]
+    #[display("resource")]
     Resources = 2,
-    #[serde(rename = "source")]
+    #[display("source")]
     Sources = 3,
-    #[serde(rename = "mineral")]
+    #[display("mineral")]
     Minerals = 4,
-    #[serde(rename = "structure")]
+    #[display("structure")]
     Structures = 5,
-    #[serde(rename = "flag")]
+    #[display("flag")]
     Flags = 6,
-    #[serde(rename = "constructionSite")]
+    #[display("constructionSite")]
     ConstructionSites = 7,
-    #[serde(rename = "nuke")]
+    #[display("nuke")]
     Nukes = 8,
-    #[serde(rename = "terrain")]
+    #[display("terrain")]
     Terrain = 9,
-    #[serde(rename = "tombstone")]
+    #[display("tombstone")]
     Tombstones = 10,
-    #[serde(rename = "powerCreep")]
+    #[display("powerCreep")]
     PowerCreeps = 11,
 }
 
 js_deserializable!(Look);
+
+impl Look {
+    /// Helper function for deserializing from a string rather than a fake
+    /// integer value.
+    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let s: Cow<'de, str> = Cow::deserialize(d)?;
+        Self::from_str(&s).map_err(|_| {
+            D::Error::invalid_value(Unexpected::Str(&s), &"a known LOOK_* constant string")
+        })
+    }
+}
 
 pub unsafe trait LookConstant {
     type Item;
@@ -464,9 +482,12 @@ pub mod look {
 /// implementations only operate on made-up integer constants. If you're ever
 /// using these impls manually, use the `__part_num_to_str` and
 /// `__part_str_to_num` JavaScript functions to convert.
+///
+/// To convert from a string representation directly, use
+/// [`FromStr`][std::str::FromStr] or [`Part::deserialize_from_str`] .
 #[repr(u32)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr)]
-#[serde(rename_all = "snake_case")]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[display(style = "snake_case")]
 pub enum Part {
     Move = 0,
     Work = 1,
@@ -491,6 +512,18 @@ impl Part {
             Part::Heal => 250,
             Part::Claim => 600,
         }
+    }
+
+    /// Helper function for deserializing from a string rather than a fake
+    /// integer value.
+    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let s: Cow<'de, str> = Cow::deserialize(d)?;
+        Self::from_str(&s).map_err(|_| {
+            D::Error::invalid_value(
+                Unexpected::Str(&s),
+                &"a known constant string in BODYPARTS_ALL",
+            )
+        })
     }
 }
 
@@ -597,9 +630,13 @@ pub const STORAGE_HITS: u32 = 10_000;
 /// using these impls manually, use the
 /// `__structure_type_num_to_str` and `__structure_type_str_to_num` JavaScript
 /// functions to convert.
+///
+/// To convert from a string representation directly, use
+/// [`FromStr`][std::str::FromStr] or
+/// [`StructureType::deserialize_from_str`] .
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
-#[serde(rename_all = "camelCase")]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[display(style = "camelCase")]
 pub enum StructureType {
     Spawn = 0,
     Extension = 1,
@@ -671,6 +708,15 @@ impl StructureType {
             KeeperLair | Portal | Controller => return None,
         };
         Some(hits)
+    }
+
+    /// Helper function for deserializing from a string rather than a fake
+    /// integer value.
+    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let s: Cow<'de, str> = Cow::deserialize(d)?;
+        Self::from_str(&s).map_err(|_| {
+            D::Error::invalid_value(Unexpected::Str(&s), &"a known STRUCTURE_* constant string")
+        })
     }
 }
 
@@ -887,12 +933,30 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 /// implementations only operate on made-up integer constants. If you're ever
 /// using these impls manually, use the `__intershard_resource_num_to_str` and
 /// `__intershard_resource_str_to_num` JavaScript functions to convert.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
+///
+/// To convert from a string representation directly, use
+/// [`FromStr`][std::str::FromStr] or
+/// [`IntershardResourceType::deserialize_from_str`] .
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[serde(rename_all = "camelCase")]
 #[repr(u32)]
 pub enum IntershardResourceType {
-    #[serde(rename = "token")]
+    #[display("token")]
     SubscriptionToken = 1,
+}
+
+impl IntershardResourceType {
+    /// Helper function for deserializing from a string rather than a fake
+    /// integer value.
+    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let s: Cow<'de, str> = Cow::deserialize(d)?;
+        Self::from_str(&s).map_err(|_| {
+            D::Error::invalid_value(
+                Unexpected::Str(&s),
+                &"a known constant string in INTERSHARD_RESOURCES",
+            )
+        })
+    }
 }
 
 /// Resource type constant for all possible types of resources.
@@ -901,141 +965,144 @@ pub enum IntershardResourceType {
 /// implementations only operate on made-up integer constants. If you're ever
 /// using these impls manually, use the `__resource_type_num_to_str`
 /// and `__resource_type_str_to_num` JavaScript functions to convert.
+///
+/// To convert from a string representation directly, use
+/// [`FromStr`][std::str::FromStr] or
+/// [`ResourceType::deserialize_from_str`] .
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
-#[serde(rename_all = "camelCase")]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 pub enum ResourceType {
     /// `"energy"`
-    #[serde(rename = "energy")]
+    #[display("energy")]
     Energy = 1,
     /// `"power"`
-    #[serde(rename = "power")]
+    #[display("power")]
     Power = 2,
     /// `"H"`
-    #[serde(rename = "H")]
+    #[display("H")]
     Hydrogen = 3,
     /// `"O"`
-    #[serde(rename = "O")]
+    #[display("O")]
     Oxygen = 4,
     /// `"U"`
-    #[serde(rename = "U")]
+    #[display("U")]
     Utrium = 5,
     /// `"L"`
-    #[serde(rename = "L")]
+    #[display("L")]
     Lemergium = 6,
     /// `"K"`
-    #[serde(rename = "K")]
+    #[display("K")]
     Keanium = 7,
     /// `"Z"`
-    #[serde(rename = "Z")]
+    #[display("Z")]
     Zynthium = 8,
     /// `"X"`
-    #[serde(rename = "X")]
+    #[display("X")]
     Catalyst = 9,
     /// `"G"`
-    #[serde(rename = "G")]
+    #[display("G")]
     Ghodium = 10,
     /// `"OH"`
-    #[serde(rename = "OH")]
+    #[display("OH")]
     Hydroxide = 11,
     /// `"ZK"`
-    #[serde(rename = "ZK")]
+    #[display("ZK")]
     ZynthiumKeanite = 12,
     /// `"UL"`
-    #[serde(rename = "UL")]
+    #[display("UL")]
     UtriumLemergite = 13,
     /// `"UH"`
-    #[serde(rename = "UH")]
+    #[display("UH")]
     UtriumHydride = 14,
     /// `"UO"`
-    #[serde(rename = "UO")]
+    #[display("UO")]
     UtriumOxide = 15,
     /// `"KH"`
-    #[serde(rename = "KH")]
+    #[display("KH")]
     KeaniumHydride = 16,
     /// `"KO"`
-    #[serde(rename = "KO")]
+    #[display("KO")]
     KeaniumOxide = 17,
     /// `"LH"`
-    #[serde(rename = "LH")]
+    #[display("LH")]
     LemergiumHydride = 18,
     /// `"LO"`
-    #[serde(rename = "LO")]
+    #[display("LO")]
     LemergiumOxide = 19,
     /// `"ZH"`
-    #[serde(rename = "ZH")]
+    #[display("ZH")]
     ZynthiumHydride = 20,
     /// `"ZO"`
-    #[serde(rename = "ZO")]
+    #[display("ZO")]
     ZynthiumOxide = 21,
     /// `"GH"`
-    #[serde(rename = "GH")]
+    #[display("GH")]
     GhodiumHydride = 22,
     /// `"GO"`
-    #[serde(rename = "GO")]
+    #[display("GO")]
     GhodiumOxide = 23,
     /// `"UH2O"`
-    #[serde(rename = "UH2O")]
+    #[display("UH2O")]
     UtriumAcid = 24,
     /// `"UHO2"`
-    #[serde(rename = "UHO2")]
+    #[display("UHO2")]
     UtriumAlkalide = 25,
     /// `"KH2O"`
-    #[serde(rename = "KH2O")]
+    #[display("KH2O")]
     KeaniumAcid = 26,
     /// `"KHO2"`
-    #[serde(rename = "KHO2")]
+    #[display("KHO2")]
     KeaniumAlkalide = 27,
     /// `"LH2O"`
-    #[serde(rename = "LH2O")]
+    #[display("LH2O")]
     LemergiumAcid = 28,
     /// `"LHO2"`
-    #[serde(rename = "LHO2")]
+    #[display("LHO2")]
     LemergiumAlkalide = 29,
     /// `"ZH2O"`
-    #[serde(rename = "ZH2O")]
+    #[display("ZH2O")]
     ZynthiumAcid = 30,
     /// `"ZHO2"`
-    #[serde(rename = "ZHO2")]
+    #[display("ZHO2")]
     ZynthiumAlkalide = 31,
     /// `"GH2O"`
-    #[serde(rename = "GH2O")]
+    #[display("GH2O")]
     GhodiumAcid = 32,
     /// `"GHO2"`
-    #[serde(rename = "GHO2")]
+    #[display("GHO2")]
     GhodiumAlkalide = 33,
     /// `"XUH2O"`
-    #[serde(rename = "XUH2O")]
+    #[display("XUH2O")]
     CatalyzedUtriumAcid = 34,
     /// `"XUHO2"`
-    #[serde(rename = "XUHO2")]
+    #[display("XUHO2")]
     CatalyzedUtriumAlkalide = 35,
     /// `"XKH2O"`
-    #[serde(rename = "XKH2O")]
+    #[display("XKH2O")]
     CatalyzedKeaniumAcid = 36,
     /// `"XKHO2"`
-    #[serde(rename = "XKHO2")]
+    #[display("XKHO2")]
     CatalyzedKeaniumAlkalide = 37,
     /// `"XLH2O"`
-    #[serde(rename = "XLH2O")]
+    #[display("XLH2O")]
     CatalyzedLemergiumAcid = 38,
     /// `"XLHO2"`
-    #[serde(rename = "XLHO2")]
+    #[display("XLHO2")]
     CatalyzedLemergiumAlkalide = 39,
     /// `"XZH2O"`
-    #[serde(rename = "XZH2O")]
+    #[display("XZH2O")]
     CatalyzedZynthiumAcid = 40,
     /// `"XZHO2"`
-    #[serde(rename = "XZHO2")]
+    #[display("XZHO2")]
     CatalyzedZynthiumAlkalide = 41,
     /// `"XGH2O"`
-    #[serde(rename = "XGH2O")]
+    #[display("XGH2O")]
     CatalyzedGhodiumAcid = 42,
     /// `"XGHO2"`
-    #[serde(rename = "XGHO2")]
+    #[display("XGHO2")]
     CatalyzedGhodiumAlkalide = 43,
     /// `"ops"`
-    #[serde(rename = "ops")]
+    #[display("ops")]
     Ops = 44,
 }
 
@@ -1117,6 +1184,18 @@ impl ResourceType {
             CatalyzedGhodiumAlkalide => 150,
         };
         Some(time)
+    }
+
+    /// Helper function for deserializing from a string rather than a fake
+    /// integer value.
+    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let s: Cow<'de, str> = Cow::deserialize(d)?;
+        Self::from_str(&s).map_err(|_| {
+            D::Error::invalid_value(
+                Unexpected::Str(&s),
+                &"a known constant string in RESOURCES_ALL",
+            )
+        })
     }
 }
 
