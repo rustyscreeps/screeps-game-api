@@ -217,6 +217,7 @@ pub mod find {
         EXIT_TOP, Exit::Top as i32, RoomPosition;
         EXIT_RIGHT, Exit::Right as i32, RoomPosition;
         EXIT_BOTTOM, Exit::Bottom as i32, RoomPosition;
+        EXIT_LEFT, Exit::Left as i32, RoomPosition;
         EXIT, Exit::All as i32, RoomPosition;
     }
 }
