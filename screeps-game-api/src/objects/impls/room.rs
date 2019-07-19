@@ -721,6 +721,7 @@ pub struct ExitEvent {
 #[serde(rename_all = "camelCase")]
 pub struct TransferEvent {
     pub target_id: String,
+    #[serde(deserialize_with = "crate::ResourceType::deserialize_from_str")]
     pub resource_type: ResourceType,
     pub amount: u32,
 }
