@@ -371,7 +371,6 @@ js_deserializable!(Color);
     Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize_repr, Serialize_repr, FromPrimitive,
 )]
 #[repr(u32)]
-#[serde(rename_all = "snake_case")]
 pub enum Terrain {
     Plain = 0,
     Wall = TERRAIN_MASK_WALL,
@@ -397,10 +396,9 @@ js_deserializable!(Terrain);
 ///
 /// To convert from a string representation directly, use
 /// [`FromStr`][std::str::FromStr] or [`Look::deserialize_from_str`] .
-#[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[doc(hidden)]
-#[serde(rename_all = "camelCase")]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[repr(u32)]
 pub enum Look {
     #[display("creep")]
     Creeps = 0,
@@ -485,8 +483,8 @@ pub mod look {
 ///
 /// To convert from a string representation directly, use
 /// [`FromStr`][std::str::FromStr] or [`Part::deserialize_from_str`] .
-#[repr(u32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[repr(u32)]
 #[display(style = "snake_case")]
 pub enum Part {
     Move = 0,
@@ -634,8 +632,8 @@ pub const STORAGE_HITS: u32 = 10_000;
 /// To convert from a string representation directly, use
 /// [`FromStr`][std::str::FromStr] or
 /// [`StructureType::deserialize_from_str`] .
-#[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[repr(u32)]
 #[display(style = "camelCase")]
 pub enum StructureType {
     Spawn = 0,
@@ -841,7 +839,6 @@ pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
 pub const MINERAL_RANDOM_FACTOR: u32 = 2;
 
 /// Translates the `DENSITY_*` constants.
-#[repr(u32)]
 #[derive(
     Debug,
     PartialEq,
@@ -854,6 +851,7 @@ pub const MINERAL_RANDOM_FACTOR: u32 = 2;
     Deserialize_repr,
     IntoEnumIterator,
 )]
+#[repr(u32)]
 pub enum Density {
     Low = 1,
     Moderate = 2,
@@ -938,7 +936,6 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 /// [`FromStr`][std::str::FromStr] or
 /// [`IntershardResourceType::deserialize_from_str`] .
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[serde(rename_all = "camelCase")]
 #[repr(u32)]
 pub enum IntershardResourceType {
     #[display("token")]
@@ -969,8 +966,8 @@ impl IntershardResourceType {
 /// To convert from a string representation directly, use
 /// [`FromStr`][std::str::FromStr] or
 /// [`ResourceType::deserialize_from_str`] .
-#[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[repr(u32)]
 pub enum ResourceType {
     /// `"energy"`
     #[display("energy")]
