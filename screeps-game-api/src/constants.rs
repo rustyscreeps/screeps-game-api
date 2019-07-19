@@ -388,7 +388,7 @@ js_deserializable!(Terrain);
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, you need to use the `__look_num_to_str` and
+/// using these impls manually, use the `__look_num_to_str` and
 /// `__look_str_to_num` JavaScript functions to convert.
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
@@ -462,7 +462,7 @@ pub mod look {
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, you need to use the `__part_num_to_str` and
+/// using these impls manually, use the `__part_num_to_str` and
 /// `__part_str_to_num` JavaScript functions to convert.
 #[repr(u32)]
 #[derive(
@@ -596,7 +596,7 @@ pub const STORAGE_HITS: u32 = 10_000;
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, you need to use the
+/// using these impls manually, use the
 /// `__structure_type_num_to_str` and `__structure_type_str_to_num` JavaScript
 /// functions to convert.
 #[repr(u32)]
@@ -887,9 +887,8 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, you need to use the
-/// `__intershard_resource_num_to_str` and `__intershard_resource_str_to_num`
-/// JavaScript functions to convert.
+/// using these impls manually, use the `__intershard_resource_num_to_str` and
+/// `__intershard_resource_str_to_num` JavaScript functions to convert.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[serde(rename_all = "camelCase")]
 #[repr(u32)]
@@ -902,7 +901,7 @@ pub enum IntershardResourceType {
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, you need to use the `__resource_type_num_to_str`
+/// using these impls manually, use the `__resource_type_num_to_str`
 /// and `__resource_type_str_to_num` JavaScript functions to convert.
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
