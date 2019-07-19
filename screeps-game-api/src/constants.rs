@@ -361,14 +361,38 @@ js_deserializable!(Color);
 /// _only work with the integer constants_. If you're ever consuming strings
 /// such as `"plain"`, `"swamp"`, `"wall"`, you can use the
 /// `__terrain_str_to_num` JavaScript function.
+///
+/// To convert from a string representation directly, use
+/// [`FromStr`][std::str::FromStr] or [`Look::deserialize_from_str`] .
 #[derive(
-    Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize_repr, Serialize_repr, FromPrimitive,
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Hash,
+    Deserialize_repr,
+    Serialize_repr,
+    FromPrimitive,
+    FromStr,
 )]
 #[repr(u8)]
+#[display(style = "snake_case")]
 pub enum Terrain {
     Plain = 0,
     Wall = TERRAIN_MASK_WALL,
     Swamp = TERRAIN_MASK_SWAMP,
+}
+
+impl Terrain {
+    /// Helper function for deserializing from a string rather than from an
+    /// integer.
+    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let s: Cow<'de, str> = Cow::deserialize(d)?;
+        Self::from_str(&s).map_err(|_| {
+            D::Error::invalid_value(Unexpected::Str(&s), &r#""plain", "wall" or "swamp""#)
+        })
+    }
 }
 
 js_deserializable!(Terrain);
