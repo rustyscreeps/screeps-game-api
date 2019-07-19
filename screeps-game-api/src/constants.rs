@@ -350,12 +350,6 @@ pub enum Color {
     White = 10,
 }
 
-impl From<Color> for u32 {
-    fn from(c: Color) -> u32 {
-        c as u32
-    }
-}
-
 js_deserializable!(Color);
 
 /// Terrain constant.
