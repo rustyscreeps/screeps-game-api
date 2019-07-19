@@ -659,7 +659,7 @@ pub const CONSTRUCTION_COST_ROAD_WALL_RATIO: u32 = 150;
 
 /// Translates the `CONTROLLER_LEVELS` constant.
 ///
-/// Accepts levels 1-7.
+/// Accepts levels 1-8.
 pub fn controller_levels(current_rcl: u32) -> Option<u32> {
     match current_rcl {
         1 => Some(200),
@@ -675,7 +675,7 @@ pub fn controller_levels(current_rcl: u32) -> Option<u32> {
 
 /// Translates the `CONTROLLER_DOWNGRADE` constant.
 ///
-/// Accepts levels 1-7.
+/// Accepts levels 1-8.
 pub fn controller_downgrade(rcl: u32) -> Option<u32> {
     match rcl {
         1 => Some(20_000),
