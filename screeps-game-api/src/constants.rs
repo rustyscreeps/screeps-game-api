@@ -106,15 +106,17 @@ pub mod find {
         fn find_code(&self) -> i32;
     }
 
-    /// Useful for finding any [`RoomObject`][crate::objects::RoomObject] with
+    /// Useful for finding any [`RoomObject`] with
     /// a dynamically-chosen find constant.
     ///
     /// If you know ahead of time what constant you'll use, then the
     /// all-upper-case constants in [this module](crate::constants::find) will
     /// be more helpful, and won't require casting the result types.
     ///
-    /// If you do use this constant, I recommend just importing the `find`
-    /// module and referring to it as `find::RoomObject`.
+    /// *Note*: To avoid ambiguity with [`RoomObject`], you should refer to this
+    /// enum as `find::RoomObject` rather than importing it directly.
+    ///
+    /// [`RoomObject`]: crate::objects::RoomObject
     #[derive(
         Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
     )]
