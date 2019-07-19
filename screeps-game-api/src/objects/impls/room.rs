@@ -642,7 +642,7 @@ pub struct AttackEvent {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
-#[repr(u32)]
+#[repr(u8)]
 pub enum AttackType {
     Melee = 1,
     Ranged = 2,
@@ -682,7 +682,7 @@ pub struct HealEvent {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
-#[repr(u32)]
+#[repr(u8)]
 pub enum HealType {
     Melee = 1,
     Ranged = 2,

@@ -383,7 +383,7 @@ macro_rules! typesafe_find_constants {
             unsafe impl FindConstant for $constant_name {
                 type Item = $result;
 
-                fn find_code(&self) -> i32 {
+                fn find_code(&self) -> i16 {
                     $value
                 }
             }

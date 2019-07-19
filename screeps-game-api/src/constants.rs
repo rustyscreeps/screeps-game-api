@@ -32,7 +32,7 @@ pub use self::find::FindConstant;
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
 )]
-#[repr(i32)]
+#[repr(i16)]
 pub enum ReturnCode {
     Ok = 0,
     NotOwner = -1,
@@ -107,7 +107,7 @@ pub mod find {
     pub unsafe trait FindConstant {
         type Item: FromExpectedType<Reference>;
 
-        fn find_code(&self) -> i32;
+        fn find_code(&self) -> i16;
     }
 
     /// Useful for finding any [`RoomObject`] with
@@ -124,7 +124,7 @@ pub mod find {
     #[derive(
         Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
     )]
-    #[repr(i32)]
+    #[repr(i16)]
     pub enum RoomObject {
         Creeps = 101,
         MyCreeps = 102,
@@ -149,15 +149,15 @@ pub mod find {
     unsafe impl FindConstant for RoomObject {
         type Item = crate::objects::RoomObject;
 
-        fn find_code(&self) -> i32 {
-            *self as i32
+        fn find_code(&self) -> i16 {
+            *self as i16
         }
     }
 
     #[derive(
         Copy, Clone, Debug, FromPrimitive, Deserialize_repr, Serialize_repr, PartialEq, Eq, Hash,
     )]
-    #[repr(i32)]
+    #[repr(i16)]
     pub enum Exit {
         Top = 1,
         Right = 3,
@@ -191,8 +191,8 @@ pub mod find {
     unsafe impl FindConstant for Exit {
         type Item = RoomPosition;
 
-        fn find_code(&self) -> i32 {
-            *self as i32
+        fn find_code(&self) -> i16 {
+            *self as i16
         }
     }
 
@@ -218,18 +218,18 @@ pub mod find {
         POWER_CREEPS, 119, PowerCreep;
         MY_POWER_CREEPS, 120, PowerCreep;
         HOSTILE_POWER_CREEPS, 121, PowerCreep;
-        EXIT_TOP, Exit::Top as i32, RoomPosition;
-        EXIT_RIGHT, Exit::Right as i32, RoomPosition;
-        EXIT_BOTTOM, Exit::Bottom as i32, RoomPosition;
-        EXIT_LEFT, Exit::Left as i32, RoomPosition;
-        EXIT, Exit::All as i32, RoomPosition;
+        EXIT_TOP, Exit::Top as i16, RoomPosition;
+        EXIT_RIGHT, Exit::Right as i16, RoomPosition;
+        EXIT_BOTTOM, Exit::Bottom as i16, RoomPosition;
+        EXIT_LEFT, Exit::Left as i16, RoomPosition;
+        EXIT, Exit::All as i16, RoomPosition;
     }
 }
 
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]
-#[repr(u32)]
+#[repr(u8)]
 pub enum Direction {
     Top = 1,
     TopRight = 2,
@@ -303,12 +303,12 @@ impl fmt::Display for Direction {
 #[derive(
     Copy, Clone, Debug, FromPrimitive, Deserialize_repr, Serialize_repr, PartialEq, Eq, Hash,
 )]
-#[repr(i32)]
+#[repr(u8)]
 pub enum ExitDirection {
-    Top = Direction::Top as i32,
-    Right = Direction::Right as i32,
-    Bottom = Direction::Bottom as i32,
-    Left = Direction::Left as i32,
+    Top = Direction::Top as u8,
+    Right = Direction::Right as u8,
+    Bottom = Direction::Bottom as u8,
+    Left = Direction::Left as u8,
 }
 
 impl From<ExitDirection> for find::Exit {
@@ -336,7 +336,7 @@ impl From<ExitDirection> for Direction {
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
 )]
-#[repr(u32)]
+#[repr(u8)]
 pub enum Color {
     Red = 1,
     Purple = 2,
@@ -364,7 +364,7 @@ js_deserializable!(Color);
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize_repr, Serialize_repr, FromPrimitive,
 )]
-#[repr(u32)]
+#[repr(u8)]
 pub enum Terrain {
     Plain = 0,
     Wall = TERRAIN_MASK_WALL,
@@ -381,7 +381,7 @@ js_deserializable!(Terrain);
 /// In fact, I don't believe this can be used at all without resorting to
 /// manually including JS code.
 ///
-/// To use in JS: `__look_num_to_str(@{look as u32})` function
+/// To use in JS: `__look_num_to_str(@{look as u8})` function
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
@@ -392,7 +392,7 @@ js_deserializable!(Terrain);
 /// [`FromStr`][std::str::FromStr] or [`Look::deserialize_from_str`] .
 #[doc(hidden)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u32)]
+#[repr(u8)]
 pub enum Look {
     #[display("creep")]
     Creeps = 0,
@@ -478,7 +478,7 @@ pub mod look {
 /// To convert from a string representation directly, use
 /// [`FromStr`][std::str::FromStr] or [`Part::deserialize_from_str`] .
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u32)]
+#[repr(u8)]
 #[display(style = "snake_case")]
 pub enum Part {
     Move = 0,
@@ -627,7 +627,7 @@ pub const STORAGE_HITS: u32 = 10_000;
 /// [`FromStr`][std::str::FromStr] or
 /// [`StructureType::deserialize_from_str`] .
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u32)]
+#[repr(u8)]
 #[display(style = "camelCase")]
 pub enum StructureType {
     Spawn = 0,
@@ -805,9 +805,9 @@ pub const GCL_POW: f32 = 2.4;
 pub const GCL_MULTIPLY: u32 = 1_000_000;
 pub const GCL_NOVICE: u32 = 3;
 
-pub const TERRAIN_MASK_WALL: u32 = 1;
-pub const TERRAIN_MASK_SWAMP: u32 = 2;
-pub const TERRAIN_MASK_LAVA: u32 = 4;
+pub const TERRAIN_MASK_WALL: u8 = 1;
+pub const TERRAIN_MASK_SWAMP: u8 = 2;
+pub const TERRAIN_MASK_LAVA: u8 = 4;
 
 pub const MAX_CONSTRUCTION_SITES: u32 = 100;
 pub const MAX_CREEP_SIZE: u32 = 50;
@@ -845,7 +845,7 @@ pub const MINERAL_RANDOM_FACTOR: u32 = 2;
     Deserialize_repr,
     IntoEnumIterator,
 )]
-#[repr(u32)]
+#[repr(u8)]
 pub enum Density {
     Low = 1,
     Moderate = 2,
@@ -930,7 +930,7 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 /// [`FromStr`][std::str::FromStr] or
 /// [`IntershardResourceType::deserialize_from_str`] .
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u32)]
+#[repr(u8)]
 pub enum IntershardResourceType {
     #[display("token")]
     SubscriptionToken = 1,
@@ -961,7 +961,7 @@ impl IntershardResourceType {
 /// [`FromStr`][std::str::FromStr] or
 /// [`ResourceType::deserialize_from_str`] .
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u32)]
+#[repr(u16)]
 pub enum ResourceType {
     /// `"energy"`
     #[display("energy")]
@@ -1225,7 +1225,7 @@ pub enum PowerClass {
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]
-#[repr(u32)]
+#[repr(u8)]
 pub enum PowerType {
     GenerateOps = 1,
     OperateSpawn = 2,

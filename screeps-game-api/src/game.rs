@@ -292,7 +292,7 @@ pub mod market {
         Room,
     };
 
-    #[repr(u32)]
+    #[repr(u8)]
     #[derive(Clone, Debug)]
     pub enum OrderType {
         Sell = 0,

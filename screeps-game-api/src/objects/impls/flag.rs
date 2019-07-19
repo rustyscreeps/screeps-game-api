@@ -38,12 +38,12 @@ impl Flag {
     pub fn set_color(&self, color: Color, secondary_color: Option<Color>) {
         match secondary_color {
             None => js! { @(no_return)
-                @{self.as_ref()}.setColor(@{color as u32});
+                @{self.as_ref()}.setColor(@{color as u8});
             },
             Some(sec_color) => js! { @(no_return)
                 @{self.as_ref()}.setColor(
-                    @{color as u32},
-                    @{sec_color as u32},
+                    @{color as u8},
+                    @{sec_color as u8},
                 );
             },
         };
