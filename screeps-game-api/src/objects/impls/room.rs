@@ -765,7 +765,7 @@ impl TryFrom<Value> for LookResult {
                 LookResult::ConstructionSite(js_unwrap_ref!(@{v}.constructionSite))
             }
             "nuke" => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
-            "terrain" => LookResult::Terrain(js_unwrap!(@{v}.terrain)),
+            "terrain" => LookResult::Terrain(js_unwrap!(__terrain_str_to_num(@{v}.terrain))),
             "tombstone" => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
             "powerCreep" => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
             _ => {

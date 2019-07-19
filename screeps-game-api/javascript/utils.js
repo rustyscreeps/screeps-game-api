@@ -224,3 +224,12 @@ function __order_type_num_to_str(num) {
         default: throw new Error("unknown order type " + num);
     }
 }
+
+function __terrain_str_to_num(str) {
+    switch (str) {
+        case 'plain': return 0;
+        case 'swamp': return TERRAIN_MASK_SWAMP;
+        case 'wall': return TERRAIN_MASK_WALL;
+        default: throw new Error("unknown terrain type " + str);
+    }
+}

@@ -361,8 +361,8 @@ js_deserializable!(Color);
 ///
 /// *Note:* This constant's `TryFrom<Value>` and `Deserialize` implementations
 /// _only work with the integer constants_. If you're ever consuming strings
-/// such as `"plain"`, `"swamp"`, `"wall"`, you must convert those manually into
-/// `0`, `1` and `2` respectively.
+/// such as `"plain"`, `"swamp"`, `"wall"`, you can use the
+/// `__terrain_str_to_num` JavaScript function.
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, Deserialize_repr, Serialize_repr, FromPrimitive,
 )]
