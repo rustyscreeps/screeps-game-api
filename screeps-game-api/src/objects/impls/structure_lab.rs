@@ -13,9 +13,7 @@ simple_accessors! {
 
 impl StructureLab {
     pub fn mineral_type(&self) -> ResourceType {
-        js_unwrap! {
-            return __resource_type_str_to_num(@{self.as_ref()}.mineralType);
-        }
+        js_unwrap!(__resource_type_str_to_num(@{self.as_ref()}.mineralType))
     }
 
     pub fn boost_creep(&self, creep: &Creep, body_part_count: Option<u32>) -> ReturnCode {
