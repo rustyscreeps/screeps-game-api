@@ -10,7 +10,6 @@ simple_accessors! {
     (my -> my -> bool),
     (progress -> progress -> u32),
     (progress_total -> progressTotal -> u32),
-    (structure_type -> structureType -> StructureType),
 }
 
 impl ConstructionSite {
@@ -29,5 +28,9 @@ impl ConstructionSite {
 
     pub fn remove(&self) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.remove())
+    }
+
+    pub fn structure_type(&self) -> StructureType {
+        js_unwrap!(__structure_type_str_to_num(@{self.as_ref()}.structureType))
     }
 }
