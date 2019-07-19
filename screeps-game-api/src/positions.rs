@@ -436,26 +436,6 @@ mod room_pos_serde {
         y: u32,
     }
 
-    #[derive(Deserialize)]
-    // efficient way of storing "either format works"
-    //
-    // This should be faster than using an untagged enum since this way serde knows
-    // exactly what fields are possible in all variants at compile time.
-    struct EitherFormat {
-        // like EfficientFormat
-        #[serde(default)]
-        room_x: Option<i32>,
-        #[serde(default)]
-        room_y: Option<i32>,
-        // like ReadableFormat
-        #[serde(default)]
-        #[serde(rename = "camelCase")]
-        room_name: Option<LocalRoomName>,
-        // in both
-        x: u32,
-        y: u32,
-    }
-
     impl From<EfficientFormat> for LocalRoomPosition {
         fn from(
             EfficientFormat {
@@ -518,30 +498,8 @@ mod room_pos_serde {
             D: Deserializer<'de>,
         {
             if deserializer.is_human_readable() {
-                // an older version of the library always serialized as 'EfficientFormat' - this
-                // keeps compatibility with that.
-                let either = EitherFormat::deserialize(deserializer)?;
-                match (either.room_name, either.room_x, either.room_y) {
-                    (Some(room_name), _, _) => Ok(LocalRoomPosition {
-                        x: either.x,
-                        y: either.y,
-                        room_name,
-                    }),
-                    (_, Some(room_x), Some(room_y)) => Ok(EfficientFormat {
-                        x: either.x,
-                        y: either.y,
-                        room_x,
-                        room_y,
-                    }
-                    .into()),
-                    (None, Some(_), None) => Err(D::Error::missing_field("room_y")),
-                    (None, None, Some(_)) => Err(D::Error::missing_field("room_x")),
-                    (None, None, None) => Err(D::Error::missing_field("roomName")),
-                }
+                ReadableFormat::deserialize(deserializer).map(Into::into)
             } else {
-                // we don't use EitherFormat here because in some binary formats like bincode,
-                // there isn't the metadata necessary to figure out that a field with a given
-                // name isn't present.
                 EfficientFormat::deserialize(deserializer).map(Into::into)
             }
         }
