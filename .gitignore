@@ -4,7 +4,7 @@ target
 
 # Build files #
 ###############
-/Cargo.lock
+*/Cargo.lock
 
 # Packages #
 ############
