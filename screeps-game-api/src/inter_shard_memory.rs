@@ -27,6 +27,8 @@ pub fn set_local(value: &str) {
 /// Returns the string contents of another shard's data.
 ///
 /// Consider using [`game::cpu::shard_limits`] to retrieve shard names.
+///
+/// [`game::cpu::shard_limits`]: crate::game::cpu::shard_limits
 pub fn get_remote(shard: &str) -> String {
     js_unwrap!(InterShardMemory.getRemote(@{shard}))
 }
