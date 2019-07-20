@@ -1,10 +1,8 @@
-use std::path::{Path, PathBuf};
-
-use std::fs;
-
-use std::collections::HashSet;
-
-use failure;
+use std::{
+    collections::HashSet,
+    fs,
+    path::{Path, PathBuf},
+};
 
 use crate::config::Configuration;
 

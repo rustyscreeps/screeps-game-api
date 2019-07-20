@@ -1,7 +1,5 @@
 use std::path::Path;
 
-use failure;
-
 use crate::{
     build,
     config::{self, Configuration},

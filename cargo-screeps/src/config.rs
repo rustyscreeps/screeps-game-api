@@ -4,10 +4,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use serde::{Deserialize};
-use failure::{self, ResultExt};
-use serde_ignored;
-use toml;
+use failure::ResultExt;
+use serde::Deserialize;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct BuildConfiguration {

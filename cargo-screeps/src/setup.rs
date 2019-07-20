@@ -1,9 +1,6 @@
 use std::{io, path::PathBuf};
 
-use {
-    clap::{self, AppSettings},
-    failure, fern, log,
-};
+use clap::AppSettings;
 
 #[derive(Clone, Debug)]
 pub struct CliConfig {

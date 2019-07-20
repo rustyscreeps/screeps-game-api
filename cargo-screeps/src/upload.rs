@@ -1,7 +1,6 @@
 use std::{collections::HashMap, fs, io::Read, path::Path};
 
 use serde::Serialize;
-use {base64, failure, reqwest, serde_json};
 
 use crate::config::{Authentication, Configuration};
 

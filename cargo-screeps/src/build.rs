@@ -2,8 +2,6 @@ use std::{borrow::Cow, ffi::OsStr, fs, io::Write, path::Path, process};
 
 use crate::config::{BuildConfiguration, Configuration};
 
-use {failure, regex};
-
 pub fn check(root: &Path) -> Result<(), failure::Error> {
     debug!("running check");
 
