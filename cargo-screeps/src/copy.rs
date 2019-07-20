@@ -12,8 +12,8 @@ pub fn copy<P: AsRef<Path>>(root: P, config: &Configuration) -> Result<(), failu
         format_err!("must include [copy] section in configuration to deploy using copy")
     })?;
 
-    // join root here so relative directories are correct even if 'cargo screeps' is run
-    // in sub-directory.
+    // join root here so relative directories are correct even if 'cargo screeps' is
+    // run in sub-directory.
     let output_dir = root
         .join(&copy_config.destination)
         .join(&copy_config.branch);

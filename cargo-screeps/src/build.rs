@@ -216,8 +216,8 @@ if( typeof Rust === "undefined" ) {
 
     let initialize_function = &input[prefix_match.end()..suffix_match.start()];
 
-    // screeps doesn't have `console.error`, so we define our own `console_error` function,
-    // and call it.
+    // screeps doesn't have `console.error`, so we define our own `console_error`
+    // function, and call it.
     let initialize_function = initialize_function.replace("console.error", "console_error");
 
     let wasm_module_name = config
