@@ -18,44 +18,42 @@ Intended to be used with [`screeps-game-api`], type-safe WASM bindings to the Sc
 
 Configured in `[build]` config section. No required settings.
 
-1. run `cargo-web build --release` to build the rust source
-2. strip off header / surrounding function `cargo-web` generates for a generic JS file to load from
-   web or from local filesystem
-3. append initialization call using bytes from `require('<compiled module name>')`
-4. put processed JS into `target/main.js` copy compiled WASM into `target/compiled.wasm`
+1. runs `cargo-web build --release` to build the rust source
+2. strips off header `cargo-web` generates for loading WASM file from a URL or the local filesystem
+3. appends initialization call using bytes from `require('<compiled module name>')`
+4. puts processed JS into `target/main.js` copy compiled WASM into `target/compiled.wasm`
 
 ### `upload`:
 
 Requires `[upload]` config section with at minimum username, password and branch.
 
-1. run build
-2. read `target/*.js` and `target/*.wasm`, keeping track of filenames
-3. read `screeps.toml` for upload options
-4. upload all read files to server, using filenames as the filenames on the server
+1. runs build
+2. reads `target/*.js` and `target/*.wasm`, keeping track of filenames
+3. reads `screeps.toml` for upload options
+4. uploads all read files to server, using filenames as the filenames on the server
 
 ### `copy`:
 
 Requires `[copy]` config section with at minimum destination and branch.
 
-1. run build
-2. copy compiled main file and WASM file (default `main.js` and `compiled.wasm`) from `target/` to
+1. runs build
+2. copies compiled main file and WASM file (default `main.js` and `compiled.wasm`) from `target/` to
    `<destination directory>/<branch name>/`
-3. if pruning is enabled, delete all other files in `<destination directory>/<branch name>/`
+3. if pruning is enabled, deletes all other files in `<destination directory>/<branch name>/`
 
 ### `deploy`:
 
 Requires `default_deploy_mode` configuration setting.
 
-1. run build
-2. run `upload` or `copy` depending on the `default_deploy_mode` configuration option
+1. runs build
+2. runs `upload` or `copy` depending on the `default_deploy_mode` configuration option
 
 ### `check`:
 
 Does not require configuration.
 
-1. perform type checking / lifetime checking without compiling code
-  - runs `cargo web check --target=wasm32-unknown-unknown` which is fairly similar to
-    `cargo check`.
+1. performs type checking and lifetime checking without compiling code
+  - runs `cargo web check` (see `cargo check` for non-WASM codebases)
 
 # Configuration Options
 
@@ -128,14 +126,10 @@ See [docs/initialization-header.md] for more information on this.
 
 # Updating `cargo screeps`
 
-`cargo-screeps` no longer requires installing `cargo-web`, so if you've previously installed both,
-you can now freely remove the latter. It won't hurt to have it installed, but `cargo-screeps` will
-not use it.
-
 To update `cargo-screeps`, simply repeat the install process with the `--force` (`-f`) flag.
 
 After updating, you'll want to do a full `cargo clean` to remove any old artifacts which were built
-using the older version of `cargo-web`.
+using the older version of `cargo-screeps`.
 
 ```sh
 cargo install -f cargo-screeps
