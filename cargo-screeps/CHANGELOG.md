@@ -1,6 +1,10 @@
 Unreleased
 ==================
 
+`cargo-screeps` no longer requires installing `cargo-web`, so if you've
+previously installed both, you can now freely remove the latter. It won't hurt
+to have it installed, but `cargo-screeps` will not use it.
+
 - Fix `cargo screeps check` (#144)
 - Removed encompassing cargo workspace (#180)
 - Update `cargo-screeps` to more rust 2018 idioms (#182)
