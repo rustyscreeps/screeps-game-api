@@ -1,52 +1,43 @@
-use std::{borrow::Cow, ffi::OsStr, fs, io::Write, path::Path, process};
+use std::{borrow::Cow, ffi::OsStr, fs, io::Write, path::Path};
 
+use cargo_web::{BuildOpts, CargoWebOpts, CheckOpts};
 use failure::{bail, ensure, format_err};
 use log::*;
+use structopt::StructOpt;
 
 use crate::config::{BuildConfiguration, Configuration};
 
 pub fn check(root: &Path) -> Result<(), failure::Error> {
     debug!("running check");
 
-    debug!("running 'cargo web check --target=wasm32-unknown-unknown'");
-    let cargo_success = process::Command::new("cargo")
-        .args(&["web", "check", "--target=wasm32-unknown-unknown"])
-        .current_dir(root)
-        .spawn()?
-        .wait()?;
-    if !cargo_success.success() {
-        bail!(
-            "'cargo check' exited with a non-zero exit code: {}",
-            cargo_success
-        );
+    debug!("running cargo-web check --target=wasm32-unknown-unknown");
+
+    let res = cargo_web::run(CargoWebOpts::Check(
+        CheckOpts::from_iter_safe(&["--target=wasm32-unknown-unknown"])
+            .expect("expected hardcoded cargo-web args to be valid"),
+    ));
+    if let Err(e) = res {
+        bail!("cargo-web check failed: {}", e);
     }
 
-    debug!("finished 'cargo check'");
+    debug!("finished executing cargo-web check");
     Ok(())
 }
 
 pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> {
     debug!("building");
 
-    debug!("running 'cargo web build --target=wasm32-unknown-unknown --release'");
-    let cargo_success = process::Command::new("cargo")
-        .args(&[
-            "web",
-            "build",
-            "--target=wasm32-unknown-unknown",
-            "--release",
-        ])
-        .current_dir(root)
-        .spawn()?
-        .wait()?;
-    if !cargo_success.success() {
-        bail!(
-            "'cargo web' exited with a non-zero exit code: {}",
-            cargo_success
-        );
+    debug!("running cargo-web build --target=wasm32-unknown-unknown --release");
+
+    let res = cargo_web::run(CargoWebOpts::Build(
+        BuildOpts::from_iter_safe(&["--target=wasm32-unknown-unknown", "--release"])
+            .expect("expected hardcoded cargo-web args to be valid"),
+    ));
+    if let Err(e) = res {
+        bail!("cargo-web build failed: {}", e);
     }
 
-    debug!("finished 'cargo web'");
+    debug!("finished executing cargo-web build");
 
     let target_dir = root
         .join("target")

@@ -21,6 +21,8 @@ description = "Build tool for deploying Rust WASM code to Screeps game servers"
 [dependencies]
 base64 = "0.10"
 clap = "2"
+# We rely on the output format of cargo-web, which is not a publicly guaranteed property.
+cargo-web = "=0.6.26"
 failure = "0.1"
 fern = "0.5"
 log = "0.4"
@@ -30,4 +32,5 @@ reqwest = "0.9"
 serde = { version = "1", features = ["derive"] }
 serde_ignored = "0.0.4"
 serde_json = "1"
+structopt = "0.2"
 toml = "0.5"
