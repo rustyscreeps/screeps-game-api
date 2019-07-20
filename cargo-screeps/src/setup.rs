@@ -1,6 +1,7 @@
 use std::{io, path::PathBuf};
 
-use {clap::AppSettings, failure::format_err};
+use clap::AppSettings;
+use failure::format_err;
 
 #[derive(Clone, Debug)]
 pub struct CliConfig {
