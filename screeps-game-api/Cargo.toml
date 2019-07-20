@@ -32,7 +32,7 @@ parse-display = "0.1"
 serde = {version = "1", features = ["derive"]}
 serde_json = "1"
 serde_repr = "0.1"
-scoped-tls = "0.1"
+scoped-tls = "1"
 stdweb = "0.4"
 stdweb-derive = "0.5"
 
