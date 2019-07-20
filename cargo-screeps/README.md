@@ -5,11 +5,10 @@ cargo-screeps
 
 Build tool for deploying Rust WASM code to Screeps game servers.
 
-Best used with [`screeps-game-api`].
+`cargo-screeps` is a direct wrapper of [`cargo-web`], and depends on it internally. It adds the
+ability to trim output files for use in `screeps`, and upload to screeps server.
 
-This implements type-safe WASM bindings to the Screeps in-game API.
-
-This is not fully tested, but feel free to use! Issues are welcome.
+Intended to be used with [`screeps-game-api`], type-safe WASM bindings to the Screeps in-game API.
 
 ---
 
@@ -19,7 +18,7 @@ This is not fully tested, but feel free to use! Issues are welcome.
 
 Configured in `[build]` config section. No required settings.
 
-1. run https://github.com/koute/cargo-web to actually build rust source
+1. run `cargo-web build --release` to build the rust source
 2. strip off header / surrounding function `cargo-web` generates for a generic JS file to load from
    web or from local filesystem
 3. append initialization call using bytes from `require('<compiled module name>')`
@@ -55,7 +54,7 @@ Requires `default_deploy_mode` configuration setting.
 Does not require configuration.
 
 1. perform type checking / lifetime checking without compiling code
-  - runs `cargo web --check --target=wasm32-unknown-unknown` which is fairly similar to
+  - runs `cargo web check --target=wasm32-unknown-unknown` which is fairly similar to
     `cargo check`.
 
 # Configuration Options
@@ -129,19 +128,16 @@ See [docs/initialization-header.md] for more information on this.
 
 # Updating `cargo screeps`
 
-As it parses the unstable output of `cargo-web`, `cargo-screeps` is highly dependent on `cargo-web`
-version. It is recommended to upgrade both together.
+`cargo-screeps` no longer requires installing `cargo-web`, so if you've previously installed both,
+you can now freely remove the latter. It won't hurt to have it installed, but `cargo-screeps` will
+not use it.
 
-Installing a version of `cargo-web` newer than what `cargo-screeps` supports will cause it to
-output an error on build. If this happens, please create an issue on this repository and we can
-update `cargo-screeps`. Updating it is simple, but it needs to be done every time `cargo-web`
-changes the output format, and we might not realize that has happened.
+To update `cargo-screeps`, simply repeat the install process with the `--force` (`-f`) flag.
 
 After updating, you'll want to do a full `cargo clean` to remove any old artifacts which were built
 using the older version of `cargo-web`.
 
 ```sh
-cargo install -f cargo-web
 cargo install -f cargo-screeps
 cargo clean
 cargo screeps build
@@ -150,5 +146,6 @@ cargo screeps build
 [cratesio-badge]: http://meritbadge.herokuapp.com/cargo-screeps
 [crate]: https://crates.io/crates/cargo-screeps/
 [`screeps-game-api`]: https://github.com/daboross/screeps-in-rust-via-wasm/
+[`cargo-web`]: https://github.com/koute/cargo-web
 [screepsmod-auth]: https://www.npmjs.com/package/screepsmod-auth
 
