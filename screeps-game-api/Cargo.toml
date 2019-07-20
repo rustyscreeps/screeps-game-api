@@ -1,6 +1,6 @@
 [package]
 name = "screeps-game-api"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2018"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://docs.rs/screeps-game-api/"

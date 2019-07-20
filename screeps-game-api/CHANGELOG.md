@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+
+0.5.0 (2019-07-19)
+==================
+
 - `Serialize` and `Deserialize` format changed for most constants and for `LocalRoomPosition`
   (breaking)
   - constants now always serialize as integers (see
