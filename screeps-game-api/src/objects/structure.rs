@@ -242,7 +242,8 @@ fn get_structure_type(structure: &Reference) -> Result<StructureType, Conversion
     (js! {
         return __structure_type_str_to_num(@{structure}.structureType);
     })
-    .try_into().map_err(Into::into)
+    .try_into()
+    .map_err(Into::into)
 }
 
 impl FromExpectedType<Reference> for Structure {
