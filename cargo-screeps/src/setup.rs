@@ -1,6 +1,6 @@
 use std::{io, path::PathBuf};
 
-use clap::AppSettings;
+use {clap::AppSettings, failure::format_err};
 
 #[derive(Clone, Debug)]
 pub struct CliConfig {
@@ -24,7 +24,7 @@ fn app() -> clap::App<'static, 'static> {
         .subcommand(
             clap::SubCommand::with_name("screeps")
                 .author("David Ross")
-                .version(crate_version!())
+                .version(clap::crate_version!())
                 .about("Builds WASM-targetting Rust code and deploys to Screeps game servers")
                 .setting(AppSettings::ArgRequiredElseHelp)
                 .arg(

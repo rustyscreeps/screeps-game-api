@@ -3,6 +3,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use failure::{self, format_err};
+
 use crate::setup::CliConfig;
 
 pub fn find_project_root(cli_config: &CliConfig) -> Result<PathBuf, failure::Error> {

@@ -4,6 +4,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use failure::format_err;
+use log::*;
+
 use crate::config::Configuration;
 
 pub fn copy<P: AsRef<Path>>(root: P, config: &Configuration) -> Result<(), failure::Error> {

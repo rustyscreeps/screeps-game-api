@@ -4,7 +4,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use failure::ResultExt;
+use failure::{self, bail, ensure, ResultExt};
+use log::*;
 use serde::Deserialize;
 
 #[derive(Clone, Debug, Deserialize)]
