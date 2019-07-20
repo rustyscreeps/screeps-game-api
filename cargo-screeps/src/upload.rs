@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fs, io::Read, path::Path};
 
-use failure::{ensure, format_err, bail};
+use failure::{bail, ensure, format_err};
 use log::*;
 use serde::Serialize;
 
