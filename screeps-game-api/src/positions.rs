@@ -415,7 +415,7 @@ mod stdweb {
 }
 
 mod room_pos_serde {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
     use super::{LocalRoomName, LocalRoomPosition};
 
