@@ -1,6 +1,8 @@
 use std::{collections::HashMap, fs, io::Read, path::Path};
 
-use {base64, failure, reqwest, serde_json};
+use failure::{ensure, format_err, bail};
+use log::*;
+use serde::Serialize;
 
 use crate::config::{Authentication, Configuration};
 
@@ -31,7 +33,7 @@ pub fn upload(root: &Path, config: &Configuration) -> Result<(), failure::Error>
                     buf
                 };
                 let data = base64::encode(&data);
-                json!({ "binary": data })
+                serde_json::json!({ "binary": data })
             } else {
                 continue;
             };

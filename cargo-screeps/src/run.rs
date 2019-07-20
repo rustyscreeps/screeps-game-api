@@ -1,6 +1,7 @@
 use std::path::Path;
 
-use failure;
+use failure::format_err;
+use log::*;
 
 use crate::{
     build,

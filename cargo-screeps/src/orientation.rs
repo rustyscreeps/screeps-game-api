@@ -3,7 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use failure;
+use failure::format_err;
 
 use crate::setup::CliConfig;
 

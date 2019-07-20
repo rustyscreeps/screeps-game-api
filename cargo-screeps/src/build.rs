@@ -1,8 +1,9 @@
 use std::{borrow::Cow, ffi::OsStr, fs, io::Write, path::Path, process};
 
-use crate::config::{BuildConfiguration, Configuration};
+use failure::{bail, ensure, format_err};
+use log::*;
 
-use {failure, regex};
+use crate::config::{BuildConfiguration, Configuration};
 
 pub fn check(root: &Path) -> Result<(), failure::Error> {
     debug!("running check");
@@ -218,8 +219,8 @@ if( typeof Rust === "undefined" ) {
 
     let initialize_function = &input[prefix_match.end()..suffix_match.start()];
 
-    // screeps doesn't have `console.error`, so we define our own `console_error` function,
-    // and call it.
+    // screeps doesn't have `console.error`, so we define our own `console_error`
+    // function, and call it.
     let initialize_function = initialize_function.replace("console.error", "console_error");
 
     let wasm_module_name = config
