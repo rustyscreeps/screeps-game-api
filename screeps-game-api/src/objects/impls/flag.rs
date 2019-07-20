@@ -24,7 +24,7 @@ impl Flag {
         value: Value,
     ) -> Result<Result<String, ReturnCode>, crate::ConversionError> {
         match value {
-            Value::Number(num) => Ok(Err(ReturnCode::try_from(num)?)),
+            num @ Value::Number(_) => Ok(Err(ReturnCode::try_from(num)?)),
             other => String::try_from(other).map(Ok),
         }
     }
@@ -38,12 +38,12 @@ impl Flag {
     pub fn set_color(&self, color: Color, secondary_color: Option<Color>) {
         match secondary_color {
             None => js! { @(no_return)
-                @{self.as_ref()}.setColor(@{u32::from(color)});
+                @{self.as_ref()}.setColor(@{color as u8});
             },
             Some(sec_color) => js! { @(no_return)
                 @{self.as_ref()}.setColor(
-                    @{u32::from(color)},
-                    @{u32::from(sec_color)},
+                    @{color as u8},
+                    @{sec_color as u8},
                 );
             },
         };

@@ -133,12 +133,13 @@ pub mod gcl {
 pub mod map {
     use std::{collections, mem};
 
+    use num_traits::FromPrimitive;
     use scoped_tls::scoped_thread_local;
     use serde::Deserialize;
     use stdweb::Value;
 
     use crate::{
-        constants::{find::Exit, Direction, ReturnCode},
+        constants::{Direction, ExitDirection, ReturnCode},
         macros::*,
         objects::RoomTerrain,
         traits::{TryFrom, TryInto},
@@ -148,8 +149,6 @@ pub mod map {
     ///
     /// [http://docs.screeps.com/api/#Game.map.describeExits]: http://docs.screeps.com/api/#Game.map.describeExits
     pub fn describe_exits(room_name: &str) -> collections::HashMap<Direction, String> {
-        use num_traits::FromPrimitive;
-
         let orig: collections::HashMap<String, String> =
             js_unwrap!(Game.map.describeExits(@{room_name}));
 
@@ -192,17 +191,18 @@ pub mod map {
     }
 
     /// Implements `Game.map.findExit`.
-    pub fn find_exit(from_room: &str, to_room: &str) -> Result<Exit, ReturnCode> {
+    pub fn find_exit(from_room: &str, to_room: &str) -> Result<ExitDirection, ReturnCode> {
         let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room})};
-        Exit::try_from(code)
-            .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
+        ExitDirection::from_i32(code).ok_or_else(|| {
+            ReturnCode::from_i32(code).expect("find_exit: Error code not recognized.")
+        })
     }
 
     pub fn find_exit_with_callback(
         from_room: &str,
         to_room: &str,
         route_callback: impl Fn(String, String) -> f64,
-    ) -> Result<Exit, ReturnCode> {
+    ) -> Result<ExitDirection, ReturnCode> {
         // Actual callback
         fn callback(room_name: String, from_room_name: String) -> f64 {
             FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
@@ -215,8 +215,15 @@ pub mod map {
 
         FR_CALLBACK.set(&callback_lifetime_erased, || {
             let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room}, @{callback})};
-            Exit::try_from(code)
-                .map_err(|v| v.try_into().expect("find_exit: Error code not recognized."))
+            ExitDirection::from_i32(code)
+                .map(Ok)
+                .or_else(|| ReturnCode::from_i32(code).map(Err))
+                .unwrap_or_else(|| {
+                    panic!(
+                        "find_exit: return value {:?} not recognized as either Exit nor ReturnCode",
+                        code
+                    )
+                })
         })
     }
 
@@ -250,12 +257,12 @@ pub mod map {
 
     fn parse_find_route_returned_value(v: Value) -> Result<Vec<RoomRouteStep>, ReturnCode> {
         match v {
-            Value::Number(x) => {
-                let i: i32 = x.try_into().unwrap();
-                Err(i
-                    .try_into()
-                    .unwrap_or_else(|val| panic!("Unexpected return code: {}", val)))
-            }
+            Value::Number(x) => Err(ReturnCode::try_from(Value::Number(x)).unwrap_or_else(|e| {
+                panic!(
+                    "parse_find_route_returned_value: unknown return value: {:?} (err: {})",
+                    x, e
+                )
+            })),
             Value::Reference(_) => Ok(v.try_into().expect("Error on parsing exit directions.")),
             _ => panic!(
                 "Game.map.findRoute expected Number or Reference, found {:?}.",
@@ -267,7 +274,7 @@ pub mod map {
     #[derive(Clone, Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct RoomRouteStep {
-        exit: Exit,
+        exit: ExitDirection,
         room: String,
     }
     js_deserializable!(RoomRouteStep);
@@ -285,7 +292,7 @@ pub mod market {
         Room,
     };
 
-    #[repr(u32)]
+    #[repr(u8)]
     #[derive(Clone, Debug)]
     pub enum OrderType {
         Sell = 0,

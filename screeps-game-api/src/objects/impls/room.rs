@@ -1,5 +1,6 @@
 use std::{fmt, marker::PhantomData, mem, ops::Range};
 
+use num_traits::FromPrimitive;
 use scoped_tls::scoped_thread_local;
 use serde::{
     self,
@@ -12,15 +13,15 @@ use stdweb::{Reference, Value};
 
 use crate::{
     constants::{
-        find::Exit, Color, Direction, FindConstant, LookConstant, ReturnCode, StructureType,
-        Terrain,
+        Color, Direction, ExitDirection, FindConstant, LookConstant, PowerType, ResourceType,
+        ReturnCode, StructureType, Terrain,
     },
     macros::*,
     memory::MemoryReference,
     objects::{
-        ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, Resource, Room, RoomPosition,
-        RoomTerrain, Source, Structure, StructureController, StructureStorage, StructureTerminal,
-        Tombstone,
+        ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource, Room,
+        RoomPosition, RoomTerrain, Source, Structure, StructureController, StructureStorage,
+        StructureTerminal, Tombstone,
     },
     pathfinder::CostMatrix,
     positions::LocalRoomName,
@@ -107,14 +108,16 @@ impl Room {
         js_unwrap_ref!(@{self.as_ref()}.find(@{ty.find_code()}))
     }
 
-    pub fn find_exit_to(&self, room: &Room) -> Result<Exit, ReturnCode> {
+    pub fn find_exit_to(&self, room: &Room) -> Result<ExitDirection, ReturnCode> {
         let code_val = js! {return @{self.as_ref()}.findExitTo(@{room.as_ref()});};
         let code_int: i32 = code_val.try_into().unwrap();
 
         if code_int < 0 {
-            Err(code_int.try_into().unwrap())
+            Err(ReturnCode::from_i32(code_int)
+                .expect("expected find_exit_to return value < 0 to be a valid ReturnCode"))
         } else {
-            Ok(code_int.try_into().unwrap())
+            Ok(ExitDirection::from_i32(code_int)
+                .expect("expected find_exit_to return value >= 0 to be a valid Exit"))
         }
     }
 
@@ -585,6 +588,10 @@ impl<'de> Deserialize<'de> for Event {
                                 serde_json::from_value(val).map_err(err)?,
                             )),
                             10 => Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
+                            11 => Some(EventType::Power(serde_json::from_value(val).map_err(err)?)),
+                            12 => Some(EventType::Transfer(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
                             _ => {
                                 return Err(de::Error::custom(format!(
                                     "Event Type Unrecognized: {}",
@@ -622,6 +629,8 @@ pub enum EventType {
     ReserveController(ReserveControllerEvent),
     UpgradeController(UpgradeControllerEvent),
     Exit(ExitEvent),
+    Power(PowerEvent),
+    Transfer(TransferEvent),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
@@ -633,7 +642,7 @@ pub struct AttackEvent {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
-#[repr(u32)]
+#[repr(u8)]
 pub enum AttackType {
     Melee = 1,
     Ranged = 2,
@@ -673,7 +682,7 @@ pub struct HealEvent {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
-#[repr(u32)]
+#[repr(u8)]
 pub enum HealType {
     Melee = 1,
     Ranged = 2,
@@ -708,6 +717,22 @@ pub struct ExitEvent {
     pub y: u32,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TransferEvent {
+    pub target_id: String,
+    #[serde(deserialize_with = "crate::ResourceType::deserialize_from_str")]
+    pub resource_type: ResourceType,
+    pub amount: u32,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PowerEvent {
+    pub target_id: String,
+    pub power: PowerType,
+}
+
 pub enum LookResult {
     Creep(Creep),
     Energy(Resource),
@@ -720,6 +745,7 @@ pub enum LookResult {
     Nuke(Nuke),
     Terrain(Terrain),
     Tombstone(Tombstone),
+    PowerCreep(PowerCreep),
 }
 
 impl TryFrom<Value> for LookResult {
@@ -740,8 +766,9 @@ impl TryFrom<Value> for LookResult {
                 LookResult::ConstructionSite(js_unwrap_ref!(@{v}.constructionSite))
             }
             "nuke" => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
-            "terrain" => LookResult::Terrain(js_unwrap!(@{v}.terrain)),
+            "terrain" => LookResult::Terrain(js_unwrap!(__terrain_str_to_num(@{v}.terrain))),
             "tombstone" => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
+            "powerCreep" => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
             _ => {
                 return Err(ConversionError::Custom(format!(
                     "Look result type unknown: {:?}",
