@@ -1,4 +1,4 @@
-use std::{borrow::Cow, ffi::OsStr, fs, io::Write, path::Path};
+use std::{borrow::Cow, env, ffi::OsStr, fs, io::Write, path::Path};
 
 use cargo_web::{BuildOpts, CargoWebOpts, CheckOpts};
 use failure::{bail, ensure, format_err};
@@ -9,6 +9,10 @@ use crate::config::{BuildConfiguration, Configuration};
 
 pub fn check(root: &Path) -> Result<(), failure::Error> {
     debug!("running check");
+
+    debug!("changing directory to {}", root.display());
+
+    env::set_current_dir(&root)?;
 
     debug!("running cargo-web check --target=wasm32-unknown-unknown");
 
@@ -26,6 +30,10 @@ pub fn check(root: &Path) -> Result<(), failure::Error> {
 
 pub fn build(root: &Path, config: &Configuration) -> Result<(), failure::Error> {
     debug!("building");
+
+    debug!("changing directory to {}", root.display());
+
+    env::set_current_dir(&root)?;
 
     debug!("running cargo-web build --target=wasm32-unknown-unknown --release");
 
