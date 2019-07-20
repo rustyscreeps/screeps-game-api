@@ -44,6 +44,24 @@ function __look_num_to_str(num) {
     }
 }
 
+function __look_str_to_num(num) {
+    switch (num) {
+        case LOOK_CREEPS: return 0;
+        case LOOK_ENERGY: return 1;
+        case LOOK_RESOURCES: return 2;
+        case LOOK_SOURCES: return 3;
+        case LOOK_MINERALS: return 4;
+        case LOOK_STRUCTURES: return 5;
+        case LOOK_FLAGS: return 6;
+        case LOOK_CONSTRUCTION_SITES: return 7;
+        case LOOK_NUKES: return 8;
+        case LOOK_TERRAIN: return 9;
+        case LOOK_TOMBSTONES: return 10;
+        case LOOK_POWER_CREEPS: return 11;
+        default: throw new Error("unknown look constant " + num);
+    }
+}
+
 function __structure_type_num_to_str(num) {
     switch (num) {
         case 0: return STRUCTURE_SPAWN;
