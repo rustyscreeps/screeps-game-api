@@ -13,7 +13,7 @@ use stdweb::{Reference, Value};
 
 use crate::{
     constants::{
-        Color, Direction, ExitDirection, FindConstant, LookConstant, PowerType, ResourceType,
+        Color, Direction, ExitDirection, FindConstant, Look, LookConstant, PowerType, ResourceType,
         ReturnCode, StructureType, Terrain,
     },
     macros::*,
@@ -752,29 +752,26 @@ impl TryFrom<Value> for LookResult {
     type Error = ConversionError;
 
     fn try_from(v: Value) -> Result<LookResult, Self::Error> {
-        let look_type: String = js!(return @{&v}.type;).try_into()?;
+        let look_type = js! (
+            return __look_str_to_num(@{&v}.type);
+        )
+        .try_into()?;
 
-        let lr = match look_type.as_ref() {
-            "creep" => LookResult::Creep(js_unwrap_ref!(@{v}.creep)),
-            "energy" => LookResult::Energy(js_unwrap_ref!(@{v}.energy)),
-            "resource" => LookResult::Resource(js_unwrap_ref!(@{v}.resource)),
-            "source" => LookResult::Source(js_unwrap_ref!(@{v}.source)),
-            "mineral" => LookResult::Mineral(js_unwrap_ref!(@{v}.mineral)),
-            "structure" => LookResult::Structure(js_unwrap_ref!(@{v}.structure)),
-            "flag" => LookResult::Flag(js_unwrap_ref!(@{v}.flag)),
-            "constructionSite" => {
+        let lr = match look_type {
+            Look::Creeps => LookResult::Creep(js_unwrap_ref!(@{v}.creep)),
+            Look::Energy => LookResult::Energy(js_unwrap_ref!(@{v}.energy)),
+            Look::Resources => LookResult::Resource(js_unwrap_ref!(@{v}.resource)),
+            Look::Sources => LookResult::Source(js_unwrap_ref!(@{v}.source)),
+            Look::Minerals => LookResult::Mineral(js_unwrap_ref!(@{v}.mineral)),
+            Look::Structures => LookResult::Structure(js_unwrap_ref!(@{v}.structure)),
+            Look::Flags => LookResult::Flag(js_unwrap_ref!(@{v}.flag)),
+            Look::ConstructionSites => {
                 LookResult::ConstructionSite(js_unwrap_ref!(@{v}.constructionSite))
             }
-            "nuke" => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
-            "terrain" => LookResult::Terrain(js_unwrap!(__terrain_str_to_num(@{v}.terrain))),
-            "tombstone" => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
-            "powerCreep" => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
-            _ => {
-                return Err(ConversionError::Custom(format!(
-                    "Look result type unknown: {:?}",
-                    &look_type
-                )));
-            }
+            Look::Nukes => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
+            Look::Terrain => LookResult::Terrain(js_unwrap!(__terrain_str_to_num(@{v}.terrain))),
+            Look::Tombstones => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
+            Look::PowerCreeps => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
         };
         Ok(lr)
     }
