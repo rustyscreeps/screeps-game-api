@@ -1,8 +1,38 @@
 Unreleased
 ==========
 
+- `Serialize` and `Deserialize` format changed for most constants and for `LocalRoomPosition`
+  (breaking)
+  - constants now always serialize as integers (see
+    [the module doc](https://docs.rs/screeps-game-api/0.5/screeps/constants/index.html)) (#164)
+  - `LocalRoomPosition` will now serialize differently depending on whether the format is readable
+    (see the [`LocalRoomPosition`
+    doc](https://docs.rs/screeps-game-api/0.5/screeps/struct.LocalRoomPosition.html)) (#171)
+- `constants-serde` feature removed in favor of always implementing Serialize and Dserialize for
+  constants. (#164)
+- Add methods for retrieving coords from `RoomPosition` (#145)
+- Implement `Hash` for most constnats (#148)
+- Add equality checking between strings and `LocalRoomName` (#149)
+- Add `raw_memory::drop_segment` (#160)
+- Add `inter_shard_memory` (#163)
+- Change `MemoryReference::get` and `get_path` to return `Option<T>` (breaking) (#169)
+- Add `Display` implementations for `Direction` and `LocalRoomPosition`
+- Fix visibility of `LocalRoomNameParseError`, `Bodypart`, `MoveToOptions` and `PortalDestination`
+  (#134)
+- Fix `Creep::get_active_bodyparts` (#147)
+- Fix `CostMatrix` upload method (#150)
+- Fix typos in `StructureController` getters (#151)
+- Fix `RoomPosition::try_from` conversion (#152)
+- Fix errors on successful flag creation (#157)
+- Fix `ConstructionSite::structure_type`, `Mineral::mineral_type` and `StructureLab::mineral_type`
+  (#173)
+- Change many `StructureController` properties to `Option`s to reflect reality (breaking) (#162)
+- Migrate to Rust 2018 (#161)
+- Improve code reuse and reduce total amount of code (#164, #166, #175)
 
-0.4.0 (2019-02-??)
+Thanks to [@ASalvail], [@Dessix] and [@mettke] for contributing to this release.
+
+0.4.0 (2019-02-15)
 ==================
 
 - Allow simulation room when using local room names (#106)
@@ -108,7 +138,7 @@ Thanks to [@ASalvail] for planning and implementing the vast majority of this re
 0.1.1 (2018-09-04)
 ==================
 
-- Add support for StructureController (thanks [@Asalvail]!)
+- Add support for StructureController (thanks [@ASalvail]!)
 
 0.1.0 (2018-08-16)
 ==================
@@ -189,4 +219,6 @@ Thanks to [@ASalvail] for planning and implementing the vast majority of this re
 - Initial release
 
 
-[@Asalvail]: https://github.com/Asalvail
+[@ASalvail]: https://github.com/ASalvail
+[@Dessix]: https://github.com/Dessix
+[@mettke]: https://github.com/mettke
