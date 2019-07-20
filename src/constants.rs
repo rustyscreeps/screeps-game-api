@@ -1035,6 +1035,8 @@ impl IntershardResourceType {
     }
 }
 
+js_deserializable!(IntershardResourceType);
+
 /// Resource type constant for all possible types of resources.
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`

@@ -4,6 +4,8 @@ Unreleased
 - Rename incorrectly spelled `Density::probabilitiy` to `probability`.
 - Rename incorrectly spelled `Nuke::lauch_room_name` to `launch_room_name`.
 - Fix typos in JavaScript code for `game::market::get_order` and `Nuke::launch_room_name`
+- Add support for accessing intershard resource amounts, which currently only includes subscription
+  tokens, under `game::resources`.
 
 0.6.0 (2019-08-15)
 ==================
