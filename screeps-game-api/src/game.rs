@@ -371,7 +371,7 @@ pub mod market {
     }
     js_deserializable!(MyOrder);
 
-    pub fn credits() -> u32 {
+    pub fn credits() -> f64 {
         js_unwrap!(Game.market.credits)
     }
 
@@ -396,7 +396,7 @@ pub mod market {
         order_book_value.try_into().unwrap()
     }
 
-    pub fn calc_transaction_cost(amount: u32, room1: &Room, room2: &Room) -> u32 {
+    pub fn calc_transaction_cost(amount: u32, room1: &Room, room2: &Room) -> f64 {
         js_unwrap!(Game.market.calcTransactionCost(@{amount}, @{room1.name()}, @{room2.name()}))
     }
 
@@ -404,7 +404,7 @@ pub mod market {
         js_unwrap!(Game.market.cancelOrder(@{order_id}))
     }
 
-    pub fn change_order_price(order_id: &str, new_price: u32) -> ReturnCode {
+    pub fn change_order_price(order_id: &str, new_price: f64) -> ReturnCode {
         js_unwrap!(Game.market.changeOrderPrice(@{order_id}, @{new_price}))
     }
 
