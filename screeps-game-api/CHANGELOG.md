@@ -8,10 +8,10 @@ Unreleased
   - `LocalRoomPosition` will now serialize differently depending on whether the format is readable
     (see the [`LocalRoomPosition`
     doc](https://docs.rs/screeps-game-api/0.5/screeps/struct.LocalRoomPosition.html)) (#171)
-- `constants-serde` feature removed in favor of always implementing Serialize and Dserialize for
+- `constants-serde` feature removed in favor of always implementing Serialize and Deserialize for
   constants. (#164)
 - Add methods for retrieving coords from `RoomPosition` (#145)
-- Implement `Hash` for most constnats (#148)
+- Implement `Hash` for most constants (#148)
 - Add equality checking between strings and `LocalRoomName` (#149)
 - Add `raw_memory::drop_segment` (#160)
 - Add `inter_shard_memory` (#163)
@@ -152,11 +152,11 @@ Thanks to [@ASalvail] for planning and implementing the vast majority of this re
 ===================
 
 - Add ReturnCode::as_result
-- Add MemoryReference::from_reference_unchecked
+- Add `MemoryReference::from_reference_unchecked`
 - Support ConstructionSite properties
-- Support Room::look_for_at_area
+- Support `Room::look_for_at_area`
 - Make 'Structure' type an enum rather than opaque reference
-- Add LocalRoomPosition::remote shorthand
+- Add `LocalRoomPosition::remote` shorthand
 
 0.0.9 (2018-03-20)
 ==================
@@ -170,8 +170,8 @@ Thanks to [@ASalvail] for planning and implementing the vast majority of this re
 - Implement Serialize/Deserialize for LocalRoomPosition
 - Add LocalRoomName structure
 - Change time to unsigned integers
-- Add StructureSpawn::is_spawning
-- Add RoomPosition::local utility
+- Add `StructureSpawn::is_spawning`
+- Add `RoomPosition::local` utility
 - Fix HeapStatistics field names
 - Fix console.error hack (see cargo-screeps changes)
 
@@ -185,8 +185,8 @@ Thanks to [@ASalvail] for planning and implementing the vast majority of this re
 
 - Add tombstone support
 - Add reaction_time constant calculation method
-- Support v8_getheapstatistics
-- Replace some get_from_js!() calls with manual functions
+- Support `v8_getheapstatistics`
+- Replace some `get_from_js!()` calls with manual functions
 - Switch from using .0 to .as_ref() to refer to inner Reference of wrapping objects
 - Add support for creating construction sites and flags
 - Add Source support
