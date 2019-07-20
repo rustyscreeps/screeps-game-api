@@ -49,6 +49,8 @@
 //! access the memory via creeps, spawns, rooms and flags. Accessing the memory
 //! from those objects will also result in a `MemoryReference` which instead
 //! points at the root of this object's memory.
+//!
+//! [`root`]: crate::memory::root
 
 use std::fmt;
 
