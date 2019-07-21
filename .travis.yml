@@ -8,10 +8,6 @@ os:
 install:
 - rustup target add wasm32-unknown-unknown
 script:
-- (cd cargo-screeps && cargo build --verbose)
-- (cd cargo-screeps && cargo test --verbose)
-- (cd cargo-screeps && cargo build --all-features --verbose)
-- (cd cargo-screeps && cargo test --all-features --verbose)
-- (cd screeps-game-api && cargo web build --target=wasm32-unknown-unknown --verbose)
-- (cd screeps-game-api && cargo web build --target=wasm32-unknown-unknown --all-features --verbose)
-- (cd screeps-game-api && cargo test --verbose)
+- cargo web build --target=wasm32-unknown-unknown --verbose
+- cargo web build --target=wasm32-unknown-unknown --all-features --verbose
+- cargo test --verbose
