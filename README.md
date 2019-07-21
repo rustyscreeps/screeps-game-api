@@ -40,7 +40,6 @@ cd screeps-starter-rust
 # cli dependencies:
 
 cargo install cargo-screeps
-cargo install cargo-web
 
 # configure for uploading:
 
