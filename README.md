@@ -4,6 +4,8 @@ screeps-game-api
 [![crates.io version badge][cratesio-badge]][crate]
 [![docs.rs version badge][docsrs-badge]][docs]
 
+![Rusty Screeps Logo][logo]
+
 Typed bindings to the Screeps in-game API for WASM Rust AIs.
 
 Also the homepage for tools relating to writing [Screeps] AIs in Rust.
@@ -62,3 +64,4 @@ cargo screeps --help
 [docs]: https://docs.rs/screeps-game-api/
 [crate]: https://crates.io/crates/screeps-game-api/
 [cargo-screeps]: https://github.com/rustyscreeps/cargo-screeps/
+[logo]: ./logo.png
