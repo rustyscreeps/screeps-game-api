@@ -24,7 +24,7 @@ enough ideas, we can start an mdbook for this repository.
 
 - [cargo screeps usage docs][cargo-screeps]
 - [screeps-game-api api docs][docs]
-- [screeps-starter-rust example project](https://github.com/daboross/screeps-starter-rust/)
+- [screeps-starter-rust example project](https://github.com/rustyscreeps/screeps-starter-rust/)
 
 If you need help or want to share feedback, feel free to open an
 [issue](https://github.com/rustyscreeps/screeps-game-api/issues)
@@ -38,7 +38,7 @@ Here's a quickstart for what you *need* to get going. More documentation will be
 ```sh
 # clone:
 
-git clone https://github.com/daboross/screeps-starter-rust.git
+git clone https://github.com/rustyscreeps/screeps-starter-rust.git
 cd screeps-starter-rust
 
 # cli dependencies:
