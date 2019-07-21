@@ -17,7 +17,7 @@ include = [
 ]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/daboross/screeps-in-rust-via-wasm/"
+repository = "https://github.com/rustyscreeps/screeps-game-api/"
 description = "WASM bindings to the in-game Screeps API"
 
 [lib]

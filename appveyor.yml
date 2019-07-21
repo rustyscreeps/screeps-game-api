@@ -21,11 +21,7 @@ install:
 - cargo -V
 
 test_script:
-- cd cargo-screeps && cargo build --verbose
-- cd cargo-screeps && cargo test --verbose
-- cd cargo-screeps && cargo build --all features --verbose
-- cd cargo-screeps && cargo test --all features --verbose
-- cd screeps-game-api && cargo build --release --target=wasm32-unknown-unknown --verbose
+- cargo build --release --target=wasm32-unknown-unknown --verbose
 
 cache:
 - target
