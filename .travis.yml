@@ -3,10 +3,9 @@ sudo: false
 cache: cargo
 rust:
 - stable
+- beta
 - nightly
-os:
-- linux
-- osx
+os: linux
 install:
 - rustup target add wasm32-unknown-unknown
 - | # download cargo web
