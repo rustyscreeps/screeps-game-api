@@ -252,9 +252,15 @@ pub unsafe trait StructureProperties: RoomObjectProperties + HasId {
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `OwnedStructure` class.
 pub unsafe trait OwnedStructureProperties: StructureProperties {
+    /// Whether this structure is owned by you (in JS: `my || false`)
     fn my(&self) -> bool {
-        js_unwrap!(@{self.as_ref()}.my)
+        js_unwrap!(@{self.as_ref()}.my || false)
     }
+    /// Whether this structure is currently owned by someone (in JS: `my !== undefined`)
+    fn has_owner(&self) -> bool {
+        js_unwrap!(@{self.as_ref()}.my !== undefined)
+    }
+    /// The name of the owner of this structure, if any.
     fn owner_name(&self) -> Option<String> {
         (js! {
             var self = @{self.as_ref()};
@@ -267,6 +273,7 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
         .try_into()
         .expect("expected OwnedStructure.owner.username to be a string")
     }
+    /// Anonymize this as an owned structure.
     fn as_owned_structure(self) -> OwnedStructure
     where
         Self: SizedRoomObject,
