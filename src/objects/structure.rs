@@ -164,7 +164,7 @@ impl Structure {
             Structure::Observer(v) => Some(v),
             Structure::PowerBank(v) => Some(v),
             Structure::PowerSpawn(v) => Some(v),
-            Structure::Portal(v) => Some(v),
+            Structure::Portal(v) => None,
             Structure::Rampart(v) => Some(v),
             Structure::Road(_) => None,
             Structure::Spawn(v) => Some(v),

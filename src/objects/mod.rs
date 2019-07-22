@@ -513,7 +513,6 @@ unsafe impl OwnedStructureProperties for StructureNuker {}
 unsafe impl OwnedStructureProperties for StructureObserver {}
 unsafe impl OwnedStructureProperties for StructurePowerBank {}
 unsafe impl OwnedStructureProperties for StructurePowerSpawn {}
-unsafe impl OwnedStructureProperties for StructurePortal {}
 unsafe impl OwnedStructureProperties for StructureRampart {}
 unsafe impl OwnedStructureProperties for StructureSpawn {}
 unsafe impl OwnedStructureProperties for StructureStorage {}
