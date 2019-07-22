@@ -3,6 +3,9 @@
 
 environment:
     matrix:
+    # Stable
+    - TARGET: i686-pc-windows-msvc
+      RUST_VERSION: stable
     # Nightly
     - TARGET: i686-pc-windows-msvc
       RUST_VERSION: nightly
