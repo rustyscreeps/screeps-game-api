@@ -444,7 +444,6 @@ unsafe impl Attackable for StructureNuker {}
 unsafe impl Attackable for StructureObserver {}
 unsafe impl Attackable for StructurePowerBank {}
 unsafe impl Attackable for StructurePowerSpawn {}
-unsafe impl Attackable for StructurePortal {}
 unsafe impl Attackable for StructureRampart {}
 unsafe impl Attackable for StructureRoad {}
 unsafe impl Attackable for StructureSpawn {}
@@ -520,7 +519,6 @@ unsafe impl OwnedStructureProperties for StructureNuker {}
 unsafe impl OwnedStructureProperties for StructureObserver {}
 unsafe impl OwnedStructureProperties for StructurePowerBank {}
 unsafe impl OwnedStructureProperties for StructurePowerSpawn {}
-unsafe impl OwnedStructureProperties for StructurePortal {}
 unsafe impl OwnedStructureProperties for StructureRampart {}
 unsafe impl OwnedStructureProperties for StructureSpawn {}
 unsafe impl OwnedStructureProperties for StructureStorage {}
