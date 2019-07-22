@@ -437,7 +437,6 @@ unsafe impl Attackable for StructureNuker {}
 unsafe impl Attackable for StructureObserver {}
 unsafe impl Attackable for StructurePowerBank {}
 unsafe impl Attackable for StructurePowerSpawn {}
-unsafe impl Attackable for StructurePortal {}
 unsafe impl Attackable for StructureRampart {}
 unsafe impl Attackable for StructureRoad {}
 unsafe impl Attackable for StructureSpawn {}

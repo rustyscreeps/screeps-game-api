@@ -130,7 +130,6 @@ impl Structure {
             Structure::Observer(v) => Some(v),
             Structure::PowerBank(v) => Some(v),
             Structure::PowerSpawn(v) => Some(v),
-            Structure::Portal(v) => Some(v),
             Structure::Rampart(v) => Some(v),
             Structure::Road(v) => Some(v),
             Structure::Spawn(v) => Some(v),
