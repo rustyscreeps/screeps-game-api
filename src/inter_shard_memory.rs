@@ -1,11 +1,11 @@
 //! An interface for communicating between shards.
 //!
-//! Quoting from [`InterShardMemory`] documentation::
+//! Quoting from [`InterShardMemory`] documentation:
 //!
 //! > InterShardMemory object provides an interface for communicating between
-//! > shards. Your script is executed separatedly on each shard, and their Memory
-//! > objects are isolated from each other. In order to pass messages and data
-//! > between shards, you need to use InterShardMemory instead.
+//! > shards. Your script is executed separatedly on each shard, and their
+//! > Memory objects are isolated from each other. In order to pass messages and
+//! > data between shards, you need to use InterShardMemory instead.
 //! >
 //! > Every shard can have its own data string that can be accessed by all other
 //! > shards. A shard can write only to its own data, other shards' data is

@@ -256,7 +256,8 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
     fn my(&self) -> bool {
         js_unwrap!(@{self.as_ref()}.my || false)
     }
-    /// Whether this structure is currently owned by someone (in JS: `my !== undefined`)
+    /// Whether this structure is currently owned by someone (in JS: `my !==
+    /// undefined`)
     fn has_owner(&self) -> bool {
         js_unwrap!(@{self.as_ref()}.my !== undefined)
     }
