@@ -1,8 +1,8 @@
 //! Manually accessing the [`PathFinder`] API
 //!
 //! This contains functionality from the [`PathFinder`] object in Screeps, which
-//! is itself a binding to a C++ Jump-Point Search optimized for Screeps's world
-//! and connected to the world's terrain.
+//! is itself a binding to a C++ Jump-Point Search pathfinding algorithm
+//! optimized for Screeps.
 //!
 //! This is both more fine-grained and less automatic than other pathing
 //! methods, such as [`Room::find_path`]. `PathFinder` knows about terrain by
