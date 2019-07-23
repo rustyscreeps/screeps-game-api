@@ -443,7 +443,7 @@ macro_rules! game_map_access {
             $(
                     #[$attr:meta]
             )*
-            ($mod_name:ident, $type:path, $js_inner:expr) $(,)*
+            ($mod_name:ident, $type:path, $stype:expr, $js_inner:expr) $(,)*
         ),* $(,)*
     ) => {
         $(
@@ -451,12 +451,14 @@ macro_rules! game_map_access {
                     #[$attr]
             )*
             pub mod $mod_name {
-                use std::collections::HashMap;
+                use std::{collections::HashMap};
 
                 use crate::objects;
                 use crate::macros::*;
 
-                /// Retrieve the full `HashMap<String, $type>`.
+                #[doc = "Retrieve the full `HashMap<String, "]
+                #[doc = $stype]
+                #[doc = ">`."]
                 pub fn hashmap() -> HashMap<String, $type> {
                     js_unwrap!($js_inner)
                 }
@@ -477,6 +479,24 @@ macro_rules! game_map_access {
                 }
             }
         )*
+    };
+
+    (
+        $(
+            $(
+                    #[$attr:meta]
+            )*
+            ($mod_name:ident, $type:path, $js_inner:expr) $(,)*
+        ),* $(,)*
+    ) => {
+        game_map_access! {
+            $(
+                $(
+                    #[$attr]
+                )*
+                ($mod_name, $type, stringify!($type), $js_inner)
+            ),*
+        }
     };
 }
 
