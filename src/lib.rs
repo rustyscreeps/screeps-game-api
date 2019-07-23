@@ -1,4 +1,4 @@
-//! `screeps-game-api`
+//! Typed bindings to the Screeps in-game API for WASM Rust AIs.
 //!
 //! # Cargo Features
 //!
