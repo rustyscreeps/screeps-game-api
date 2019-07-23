@@ -345,20 +345,16 @@ macro_rules! creep_simple_concrete_action {
 /// Declares a unit structure with a doc attribute which is computed by a macro
 /// expression. This allows documentation to be dynamically generated, for
 /// instance. Necessary to work around https://github.com/rust-lang/rust/issues/52607.
-macro_rules! unit_struct_with_doc {
+macro_rules! calculated_doc {
     (
         $(
             #[doc = $doc:expr]
-            $(
-                #[$attr:meta]
-            )*
-            $vis:vis struct $name:ident;
+            $thing:item
         )*
     ) => (
         $(
             #[doc = $doc]
-            $(#[$attr])*
-            $vis struct $name;
+            $thing
         )*
     );
 }
@@ -370,7 +366,7 @@ macro_rules! typesafe_find_constants {
         )*
     ) => (
         $(
-            unit_struct_with_doc! {
+            calculated_doc! {
                 #[doc = concat!(
                     "Zero-sized constant representing the `FIND_",
                     stringify!($constant_name),
