@@ -451,9 +451,15 @@ macro_rules! game_map_access {
                     #[$attr]
             )*
             pub mod $mod_name {
+                use std::collections::HashMap;
+
                 use crate::objects;
                 use crate::macros::*;
 
+                /// Retrieve the full `HashMap<String, $type>`.
+                pub fn hashmap() -> HashMap<String, $type> {
+                    js_unwrap!($js_inner)
+                }
 
                 /// Retrieve the string keys of this object.
                 pub fn keys() -> Vec<String> {
