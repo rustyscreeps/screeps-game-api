@@ -1,3 +1,14 @@
+//! Manually accessing the [`PathFinder`] API
+//!
+//! This contains functionality from the [`PathFinder`] object in Screeps, which
+//! is itself a binding to a C++ implementation of the astar algorithm backed by
+//! the game state.
+//!
+//! This is both more fine-grained and less automatic than other pathing
+//! methods, such as [`Room::find_path`]. Only terrain data is considered by
+//! default, and you have full control over all other obstacles.
+//!
+//! [`PathFinder`]: https://docs.screeps.com/api/#PathFinder
 use std::{f64, marker::PhantomData, mem};
 
 use scoped_tls::scoped_thread_local;

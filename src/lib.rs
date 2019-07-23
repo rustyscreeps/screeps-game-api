@@ -43,8 +43,20 @@ pub use crate::{
     traits::{FromExpectedType, IntoExpectedType},
 };
 
-/// Useful for `use screeps::prelude::*;` to bring in screeps traits. Does not
-/// contain any structures in order to minimize namespace polution.
+/// Traits which implement base functionalities for Screeps types.
+///
+/// # Example
+///
+/// ```no_run
+/// use screeps::prelude::*;
+///
+/// let c = screeps::game::creeps::get("Bob").unwrap();
+///
+/// // `HasId` trait brought in from prelude
+/// let id = c.id();
+/// ```
+///
+/// This module contains all base functionality traits, and no structures.
 pub mod prelude {
     pub use crate::objects::{
         CanDecay, CanStoreEnergy, HasCooldown, HasId, HasPosition, HasStore,

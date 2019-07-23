@@ -1,3 +1,9 @@
+//! Get global Screeps resources.
+//!
+//! This contains all functionality from the [`Game`] object in Screeps. That
+//! generally means all state which is true this tick throughout the world.
+//!
+//! [`Game`]: http://docs.screeps.com/api/#Game
 use crate::{
     macros::*,
     objects::{HasId, RoomObject, SizedRoomObject},
