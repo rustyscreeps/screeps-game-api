@@ -1,4 +1,6 @@
-//! Interface for Screeps `RawMemory` global object.
+//! Interface for Screeps [`RawMemory`] global object.
+//!
+//! [`RawMemory`]: https://docs.screeps.com/api/#RawMemory
 
 use serde::Deserialize;
 

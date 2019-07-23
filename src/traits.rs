@@ -1,5 +1,7 @@
-//! Useful traits for interacting with JavaScript above what [`stdweb`]
+//! Useful traits for interacting with JavaScript beyond what [`stdweb`]
 //! provides.
+//!
+//! [`stdweb`]: http://docs.rs/stdweb/
 
 pub use stdweb::unstable::{TryFrom, TryInto};
 use stdweb::{Reference, Value};
