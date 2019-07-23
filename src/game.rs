@@ -1,3 +1,9 @@
+//! Get global Screeps resources.
+//!
+//! This contains all functionality from the [`Game`] object in Screeps. That
+//! generally means all state which is true this tick throughout the world.
+//!
+//! [`Game`]: http://docs.screeps.com/api/#Game
 use crate::{
     macros::*,
     objects::{HasId, RoomObject, SizedRoomObject},
@@ -55,6 +61,7 @@ pub fn time() -> u32 {
 ///
 /// If all you want to assume is that something has an ID, use
 /// [`get_object_erased`].
+///
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
 pub fn get_object_typed<T>(id: &str) -> Result<Option<T>, ConversionError>
 where
@@ -69,6 +76,7 @@ where
 /// it's a RoomObject.
 ///
 /// If a more specific type is expected, [`get_object_typed`] can be used.
+///
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
 pub fn get_object_erased(id: &str) -> Option<RoomObject> {
     js_unwrap_ref!(Game.getObjectById(@{id}))

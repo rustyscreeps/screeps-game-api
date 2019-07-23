@@ -74,6 +74,8 @@ impl fmt::Display for UnexpectedTypeError {
 
 // TODO: do we even need this over just a raw 'Reference'?
 /// A [`Reference`] to a screeps memory object
+///
+/// [`Reference`]: stdweb::Reference
 pub struct MemoryReference(Reference);
 
 impl AsRef<Reference> for MemoryReference {
