@@ -434,50 +434,36 @@ macro_rules! typesafe_look_constants {
 /// collection, the `values` as `rust_object_accessedX` and a single object
 /// via the `get` function.
 macro_rules! game_map_access {
-    (
-        $(
-            $(
-                    #[$attr:meta]
-            )*
-            ($mod_name:ident, $type:path, $js_inner:expr) $(,)*
-        ),* $(,)*
-    ) => {
-        $(
-            $(
-                    #[$attr]
-            )*
-            pub mod $mod_name {
-                use std::{collections::HashMap};
+    ($type:path, $js_inner:expr $(,)?) => {
+        use std::{collections::HashMap};
 
-                use crate::objects;
-                use crate::macros::*;
+        use crate::objects;
+        use crate::macros::*;
 
-                calculated_doc! {
-                    #[doc = concat!("Retrieve the full `HashMap<String, ",
-                                    stringify!($type),
-                                    ">`.")
-                    ]
-                    pub fn hashmap() -> HashMap<String, $type> {
-                        js_unwrap!($js_inner)
-                    }
-                }
-
-                /// Retrieve the string keys of this object.
-                pub fn keys() -> Vec<String> {
-                    js_unwrap!(Object.keys($js_inner))
-                }
-
-                /// Retrieve all values in this object.
-                pub fn values() -> Vec<$type> {
-                    js_unwrap_ref!(Object.values($js_inner))
-                }
-
-                /// Retrieve a specific value by key.
-                pub fn get(name: &str) -> Option<$type> {
-                    js_unwrap_ref!($js_inner[@{name}])
-                }
+        calculated_doc! {
+            #[doc = concat!("Retrieve the full `HashMap<String, ",
+                            stringify!($type),
+                            ">`.")
+            ]
+            pub fn hashmap() -> HashMap<String, $type> {
+                js_unwrap!($js_inner)
             }
-        )*
+        }
+
+        /// Retrieve the string keys of this object.
+        pub fn keys() -> Vec<String> {
+            js_unwrap!(Object.keys($js_inner))
+        }
+
+        /// Retrieve all values in this object.
+        pub fn values() -> Vec<$type> {
+            js_unwrap_ref!(Object.values($js_inner))
+        }
+
+        /// Retrieve a specific value by key.
+        pub fn get(name: &str) -> Option<$type> {
+            js_unwrap_ref!($js_inner[@{name}])
+        }
     };
 }
 
