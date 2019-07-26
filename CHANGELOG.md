@@ -1,8 +1,13 @@
 Unreleased
 ==========
 
-- Change `LocalRoomName`'s orientation so that north to be negative and south is positive.
+- Change `LocalRoomName`'s orientation so that north to be negative and south is positive. (#200)
   This is a breaking change for `LocalRoomName::from_coords`, fields and add/sub implementations
+- `OwnedStructureProperties`'s `my` method now correctly handles the value being undefined. (#189)
+- `StructurePortal` no longer implements `OwnedStructure` and `Attackable`. (#190)
+- Collections provided by `Game` now implements the `hashmap` method to retrieve both keys
+  and values at once. (#194)
+- Misc. documentation improvements.
 
 0.5.0 (2019-07-19)
 ==================
