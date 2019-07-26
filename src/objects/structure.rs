@@ -75,7 +75,7 @@ impl Structure {
     /// Example usage:
     ///
     /// ```no_run
-    /// use screeps::{Creep, Structure, ResourceType};
+    /// use screeps::{Creep, ResourceType, Structure};
     ///
     /// # let my_struct: Structure = unimplemented!();
     /// # let my_creep: Creep = unimplemented!();

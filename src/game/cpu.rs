@@ -62,8 +62,7 @@ pub fn shard_limits() -> collections::HashMap<String, f64> {
 pub fn get_heap_statistics() -> HeapStatistics {
     use stdweb::Value;
 
-    let heap_stats: Value =
-        js_unwrap!(Game.cpu.getHeapStatistics && Game.cpu.getHeapStatistics());
+    let heap_stats: Value = js_unwrap!(Game.cpu.getHeapStatistics && Game.cpu.getHeapStatistics());
 
     match heap_stats {
         Value::Null | Value::Undefined | Value::Bool(false) => HeapStatistics::default(),

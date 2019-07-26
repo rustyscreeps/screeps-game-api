@@ -48,7 +48,9 @@
 //! let spawns = game::spawns::values();
 //! let r: StructureType = (js! {
 //!     return __structure_type_str_to_num(@{spawns[0].as_ref()}.structureType);
-//! }).try_into().expect("expected structure type to convert successfully");
+//! })
+//! .try_into()
+//! .expect("expected structure type to convert successfully");
 //! ```
 //!
 //! If you need to consume strings already in Rust, use either the [`FromStr`]
