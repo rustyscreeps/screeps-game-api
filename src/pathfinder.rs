@@ -15,9 +15,9 @@ use scoped_tls::scoped_thread_local;
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
 use crate::{
+    local::LocalRoomPosition,
     macros::*,
     objects::{HasPosition, RoomPosition},
-    positions::LocalRoomPosition,
     traits::TryInto,
 };
 

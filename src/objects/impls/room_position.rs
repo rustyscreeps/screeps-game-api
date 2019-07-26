@@ -4,10 +4,10 @@ use super::room::{FindOptions, Path};
 use crate::{
     constants::{Color, Direction, FindConstant, LookConstant, ReturnCode},
     game,
+    local::LocalRoomPosition,
     macros::*,
     objects::{Flag, HasPosition, LookResult, RoomPosition, StructureType},
     pathfinder::CostMatrix,
-    positions::LocalRoomPosition,
     traits::TryInto,
 };
 
