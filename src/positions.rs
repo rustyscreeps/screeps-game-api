@@ -224,39 +224,58 @@ impl<'a> fmt::Display for LocalRoomNameParseError<'a> {
     }
 }
 
-impl PartialEq<&str> for LocalRoomName {
-    fn eq(&self, other: &&str) -> bool {
-        let s = format!("{}", &self);
+impl PartialEq<str> for LocalRoomName {
+    fn eq(&self, other: &str) -> bool {
+        let s = self.to_array_string();
         s.eq_ignore_ascii_case(other)
     }
 }
-impl PartialEq<LocalRoomName> for &str {
+impl PartialEq<LocalRoomName> for str {
+    #[inline]
     fn eq(&self, other: &LocalRoomName) -> bool {
-        other.eq(self)
+        <LocalRoomName as PartialEq<str>>::eq(other, self)
+    }
+}
+
+impl PartialEq<&str> for LocalRoomName {
+    #[inline]
+    fn eq(&self, other: &&str) -> bool {
+        <LocalRoomName as PartialEq<str>>::eq(self, other)
+    }
+}
+
+impl PartialEq<LocalRoomName> for &str {
+    #[inline]
+    fn eq(&self, other: &LocalRoomName) -> bool {
+        <LocalRoomName as PartialEq<str>>::eq(other, self)
     }
 }
 
 impl PartialEq<String> for LocalRoomName {
+    #[inline]
     fn eq(&self, other: &String) -> bool {
-        let s = format!("{}", &self);
-        s.eq_ignore_ascii_case(other.as_str())
+        <LocalRoomName as PartialEq<str>>::eq(self, &other)
     }
 }
+
 impl PartialEq<LocalRoomName> for String {
+    #[inline]
     fn eq(&self, other: &LocalRoomName) -> bool {
-        other.eq(&self.as_str())
+        <LocalRoomName as PartialEq<str>>::eq(other, self)
     }
 }
 
 impl PartialEq<&String> for LocalRoomName {
+    #[inline]
     fn eq(&self, other: &&String) -> bool {
-        let s = format!("{}", &self);
-        s.eq_ignore_ascii_case(other.as_str())
+        <LocalRoomName as PartialEq<str>>::eq(self, other)
     }
 }
+
 impl PartialEq<LocalRoomName> for &String {
+    #[inline]
     fn eq(&self, other: &LocalRoomName) -> bool {
-        other.eq(&self.as_str())
+        <LocalRoomName as PartialEq<str>>::eq(other, self)
     }
 }
 
