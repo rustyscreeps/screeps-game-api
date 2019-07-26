@@ -15,9 +15,9 @@ pub struct LocalRoomName {
     pub x_coord: i32,
     /// Inner y coordinate representation.
     ///
-    /// 0 represents N0, positive numbers represent N(y)
+    /// 0 represents S0, positive numbers represent S(y)
     ///
-    /// -1 represents S0, negative numbers represent S((-y) - 1)
+    /// -1 represents N0, negative numbers represent N((-y) - 1)
     pub y_coord: i32,
 }
 
@@ -36,9 +36,9 @@ impl fmt::Display for LocalRoomName {
         }
 
         if self.y_coord >= 0 {
-            write!(f, "N{}", self.y_coord)?;
+            write!(f, "S{}", self.y_coord)?;
         } else {
-            write!(f, "S{}", (-self.y_coord) - 1)?;
+            write!(f, "N{}", (-self.y_coord) - 1)?;
         }
 
         Ok(())
@@ -61,10 +61,10 @@ impl LocalRoomName {
 
     /// Creates a new room name from the given position parameters.
     #[inline]
-    pub fn from_coords(east: bool, north: bool, x_pos: i32, y_pos: i32) -> Self {
+    pub fn from_coords(east: bool, south: bool, x_pos: i32, y_pos: i32) -> Self {
         LocalRoomName {
             x_coord: if east { x_pos } else { -x_pos - 1 },
-            y_coord: if north { y_pos } else { -y_pos - 1 },
+            y_coord: if south { y_pos } else { -y_pos - 1 },
         }
     }
 }
@@ -133,17 +133,17 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
         // we'll catch it when we try to parse this substr.
         let (start_index, _) = chars.next().ok_or(())?;
         let end_index;
-        let north;
+        let south;
         loop {
             match chars.next().ok_or(())? {
                 (i, 'N') | (i, 'n') => {
                     end_index = i;
-                    north = true;
+                    south = false;
                     break;
                 }
                 (i, 'S') | (i, 's') => {
                     end_index = i;
-                    north = false;
+                    south = true;
                     break;
                 }
                 _ => continue,
@@ -161,7 +161,7 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
         s[start_index..s.len()].parse().map_err(|_| ())?
     };
 
-    Ok(LocalRoomName::from_coords(east, north, x_coord, y_coord))
+    Ok(LocalRoomName::from_coords(east, south, x_coord, y_coord))
 }
 
 /// An error representing when a string can't be parsed into a
