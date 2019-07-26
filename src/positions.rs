@@ -128,7 +128,7 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
         _ => return Err(()),
     };
 
-    let (x_coord, north) = {
+    let (x_coord, south) = {
         // we assume there's at least one number character. If there isn't,
         // we'll catch it when we try to parse this substr.
         let (start_index, _) = chars.next().ok_or(())?;
@@ -152,7 +152,7 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
 
         let x_coord = s[start_index..end_index].parse().map_err(|_| ())?;
 
-        (x_coord, north)
+        (x_coord, south)
     };
 
     let y_coord = {
