@@ -1,14 +1,19 @@
-//! Structures relating to room name parsing.
+//! Room position type and related operations and traits.
+//!
+//! This is a reimplementation/translation of the `RoomPosition` code originally
+//! written in JavaScript. All RoomPosition to RoomPosition operations in this
+//! file stay within Rust.
 use std::fmt;
 
 use super::LocalRoomName;
-use crate::objects::{HasPosition, RoomPosition};
 
-/// This is a room position located in Rust memory.
+const HALF_WORLD_SIZE: i32 = 128;
+
+/// Represents a position in a particular room in Screeps.
 ///
-/// It's "local" in the sense that while `RoomPosition` always references a room
-/// position allocated by and managed by the JavaScript VM, this is a
-/// self-contained plain-data struct in Rust memory.
+/// This is "local" in the sense that while `RoomPosition` always references a
+/// room position allocated by and managed by the JavaScript VM, this is a
+/// self-contained plain-data struct in Rust memory, the same size as a `i32`.
 ///
 /// # Using LocalRoomPosition
 ///
@@ -19,103 +24,257 @@ use crate::objects::{HasPosition, RoomPosition};
 /// `&LocalRoomPosition` can be passed into any game method taking an object,
 /// and will be automatically uploaded to JavaScript as a `RoomPosition`.
 ///
-/// If you need to manually create a `RoomPosition` from a `LocalRoomPosition`,
-/// use [`LocalRoomPosition::remote`].
-///
 /// # Serialization
 ///
 /// `LocalRoomPosition` implements both `serde::Serialize` and
 /// `serde::Deserialize`.
 ///
-/// When serializing, it will use the obvious format of `{roomName: String, x:
-/// u32, y: u32}` in "human readable" formats like JSON, and a less obvious
-/// format `{room_x: u32, room_y: u32, x: u32, y: u32}` in "non-human readable"
-/// formats like [`bincode`].
+/// When serializing, it will use the format `{roomName: String, x: u32, y:
+/// u32}` in "human readable" formats like JSON, and will serialize as a single
+/// `i32` in "non-human readable" formats like [`bincode`].
 ///
 /// You can also pass `LocalRoomPosition` into JavaScript using the `js!{}`
 /// macro provided by `stdweb`, or helper methods using the same code like
-/// [`MemoryReference::set`][crate::memory::MemoryReference::set].  It will be
+/// [`MemoryReference::set`][crate::memory::MemoryReference::set]. It will be
 /// serialized the same as in JSON, as an object with `roomName`, `x` and `y`
 /// properties.
 ///
 /// *Note:* serializing using `js!{}` or `MemoryReference::set` will _not_
-/// create a `RoomPosition`, only something with the same properties. Use
-/// `.remote()` if you need a `RoomPosition`.
+/// create a `LocalRoomPosition`, only something with the same properties.
+///
+/// If you need a remote `RoomPosition`, you have two options:
+///
+/// 1.  Use `.remote()`, then send that to JavaScript
+///
+/// 2. Transfer the int from [`LocalRoomPosition::packed_repr`] into JS, and use
+///    the `pos_from_packed` JavaScript function provided by
+///    this library:
+///
+///    ```no_run
+///    # #[macro_use]
+///    # extern crate stdweb;
+///    # use screeps::LocalRoomPosition;
+///    # fn main() {/*
+///    let pos = LocalRoomPosition::new(...)
+///    # */
+///    # let pos: LocalRoomPosition = unimplemented!();
+///    js! {
+///        let pos = pos_from_packed(@{pos.packed_repr()})
+///    };
+///    # }
+///    ```
 ///
 /// [`bincode`]: https://github.com/servo/bincode
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+/// [`RoomPosition::local`]: crate::RoomPosition::local
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
+#[repr(transparent)]
 pub struct LocalRoomPosition {
-    pub room_name: LocalRoomName,
-    pub x: u32,
-    pub y: u32,
+    /// A bit-packed integer, containing, from highest-order to lowest:
+    ///
+    /// - 1 byte: (room_x) + 128
+    /// - 1 byte: (room_y) + 128
+    /// - 1 byte: x
+    /// - 1 byte: y
+    ///
+    /// For `Wxx` rooms, `room_x = -xx - 1`. For `Exx` rooms, `room_x = xx`.
+    ///
+    /// For `Nyy` rooms, `room_y = -yy - 1`. For `Syy` rooms, `room_y = yy`.
+    ///
+    /// This is the same representation used in the Screeps server, allowing for
+    /// easy translation. Besides the method names and display representation,
+    /// this is the one part of LocalRoomPosition copied directly from the
+    /// engine code.
+    packed: u32,
+}
+
+impl fmt::Debug for LocalRoomPosition {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("LocalRoomPosition")
+            .field("packed", &self.packed)
+            .field("x", &self.x())
+            .field("y", &self.y())
+            .field("room_name", &self.room_name())
+            .finish()
+    }
 }
 
 impl fmt::Display for LocalRoomPosition {
-    /// Formats this into a nice looking string mimicking `RoomPosition`'s
-    /// `toString`.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "[room {} pos {},{}]", self.room_name, self.x, self.y)
+        write!(
+            f,
+            "[room {} pos {},{}]",
+            self.room_name(),
+            self.x(),
+            self.y()
+        )
     }
 }
 
 impl LocalRoomPosition {
-    pub fn remote(&self) -> RoomPosition {
-        RoomPosition::new(self.x, self.y, &self.room_name.to_array_string())
-    }
-}
+    /// Create a new LocalRoomPosition
+    ///
+    /// # Panics
+    ///
+    /// Will panic if either `x` or `y` is larger than 49, or if `room_name` is
+    /// outside of the range `E127N127 - W127S127`.
+    #[inline]
+    pub fn new(x: u32, y: u32, room_name: LocalRoomName) -> Self {
+        assert!(x < 50, "out of bounds x: {}", x);
+        assert!(y < 50, "out of bounds y: {}", y);
+        assert!(
+            (-128..=127).contains(&room_name.x_coord),
+            "out of bounds room_x: {}",
+            room_name.x_coord,
+        );
+        assert!(
+            (-128..=127).contains(&room_name.y_coord),
+            "out of bounds room_y: {}",
+            room_name.y_coord,
+        );
+        let room_x = (room_name.x_coord + HALF_WORLD_SIZE) as u32;
+        let room_y = (room_name.y_coord + HALF_WORLD_SIZE) as u32;
 
-impl HasPosition for LocalRoomPosition {
-    fn pos(&self) -> RoomPosition {
-        self.remote()
+        LocalRoomPosition {
+            packed: (room_x << 24) | (room_y << 16) | (x << 8) | y,
+        }
+    }
+
+    #[inline]
+    pub fn packed_repr(self) -> i32 {
+        self.packed as i32
+    }
+
+    #[inline]
+    pub fn from_packed(packed: i32) -> Self {
+        LocalRoomPosition {
+            packed: packed as u32,
+        }
+    }
+
+    #[inline]
+    fn room_x(self) -> i32 {
+        (self.packed >> 24 & 0xFF) as i32 - HALF_WORLD_SIZE
+    }
+
+    #[inline]
+    fn room_y(self) -> i32 {
+        (self.packed >> 16 & 0xFF) as i32 - HALF_WORLD_SIZE
+    }
+
+    #[inline]
+    pub fn x(self) -> u32 {
+        self.packed >> 8 & 0xFF
+    }
+
+    #[inline]
+    pub fn y(self) -> u32 {
+        self.packed & 0xFF
+    }
+
+    #[inline]
+    pub fn room_name(self) -> LocalRoomName {
+        LocalRoomName {
+            x_coord: self.room_x(),
+            y_coord: self.room_y(),
+        }
+    }
+
+    #[inline]
+    pub fn set_x(&mut self, x: u32) {
+        assert!(x < 50, "out of bounds x: {}", x);
+        self.packed = (self.packed & !(0xFF << 8)) | (x << 8);
+    }
+
+    #[inline]
+    pub fn set_y(&mut self, y: u32) {
+        assert!(y < 50, "out of bounds y: {}", y);
+        self.packed = (self.packed & !0xFF) | y;
+    }
+
+    #[inline]
+    pub fn set_room_name(&mut self, room_name: LocalRoomName) {
+        assert!(
+            (-128..=127).contains(&room_name.x_coord),
+            "out of bounds room_x: {}",
+            room_name.x_coord,
+        );
+        assert!(
+            (-128..=127).contains(&room_name.y_coord),
+            "out of bounds room_y: {}",
+            room_name.y_coord,
+        );
+        let room_x = (room_name.x_coord + HALF_WORLD_SIZE) as u32;
+        let room_y = (room_name.y_coord + HALF_WORLD_SIZE) as u32;
+
+        self.packed = (self.packed & 0xFFFF) | (room_x << 24) | (room_y << 16);
+    }
+
+    #[inline]
+    pub fn with_x(mut self, x: u32) -> Self {
+        self.set_x(x);
+        self
+    }
+
+    #[inline]
+    pub fn with_y(mut self, y: u32) -> Self {
+        self.set_y(y);
+        self
+    }
+
+    #[inline]
+    pub fn with_room_name(mut self, room_name: LocalRoomName) -> Self {
+        self.set_room_name(room_name);
+        self
     }
 }
 
 mod stdweb {
     use stdweb::Value;
 
-    use super::{LocalRoomName, LocalRoomPosition};
     use crate::{
         macros::*,
+        objects::{HasPosition, RoomPosition},
         traits::{TryFrom, TryInto},
     };
+
+    use super::LocalRoomPosition;
+
+    impl LocalRoomPosition {
+        pub fn remote(self) -> RoomPosition {
+            js_unwrap_ref!(pos_from_packed(@{self.packed_repr()}))
+        }
+    }
 
     impl TryFrom<Value> for LocalRoomPosition {
         type Error = <Value as TryInto<String>>::Error;
 
         fn try_from(v: Value) -> Result<LocalRoomPosition, Self::Error> {
-            let x: u32 = (js! {return @{&v}.x}).try_into()?;
-            let y: u32 = (js! {return @{&v}.y}).try_into()?;
-            let room_name: LocalRoomName = (js! {return @{&v}.roomName}).try_into()?;
-
-            Ok(LocalRoomPosition { x, y, room_name })
+            let value = js! { return @{v}.__packedPos};
+            match value {
+                Value::Undefined => {
+                    let x = js! {v.x}.try_into()?;
+                    let y = js! {v.y}.try_into()?;
+                    let room_name = js! {v.roomName}.try_into()?;
+                    Ok(Self::new(x, y, room_name))
+                }
+                other => Ok(Self::from_packed(other.try_into()?)),
+            }
         }
     }
 
-    // We don't use `js_deserializable!` since it would generate pretty much exactly
-    // the code above, but with slightly extra cost since our `serde::Deserialize`
-    // implementation has extra code to be backwards compatible with a different
-    // format.
-    //
-    // On the other hand, we do want `js_serializable!()` since it does more than
-    // just implement `TryFrom<LocalRoomPosition> for Value` - it also gives us
-    // `JsSerializable` and other impls.
+    impl HasPosition for LocalRoomPosition {
+        fn pos(&self) -> RoomPosition {
+            self.remote()
+        }
+    }
 
     js_serializable!(LocalRoomPosition);
 }
 
-mod room_pos_serde {
+mod serde {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
     use super::{LocalRoomName, LocalRoomPosition};
-
-    #[derive(Serialize, Deserialize)]
-    #[serde(rename = "SerializedLocalRoomPosition")]
-    struct EfficientFormat {
-        room_x: i32,
-        room_y: i32,
-        x: u32,
-        y: u32,
-    }
 
     #[derive(Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
@@ -125,46 +284,19 @@ mod room_pos_serde {
         y: u32,
     }
 
-    impl From<EfficientFormat> for LocalRoomPosition {
-        fn from(
-            EfficientFormat {
-                room_x,
-                room_y,
-                x,
-                y,
-            }: EfficientFormat,
-        ) -> Self {
-            LocalRoomPosition {
-                room_name: LocalRoomName {
-                    x_coord: room_x,
-                    y_coord: room_y,
-                },
-                x,
-                y,
-            }
-        }
-    }
-
-    impl From<LocalRoomPosition> for EfficientFormat {
-        fn from(LocalRoomPosition { room_name, x, y }: LocalRoomPosition) -> Self {
-            EfficientFormat {
-                room_x: room_name.x_coord,
-                room_y: room_name.y_coord,
-                x,
-                y,
-            }
-        }
-    }
-
     impl From<ReadableFormat> for LocalRoomPosition {
         fn from(ReadableFormat { room_name, x, y }: ReadableFormat) -> Self {
-            LocalRoomPosition { room_name, x, y }
+            LocalRoomPosition::new(x, y, room_name)
         }
     }
 
     impl From<LocalRoomPosition> for ReadableFormat {
-        fn from(LocalRoomPosition { room_name, x, y }: LocalRoomPosition) -> Self {
-            ReadableFormat { room_name, x, y }
+        fn from(pos: LocalRoomPosition) -> Self {
+            ReadableFormat {
+                room_name: pos.room_name(),
+                x: pos.x(),
+                y: pos.y(),
+            }
         }
     }
 
@@ -176,7 +308,7 @@ mod room_pos_serde {
             if serializer.is_human_readable() {
                 ReadableFormat::from(*self).serialize(serializer)
             } else {
-                EfficientFormat::from(*self).serialize(serializer)
+                self.packed_repr().serialize(serializer)
             }
         }
     }
@@ -189,8 +321,40 @@ mod room_pos_serde {
             if deserializer.is_human_readable() {
                 ReadableFormat::deserialize(deserializer).map(Into::into)
             } else {
-                EfficientFormat::deserialize(deserializer).map(Into::into)
+                i32::deserialize(deserializer).map(LocalRoomPosition::from_packed)
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::LocalRoomPosition;
+
+    const TEST_POSITIONS: &[(i32, (u32, u32, &str))] = &[
+        (-2122440404i32, (33, 44, "E1N1")),
+        (-1803615720i32, (2, 24, "E20N0")),
+        (2139029504i32, (0, 0, "W0N0")),
+        (-2139160576i32, (0, 0, "E0N0")),
+        (2139095040i32, (0, 0, "W0S0")),
+        (-2139095040i32, (0, 0, "E0S0")),
+    ];
+
+    #[test]
+    fn from_i32_accurate() {
+        for (packed, (x, y, name)) in TEST_POSITIONS.iter().copied() {
+            let pos = LocalRoomPosition::from_packed(packed);
+            assert_eq!(pos.x(), x);
+            assert_eq!(pos.y(), y);
+            assert_eq!(&*pos.room_name().to_array_string(), name);
+        }
+    }
+
+    #[test]
+    fn from_args_accurate() {
+        for (packed, (x, y, name)) in TEST_POSITIONS.iter().copied() {
+            let pos = LocalRoomPosition::new(x, y, name.parse().unwrap());
+            assert_eq!(pos.packed_repr(), packed);
         }
     }
 }

@@ -37,11 +37,7 @@ impl RoomPosition {
     }
 
     pub fn local(&self) -> LocalRoomPosition {
-        LocalRoomPosition {
-            room_name: js_unwrap!(@{self.as_ref()}.roomName),
-            x: self.x(),
-            y: self.y(),
-        }
+        LocalRoomPosition::from_packed(js_unwrap!(@{self.as_ref()}.__packedPos))
     }
 
     pub fn create_construction_site(&self, ty: StructureType) -> ReturnCode {
