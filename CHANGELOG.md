@@ -1,12 +1,19 @@
 Unreleased
 ==========
 
-- Change `LocalRoomName`'s orientation so that north to be negative and south is positive. (#200)
+- Change `LocalRoomName`'s orientation so that north is negative and south is positive.
   This is a breaking change for `LocalRoomName::from_coords`, fields and add/sub implementations
-- `OwnedStructureProperties`'s `my` method now correctly handles the value being undefined. (#189)
+  (#200)
+- Fix prices returned from `game::market` APIs being integers rather than floats (breaking) (#179)
+- Work around bug where IntelliJ-Rust didn't understand `screeps::game::*` modules created by a
+  macro, even with experimental engine enabled (#197)
+- `OwnedStructureProperties`'s `my` method now correctly handles the value being undefined.
+  This fixes a panic on checking `my` for unowned controllers (#189)
 - `StructurePortal` no longer implements `OwnedStructure` and `Attackable`. (#190)
-- Collections provided by `Game` now implements the `hashmap` method to retrieve both keys
+- Collections provided by `Game` now implement the `hashmap` function to retrieve both keys
   and values at once. (#194)
+- Split [cargo-screeps](https://github.com/rustyscreeps/cargo-screeps/) out into a separate
+  repository
 - Misc. documentation improvements.
 
 0.5.0 (2019-07-19)
