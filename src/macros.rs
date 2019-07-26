@@ -110,7 +110,7 @@ macro_rules! js_unwrap_ref {
 ///
 /// Will become:
 /// ```
-/// pub fn limit() -> u32{
+/// pub fn limit() -> u32 {
 ///     js_unwrap!(Game.cpu.limit)
 /// }
 /// ```
