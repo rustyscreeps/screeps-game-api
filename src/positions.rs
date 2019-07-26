@@ -1,6 +1,12 @@
 //! Structures relating to room name parsing.
+use std::{
+    borrow::Cow,
+    error,
+    fmt::{self, Write},
+    ops,
+};
 
-use std::{borrow::Cow, error, fmt, ops};
+use arrayvec::ArrayString;
 
 use crate::objects::{HasPosition, RoomPosition};
 
@@ -66,6 +72,16 @@ impl LocalRoomName {
             x_coord: if east { x_pos } else { -x_pos - 1 },
             y_coord: if south { y_pos } else { -y_pos - 1 },
         }
+    }
+
+    /// Converts this LocalRoomName into an efficient, stack-based string.
+    ///
+    /// This is equivalent to [`ToString::to_string`], but involves no
+    /// allocation.
+    pub fn to_array_string(&self) -> ArrayString<[u8; 8]> {
+        let mut res = ArrayString::new();
+        write!(res, "{}", self).expect("expected ArrayString write to be unfallible");
+        res
     }
 }
 
@@ -371,7 +387,7 @@ impl fmt::Display for LocalRoomPosition {
 
 impl LocalRoomPosition {
     pub fn remote(&self) -> RoomPosition {
-        RoomPosition::new(self.x, self.y, &self.room_name.to_string())
+        RoomPosition::new(self.x, self.y, &self.room_name.to_array_string())
     }
 }
 
