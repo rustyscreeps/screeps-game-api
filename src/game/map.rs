@@ -28,9 +28,11 @@ pub fn describe_exits(room_name: &str) -> collections::HashMap<Direction, String
                 "expected all directions returned from Game.map.describeExits to be integers",
             );
             (
-            Direction::from_u32(key).expect("expected all directions returned from Game.map.describeExits to be directions"),
-            value,
-        )
+                Direction::from_u32(key).expect(
+                    "expected all directions returned from Game.map.describeExits to be directions",
+                ),
+                value,
+            )
         })
         .collect()
 }
@@ -63,9 +65,8 @@ pub fn is_room_available(room_name: &str) -> bool {
 /// Implements `Game.map.findExit`.
 pub fn find_exit(from_room: &str, to_room: &str) -> Result<ExitDirection, ReturnCode> {
     let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room})};
-    ExitDirection::from_i32(code).ok_or_else(|| {
-        ReturnCode::from_i32(code).expect("find_exit: Error code not recognized.")
-    })
+    ExitDirection::from_i32(code)
+        .ok_or_else(|| ReturnCode::from_i32(code).expect("find_exit: Error code not recognized."))
 }
 
 pub fn find_exit_with_callback(
