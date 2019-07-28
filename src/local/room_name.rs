@@ -15,13 +15,13 @@ pub struct LocalRoomName {
     /// 0 represents E0, positive numbers represent E(x)
     ///
     /// -1 represents W0, negative numbers represent W((-x) - 1)
-    pub x_coord: i32,
+    x_coord: i32,
     /// Inner y coordinate representation.
     ///
     /// 0 represents S0, positive numbers represent S(y)
     ///
     /// -1 represents N0, negative numbers represent N((-y) - 1)
-    pub y_coord: i32,
+    y_coord: i32,
 }
 
 impl fmt::Display for LocalRoomName {
@@ -63,7 +63,7 @@ impl LocalRoomName {
 
     /// Creates a new room name from the given position parameters.
     #[inline]
-    pub fn from_coords(east: bool, south: bool, x_pos: i32, y_pos: i32) -> Self {
+    pub(crate) fn from_coords(east: bool, south: bool, x_pos: i32, y_pos: i32) -> Self {
         LocalRoomName {
             x_coord: if east { x_pos } else { -x_pos - 1 },
             y_coord: if south { y_pos } else { -y_pos - 1 },
