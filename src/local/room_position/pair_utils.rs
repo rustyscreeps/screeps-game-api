@@ -16,6 +16,11 @@ impl LocalRoomPosition {
     }
 }
 
+// Note: we would usually implement `From<LocalRoomPosition> for (u8, u8)`, but
+// this implementation is not allowed as it'd be implementing it on a nested
+// type, and both the outer type (`(T, T)`), and the inner ones (`u8`) are from
+// an external crate.
+
 impl Into<(u8, u8)> for LocalRoomPosition {
     #[inline]
     fn into(self) -> (u8, u8) {

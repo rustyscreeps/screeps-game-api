@@ -228,6 +228,13 @@ impl PartialEq<str> for LocalRoomName {
 impl PartialEq<LocalRoomName> for str {
     #[inline]
     fn eq(&self, other: &LocalRoomName) -> bool {
+        // Explicitly call the impl for `PartialEq<str>` so that we don't end up
+        // accidentally calling one of the other implementations and ending up in an
+        // infinite loop.
+        //
+        // This one in particular would probably be OK, but I've written it this way to
+        // be consistent with the others, and to ensure that if this code changes in
+        // this future it'll stay working.
         <LocalRoomName as PartialEq<str>>::eq(other, self)
     }
 }
