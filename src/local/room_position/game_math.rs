@@ -52,8 +52,8 @@ impl LocalRoomPosition {
         self == target
     }
 
-    /// True if this position is in the same room as and is within 1
-    /// tile from the target.
+    /// True if this position is in the same room as the target, and the range
+    /// is at most 1.
     #[inline]
     pub fn is_near_to(self, target: LocalRoomPosition) -> bool {
         self.room_name() == target.room_name()
