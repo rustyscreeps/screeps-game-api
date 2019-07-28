@@ -46,6 +46,7 @@ use crate::{
 /// ```
 ///
 /// See method documentation for a full list of possible helpers.
+#[derive(Clone)]
 pub enum Structure {
     Container(StructureContainer),
     Controller(StructureController),
