@@ -7,8 +7,8 @@ Unreleased
 - Rework `LocalRoomPosition` to use a single `u32` as its representation, matching the Screeps'
   server's optimizations, and implement math utilities for it. (#203)
   - `LocalRoomPosition`, now `Position`, implements `Add<(i32, i32)>` for altering world
-    coordinates, and has methods like `from_world_coords` and `world_coords`. See [`RoomPosition`
-    documentation][pos-doc]
+    coordinates, and has methods like `from_world_coords` and `world_coords`. See [`Position`
+    documentation][pos-doc].
 - Merge `LocalRoomPosition` and `RoomPosition` into one efficient, local, `Position` type. (#206)
   - Game methods dealing with coordinates now take something which can produce a local
     `Position`, and will only have to upload a single `u32` to JavaScript to call it.
@@ -28,7 +28,7 @@ Unreleased
   repository
 - Misc. documentation improvements.
 
-[pos-doc]: https://docs.rs/screeps-game-api/0.6.0/screeps/local/struct.LocalRoomPosition.html
+[pos-doc]: https://docs.rs/screeps-game-api/0.6.0/screeps/local/struct.Position.html
 
 0.5.0 (2019-07-19)
 ==================

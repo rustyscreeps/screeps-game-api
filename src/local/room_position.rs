@@ -89,6 +89,7 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 ///   ```
 ///
 /// [`bincode`]: https://github.com/servo/bincode
+/// [`HasPosition::pos`]: crate::HasPosition::pos
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(transparent)]
 pub struct Position {
