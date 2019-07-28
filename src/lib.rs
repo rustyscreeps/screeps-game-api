@@ -43,6 +43,10 @@ pub use crate::{
     traits::{FromExpectedType, IntoExpectedType},
 };
 
+/// An alias for `Position` for those used to the JavaScript `RoomPosition`
+/// type.
+pub type RoomPosition = Position;
+
 /// Traits which implement base functionalities for Screeps types.
 ///
 /// # Example
