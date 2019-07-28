@@ -17,7 +17,7 @@ use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 use crate::{
     local::LocalRoomPosition,
     macros::*,
-    objects::{HasPosition, RoomPosition},
+    objects::{HasPosition, RemoteRoomPosition},
     traits::TryInto,
 };
 
@@ -309,7 +309,7 @@ impl SearchResults {
             .try_into()
             .expect("expected PathFinder.search path result to be an array of RoomPositions")
     }
-    pub fn load_semi_local_path(&self) -> Vec<RoomPosition> {
+    pub fn load_semi_local_path(&self) -> Vec<RemoteRoomPosition> {
         self.path
             .clone()
             .try_into()

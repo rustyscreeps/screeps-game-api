@@ -57,7 +57,7 @@ reference_wrappers!(
     #[reference(instance_of = "RoomObject")]
     RoomObject,
     #[reference(instance_of = "RoomPosition")]
-    RoomPosition,
+    RemoteRoomPosition,
     #[reference(instance_of = "Room.Terrain")]
     RoomTerrain,
     #[reference(instance_of = "Source")]
@@ -124,7 +124,7 @@ impl HasPosition for LocalRoomPosition {
     }
 }
 
-impl HasPosition for RoomPosition {
+impl HasPosition for RemoteRoomPosition {
     fn pos(&self) -> LocalRoomPosition {
         self.local()
     }

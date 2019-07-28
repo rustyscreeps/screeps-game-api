@@ -6,11 +6,11 @@ use crate::{
     game,
     local::LocalRoomPosition,
     macros::*,
-    objects::{Flag, HasPosition, LookResult, RoomPosition, StructureType},
+    objects::{Flag, HasPosition, LookResult, RemoteRoomPosition, StructureType},
     pathfinder::CostMatrix,
 };
 
-impl RoomPosition {
+impl RemoteRoomPosition {
     pub fn new(x: u32, y: u32, room_name: &str) -> Self {
         js_unwrap!(new RoomPosition(@{x}, @{y}, @{room_name}))
     }
@@ -99,7 +99,7 @@ impl RoomPosition {
     where
         F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
-        let target = RoomPosition::new(x, y, &self.room_name());
+        let target = RemoteRoomPosition::new(x, y, &self.room_name());
         self.find_path_to(&target, opts)
     }
 
@@ -156,57 +156,57 @@ impl RoomPosition {
     }
 }
 
-impl<T: HasPosition> PartialEq<T> for RoomPosition {
+impl<T: HasPosition> PartialEq<T> for RemoteRoomPosition {
     fn eq(&self, other: &T) -> bool {
         self.local() == other.pos()
     }
 }
 
-impl Eq for RoomPosition {}
+impl Eq for RemoteRoomPosition {}
 
-impl Into<(u8, u8)> for RoomPosition {
+impl Into<(u8, u8)> for RemoteRoomPosition {
     fn into(self) -> (u8, u8) {
         self.local().into()
     }
 }
 
-impl Into<(u16, u16)> for RoomPosition {
+impl Into<(u16, u16)> for RemoteRoomPosition {
     fn into(self) -> (u16, u16) {
         self.local().into()
     }
 }
 
-impl Into<(u32, u32)> for RoomPosition {
+impl Into<(u32, u32)> for RemoteRoomPosition {
     fn into(self) -> (u32, u32) {
         self.local().into()
     }
 }
 
-impl Into<(u64, u64)> for RoomPosition {
+impl Into<(u64, u64)> for RemoteRoomPosition {
     fn into(self) -> (u64, u64) {
         self.local().into()
     }
 }
 
-impl Into<(i8, i8)> for RoomPosition {
+impl Into<(i8, i8)> for RemoteRoomPosition {
     fn into(self) -> (i8, i8) {
         self.local().into()
     }
 }
 
-impl Into<(i16, i16)> for RoomPosition {
+impl Into<(i16, i16)> for RemoteRoomPosition {
     fn into(self) -> (i16, i16) {
         self.local().into()
     }
 }
 
-impl Into<(i32, i32)> for RoomPosition {
+impl Into<(i32, i32)> for RemoteRoomPosition {
     fn into(self) -> (i32, i32) {
         self.local().into()
     }
 }
 
-impl Into<(i64, i64)> for RoomPosition {
+impl Into<(i64, i64)> for RemoteRoomPosition {
     fn into(self) -> (i64, i64) {
         self.local().into()
     }

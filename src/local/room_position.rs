@@ -28,15 +28,16 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 
 /// Represents a position in a particular room in Screeps.
 ///
-/// This is "local" in the sense that while `RoomPosition` always references a
-/// room position allocated by and managed by the JavaScript VM, this is a
-/// self-contained plain-data struct in Rust memory, the same size as a `i32`.
+/// This is "local" in the sense that while `RemoteRoomPosition` always
+/// references a room position allocated by and managed by the JavaScript VM,
+/// this is a self-contained plain-data struct in Rust memory, the same size as
+/// a `i32`.
 ///
 /// # Using LocalRoomPosition
 ///
 /// A `LocalRoomPosition` can be retrieved at any point by using
-/// [`RoomPosition::local`]. It can then be copied around freely, and have its
-/// values modified.
+/// [`RemoteRoomPosition::local`]. It can then be copied around freely, and have
+/// its values modified.
 ///
 /// `&LocalRoomPosition` can be passed into any game method taking an object,
 /// and will be automatically uploaded to JavaScript as a `RoomPosition`.
@@ -81,7 +82,7 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 ///   ```
 ///
 /// [`bincode`]: https://github.com/servo/bincode
-/// [`RoomPosition::local`]: crate::RoomPosition::local
+/// [`RemoteRoomPosition::local`]: crate::RoomPosition::local
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(transparent)]
 pub struct LocalRoomPosition {
@@ -262,14 +263,14 @@ mod stdweb {
 
     use crate::{
         macros::*,
-        objects::RoomPosition,
+        objects::RemoteRoomPosition,
         traits::{TryFrom, TryInto},
     };
 
     use super::LocalRoomPosition;
 
     impl LocalRoomPosition {
-        pub fn remote(self) -> RoomPosition {
+        pub fn remote(self) -> RemoteRoomPosition {
             js_unwrap_ref!(pos_from_packed(@{self.packed_repr()}))
         }
     }
