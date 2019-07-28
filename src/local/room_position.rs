@@ -175,21 +175,25 @@ impl LocalRoomPosition {
         }
     }
 
+    /// Gets the horizontal coordinate of this position's room name.
     #[inline]
     fn room_x(self) -> i32 {
         (self.packed >> 24 & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
+    /// Gets the vertical coordinate of this position's room name.
     #[inline]
     fn room_y(self) -> i32 {
         (self.packed >> 16 & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
+    /// Gets this position's in-room x coordinate.
     #[inline]
     pub fn x(self) -> u32 {
         self.packed >> 8 & 0xFF
     }
 
+    /// Gets this position's in-room y coordinate.
     #[inline]
     pub fn y(self) -> u32 {
         self.packed & 0xFF
