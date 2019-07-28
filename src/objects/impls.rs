@@ -6,7 +6,6 @@ mod mineral;
 mod nuke;
 mod resource;
 mod room;
-mod room_position;
 mod room_terrain;
 mod source;
 mod structure_controller;

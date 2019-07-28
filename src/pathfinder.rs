@@ -14,12 +14,7 @@ use std::{f64, marker::PhantomData, mem};
 use scoped_tls::scoped_thread_local;
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
-use crate::{
-    local::LocalRoomPosition,
-    macros::*,
-    objects::{HasPosition, RemoteRoomPosition},
-    traits::TryInto,
-};
+use crate::{local::LocalRoomPosition, macros::*, objects::HasPosition, traits::TryInto};
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
@@ -304,12 +299,6 @@ impl SearchResults {
         &self.path
     }
     pub fn load_local_path(&self) -> Vec<LocalRoomPosition> {
-        self.path
-            .clone()
-            .try_into()
-            .expect("expected PathFinder.search path result to be an array of RoomPositions")
-    }
-    pub fn load_semi_local_path(&self) -> Vec<RemoteRoomPosition> {
         self.path
             .clone()
             .try_into()

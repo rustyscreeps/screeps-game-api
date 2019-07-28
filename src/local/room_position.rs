@@ -28,10 +28,9 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 
 /// Represents a position in a particular room in Screeps.
 ///
-/// This is "local" in the sense that while `RemoteRoomPosition` always
-/// references a room position allocated by and managed by the JavaScript VM,
-/// this is a self-contained plain-data struct in Rust memory, the same size as
-/// a `i32`.
+/// This is "local" in the sense that while other structures alway references
+/// things allocated by and managed by the JavaScript VM, this is a
+/// self-contained plain-data struct in Rust memory, the same size as a `i32`.
 ///
 /// # Using LocalRoomPosition
 ///
@@ -63,8 +62,8 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 /// If you need a reference to a `RoomPosition` in JavaScript to use manually,
 /// you have two options:
 ///
-/// - Use `.remote()` to get a `RoomPosition`, and then use that reference in
-///   JavaScript
+/// - Use `.remote()` to get a `stdweb::Reference`, and then use that reference
+///   in JavaScript
 ///
 /// - Convert the room position to an integer with
 ///   [`LocalRoomPosition::packed_repr`], send that to JS, and use the
@@ -263,15 +262,14 @@ mod stdweb {
 
     use crate::{
         macros::*,
-        objects::RemoteRoomPosition,
         traits::{TryFrom, TryInto},
     };
 
     use super::LocalRoomPosition;
 
     impl LocalRoomPosition {
-        pub fn remote(self) -> RemoteRoomPosition {
-            js_unwrap_ref!(pos_from_packed(@{self.packed_repr()}))
+        pub fn remote(self) -> Reference {
+            js_unwrap!(pos_from_packed(@{self.packed_repr()}))
         }
     }
 
