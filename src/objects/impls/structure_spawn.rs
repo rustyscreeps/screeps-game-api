@@ -11,7 +11,7 @@ use crate::{
 simple_accessors! {
     StructureSpawn;
     (name -> name -> String),
-    (spawning -> spawning -> Spawning),
+    (spawning -> spawning -> Option<Spawning>),
 }
 
 impl StructureSpawn {
