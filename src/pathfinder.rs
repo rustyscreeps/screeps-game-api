@@ -14,7 +14,7 @@ use std::{f64, marker::PhantomData, mem};
 use scoped_tls::scoped_thread_local;
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
-use crate::{local::LocalRoomPosition, macros::*, objects::HasPosition, traits::TryInto};
+use crate::{local::RoomPosition, macros::*, objects::HasPosition, traits::TryInto};
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
@@ -298,7 +298,7 @@ impl SearchResults {
     pub fn opaque_path(&self) -> &Array {
         &self.path
     }
-    pub fn load_local_path(&self) -> Vec<LocalRoomPosition> {
+    pub fn load_local_path(&self) -> Vec<RoomPosition> {
         self.path
             .clone()
             .try_into()
@@ -348,7 +348,7 @@ where
 scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Reference);
 
 fn search_real<'a, F>(
-    origin: LocalRoomPosition,
+    origin: RoomPosition,
     goal: &Reference,
     opts: SearchOptions<'a, F>,
 ) -> SearchResults

@@ -18,7 +18,7 @@ use stdweb_derive::ReferenceType;
 
 use crate::{
     constants::{ResourceType, ReturnCode, StructureType},
-    local::LocalRoomPosition,
+    local::RoomPosition,
     macros::*,
     traits::{IntoExpectedType, TryFrom, TryInto},
     ConversionError,
@@ -113,11 +113,11 @@ reference_wrappers!(
 ///
 /// This can be freely implemented for anything with a way to get a position.
 pub trait HasPosition {
-    fn pos(&self) -> LocalRoomPosition;
+    fn pos(&self) -> RoomPosition;
 }
 
-impl HasPosition for LocalRoomPosition {
-    fn pos(&self) -> LocalRoomPosition {
+impl HasPosition for RoomPosition {
+    fn pos(&self) -> RoomPosition {
         self.clone()
     }
 }
@@ -127,8 +127,8 @@ impl<T> HasPosition for T
 where
     T: RoomObjectProperties,
 {
-    fn pos(&self) -> LocalRoomPosition {
-        LocalRoomPosition::from_packed(js_unwrap!(@{self.as_ref()}.pos.__packedPos))
+    fn pos(&self) -> RoomPosition {
+        RoomPosition::from_packed(js_unwrap!(@{self.as_ref()}.pos.__packedPos))
     }
 }
 

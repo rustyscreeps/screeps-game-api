@@ -38,7 +38,7 @@ pub use stdweb::private::ConversionError;
 pub use crate::{
     constants::*,
     js_collections::JsVec,
-    local::{LocalRoomName, LocalRoomNameParseError, LocalRoomPosition},
+    local::{LocalRoomName, LocalRoomNameParseError, RoomPosition},
     objects::*,
     traits::{FromExpectedType, IntoExpectedType},
 };

@@ -6,7 +6,7 @@ use stdweb::{Reference, Value};
 use super::room::Step;
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
-    local::LocalRoomPosition,
+    local::RoomPosition,
     macros::*,
     memory::MemoryReference,
     objects::{
@@ -90,7 +90,7 @@ impl Creep {
     where
         F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
-        let pos = LocalRoomPosition::new(x, y, self.pos().room_name());
+        let pos = RoomPosition::new(x, y, self.pos().room_name());
         self.move_to_with_options(&pos, move_options)
     }
 

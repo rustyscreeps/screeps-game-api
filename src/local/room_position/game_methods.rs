@@ -1,4 +1,4 @@
-//! Game method implementations on `LocalRoomPosition`
+//! Game method implementations on `RoomPosition`
 use crate::{
     constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType},
     game,
@@ -7,9 +7,9 @@ use crate::{
     pathfinder::CostMatrix,
 };
 
-use super::LocalRoomPosition;
+use super::RoomPosition;
 
-impl LocalRoomPosition {
+impl RoomPosition {
     pub fn create_construction_site(self, ty: StructureType) -> ReturnCode {
         js_unwrap!(
             pos_from_packed(@{self.packed_repr()})
@@ -77,7 +77,7 @@ impl LocalRoomPosition {
     where
         F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
-        let target = LocalRoomPosition::new(x, y, self.room_name());
+        let target = RoomPosition::new(x, y, self.room_name());
         self.find_path_to(&target, opts)
     }
 
