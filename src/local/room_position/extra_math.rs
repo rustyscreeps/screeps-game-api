@@ -12,7 +12,8 @@ impl LocalRoomPosition {
     /// if necessary.
     ///
     /// To return a new position rather than modifying in place, use `pos + (x,
-    /// y)`. See [`LocalRoomPosition::add`].
+    /// y)`. See the implementation of `Add<(i32, i32)>` for
+    /// [`LocalRoomPosition`] further down on this page.
     ///
     /// # Panics
     ///
@@ -80,7 +81,7 @@ impl Add<(i32, i32)> for LocalRoomPosition {
 impl Sub<(i32, i32)> for LocalRoomPosition {
     type Output = LocalRoomPosition;
 
-    /// See [`LocalRoomPosition::add`].
+    /// See the implementation of `Add<(i32, i32)>` for [`LocalRoomPosition`].
     #[inline]
     fn sub(self, (x, y): (i32, i32)) -> Self {
         self + (-x, -y)

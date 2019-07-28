@@ -47,27 +47,26 @@ const HALF_WORLD_SIZE: i32 = 128;
 /// *Note:* serializing using `js!{}` or `MemoryReference::set` will _not_
 /// create a `LocalRoomPosition`, only something with the same properties.
 ///
-/// If you need a remote `RoomPosition`, you have two options:
+/// If you need a reference to a `RoomPosition` in JavaScript to use manually,
+/// you have two options:
 ///
-/// 1.  Use `.remote()`, then send that to JavaScript
+/// - Use `.remote()` to get a `RoomPosition`, and then use that reference in
+///   JavaScript
 ///
-/// 2. Transfer the int from [`LocalRoomPosition::packed_repr`] into JS, and use
-///    the `pos_from_packed` JavaScript function provided by
-///    this library:
+/// - Convert the room position to an integer with
+///   [`LocalRoomPosition::packed_repr`], send that to JS, and use the
+///   `pos_from_packed` JavaScript function provided by this library:
 ///
-///    ```no_run
-///    # #[macro_use]
-///    # extern crate stdweb;
-///    # use screeps::LocalRoomPosition;
-///    # fn main() {/*
-///    let pos = LocalRoomPosition::new(...)
-///    # */
-///    # let pos: LocalRoomPosition = unimplemented!();
-///    js! {
-///        let pos = pos_from_packed(@{pos.packed_repr()})
-///    };
-///    # }
-///    ```
+///   ```no_run
+///   use stdweb::js;
+///   use screeps::LocalRoomPosition;
+///
+///   let pos = LocalRoomPosition::new(20, 21, "E5N6".parse().unwrap());
+///   let result = js! {
+///       let pos = pos_from_packed(@{pos.packed_repr()});
+///       pos.roomName
+///   };
+///   ```
 ///
 /// [`bincode`]: https://github.com/servo/bincode
 /// [`RoomPosition::local`]: crate::RoomPosition::local
