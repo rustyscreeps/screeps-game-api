@@ -14,6 +14,11 @@ impl LocalRoomPosition {
     /// To return a new position rather than modifying in place, use `pos + (x,
     /// y)`. See [`LocalRoomPosition::add`].
     ///
+    /// # Panics
+    ///
+    /// Will panic if the new position overflows the world. See
+    /// [`LocalRoomPosition::from_world_coords`].
+    ///
     /// # Example
     ///
     /// ```
@@ -29,11 +34,6 @@ impl LocalRoomPosition {
     /// pos.offset(0, 49);
     /// assert_eq!(pos, LocalRoomPosition::new(26, 25, e21s22));
     /// ```
-    ///
-    /// # Panics
-    ///
-    /// Will panic if the new position overflows the world. See
-    /// [`LocalRoomPosition::from_world_coords`].
     #[inline]
     pub fn offset(&mut self, x: i32, y: i32) {
         *self = *self + (x, y);
