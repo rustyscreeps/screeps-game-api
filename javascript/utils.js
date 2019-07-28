@@ -251,3 +251,14 @@ function __terrain_str_to_num(str) {
         default: throw new Error("unknown terrain type " + str);
     }
 }
+
+function pos_from_packed(repr) {
+    // mimick the RoomPosition constructor
+    let pos = Object.create(RoomPosition.prototype);
+    Object.defineProperty(pos, "__packedPos", {
+        enumerable: false,
+        value: repr,
+        writable: true,
+    });
+    return pos;
+}

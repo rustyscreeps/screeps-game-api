@@ -26,10 +26,10 @@ pub mod constants;
 pub mod game;
 pub mod inter_shard_memory;
 pub mod js_collections;
+pub mod local;
 pub mod memory;
 pub mod objects;
 pub mod pathfinder;
-mod positions;
 pub mod raw_memory;
 pub mod traits;
 
@@ -38,8 +38,8 @@ pub use stdweb::private::ConversionError;
 pub use crate::{
     constants::*,
     js_collections::JsVec,
+    local::{LocalRoomName, LocalRoomNameParseError, LocalRoomPosition},
     objects::*,
-    positions::{LocalRoomName, LocalRoomNameParseError, LocalRoomPosition},
     traits::{FromExpectedType, IntoExpectedType},
 };
 

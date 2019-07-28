@@ -16,6 +16,7 @@ use crate::{
         Color, Direction, ExitDirection, FindConstant, Look, LookConstant, PowerType, ResourceType,
         ReturnCode, StructureType, Terrain,
     },
+    local::LocalRoomName,
     macros::*,
     memory::MemoryReference,
     objects::{
@@ -24,7 +25,6 @@ use crate::{
         StructureTerminal, Tombstone,
     },
     pathfinder::CostMatrix,
-    positions::LocalRoomName,
     traits::{TryFrom, TryInto},
     ConversionError,
 };
