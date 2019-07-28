@@ -7,6 +7,11 @@ use std::fmt;
 
 use super::LocalRoomName;
 
+mod extra_math;
+mod game_math;
+mod pair_utils;
+mod world_utils;
+
 const HALF_WORLD_SIZE: i32 = 128;
 
 /// Represents a position in a particular room in Screeps.
