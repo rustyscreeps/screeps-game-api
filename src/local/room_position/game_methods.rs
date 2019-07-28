@@ -3,7 +3,7 @@ use crate::{
     constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType},
     game,
     macros::*,
-    objects::{FindOptions, Flag, HasPosition, LookResult, Path, RoomPosition},
+    objects::{FindOptions, Flag, HasPosition, LookResult, Path},
     pathfinder::CostMatrix,
 };
 
@@ -77,7 +77,7 @@ impl LocalRoomPosition {
     where
         F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
-        let target = RoomPosition::new(x, y, &self.room_name().to_array_string());
+        let target = LocalRoomPosition::new(x, y, self.room_name());
         self.find_path_to(&target, opts)
     }
 

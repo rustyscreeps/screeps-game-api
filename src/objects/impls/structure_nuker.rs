@@ -1,7 +1,7 @@
 use crate::{
     constants::ReturnCode,
     macros::*,
-    objects::{RoomPosition, StructureNuker},
+    objects::{HasPosition, StructureNuker},
 };
 
 simple_accessors! {
@@ -11,7 +11,8 @@ simple_accessors! {
 }
 
 impl StructureNuker {
-    pub fn launch_nuke(&self, pos: &RoomPosition) -> ReturnCode {
-        js_unwrap! {@{self.as_ref()}.launchNuke(@{pos.as_ref()})}
+    pub fn launch_nuke<T: HasPosition + ?Sized>(&self, target: &T) -> ReturnCode {
+        let pos = target.pos();
+        js_unwrap! {@{self.as_ref()}.launchNuke(pos_from_packed(@{pos.packed_repr()}))}
     }
 }

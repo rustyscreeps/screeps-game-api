@@ -331,8 +331,8 @@ where
 {
     let pos = goal.pos();
     search_real(
-        &origin.pos(),
-        &js_unwrap!({pos: @{pos.as_ref()}, range: @{range}}),
+        origin.pos(),
+        &js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}}),
         opts,
     )
 }
@@ -349,17 +349,17 @@ where
         .into_iter()
         .map(|(target, range)| {
             let pos = target.pos();
-            js_unwrap!({pos: @{pos.as_ref()}, range: @{range}})
+            js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}})
         })
         .collect();
     let goals_js: Reference = js_unwrap!(@{goals});
-    search_real(&origin.pos(), &goals_js, opts)
+    search_real(origin.pos(), &goals_js, opts)
 }
 
 scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Reference);
 
 fn search_real<'a, F>(
-    origin: &RoomPosition,
+    origin: LocalRoomPosition,
     goal: &Reference,
     opts: SearchOptions<'a, F>,
 ) -> SearchResults
@@ -409,7 +409,7 @@ where
     // See https://docs.rs/scoped-tls/0.1/scoped_tls/
     PF_CALLBACK.set(&callback_lifetime_erased, || {
         let res: ::stdweb::Reference = js_unwrap! {
-            PathFinder.search(@{origin.as_ref()}, @{goal}, {
+            PathFinder.search(pos_from_packed(@{origin.packed_repr()}), @{goal}, {
                 roomCallback: @{callback},
                 plainCost: @{plain_cost},
                 swampCost: @{swamp_cost},

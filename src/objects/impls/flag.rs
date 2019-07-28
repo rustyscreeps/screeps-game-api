@@ -50,9 +50,9 @@ impl Flag {
     }
 
     pub fn set_position<T: HasPosition>(&self, pos: T) {
-        let room_pos = pos.pos();
+        let pos = pos.pos();
         js! { @(no_return)
-            @{self.as_ref()}.setPosition(@{room_pos.as_ref()});
+            @{self.as_ref()}.setPosition(pos_from_packed(@{pos.packed_repr()}));
         }
     }
 

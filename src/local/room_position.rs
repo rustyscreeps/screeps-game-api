@@ -262,7 +262,7 @@ mod stdweb {
 
     use crate::{
         macros::*,
-        objects::{HasPosition, RoomPosition},
+        objects::RoomPosition,
         traits::{TryFrom, TryInto},
     };
 
@@ -302,12 +302,6 @@ mod stdweb {
     impl crate::traits::FromExpectedType<Reference> for LocalRoomPosition {
         fn from_expected_type(reference: Reference) -> Result<Self, crate::ConversionError> {
             Self::try_from(Value::Reference(reference))
-        }
-    }
-
-    impl HasPosition for LocalRoomPosition {
-        fn pos(&self) -> RoomPosition {
-            self.remote()
         }
     }
 

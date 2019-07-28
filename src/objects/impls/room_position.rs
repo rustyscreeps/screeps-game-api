@@ -8,7 +8,6 @@ use crate::{
     macros::*,
     objects::{Flag, HasPosition, LookResult, RoomPosition, StructureType},
     pathfinder::CostMatrix,
-    traits::TryInto,
 };
 
 impl RoomPosition {
@@ -108,28 +107,28 @@ impl RoomPosition {
     where
         T: HasPosition,
     {
-        js_unwrap!(@{self.as_ref()}.getDirectionTo(@{&target.pos().0}))
+        js_unwrap!(@{self.as_ref()}.getDirectionTo(pos_from_packed(@{target.pos().packed_repr()})))
     }
 
     pub fn get_range_to<T>(&self, target: &T) -> u32
     where
         T: HasPosition,
     {
-        js_unwrap!(@{self.as_ref()}.getRangeTo(@{&target.pos().0}))
+        js_unwrap!(@{self.as_ref()}.getRangeTo(pos_from_packed(@{target.pos().packed_repr()})))
     }
 
     pub fn in_range_to<T>(&self, target: &T, range: u32) -> bool
     where
         T: ?Sized + HasPosition,
     {
-        js_unwrap!(@{self.as_ref()}.inRangeTo(@{&target.pos().0}, @{range}))
+        js_unwrap!(@{self.as_ref()}.inRangeTo(pos_from_packed(@{target.pos().packed_repr()}), @{range}))
     }
 
     pub fn is_equal_to<T>(&self, target: &T) -> bool
     where
         T: ?Sized + HasPosition,
     {
-        js_unwrap!(@{self.as_ref()}.isEqualTo(@{&target.pos().0}))
+        js_unwrap!(@{self.as_ref()}.isEqualTo(pos_from_packed(@{target.pos().packed_repr()})))
     }
 
     pub fn is_equal_to_xy(&self, x: u32, y: u32) -> bool {
@@ -140,7 +139,7 @@ impl RoomPosition {
     where
         T: ?Sized + HasPosition,
     {
-        js_unwrap!(@{self.as_ref()}.isNearTo(@{&target.pos().0}))
+        js_unwrap!(@{self.as_ref()}.isNearTo(pos_from_packed(@{target.pos().packed_repr()})))
     }
 
     pub fn look(&self) -> Vec<LookResult> {
@@ -159,13 +158,7 @@ impl RoomPosition {
 
 impl<T: HasPosition> PartialEq<T> for RoomPosition {
     fn eq(&self, other: &T) -> bool {
-        (js! {
-            var a = @{self.as_ref()};
-            var b = @{&other.pos().0};
-            return a.x == b.x && a.y == b.y && a.roomName == b.roomName;
-        })
-        .try_into()
-        .expect("expected a boolean to be a boolean")
+        self.local() == other.pos()
     }
 }
 
