@@ -56,7 +56,7 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 /// properties.
 ///
 /// *Note:* serializing using `js!{}` or `MemoryReference::set` will _not_
-/// create a `LocalRoomPosition`, only something with the same properties.
+/// create a JavaScript `RoomPosition`, only something with the same properties.
 ///
 /// If you need a reference to a `RoomPosition` in JavaScript to use manually,
 /// you have two options:
