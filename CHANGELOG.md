@@ -4,6 +4,7 @@ Unreleased
 - Change `LocalRoomName`'s orientation so that north is negative and south is positive.
   This is a breaking change for `LocalRoomName::from_coords`, fields and add/sub implementations
   (#200)
+- Make `StructureSpawn::spawning` an `Option<Spawning>` to reflect reality
 - Fix prices returned from `game::market` APIs being integers rather than floats (breaking) (#179)
 - Work around bug where IntelliJ-Rust didn't understand `screeps::game::*` modules created by a
   macro, even with experimental engine enabled (#197)
@@ -12,6 +13,7 @@ Unreleased
 - `StructurePortal` no longer implements `OwnedStructure` and `Attackable`. (#190)
 - Collections provided by `Game` now implement the `hashmap` function to retrieve both keys
   and values at once. (#194)
+- Implement `Clone` for `Structure`
 - Split [cargo-screeps](https://github.com/rustyscreeps/cargo-screeps/) out into a separate
   repository
 - Misc. documentation improvements.
