@@ -9,6 +9,7 @@ use super::LocalRoomName;
 
 mod extra_math;
 mod game_math;
+mod game_methods;
 mod pair_utils;
 mod world_utils;
 
