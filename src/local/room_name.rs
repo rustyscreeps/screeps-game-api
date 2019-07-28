@@ -15,13 +15,13 @@ pub struct LocalRoomName {
     /// 0 represents E0, positive numbers represent E(x)
     ///
     /// -1 represents W0, negative numbers represent W((-x) - 1)
-    x_coord: i32,
+    pub(super) x_coord: i32,
     /// Inner y coordinate representation.
     ///
     /// 0 represents S0, positive numbers represent S(y)
     ///
     /// -1 represents N0, negative numbers represent N((-y) - 1)
-    y_coord: i32,
+    pub(super) y_coord: i32,
 }
 
 impl fmt::Display for LocalRoomName {
