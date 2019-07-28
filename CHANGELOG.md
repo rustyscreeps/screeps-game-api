@@ -1,18 +1,19 @@
 Unreleased
 ==========
 
-- Merge `LocalRoomPosition` and `RoomPosition` into one efficient, local, room position type. (#206)
-  - Game methods dealing with coordinates now take something which can produce a local
-    `RoomPosition`, and will only have to upload a single `u32` to JavaScript to call it.
-  - `RoomPosition` methods dealing with math between positions are now implemented in pure-Rust code
-- Rework `LocalRoomPosition` to use a single `u32` as its representation, matching the Screeps'
-  server's optimizations, and implement math utilities for it. (#203)
-  - `LocalRoomPosition`, now `RoomPosition`, implements thing such as `Add<(i32, i32)>` for altering
-    world coordinates, and has methods like `from_world_coords` and `world_coords`.
-    See [`RoomPosition` documentation][pos-doc]
 - Change `LocalRoomName`'s orientation so that north is negative and south is positive.
   This is a breaking change for `LocalRoomName::from_coords`, fields and add/sub implementations
   (#200)
+- Rework `LocalRoomPosition` to use a single `u32` as its representation, matching the Screeps'
+  server's optimizations, and implement math utilities for it. (#203)
+  - `LocalRoomPosition`, now `Position`, implements `Add<(i32, i32)>` for altering world
+    coordinates, and has methods like `from_world_coords` and `world_coords`. See [`RoomPosition`
+    documentation][pos-doc]
+- Merge `LocalRoomPosition` and `RoomPosition` into one efficient, local, `Position` type. (#206)
+  - Game methods dealing with coordinates now take something which can produce a local
+    `Position`, and will only have to upload a single `u32` to JavaScript to call it.
+  - `Position` methods dealing with math between positions are now implemented in pure-Rust code
+  - An alias `type RoomPosition = Position;` has been added to reflect the JS API
 - Make `StructureSpawn::spawning` an `Option<Spawning>` to reflect reality
 - Fix prices returned from `game::market` APIs being integers rather than floats (breaking) (#179)
 - Work around bug where IntelliJ-Rust didn't understand `screeps::game::*` modules created by a
