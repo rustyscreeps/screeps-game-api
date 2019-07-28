@@ -234,7 +234,7 @@ impl LocalRoomPosition {
 }
 
 mod stdweb {
-    use stdweb::Value;
+    use stdweb::{Reference, Value};
 
     use crate::{
         macros::*,
@@ -269,6 +269,12 @@ mod stdweb {
                 }
                 other => Ok(Self::from_packed(other.try_into()?)),
             }
+        }
+    }
+
+    impl crate::traits::FromExpectedType<Reference> for LocalRoomPosition {
+        fn from_expected_type(reference: Reference) -> Result<Self, crate::ConversionError> {
+            Self::try_from(Value::Reference(reference))
         }
     }
 
