@@ -48,12 +48,12 @@ impl LocalRoomPosition {
         // not inclusive since the range for world coords in `-128..=127`, and the range
         // for room coords is `0..=49`.
         assert!(
-            (-128 * 50..128 * 50).contains(&x),
+            (-HALF_WORLD_SIZE * 50..HALF_WORLD_SIZE * 50).contains(&x),
             "out of bounds world x: {}",
             x
         );
         assert!(
-            (-128 * 50..128 * 50).contains(&y),
+            (-HALF_WORLD_SIZE * 50..HALF_WORLD_SIZE * 50).contains(&y),
             "out of bounds world y: {}",
             y
         );

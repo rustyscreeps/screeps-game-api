@@ -3,7 +3,7 @@
 //! This is a reimplementation/translation of the `RoomPosition` code originally
 //! written in JavaScript. All RoomPosition to RoomPosition operations in this
 //! file stay within Rust.
-use std::fmt;
+use std::{fmt, ops::Range};
 
 use super::LocalRoomName;
 
@@ -12,7 +12,18 @@ mod game_math;
 mod pair_utils;
 mod world_utils;
 
+/// Represents two constants related to room names.
+///
+/// First, this is the constant added to room coordinates before they're stored
+/// in the packed representation.
+///
+/// Second, `-HALF_WORLD_SIZE` is the minimum representable room name
+/// coordinate, and `HALF_WORLD_SIZE - 1` is the maximum representable room name
+/// coordinate.
 const HALF_WORLD_SIZE: i32 = 128;
+
+/// Valid room name coordinates.
+const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SIZE);
 
 /// Represents a position in a particular room in Screeps.
 ///
@@ -126,12 +137,12 @@ impl LocalRoomPosition {
         assert!(x < 50, "out of bounds x: {}", x);
         assert!(y < 50, "out of bounds y: {}", y);
         assert!(
-            (-128..=127).contains(&room_name.x_coord),
+            VALID_ROOM_NAME_COORDINATES.contains(&room_name.x_coord),
             "out of bounds room_x: {}",
             room_name.x_coord,
         );
         assert!(
-            (-128..=127).contains(&room_name.y_coord),
+            VALID_ROOM_NAME_COORDINATES.contains(&room_name.y_coord),
             "out of bounds room_y: {}",
             room_name.y_coord,
         );
@@ -207,12 +218,12 @@ impl LocalRoomPosition {
     #[inline]
     pub fn set_room_name(&mut self, room_name: LocalRoomName) {
         assert!(
-            (-128..=127).contains(&room_name.x_coord),
+            VALID_ROOM_NAME_COORDINATES.contains(&room_name.x_coord),
             "out of bounds room_x: {}",
             room_name.x_coord,
         );
         assert!(
-            (-128..=127).contains(&room_name.y_coord),
+            VALID_ROOM_NAME_COORDINATES.contains(&room_name.y_coord),
             "out of bounds room_y: {}",
             room_name.y_coord,
         );
