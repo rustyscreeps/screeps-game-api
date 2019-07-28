@@ -28,18 +28,26 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 
 /// Represents a position in a particular room in Screeps.
 ///
-/// This is "local" in the sense that while other structures alway references
-/// things allocated by and managed by the JavaScript VM, this is a
-/// self-contained plain-data struct in Rust memory, the same size as a `i32`.
+/// **Note:** This is analagous to the `RoomPosition` JavaScript type.
+///
+/// We've renamed this type to `Position` in `screeps-game-api` to reflect the
+/// fact that it's implemented entirely as a local type, and does represent a
+/// position located within an entire shard, not only within a single room.
+///
+/// This should be a very efficient type to use in most if not all situations.
+/// It's represented by a single `u32`, all math operations are implemented in
+/// pure-Rust code, and uploading to / downloading from JavaScript only requires
+/// transferring a single `i32`.
 ///
 /// # Using Position
 ///
-/// A `Position` can be retrieved at any point by using
-/// [`RemoteRoomPosition::local`]. It can then be copied around freely, and have
-/// its values modified.
+/// You can retrieve a `Position` by getting the position of a game object using
+/// [`HasPosition::pos`], or by creating one from coordinates with
+/// [`Position::new`].
 ///
-/// `&Position` can be passed into any game method taking an object,
-/// and will be automatically uploaded to JavaScript as a `RoomPosition`.
+/// You can use any of the math methods available on this page to manipulate
+/// [`Position`], and you can pass it to any game methods expecting a position
+/// or something with a position.
 ///
 /// # Serialization
 ///
@@ -81,7 +89,6 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 ///   ```
 ///
 /// [`bincode`]: https://github.com/servo/bincode
-/// [`RemoteRoomPosition::local`]: crate::RoomPosition::local
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(transparent)]
 pub struct Position {
