@@ -254,7 +254,12 @@ mod stdweb {
         type Error = <Value as TryInto<String>>::Error;
 
         fn try_from(v: Value) -> Result<LocalRoomPosition, Self::Error> {
-            let value = js! { return @{v}.__packedPos};
+            if let Value::Number(v) = v {
+                let packed: i32 = v.try_into()?;
+                return Ok(LocalRoomPosition::from_packed(packed));
+            }
+
+            let value = js! { return @{v}.__packedPos };
             match value {
                 Value::Undefined => {
                     let x = js! {v.x}.try_into()?;
