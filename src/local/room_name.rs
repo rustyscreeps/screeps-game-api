@@ -1,8 +1,8 @@
 use std::{
-    borrow::Cow,
     error,
     fmt::{self, Write},
     ops,
+    str::FromStr,
 };
 
 use arrayvec::ArrayString;
@@ -54,12 +54,11 @@ impl LocalRoomName {
     /// This will parse the input, and return an error if it is in an invalid
     /// format.
     #[inline]
-    pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError<'_>>
+    pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError>
     where
         T: AsRef<str> + ?Sized,
     {
-        let s = x.as_ref();
-        parse_or_cheap_failure(s).map_err(|()| LocalRoomNameParseError::new(s.to_owned()))
+        x.as_ref().parse()
     }
 
     /// Creates a new room name from the given position parameters.
@@ -118,11 +117,12 @@ impl ops::Sub<LocalRoomName> for LocalRoomName {
     }
 }
 
-/// Something that can be turned into a room name.
-pub trait IntoLocalRoomName {
-    /// Turns this data into a room name, erroring if the format is not as
-    /// expected.
-    fn into_room_name(&self) -> Result<LocalRoomName, LocalRoomNameParseError<'_>>;
+impl FromStr for LocalRoomName {
+    type Err = LocalRoomNameParseError;
+
+    fn from_str(s: &str) -> Result<Self, LocalRoomNameParseError> {
+        parse_or_cheap_failure(s).map_err(|()| LocalRoomNameParseError::new(s))
+    }
 }
 
 fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
@@ -182,42 +182,40 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
 ///
 /// [`LocalRoomName`]: struct.LocalRoomName.html
 #[derive(Clone, Debug)]
-pub struct LocalRoomNameParseError<'a>(Cow<'a, str>);
+pub enum LocalRoomNameParseError {
+    TooLarge { length: usize },
+    InvalidString { string: ArrayString<[u8; 8]> },
+}
 
-impl<'a> LocalRoomNameParseError<'a> {
+impl LocalRoomNameParseError {
     /// Private method to construct a `LocalRoomNameParseError`.
-    fn new<T: Into<Cow<'a, str>>>(failed_room_name: T) -> Self {
-        LocalRoomNameParseError(failed_room_name.into())
-    }
-
-    /// Turns this error into a 'static error, cloning any inner data that
-    /// represents what failed.
-    pub fn into_owned(self) -> LocalRoomNameParseError<'static> {
-        let LocalRoomNameParseError(cow) = self;
-        LocalRoomNameParseError(cow.into_owned().into())
-    }
-
-    /// Retrieves the room name that failed to parse into a [`LocalRoomName`].
-    ///
-    /// [`LocalRoomName`]: struct.LocalRoomName.html
-    pub fn get_failed_str(&self) -> &str {
-        self.0.as_ref()
+    fn new(failed_room_name: &str) -> Self {
+        match ArrayString::from(failed_room_name) {
+            Ok(string) => LocalRoomNameParseError::InvalidString { string },
+            Err(_) => LocalRoomNameParseError::TooLarge {
+                length: failed_room_name.len(),
+            },
+        }
     }
 }
 
-impl<'a> error::Error for LocalRoomNameParseError<'a> {
-    fn description(&self) -> &str {
-        "string failed to parse into room name"
-    }
-}
+impl error::Error for LocalRoomNameParseError {}
 
-impl<'a> fmt::Display for LocalRoomNameParseError<'a> {
+impl fmt::Display for LocalRoomNameParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "expected room name formatted `(E|W)[0-9]+(N|S)[0-9]+`, found `{}`",
-            self.0.as_ref()
-        )
+        match self {
+            LocalRoomNameParseError::TooLarge { length } => write!(
+                f,
+                "got invalid room name, too large to stick in error. \
+                 expected length 8 or less, got length {}",
+                length
+            ),
+            LocalRoomNameParseError::InvalidString { string } => write!(
+                f,
+                "expected room name formatted `(E|W)[0-9]+(N|S)[0-9]+`, found `{}`",
+                string
+            ),
+        }
     }
 }
 
