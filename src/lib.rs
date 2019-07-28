@@ -38,10 +38,14 @@ pub use stdweb::private::ConversionError;
 pub use crate::{
     constants::*,
     js_collections::JsVec,
-    local::{LocalRoomName, LocalRoomNameParseError, LocalRoomPosition},
+    local::{LocalRoomName, LocalRoomNameParseError, Position},
     objects::*,
     traits::{FromExpectedType, IntoExpectedType},
 };
+
+/// An alias for `Position` for those used to the JavaScript `RoomPosition`
+/// type.
+pub type RoomPosition = Position;
 
 /// Traits which implement base functionalities for Screeps types.
 ///

@@ -139,9 +139,10 @@ pub mod find {
     use stdweb::Reference;
 
     use crate::{
+        local::Position,
         objects::{
             ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, PowerCreep, Resource,
-            RoomPosition, Source, Structure, StructureSpawn, Tombstone,
+            Source, Structure, StructureSpawn, Tombstone,
         },
         traits::FromExpectedType,
     };
@@ -235,7 +236,7 @@ pub mod find {
     }
 
     unsafe impl FindConstant for Exit {
-        type Item = RoomPosition;
+        type Item = Position;
 
         fn find_code(&self) -> i16 {
             *self as i16
@@ -264,11 +265,11 @@ pub mod find {
         POWER_CREEPS, 119, PowerCreep;
         MY_POWER_CREEPS, 120, PowerCreep;
         HOSTILE_POWER_CREEPS, 121, PowerCreep;
-        EXIT_TOP, Exit::Top as i16, RoomPosition;
-        EXIT_RIGHT, Exit::Right as i16, RoomPosition;
-        EXIT_BOTTOM, Exit::Bottom as i16, RoomPosition;
-        EXIT_LEFT, Exit::Left as i16, RoomPosition;
-        EXIT, Exit::All as i16, RoomPosition;
+        EXIT_TOP, Exit::Top as i16, Position;
+        EXIT_RIGHT, Exit::Right as i16, Position;
+        EXIT_BOTTOM, Exit::Bottom as i16, Position;
+        EXIT_LEFT, Exit::Left as i16, Position;
+        EXIT, Exit::All as i16, Position;
     }
 }
 

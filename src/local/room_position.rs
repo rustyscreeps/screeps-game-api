@@ -9,6 +9,7 @@ use super::LocalRoomName;
 
 mod extra_math;
 mod game_math;
+mod game_methods;
 mod pair_utils;
 mod world_utils;
 
@@ -27,29 +28,37 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 
 /// Represents a position in a particular room in Screeps.
 ///
-/// This is "local" in the sense that while `RoomPosition` always references a
-/// room position allocated by and managed by the JavaScript VM, this is a
-/// self-contained plain-data struct in Rust memory, the same size as a `i32`.
+/// **Note:** This is analagous to the `RoomPosition` JavaScript type.
 ///
-/// # Using LocalRoomPosition
+/// We've renamed this type to `Position` in `screeps-game-api` to reflect the
+/// fact that it's implemented entirely as a local type, and does represent a
+/// position located within an entire shard, not only within a single room.
 ///
-/// A `LocalRoomPosition` can be retrieved at any point by using
-/// [`RoomPosition::local`]. It can then be copied around freely, and have its
-/// values modified.
+/// This should be a very efficient type to use in most if not all situations.
+/// It's represented by a single `u32`, all math operations are implemented in
+/// pure-Rust code, and uploading to / downloading from JavaScript only requires
+/// transferring a single `i32`.
 ///
-/// `&LocalRoomPosition` can be passed into any game method taking an object,
-/// and will be automatically uploaded to JavaScript as a `RoomPosition`.
+/// # Using Position
+///
+/// You can retrieve a `Position` by getting the position of a game object using
+/// [`HasPosition::pos`], or by creating one from coordinates with
+/// [`Position::new`].
+///
+/// You can use any of the math methods available on this page to manipulate
+/// [`Position`], and you can pass it to any game methods expecting a position
+/// or something with a position.
 ///
 /// # Serialization
 ///
-/// `LocalRoomPosition` implements both `serde::Serialize` and
+/// `Position` implements both `serde::Serialize` and
 /// `serde::Deserialize`.
 ///
 /// When serializing, it will use the format `{roomName: String, x: u32, y:
 /// u32}` in "human readable" formats like JSON, and will serialize as a single
 /// `i32` in "non-human readable" formats like [`bincode`].
 ///
-/// You can also pass `LocalRoomPosition` into JavaScript using the `js!{}`
+/// You can also pass `Position` into JavaScript using the `js!{}`
 /// macro provided by `stdweb`, or helper methods using the same code like
 /// [`MemoryReference::set`][crate::memory::MemoryReference::set]. It will be
 /// serialized the same as in JSON, as an object with `roomName`, `x` and `y`
@@ -61,18 +70,18 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 /// If you need a reference to a `RoomPosition` in JavaScript to use manually,
 /// you have two options:
 ///
-/// - Use `.remote()` to get a `RoomPosition`, and then use that reference in
-///   JavaScript
+/// - Use `.remote()` to get a `stdweb::Reference`, and then use that reference
+///   in JavaScript
 ///
-/// - Convert the room position to an integer with
-///   [`LocalRoomPosition::packed_repr`], send that to JS, and use the
-///   `pos_from_packed` JavaScript function provided by this library:
+/// - Convert the room position to an integer with [`Position::packed_repr`],
+///   send that to JS, and use the `pos_from_packed` JavaScript function
+///   provided by this library:
 ///
 ///   ```no_run
 ///   use stdweb::js;
-///   use screeps::LocalRoomPosition;
+///   use screeps::Position;
 ///
-///   let pos = LocalRoomPosition::new(20, 21, "E5N6".parse().unwrap());
+///   let pos = Position::new(20, 21, "E5N6".parse().unwrap());
 ///   let result = js! {
 ///       let pos = pos_from_packed(@{pos.packed_repr()});
 ///       pos.roomName
@@ -80,10 +89,10 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SI
 ///   ```
 ///
 /// [`bincode`]: https://github.com/servo/bincode
-/// [`RoomPosition::local`]: crate::RoomPosition::local
+/// [`HasPosition::pos`]: crate::HasPosition::pos
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(transparent)]
-pub struct LocalRoomPosition {
+pub struct Position {
     /// A bit-packed integer, containing, from highest-order to lowest:
     ///
     /// - 1 byte: (room_x) + 128
@@ -97,14 +106,14 @@ pub struct LocalRoomPosition {
     ///
     /// This is the same representation used in the Screeps server, allowing for
     /// easy translation. Besides the method names and display representation,
-    /// this is the one part of LocalRoomPosition copied directly from the
+    /// this is the one part of RoomPosition copied directly from the
     /// engine code.
     packed: u32,
 }
 
-impl fmt::Debug for LocalRoomPosition {
+impl fmt::Debug for Position {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("LocalRoomPosition")
+        f.debug_struct("Position")
             .field("packed", &self.packed)
             .field("x", &self.x())
             .field("y", &self.y())
@@ -113,7 +122,7 @@ impl fmt::Debug for LocalRoomPosition {
     }
 }
 
-impl fmt::Display for LocalRoomPosition {
+impl fmt::Display for Position {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -125,8 +134,8 @@ impl fmt::Display for LocalRoomPosition {
     }
 }
 
-impl LocalRoomPosition {
-    /// Create a new LocalRoomPosition
+impl Position {
+    /// Create a new Position
     ///
     /// # Panics
     ///
@@ -152,13 +161,13 @@ impl LocalRoomPosition {
         Self::from_coords_and_world_coords_adjusted(x, y, room_x, room_y)
     }
 
-    /// Creates a `LocalRoomPosition` from x,y coordinates and room coordinates
+    /// Creates a `Position` from x,y coordinates and room coordinates
     /// already adjusted to be positive using `HALF_WORLD_SIZE`.
     ///
     /// Non-public as this doesn't check the bounds for any of these values.
     #[inline]
     fn from_coords_and_world_coords_adjusted(x: u32, y: u32, room_x: u32, room_y: u32) -> Self {
-        LocalRoomPosition {
+        Position {
             packed: (room_x << 24) | (room_y << 16) | (x << 8) | y,
         }
     }
@@ -170,7 +179,7 @@ impl LocalRoomPosition {
 
     #[inline]
     pub fn from_packed(packed: i32) -> Self {
-        LocalRoomPosition {
+        Position {
             packed: packed as u32,
         }
     }
@@ -261,25 +270,24 @@ mod stdweb {
 
     use crate::{
         macros::*,
-        objects::{HasPosition, RoomPosition},
         traits::{TryFrom, TryInto},
     };
 
-    use super::LocalRoomPosition;
+    use super::Position;
 
-    impl LocalRoomPosition {
-        pub fn remote(self) -> RoomPosition {
-            js_unwrap_ref!(pos_from_packed(@{self.packed_repr()}))
+    impl Position {
+        pub fn remote(self) -> Reference {
+            js_unwrap!(pos_from_packed(@{self.packed_repr()}))
         }
     }
 
-    impl TryFrom<Value> for LocalRoomPosition {
+    impl TryFrom<Value> for Position {
         type Error = <Value as TryInto<String>>::Error;
 
-        fn try_from(v: Value) -> Result<LocalRoomPosition, Self::Error> {
+        fn try_from(v: Value) -> Result<Position, Self::Error> {
             if let Value::Number(v) = v {
                 let packed: i32 = v.try_into()?;
-                return Ok(LocalRoomPosition::from_packed(packed));
+                return Ok(Position::from_packed(packed));
             }
 
             let value = js! {
@@ -298,25 +306,19 @@ mod stdweb {
         }
     }
 
-    impl crate::traits::FromExpectedType<Reference> for LocalRoomPosition {
+    impl crate::traits::FromExpectedType<Reference> for Position {
         fn from_expected_type(reference: Reference) -> Result<Self, crate::ConversionError> {
             Self::try_from(Value::Reference(reference))
         }
     }
 
-    impl HasPosition for LocalRoomPosition {
-        fn pos(&self) -> RoomPosition {
-            self.remote()
-        }
-    }
-
-    js_serializable!(LocalRoomPosition);
+    js_serializable!(Position);
 }
 
 mod serde {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-    use super::{LocalRoomName, LocalRoomPosition};
+    use super::{LocalRoomName, Position};
 
     #[derive(Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
@@ -326,14 +328,14 @@ mod serde {
         y: u32,
     }
 
-    impl From<ReadableFormat> for LocalRoomPosition {
+    impl From<ReadableFormat> for Position {
         fn from(ReadableFormat { room_name, x, y }: ReadableFormat) -> Self {
-            LocalRoomPosition::new(x, y, room_name)
+            Position::new(x, y, room_name)
         }
     }
 
-    impl From<LocalRoomPosition> for ReadableFormat {
-        fn from(pos: LocalRoomPosition) -> Self {
+    impl From<Position> for ReadableFormat {
+        fn from(pos: Position) -> Self {
             ReadableFormat {
                 room_name: pos.room_name(),
                 x: pos.x(),
@@ -342,7 +344,7 @@ mod serde {
         }
     }
 
-    impl Serialize for LocalRoomPosition {
+    impl Serialize for Position {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: Serializer,
@@ -355,7 +357,7 @@ mod serde {
         }
     }
 
-    impl<'de> Deserialize<'de> for LocalRoomPosition {
+    impl<'de> Deserialize<'de> for Position {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: Deserializer<'de>,
@@ -363,7 +365,7 @@ mod serde {
             if deserializer.is_human_readable() {
                 ReadableFormat::deserialize(deserializer).map(Into::into)
             } else {
-                i32::deserialize(deserializer).map(LocalRoomPosition::from_packed)
+                i32::deserialize(deserializer).map(Position::from_packed)
             }
         }
     }
@@ -371,7 +373,7 @@ mod serde {
 
 #[cfg(test)]
 mod test {
-    use super::LocalRoomPosition;
+    use super::Position;
 
     const TEST_POSITIONS: &[(i32, (u32, u32, &str))] = &[
         (-2122440404i32, (33, 44, "E1N1")),
@@ -385,7 +387,7 @@ mod test {
     #[test]
     fn from_i32_accurate() {
         for (packed, (x, y, name)) in TEST_POSITIONS.iter().copied() {
-            let pos = LocalRoomPosition::from_packed(packed);
+            let pos = Position::from_packed(packed);
             assert_eq!(pos.x(), x);
             assert_eq!(pos.y(), y);
             assert_eq!(&*pos.room_name().to_array_string(), name);
@@ -395,7 +397,7 @@ mod test {
     #[test]
     fn from_args_accurate() {
         for (packed, (x, y, name)) in TEST_POSITIONS.iter().copied() {
-            let pos = LocalRoomPosition::new(x, y, name.parse().unwrap());
+            let pos = Position::new(x, y, name.parse().unwrap());
             assert_eq!(pos.packed_repr(), packed);
         }
     }

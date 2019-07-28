@@ -16,13 +16,13 @@ use crate::{
         Color, Direction, ExitDirection, FindConstant, Look, LookConstant, PowerType, ResourceType,
         ReturnCode, StructureType, Terrain,
     },
-    local::LocalRoomName,
+    local::{LocalRoomName, Position},
     macros::*,
     memory::MemoryReference,
     objects::{
         ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource, Room,
-        RoomPosition, RoomTerrain, Source, Structure, StructureController, StructureStorage,
-        StructureTerminal, Tombstone,
+        RoomTerrain, Source, Structure, StructureController, StructureStorage, StructureTerminal,
+        Tombstone,
     },
     pathfinder::CostMatrix,
     traits::{TryFrom, TryInto},
@@ -57,7 +57,7 @@ impl Room {
     {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
-            @{pos.as_ref()},
+            pos_from_packed(@{pos.packed_repr()}),
             __structure_type_num_to_str(@{ty as u32})
         ))
     }
@@ -73,7 +73,7 @@ impl Room {
     {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
-            @{pos.as_ref()},
+            pos_from_packed(@{pos.packed_repr()}),
             __structure_type_num_to_str(@{ty as u32}),
             @{name}
         ))
@@ -92,7 +92,7 @@ impl Room {
         let pos = at.pos();
         Flag::interpret_creation_ret_value(js! {
             return @{self.as_ref()}.createFlag(
-                @{pos.as_ref()},
+                pos_from_packed(@{pos.packed_repr()}),
                 @{name},
                 @{main_color as u32},
                 @{secondary_color as u32}
@@ -129,8 +129,27 @@ impl Room {
         js_unwrap! {@{self.as_ref()}.getEventLog(true)}
     }
 
-    pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
-        js_unwrap! {@{self.as_ref()}.getPositionAt(@{x}, @{y})}
+    pub fn get_position_at(&self, x: u32, y: u32) -> Option<Position> {
+        let v = js! {
+            let value = @{self.as_ref()}.getPositionAt(@{x}, @{y});
+            if value == null {
+                return null;
+            } else {
+                return value.__packedPos;
+            }
+        };
+        match v {
+            Value::Number(_) => Some(
+                v.try_into()
+                    .expect("expected Position::try_from(pos.__packedPos) to succeed"),
+            ),
+            Value::Null => None,
+            _ => panic!(
+                "unexpected return value for JS binding to Room.getPositionAt. \
+                 expected null or number, found {:?}",
+                v
+            ),
+        }
     }
 
     pub fn get_terrain(&self) -> RoomTerrain {
@@ -138,8 +157,8 @@ impl Room {
     }
 
     pub fn look_at<T: ?Sized + HasPosition>(&self, target: &T) -> Vec<LookResult> {
-        let rp = target.pos();
-        js_unwrap!(@{self.as_ref()}.lookAt(@{rp.as_ref()}))
+        let pos = target.pos();
+        js_unwrap!(@{self.as_ref()}.lookAt(pos_from_packed(@{pos.packed_repr()})))
     }
 
     pub fn look_at_xy(&self, x: u32, y: u32) -> Vec<LookResult> {
@@ -215,18 +234,22 @@ impl Room {
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
             let v = js! {
-                return @{&self.as_ref()}.search(@{from.as_ref()}, @{to.as_ref()}, {
-                    ignoreCreeps: @{ignore_creeps},
-                    ignoreDestructibleStructures: @{ignore_destructible_structures}
-                    costCallback: @{callback},
-                    maxOps: @{max_ops},
-                    heuristicWeight: @{heuristic_weight},
-                    serialize: @{serialize},
-                    maxRooms: @{max_rooms},
-                    range: @{range},
-                    plainCost: @{plain_cost},
-                    swampCost: @{swamp_cost}
-                });
+                return @{&self.as_ref()}.search(
+                    pos_from_packed(@{from.packed_repr()}),
+                    pos_from_packed(@{to.packed_repr()}),
+                    {
+                        ignoreCreeps: @{ignore_creeps},
+                        ignoreDestructibleStructures: @{ignore_destructible_structures}
+                        costCallback: @{callback},
+                        maxOps: @{max_ops},
+                        heuristicWeight: @{heuristic_weight},
+                        serialize: @{serialize},
+                        maxRooms: @{max_rooms},
+                        range: @{range},
+                        plainCost: @{plain_cost},
+                        swampCost: @{swamp_cost}
+                    }
+                );
             };
             if serialize {
                 Path::Serialized(v.try_into().unwrap())
@@ -244,7 +267,7 @@ impl Room {
         let pos = target.pos();
         T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
             __look_num_to_str(@{ty.look_code() as u32}),
-            @{pos.as_ref()},
+            pos_from_packed(@{pos.packed_repr()}),
         )))
     }
 

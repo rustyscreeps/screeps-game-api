@@ -14,12 +14,7 @@ use std::{f64, marker::PhantomData, mem};
 use scoped_tls::scoped_thread_local;
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
-use crate::{
-    local::LocalRoomPosition,
-    macros::*,
-    objects::{HasPosition, RoomPosition},
-    traits::TryInto,
-};
+use crate::{local::Position, macros::*, objects::HasPosition, traits::TryInto};
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
@@ -303,13 +298,7 @@ impl SearchResults {
     pub fn opaque_path(&self) -> &Array {
         &self.path
     }
-    pub fn load_local_path(&self) -> Vec<LocalRoomPosition> {
-        self.path
-            .clone()
-            .try_into()
-            .expect("expected PathFinder.search path result to be an array of RoomPositions")
-    }
-    pub fn load_semi_local_path(&self) -> Vec<RoomPosition> {
+    pub fn load_local_path(&self) -> Vec<Position> {
         self.path
             .clone()
             .try_into()
@@ -331,8 +320,8 @@ where
 {
     let pos = goal.pos();
     search_real(
-        &origin.pos(),
-        &js_unwrap!({pos: @{pos.as_ref()}, range: @{range}}),
+        origin.pos(),
+        &js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}}),
         opts,
     )
 }
@@ -349,17 +338,17 @@ where
         .into_iter()
         .map(|(target, range)| {
             let pos = target.pos();
-            js_unwrap!({pos: @{pos.as_ref()}, range: @{range}})
+            js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}})
         })
         .collect();
     let goals_js: Reference = js_unwrap!(@{goals});
-    search_real(&origin.pos(), &goals_js, opts)
+    search_real(origin.pos(), &goals_js, opts)
 }
 
 scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Reference);
 
 fn search_real<'a, F>(
-    origin: &RoomPosition,
+    origin: Position,
     goal: &Reference,
     opts: SearchOptions<'a, F>,
 ) -> SearchResults
@@ -409,7 +398,7 @@ where
     // See https://docs.rs/scoped-tls/0.1/scoped_tls/
     PF_CALLBACK.set(&callback_lifetime_erased, || {
         let res: ::stdweb::Reference = js_unwrap! {
-            PathFinder.search(@{origin.as_ref()}, @{goal}, {
+            PathFinder.search(pos_from_packed(@{origin.packed_repr()}), @{goal}, {
                 roomCallback: @{callback},
                 plainCost: @{plain_cost},
                 swampCost: @{swamp_cost},

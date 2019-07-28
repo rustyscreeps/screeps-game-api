@@ -1,10 +1,7 @@
 use serde::Deserialize;
+use stdweb::Value;
 
-use crate::{
-    macros::*,
-    objects::{RoomPosition, StructurePortal},
-    traits::TryInto,
-};
+use crate::{local::Position, macros::*, objects::StructurePortal, traits::TryInto};
 
 #[derive(Deserialize, Debug)]
 pub struct InterShardPortalDestination {
@@ -14,27 +11,30 @@ pub struct InterShardPortalDestination {
 js_deserializable!(InterShardPortalDestination);
 
 pub enum PortalDestination {
-    InterRoom(RoomPosition),
+    InterRoom(Position),
     InterShard(InterShardPortalDestination),
 }
 
 impl StructurePortal {
     pub fn destination(&self) -> PortalDestination {
-        let v = js! {return @{self.as_ref()}.destination;};
-
-        let is_inter_room: bool = js_unwrap! {
-            @{&v} instanceof RoomPosition
+        let v = js! {
+            let destination = @{self.as_ref()}.destination;
+            if (destination instanceof Position) {
+                return destination.__packedPos;
+            } else {
+                return destination;
+            }
         };
 
-        if is_inter_room {
-            PortalDestination::InterRoom(v.try_into().expect(
-                "The inter room portal destination couldn't be converted to a RoomPosition",
-            ))
-        } else {
-            PortalDestination::InterShard(
+        match v {
+            Value::Number(_) => PortalDestination::InterRoom(
+                v.try_into()
+                    .expect("expected Position::try_from(pos.__packedPos) to succeed"),
+            ),
+            _ => PortalDestination::InterShard(
                 v.try_into()
                     .expect("Value couldn't be converted into an InterShardPortalDestination"),
-            )
+            ),
         }
     }
 }

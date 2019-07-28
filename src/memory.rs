@@ -219,11 +219,11 @@ impl MemoryReference {
     ///
     /// ```no_run
     /// use log::info;
-    /// use screeps::{prelude::*, LocalRoomPosition};
+    /// use screeps::{prelude::*, Position};
     ///
     /// let creep = screeps::game::creeps::get("mycreepname").unwrap();
     /// let mem = creep.memory();
-    /// let pos = mem.get::<LocalRoomPosition>("saved_pos").unwrap();
+    /// let pos = mem.get::<Position>("saved_pos").unwrap();
     /// let pos = match pos {
     ///     Some(pos) => {
     ///         info!("found position: {}", pos);
@@ -231,7 +231,7 @@ impl MemoryReference {
     ///     }
     ///     None => {
     ///         info!("no position. saving new one!");
-    ///         let pos = creep.pos().local();
+    ///         let pos = creep.pos();
     ///         mem.set("saved_pos", pos);
     ///         pos
     ///     }

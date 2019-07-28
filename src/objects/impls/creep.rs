@@ -6,11 +6,12 @@ use stdweb::{Reference, Value};
 use super::room::Step;
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
+    local::Position,
     macros::*,
     memory::MemoryReference,
     objects::{
-        Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, RoomPosition,
-        Source, StructureController, StructureProperties, Transferable, Withdrawable,
+        Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, Source,
+        StructureController, StructureProperties, Transferable, Withdrawable,
     },
     pathfinder::{CostMatrix, SearchResults},
     traits::TryFrom,
@@ -89,13 +90,13 @@ impl Creep {
     where
         F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
-        let rp = RoomPosition::new(x, y, &self.pos().room_name());
-        self.move_to_with_options(&rp, move_options)
+        let pos = Position::new(x, y, self.pos().room_name());
+        self.move_to_with_options(&pos, move_options)
     }
 
     pub fn move_to<T: ?Sized + HasPosition>(&self, target: &T) -> ReturnCode {
         let p = target.pos();
-        js_unwrap!(@{self.as_ref()}.moveTo(@{&p.0}))
+        js_unwrap!(@{self.as_ref()}.moveTo(pos_from_packed(@{p.packed_repr()})))
     }
 
     pub fn move_to_with_options<'a, F, T>(
@@ -168,7 +169,7 @@ impl Creep {
             let rp = target.pos();
             js_unwrap! {
                 @{ self.as_ref() }.moveTo(
-                    @{rp.as_ref()},
+                    pos_from_packed(@{rp.packed_repr()}),
                     {
                         reusePath: @{reuse_path},
                         serializeMemory: @{serialize_memory},
