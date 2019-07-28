@@ -49,10 +49,13 @@ impl fmt::Display for LocalRoomName {
 }
 
 impl LocalRoomName {
-    /// Creates a new room name from the given input.
+    /// Parses a room name from a string.
     ///
-    /// This will parse the input, and return an error if it is in an invalid
-    /// format.
+    /// This will parse the input string, returning an error if it is in an
+    /// invalid room name.
+    ///
+    /// The expected format can be represented by the regex
+    /// `[ewEW][0-9]+[nsNS][0-9]+`.
     #[inline]
     pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError>
     where
@@ -84,7 +87,11 @@ impl LocalRoomName {
 impl ops::Add<(i32, i32)> for LocalRoomName {
     type Output = Self;
 
-    /// Adds an (x, y) coordinate pair to this room name.
+    /// Offsets this room name by a given horizontal and vertical (x, y) pair.
+    ///
+    /// The first number offsets to the west when negative and to the east when
+    /// positive. The first number offsets to the north when negative and to
+    /// the south when positive.
     #[inline]
     fn add(self, (x, y): (i32, i32)) -> Self {
         LocalRoomName {
@@ -97,7 +104,9 @@ impl ops::Add<(i32, i32)> for LocalRoomName {
 impl ops::Sub<(i32, i32)> for LocalRoomName {
     type Output = Self;
 
-    /// Subtracts an (x, y) coordinate pair to this room name.
+    /// Offsets this room name in the opposite direction from the coordinates.
+    ///
+    /// See the implementation for `Add<(i32, i32)>`.
     #[inline]
     fn sub(self, (x, y): (i32, i32)) -> Self {
         LocalRoomName {
@@ -110,7 +119,16 @@ impl ops::Sub<(i32, i32)> for LocalRoomName {
 impl ops::Sub<LocalRoomName> for LocalRoomName {
     type Output = (i32, i32);
 
-    /// Subtracts an (x, y) coordinate pair to this room name.
+    /// Subtracts one room name from the other, extracting the difference.
+    ///
+    /// The first return value represents east/west offset, with 'more east'
+    /// being positive and 'more west' being negative.
+    ///
+    /// The second return value represents north/south offset, with 'more south'
+    /// being positive and 'more north' being negative.
+    ///
+    /// This coordinate system agrees with the implementations `Add<(i32, i32)>
+    /// for LocalRoomName` and `Sub<(i32, i32)> for LocalRoomName`.
     #[inline]
     fn sub(self, other: LocalRoomName) -> (i32, i32) {
         (self.x_coord - other.x_coord, self.y_coord - other.y_coord)
@@ -212,7 +230,7 @@ impl fmt::Display for LocalRoomNameParseError {
             ),
             LocalRoomNameParseError::InvalidString { string } => write!(
                 f,
-                "expected room name formatted `(E|W)[0-9]+(N|S)[0-9]+`, found `{}`",
+                "expected room name formatted `[ewEW][0-9]+[nsNS][0-9]+`, found `{}`",
                 string
             ),
         }
