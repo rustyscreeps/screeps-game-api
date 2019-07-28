@@ -2,14 +2,15 @@
 use super::LocalRoomPosition;
 
 impl LocalRoomPosition {
-    /// Returns this positions in-room coordinates as a pair of unsigned
+    /// Returns this position's in-room coordinates as a pair of unsigned
     /// integers.
     #[inline]
     pub fn coords(&self) -> (u32, u32) {
         (self.x(), self.y())
     }
 
-    /// Returns this positions in-room coordinates as a pair of signed integers.
+    /// Returns this position's in-room coordinates as a pair of signed
+    /// integers.
     #[inline]
     pub fn coords_signed(&self) -> (i32, i32) {
         (self.x() as i32, self.y() as i32)

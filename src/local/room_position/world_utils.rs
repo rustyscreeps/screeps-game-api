@@ -13,7 +13,7 @@ impl LocalRoomPosition {
     /// Returns this position's vertical "world coordinate".
     ///
     /// The value is equal to `50 * room_y + y`, where `room_y` is defined as
-    /// `room_y = -yy - 1` for `Wyy` rooms and as `room_y = yy` for `Eyy` rooms.
+    /// `room_y = -yy - 1` for `Nyy` rooms and as `room_y = yy` for `Syy` rooms.
     #[inline]
     pub fn world_y(self) -> i32 {
         self.room_y() * 50 + (self.y() as i32)
@@ -26,8 +26,8 @@ impl LocalRoomPosition {
     /// rooms.
     ///
     /// The second value is equal to `50 * room_y + y`, where `room_y` is
-    /// defined as `room_y = -yy - 1` for `Wyy` rooms and as `room_y = yy`
-    /// for `Eyy` rooms.
+    /// defined as `room_y = -yy - 1` for `Nyy` rooms and as `room_y = yy`
+    /// for `Syy` rooms.
     ///
     /// See also [`LocalRoomPosition::world_x`] and
     /// [`LocalRoomPosition::world_y`].

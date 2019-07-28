@@ -267,7 +267,10 @@ mod stdweb {
                 return Ok(LocalRoomPosition::from_packed(packed));
             }
 
-            let value = js! { return @{v}.__packedPos };
+            let value = js! {
+                return @{v}.__packedPos;
+            };
+
             match value {
                 Value::Undefined => {
                     let x = js! {v.x}.try_into()?;
