@@ -274,27 +274,6 @@ impl PartialEq<LocalRoomName> for &String {
     }
 }
 
-#[cfg(test)]
-mod local_room_name_tests {
-    #[test]
-    fn test_string_equality() {
-        use super::LocalRoomName;
-        let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5"];
-        for room_name in room_names {
-            assert_eq!(room_name, LocalRoomName::new(room_name).unwrap());
-            assert_eq!(LocalRoomName::new(room_name).unwrap(), room_name);
-            assert_eq!(
-                LocalRoomName::new(room_name).unwrap(),
-                &room_name.to_string()
-            );
-            assert_eq!(
-                &room_name.to_string(),
-                LocalRoomName::new(room_name).unwrap()
-            );
-        }
-    }
-}
-
 mod serde {
     use std::fmt;
 
@@ -343,4 +322,25 @@ mod serde {
 
     js_deserializable!(LocalRoomName);
     js_serializable!(LocalRoomName);
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn test_string_equality() {
+        use super::LocalRoomName;
+        let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5"];
+        for room_name in room_names {
+            assert_eq!(room_name, LocalRoomName::new(room_name).unwrap());
+            assert_eq!(LocalRoomName::new(room_name).unwrap(), room_name);
+            assert_eq!(
+                LocalRoomName::new(room_name).unwrap(),
+                &room_name.to_string()
+            );
+            assert_eq!(
+                &room_name.to_string(),
+                LocalRoomName::new(room_name).unwrap()
+            );
+        }
+    }
 }
