@@ -22,7 +22,7 @@ impl LocalRoomPosition {
     /// # Example
     ///
     /// ```
-    /// use screeps::{LocalRoomPosition};
+    /// use screeps::LocalRoomPosition;
     ///
     /// let e21s21 = "E21S21".parse().unwrap();
     /// let e21s22 = "E21S22".parse().unwrap();
@@ -55,7 +55,7 @@ impl Add<(i32, i32)> for LocalRoomPosition {
     /// # Example
     ///
     /// ```
-    /// use screeps::{LocalRoomPosition};
+    /// use screeps::LocalRoomPosition;
     ///
     /// let w5s6 = "W5S6".parse().unwrap();
     /// let w5s5 = "W5S5".parse().unwrap();
@@ -96,7 +96,7 @@ impl Sub<LocalRoomPosition> for LocalRoomPosition {
     /// # Example
     ///
     /// ```
-    /// use screeps::{LocalRoomPosition};
+    /// use screeps::LocalRoomPosition;
     ///
     /// let e5n5 = "E5N5".parse().unwrap();
     /// let e5n6 = "E5N6".parse().unwrap();
