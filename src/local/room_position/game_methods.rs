@@ -25,7 +25,7 @@ impl RoomPosition {
     }
 
     pub fn create_flag(
-        &self,
+        self,
         name: &str,
         main_color: Color,
         secondary_color: Color,
@@ -44,7 +44,7 @@ impl RoomPosition {
         .expect("expected RoomPosition.createFlag to return ReturnCode or String name")
     }
 
-    pub fn find_closest_by_range<T>(&self, ty: T) -> Option<T::Item>
+    pub fn find_closest_by_range<T>(self, ty: T) -> Option<T::Item>
     where
         T: FindConstant,
     {
@@ -54,7 +54,7 @@ impl RoomPosition {
         )
     }
 
-    pub fn find_in_range<T>(&self, ty: T, range: u32) -> Vec<T::Item>
+    pub fn find_in_range<T>(self, ty: T, range: u32) -> Vec<T::Item>
     where
         T: FindConstant,
     {
@@ -64,7 +64,7 @@ impl RoomPosition {
         )
     }
 
-    pub fn find_path_to<'a, F, T>(&self, target: &T, opts: FindOptions<'a, F>) -> Path
+    pub fn find_path_to<'a, F, T>(self, target: &T, opts: FindOptions<'a, F>) -> Path
     where
         F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
         T: ?Sized + HasPosition,
@@ -73,7 +73,7 @@ impl RoomPosition {
         self_room.find_path(self, target, opts)
     }
 
-    pub fn find_path_to_xy<'a, F>(&self, x: u32, y: u32, opts: FindOptions<'a, F>) -> Path
+    pub fn find_path_to_xy<'a, F>(self, x: u32, y: u32, opts: FindOptions<'a, F>) -> Path
     where
         F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
@@ -81,11 +81,11 @@ impl RoomPosition {
         self.find_path_to(&target, opts)
     }
 
-    pub fn look(&self) -> Vec<LookResult> {
+    pub fn look(self) -> Vec<LookResult> {
         js_unwrap!(pos_from_packed(@{self.packed_repr()}).look())
     }
 
-    pub fn look_for<T>(&self, ty: T) -> Vec<T::Item>
+    pub fn look_for<T>(self, ty: T) -> Vec<T::Item>
     where
         T: LookConstant,
     {
