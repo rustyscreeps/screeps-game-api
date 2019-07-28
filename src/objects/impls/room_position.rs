@@ -24,11 +24,11 @@ impl RoomPosition {
     }
 
     pub fn coords(&self) -> (u32, u32) {
-        (self.x(), self.y())
+        self.local().coords()
     }
 
     pub fn coords_signed(&self) -> (i32, i32) {
-        (self.x() as i32, self.y() as i32)
+        self.local().coords_signed()
     }
 
     pub fn room_name(&self) -> String {
@@ -166,48 +166,48 @@ impl Eq for RoomPosition {}
 
 impl Into<(u8, u8)> for RoomPosition {
     fn into(self) -> (u8, u8) {
-        (self.x() as u8, self.y() as u8)
+        self.local().into()
     }
 }
 
 impl Into<(u16, u16)> for RoomPosition {
     fn into(self) -> (u16, u16) {
-        (self.x() as u16, self.y() as u16)
+        self.local().into()
     }
 }
 
 impl Into<(u32, u32)> for RoomPosition {
     fn into(self) -> (u32, u32) {
-        (self.x(), self.y())
+        self.local().into()
     }
 }
 
 impl Into<(u64, u64)> for RoomPosition {
     fn into(self) -> (u64, u64) {
-        (self.x() as u64, self.y() as u64)
+        self.local().into()
     }
 }
 
 impl Into<(i8, i8)> for RoomPosition {
     fn into(self) -> (i8, i8) {
-        (self.x() as i8, self.y() as i8)
+        self.local().into()
     }
 }
 
 impl Into<(i16, i16)> for RoomPosition {
     fn into(self) -> (i16, i16) {
-        (self.x() as i16, self.y() as i16)
+        self.local().into()
     }
 }
 
 impl Into<(i32, i32)> for RoomPosition {
     fn into(self) -> (i32, i32) {
-        (self.x() as i32, self.y() as i32)
+        self.local().into()
     }
 }
 
 impl Into<(i64, i64)> for RoomPosition {
     fn into(self) -> (i64, i64) {
-        (self.x() as i64, self.y() as i64)
+        self.local().into()
     }
 }
