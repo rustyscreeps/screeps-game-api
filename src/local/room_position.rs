@@ -138,6 +138,15 @@ impl LocalRoomPosition {
         let room_x = (room_name.x_coord + HALF_WORLD_SIZE) as u32;
         let room_y = (room_name.y_coord + HALF_WORLD_SIZE) as u32;
 
+        Self::from_coords_and_world_coords_adjusted(x, y, room_x, room_y)
+    }
+
+    /// Creates a `LocalRoomPosition` from x,y coordinates and room coordinates
+    /// already adjusted to be positive using `HALF_WORLD_SIZE`.
+    ///
+    /// Non-public as this doesn't check the bounds for any of these values.
+    #[inline]
+    fn from_coords_and_world_coords_adjusted(x: u32, y: u32, room_x: u32, room_y: u32) -> Self {
         LocalRoomPosition {
             packed: (room_x << 24) | (room_y << 16) | (x << 8) | y,
         }

@@ -58,6 +58,8 @@ impl LocalRoomPosition {
             y
         );
 
+        // We do the `HALF_WORLD_SIZE` transition here first so that the division and
+        // modulo operations work correctly.
         let pos_x = (x + HALF_WORLD_SIZE * 50) as u32;
         let pos_y = (y + HALF_WORLD_SIZE * 50) as u32;
         let room_x = pos_x / 50;
@@ -65,9 +67,7 @@ impl LocalRoomPosition {
         let x = pos_x % 50;
         let y = pos_y % 50;
 
-        LocalRoomPosition {
-            packed: (room_x << 24) | (room_y << 16) | (x << 8) | y,
-        }
+        Self::from_coords_and_world_coords_adjusted(x, y, room_x, room_y)
     }
 }
 
