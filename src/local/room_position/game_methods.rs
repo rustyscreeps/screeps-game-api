@@ -70,7 +70,7 @@ impl RoomPosition {
         T: ?Sized + HasPosition,
     {
         let self_room = game::rooms::get(&self.room_name().to_array_string()).unwrap();
-        self_room.find_path(self, target, opts)
+        self_room.find_path(&self, target, opts)
     }
 
     pub fn find_path_to_xy<'a, F>(self, x: u32, y: u32, opts: FindOptions<'a, F>) -> Path
