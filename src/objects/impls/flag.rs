@@ -16,7 +16,7 @@ simple_accessors! {
 
 impl Flag {
     /// Useful method for constructing Flag from the result of
-    /// `RoomPosition.createFlag` or `Room.createFlag`.
+    /// `Position.createFlag` or `Room.createFlag`.
     ///
     /// String names are mapped to Ok(Ok(s)), return codes are mapped to
     /// Ok(Err(e)), other unknown inputs are mapped to Err(e).

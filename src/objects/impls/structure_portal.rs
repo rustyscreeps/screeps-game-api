@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use stdweb::Value;
 
-use crate::{local::RoomPosition, macros::*, objects::StructurePortal, traits::TryInto};
+use crate::{local::Position, macros::*, objects::StructurePortal, traits::TryInto};
 
 #[derive(Deserialize, Debug)]
 pub struct InterShardPortalDestination {
@@ -11,7 +11,7 @@ pub struct InterShardPortalDestination {
 js_deserializable!(InterShardPortalDestination);
 
 pub enum PortalDestination {
-    InterRoom(RoomPosition),
+    InterRoom(Position),
     InterShard(InterShardPortalDestination),
 }
 
@@ -19,7 +19,7 @@ impl StructurePortal {
     pub fn destination(&self) -> PortalDestination {
         let v = js! {
             let destination = @{self.as_ref()}.destination;
-            if (destination instanceof RoomPosition) {
+            if (destination instanceof Position) {
                 return destination.__packedPos;
             } else {
                 return destination;
@@ -29,7 +29,7 @@ impl StructurePortal {
         match v {
             Value::Number(_) => PortalDestination::InterRoom(
                 v.try_into()
-                    .expect("expected RoomPosition::try_from(pos.__packedPos) to succeed"),
+                    .expect("expected Position::try_from(pos.__packedPos) to succeed"),
             ),
             _ => PortalDestination::InterShard(
                 v.try_into()

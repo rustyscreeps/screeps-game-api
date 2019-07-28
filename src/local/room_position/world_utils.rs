@@ -1,6 +1,6 @@
-use super::{RoomPosition, HALF_WORLD_SIZE};
+use super::{Position, HALF_WORLD_SIZE};
 
-impl RoomPosition {
+impl Position {
     /// Returns this position's horizontal "world coordinate".
     ///
     /// The value is equal to `50 * room_x + x`, where `room_x` is defined as
@@ -29,8 +29,8 @@ impl RoomPosition {
     /// defined as `room_y = -yy - 1` for `Nyy` rooms and as `room_y = yy`
     /// for `Syy` rooms.
     ///
-    /// See also [`RoomPosition::world_x`] and
-    /// [`RoomPosition::world_y`].
+    /// See also [`Position::world_x`] and
+    /// [`Position::world_y`].
     #[inline]
     pub fn world_coords(self) -> (i32, i32) {
         (self.world_x(), self.world_y())
@@ -42,7 +42,7 @@ impl RoomPosition {
     ///
     /// Panics if either x or y is out of the range `-128 * 50 .. +128 * 50`.
     ///
-    /// See [`RoomPosition::world_coords`].
+    /// See [`Position::world_coords`].
     #[inline]
     pub fn from_world_coords(x: i32, y: i32) -> Self {
         // not inclusive since the range for world coords in `-128..=127`, and the range
@@ -73,7 +73,7 @@ impl RoomPosition {
 
 #[cfg(test)]
 mod test {
-    use super::RoomPosition;
+    use super::Position;
 
     const TEST_ROOM_NAMES: &[&str] = &[
         "E1N1", "E20N0", "W0N0", "E0N0", "W0S0", "E0S0", "W0N0", "E0N0", "W0S0", "E0S0", "W50S20",
@@ -86,9 +86,9 @@ mod test {
         for room_name in TEST_ROOM_NAMES {
             for x in TEST_COORDS.iter().cloned() {
                 for y in TEST_COORDS.iter().cloned() {
-                    let original_pos = RoomPosition::new(x, y, room_name.parse().unwrap());
+                    let original_pos = Position::new(x, y, room_name.parse().unwrap());
                     let (wx, wy) = original_pos.world_coords();
-                    let new = RoomPosition::from_world_coords(wx, wy);
+                    let new = Position::from_world_coords(wx, wy);
                     assert_eq!(original_pos, new);
                 }
             }

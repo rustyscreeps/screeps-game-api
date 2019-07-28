@@ -16,7 +16,7 @@ use crate::{
         Color, Direction, ExitDirection, FindConstant, Look, LookConstant, PowerType, ResourceType,
         ReturnCode, StructureType, Terrain,
     },
-    local::{LocalRoomName, RoomPosition},
+    local::{LocalRoomName, Position},
     macros::*,
     memory::MemoryReference,
     objects::{
@@ -129,7 +129,7 @@ impl Room {
         js_unwrap! {@{self.as_ref()}.getEventLog(true)}
     }
 
-    pub fn get_position_at(&self, x: u32, y: u32) -> Option<RoomPosition> {
+    pub fn get_position_at(&self, x: u32, y: u32) -> Option<Position> {
         let v = js! {
             let value = @{self.as_ref()}.getPositionAt(@{x}, @{y});
             if value == null {
@@ -141,7 +141,7 @@ impl Room {
         match v {
             Value::Number(_) => Some(
                 v.try_into()
-                    .expect("expected RoomPosition::try_from(pos.__packedPos) to succeed"),
+                    .expect("expected Position::try_from(pos.__packedPos) to succeed"),
             ),
             Value::Null => None,
             _ => panic!(

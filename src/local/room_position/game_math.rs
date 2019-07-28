@@ -1,10 +1,10 @@
-//! Utilities for doing math on [`RoomPosition`]s which are present in the
+//! Utilities for doing math on [`Position`]s which are present in the
 //! JavaScript API.
 use crate::{constants::Direction, objects::HasPosition};
 
-use super::RoomPosition;
+use super::Position;
 
-impl RoomPosition {
+impl Position {
     pub fn get_direction_to<T>(self, target: &T) -> Option<Direction>
     where
         T: ?Sized + HasPosition,
