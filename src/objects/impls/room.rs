@@ -481,11 +481,11 @@ where
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Step {
-    x: u32,
-    y: u32,
-    dx: i32,
-    dy: i32,
-    direction: Direction,
+    pub x: u32,
+    pub y: u32,
+    pub dx: i32,
+    pub dy: i32,
+    pub direction: Direction,
 }
 
 js_deserializable! {Step}
