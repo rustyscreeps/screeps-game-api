@@ -3,28 +3,15 @@
 //! This is a reimplementation/translation of the `RoomPosition` code originally
 //! written in JavaScript. All RoomPosition to RoomPosition operations in this
 //! file stay within Rust.
-use std::{fmt, ops::Range};
+use std::fmt;
 
-use super::LocalRoomName;
+use super::{LocalRoomName, HALF_WORLD_SIZE};
 
 mod extra_math;
 mod game_math;
 mod game_methods;
 mod pair_utils;
 mod world_utils;
-
-/// Represents two constants related to room names.
-///
-/// First, this is the constant added to room coordinates before they're stored
-/// in the packed representation.
-///
-/// Second, `-HALF_WORLD_SIZE` is the minimum representable room name
-/// coordinate, and `HALF_WORLD_SIZE - 1` is the maximum representable room name
-/// coordinate.
-const HALF_WORLD_SIZE: i32 = 128;
-
-/// Valid room name coordinates.
-const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SIZE);
 
 /// Represents a position in a particular room in Screeps.
 ///
@@ -145,20 +132,8 @@ impl Position {
     pub fn new(x: u32, y: u32, room_name: LocalRoomName) -> Self {
         assert!(x < 50, "out of bounds x: {}", x);
         assert!(y < 50, "out of bounds y: {}", y);
-        assert!(
-            VALID_ROOM_NAME_COORDINATES.contains(&room_name.x_coord),
-            "out of bounds room_x: {}",
-            room_name.x_coord,
-        );
-        assert!(
-            VALID_ROOM_NAME_COORDINATES.contains(&room_name.y_coord),
-            "out of bounds room_y: {}",
-            room_name.y_coord,
-        );
-        let room_x = (room_name.x_coord + HALF_WORLD_SIZE) as u32;
-        let room_y = (room_name.y_coord + HALF_WORLD_SIZE) as u32;
 
-        Self::from_coords_and_world_coords_adjusted(x, y, room_x, room_y)
+        Self::from_coords_adjusted_and_room_packed(x, y, room_name.packed_repr())
     }
 
     /// Creates a `Position` from x,y coordinates and room coordinates
@@ -169,6 +144,17 @@ impl Position {
     fn from_coords_and_world_coords_adjusted(x: u32, y: u32, room_x: u32, room_y: u32) -> Self {
         Position {
             packed: (room_x << 24) | (room_y << 16) | (x << 8) | y,
+        }
+    }
+
+    /// Creates a `Position` from x,y coordinates and an already-packed room
+    /// representation.
+    ///
+    /// Non-public as this doesn't check the bounds for any of these values.
+    #[inline]
+    fn from_coords_adjusted_and_room_packed(x: u32, y: u32, room_repr_packed: u16) -> Self {
+        Position {
+            packed: ((room_repr_packed as u32) << 16) | (x << 8) | y,
         }
     }
 
@@ -187,13 +173,13 @@ impl Position {
     /// Gets the horizontal coordinate of this position's room name.
     #[inline]
     fn room_x(self) -> i32 {
-        (self.packed >> 24 & 0xFF) as i32 - HALF_WORLD_SIZE
+        self.room_name().x_coord()
     }
 
     /// Gets the vertical coordinate of this position's room name.
     #[inline]
     fn room_y(self) -> i32 {
-        (self.packed >> 16 & 0xFF) as i32 - HALF_WORLD_SIZE
+        self.room_name().y_coord()
     }
 
     /// Gets this position's in-room x coordinate.
@@ -210,10 +196,7 @@ impl Position {
 
     #[inline]
     pub fn room_name(self) -> LocalRoomName {
-        LocalRoomName {
-            x_coord: self.room_x(),
-            y_coord: self.room_y(),
-        }
+        LocalRoomName::from_packed(((self.packed >> 16) & 0xFFFF) as u16)
     }
 
     #[inline]
@@ -230,20 +213,8 @@ impl Position {
 
     #[inline]
     pub fn set_room_name(&mut self, room_name: LocalRoomName) {
-        assert!(
-            VALID_ROOM_NAME_COORDINATES.contains(&room_name.x_coord),
-            "out of bounds room_x: {}",
-            room_name.x_coord,
-        );
-        assert!(
-            VALID_ROOM_NAME_COORDINATES.contains(&room_name.y_coord),
-            "out of bounds room_y: {}",
-            room_name.y_coord,
-        );
-        let room_x = (room_name.x_coord + HALF_WORLD_SIZE) as u32;
-        let room_y = (room_name.y_coord + HALF_WORLD_SIZE) as u32;
-
-        self.packed = (self.packed & 0xFFFF) | (room_x << 24) | (room_y << 16);
+        let room_repr_packed = room_name.packed_repr() as u32;
+        self.packed = (self.packed & 0xFFFF) | (room_repr_packed << 16);
     }
 
     #[inline]

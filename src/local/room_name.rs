@@ -7,21 +7,23 @@ use std::{
 
 use arrayvec::ArrayString;
 
+use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
+
 /// A structure representing a room name.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct LocalRoomName {
-    /// Inner x coordinate representation.
+    /// A bit-packed integer, containing, from highest-order to lowest:
     ///
-    /// 0 represents E0, positive numbers represent E(x)
+    /// - 1 byte: (room_x) + 128
+    /// - 1 byte: (room_y) + 128
     ///
-    /// -1 represents W0, negative numbers represent W((-x) - 1)
-    pub(super) x_coord: i32,
-    /// Inner y coordinate representation.
+    /// For `Wxx` rooms, `room_x = -xx - 1`. For `Exx` rooms, `room_x = xx`.
     ///
-    /// 0 represents S0, positive numbers represent S(y)
+    /// For `Nyy` rooms, `room_y = -yy - 1`. For `Syy` rooms, `room_y = yy`.
     ///
-    /// -1 represents N0, negative numbers represent N((-y) - 1)
-    pub(super) y_coord: i32,
+    /// This is the same representation of the upper 16 bits of [`Position`]'s
+    /// packed representation.
+    packed: u16,
 }
 
 impl fmt::Display for LocalRoomName {
@@ -32,16 +34,20 @@ impl fmt::Display for LocalRoomName {
     ///
     /// [`LocalRoomName::new`]: struct.LocalRoomName.html#method.new
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.x_coord >= 0 {
-            write!(f, "E{}", self.x_coord)?;
+        let x_coord = self.x_coord();
+
+        if x_coord >= 0 {
+            write!(f, "E{}", x_coord)?;
         } else {
-            write!(f, "W{}", (-self.x_coord) - 1)?;
+            write!(f, "W{}", -x_coord - 1)?;
         }
 
-        if self.y_coord >= 0 {
-            write!(f, "S{}", self.y_coord)?;
+        let y_coord = self.y_coord();
+
+        if y_coord >= 0 {
+            write!(f, "S{}", y_coord)?;
         } else {
-            write!(f, "N{}", (-self.y_coord) - 1)?;
+            write!(f, "N{}", -y_coord - 1)?;
         }
 
         Ok(())
@@ -64,13 +70,54 @@ impl LocalRoomName {
         x.as_ref().parse()
     }
 
-    /// Creates a new room name from the given position parameters.
     #[inline]
-    pub(crate) fn from_coords(east: bool, south: bool, x_pos: i32, y_pos: i32) -> Self {
-        LocalRoomName {
-            x_coord: if east { x_pos } else { -x_pos - 1 },
-            y_coord: if south { y_pos } else { -y_pos - 1 },
+    pub(crate) fn from_packed(packed: u16) -> Self {
+        LocalRoomName { packed }
+    }
+
+    /// Creates a new room name from room coords with direction implicit in
+    /// sign.
+    ///
+    /// For `Wxx` rooms, `room_x = -xx - 1`. For `Exx` rooms, `room_x = xx`.
+    ///
+    /// For `Nyy` rooms, `room_y = -yy - 1`. For `Syy` rooms, `room_y = yy`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the coordinates are outside of the valid room name
+    /// bounds.
+    pub(super) fn from_coords(x_coord: i32, y_coord: i32) -> Result<Self, LocalRoomNameParseError> {
+        if !VALID_ROOM_NAME_COORDINATES.contains(&x_coord)
+            || !VALID_ROOM_NAME_COORDINATES.contains(&y_coord)
+        {
+            return Err(LocalRoomNameParseError::PositionOutOfBounds { x_coord, y_coord });
         }
+
+        let room_x = (x_coord + HALF_WORLD_SIZE) as u16;
+        let room_y = (y_coord + HALF_WORLD_SIZE) as u16;
+
+        Ok(Self::from_packed((room_x << 8) | room_y))
+    }
+
+    /// Gets the x coordinate.
+    ///
+    /// For `Wxx` rooms, returns `-xx - 1`. For `Exx` rooms, returns `xx`.
+    #[inline]
+    pub(super) fn x_coord(&self) -> i32 {
+        ((self.packed >> 8) & 0xFF) as i32 - HALF_WORLD_SIZE
+    }
+
+    /// Gets the y coordinate.
+    ///
+    /// For `Nyy` rooms, returns `-yy - 1`. For `Syy` rooms, returns `yy`.
+    #[inline]
+    pub(super) fn y_coord(&self) -> i32 {
+        (self.packed & 0xFF) as i32 - HALF_WORLD_SIZE
+    }
+
+    #[inline]
+    pub(super) fn packed_repr(&self) -> u16 {
+        self.packed
     }
 
     /// Converts this LocalRoomName into an efficient, stack-based string.
@@ -92,12 +139,14 @@ impl ops::Add<(i32, i32)> for LocalRoomName {
     /// The first number offsets to the west when negative and to the east when
     /// positive. The first number offsets to the north when negative and to
     /// the south when positive.
+    ///
+    /// # Panics
+    ///
+    /// Will panic if the addition overflows the boundaries of LocalRoomName.
     #[inline]
     fn add(self, (x, y): (i32, i32)) -> Self {
-        LocalRoomName {
-            x_coord: self.x_coord + x,
-            y_coord: self.y_coord + y,
-        }
+        LocalRoomName::from_coords(self.x_coord() + x, self.y_coord() + y)
+            .expect("expected addition to keep LocalRoomName in-bounds")
     }
 }
 
@@ -107,12 +156,14 @@ impl ops::Sub<(i32, i32)> for LocalRoomName {
     /// Offsets this room name in the opposite direction from the coordinates.
     ///
     /// See the implementation for `Add<(i32, i32)>`.
+    ///
+    /// # Panics
+    ///
+    /// Will panic if the subtraction overflows the boundaries of LocalRoomName.
     #[inline]
     fn sub(self, (x, y): (i32, i32)) -> Self {
-        LocalRoomName {
-            x_coord: self.x_coord - x,
-            y_coord: self.y_coord - y,
-        }
+        LocalRoomName::from_coords(self.x_coord() - x, self.y_coord() - y)
+            .expect("expected addition to keep LocalRoomName in-bounds")
     }
 }
 
@@ -131,7 +182,10 @@ impl ops::Sub<LocalRoomName> for LocalRoomName {
     /// for LocalRoomName` and `Sub<(i32, i32)> for LocalRoomName`.
     #[inline]
     fn sub(self, other: LocalRoomName) -> (i32, i32) {
-        (self.x_coord - other.x_coord, self.y_coord - other.y_coord)
+        (
+            self.x_coord() - other.x_coord(),
+            self.y_coord() - other.y_coord(),
+        )
     }
 }
 
@@ -139,16 +193,15 @@ impl FromStr for LocalRoomName {
     type Err = LocalRoomNameParseError;
 
     fn from_str(s: &str) -> Result<Self, LocalRoomNameParseError> {
-        parse_or_cheap_failure(s).map_err(|()| LocalRoomNameParseError::new(s))
+        parse_to_coords(s)
+            .map_err(|()| LocalRoomNameParseError::new(s))
+            .and_then(|(x, y)| LocalRoomName::from_coords(x, y))
     }
 }
 
-fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
+fn parse_to_coords(s: &str) -> Result<(i32, i32), ()> {
     if s == "sim" {
-        return Ok(LocalRoomName {
-            x_coord: 0,
-            y_coord: 0,
-        });
+        return Ok((0, 0));
     }
 
     let mut chars = s.char_indices();
@@ -159,7 +212,7 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
         _ => return Err(()),
     };
 
-    let (x_coord, south) = {
+    let (x_coord, south): (i32, bool) = {
         // we assume there's at least one number character. If there isn't,
         // we'll catch it when we try to parse this substr.
         let (start_index, _) = chars.next().ok_or(())?;
@@ -186,13 +239,16 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
         (x_coord, south)
     };
 
-    let y_coord = {
+    let y_coord: i32 = {
         let (start_index, _) = chars.next().ok_or(())?;
 
         s[start_index..s.len()].parse().map_err(|_| ())?
     };
 
-    Ok(LocalRoomName::from_coords(east, south, x_coord, y_coord))
+    let room_x = if east { x_coord } else { -x_coord - 1 };
+    let room_y = if south { y_coord } else { -y_coord - 1 };
+
+    Ok((room_x, room_y))
 }
 
 /// An error representing when a string can't be parsed into a
@@ -203,6 +259,7 @@ fn parse_or_cheap_failure(s: &str) -> Result<LocalRoomName, ()> {
 pub enum LocalRoomNameParseError {
     TooLarge { length: usize },
     InvalidString { string: ArrayString<[u8; 8]> },
+    PositionOutOfBounds { x_coord: i32, y_coord: i32 },
 }
 
 impl LocalRoomNameParseError {
@@ -232,6 +289,11 @@ impl fmt::Display for LocalRoomNameParseError {
                 f,
                 "expected room name formatted `[ewEW][0-9]+[nsNS][0-9]+`, found `{}`",
                 string
+            ),
+            LocalRoomNameParseError::PositionOutOfBounds { x_coord, y_coord } => write!(
+                f,
+                "expected room name with coords within -128..+128, found {}, {}",
+                x_coord, y_coord,
             ),
         }
     }
@@ -307,7 +369,7 @@ mod serde {
         Deserialize, Deserializer, Serialize, Serializer,
     };
 
-    use super::{parse_or_cheap_failure, LocalRoomName};
+    use super::LocalRoomName;
     use crate::macros::*;
 
     impl Serialize for LocalRoomName {
@@ -325,14 +387,17 @@ mod serde {
         type Value = LocalRoomName;
 
         fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-            formatter.write_str("room name formatted `(E|W)[0-9]+(N|S)[0-9]+`")
+            formatter.write_str(
+                "room name formatted `(E|W)[0-9]+(N|S)[0-9]+` with both numbers within -128..128",
+            )
         }
 
         fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
         where
             E: Error,
         {
-            parse_or_cheap_failure(v).map_err(|()| E::invalid_value(Unexpected::Str(v), &self))
+            v.parse()
+                .map_err(|_| E::invalid_value(Unexpected::Str(v), &self))
         }
     }
 
