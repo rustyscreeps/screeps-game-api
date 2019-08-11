@@ -28,7 +28,8 @@ Unreleased
   repository
 - Misc. documentation improvements.
 - Add `game::cpu::halt` binding for [`Game.cpu.halt`](https://docs.screeps.com/api/#Game.halt)
-- Add `Creep::pull` binding for [`Creep.pull`](https://docs.screeps.com/api/#Creep.pull)
+  (#210)
+- Add `Creep::pull` binding for [`Creep.pull`](https://docs.screeps.com/api/#Creep.pull) (#210)
 
 [pos-doc]: https://docs.rs/screeps-game-api/0.6.0/screeps/local/struct.Position.html
 
