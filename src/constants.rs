@@ -102,6 +102,7 @@ impl ReturnCode {
     ///
     /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned
     /// into `Result::Err(code)`
+    #[inline]
     pub fn as_result(self) -> Result<(), Self> {
         match self {
             ReturnCode::Ok => Ok(()),
@@ -196,6 +197,7 @@ pub mod find {
     unsafe impl FindConstant for RoomObject {
         type Item = crate::objects::RoomObject;
 
+        #[inline]
         fn find_code(&self) -> i16 {
             *self as i16
         }
@@ -214,22 +216,27 @@ pub mod find {
     }
 
     impl Exit {
+        #[inline]
         pub fn top() -> Self {
             Exit::Top
         }
 
+        #[inline]
         pub fn right() -> Self {
             Exit::Right
         }
 
+        #[inline]
         pub fn bottom() -> Self {
             Exit::Bottom
         }
 
+        #[inline]
         pub fn left() -> Self {
             Exit::Left
         }
 
+        #[inline]
         pub fn all() -> Self {
             Exit::All
         }
@@ -238,6 +245,7 @@ pub mod find {
     unsafe impl FindConstant for Exit {
         type Item = Position;
 
+        #[inline]
         fn find_code(&self) -> i16 {
             *self as i16
         }
@@ -305,6 +313,7 @@ impl ::std::ops::Neg for Direction {
     /// assert_eq!(-BottomRight, TopLeft);
     /// assert_eq!(-Left, Right);
     /// ```
+    #[inline]
     fn neg(self) -> Direction {
         use crate::Direction::*;
 
@@ -359,6 +368,7 @@ pub enum ExitDirection {
 }
 
 impl From<ExitDirection> for find::Exit {
+    #[inline]
     fn from(dir: ExitDirection) -> Self {
         match dir {
             ExitDirection::Top => find::Exit::Top,
@@ -370,6 +380,7 @@ impl From<ExitDirection> for find::Exit {
 }
 
 impl From<ExitDirection> for Direction {
+    #[inline]
     fn from(dir: ExitDirection) -> Self {
         match dir {
             ExitDirection::Top => Direction::Top,
@@ -559,6 +570,7 @@ pub enum Part {
 
 impl Part {
     /// Translates the `BODYPART_COST` constant.
+    #[inline]
     pub fn cost(self) -> u32 {
         match self {
             Part::Move => 50,
@@ -627,6 +639,7 @@ pub const RAMPART_HITS_MAX_RCL7: u32 = 100_000_000;
 pub const RAMPART_HITS_MAX_RCL8: u32 = 300_000_000;
 
 /// Translates the `RAMPART_HITS_MAX` constant
+#[inline]
 pub fn rampart_hits_max(rcl: u32) -> u32 {
     match rcl {
         r if r < 2 => 0,
@@ -659,6 +672,7 @@ pub const WALL_HITS_MAX: u32 = 300_000_000;
 pub const EXTENSION_HITS: u32 = 1000;
 
 /// Translates the `EXTENSION_ENERGY_CAPACITY` constant.
+#[inline]
 pub fn extension_energy_capacity(rcl: u32) -> u32 {
     match rcl {
         r if r < 7 => 50,
@@ -717,6 +731,7 @@ pub enum StructureType {
 
 impl StructureType {
     /// Translates the `CONSTRUCTION_COST` constant.
+    #[inline]
     pub fn construction_cost(self) -> Option<u32> {
         use self::StructureType::*;
 
@@ -741,6 +756,7 @@ impl StructureType {
         Some(cost)
     }
 
+    #[inline]
     pub fn initial_hits(self) -> Option<u32> {
         use self::StructureType::*;
 
@@ -784,6 +800,7 @@ pub const CONSTRUCTION_COST_ROAD_WALL_RATIO: u32 = 150;
 /// Translates the `CONTROLLER_LEVELS` constant.
 ///
 /// Returns `Some` for levels 1-7, `None` for all others.
+#[inline]
 pub fn controller_levels(current_rcl: u32) -> Option<u32> {
     match current_rcl {
         1 => Some(200),
@@ -800,6 +817,7 @@ pub fn controller_levels(current_rcl: u32) -> Option<u32> {
 /// Translates the `CONTROLLER_DOWNGRADE` constant.
 ///
 /// Returns `Some` for levels 1-8, `None` for all others.
+#[inline]
 pub fn controller_downgrade(rcl: u32) -> Option<u32> {
     match rcl {
         1 => Some(20_000),
@@ -881,6 +899,7 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 /// Translates the `MINERAL_MIN_AMOUNT` constant.
 ///
 /// Currently always returns 35_000 for all minerals...
+#[inline]
 pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
     match mineral {
         ResourceType::Hydrogen => Some(35_000),
@@ -921,6 +940,7 @@ js_deserializable!(Density);
 
 impl Density {
     /// Translates the `MINERAL_DENSITY` constant.
+    #[inline]
     pub fn amount(self) -> u32 {
         match self {
             Density::Low => 15_000,
@@ -935,6 +955,7 @@ impl Density {
     /// These are values intended for subsequent percentage checks
     /// in the order `Low` -> `Medium` -> `High` -> `Ultra`. Use the
     /// [`Density::iter_values`] iterator to iterate in this order.
+    #[inline]
     pub fn probabilitiy(self) -> f32 {
         match self {
             Density::Low => 0.1,
@@ -1162,6 +1183,7 @@ pub enum ResourceType {
 
 impl ResourceType {
     /// Translates the `REACTION_TIME` constant.
+    #[inline]
     pub fn reaction_time(self) -> Option<u32> {
         use crate::ResourceType::*;
         let time = match self {

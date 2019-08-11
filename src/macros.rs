@@ -379,6 +379,7 @@ macro_rules! typesafe_find_constants {
             unsafe impl FindConstant for $constant_name {
                 type Item = $result;
 
+                #[inline]
                 fn find_code(&self) -> i16 {
                     $value
                 }
@@ -403,6 +404,7 @@ macro_rules! typesafe_look_constants {
                                "expected correct type at ", line!(), " in ", file!()))
                 }
 
+                #[inline]
                 fn look_code(&self) -> Look {
                     $value
                 }
