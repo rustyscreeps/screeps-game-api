@@ -67,8 +67,8 @@ js_deserializable!(Player);
 #[derive(Deserialize, Debug)]
 pub struct TransactionOrder {
     id: String,
-    #[serde(rename = "type")]
-    order_type: String,
+    #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
+    order_type: OrderType,
     price: f64,
 }
 js_deserializable!(TransactionOrder);
@@ -94,8 +94,8 @@ js_deserializable!(Transaction);
 pub struct Order {
     id: String,
     created: u32,
-    #[serde(rename = "type")]
-    order_type: String,
+    #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
+    order_type: OrderType,
     resource_type: String,
     room_name: String,
     amount: u32,
@@ -110,8 +110,8 @@ pub struct MyOrder {
     id: String,
     created: u32,
     active: bool,
-    #[serde(rename = "type")]
-    order_type: String,
+    #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
+    order_type: OrderType,
     resource_type: String,
     room_name: String,
     amount: u32,
