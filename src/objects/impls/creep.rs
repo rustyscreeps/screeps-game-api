@@ -307,6 +307,7 @@ creep_simple_concrete_action! {
     (harvest(Source) -> harvest),
     (heal(Creep) -> heal),
     (pickup(Resource) -> pickup),
+    (pull(Creep) -> pull),
     (ranged_heal(Creep) -> rangedHeal),
     (reserve_controller(StructureController) -> reserveController),
     (upgrade_controller(StructureController) -> upgradeController),
