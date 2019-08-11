@@ -132,7 +132,7 @@ impl Room {
     pub fn get_position_at(&self, x: u32, y: u32) -> Option<Position> {
         let v = js! {
             let value = @{self.as_ref()}.getPositionAt(@{x}, @{y});
-            if value == null {
+            if (value == null) {
                 return null;
             } else {
                 return value.__packedPos;
