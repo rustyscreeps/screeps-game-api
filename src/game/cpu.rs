@@ -85,3 +85,12 @@ pub fn get_used() -> f64 {
 pub fn set_shard_limits(limits: collections::HashMap<String, f64>) -> ReturnCode {
     js_unwrap!(Game.cpu.setShardLimits(@{limits}))
 }
+
+/// Reset your runtime environment and wipe all data in heap memory.
+///
+/// See [Game.cpu.halt()](https://docs.screeps.com/api/#Game.halt).
+pub fn halt() {
+    js! {
+        Game.cpu.halt();
+    }
+}
