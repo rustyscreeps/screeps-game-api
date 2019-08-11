@@ -37,7 +37,12 @@ impl Creep {
             let part: Part = js_unwrap!(__part_str_to_num(@{self.as_ref()}.body[@{i}].type));
             let hits: u32 = js_unwrap!(@{self.as_ref()}.body[@{i}].hits);
 
-            body_parts.push(Bodypart { boost, part, hits });
+            body_parts.push(Bodypart {
+                boost,
+                part,
+                hits,
+                _non_exhaustive: (),
+            });
         }
         body_parts
     }
@@ -276,9 +281,10 @@ impl Creep {
 
 #[derive(Clone, Debug)]
 pub struct Bodypart {
-    boost: Option<ResourceType>,
-    part: Part,
-    hits: u32,
+    pub boost: Option<ResourceType>,
+    pub part: Part,
+    pub hits: u32,
+    _non_exhaustive: (),
 }
 
 simple_accessors! {

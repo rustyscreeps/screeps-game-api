@@ -23,6 +23,7 @@ Unreleased
 - `StructurePortal` no longer implements `OwnedStructure` and `Attackable`. (#190)
 - Collections provided by `Game` now implement the `hashmap` function to retrieve both keys
   and values at once. (#194)
+- Allow accessing fields of the `Bodypart` struct. (#215)
 - Implement `Clone` for `Structure`
 - Split [cargo-screeps](https://github.com/rustyscreeps/cargo-screeps/) out into a separate
   repository
