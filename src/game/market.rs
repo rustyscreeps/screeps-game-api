@@ -1,9 +1,14 @@
 //! See [https://docs.screeps.com/api/#Game-market]
 //!
 //! [https://docs.screeps.com/api/#Game-market]: https://docs.screeps.com/api/#Game-market
-use std::collections::HashMap;
+use std::{borrow::Cow, collections::HashMap, str::FromStr};
 
-use serde::Deserialize;
+use parse_display::FromStr;
+use serde::{
+    de::{Deserializer, Error as _, Unexpected},
+    Deserialize,
+};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
     constants::{ResourceType, ReturnCode},
@@ -12,11 +17,36 @@ use crate::{
     Room,
 };
 
+/// Translates the `ORDER_SELL` and `ORDER_BUY` constants.
+///
+/// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
+/// implementations only operate on made-up integer constants. If you're ever
+/// using these impls manually, use the `__order_type_num_to_str` and
+/// `__order_type_str_to_num` JavaScript functions,
+/// [`FromStr`][std::str::FromStr] or [`OrderType::deserialize_from_str`].
+///
+/// `OrderType`'s `FromStr`, `Display` and `ToString` representations accurately
+/// represent the strings the game constant uses.
+///
+/// See the [constants module's documentation][crate::constants] for more
+/// details.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[repr(u8)]
-#[derive(Clone, Debug)]
 pub enum OrderType {
+    #[display("sell")]
     Sell = 0,
+    #[display("buy")]
     Buy = 1,
+}
+
+impl OrderType {
+    /// Helper function for deserializing from a string rather than from an
+    /// integer.
+    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let s: Cow<'de, str> = Cow::deserialize(d)?;
+        Self::from_str(&s)
+            .map_err(|_| D::Error::invalid_value(Unexpected::Str(&s), &r#""buy" or "sell""#))
+    }
 }
 
 // impl OrderType {
