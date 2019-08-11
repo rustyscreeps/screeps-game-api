@@ -10,6 +10,7 @@ use stdweb::Value;
 
 use crate::{
     constants::{Direction, ExitDirection, ReturnCode},
+    local::LocalRoomName,
     macros::*,
     objects::RoomTerrain,
     traits::{TryFrom, TryInto},
@@ -18,7 +19,7 @@ use crate::{
 /// See [http://docs.screeps.com/api/#Game.map.describeExits]
 ///
 /// [http://docs.screeps.com/api/#Game.map.describeExits]: http://docs.screeps.com/api/#Game.map.describeExits
-pub fn describe_exits(room_name: &str) -> collections::HashMap<Direction, String> {
+pub fn describe_exits(room_name: LocalRoomName) -> collections::HashMap<Direction, String> {
     let orig: collections::HashMap<String, String> =
         js_unwrap!(Game.map.describeExits(@{room_name}));
 
@@ -40,11 +41,15 @@ pub fn describe_exits(room_name: &str) -> collections::HashMap<Direction, String
 /// See [http://docs.screeps.com/api/#Game.map.getRoomLinearDistance]
 ///
 /// [http://docs.screeps.com/api/#Game.map.getRoomLinearDistance]: http://docs.screeps.com/api/#Game.map.getRoomLinearDistance
-pub fn get_room_linear_distance(room1: &str, room2: &str, continuous: bool) -> u32 {
+pub fn get_room_linear_distance(
+    room1: LocalRoomName,
+    room2: LocalRoomName,
+    continuous: bool,
+) -> u32 {
     js_unwrap!(Game.map.getRoomLinearDistance(@{room1}, @{room2}, @{continuous}))
 }
 
-pub fn get_room_terrain(room_name: &str) -> RoomTerrain {
+pub fn get_room_terrain(room_name: LocalRoomName) -> RoomTerrain {
     js_unwrap!(Game.map.getRoomTerrain(@{room_name}))
 }
 
@@ -58,30 +63,45 @@ pub fn get_world_size() -> u32 {
 /// See [http://docs.screeps.com/api/#Game.map.isRoomAvailable]
 ///
 /// [http://docs.screeps.com/api/#Game.map.isRoomAvailable]: http://docs.screeps.com/api/#Game.map.isRoomAvailable
-pub fn is_room_available(room_name: &str) -> bool {
+pub fn is_room_available(room_name: LocalRoomName) -> bool {
     js_unwrap!(Game.map.isRoomAvailable(@{room_name}))
 }
 
 /// Implements `Game.map.findExit`.
-pub fn find_exit(from_room: &str, to_room: &str) -> Result<ExitDirection, ReturnCode> {
+pub fn find_exit(
+    from_room: LocalRoomName,
+    to_room: LocalRoomName,
+) -> Result<ExitDirection, ReturnCode> {
     let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room})};
     ExitDirection::from_i32(code)
         .ok_or_else(|| ReturnCode::from_i32(code).expect("find_exit: Error code not recognized."))
 }
 
 pub fn find_exit_with_callback(
-    from_room: &str,
-    to_room: &str,
-    route_callback: impl Fn(String, String) -> f64,
+    from_room: LocalRoomName,
+    to_room: LocalRoomName,
+    route_callback: impl Fn(LocalRoomName, LocalRoomName) -> f64,
 ) -> Result<ExitDirection, ReturnCode> {
     // Actual callback
     fn callback(room_name: String, from_room_name: String) -> f64 {
-        FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
+        FR_CALLBACK.with(|callback| {
+            callback(
+                room_name.parse().expect(
+                    "expected room name passed into Game.map.findExit \
+                     callback to be a valid room name",
+                ),
+                from_room_name.parse().expect(
+                    "expected room name passed into Game.map.findExit \
+                     callback to be a valid room name",
+                ),
+            )
+        })
     }
 
-    let callback_type_erased: Box<dyn Fn(String, String) -> f64> = Box::new(route_callback);
+    let callback_type_erased: Box<dyn Fn(LocalRoomName, LocalRoomName) -> f64> =
+        Box::new(route_callback);
 
-    let callback_lifetime_erased: Box<dyn Fn(String, String) -> f64 + 'static> =
+    let callback_lifetime_erased: Box<dyn Fn(LocalRoomName, LocalRoomName) -> f64 + 'static> =
         unsafe { mem::transmute(callback_type_erased) };
 
     FR_CALLBACK.set(&callback_lifetime_erased, || {
@@ -103,21 +123,33 @@ pub fn find_route(from_room: &str, to_room: &str) -> Result<Vec<RoomRouteStep>, 
     parse_find_route_returned_value(v)
 }
 
-scoped_thread_local!(static FR_CALLBACK: Box<(dyn Fn(String, String) -> f64)>);
+scoped_thread_local!(static FR_CALLBACK: Box<(dyn Fn(LocalRoomName, LocalRoomName) -> f64)>);
 
 pub fn find_route_with_callback(
-    from_room: &str,
-    to_room: &str,
-    route_callback: impl Fn(String, String) -> f64,
+    from_room: LocalRoomName,
+    to_room: LocalRoomName,
+    route_callback: impl Fn(LocalRoomName, LocalRoomName) -> f64,
 ) -> Result<Vec<RoomRouteStep>, ReturnCode> {
     // Actual callback
     fn callback(room_name: String, from_room_name: String) -> f64 {
-        FR_CALLBACK.with(|callback| callback(room_name, from_room_name))
+        FR_CALLBACK.with(|callback| {
+            callback(
+                room_name.parse().expect(
+                    "expected room name passed into Game.map.findRoute \
+                     callback to be a valid room name",
+                ),
+                from_room_name.parse().expect(
+                    "expected room name passed into Game.map.findRoute \
+                     callback to be a valid room name",
+                ),
+            )
+        })
     }
 
-    let callback_type_erased: Box<dyn Fn(String, String) -> f64> = Box::new(route_callback);
+    let callback_type_erased: Box<dyn Fn(LocalRoomName, LocalRoomName) -> f64> =
+        Box::new(route_callback);
 
-    let callback_lifetime_erased: Box<dyn Fn(String, String) -> f64 + 'static> =
+    let callback_lifetime_erased: Box<dyn Fn(LocalRoomName, LocalRoomName) -> f64 + 'static> =
         unsafe { mem::transmute(callback_type_erased) };
 
     FR_CALLBACK.set(&callback_lifetime_erased, || {

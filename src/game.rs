@@ -45,7 +45,29 @@ pub mod flags {
 ///
 /// [http://docs.screeps.com/api/#Game.rooms]: http://docs.screeps.com/api/#Game.rooms
 pub mod rooms {
-    game_map_access!(objects::Room, Game.rooms);
+    use std::collections::HashMap;
+
+    use crate::{local::LocalRoomName, macros::*, objects::Room};
+
+    /// Retrieve the full `HashMap<LocalRoomName, Room>`.
+    pub fn hashmap() -> HashMap<String, Room> {
+        js_unwrap!($js_inner)
+    }
+
+    /// Retrieve the string keys of this object.
+    pub fn keys() -> Vec<String> {
+        js_unwrap!(Object.keys(Game.rooms))
+    }
+
+    /// Retrieve all values in this object.
+    pub fn values() -> Vec<Room> {
+        js_unwrap_ref!(Object.values(Game.rooms))
+    }
+
+    /// Retrieve a specific value by key.
+    pub fn get(name: LocalRoomName) -> Option<Room> {
+        js_unwrap_ref!(Game.rooms[@{name}])
+    }
 }
 
 /// See [http://docs.screeps.com/api/#Game.spawns]

@@ -125,7 +125,7 @@ js_deserializable!(ReturnCode);
 /// ```no_run
 /// use screeps::{find, game, Room};
 ///
-/// let room: Room = game::rooms::get("E23S55").unwrap();
+/// let room: Room = game::rooms::get("E23S55".parse().unwrap()).unwrap();
 ///
 /// let creeps = room.find(find::CREEPS);
 /// # let _ = creeps;
