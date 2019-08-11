@@ -16,7 +16,7 @@ use crate::{
         Color, Direction, ExitDirection, FindConstant, Look, LookConstant, PowerType, ResourceType,
         ReturnCode, StructureType, Terrain,
     },
-    local::{LocalRoomName, Position},
+    local::{Position, RoomName},
     macros::*,
     memory::MemoryReference,
     objects::{
@@ -34,13 +34,13 @@ simple_accessors! {
     (controller -> controller -> Option<StructureController>),
     (energy_available -> energyAvailable -> u32),
     (energy_capacity_available -> energyCapacityAvailable -> u32),
-    (name -> name -> LocalRoomName),
+    (name -> name -> RoomName),
     (storage -> storage -> Option<StructureStorage>),
     (terminal -> terminal -> Option<StructureTerminal>),
     // todo: visual
 }
 
-scoped_thread_local!(static COST_CALLBACK: &'static dyn Fn(LocalRoomName, Reference) -> Option<Reference>);
+scoped_thread_local!(static COST_CALLBACK: &'static dyn Fn(RoomName, Reference) -> Option<Reference>);
 
 impl Room {
     pub fn serialize_path(&self, path: &[Step]) -> String {
@@ -179,7 +179,7 @@ impl Room {
     where
         O: ?Sized + HasPosition,
         T: ?Sized + HasPosition,
-        F: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let from = from_pos.pos();
         let to = to_pos.pos();
@@ -207,7 +207,7 @@ impl Room {
 
         // Type erased and boxed callback: no longer a type specific to the closure
         // passed in, now unified as &Fn
-        let callback_type_erased: &(dyn Fn(LocalRoomName, Reference) -> Option<Reference> + 'a) =
+        let callback_type_erased: &(dyn Fn(RoomName, Reference) -> Option<Reference> + 'a) =
             &callback_boxed;
 
         // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
@@ -216,10 +216,8 @@ impl Room {
         // only use of it, but it's still necessary because "some lifetime above
         // the  current scope but otherwise unknown" is not a valid lifetime to
         // have PF_CALLBACK have.
-        let callback_lifetime_erased: &'static dyn Fn(
-            LocalRoomName,
-            Reference,
-        ) -> Option<Reference> = unsafe { mem::transmute(callback_type_erased) };
+        let callback_lifetime_erased: &'static dyn Fn(RoomName, Reference) -> Option<Reference> =
+            unsafe { mem::transmute(callback_type_erased) };
 
         let FindOptions {
             ignore_creeps,
@@ -336,7 +334,7 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.memory)
     }
 
-    pub fn name_local(&self) -> LocalRoomName {
+    pub fn name_local(&self) -> RoomName {
         js_unwrap!(@{self.as_ref()}.name)
     }
 }
@@ -351,7 +349,7 @@ impl Eq for Room {}
 
 pub struct FindOptions<'a, F>
 where
-    F: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
+    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     pub(crate) ignore_creeps: bool,
     pub(crate) ignore_destructible_structures: bool,
@@ -365,11 +363,9 @@ where
     pub(crate) swamp_cost: u8,
 }
 
-impl Default
-    for FindOptions<'static, fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>>
-{
+impl Default for FindOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     fn default() -> Self {
-        fn cost_callback(_: LocalRoomName, _: CostMatrix<'_>) -> Option<CostMatrix<'static>> {
+        fn cost_callback(_: RoomName, _: CostMatrix<'_>) -> Option<CostMatrix<'static>> {
             None
         }
 
@@ -390,7 +386,7 @@ impl Default
     }
 }
 
-impl FindOptions<'static, fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
+impl FindOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -399,7 +395,7 @@ impl FindOptions<'static, fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix
 
 impl<'a, F> FindOptions<'a, F>
 where
-    F: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
+    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
@@ -417,7 +413,7 @@ where
     /// Sets cost callback - default `|_, _| {}`.
     pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> FindOptions<'b, F2>
     where
-        F2: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
+        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         let FindOptions {
             ignore_creeps,

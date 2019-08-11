@@ -6,7 +6,7 @@ use stdweb::{Reference, Value};
 use super::room::Step;
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
-    local::{LocalRoomName, Position},
+    local::{Position, RoomName},
     macros::*,
     memory::MemoryReference,
     objects::{
@@ -17,7 +17,7 @@ use crate::{
     traits::TryFrom,
 };
 
-scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(LocalRoomName, Reference) -> Option<Reference>>);
+scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(RoomName, Reference) -> Option<Reference>>);
 
 impl Creep {
     pub fn body(&self) -> Vec<Bodypart> {
@@ -88,7 +88,7 @@ impl Creep {
         move_options: MoveToOptions<'a, F>,
     ) -> ReturnCode
     where
-        F: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let pos = Position::new(x, y, self.pos().room_name());
         self.move_to_with_options(&pos, move_options)
@@ -106,7 +106,7 @@ impl Creep {
     ) -> ReturnCode
     where
         T: ?Sized + HasPosition,
-        F: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let MoveToOptions {
             reuse_path,
@@ -151,7 +151,7 @@ impl Creep {
 
         // Type erased and boxed callback: no longer a type specific to the closure
         // passed in, now unified as Box<Fn>
-        let callback_type_erased: Box<dyn Fn(LocalRoomName, Reference) -> Option<Reference> + 'a> =
+        let callback_type_erased: Box<dyn Fn(RoomName, Reference) -> Option<Reference> + 'a> =
             Box::new(callback_boxed);
 
         // Overwrite lifetime of box inside closure so it can be stuck in
@@ -162,7 +162,7 @@ impl Creep {
         // scope but otherwise unknown" is not a valid lifetime to have
         // PF_CALLBACK have.
         let callback_lifetime_erased: Box<
-            dyn Fn(LocalRoomName, Reference) -> Option<Reference> + 'static,
+            dyn Fn(RoomName, Reference) -> Option<Reference> + 'static,
         > = unsafe { mem::transmute(callback_type_erased) };
 
         // Store callback_lifetime_erased in COST_CALLBACK for the duration of the
@@ -319,7 +319,7 @@ creep_simple_concrete_action! {
 
 pub struct MoveToOptions<'a, F>
 where
-    F: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
+    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     pub(crate) reuse_path: u32,
     pub(crate) serialize_memory: bool,
@@ -329,7 +329,7 @@ where
 }
 
 impl Default
-    for MoveToOptions<'static, fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>>
+    for MoveToOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>>
 {
     fn default() -> Self {
         // TODO: should we fall back onto the game's default values, or is
@@ -344,7 +344,7 @@ impl Default
     }
 }
 
-impl MoveToOptions<'static, fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
+impl MoveToOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -353,7 +353,7 @@ impl MoveToOptions<'static, fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatr
 
 impl<'a, F> MoveToOptions<'a, F>
 where
-    F: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
+    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     /// Enables caching of the calculated path. Default: 5 ticks
     pub fn reuse_path(mut self, n_ticks: u32) -> Self {
@@ -395,7 +395,7 @@ where
     /// Sets cost callback - default `|_, _| {}`.
     pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> MoveToOptions<'b, F2>
     where
-        F2: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
+        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,
@@ -450,7 +450,7 @@ where
     /// Sets options related to FindOptions. Defaults to FindOptions default.
     pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2>) -> MoveToOptions<'b, F2>
     where
-        F2: Fn(LocalRoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
+        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,

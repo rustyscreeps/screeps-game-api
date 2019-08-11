@@ -47,9 +47,9 @@ pub mod flags {
 pub mod rooms {
     use std::collections::HashMap;
 
-    use crate::{local::LocalRoomName, macros::*, objects::Room};
+    use crate::{local::RoomName, macros::*, objects::Room};
 
-    /// Retrieve the full `HashMap<LocalRoomName, Room>`.
+    /// Retrieve the full `HashMap<RoomName, Room>`.
     pub fn hashmap() -> HashMap<String, Room> {
         js_unwrap!($js_inner)
     }
@@ -65,7 +65,7 @@ pub mod rooms {
     }
 
     /// Retrieve a specific value by key.
-    pub fn get(name: LocalRoomName) -> Option<Room> {
+    pub fn get(name: RoomName) -> Option<Room> {
         js_unwrap_ref!(Game.rooms[@{name}])
     }
 }

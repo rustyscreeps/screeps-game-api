@@ -2,7 +2,7 @@ use serde::Deserialize;
 use stdweb::Value;
 
 use crate::{
-    local::{LocalRoomName, Position},
+    local::{Position, RoomName},
     macros::*,
     objects::StructurePortal,
     traits::TryInto,
@@ -11,7 +11,7 @@ use crate::{
 #[derive(Deserialize, Debug)]
 pub struct InterShardPortalDestination {
     shard: String,
-    room: LocalRoomName,
+    room: RoomName,
 }
 js_deserializable!(InterShardPortalDestination);
 
