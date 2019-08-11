@@ -14,6 +14,9 @@ Unreleased
     `Position`, and will only have to upload a single `u32` to JavaScript to call it.
   - `Position` methods dealing with math between positions are now implemented in pure-Rust code
   - An alias `type RoomPosition = Position;` has been added to reflect the JS API
+- Rename `LocalRoomName` to `RoomName`, use in APIs, and optimize representation:
+  - It is now a 16-bit sized structure, one very efficient to get from a `Position` (#209)
+  - It's now used in all API bindings referencing room names (#217)
 - Make `StructureSpawn::spawning` an `Option<Spawning>` to reflect reality
 - Fix prices returned from `game::market` APIs being integers rather than floats (breaking) (#179)
 - Work around bug where IntelliJ-Rust didn't understand `screeps::game::*` modules created by a
