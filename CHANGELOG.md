@@ -26,6 +26,7 @@ Unreleased
 - Implement `Clone` for `Structure`
 - Split [cargo-screeps](https://github.com/rustyscreeps/cargo-screeps/) out into a separate
   repository
+- Mark most constant functions as inlinable (#221)
 - Misc. documentation improvements.
 
 [pos-doc]: https://docs.rs/screeps-game-api/0.6.0/screeps/local/struct.Position.html
