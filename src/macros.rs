@@ -269,7 +269,7 @@ macro_rules! impl_has_id {
         unsafe impl HasId for $struct_name {}
 
         impl PartialEq for $struct_name {
-            fn eq(&self, other: &$struct_name) -> bool{
+            fn eq(&self, other: &$struct_name) -> bool {
                 self.id() == other.id()
             }
         }
@@ -333,8 +333,7 @@ macro_rules! creep_simple_concrete_action {
     ($(($method:ident($type:ty) -> $js_name:ident)),* $(,)*) => (
         impl Creep {
             $(
-                pub fn $method(&self, target: &$type) -> ReturnCode
-                {
+                pub fn $method(&self, target: &$type) -> ReturnCode {
                     js_unwrap!(@{self.as_ref()}.$js_name(@{target.as_ref()}))
                 }
             )*
