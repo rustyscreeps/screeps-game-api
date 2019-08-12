@@ -50,8 +50,20 @@ pub mod rooms {
     use crate::{local::RoomName, macros::*, objects::Room};
 
     /// Retrieve the full `HashMap<RoomName, Room>`.
-    pub fn hashmap() -> HashMap<String, Room> {
-        js_unwrap!($js_inner)
+    pub fn hashmap() -> HashMap<RoomName, Room> {
+        // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
+        //
+        // See https://github.com/koute/stdweb/issues/359.
+        let map: HashMap<String, Room> = js_unwrap!(Game.rooms);
+        map.into_iter()
+            .map(|(key, val)| {
+                (
+                    key.parse()
+                        .expect("expected room name in Game.rooms to be valid"),
+                    val,
+                )
+            })
+            .collect()
     }
 
     /// Retrieve the string keys of this object.
