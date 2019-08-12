@@ -16,6 +16,8 @@ Unreleased
   - An alias `type RoomPosition = Position;` has been added to reflect the JS API
 - Make `StructureSpawn::spawning` an `Option<Spawning>` to reflect reality
 - Fix prices returned from `game::market` APIs being integers rather than floats (breaking) (#179)
+- Use `OrderType` rather than `String` for `order_type` fields of `TransactionOrder`, `Order` and
+  `MyOrder`. (breaking) (#213)
 - Work around bug where IntelliJ-Rust didn't understand `screeps::game::*` modules created by a
   macro, even with experimental engine enabled (#197)
 - `OwnedStructureProperties`'s `my` method now correctly handles the value being undefined.
@@ -24,6 +26,8 @@ Unreleased
 - Collections provided by `Game` now implement the `hashmap` function to retrieve both keys
   and values at once. (#194)
 - Implement `Clone` for `Structure`
+- Update `screeps::game::market::OrderType` derives to match other constants changed in the
+  constants overhaul last update (#213)
 - Split [cargo-screeps](https://github.com/rustyscreeps/cargo-screeps/) out into a separate
   repository
 - Misc. documentation improvements.
