@@ -392,11 +392,11 @@ pub unsafe trait Withdrawable: RoomObjectProperties {}
 /// target for `Creep.attack`.
 pub unsafe trait Attackable: RoomObjectProperties {
     fn hits(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.hits }
+        js_unwrap! { @{self.as_ref()}.hits || 0 }
     }
 
     fn hits_max(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.hitsMax }
+        js_unwrap! { @{self.as_ref()}.hitsMax || 0 }
     }
 }
 
