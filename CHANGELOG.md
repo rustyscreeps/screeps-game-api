@@ -30,6 +30,7 @@ Unreleased
   constants overhaul last update (#213)
 - Split [cargo-screeps](https://github.com/rustyscreeps/cargo-screeps/) out into a separate
   repository
+- Mark most constant functions as inlinable (#221)
 - Misc. documentation improvements.
 - Add `game::cpu::halt` binding for [`Game.cpu.halt`](https://docs.screeps.com/api/#Game.halt)
   (#210)

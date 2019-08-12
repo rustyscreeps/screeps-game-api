@@ -34,16 +34,19 @@ impl Default for LocalCostMatrix {
 }
 
 impl LocalCostMatrix {
+    #[inline]
     pub fn new() -> Self {
         LocalCostMatrix {
             bits: vec![0; 2500],
         }
     }
 
+    #[inline]
     pub fn set(&mut self, x: u8, y: u8, val: u8) {
         self.bits[pos_as_idx(x, y)] = val;
     }
 
+    #[inline]
     pub fn get(&self, x: u8, y: u8) -> u8 {
         self.bits[pos_as_idx(x, y)]
     }
@@ -110,6 +113,7 @@ impl LocalCostMatrix {
 impl Into<Vec<u8>> for LocalCostMatrix {
     /// Returns a vector of bits length 2500, where each position is
     /// `idx = ((x * 50) + y)`.
+    #[inline]
     fn into(self) -> Vec<u8> {
         self.bits
     }
@@ -208,6 +212,7 @@ impl Default for SearchOptions<'static, fn(String) -> CostMatrix<'static>> {
 
 impl SearchOptions<'static, fn(String) -> CostMatrix<'static>> {
     /// Creates default SearchOptions
+    #[inline]
     pub fn new() -> Self {
         Self::default()
     }
@@ -245,42 +250,49 @@ where
     }
 
     /// Sets plain cost - default `1`.
+    #[inline]
     pub fn plain_cost(mut self, cost: u8) -> Self {
         self.plain_cost = cost;
         self
     }
 
     /// Sets swamp cost - default `5`.
+    #[inline]
     pub fn swamp_cost(mut self, cost: u8) -> Self {
         self.swamp_cost = cost;
         self
     }
 
     /// Sets whether this is a flee search - default `false`.
+    #[inline]
     pub fn flee(mut self, flee: bool) -> Self {
         self.flee = flee;
         self
     }
 
     /// Sets maximum ops - default `2000`.
+    #[inline]
     pub fn max_ops(mut self, ops: u32) -> Self {
         self.max_ops = ops;
         self
     }
 
     /// Sets maximum rooms - default `16`, max `16`.
+    #[inline]
     pub fn max_rooms(mut self, rooms: u32) -> Self {
         self.max_rooms = rooms;
         self
     }
 
     /// Sets maximum path cost - default `f64::Infinity`.
+    #[inline]
     pub fn max_cost(mut self, cost: f64) -> Self {
         self.max_cost = cost;
         self
     }
 
     /// Sets heuristic weight - default `1.2`.
+    #[inline]
     pub fn heuristic_weight(mut self, weight: f64) -> Self {
         self.heuristic_weight = weight;
         self
@@ -295,6 +307,7 @@ pub struct SearchResults {
 }
 
 impl SearchResults {
+    #[inline]
     pub fn opaque_path(&self) -> &Array {
         &self.path
     }
