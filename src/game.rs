@@ -45,7 +45,41 @@ pub mod flags {
 ///
 /// [http://docs.screeps.com/api/#Game.rooms]: http://docs.screeps.com/api/#Game.rooms
 pub mod rooms {
-    game_map_access!(objects::Room, Game.rooms);
+    use std::collections::HashMap;
+
+    use crate::{local::RoomName, macros::*, objects::Room};
+
+    /// Retrieve the full `HashMap<RoomName, Room>`.
+    pub fn hashmap() -> HashMap<RoomName, Room> {
+        // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
+        //
+        // See https://github.com/koute/stdweb/issues/359.
+        let map: HashMap<String, Room> = js_unwrap!(Game.rooms);
+        map.into_iter()
+            .map(|(key, val)| {
+                (
+                    key.parse()
+                        .expect("expected room name in Game.rooms to be valid"),
+                    val,
+                )
+            })
+            .collect()
+    }
+
+    /// Retrieve the string keys of this object.
+    pub fn keys() -> Vec<String> {
+        js_unwrap!(Object.keys(Game.rooms))
+    }
+
+    /// Retrieve all values in this object.
+    pub fn values() -> Vec<Room> {
+        js_unwrap_ref!(Object.values(Game.rooms))
+    }
+
+    /// Retrieve a specific value by key.
+    pub fn get(name: RoomName) -> Option<Room> {
+        js_unwrap_ref!(Game.rooms[@{name}])
+    }
 }
 
 /// See [http://docs.screeps.com/api/#Game.spawns]

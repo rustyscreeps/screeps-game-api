@@ -12,6 +12,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
     constants::{ResourceType, ReturnCode},
+    local::RoomName,
     macros::*,
     traits::TryInto,
     Room,
@@ -97,7 +98,7 @@ pub struct Order {
     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
     order_type: OrderType,
     resource_type: String,
-    room_name: String,
+    room_name: RoomName,
     amount: u32,
     remaining_amount: u32,
     price: f64,
@@ -113,7 +114,7 @@ pub struct MyOrder {
     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
     order_type: OrderType,
     resource_type: String,
-    room_name: String,
+    room_name: RoomName,
     amount: u32,
     remaining_amount: u32,
     total_amount: u32,

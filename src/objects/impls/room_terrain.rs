@@ -2,13 +2,14 @@ use stdweb::UnsafeTypedArray;
 
 use crate::{
     constants::{ReturnCode, Terrain},
+    local::RoomName,
     macros::*,
     objects::RoomTerrain,
     traits::TryInto,
 };
 
 impl RoomTerrain {
-    pub fn constructor(room_name: &str) -> Self {
+    pub fn constructor(room_name: RoomName) -> Self {
         js_unwrap!(new Room.Terrain(@{room_name}))
     }
 

@@ -2,6 +2,7 @@
 use crate::{
     constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType},
     game,
+    local::RoomName,
     macros::*,
     objects::{FindOptions, Flag, HasPosition, LookResult, Path},
     pathfinder::CostMatrix,
@@ -66,16 +67,16 @@ impl Position {
 
     pub fn find_path_to<'a, F, T>(self, target: &T, opts: FindOptions<'a, F>) -> Path
     where
-        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
         T: ?Sized + HasPosition,
     {
-        let self_room = game::rooms::get(&self.room_name().to_array_string()).unwrap();
+        let self_room = game::rooms::get(self.room_name()).unwrap();
         self_room.find_path(&self, target, opts)
     }
 
     pub fn find_path_to_xy<'a, F>(self, x: u32, y: u32, opts: FindOptions<'a, F>) -> Path
     where
-        F: Fn(String, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
+        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let target = Position::new(x, y, self.room_name());
         self.find_path_to(&target, opts)

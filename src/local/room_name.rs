@@ -11,7 +11,7 @@ use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 
 /// A structure representing a room name.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub struct LocalRoomName {
+pub struct RoomName {
     /// A bit-packed integer, containing, from highest-order to lowest:
     ///
     /// - 1 byte: (room_x) + 128
@@ -26,13 +26,13 @@ pub struct LocalRoomName {
     packed: u16,
 }
 
-impl fmt::Display for LocalRoomName {
+impl fmt::Display for RoomName {
     /// Formats this room name into the format the game expects.
     ///
     /// Resulting string will be `(E|W)[0-9]+(N|S)[0-9]+`, and will result
-    /// in the same LocalRoomName if passed into [`LocalRoomName::new`].
+    /// in the same RoomName if passed into [`RoomName::new`].
     ///
-    /// [`LocalRoomName::new`]: struct.LocalRoomName.html#method.new
+    /// [`RoomName::new`]: struct.RoomName.html#method.new
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let x_coord = self.x_coord();
 
@@ -54,7 +54,7 @@ impl fmt::Display for LocalRoomName {
     }
 }
 
-impl LocalRoomName {
+impl RoomName {
     /// Parses a room name from a string.
     ///
     /// This will parse the input string, returning an error if it is in an
@@ -63,7 +63,7 @@ impl LocalRoomName {
     /// The expected format can be represented by the regex
     /// `[ewEW][0-9]+[nsNS][0-9]+`.
     #[inline]
-    pub fn new<T>(x: &T) -> Result<Self, LocalRoomNameParseError>
+    pub fn new<T>(x: &T) -> Result<Self, RoomNameParseError>
     where
         T: AsRef<str> + ?Sized,
     {
@@ -72,7 +72,7 @@ impl LocalRoomName {
 
     #[inline]
     pub(crate) fn from_packed(packed: u16) -> Self {
-        LocalRoomName { packed }
+        RoomName { packed }
     }
 
     /// Creates a new room name from room coords with direction implicit in
@@ -86,11 +86,11 @@ impl LocalRoomName {
     ///
     /// Returns an error if the coordinates are outside of the valid room name
     /// bounds.
-    pub(super) fn from_coords(x_coord: i32, y_coord: i32) -> Result<Self, LocalRoomNameParseError> {
+    pub(super) fn from_coords(x_coord: i32, y_coord: i32) -> Result<Self, RoomNameParseError> {
         if !VALID_ROOM_NAME_COORDINATES.contains(&x_coord)
             || !VALID_ROOM_NAME_COORDINATES.contains(&y_coord)
         {
-            return Err(LocalRoomNameParseError::PositionOutOfBounds { x_coord, y_coord });
+            return Err(RoomNameParseError::PositionOutOfBounds { x_coord, y_coord });
         }
 
         let room_x = (x_coord + HALF_WORLD_SIZE) as u16;
@@ -120,7 +120,7 @@ impl LocalRoomName {
         self.packed
     }
 
-    /// Converts this LocalRoomName into an efficient, stack-based string.
+    /// Converts this RoomName into an efficient, stack-based string.
     ///
     /// This is equivalent to [`ToString::to_string`], but involves no
     /// allocation.
@@ -131,7 +131,7 @@ impl LocalRoomName {
     }
 }
 
-impl ops::Add<(i32, i32)> for LocalRoomName {
+impl ops::Add<(i32, i32)> for RoomName {
     type Output = Self;
 
     /// Offsets this room name by a given horizontal and vertical (x, y) pair.
@@ -142,15 +142,15 @@ impl ops::Add<(i32, i32)> for LocalRoomName {
     ///
     /// # Panics
     ///
-    /// Will panic if the addition overflows the boundaries of LocalRoomName.
+    /// Will panic if the addition overflows the boundaries of RoomName.
     #[inline]
     fn add(self, (x, y): (i32, i32)) -> Self {
-        LocalRoomName::from_coords(self.x_coord() + x, self.y_coord() + y)
-            .expect("expected addition to keep LocalRoomName in-bounds")
+        RoomName::from_coords(self.x_coord() + x, self.y_coord() + y)
+            .expect("expected addition to keep RoomName in-bounds")
     }
 }
 
-impl ops::Sub<(i32, i32)> for LocalRoomName {
+impl ops::Sub<(i32, i32)> for RoomName {
     type Output = Self;
 
     /// Offsets this room name in the opposite direction from the coordinates.
@@ -159,15 +159,15 @@ impl ops::Sub<(i32, i32)> for LocalRoomName {
     ///
     /// # Panics
     ///
-    /// Will panic if the subtraction overflows the boundaries of LocalRoomName.
+    /// Will panic if the subtraction overflows the boundaries of RoomName.
     #[inline]
     fn sub(self, (x, y): (i32, i32)) -> Self {
-        LocalRoomName::from_coords(self.x_coord() - x, self.y_coord() - y)
-            .expect("expected addition to keep LocalRoomName in-bounds")
+        RoomName::from_coords(self.x_coord() - x, self.y_coord() - y)
+            .expect("expected addition to keep RoomName in-bounds")
     }
 }
 
-impl ops::Sub<LocalRoomName> for LocalRoomName {
+impl ops::Sub<RoomName> for RoomName {
     type Output = (i32, i32);
 
     /// Subtracts one room name from the other, extracting the difference.
@@ -179,9 +179,9 @@ impl ops::Sub<LocalRoomName> for LocalRoomName {
     /// being positive and 'more north' being negative.
     ///
     /// This coordinate system agrees with the implementations `Add<(i32, i32)>
-    /// for LocalRoomName` and `Sub<(i32, i32)> for LocalRoomName`.
+    /// for RoomName` and `Sub<(i32, i32)> for RoomName`.
     #[inline]
-    fn sub(self, other: LocalRoomName) -> (i32, i32) {
+    fn sub(self, other: RoomName) -> (i32, i32) {
         (
             self.x_coord() - other.x_coord(),
             self.y_coord() - other.y_coord(),
@@ -189,13 +189,13 @@ impl ops::Sub<LocalRoomName> for LocalRoomName {
     }
 }
 
-impl FromStr for LocalRoomName {
-    type Err = LocalRoomNameParseError;
+impl FromStr for RoomName {
+    type Err = RoomNameParseError;
 
-    fn from_str(s: &str) -> Result<Self, LocalRoomNameParseError> {
+    fn from_str(s: &str) -> Result<Self, RoomNameParseError> {
         parse_to_coords(s)
-            .map_err(|()| LocalRoomNameParseError::new(s))
-            .and_then(|(x, y)| LocalRoomName::from_coords(x, y))
+            .map_err(|()| RoomNameParseError::new(s))
+            .and_then(|(x, y)| RoomName::from_coords(x, y))
     }
 }
 
@@ -252,45 +252,45 @@ fn parse_to_coords(s: &str) -> Result<(i32, i32), ()> {
 }
 
 /// An error representing when a string can't be parsed into a
-/// [`LocalRoomName`].
+/// [`RoomName`].
 ///
-/// [`LocalRoomName`]: struct.LocalRoomName.html
+/// [`RoomName`]: struct.RoomName.html
 #[derive(Clone, Debug)]
-pub enum LocalRoomNameParseError {
+pub enum RoomNameParseError {
     TooLarge { length: usize },
     InvalidString { string: ArrayString<[u8; 8]> },
     PositionOutOfBounds { x_coord: i32, y_coord: i32 },
 }
 
-impl LocalRoomNameParseError {
-    /// Private method to construct a `LocalRoomNameParseError`.
+impl RoomNameParseError {
+    /// Private method to construct a `RoomNameParseError`.
     fn new(failed_room_name: &str) -> Self {
         match ArrayString::from(failed_room_name) {
-            Ok(string) => LocalRoomNameParseError::InvalidString { string },
-            Err(_) => LocalRoomNameParseError::TooLarge {
+            Ok(string) => RoomNameParseError::InvalidString { string },
+            Err(_) => RoomNameParseError::TooLarge {
                 length: failed_room_name.len(),
             },
         }
     }
 }
 
-impl error::Error for LocalRoomNameParseError {}
+impl error::Error for RoomNameParseError {}
 
-impl fmt::Display for LocalRoomNameParseError {
+impl fmt::Display for RoomNameParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            LocalRoomNameParseError::TooLarge { length } => write!(
+            RoomNameParseError::TooLarge { length } => write!(
                 f,
                 "got invalid room name, too large to stick in error. \
                  expected length 8 or less, got length {}",
                 length
             ),
-            LocalRoomNameParseError::InvalidString { string } => write!(
+            RoomNameParseError::InvalidString { string } => write!(
                 f,
                 "expected room name formatted `[ewEW][0-9]+[nsNS][0-9]+`, found `{}`",
                 string
             ),
-            LocalRoomNameParseError::PositionOutOfBounds { x_coord, y_coord } => write!(
+            RoomNameParseError::PositionOutOfBounds { x_coord, y_coord } => write!(
                 f,
                 "expected room name with coords within -128..+128, found {}, {}",
                 x_coord, y_coord,
@@ -299,15 +299,15 @@ impl fmt::Display for LocalRoomNameParseError {
     }
 }
 
-impl PartialEq<str> for LocalRoomName {
+impl PartialEq<str> for RoomName {
     fn eq(&self, other: &str) -> bool {
         let s = self.to_array_string();
         s.eq_ignore_ascii_case(other)
     }
 }
-impl PartialEq<LocalRoomName> for str {
+impl PartialEq<RoomName> for str {
     #[inline]
-    fn eq(&self, other: &LocalRoomName) -> bool {
+    fn eq(&self, other: &RoomName) -> bool {
         // Explicitly call the impl for `PartialEq<str>` so that we don't end up
         // accidentally calling one of the other implementations and ending up in an
         // infinite loop.
@@ -315,49 +315,49 @@ impl PartialEq<LocalRoomName> for str {
         // This one in particular would probably be OK, but I've written it this way to
         // be consistent with the others, and to ensure that if this code changes in
         // this future it'll stay working.
-        <LocalRoomName as PartialEq<str>>::eq(other, self)
+        <RoomName as PartialEq<str>>::eq(other, self)
     }
 }
 
-impl PartialEq<&str> for LocalRoomName {
+impl PartialEq<&str> for RoomName {
     #[inline]
     fn eq(&self, other: &&str) -> bool {
-        <LocalRoomName as PartialEq<str>>::eq(self, other)
+        <RoomName as PartialEq<str>>::eq(self, other)
     }
 }
 
-impl PartialEq<LocalRoomName> for &str {
+impl PartialEq<RoomName> for &str {
     #[inline]
-    fn eq(&self, other: &LocalRoomName) -> bool {
-        <LocalRoomName as PartialEq<str>>::eq(other, self)
+    fn eq(&self, other: &RoomName) -> bool {
+        <RoomName as PartialEq<str>>::eq(other, self)
     }
 }
 
-impl PartialEq<String> for LocalRoomName {
+impl PartialEq<String> for RoomName {
     #[inline]
     fn eq(&self, other: &String) -> bool {
-        <LocalRoomName as PartialEq<str>>::eq(self, &other)
+        <RoomName as PartialEq<str>>::eq(self, &other)
     }
 }
 
-impl PartialEq<LocalRoomName> for String {
+impl PartialEq<RoomName> for String {
     #[inline]
-    fn eq(&self, other: &LocalRoomName) -> bool {
-        <LocalRoomName as PartialEq<str>>::eq(other, self)
+    fn eq(&self, other: &RoomName) -> bool {
+        <RoomName as PartialEq<str>>::eq(other, self)
     }
 }
 
-impl PartialEq<&String> for LocalRoomName {
+impl PartialEq<&String> for RoomName {
     #[inline]
     fn eq(&self, other: &&String) -> bool {
-        <LocalRoomName as PartialEq<str>>::eq(self, other)
+        <RoomName as PartialEq<str>>::eq(self, other)
     }
 }
 
-impl PartialEq<LocalRoomName> for &String {
+impl PartialEq<RoomName> for &String {
     #[inline]
-    fn eq(&self, other: &LocalRoomName) -> bool {
-        <LocalRoomName as PartialEq<str>>::eq(other, self)
+    fn eq(&self, other: &RoomName) -> bool {
+        <RoomName as PartialEq<str>>::eq(other, self)
     }
 }
 
@@ -369,10 +369,10 @@ mod serde {
         Deserialize, Deserializer, Serialize, Serializer,
     };
 
-    use super::LocalRoomName;
+    use super::RoomName;
     use crate::macros::*;
 
-    impl Serialize for LocalRoomName {
+    impl Serialize for RoomName {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: Serializer,
@@ -381,10 +381,10 @@ mod serde {
         }
     }
 
-    struct LocalRoomNameVisitor;
+    struct RoomNameVisitor;
 
-    impl<'de> Visitor<'de> for LocalRoomNameVisitor {
-        type Value = LocalRoomName;
+    impl<'de> Visitor<'de> for RoomNameVisitor {
+        type Value = RoomName;
 
         fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
             formatter.write_str(
@@ -401,36 +401,30 @@ mod serde {
         }
     }
 
-    impl<'de> Deserialize<'de> for LocalRoomName {
+    impl<'de> Deserialize<'de> for RoomName {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: Deserializer<'de>,
         {
-            deserializer.deserialize_str(LocalRoomNameVisitor)
+            deserializer.deserialize_str(RoomNameVisitor)
         }
     }
 
-    js_deserializable!(LocalRoomName);
-    js_serializable!(LocalRoomName);
+    js_deserializable!(RoomName);
+    js_serializable!(RoomName);
 }
 
 #[cfg(test)]
 mod test {
     #[test]
     fn test_string_equality() {
-        use super::LocalRoomName;
+        use super::RoomName;
         let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5"];
         for room_name in room_names {
-            assert_eq!(room_name, LocalRoomName::new(room_name).unwrap());
-            assert_eq!(LocalRoomName::new(room_name).unwrap(), room_name);
-            assert_eq!(
-                LocalRoomName::new(room_name).unwrap(),
-                &room_name.to_string()
-            );
-            assert_eq!(
-                &room_name.to_string(),
-                LocalRoomName::new(room_name).unwrap()
-            );
+            assert_eq!(room_name, RoomName::new(room_name).unwrap());
+            assert_eq!(RoomName::new(room_name).unwrap(), room_name);
+            assert_eq!(RoomName::new(room_name).unwrap(), &room_name.to_string());
+            assert_eq!(&room_name.to_string(), RoomName::new(room_name).unwrap());
         }
     }
 }

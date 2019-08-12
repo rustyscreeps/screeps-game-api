@@ -5,7 +5,7 @@
 //! file stay within Rust.
 use std::fmt;
 
-use super::{LocalRoomName, HALF_WORLD_SIZE};
+use super::{RoomName, HALF_WORLD_SIZE};
 
 mod extra_math;
 mod game_math;
@@ -129,7 +129,7 @@ impl Position {
     /// Will panic if either `x` or `y` is larger than 49, or if `room_name` is
     /// outside of the range `E127N127 - W127S127`.
     #[inline]
-    pub fn new(x: u32, y: u32, room_name: LocalRoomName) -> Self {
+    pub fn new(x: u32, y: u32, room_name: RoomName) -> Self {
         assert!(x < 50, "out of bounds x: {}", x);
         assert!(y < 50, "out of bounds y: {}", y);
 
@@ -195,8 +195,8 @@ impl Position {
     }
 
     #[inline]
-    pub fn room_name(self) -> LocalRoomName {
-        LocalRoomName::from_packed(((self.packed >> 16) & 0xFFFF) as u16)
+    pub fn room_name(self) -> RoomName {
+        RoomName::from_packed(((self.packed >> 16) & 0xFFFF) as u16)
     }
 
     #[inline]
@@ -212,7 +212,7 @@ impl Position {
     }
 
     #[inline]
-    pub fn set_room_name(&mut self, room_name: LocalRoomName) {
+    pub fn set_room_name(&mut self, room_name: RoomName) {
         let room_repr_packed = room_name.packed_repr() as u32;
         self.packed = (self.packed & 0xFFFF) | (room_repr_packed << 16);
     }
@@ -230,7 +230,7 @@ impl Position {
     }
 
     #[inline]
-    pub fn with_room_name(mut self, room_name: LocalRoomName) -> Self {
+    pub fn with_room_name(mut self, room_name: RoomName) -> Self {
         self.set_room_name(room_name);
         self
     }
@@ -289,12 +289,12 @@ mod stdweb {
 mod serde {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-    use super::{LocalRoomName, Position};
+    use super::{Position, RoomName};
 
     #[derive(Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     struct ReadableFormat {
-        room_name: LocalRoomName,
+        room_name: RoomName,
         x: u32,
         y: u32,
     }
