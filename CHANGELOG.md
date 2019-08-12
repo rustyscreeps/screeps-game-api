@@ -25,6 +25,7 @@ Unreleased
 - `StructurePortal` no longer implements `OwnedStructure` and `Attackable`. (#190)
 - Collections provided by `Game` now implement the `hashmap` function to retrieve both keys
   and values at once. (#194)
+- Allow accessing fields of the `Bodypart` struct. (#215)
 - Implement `Clone` for `Structure`
 - Update `screeps::game::market::OrderType` derives to match other constants changed in the
   constants overhaul last update (#213)
