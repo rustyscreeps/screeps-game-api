@@ -269,7 +269,7 @@ macro_rules! impl_has_id {
         unsafe impl HasId for $struct_name {}
 
         impl PartialEq for $struct_name {
-            fn eq(&self, other: &$struct_name) -> bool{
+            fn eq(&self, other: &$struct_name) -> bool {
                 self.id() == other.id()
             }
         }
@@ -333,8 +333,7 @@ macro_rules! creep_simple_concrete_action {
     ($(($method:ident($type:ty) -> $js_name:ident)),* $(,)*) => (
         impl Creep {
             $(
-                pub fn $method(&self, target: &$type) -> ReturnCode
-                {
+                pub fn $method(&self, target: &$type) -> ReturnCode {
                     js_unwrap!(@{self.as_ref()}.$js_name(@{target.as_ref()}))
                 }
             )*
@@ -417,17 +416,14 @@ macro_rules! typesafe_look_constants {
 ///
 /// Macro syntax:
 /// ```ignore
-/// game_map_access! {
-///     $rust_mod_name1, $rust_object_accessed1, $js_code_to_access1;
-///     $rust_mod_name2, $rust_object_accessed2, $js_code_to_access2;
-///     ...
-/// }
+/// game_map_access!($rust_object_accessed1, $js_code_to_access1);
 /// ```
 ///
-/// Builds a module for often accessed collections. Those can then be accesed
-/// via functions. For example, to retreive a vector of all creeps names:
+/// Best used inside a module. It builds four functions, `keys`, `values`, `get`
+/// and `hashmap`. For example, to retreive a vector of all creeps names:
+///
 /// ```
-/// screeps::game::creeps.keys();
+/// screeps::game::creeps::keys();
 /// ```
 ///
 /// This macro defines functions for retreiving the `keys` (names) of the
@@ -435,10 +431,9 @@ macro_rules! typesafe_look_constants {
 /// via the `get` function.
 macro_rules! game_map_access {
     ($type:path, $js_inner:expr $(,)?) => {
-        use std::{collections::HashMap};
+        use std::collections::HashMap;
 
-        use crate::objects;
-        use crate::macros::*;
+        use crate::{macros::*, objects};
 
         calculated_doc! {
             #[doc = concat!("Retrieve the full `HashMap<String, ",
