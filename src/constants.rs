@@ -887,6 +887,7 @@ pub const GCL_POW: f32 = 2.4;
 pub const GCL_MULTIPLY: u32 = 1_000_000;
 pub const GCL_NOVICE: u32 = 3;
 
+pub const TERRAIN_MASK_PLAIN: u8 = 0;
 pub const TERRAIN_MASK_WALL: u8 = 1;
 pub const TERRAIN_MASK_SWAMP: u8 = 2;
 pub const TERRAIN_MASK_LAVA: u8 = 4;
