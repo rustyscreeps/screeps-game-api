@@ -391,12 +391,24 @@ pub unsafe trait Withdrawable: RoomObjectProperties {}
 /// The reference returned from `AsRef<Reference>::as_ref` must be a valid
 /// target for `Creep.attack`.
 pub unsafe trait Attackable: RoomObjectProperties {
+    /// Retrieve this hits of this structure, or `0` if this structure doesn't
+    /// have a hit count.
+    ///
+    /// For instance, this retrieves the hitpoints of a `Creep`. Or for a
+    /// `StructureWall` that's part of a novice area border, this will return
+    /// `0`.
     fn hits(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.hits }
+        js_unwrap! { @{self.as_ref()}.hits || 0 }
     }
 
+    /// Retrieve the maximum hits of this structure, or `0` if this structure
+    /// doesn't have a hit count.
+    ///
+    /// For instance, this retrieves the maximum full health of a `Creep`. Or
+    /// for a `StructureWall` that's part of a novice area border, this will
+    /// return `0`.
     fn hits_max(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.hitsMax }
+        js_unwrap! { @{self.as_ref()}.hitsMax || 0 }
     }
 }
 
