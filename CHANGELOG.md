@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+
+0.6.0 (2019-08-15)
+==================
+
 - Change `LocalRoomName`'s orientation so that north is negative and south is positive.
   This is a breaking change for `LocalRoomName::from_coords`, fields and add/sub implementations
   (#200)
