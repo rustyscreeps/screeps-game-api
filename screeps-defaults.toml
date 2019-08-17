@@ -11,8 +11,9 @@ branch = "default"
 # port = 443
 
 # [copy]
-# destination = "your copy destination"
+# destination = "your copy destination"  # On Windows, use forward slashes instead of backslashes
 # prune = false
+# branch = "default"
 
 # [build]
 # use absolute file path to get out of "target/"
