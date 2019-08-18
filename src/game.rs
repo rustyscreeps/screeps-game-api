@@ -5,6 +5,7 @@
 //!
 //! [`Game`]: http://docs.screeps.com/api/#Game
 use crate::{
+    local::{ObjectId, RawObjectId},
     macros::*,
     objects::{HasId, RoomObject, SizedRoomObject},
     traits::TryInto,
@@ -111,12 +112,47 @@ pub fn time() -> u32 {
 /// If all you want to assume is that something has an ID, use
 /// [`get_object_erased`].
 ///
+/// This uses the typed id type, [`ObjectId`]. Note that if you'd rather store
+/// an untyped ID, it's free to convert from [`RawObjectId`] to [`ObjectId`].
+///
+/// # Example
+///
+/// ```no_run
+/// use screeps::{game, prelude::*, Creep, ObjectId};
+///
+/// // get your id however
+/// let id: ObjectId<Creep> = "aaaa".parse().unwrap();
+///
+/// let creep = game::get_object_typed(id).unwrap();
+/// match creep {
+///     Some(creep) => println!("creep with id aaaa has name {}", creep.name()),
+///     None => println!("no creep with id aaaa! such a surprise!"),
+/// }
+/// ```
+///
+/// Or, using `RawObjectId`,
+///
+/// ```no_run
+/// use screeps::{game, prelude::*, Creep, RawObjectId};
+///
+/// let id: RawObjectId = "bbbb".parse().unwrap();
+///
+/// let creep = game::get_object_typed::<Creep>(id.into()).unwrap();
+/// if let Some(creep) = creep {
+///     println!("creep with id bbbb exists, and has name {}", creep.name());
+/// }
+/// ```
+///
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
-pub fn get_object_typed<T>(id: &str) -> Result<Option<T>, ConversionError>
+pub fn get_object_typed<T>(id: ObjectId<T>) -> Result<Option<T>, ConversionError>
 where
     T: HasId + SizedRoomObject,
 {
-    js!(return Game.getObjectById(@{id});).try_into()
+    let array_view = unsafe { id.unsafe_as_uploaded() };
+    (js! {
+        return Game.getObjectById(object_id_from_packed(@{array_view}));
+    })
+    .try_into()
 }
 
 /// See [http://docs.screeps.com/api/#Game.getObjectById]
@@ -126,9 +162,14 @@ where
 ///
 /// If a more specific type is expected, [`get_object_typed`] can be used.
 ///
+/// The ID passed in must be either an [`ObjectId`], or a [`RawObjectId`]. Both
+/// work, and the type of [`ObjectId`] if passed will be ignored.
+///
 /// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
-pub fn get_object_erased(id: &str) -> Option<RoomObject> {
-    js_unwrap_ref!(Game.getObjectById(@{id}))
+pub fn get_object_erased(id: impl Into<RawObjectId>) -> Option<RoomObject> {
+    let id = id.into();
+    let array_view = unsafe { id.unsafe_as_uploaded() };
+    js_unwrap_ref!(Game.getObjectById(object_id_from_packed(@{array_view})))
 }
 
 pub fn notify(message: &str, group_interval: Option<u32>) {

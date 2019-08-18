@@ -120,7 +120,7 @@ impl<T> ObjectId<T> {
     /// use screeps::{prelude::*, Creep, ObjectId};
     /// use stdweb::js;
     ///
-    /// let object_id: ObjectId<Creep> = screeps::game::creeps::values()[0].id().parse().unwrap();
+    /// let object_id = screeps::game::creeps::values()[0].id();
     ///
     /// let str_repr = object_id.to_array_string();
     ///
@@ -160,7 +160,7 @@ impl<T> ObjectId<T> {
     /// use screeps::{prelude::*, Creep, ObjectId};
     /// use stdweb::js;
     ///
-    /// let object_id: ObjectId<Creep> = screeps::game::creeps::values()[0].id().parse().unwrap();
+    /// let object_id = screeps::game::creeps::values()[0].id();
     ///
     /// let array_view = unsafe { object_id.unsafe_as_uploaded() };
     ///
