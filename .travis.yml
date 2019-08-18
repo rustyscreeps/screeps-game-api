@@ -30,3 +30,4 @@ script:
 - cargo web build --target=wasm32-unknown-unknown --verbose
 - cargo web build --target=wasm32-unknown-unknown --all-features --verbose
 - cargo test --verbose
+- cargo web test --verbose --nodejs
