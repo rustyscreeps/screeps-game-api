@@ -1,6 +1,7 @@
 //! Pure-data structures relating to Screeps.
 use std::ops::Range;
 
+mod object_id;
 mod room_name;
 mod room_position;
 
@@ -17,4 +18,4 @@ const HALF_WORLD_SIZE: i32 = 128;
 /// Valid room name coordinates.
 const VALID_ROOM_NAME_COORDINATES: Range<i32> = (-HALF_WORLD_SIZE..HALF_WORLD_SIZE);
 
-pub use self::{room_name::*, room_position::*};
+pub use self::{object_id::*, room_name::*, room_position::*};
