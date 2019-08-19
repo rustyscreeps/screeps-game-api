@@ -11,7 +11,8 @@ branch = "default"
 # port = 443
 
 # [copy]
-# destination = "your copy destination"  # On Windows, use forward slashes instead of backslashes
+# # On Windows, use forward slashes instead of backslashes for the destination
+# destination = "your copy destination"
 # prune = false
 # branch = "default"
 
