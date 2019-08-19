@@ -15,7 +15,7 @@ mod world_utils;
 
 /// Represents a position in a particular room in Screeps.
 ///
-/// **Note:** This is analagous to the `RoomPosition` JavaScript type.
+/// **Note:** This is analogous to the `RoomPosition` JavaScript type.
 ///
 /// We've renamed this type to `Position` in `screeps-game-api` to reflect the
 /// fact that it's implemented entirely as a local type, and does represent a

@@ -422,13 +422,13 @@ macro_rules! typesafe_look_constants {
 /// ```
 ///
 /// Best used inside a module. It builds four functions, `keys`, `values`, `get`
-/// and `hashmap`. For example, to retreive a vector of all creeps names:
+/// and `hashmap`. For example, to retrieve a vector of all creeps names:
 ///
 /// ```
 /// screeps::game::creeps::keys();
 /// ```
 ///
-/// This macro defines functions for retreiving the `keys` (names) of the
+/// This macro defines functions for retrieving the `keys` (names) of the
 /// collection, the `values` as `rust_object_accessedX` and a single object
 /// via the `get` function.
 macro_rules! game_map_access {
