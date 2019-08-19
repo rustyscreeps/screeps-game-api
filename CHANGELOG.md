@@ -1,6 +1,7 @@
 Unreleased
 ==========
 
+- Rename incorrectly spelled `Density::probabilitiy` to `probability`.
 
 0.6.0 (2019-08-15)
 ==================

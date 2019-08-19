@@ -956,7 +956,7 @@ impl Density {
     /// in the order `Low` -> `Medium` -> `High` -> `Ultra`. Use the
     /// [`Density::iter_values`] iterator to iterate in this order.
     #[inline]
-    pub fn probabilitiy(self) -> f32 {
+    pub fn probability(self) -> f32 {
         match self {
             Density::Low => 0.1,
             Density::Moderate => 0.5,
