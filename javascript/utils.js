@@ -262,3 +262,30 @@ function pos_from_packed(repr) {
     });
     return pos;
 }
+
+function object_id_from_packed(slice) {
+    // reconstruct string in JS
+    let res = "";
+    for (var i = 0; i < slice.length; i++) {
+       if (i > 0) {
+           res += slice[i].toString(16).padStart(8, "0");
+       } else {
+           res += slice[i].toString(16);
+       }
+    }
+    return res;
+}
+
+function object_id_to_packed(id) {
+    let packed = [0, 0, 0];
+    if (id.length > 16) {
+        packed[0] = parseInt(id.slice(0, -16), 16);
+    }
+    if (id.length > 8) {
+        packed[1] = parseInt(id.slice(-16, -8), 16);
+    }
+    if (id.length > 0) {
+        packed[2] = parseInt(id.slice(-8), 16);
+    }
+    return packed;
+}

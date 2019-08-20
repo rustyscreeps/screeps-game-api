@@ -18,7 +18,7 @@ use stdweb_derive::ReferenceType;
 
 use crate::{
     constants::{ResourceType, ReturnCode, StructureType},
-    local::Position,
+    local::{ObjectId, Position, RawObjectId},
     macros::*,
     traits::{IntoExpectedType, TryFrom, TryInto},
     ConversionError,
@@ -134,8 +134,33 @@ where
 
 /// Trait covering all objects with an id.
 pub unsafe trait HasId: RoomObjectProperties {
-    fn id(&self) -> String {
-        js_unwrap!(@{self.as_ref()}.id)
+    /// Retrieves this object's id as an untyped, packed value.
+    ///
+    /// This has no major differences from [`HasId::id`] except for the return
+    /// value not being typed by the kind of thing it points to. As the type of
+    /// an `ObjectId` can be freely changed, that isn't a big deal.
+    fn untyped_id(&self) -> RawObjectId {
+        RawObjectId::from_packed_js_val(js_unwrap!(object_id_to_packed(@{self.as_ref()}.id)))
+            .expect("expected HasId type's JavaScript id to be a 12-byte number encoded in hex")
+    }
+
+    /// Retrieves this object's id as a typed, packed value.
+    ///
+    /// This can be helpful for use with [`game::get_object_typed`][1], as it
+    /// will force rust to infer the proper return type.
+    ///
+    /// If an ID without these protections is needed, use [`HasId::untyped_id`],
+    /// or `RawObjectId::from(x.id())`.
+    ///
+    /// Note that the ID returned is also stored as a packed, 12-byte value on
+    /// the stack, so it's fairly efficient to move and copy around.
+    ///
+    /// [1]: crate::game::get_object_typed
+    fn id(&self) -> ObjectId<Self>
+    where
+        Self: Sized,
+    {
+        self.untyped_id().into()
     }
 }
 
