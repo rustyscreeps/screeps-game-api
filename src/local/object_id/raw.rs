@@ -198,6 +198,24 @@ impl RawObjectId {
     }
 }
 
+impl From<RawObjectId> for ArrayString<[u8; 24]> {
+    fn from(id: RawObjectId) -> Self {
+        id.to_array_string()
+    }
+}
+
+impl From<RawObjectId> for String {
+    fn from(id: RawObjectId) -> Self {
+        id.to_string()
+    }
+}
+
+impl From<[u32; 3]> for RawObjectId {
+    fn from(packed: [u32; 3]) -> Self {
+        Self::from_packed(packed)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::RawObjectId;

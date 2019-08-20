@@ -190,3 +190,21 @@ impl<T> From<ObjectId<T>> for RawObjectId {
         id.raw
     }
 }
+
+impl<T> From<ObjectId<T>> for ArrayString<[u8; 24]> {
+    fn from(id: ObjectId<T>) -> Self {
+        id.to_array_string()
+    }
+}
+
+impl<T> From<ObjectId<T>> for String {
+    fn from(id: ObjectId<T>) -> Self {
+        id.to_string()
+    }
+}
+
+impl<T> From<[u32; 3]> for ObjectId<T> {
+    fn from(packed: [u32; 3]) -> Self {
+        Self::from_packed(packed)
+    }
+}
