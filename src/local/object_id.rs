@@ -1,4 +1,10 @@
-use std::{fmt, marker::PhantomData, str::FromStr};
+use std::{
+    cmp::{Eq, PartialEq},
+    fmt,
+    hash::{Hash, Hasher},
+    marker::PhantomData,
+    str::FromStr,
+};
 
 use arrayvec::ArrayString;
 use serde::{Deserialize, Serialize};
@@ -29,12 +35,40 @@ pub use raw::*;
 ///
 /// Use `into` to convert between `ObjectId<T>` and [`RawObjectId`], and
 /// [`ObjectId::into_type`] to change the type this `ObjectId` points to freely.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+// Copy, Clone, Debug, PartialEq, Eq, Hash implemented manually below
+#[derive(Serialize, Deserialize)]
 #[serde(transparent, bound = "")]
 pub struct ObjectId<T> {
     raw: RawObjectId,
     #[serde(skip)]
     phantom: PhantomData<T>,
+}
+
+// traits implemented manually so they don't depend on `T` implementing them.
+impl<T> Copy for ObjectId<T> {}
+impl<T> Clone for ObjectId<T> {
+    fn clone(&self) -> ObjectId<T> {
+        ObjectId {
+            raw: self.raw.clone(),
+            phantom: PhantomData,
+        }
+    }
+}
+impl<T> fmt::Debug for ObjectId<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.raw.fmt(f)
+    }
+}
+impl<T> PartialEq for ObjectId<T> {
+    fn eq(&self, o: &ObjectId<T>) -> bool {
+        self.raw.eq(&o.raw)
+    }
+}
+impl<T> Eq for ObjectId<T> {}
+impl<T> Hash for ObjectId<T> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.raw.hash(state)
+    }
 }
 
 impl<T> FromStr for ObjectId<T> {
