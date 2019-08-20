@@ -10,7 +10,10 @@ use arrayvec::ArrayString;
 use serde::{Deserialize, Serialize};
 use stdweb::{Reference, UnsafeTypedArray};
 
-use crate::ConversionError;
+use crate::{
+    objects::{HasId, SizedRoomObject},
+    ConversionError,
+};
 
 mod errors;
 mod raw;
@@ -207,6 +210,48 @@ impl<T> ObjectId<T> {
     /// See also [`RawObjectId::unsafe_as_uploaded`].
     pub unsafe fn unsafe_as_uploaded(&self) -> UnsafeTypedArray<'_, u32> {
         self.raw.unsafe_as_uploaded()
+    }
+
+    /// Resolves this object ID into an object.
+    ///
+    /// This is a shortcut for [`game::get_object_typed(id)`][1]
+    ///
+    /// # Errors
+    ///
+    /// Will return an error if this ID's type does not match the object it
+    /// points to.
+    ///
+    /// Will return `Ok(None)` if the object no longer exists, or is in a room
+    /// we don't have vision for.
+    ///
+    /// [1]: crate::game::get_object_typed
+    pub fn try_resolve(self) -> Result<Option<T>, ConversionError>
+    where
+        T: HasId + SizedRoomObject,
+    {
+        crate::game::get_object_typed(self)
+    }
+
+    /// Resolves this ID into an object, panicking on type mismatch.
+    ///
+    /// This is a shortcut for [`id.try_resolve().expect(...)`][1]
+    ///
+    /// # Panics
+    ///
+    /// Will panic if this ID points to an object which is not of type `T`.
+    ///
+    /// Will return `None` if this object no longer exists, or is in a room we
+    /// don't have vision for.
+    ///
+    /// [1]: ObjectId::try_resolve
+    pub fn resolve(self) -> Option<T>
+    where
+        T: HasId + SizedRoomObject,
+    {
+        match self.try_resolve() {
+            Ok(v) => v,
+            Err(e) => panic!("error resolving id {}: {}", self, e),
+        }
     }
 }
 
