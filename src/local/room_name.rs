@@ -126,7 +126,7 @@ impl RoomName {
     /// allocation.
     pub fn to_array_string(&self) -> ArrayString<[u8; 8]> {
         let mut res = ArrayString::new();
-        write!(res, "{}", self).expect("expected ArrayString write to be unfallible");
+        write!(res, "{}", self).expect("expected ArrayString write to be infallible");
         res
     }
 }

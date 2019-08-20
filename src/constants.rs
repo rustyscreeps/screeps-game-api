@@ -118,7 +118,7 @@ js_deserializable!(ReturnCode);
 /// *Note:* Types in this module have purposefully ambiguous names, and are
 /// intended to be used as, for example, `find::CREEPS`, not `CREEPS`.
 ///
-/// You can do this my importing the module itself, rather than any indvidiual
+/// You can do this my importing the module itself, rather than any individual
 /// constant, and then just referring to the constants relative to the module.
 ///
 /// # Example
@@ -956,7 +956,7 @@ impl Density {
     /// in the order `Low` -> `Medium` -> `High` -> `Ultra`. Use the
     /// [`Density::iter_values`] iterator to iterate in this order.
     #[inline]
-    pub fn probabilitiy(self) -> f32 {
+    pub fn probability(self) -> f32 {
         match self {
             Density::Low => 0.1,
             Density::Moderate => 0.5,
@@ -1306,7 +1306,7 @@ pub enum PowerClass {
     Operator,
 }
 
-/// Traslates the `PWR_*` constants.
+/// Translates the `PWR_*` constants.
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]

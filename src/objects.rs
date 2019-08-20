@@ -239,7 +239,7 @@ pub unsafe trait StructureProperties: RoomObjectProperties + HasId {
     {
         Into::<Reference>::into(self)
             .into_expected_type()
-            .expect("expected converting a StructureProperties to a Structure would suceed.")
+            .expect("expected converting a StructureProperties to a Structure would succeed.")
     }
 }
 

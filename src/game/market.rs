@@ -195,7 +195,7 @@ pub fn get_all_orders() -> Vec<Order> {
 
 pub fn get_order(id: &str) -> Option<Order> {
     let order = js! {
-        return Game.marget.getOrder(@{id});
+        return Game.market.getOrder(@{id});
     };
     order.try_into().ok()
 }

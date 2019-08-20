@@ -3,7 +3,7 @@
 //! Quoting from [`InterShardMemory`] documentation:
 //!
 //! > InterShardMemory object provides an interface for communicating between
-//! > shards. Your script is executed separatedly on each shard, and their
+//! > shards. Your script is executed separately on each shard, and their
 //! > Memory objects are isolated from each other. In order to pass messages and
 //! > data between shards, you need to use InterShardMemory instead.
 //! >

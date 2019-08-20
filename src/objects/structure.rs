@@ -30,7 +30,7 @@ use crate::{
 /// ```
 ///
 /// To use structures of a particular type, like something that can be attacked,
-/// or something that can be transfered to, use helper methods:
+/// or something that can be transferred to, use helper methods:
 /// ```no_run
 /// use screeps::Structure;
 ///
@@ -86,7 +86,7 @@ impl Structure {
     ///         my_creep.transfer_all(transf, ResourceType::Energy);
     ///     }
     ///     None => {
-    ///         // my_struct cannot be transfered to
+    ///         // my_struct cannot be transferred to
     ///     }
     /// }
     /// ```
