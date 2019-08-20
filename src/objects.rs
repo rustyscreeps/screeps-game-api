@@ -136,9 +136,9 @@ where
 pub unsafe trait HasId: RoomObjectProperties {
     /// Retrieves this object's id as an untyped, packed value.
     ///
-    /// This has no major differences from [`HasId::id`] besides the return
-    /// value not being typed by the kind of thing it points to. As `ObjectId`'s
-    /// type can be freely changed anyways, this isn't that big of a deal.
+    /// This has no major differences from [`HasId::id`] except for the return
+    /// value not being typed by the kind of thing it points to. As the type of
+    /// an `ObjectId` can be freely changed, that isn't a big deal.
     fn untyped_id(&self) -> RawObjectId {
         RawObjectId::from_packed_js_val(js_unwrap!(object_id_to_packed(@{self.as_ref()}.id)))
             .expect("expected HasId type's JavaScript id to be a 12-byte number encoded in hex")
