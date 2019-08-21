@@ -382,7 +382,7 @@ macro_rules! calculated_doc {
 macro_rules! typesafe_find_constants {
     (
         $(
-            $constant_name:ident, $value:expr, $result:path;
+            $vis:vis struct $constant_name:ident = ($value:expr, $result:path);
         )*
     ) => (
         $(
@@ -394,7 +394,7 @@ macro_rules! typesafe_find_constants {
                 )]
                 #[allow(bad_style)]
                 #[derive(Copy, Clone, Debug, Default)]
-                pub struct $constant_name;
+                $vis struct $constant_name;
             }
             unsafe impl FindConstant for $constant_name {
                 type Item = $result;
@@ -410,11 +410,13 @@ macro_rules! typesafe_find_constants {
 
 macro_rules! typesafe_look_constants {
     (
-        $($constant_name:ident, $value:expr, $result:path, $conversion_method:expr;)*
+        $(
+            $vis:vis struct $constant_name:ident = ($value:expr, $result:path, $conversion_method:expr);
+        )*
     ) => (
         $(
             #[allow(bad_style)]
-            pub struct $constant_name;
+            $vis struct $constant_name;
             unsafe impl LookConstant for $constant_name {
                 type Item = $result;
 
