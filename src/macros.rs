@@ -198,7 +198,7 @@ macro_rules! simple_accessors {
 /// (See `reference_wrapper` macro) which will support all `StructureProperties`
 /// methods.
 macro_rules! impl_structure_properties {
-    ( $( $struct_name:ty ),+ ) => {$(
+    ( $( $struct_name:ty ),+ $(,)? ) => {$(
         unsafe impl StructureProperties for $struct_name {}
     )*};
 }
@@ -218,7 +218,7 @@ macro_rules! impl_structure_properties {
 /// }
 /// ```
 macro_rules! impl_has_id {
-    ($($struct_name:ty);* $(;)*) => {$(
+    ($($struct_name:ty),+ $(,)?) => {$(
         unsafe impl HasId for $struct_name {}
 
         impl PartialEq for $struct_name {
@@ -487,8 +487,12 @@ macro_rules! match_some_structure_variants {
 
 /// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`, using
 /// `FromExpectedType` and panicking on incorrect types.
+///
+/// Accepts a list of types to implement the traits for. Each type must be a
+/// single ident, optionally followed by `<'lifetime_param>` where
+/// `lifetime_param` is a single named lifetime.
 macro_rules! impl_js_vec_iterators_from_expected_type_panic {
-    ($($name:ident $(<$single_life_param:lifetime>)*),* $(,)*) => {
+    ($($name:ident $(<$single_life_param:lifetime>)*),+ $(,)?) => {
         $(
             impl<$($single_life_param, )* T> Iterator for $name<$($single_life_param, )* T>
             where
@@ -532,8 +536,12 @@ macro_rules! impl_js_vec_iterators_from_expected_type_panic {
 }
 
 /// Implements `Iterator` for `js_vec::IntoIter` or `js_vec::Iter`.
+///
+/// Accepts a list of types to implement the traits for. Each type must be a
+/// single ident, optionally followed by `<'lifetime_param>` where
+/// `lifetime_param` is a single named lifetime.
 macro_rules! impl_js_vec_iterators_from_expected_type_with_result {
-    ($($name:ident $(<$single_life_param:lifetime>)*),* $(,)*) => {
+    ($($name:ident $(<$single_life_param:lifetime>)*),+ $(,)?) => {
         $(
             impl<$($single_life_param, )* T> Iterator for $name<$($single_life_param, )* T>
             where

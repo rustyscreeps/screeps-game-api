@@ -165,35 +165,35 @@ pub unsafe trait HasId: RoomObjectProperties {
 }
 
 impl_has_id! {
-    ConstructionSite;
-    Creep;
-    Mineral;
-    Nuke;
-    Resource;
-    Source;
-    OwnedStructure;
-    Structure;
-    StructureContainer;
-    StructureController;
-    StructureExtension;
-    StructureExtractor;
-    StructureKeeperLair;
-    StructureLab;
-    StructureLink;
-    StructureNuker;
-    StructureObserver;
-    StructurePowerBank;
-    StructurePowerSpawn;
-    StructurePortal;
-    StructureRampart;
-    StructureRoad;
-    StructureSpawn;
-    StructureStorage;
-    StructureTerminal;
-    StructureTower;
-    StructureWall;
-    Tombstone;
-    PowerCreep;
+    ConstructionSite,
+    Creep,
+    Mineral,
+    Nuke,
+    Resource,
+    Source,
+    OwnedStructure,
+    Structure,
+    StructureContainer,
+    StructureController,
+    StructureExtension,
+    StructureExtractor,
+    StructureKeeperLair,
+    StructureLab,
+    StructureLink,
+    StructureNuker,
+    StructureObserver,
+    StructurePowerBank,
+    StructurePowerSpawn,
+    StructurePortal,
+    StructureRampart,
+    StructureRoad,
+    StructureSpawn,
+    StructureStorage,
+    StructureTerminal,
+    StructureTower,
+    StructureWall,
+    Tombstone,
+    PowerCreep,
 }
 
 /// Trait for all wrappers over Screeps JavaScript objects extending

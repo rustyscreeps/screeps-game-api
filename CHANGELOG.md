@@ -8,6 +8,7 @@ Unreleased
 - Add support for accessing intershard resource amounts, which currently only includes subscription
   tokens, under `game::resources`.
 - Remove remaining usages of internal `get_from_js!` macro, as it was minimally useful
+- Improve syntax and consistency of some internal macros
 
 0.6.0 (2019-08-15)
 ==================
