@@ -210,6 +210,12 @@ impl From<RawObjectId> for String {
     }
 }
 
+impl From<RawObjectId> for [u32; 3] {
+    fn from(id: RawObjectId) -> Self {
+        id.packed
+    }
+}
+
 impl From<[u32; 3]> for RawObjectId {
     fn from(packed: [u32; 3]) -> Self {
         Self::from_packed(packed)

@@ -282,8 +282,20 @@ impl<T> From<ObjectId<T>> for String {
     }
 }
 
+impl<T> From<ObjectId<T>> for u128 {
+    fn from(id: ObjectId<T>) -> Self {
+        id.raw.into()
+    }
+}
+
 impl<T> From<[u32; 3]> for ObjectId<T> {
     fn from(packed: [u32; 3]) -> Self {
         Self::from_packed(packed)
+    }
+}
+
+impl<T> From<ObjectId<T>> for [u32; 3] {
+    fn from(id: ObjectId<T>) -> Self {
+        id.raw.into()
     }
 }
