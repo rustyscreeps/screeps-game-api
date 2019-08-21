@@ -8,7 +8,11 @@ use serde::{Deserialize, Serialize};
 use stdweb::{Reference, UnsafeTypedArray};
 
 use super::errors::RawObjectIdParseError;
-use crate::{macros::*, traits::TryInto, ConversionError};
+use crate::{
+    macros::*,
+    traits::{TryFrom, TryInto},
+    ConversionError,
+};
 
 const MAX_PACKED_VAL: u128 = (1 << (32 * 3)) - 1;
 
@@ -38,14 +42,7 @@ impl fmt::Debug for RawObjectId {
 
 impl fmt::Display for RawObjectId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut ints = self.non_zero_packed_ints().iter();
-        if let Some(first) = ints.next() {
-            write!(f, "{:x}", first)?;
-        }
-        for next in ints {
-            write!(f, "{:08x}", next)?;
-        }
-        Ok(())
+        write!(f, "{:x}", self.to_u128())
     }
 }
 
@@ -55,20 +52,33 @@ impl FromStr for RawObjectId {
     fn from_str(s: &str) -> Result<Self, RawObjectIdParseError> {
         let u128_val = u128::from_str_radix(s, 16)?;
 
-        if u128_val > MAX_PACKED_VAL {
-            return Err(RawObjectIdParseError::value_too_large(u128_val));
+        Self::try_from(u128_val)
+    }
+}
+
+impl TryFrom<u128> for RawObjectId {
+    type Error = RawObjectIdParseError;
+
+    /// Creates an object ID from its binary representation as a `u128` number.
+    ///
+    /// # Errors
+    ///
+    /// This will error if the given value is greater than `2^96 - 1`, the
+    /// maximum number storable in a 96-bit integer.
+    fn try_from(val: u128) -> Result<Self, RawObjectIdParseError> {
+        if val > MAX_PACKED_VAL {
+            return Err(RawObjectIdParseError::value_too_large(val));
         }
 
         // if the endianness is right, then I think this should optimize down to a
         // transmute. If it isn't, then it should be pretty efficient anyways and will
         // still be _correct_.
         let as_array = [
-            ((u128_val >> 64) & 0xFFFF_FFFF) as u32,
-            ((u128_val >> 32) & 0xFFFF_FFFF) as u32,
-            (u128_val & 0xFFFF_FFFF) as u32,
+            ((val >> 64) & 0xFFFF_FFFF) as u32,
+            ((val >> 32) & 0xFFFF_FFFF) as u32,
+            (val & 0xFFFF_FFFF) as u32,
         ];
-
-        Ok(RawObjectId::from_packed(as_array))
+        Ok(Self::from_packed(as_array))
     }
 }
 
@@ -114,6 +124,19 @@ impl RawObjectId {
         packed[2] = js! {return @{&packed_val}[2]}.try_into()?;
 
         Ok(Self::from_packed(packed))
+    }
+
+    /// Converts this object ID to a `u128` number.
+    ///
+    /// The returned number, when formatted as hex, will produce a string
+    /// parseable into this object id.
+    ///
+    /// The returned number will be less than or equal to `2^96 - 1`, as that's
+    /// the maximum value that `RawObjectId` can hold.
+    pub fn to_u128(self) -> u128 {
+        ((self.packed[0] as u128) << 64)
+            | ((self.packed[1] as u128) << 32)
+            | (self.packed[2] as u128)
     }
 
     /// Internal function which trims off leading zero integers.
@@ -210,6 +233,12 @@ impl From<RawObjectId> for String {
     }
 }
 
+impl From<RawObjectId> for u128 {
+    fn from(id: RawObjectId) -> Self {
+        id.to_u128()
+    }
+}
+
 impl From<RawObjectId> for [u32; 3] {
     fn from(id: RawObjectId) -> Self {
         id.packed
@@ -228,6 +257,7 @@ mod test {
 
     #[cfg(target_arch = "wasm32")]
     use crate::macros::*;
+    use crate::traits::TryInto;
 
     const TEST_IDS: &[&str] = &[
         "bc03381d32f6790",
@@ -253,6 +283,17 @@ mod test {
         for id in TEST_IDS {
             let parsed: RawObjectId = id.parse().unwrap();
             assert_eq!(&*parsed.to_array_string(), *id);
+        }
+    }
+
+    #[test]
+    fn rust_to_u128_from_u128_roundtrip() {
+        for id in TEST_IDS {
+            let parsed: RawObjectId = id.parse().unwrap();
+            let int = parsed.to_u128();
+            let reparsed: RawObjectId = int.try_into().unwrap();
+            assert_eq!(parsed, reparsed);
+            assert_eq!(reparsed.to_string(), *id);
         }
     }
 

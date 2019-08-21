@@ -84,6 +84,16 @@ impl<T> FromStr for ObjectId<T> {
     }
 }
 
+impl<T> TryFrom<u128> for ObjectId<T> {
+    type Err = RawObjectIdParseError;
+
+    fn try_from(val: u128) -> Result<Self, RawObjectIdParseError> {
+        let raw: RawObjectId = val.try_into()?;
+
+        Ok(raw.into())
+    }
+}
+
 impl<T> fmt::Display for ObjectId<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.raw.fmt(f)
@@ -138,6 +148,17 @@ impl<T> ObjectId<T> {
     /// See also [`RawObjectId::from_packed_js_val`].
     pub fn from_packed_js_val(packed_val: Reference) -> Result<Self, ConversionError> {
         RawObjectId::from_packed_js_val(packed_val).map(Into::into)
+    }
+
+    /// Converts this object ID to a `u128` number.
+    ///
+    /// The returned number, when formatted as hex, will produce a string
+    /// parseable into this object id.
+    ///
+    /// The returned number will be less than or equal to `2^96 - 1`, as that's
+    /// the maximum value that `RawObjectId` can hold.
+    pub fn to_u128(self) -> u128 {
+        self.raw.to_u128()
     }
 
     /// Formats this object ID as a string on the stack.
