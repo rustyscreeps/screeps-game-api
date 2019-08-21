@@ -68,7 +68,7 @@ pub mod rooms {
     }
 
     /// Retrieve the string keys of this object.
-    pub fn keys() -> Vec<String> {
+    pub fn keys() -> Vec<RoomName> {
         js_unwrap!(Object.keys(Game.rooms))
     }
 

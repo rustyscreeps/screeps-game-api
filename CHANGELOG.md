@@ -3,6 +3,7 @@ Unreleased
 
 - Rename incorrectly spelled `Density::probabilitiy` to `probability`.
 - Rename incorrectly spelled `Nuke::lauch_room_name` to `launch_room_name`.
+- Change return type of `game::rooms::keys` from `Vec<String>` to `Vec<RoomName>`
 - Fix typos in JavaScript code for `game::market::get_order` and `Nuke::launch_room_name`
 
 0.6.0 (2019-08-15)
