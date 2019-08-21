@@ -1,6 +1,7 @@
 use crate::{macros::*, objects::StructurePowerBank};
 
 simple_accessors! {
-    StructurePowerBank;
-    (power -> power -> u32),
+    impl StructurePowerBank {
+        pub fn power() -> u32 = power;
+    }
 }

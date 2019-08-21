@@ -5,10 +5,11 @@ use crate::{
 };
 
 simple_accessors! {
-    StructureLab;
-    (mineral_amount -> mineralAmount -> u32),
-    // mineralType
-    (mineral_capacity -> mineralCapacity -> u32),
+    impl StructureLab {
+        pub fn mineral_amount() -> u32 = mineralAmount;
+        // mineralType
+        pub fn mineral_capacity() -> u32 = mineralCapacity;
+    }
 }
 
 impl StructureLab {

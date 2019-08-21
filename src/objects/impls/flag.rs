@@ -8,10 +8,11 @@ use crate::{
 };
 
 simple_accessors! {
-    Flag;
-    (color -> color -> Color),
-    (name -> name -> String),
-    (secondary_color -> secondaryColor -> Color),
+    impl Flag {
+        pub fn color() -> Color = color;
+        pub fn name() -> String = name;
+        pub fn secondary_color() -> Color = secondaryColor;
+    }
 }
 
 impl Flag {

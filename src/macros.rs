@@ -203,18 +203,23 @@ macro_rules! reference_wrappers {
 /// Method Syntax:
 ///
 /// ```ignore
-/// simple_accessor! {
-///     $struct_name;
-///     ($rust_method_name1 -> $js_field_name1 -> $rust_type1),
-///     ($rust_method_name2 -> $js_field_name2 -> $rust_type2),
-///     ...
+/// simple_accessors! {
+///     impl $struct_name {
+///         pub fn $rust_method_name1() -> $rust_type1 = $js_field_name1;
+///         pub fn $rust_method_name2() -> $rust_type2 = $js_field_name2;
+///         ...
+///     }
 /// }
 /// ```
 macro_rules! simple_accessors {
-    ($struct_name:ident; $(($method:ident -> $prop:ident -> $ret:ty)),* $(,)*) => (
+    (impl $struct_name:ident {
+        $(
+            $vis:vis fn $method:ident () -> $ret:ty = $prop:ident;
+        )+
+    }) => (
         impl $struct_name {
             $(
-                pub fn $method(&self) -> $ret {
+                $vis fn $method(&self) -> $ret {
                     js_unwrap!(@{self.as_ref()}.$prop)
                 }
             )*

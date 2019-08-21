@@ -1,9 +1,10 @@
 use crate::{constants::ReturnCode, macros::*, objects::StructurePowerSpawn};
 
 simple_accessors! {
-    StructurePowerSpawn;
-    (power -> power -> u32),
-    (power_capacity -> powerCapacity -> u32),
+    impl StructurePowerSpawn {
+        pub fn power() -> u32 = power;
+        pub fn power_capacity() -> u32 = powerCapacity;
+    }
 }
 
 impl StructurePowerSpawn {

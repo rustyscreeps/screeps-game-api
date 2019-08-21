@@ -30,14 +30,15 @@ use crate::{
 };
 
 simple_accessors! {
-    Room;
-    (controller -> controller -> Option<StructureController>),
-    (energy_available -> energyAvailable -> u32),
-    (energy_capacity_available -> energyCapacityAvailable -> u32),
-    (name -> name -> RoomName),
-    (storage -> storage -> Option<StructureStorage>),
-    (terminal -> terminal -> Option<StructureTerminal>),
-    // todo: visual
+    impl Room {
+        pub fn controller() -> Option<StructureController> = controller;
+        pub fn energy_available() -> u32 = energyAvailable;
+        pub fn energy_capacity_available() -> u32 = energyCapacityAvailable;
+        pub fn name() -> RoomName = name;
+        pub fn storage() -> Option<StructureStorage> = storage;
+        pub fn terminal() -> Option<StructureTerminal> = terminal;
+        // todo: visual
+    }
 }
 
 scoped_thread_local!(static COST_CALLBACK: &'static dyn Fn(RoomName, Reference) -> Option<Reference>);

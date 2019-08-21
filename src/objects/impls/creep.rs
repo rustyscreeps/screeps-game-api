@@ -292,14 +292,15 @@ pub struct Bodypart {
 }
 
 simple_accessors! {
-    Creep;
-    (carry_capacity -> carryCapacity -> u32),
-    (fatigue -> fatigue -> u32),
-    (name -> name -> String),
-    (my -> my -> bool),
-    (saying -> saying -> String),
-    (spawning -> spawning -> bool),
-    (ticks_to_live -> ticksToLive -> u32),
+    impl Creep {
+        pub fn carry_capacity() -> u32 = carryCapacity;
+        pub fn fatigue() -> u32 = fatigue;
+        pub fn name() -> String = name;
+        pub fn my() -> bool = my;
+        pub fn saying() -> String = saying;
+        pub fn spawning() -> bool = spawning;
+        pub fn ticks_to_live() -> u32 = ticksToLive;
+    }
 }
 
 creep_simple_generic_action! {

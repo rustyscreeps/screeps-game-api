@@ -1,8 +1,9 @@
 use crate::{constants::ReturnCode, macros::*, objects::StructureRampart};
 
 simple_accessors! {
-    StructureRampart;
-    (is_public -> isPublic -> bool),
+    impl StructureRampart {
+        pub fn is_public() -> bool = isPublic;
+    }
 }
 
 impl StructureRampart {
