@@ -7,6 +7,7 @@ Unreleased
 - Fix typos in JavaScript code for `game::market::get_order` and `Nuke::launch_room_name`
 - Add support for accessing intershard resource amounts, which currently only includes subscription
   tokens, under `game::resources`.
+- Remove remaining usages of internal `get_from_js!` macro, as it was minimally useful
 
 0.6.0 (2019-08-15)
 ==================

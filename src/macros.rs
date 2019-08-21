@@ -87,53 +87,6 @@ macro_rules! js_unwrap_ref {
     )
 }
 
-/// Creates a getter method to unwrap a field of a javascript object.
-///
-/// Macro Syntax (`$name` are expressions):
-///
-/// ```ignore
-/// get_from_js!($method_name -> {$js_statement} -> $rust_type)
-/// get_from_js!($method_name($param1, $param2, ...) -> {$js_statement} -> $rust_type)
-/// ```
-///
-/// Building on top of `js_unwrap!()`, this creates an accessor to a javascript
-/// object method or attribute.
-///
-/// # Example
-/// ```
-/// get_from_js!(
-///     limit -> {
-///         Game.cpu.limit
-///     } -> u32
-/// )
-/// ```
-///
-/// Will become:
-/// ```
-/// pub fn limit() -> u32 {
-///     js_unwrap!(Game.cpu.limit)
-/// }
-/// ```
-/// which would best be used inside the implementation for `cpu` in this case.
-macro_rules! get_from_js {
-    ($name:ident -> { $js_side:expr } -> $rust_ret_type:ty) => (
-        get_from_js!($name() -> { $js_side } -> $rust_ret_type);
-    );
-    (
-        $name:ident(
-            $($param_ident:ident: $param_ty:ty),*
-        ) -> {
-            $($js_side:tt)*
-        } -> $rust_ret_type:ty
-    ) => (
-        pub fn $name(
-            $($param_ident: $param_ty),*
-        ) -> $rust_ret_type {
-            js_unwrap!($($js_side)*)
-        }
-    )
-}
-
 /// Macro used to encapsulate all screeps game objects
 ///
 /// Macro syntax:
