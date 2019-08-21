@@ -1008,8 +1008,8 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, use the `__intershard_resource_num_to_str` and
-/// `__intershard_resource_str_to_num` JavaScript functions,
+/// using these impls manually, use the `__intershard_resource_type_num_to_str`
+/// and `__intershard_resource_type_str_to_num` JavaScript functions,
 /// [`FromStr`][std::str::FromStr] or
 /// [`IntershardResourceType::deserialize_from_str`].
 ///
@@ -1034,6 +1034,8 @@ impl IntershardResourceType {
         })
     }
 }
+
+js_deserializable!(IntershardResourceType);
 
 /// Resource type constant for all possible types of resources.
 ///

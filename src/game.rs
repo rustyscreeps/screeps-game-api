@@ -39,9 +39,44 @@ pub mod flags {
     game_map_access!(objects::Flag, Game.flags);
 }
 
-// TODO: See [http://docs.screeps.com/api/#Game.resources]
+/// See [http://docs.screeps.com/api/#Game.resources]
 ///
 /// [http://docs.screeps.com/api/#Game.resources]: http://docs.screeps.com/api/#Game.resources
+pub mod resources {
+    use std::collections::HashMap;
+
+    use crate::{constants::IntershardResourceType, macros::*};
+
+    /// Retrieve the full `HashMap<IntershardResourceType, u32>`.
+    pub fn hashmap() -> HashMap<IntershardResourceType, u32> {
+        // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
+        //
+        // See https://github.com/koute/stdweb/issues/359.
+        let map: HashMap<String, u32> = js_unwrap!(Game.resources);
+        map.into_iter()
+            .map(|(key, val)| {
+                (
+                    key.parse()
+                        .expect("expected resource key in Game.resources to be a known intershard resource type"),
+                    val,
+                )
+            })
+            .collect()
+    }
+
+    /// Retrieve the string keys of this object.
+    pub fn keys() -> Vec<IntershardResourceType> {
+        js_unwrap!(Object
+            .keys(Game.resources)
+            .map(__intershard_resource_type_str_to_num))
+    }
+
+    /// Retrieve a specific value by key.
+    pub fn get(key: IntershardResourceType) -> Option<u32> {
+        js_unwrap!(Game.resources[__intershard_resource_type_num_to_str(@{key as u32})])
+    }
+}
+
 /// See [http://docs.screeps.com/api/#Game.rooms]
 ///
 /// [http://docs.screeps.com/api/#Game.rooms]: http://docs.screeps.com/api/#Game.rooms
