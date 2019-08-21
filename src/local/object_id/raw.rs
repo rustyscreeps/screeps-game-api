@@ -10,7 +10,7 @@ use stdweb::{Reference, UnsafeTypedArray};
 use super::errors::RawObjectIdParseError;
 use crate::{macros::*, traits::TryInto, ConversionError};
 
-const MAX_PACKED_VAL: u128 = 1 << (32 * 3);
+const MAX_PACKED_VAL: u128 = (1 << (32 * 3)) - 1;
 
 /// Represents an Object ID using a packed 12-byte representation
 ///
@@ -247,6 +247,18 @@ mod test {
         for id in TEST_IDS {
             let parsed: RawObjectId = id.parse().unwrap();
             assert_eq!(&*parsed.to_array_string(), *id);
+        }
+    }
+
+    #[test]
+    fn large_values_do_not_parse() {
+        let large_ids = &[
+            "1000000000000000000000000".to_owned(),
+            format!("{:x}", u128::max_value()),
+        ];
+        for id in large_ids {
+            let res: Result<RawObjectId, _> = id.parse();
+            assert!(res.is_err());
         }
     }
 
