@@ -12,6 +12,7 @@ use stdweb::{Reference, UnsafeTypedArray};
 
 use crate::{
     objects::{HasId, SizedRoomObject},
+    traits::{TryFrom, TryInto},
     ConversionError,
 };
 
@@ -85,7 +86,7 @@ impl<T> FromStr for ObjectId<T> {
 }
 
 impl<T> TryFrom<u128> for ObjectId<T> {
-    type Err = RawObjectIdParseError;
+    type Error = RawObjectIdParseError;
 
     fn try_from(val: u128) -> Result<Self, RawObjectIdParseError> {
         let raw: RawObjectId = val.try_into()?;
