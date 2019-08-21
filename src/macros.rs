@@ -168,15 +168,15 @@ macro_rules! reference_wrappers {
     (
         $(
             $(#[ $attr:meta ])*
-            $name:ident
-        ),* $(,)*
+            $vis:vis struct $name:ident(...);
+        )+
     ) => {
         $(
             #[derive(Clone, ReferenceType)]
             $(
                 #[$attr]
             )*
-            pub struct $name(Reference);
+            $vis struct $name(Reference);
 
             impl crate::traits::FromExpectedType<Reference> for $name {
                 fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {

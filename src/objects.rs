@@ -37,77 +37,77 @@ pub use self::{
     structure::Structure,
 };
 
-reference_wrappers!(
+reference_wrappers! {
     #[reference(instance_of = "ConstructionSite")]
-    ConstructionSite,
+    pub struct ConstructionSite(...);
     #[reference(instance_of = "Creep")]
-    Creep,
+    pub struct Creep(...);
     #[reference(instance_of = "Flag")]
-    Flag,
+    pub struct Flag(...);
     #[reference(instance_of = "Mineral")]
-    Mineral,
+    pub struct Mineral(...);
     #[reference(instance_of = "Nuke")]
-    Nuke,
+    pub struct Nuke(...);
     #[reference(instance_of = "OwnedStructure")]
-    OwnedStructure,
+    pub struct OwnedStructure(...);
     #[reference(instance_of = "Resource")]
-    Resource,
+    pub struct Resource(...);
     #[reference(instance_of = "Room")]
-    Room,
+    pub struct Room(...);
     #[reference(instance_of = "RoomObject")]
-    RoomObject,
+    pub struct RoomObject(...);
     #[reference(instance_of = "Room.Terrain")]
-    RoomTerrain,
+    pub struct RoomTerrain(...);
     #[reference(instance_of = "Source")]
-    Source,
+    pub struct Source(...);
     #[reference(instance_of = "StructureContainer")]
-    StructureContainer,
+    pub struct StructureContainer(...);
     #[reference(instance_of = "StructureController")]
-    StructureController,
+    pub struct StructureController(...);
     #[reference(instance_of = "StructureExtension")]
-    StructureExtension,
+    pub struct StructureExtension(...);
     #[reference(instance_of = "StructureExtractor")]
-    StructureExtractor,
+    pub struct StructureExtractor(...);
     #[reference(instance_of = "StructureKeeperLair")]
-    StructureKeeperLair,
+    pub struct StructureKeeperLair(...);
     #[reference(instance_of = "StructureLab")]
-    StructureLab,
+    pub struct StructureLab(...);
     #[reference(instance_of = "StructureLink")]
-    StructureLink,
+    pub struct StructureLink(...);
     #[reference(instance_of = "StructureNuker")]
-    StructureNuker,
+    pub struct StructureNuker(...);
     #[reference(instance_of = "StructureObserver")]
-    StructureObserver,
+    pub struct StructureObserver(...);
     #[reference(instance_of = "StructurePowerBank")]
-    StructurePowerBank,
+    pub struct StructurePowerBank(...);
     #[reference(instance_of = "StructurePowerSpawn")]
-    StructurePowerSpawn,
+    pub struct StructurePowerSpawn(...);
     #[reference(instance_of = "StructurePortal")]
-    StructurePortal,
+    pub struct StructurePortal(...);
     #[reference(instance_of = "StructureRampart")]
-    StructureRampart,
+    pub struct StructureRampart(...);
     #[reference(instance_of = "StructureRoad")]
-    StructureRoad,
+    pub struct StructureRoad(...);
     #[reference(instance_of = "StructureSpawn")]
-    StructureSpawn,
+    pub struct StructureSpawn(...);
     #[reference(instance_of = "Spawning")]
-    Spawning,
+    pub struct Spawning(...);
     #[reference(instance_of = "StructureStorage")]
-    StructureStorage,
+    pub struct StructureStorage(...);
     #[reference(instance_of = "StructureTerminal")]
-    StructureTerminal,
+    pub struct StructureTerminal(...);
     #[reference(instance_of = "StructureTower")]
-    StructureTower,
+    pub struct StructureTower(...);
     #[reference(instance_of = "StructureWall")]
-    StructureWall,
+    pub struct StructureWall(...);
     // this is implemented later
     // #[reference(instance_of = "Structure")]
-    // Structure,
+    // pub struct Structure,
     #[reference(instance_of = "Tombstone")]
-    Tombstone,
+    pub struct Tombstone(...);
     #[reference(instance_of = "PowerCreep")]
-    PowerCreep,
-);
+    pub struct PowerCreep(...);
+}
 
 /// Trait for things which have positions in the Screeps world.
 ///
