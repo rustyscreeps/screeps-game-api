@@ -304,24 +304,28 @@ simple_accessors! {
 }
 
 creep_simple_generic_action! {
-    (attack(Attackable) -> attack),
-    (dismantle(StructureProperties) -> dismantle),
-    (ranged_attack(Attackable) -> rangedAttack),
-    (repair(StructureProperties) -> repair),
+    impl Creep {
+        pub fn attack(Attackable) = attack();
+        pub fn dismantle(StructureProperties) = dismantle();
+        pub fn ranged_attack(Attackable) = rangedAttack();
+        pub fn repair(StructureProperties) = repair();
+    }
 }
 
 creep_simple_concrete_action! {
-    (attack_controller(StructureController) -> attackController),
-    (build(ConstructionSite) -> build),
-    (claim_controller(StructureController) -> claimController),
-    (generate_safe_mode(StructureController) -> generateSafeMode),
-    (harvest(Source) -> harvest),
-    (heal(Creep) -> heal),
-    (pickup(Resource) -> pickup),
-    (pull(Creep) -> pull),
-    (ranged_heal(Creep) -> rangedHeal),
-    (reserve_controller(StructureController) -> reserveController),
-    (upgrade_controller(StructureController) -> upgradeController),
+    impl Creep {
+        pub fn attack_controller(StructureController) = attackController();
+        pub fn build(ConstructionSite) = build();
+        pub fn claim_controller(StructureController) = claimController();
+        pub fn generate_safe_mode(StructureController) = generateSafeMode();
+        pub fn harvest(Source) = harvest();
+        pub fn heal(Creep) = heal();
+        pub fn pickup(Resource) = pickup();
+        pub fn pull(Creep) = pull();
+        pub fn ranged_heal(Creep) = rangedHeal();
+        pub fn reserve_controller(StructureController) = reserveController();
+        pub fn upgrade_controller(StructureController) = upgradeController();
+    }
 }
 
 pub struct MoveToOptions<'a, F>
