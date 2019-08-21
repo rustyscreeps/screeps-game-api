@@ -73,7 +73,7 @@ pub mod resources {
 
     /// Retrieve a specific value by key.
     pub fn get(key: IntershardResourceType) -> Option<u32> {
-        js_unwrap!(Game.resources[__intershard_resource_num_to_str(@{key as u32})])
+        js_unwrap!(Game.resources[__intershard_resource_type_num_to_str(@{key as u32})])
     }
 }
 
