@@ -294,7 +294,7 @@ impl ResourceType {
     /// Translates the `REACTION_TIME` constant.
     #[inline]
     pub fn reaction_time(self) -> Option<u32> {
-        use crate::ResourceType::*;
+        use ResourceType::*;
         let time = match self {
             Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
             | Catalyst | Ops => return None,

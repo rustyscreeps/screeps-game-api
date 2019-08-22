@@ -88,7 +88,7 @@ impl ::std::ops::Neg for Direction {
     /// ```
     #[inline]
     fn neg(self) -> Direction {
-        use crate::Direction::*;
+        use Direction::*;
 
         match self {
             Top => Bottom,
