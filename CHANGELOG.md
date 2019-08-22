@@ -3,6 +3,8 @@ Unreleased
 
 - Rename incorrectly spelled `Density::probabilitiy` to `probability`.
 - Rename incorrectly spelled `Nuke::lauch_room_name` to `launch_room_name`.
+- Rename constants with typo `SPAWN_RENEW_RATION` and  `LINK_LOSS_RATION` to `SPAWN_RENEW_RATIO`
+  and `LINK_LOSS_RATIO` respectively
 - Change return type of `game::rooms::keys` from `Vec<String>` to `Vec<RoomName>`
 - Fix typos in JavaScript code for `game::market::get_order` and `Nuke::launch_room_name`
 - Add support for accessing intershard resource amounts, which currently only includes subscription

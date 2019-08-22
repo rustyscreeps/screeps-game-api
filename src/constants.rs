@@ -660,7 +660,7 @@ pub const SPAWN_HITS: u32 = 5000;
 pub const SPAWN_ENERGY_START: u32 = 300;
 pub const SPAWN_ENERGY_CAPACITY: u32 = 300;
 pub const CREEP_SPAWN_TIME: u32 = 3;
-pub const SPAWN_RENEW_RATION: f32 = 1.2;
+pub const SPAWN_RENEW_RATIO: f32 = 1.2;
 
 pub const SOURCE_ENERGY_CAPACITY: u32 = 3000;
 pub const SOURCE_ENERGY_NEUTRAL_CAPACITY: u32 = 1500;
@@ -690,7 +690,7 @@ pub const ROAD_DECAY_TIME: u32 = 1000;
 pub const LINK_HITS: u32 = 1000;
 pub const LINK_CAPACITY: u32 = 800;
 pub const LINK_COOLDOWN: u32 = 1;
-pub const LINK_LOSS_RATION: f32 = 0.03;
+pub const LINK_LOSS_RATIO: f32 = 0.03;
 
 pub const STORAGE_CAPACITY: u32 = 1_000_000;
 pub const STORAGE_HITS: u32 = 10_000;
