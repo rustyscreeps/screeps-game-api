@@ -1,6 +1,14 @@
 Unreleased
 ==========
 
+- Add `ObjectId<T>`, a typed binary object ID, and `RawObjectId`, an untyped binary object ID
+  - untyped ids can be converted to typed freely - the type is purely for type inference
+  - `RoomObject::id` now returns `ObjectId<Self>`, and an `untyped_id` function is added for
+    retrieving an untyped id
+  - `game::get_object_typed` now takes `ObjectId<T>`, and `game::get_object_erased` is now generic,
+    taking either id type
+  - both types are 12 bytes large, and can represent all hex-formatted object IDs from the official
+    server, the default private servers backend and the private server with ags131's mongodb mod
 - Rename incorrectly spelled `Density::probabilitiy` to `probability`.
 - Rename incorrectly spelled `Nuke::lauch_room_name` to `launch_room_name`.
 - Rename constants with typo `SPAWN_RENEW_RATION` and  `LINK_LOSS_RATION` to `SPAWN_RENEW_RATIO`
