@@ -6,10 +6,11 @@ use crate::{
 };
 
 simple_accessors! {
-    ConstructionSite;
-    (my -> my -> bool),
-    (progress -> progress -> u32),
-    (progress_total -> progressTotal -> u32),
+    impl ConstructionSite {
+        pub fn my() -> bool = my;
+        pub fn progress() -> u32 = progress;
+        pub fn progress_total() -> u32 = progressTotal;
+    }
 }
 
 impl ConstructionSite {

@@ -1,6 +1,7 @@
 use crate::{macros::*, objects::StructureKeeperLair};
 
 simple_accessors! {
-    StructureKeeperLair;
-    (ticks_to_spawn -> ticksToSpawn -> u32),
+    impl StructureKeeperLair {
+        pub fn ticks_to_spawn() -> u32 = ticksToSpawn;
+    }
 }

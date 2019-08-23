@@ -7,6 +7,7 @@ impl Resource {
 }
 
 simple_accessors! {
-    Resource;
-    (amount -> amount -> u32),
+    impl Resource {
+        pub fn amount() -> u32 = amount;
+    }
 }

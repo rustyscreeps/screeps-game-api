@@ -121,15 +121,15 @@ macro_rules! reference_wrappers {
     (
         $(
             $(#[ $attr:meta ])*
-            $name:ident
-        ),* $(,)*
+            $vis:vis struct $name:ident(...);
+        )+
     ) => {
         $(
             #[derive(Clone, ReferenceType)]
             $(
                 #[$attr]
             )*
-            pub struct $name(Reference);
+            $vis struct $name(Reference);
 
             impl crate::traits::FromExpectedType<Reference> for $name {
                 fn from_expected_type(reference: Reference) -> Result<Self, ConversionError> {
@@ -156,18 +156,23 @@ macro_rules! reference_wrappers {
 /// Method Syntax:
 ///
 /// ```ignore
-/// simple_accessor! {
-///     $struct_name;
-///     ($rust_method_name1 -> $js_field_name1 -> $rust_type1),
-///     ($rust_method_name2 -> $js_field_name2 -> $rust_type2),
-///     ...
+/// simple_accessors! {
+///     impl $struct_name {
+///         pub fn $rust_method_name1() -> $rust_type1 = $js_field_name1;
+///         pub fn $rust_method_name2() -> $rust_type2 = $js_field_name2;
+///         ...
+///     }
 /// }
 /// ```
 macro_rules! simple_accessors {
-    ($struct_name:ident; $(($method:ident -> $prop:ident -> $ret:ty)),* $(,)*) => (
+    (impl $struct_name:ident {
+        $(
+            $vis:vis fn $method:ident () -> $ret:ty = $prop:ident;
+        )+
+    }) => (
         impl $struct_name {
             $(
-                pub fn $method(&self) -> $ret {
+                $vis fn $method(&self) -> $ret {
                     js_unwrap!(@{self.as_ref()}.$prop)
                 }
             )*
@@ -238,10 +243,12 @@ macro_rules! impl_has_id {
 ///
 /// Macro Syntax:
 /// ```ignore
-/// creep_simple_generic_action!{
-///     ($rust_method_name1($action_target_trait1) -> js_method_name1),
-///     ($rust_method_name2($action_target_trait2) -> js_method_name2),
-///     ...
+/// creep_simple_generic_action! {
+///     impl Creep {
+///         pub fn $rust_method_name1($action_target_trait1) = js_method_name1();
+///         pub fn $rust_method_name2($action_target_trait2) = js_method_name2();
+///         ...
+///     }
 /// }
 /// ```
 ///
@@ -250,10 +257,16 @@ macro_rules! impl_has_id {
 /// The generic comes from the fact that this implements the method to be able
 /// to target any object that conforms to the `action_target_trait` trait.
 macro_rules! creep_simple_generic_action {
-    ($(($method:ident($trait:ident) -> $js_name:ident)),* $(,)*) => (
-        impl Creep {
+    (
+        impl $struct_name:ident {
             $(
-                pub fn $method<T>(&self, target: &T) -> ReturnCode
+                $vis:vis fn $method:ident($trait:ident) = $js_name:ident ();
+            )+
+        }
+    ) => (
+        impl $struct_name {
+            $(
+                $vis fn $method<T>(&self, target: &T) -> ReturnCode
                 where
                     T: ?Sized + $trait,
                 {
@@ -271,10 +284,12 @@ macro_rules! creep_simple_generic_action {
 ///
 /// Macro Syntax:
 /// ```ignore
-/// creep_simple_generic_action!{
-///     ($rust_method_name1($target_type1) -> js_method_name1),
-///     ($rust_method_name2($target_type2) -> js_method_name2),
-///     ...
+/// creep_simple_generic_action! {
+///     impl Creep {
+///         pub fn $rust_method_name1($target_type1) = js_method_name1();
+///         pub fn $rust_method_name2($target_type2) = js_method_name2();
+///         ...
+///     }
 /// }
 /// ```
 ///
@@ -283,10 +298,16 @@ macro_rules! creep_simple_generic_action {
 /// The concrete comes from the fact that this implements the method to be able
 /// to target only the `type` given.
 macro_rules! creep_simple_concrete_action {
-    ($(($method:ident($type:ty) -> $js_name:ident)),* $(,)*) => (
+    (
+        impl $struct_name:ident {
+            $(
+                $vis:vis fn $method:ident($type:ty) = $js_name:ident ();
+            )+
+        }
+    ) => (
         impl Creep {
             $(
-                pub fn $method(&self, target: &$type) -> ReturnCode {
+                $vis fn $method(&self, target: &$type) -> ReturnCode {
                     js_unwrap!(@{self.as_ref()}.$js_name(@{target.as_ref()}))
                 }
             )*
@@ -314,7 +335,7 @@ macro_rules! calculated_doc {
 macro_rules! typesafe_find_constants {
     (
         $(
-            $constant_name:ident, $value:expr, $result:path;
+            $vis:vis struct $constant_name:ident = ($value:expr, $result:path);
         )*
     ) => (
         $(
@@ -326,7 +347,7 @@ macro_rules! typesafe_find_constants {
                 )]
                 #[allow(bad_style)]
                 #[derive(Copy, Clone, Debug, Default)]
-                pub struct $constant_name;
+                $vis struct $constant_name;
             }
             unsafe impl FindConstant for $constant_name {
                 type Item = $result;
@@ -342,11 +363,13 @@ macro_rules! typesafe_find_constants {
 
 macro_rules! typesafe_look_constants {
     (
-        $($constant_name:ident, $value:expr, $result:path, $conversion_method:expr;)*
+        $(
+            $vis:vis struct $constant_name:ident = ($value:expr, $result:path, $conversion_method:expr);
+        )*
     ) => (
         $(
             #[allow(bad_style)]
-            pub struct $constant_name;
+            $vis struct $constant_name;
             unsafe impl LookConstant for $constant_name {
                 type Item = $result;
 

@@ -5,11 +5,12 @@ use crate::{
 };
 
 simple_accessors! {
-    Mineral;
-    (density -> density -> u32),
-    (mineral_amount -> mineralAmount -> Density),
-    // id from HasId trait
-    (ticks_to_regeneration -> ticksToRegeneration -> u32),
+    impl Mineral {
+        pub fn density() -> u32 = density;
+        pub fn mineral_amount() -> Density = mineralAmount;
+        // id from HasId trait
+        pub fn ticks_to_regeneration() -> u32 = ticksToRegeneration;
+    }
 }
 
 impl Mineral {

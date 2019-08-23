@@ -3,15 +3,16 @@ use stdweb::Value;
 use crate::{constants::ReturnCode, macros::*, objects::StructureController};
 
 simple_accessors! {
-    StructureController;
-    (level -> level -> u32),
-    (progress -> progress -> Option<u32>),
-    (progress_total -> progressTotal -> Option<u32>),
-    (safe_mode -> safeMode -> Option<u32>),
-    (safe_mode_available -> safeModeAvailable -> u32),
-    (safe_mode_cooldown -> safeModeCooldown -> Option<u32>),
-    (ticks_to_downgrade -> ticksToDowngrade -> u32),
-    (upgrade_blocked -> upgradeBlocked -> Option<u32>)
+    impl StructureController {
+        pub fn level() -> u32 = level;
+        pub fn progress() -> Option<u32> = progress;
+        pub fn progress_total() -> Option<u32> = progressTotal;
+        pub fn safe_mode() -> Option<u32> = safeMode;
+        pub fn safe_mode_available() -> u32 = safeModeAvailable;
+        pub fn safe_mode_cooldown() -> Option<u32> = safeModeCooldown;
+        pub fn ticks_to_downgrade() -> u32 = ticksToDowngrade;
+        pub fn upgrade_blocked() -> Option<u32> = upgradeBlocked;
+    }
 }
 
 #[derive(Debug)]

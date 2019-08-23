@@ -1,8 +1,9 @@
 use crate::{macros::*, objects::Source};
 
 simple_accessors! {
-    Source;
-    (energy -> energy -> u32),
-    (energy_capacity -> energyCapacity -> u32),
-    (ticks_to_regeneration -> ticksToRegeneration -> u32),
+    impl Source {
+        pub fn energy() -> u32 = energy;
+        pub fn energy_capacity() -> u32 = energyCapacity;
+        pub fn ticks_to_regeneration() -> u32 = ticksToRegeneration;
+    }
 }

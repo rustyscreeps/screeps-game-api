@@ -9,9 +9,10 @@ use crate::{
 };
 
 simple_accessors! {
-    StructureSpawn;
-    (name -> name -> String),
-    (spawning -> spawning -> Option<Spawning>),
+    impl StructureSpawn {
+        pub fn name() -> String = name;
+        pub fn spawning() -> Option<Spawning> = spawning;
+    }
 }
 
 impl StructureSpawn {
@@ -118,12 +119,13 @@ impl SpawnOptions {
 }
 
 simple_accessors! {
-    Spawning;
-    (directions -> directions -> Vec<Direction>),
-    (name -> name -> String),
-    (need_time -> needTime -> u32),
-    (remaining_time -> remainingTime -> u32),
-    (spawn -> spawn -> StructureSpawn),
+    impl Spawning {
+        pub fn directions() -> Vec<Direction> = directions;
+        pub fn name() -> String = name;
+        pub fn need_time() -> u32 = needTime;
+        pub fn remaining_time() -> u32 = remainingTime;
+        pub fn spawn() -> StructureSpawn = spawn;
+    }
 }
 
 impl Spawning {

@@ -5,9 +5,10 @@ use crate::{
 };
 
 simple_accessors! {
-    StructureNuker;
-    (ghodium -> ghodium -> u32),
-    (ghodium_capacity -> ghodiumCapacity -> u32),
+    impl StructureNuker {
+        pub fn ghodium() -> u32 = ghodium;
+        pub fn ghodium_capacity() -> u32 = ghodiumCapacity;
+    }
 }
 
 impl StructureNuker {

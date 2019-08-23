@@ -4,8 +4,9 @@ use crate::{
 };
 
 simple_accessors! {
-    Tombstone;
-    (creep -> creep -> Creep),
-    (death_time -> deathTime -> u32),
-    (ticks_to_decay -> ticksToDecay -> u32),
+    impl Tombstone {
+        pub fn creep() -> Creep = creep;
+        pub fn death_time() -> u32 = deathTime;
+        pub fn ticks_to_decay() -> u32 = ticksToDecay;
+    }
 }

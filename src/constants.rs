@@ -252,32 +252,32 @@ pub mod find {
     }
 
     typesafe_find_constants! {
-        CREEPS, 101, Creep;
-        MY_CREEPS, 102, Creep;
-        HOSTILE_CREEPS, 103, Creep;
-        SOURCES_ACTIVE, 104, Source;
-        SOURCES, 105, Source;
-        DROPPED_RESOURCES, 106, Resource;
-        STRUCTURES, 107, Structure;
-        MY_STRUCTURES, 108, OwnedStructure;
-        HOSTILE_STRUCTURES, 109, OwnedStructure;
-        FLAGS, 110, Flag;
-        CONSTRUCTION_SITES, 111, ConstructionSite;
-        MY_SPAWNS, 112, StructureSpawn;
-        HOSTILE_SPAWNS, 113, StructureSpawn;
-        MY_CONSTRUCTION_SITES, 114, ConstructionSite;
-        HOSTILE_CONSTRUCTION_SITES, 115, ConstructionSite;
-        MINERALS, 116, Mineral;
-        NUKES, 117, Nuke;
-        TOMBSTONES, 118, Tombstone;
-        POWER_CREEPS, 119, PowerCreep;
-        MY_POWER_CREEPS, 120, PowerCreep;
-        HOSTILE_POWER_CREEPS, 121, PowerCreep;
-        EXIT_TOP, Exit::Top as i16, Position;
-        EXIT_RIGHT, Exit::Right as i16, Position;
-        EXIT_BOTTOM, Exit::Bottom as i16, Position;
-        EXIT_LEFT, Exit::Left as i16, Position;
-        EXIT, Exit::All as i16, Position;
+        pub struct CREEPS = (101, Creep);
+        pub struct MY_CREEPS = (102, Creep);
+        pub struct HOSTILE_CREEPS = (103, Creep);
+        pub struct SOURCES_ACTIVE = (104, Source);
+        pub struct SOURCES = (105, Source);
+        pub struct DROPPED_RESOURCES = (106, Resource);
+        pub struct STRUCTURES = (107, Structure);
+        pub struct MY_STRUCTURES = (108, OwnedStructure);
+        pub struct HOSTILE_STRUCTURES = (109, OwnedStructure);
+        pub struct FLAGS = (110, Flag);
+        pub struct CONSTRUCTION_SITES = (111, ConstructionSite);
+        pub struct MY_SPAWNS = (112, StructureSpawn);
+        pub struct HOSTILE_SPAWNS = (113, StructureSpawn);
+        pub struct MY_CONSTRUCTION_SITES = (114, ConstructionSite);
+        pub struct HOSTILE_CONSTRUCTION_SITES = (115, ConstructionSite);
+        pub struct MINERALS = (116, Mineral);
+        pub struct NUKES = (117, Nuke);
+        pub struct TOMBSTONES = (118, Tombstone);
+        pub struct POWER_CREEPS = (119, PowerCreep);
+        pub struct MY_POWER_CREEPS = (120, PowerCreep);
+        pub struct HOSTILE_POWER_CREEPS = (121, PowerCreep);
+        pub struct EXIT_TOP = (Exit::Top as i16, Position);
+        pub struct EXIT_RIGHT = (Exit::Right as i16, Position);
+        pub struct EXIT_BOTTOM = (Exit::Bottom as i16, Position);
+        pub struct EXIT_LEFT = (Exit::Left as i16, Position);
+        pub struct EXIT = (Exit::All as i16, Position);
     }
 }
 
@@ -529,19 +529,19 @@ pub mod look {
     };
 
     typesafe_look_constants! {
-        CREEPS, Look::Creeps, Creep, IntoExpectedType::into_expected_type;
-        ENERGY, Look::Energy, Resource, IntoExpectedType::into_expected_type;
-        RESOURCES, Look::Resources, Resource, IntoExpectedType::into_expected_type;
-        SOURCES, Look::Sources, Source, IntoExpectedType::into_expected_type;
-        MINERALS, Look::Minerals, Mineral, IntoExpectedType::into_expected_type;
-        STRUCTURES, Look::Structures, Structure, IntoExpectedType::into_expected_type;
-        FLAGS, Look::Flags, Flag, IntoExpectedType::into_expected_type;
-        CONSTRUCTION_SITES, Look::ConstructionSites, ConstructionSite,
-            IntoExpectedType::into_expected_type;
-        NUKES, Look::Nukes, Nuke, IntoExpectedType::into_expected_type;
-        TERRAIN, Look::Terrain, Terrain, TryInto::try_into;
-        TOMBSTONES, Look::Tombstones, Tombstone, IntoExpectedType::into_expected_type;
-        POWER_CREEPS, Look::PowerCreeps, PowerCreep, IntoExpectedType::into_expected_type;
+        pub struct CREEPS = (Look::Creeps, Creep, IntoExpectedType::into_expected_type);
+        pub struct ENERGY = (Look::Energy, Resource, IntoExpectedType::into_expected_type);
+        pub struct RESOURCES = (Look::Resources, Resource, IntoExpectedType::into_expected_type);
+        pub struct SOURCES = (Look::Sources, Source, IntoExpectedType::into_expected_type);
+        pub struct MINERALS = (Look::Minerals, Mineral, IntoExpectedType::into_expected_type);
+        pub struct STRUCTURES = (Look::Structures, Structure, IntoExpectedType::into_expected_type);
+        pub struct FLAGS = (Look::Flags, Flag, IntoExpectedType::into_expected_type);
+        pub struct CONSTRUCTION_SITES = (Look::ConstructionSites, ConstructionSite,
+            IntoExpectedType::into_expected_type);
+        pub struct NUKES = (Look::Nukes, Nuke, IntoExpectedType::into_expected_type);
+        pub struct TERRAIN = (Look::Terrain, Terrain, TryInto::try_into);
+        pub struct TOMBSTONES = (Look::Tombstones, Tombstone, IntoExpectedType::into_expected_type);
+        pub struct POWER_CREEPS = (Look::PowerCreeps, PowerCreep, IntoExpectedType::into_expected_type);
     }
 }
 

@@ -292,35 +292,40 @@ pub struct Bodypart {
 }
 
 simple_accessors! {
-    Creep;
-    (carry_capacity -> carryCapacity -> u32),
-    (fatigue -> fatigue -> u32),
-    (name -> name -> String),
-    (my -> my -> bool),
-    (saying -> saying -> String),
-    (spawning -> spawning -> bool),
-    (ticks_to_live -> ticksToLive -> u32),
+    impl Creep {
+        pub fn carry_capacity() -> u32 = carryCapacity;
+        pub fn fatigue() -> u32 = fatigue;
+        pub fn name() -> String = name;
+        pub fn my() -> bool = my;
+        pub fn saying() -> String = saying;
+        pub fn spawning() -> bool = spawning;
+        pub fn ticks_to_live() -> u32 = ticksToLive;
+    }
 }
 
 creep_simple_generic_action! {
-    (attack(Attackable) -> attack),
-    (dismantle(StructureProperties) -> dismantle),
-    (ranged_attack(Attackable) -> rangedAttack),
-    (repair(StructureProperties) -> repair),
+    impl Creep {
+        pub fn attack(Attackable) = attack();
+        pub fn dismantle(StructureProperties) = dismantle();
+        pub fn ranged_attack(Attackable) = rangedAttack();
+        pub fn repair(StructureProperties) = repair();
+    }
 }
 
 creep_simple_concrete_action! {
-    (attack_controller(StructureController) -> attackController),
-    (build(ConstructionSite) -> build),
-    (claim_controller(StructureController) -> claimController),
-    (generate_safe_mode(StructureController) -> generateSafeMode),
-    (harvest(Source) -> harvest),
-    (heal(Creep) -> heal),
-    (pickup(Resource) -> pickup),
-    (pull(Creep) -> pull),
-    (ranged_heal(Creep) -> rangedHeal),
-    (reserve_controller(StructureController) -> reserveController),
-    (upgrade_controller(StructureController) -> upgradeController),
+    impl Creep {
+        pub fn attack_controller(StructureController) = attackController();
+        pub fn build(ConstructionSite) = build();
+        pub fn claim_controller(StructureController) = claimController();
+        pub fn generate_safe_mode(StructureController) = generateSafeMode();
+        pub fn harvest(Source) = harvest();
+        pub fn heal(Creep) = heal();
+        pub fn pickup(Resource) = pickup();
+        pub fn pull(Creep) = pull();
+        pub fn ranged_heal(Creep) = rangedHeal();
+        pub fn reserve_controller(StructureController) = reserveController();
+        pub fn upgrade_controller(StructureController) = upgradeController();
+    }
 }
 
 pub struct MoveToOptions<'a, F>
