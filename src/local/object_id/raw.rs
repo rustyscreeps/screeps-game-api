@@ -25,7 +25,20 @@ const MAX_PACKED_VAL: u128 = (1 << (32 * 3)) - 1;
 /// To convert to a String in JavaScript, either use
 /// [`RawObjectId::to_array_string`], or [`RawObjectId::unsafe_as_uploaded`].
 /// See method documentation for more information.
-#[derive(Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+///
+/// # Ordering
+///
+/// To facilitate use as a key in a [`BTreeMap`] or other similar data
+/// structures, `ObjectId` implements [`PartialOrd`] and [`Ord`].
+///
+/// `RawObjectId`'s are ordered by the corresponding order of their underlying
+/// byte values. See [`ObjectId`] documentation for more information.
+///
+/// [`BTreeMap`]: std::collections::BTreeMap
+/// [`Ord`]: std::cmp::Ord
+/// [`PartialOrd`]: std::cmp::PartialOrd
+/// [`ObjectId`]: super::ObjectId
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(transparent)]
 pub struct RawObjectId {
     packed: [u32; 3],
