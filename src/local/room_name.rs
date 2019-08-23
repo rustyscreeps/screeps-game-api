@@ -23,6 +23,8 @@ pub struct RoomName {
     ///
     /// This is the same representation of the upper 16 bits of [`Position`]'s
     /// packed representation.
+    ///
+    /// [`Position`]: crate::local::Position
     packed: u16,
 }
 
