@@ -1,11 +1,12 @@
-//! Constants for use with the [`Room::look_at`] function and similar
-//! `look_at_*` functions.
+//! Constants for use with [`Room::look_for_at`] and related functions.
 //!
 //! *Note:* Types in this module have purposefully ambiguous names, and are
 //! intended to be used as, for example, `look::CREEPS`, not `CREEPS`.
 //!
 //! You can do this my importing the module itself, rather than any individual
 //! constant, and then just referring to the constants relative to the module.
+//!
+//! [`Room::look_for_at`]: crate::objects::Room::look_for_at
 use std::{borrow::Cow, str::FromStr};
 
 use parse_display::FromStr;

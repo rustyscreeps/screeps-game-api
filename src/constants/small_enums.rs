@@ -192,7 +192,7 @@ js_deserializable!(Color);
 /// _only work with the integer constants_. If you're ever consuming strings
 /// such as `"plain"`, `"swamp"`, `"wall"`, you can use the
 /// `__terrain_str_to_num` JavaScript function, [`FromStr`][std::str::FromStr]
-/// or [`Look::deserialize_from_str`].
+/// or [`Terrain::deserialize_from_str`].
 ///
 /// See the [module-level documentation][crate::constants] for more details.
 #[derive(
