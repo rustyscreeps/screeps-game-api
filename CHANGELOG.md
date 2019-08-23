@@ -11,6 +11,8 @@ Unreleased
   tokens, under `game::resources`.
 - Implement `PartialOrd` and `Ord` for `Position`, `RoomName`, `RawObjectId` and `ObjectId`. See
   documentation for ordering specifications.
+- Add a number of modules grouping constants together, such as `constants::creep` for creep related
+  constants or `constants::minerals` for mineral related constants.
 - Remove remaining usages of internal `get_from_js!` macro, as it was minimally useful
 - Improve syntax and consistency of some internal macros
 
