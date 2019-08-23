@@ -9,6 +9,8 @@ Unreleased
 - Fix typos in JavaScript code for `game::market::get_order` and `Nuke::launch_room_name`
 - Add support for accessing intershard resource amounts, which currently only includes subscription
   tokens, under `game::resources`.
+- Implement `PartialOrd` and `Ord` for `Position`, `RoomName`, `RawObjectId` and `ObjectId`. See
+  documentation for ordering specifications.
 - Remove remaining usages of internal `get_from_js!` macro, as it was minimally useful
 - Improve syntax and consistency of some internal macros
 

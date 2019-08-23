@@ -3,7 +3,10 @@
 //! This is a reimplementation/translation of the `RoomPosition` code originally
 //! written in JavaScript. All RoomPosition to RoomPosition operations in this
 //! file stay within Rust.
-use std::fmt;
+use std::{
+    cmp::{Ord, Ordering, PartialOrd},
+    fmt,
+};
 
 use super::{RoomName, HALF_WORLD_SIZE};
 
@@ -75,8 +78,27 @@ mod world_utils;
 ///   };
 ///   ```
 ///
+/// # Ordering
+///
+/// To facilitate use as a key in a [`BTreeMap`] or other similar data
+/// structures, `Position` implements [`PartialOrd`] and [`Ord`].
+///
+/// `Position`s are ordered first by ascending world `y` position, then by
+/// ascending world `x` position. World `x` and `y` here simply extend the x,y
+/// coords within the room `E0S0` throughout the map.
+///
+/// Looking at positions as tuples `(world_x, world_y)`, the sorting obeys rules
+/// such as:
+///
+/// - `(a, 0) < (b, 1)` for any `a`, `b`
+/// - `(0, c) < (1, c)` for any `c`
+///
+/// This follows left-to-right reading order when looking at the Screeps map
+/// from above.
+///
 /// [`bincode`]: https://github.com/servo/bincode
 /// [`HasPosition::pos`]: crate::HasPosition::pos
+/// [`BTreeMap`]: std::collections::BTreeMap
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(transparent)]
 pub struct Position {
@@ -233,6 +255,21 @@ impl Position {
     pub fn with_room_name(mut self, room_name: RoomName) -> Self {
         self.set_room_name(room_name);
         self
+    }
+}
+
+impl PartialOrd for Position {
+    #[inline]
+    fn partial_cmp(&self, other: &Position) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Position {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.world_y()
+            .cmp(&other.world_y())
+            .then_with(|| self.world_x().cmp(&other.world_x()))
     }
 }
 

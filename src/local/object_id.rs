@@ -1,5 +1,5 @@
 use std::{
-    cmp::{Eq, PartialEq},
+    cmp::{Eq, Ord, Ordering, PartialEq, PartialOrd},
     fmt,
     hash::{Hash, Hasher},
     marker::PhantomData,
@@ -35,11 +35,32 @@ pub use raw::*;
 /// With that said, using this can provide nice type inference, and should have
 /// few disadvantages to the lower-level alternative, [`RawObjectId`].
 ///
-/// ---
+/// # Conversion
 ///
 /// Use `into` to convert between `ObjectId<T>` and [`RawObjectId`], and
 /// [`ObjectId::into_type`] to change the type this `ObjectId` points to freely.
-// Copy, Clone, Debug, PartialEq, Eq, Hash implemented manually below
+///
+/// # Ordering
+///
+/// To facilitate use as a key in a [`BTreeMap`] or other similar data
+/// structures, `ObjectId` implements [`PartialOrd`] and [`Ord`].
+///
+/// `ObjectId`'s are ordered by the corresponding order of their underlying
+/// byte values. This agrees with:
+///
+/// - lexicographical ordering of the object id strings
+/// - JavaScript's ordering of object id strings
+/// - ordering of [`RawObjectId`]s
+///
+/// **Note:** when running on the official screeps server, or on a private
+/// server backed by a MongoDB database, this ordering roughly corresponds to
+/// creation order. The first four bytes of a MongoDB-created `ObjectId` [are
+/// seconds since the epoch when the id was created][1], so up to a second
+/// accuracy, these ids will be sorted by object creation time.
+///
+/// [`BTreeMap`]: std::collections::BTreeMap
+/// [1]: https://docs.mongodb.com/manual/reference/method/ObjectId/
+// Copy, Clone, Debug, PartialEq, Eq, Hash, PartialEq, Eq implemented manually below
 #[derive(Serialize, Deserialize)]
 #[serde(transparent, bound = "")]
 pub struct ObjectId<T> {
@@ -72,6 +93,18 @@ impl<T> Eq for ObjectId<T> {}
 impl<T> Hash for ObjectId<T> {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.raw.hash(state)
+    }
+}
+impl<T> PartialOrd<ObjectId<T>> for ObjectId<T> {
+    #[inline]
+    fn partial_cmp(&self, other: &ObjectId<T>) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl<T> Ord for ObjectId<T> {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.raw.cmp(&other.raw)
     }
 }
 

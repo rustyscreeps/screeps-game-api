@@ -1,4 +1,5 @@
 use std::{
+    cmp::{Ord, Ordering, PartialOrd},
     error,
     fmt::{self, Write},
     ops,
@@ -10,6 +11,22 @@ use arrayvec::ArrayString;
 use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 
 /// A structure representing a room name.
+///
+/// # Ordering
+///
+/// To facilitate use as a key in a [`BTreeMap`] or other similar data
+/// structures, `RoomName` implements [`PartialOrd`] and [`Ord`].
+///
+/// `RoomName`s are ordered first by y position, then by x position. North is
+/// considered less than south, and west less than east.
+///
+/// The total ordering is `N127W127`, `N127W126`, `N127W125`, ..., `N127W0`,
+/// `N127E0`, ..., `N127E127`, `N126W127`, ..., `S127E126`, `S127E127`.
+///
+/// This follows left-to-right reading order when looking at the Screeps map
+/// from above.
+///
+/// [`BTreeMap`]: std::collections::BTreeMap
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct RoomName {
     /// A bit-packed integer, containing, from highest-order to lowest:
@@ -23,6 +40,8 @@ pub struct RoomName {
     ///
     /// This is the same representation of the upper 16 bits of [`Position`]'s
     /// packed representation.
+    ///
+    /// [`Position`]: crate::local::Position
     packed: u16,
 }
 
@@ -358,6 +377,21 @@ impl PartialEq<RoomName> for &String {
     #[inline]
     fn eq(&self, other: &RoomName) -> bool {
         <RoomName as PartialEq<str>>::eq(other, self)
+    }
+}
+
+impl PartialOrd for RoomName {
+    #[inline]
+    fn partial_cmp(&self, other: &RoomName) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for RoomName {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.y_coord()
+            .cmp(&other.y_coord())
+            .then_with(|| self.x_coord().cmp(&other.x_coord()))
     }
 }
 
