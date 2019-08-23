@@ -73,7 +73,9 @@ pub use self::{
     types::*,
 };
 
-/// Re-export of all constants related to `Creep`s.
+/// Re-export of all constants related to [`Creep`] behavior and operations.
+///
+/// [`Creep`]: crate::objects::Creep
 pub mod creep {
     pub use super::{
         numbers::{
@@ -109,7 +111,11 @@ pub mod structure {
     };
 }
 
-/// Re-export of all constants related to minerals.
+/// Re-export of all constants related to [`Mineral`] behavior and
+/// [`StructureLab`] operations.
+///
+/// [`StructureLab`]: crate::objects::StructureLab
+/// [`Mineral`]: crate::objects::Mineral
 pub mod minerals {
     pub use super::{
         numbers::{
@@ -122,7 +128,10 @@ pub mod minerals {
     };
 }
 
-/// Re-export of all constants related to controllers.
+/// Re-export of all constants related to [`StructureController`] behavior and
+/// GCL.
+///
+/// [`StructureController`]: crate::objects::StructureController
 pub mod control {
     pub use super::numbers::{
         controller_downgrade, controller_levels, CONTROLLER_ATTACK_BLOCKED_UPGRADE,
@@ -149,14 +158,18 @@ pub mod power {
     };
 }
 
-/// Re-export of all constants related to portals.
+/// Re-export of all constants related to [`StructurePortal`] behavior.
+///
+/// [`StructurePortal`]: crate::objects::StructurePortal
 pub mod portal {
     pub use super::numbers::{
         PORTAL_DECAY, PORTAL_MAX_TIMEOUT, PORTAL_MIN_TIMEOUT, PORTAL_UNSTABLE,
     };
 }
 
-/// Re-export of all constants related to sources.
+/// Re-export of all constants related to [`Source`] behavior.
+///
+/// [`Source`]: crate::objects::Source
 pub mod source {
     pub use super::numbers::{
         ENERGY_REGEN_TIME, INVADERS_ENERGY_GOAL, SOURCE_ENERGY_CAPACITY,
@@ -164,14 +177,18 @@ pub mod source {
     };
 }
 
-/// Re-export of all constants related to the market.
+/// Re-export of all constants related to the [market].
+///
+/// [market]: crate::game::market
 pub mod market {
     pub use super::numbers::{
         MARKET_FEE, TERMINAL_CAPACITY, TERMINAL_COOLDOWN, TERMINAL_MIN_SEND, TERMINAL_SEND_COST,
     };
 }
 
-/// Re-export of all constants related to spawning.
+/// Re-export of all constants related to [`StructureSpawn`] operations.
+///
+/// [`StructureSpawn`]: crate::objects::StructureSpawn
 pub mod spawn {
     pub use super::numbers::{
         extension_energy_capacity, CREEP_SPAWN_TIME, ENERGY_REGEN_TIME, MAX_CREEP_SIZE,
@@ -179,7 +196,9 @@ pub mod spawn {
     };
 }
 
-/// Re-export of all constants related to tower operation.
+/// Re-export of all constants related to [`StructureTower`] operations.
+///
+/// [`StructureTower`]: crate::objects::StructureTower
 pub mod tower {
     pub use super::numbers::{
         TOWER_CAPACITY, TOWER_ENERGY_COST, TOWER_FALLOFF, TOWER_FALLOFF_RANGE, TOWER_OPTIMAL_RANGE,
@@ -187,7 +206,10 @@ pub mod tower {
     };
 }
 
-/// Re-export of all constants related to nukes.
+/// Re-export of all constants related to [`StructureNuker`] and [`Nuke`].
+///
+/// [`StructureNuker`]: crate::objects::StructureNuker
+/// [`Nuke`]: crate::objects::Nuke
 pub mod nuke {
     pub use super::numbers::{
         NUKER_COOLDOWN, NUKER_ENERGY_CAPACITY, NUKER_GHODIUM_CAPACITY, NUKE_DAMAGE_RANGE_0,
@@ -195,22 +217,30 @@ pub mod nuke {
     };
 }
 
-/// Re-export of all constants related to observer operation.
+/// Re-export of all constants related to [`StructureObserver`] operations.
+///
+/// [`StructureObserver`]: crate::objects::StructureObserver
 pub mod observer {
     pub use super::numbers::OBSERVER_RANGE;
 }
 
-/// Re-export of all constants related to `Resource`s.
+/// Re-export of all constants related to [`Resource`]s.
+///
+/// [`Resource`]: crate::objects::Resource
 pub mod resource {
     pub use super::{numbers::ENERGY_DECAY, types::ResourceType};
 }
 
-/// Re-export of all constants related to `Tombstone`s.
+/// Re-export of all constants related to [`Tombstone`]s.
+///
+/// [`Tombstone`]: crate::objects::Tombstone
 pub mod tombstone {
     pub use super::numbers::{TOMBSTONE_DECAY_PER_PART, TOMBSTONE_DECAY_POWER_CREEP};
 }
 
-/// Re-export of all constants related to `Tombstone`s.
+/// Re-export of all constants related to [`Flag`]s.
+///
+/// [`Flag`]: crate::objects::Flag
 pub mod flags {
     pub use super::{numbers::FLAGS_LIMIT, small_enums::Color};
 }
