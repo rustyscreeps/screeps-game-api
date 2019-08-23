@@ -84,7 +84,7 @@ pub mod creep {
             HARVEST_MINERAL_POWER, HARVEST_POWER, HEAL_POWER, MAX_CREEP_SIZE, RANGED_HEAL_POWER,
             REPAIR_COST, REPAIR_POWER, SPAWN_RENEW_RATIO, UPGRADE_CONTROLLER_POWER,
         },
-        small_enums::Part,
+        small_enums::{Part, ReturnCode},
     };
 }
 
