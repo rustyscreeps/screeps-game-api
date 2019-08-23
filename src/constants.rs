@@ -118,6 +118,7 @@ pub mod minerals {
             MINERAL_DENSITY_CHANGE, MINERAL_RANDOM_FACTOR, MINERAL_REGEN_TIME,
         },
         small_enums::Density,
+        types::ResourceType,
     };
 }
 
