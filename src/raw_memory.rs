@@ -15,9 +15,9 @@ pub struct ForeignSegment {
 
 js_deserializable!(ForeignSegment);
 
-get_from_js!(get_active_segments -> {
-    Object.keys(RawMemory.segments).map(Number)
-} -> Vec<u32>);
+pub fn get_active_segments() -> Vec<u32> {
+    js_unwrap!(Object.keys(RawMemory.segments).map(Number))
+}
 
 /// Sets active segments (max 10 ids).
 pub fn set_active_segments(ids: &[u32]) {
@@ -30,9 +30,9 @@ pub fn set_active_segments(ids: &[u32]) {
     }
 }
 
-get_from_js!(get_segment(id: u32) -> {
-    RawMemory.segments[@{id}]
-} -> Option<String>);
+pub fn get_segment(id: u32) -> Option<String> {
+    js_unwrap!(RawMemory.segments[@{id}])
+}
 
 pub fn set_segment(id: u32, data: &str) {
     js! { @(no_return)
@@ -53,9 +53,9 @@ pub fn drop_segment(id: u32) {
     }
 }
 
-get_from_js!(get_foreign_segment -> {
-    RawMemory.foreignSegment
-} -> ForeignSegment);
+pub fn get_foreign_segment() -> ForeignSegment {
+    js_unwrap!(RawMemory.foreignSegment)
+}
 
 /// Implements `RawMemory.setActiveForeignSegment`
 ///
@@ -92,7 +92,9 @@ pub fn set_public_segments(ids: &[u32]) {
     }
 }
 
-get_from_js!(get -> {RawMemory.get()} -> String);
+pub fn get() -> String {
+    js_unwrap!(RawMemory.get())
+}
 
 pub fn set(value: &str) {
     js! { @(no_return)
