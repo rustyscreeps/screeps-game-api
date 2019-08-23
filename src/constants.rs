@@ -172,7 +172,7 @@ pub mod portal {
 /// [`Source`]: crate::objects::Source
 pub mod source {
     pub use super::numbers::{
-        ENERGY_REGEN_TIME, INVADERS_ENERGY_GOAL, SOURCE_ENERGY_CAPACITY,
+        ENERGY_DECAY, ENERGY_REGEN_TIME, INVADERS_ENERGY_GOAL, SOURCE_ENERGY_CAPACITY,
         SOURCE_ENERGY_KEEPER_CAPACITY, SOURCE_ENERGY_NEUTRAL_CAPACITY,
     };
 }
