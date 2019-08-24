@@ -310,6 +310,34 @@ impl<T> ObjectId<T> {
     }
 }
 
+impl<T> PartialEq<RawObjectId> for ObjectId<T> {
+    #[inline]
+    fn eq(&self, other: &RawObjectId) -> bool {
+        self.raw == *other
+    }
+}
+
+impl<T> PartialEq<ObjectId<T>> for RawObjectId {
+    #[inline]
+    fn eq(&self, other: &ObjectId<T>) -> bool {
+        *self == other.raw
+    }
+}
+
+impl<T> PartialOrd<RawObjectId> for ObjectId<T> {
+    #[inline]
+    fn partial_cmp(&self, other: &RawObjectId) -> Option<Ordering> {
+        Some(self.raw.cmp(other))
+    }
+}
+
+impl<T> PartialOrd<ObjectId<T>> for RawObjectId {
+    #[inline]
+    fn partial_cmp(&self, other: &ObjectId<T>) -> Option<Ordering> {
+        Some(self.cmp(&other.raw))
+    }
+}
+
 impl<T> From<RawObjectId> for ObjectId<T> {
     fn from(raw: RawObjectId) -> Self {
         ObjectId {
