@@ -78,6 +78,27 @@ mod world_utils;
 ///   };
 ///   ```
 ///
+/// # Deserialization
+///
+/// `Position` implements `TryFrom<Value>`, allowing conversion from values
+/// retrieved from JavaScript. The implementation is fairly lenient, and will
+/// try to accept the value as any of the following things, in order:
+///
+/// - an integer representing the packedPos
+///   - this can be produced by retrieving the `__packedPos` field of a
+///     `RoomPosition`
+/// - an object with a `__packedPos` property
+///   - this allows converting from a JavaScript `RoomPosition` to a `Position`
+///     without referencing `__packedPos` manually, but is less efficient since
+///     it requires an extra callback into JavaScript to grab that field from
+///     within the conversion code
+/// - an object with `x`, `y` and `roomName` properties
+///   - this is mainly intended to decode `Position`s which were previously sent
+///     to JavaScript using `@{}` in `js!{}`, or serialized using
+///     [`serde::Serialize`]
+///   - this will also understand `RoomPosition`s in private servers versions
+///     `3.2.1` and below, prior to when `__packedPos` was added
+///
 /// # Ordering
 ///
 /// To facilitate use as a key in a [`BTreeMap`] or other similar data
