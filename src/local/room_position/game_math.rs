@@ -5,6 +5,12 @@ use crate::{constants::Direction, objects::HasPosition};
 use super::Position;
 
 impl Position {
+    /// Gets linear direction to the specified position.
+    ///
+    /// Note that this chooses between `Top`/`Bottom`/`Left`/`Right` and
+    /// `TopLeft`/`TopRight`/`BottomLeft`/`BottomRight` by the magnitude in both
+    /// directions. For instance, [`Direction::Top`] can be returned even
+    /// if the target has a slightly different `x` coordinate.
     pub fn get_direction_to<T>(self, target: &T) -> Option<Direction>
     where
         T: ?Sized + HasPosition,
@@ -39,6 +45,12 @@ impl Position {
         }
     }
 
+    /// Gets linear range to the specified position.
+    ///
+    /// This operates on positions as "world positions", and will return an
+    /// accurate range for positions in different rooms. Note that the
+    /// corresponding JavaScript method, `RoomPosition.getRangeTo` returns
+    /// `Infinity` if given positions in different rooms.
     #[inline]
     pub fn get_range_to<T>(self, target: &T) -> u32
     where
@@ -48,6 +60,12 @@ impl Position {
         dx.abs().max(dy.abs()) as u32
     }
 
+    /// Checks whether this position is in the given range of another position.
+    ///
+    /// This operates on positions as "world positions", and may return true for
+    /// positions in different rooms which are still within the given range.
+    /// Note that the corresponding JavaScript method, `RoomPosition.inRangeTo`,
+    /// will always return `false` for positions from different rooms.
     #[inline]
     pub fn in_range_to<T>(self, target: &T, range: u32) -> bool
     where
@@ -56,6 +74,9 @@ impl Position {
         self.get_range_to(target) < range
     }
 
+    /// Checks whether this position is the same as the specified position.
+    ///
+    /// Note that this is equivalent to `this_pos == target.pos()`.
     #[inline]
     pub fn is_equal_to<T>(self, target: &T) -> bool
     where
