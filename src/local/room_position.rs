@@ -99,6 +99,23 @@ mod world_utils;
 ///   - this will also understand `RoomPosition`s in private servers versions
 ///     `3.2.1` and below, prior to when `__packedPos` was added
 ///
+/// # Method Behavior
+///
+/// While this corresponds with the JavaScript `RoomPosition` type, it is not
+/// identical. In particular, all "calculation" methods which take in another
+/// position are re-implemented in pure Rust code, and behave slightly
+/// different.
+///
+/// For instance, [`Position::get_range_to`] operates on "world positions", and
+/// will return accurate distances for positions in different rooms. This is in
+/// contrast to `RoomPosition.getRangeTo` in JavaScript, which will return
+/// `Infinity` for positions from different rooms.
+///
+/// Besides extending behavior to work on world positions, we've tried to keep
+/// methods as in-sync with the JavaScript versions as possible. Everything
+/// will "just work", and there should be some speed advantage because of not
+/// having to call into JavaScript to perform calculations.
+///
 /// # Ordering
 ///
 /// To facilitate use as a key in a [`BTreeMap`] or other similar data
