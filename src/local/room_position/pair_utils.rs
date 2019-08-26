@@ -23,6 +23,7 @@ impl Position {
 // external crate.
 
 impl Into<(u8, u8)> for Position {
+    /// Turns this positions's in-room coordinates into a pair of `u8` values.
     #[inline]
     fn into(self) -> (u8, u8) {
         (self.x() as u8, self.y() as u8)
@@ -30,6 +31,7 @@ impl Into<(u8, u8)> for Position {
 }
 
 impl Into<(u16, u16)> for Position {
+    /// Turns this positions's in-room coordinates into a pair of `u16` values.
     #[inline]
     fn into(self) -> (u16, u16) {
         (self.x() as u16, self.y() as u16)
@@ -37,6 +39,7 @@ impl Into<(u16, u16)> for Position {
 }
 
 impl Into<(u32, u32)> for Position {
+    /// Turns this positions's in-room coordinates into a pair of `u32` values.
     #[inline]
     fn into(self) -> (u32, u32) {
         (self.x(), self.y())
@@ -44,6 +47,7 @@ impl Into<(u32, u32)> for Position {
 }
 
 impl Into<(u64, u64)> for Position {
+    /// Turns this positions's in-room coordinates into a pair of `u64` values.
     #[inline]
     fn into(self) -> (u64, u64) {
         (self.x() as u64, self.y() as u64)
@@ -51,6 +55,7 @@ impl Into<(u64, u64)> for Position {
 }
 
 impl Into<(i8, i8)> for Position {
+    /// Turns this positions's in-room coordinates into a pair of `i8` values.
     #[inline]
     fn into(self) -> (i8, i8) {
         (self.x() as i8, self.y() as i8)
@@ -58,6 +63,7 @@ impl Into<(i8, i8)> for Position {
 }
 
 impl Into<(i16, i16)> for Position {
+    /// Turns this positions's in-room coordinates into a pair of `i16` values.
     #[inline]
     fn into(self) -> (i16, i16) {
         (self.x() as i16, self.y() as i16)
@@ -65,6 +71,7 @@ impl Into<(i16, i16)> for Position {
 }
 
 impl Into<(i32, i32)> for Position {
+    /// Turns this positions's in-room coordinates into a pair of `i32` values.
     #[inline]
     fn into(self) -> (i32, i32) {
         (self.x() as i32, self.y() as i32)
@@ -72,6 +79,7 @@ impl Into<(i32, i32)> for Position {
 }
 
 impl Into<(i64, i64)> for Position {
+    /// Turns this positions's in-room coordinates into a pair of `i64` values.
     #[inline]
     fn into(self) -> (i64, i64) {
         (self.x() as i64, self.y() as i64)
