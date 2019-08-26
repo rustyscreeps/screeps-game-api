@@ -116,6 +116,32 @@ mod world_utils;
 /// will "just work", and there should be some speed advantage because of not
 /// having to call into JavaScript to perform calculations.
 ///
+/// # Addition and subtraction
+///
+/// [`Position`] implements `Add<(i32, i32)>`, `Sub<(i32, i32)>` and
+/// `Sub<Position>`. All of these implementations work on positions as world
+/// positions, and will treat positions from different rooms just as if they're
+/// further apart.
+///
+/// The `Add` implementation can be used to add an offset to a position:
+///
+/// ```
+/// # use screeps::Position;
+/// let pos1 = Position::new(0, 0, "E1N1".parse().unwrap());
+/// let pos2 = Position::new(40, 20, "E1N1".parse().unwrap());
+/// assert_eq!(pos1 + (40, 20), pos2);
+/// ```
+///
+/// And the `Sub` implementation can be used to get the offset between two
+/// positions:
+///
+/// ```
+/// # use screeps::Position;
+/// let pos1 = Position::new(4, 20, "E20S21".parse().unwrap());
+/// let pos2 = Position::new(4, 30, "E20S22".parse().unwrap());
+/// assert_eq!(pos2 - pos1, (0, 60));
+/// ```
+///
 /// # Ordering
 ///
 /// To facilitate use as a key in a [`BTreeMap`] or other similar data
