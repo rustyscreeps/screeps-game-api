@@ -140,6 +140,9 @@ mod world_utils;
 /// let pos1 = Position::new(4, 20, "E20S21".parse().unwrap());
 /// let pos2 = Position::new(4, 30, "E20S22".parse().unwrap());
 /// assert_eq!(pos2 - pos1, (0, 60));
+///
+/// let pos3 = Position::new(0, 0, "E20S21".parse().unwrap());
+/// assert_eq!(pos3 - pos1, (-4, -20));
 /// ```
 ///
 /// # Ordering
