@@ -10,6 +10,7 @@ use std::{
 
 use super::{RoomName, HALF_WORLD_SIZE};
 
+mod approximate_offsets;
 mod extra_math;
 mod game_math;
 mod game_methods;
