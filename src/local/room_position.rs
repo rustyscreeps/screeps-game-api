@@ -78,6 +78,95 @@ mod world_utils;
 ///   };
 ///   ```
 ///
+/// # Deserialization
+///
+/// `Position` implements `TryFrom<Value>`, allowing conversion from values
+/// retrieved from JavaScript. The implementation is fairly lenient, and will
+/// try to accept the value as any of the following things, in order:
+///
+/// - an integer representing the packedPos
+///   - this can be produced by retrieving the `__packedPos` field of a
+///     `RoomPosition`
+/// - an object with a `__packedPos` property
+///   - this allows converting from a JavaScript `RoomPosition` to a `Position`
+///     without referencing `__packedPos` manually, but is less efficient since
+///     it requires an extra callback into JavaScript to grab that field from
+///     within the conversion code
+/// - an object with `x`, `y` and `roomName` properties
+///   - this is mainly intended to decode `Position`s which were previously sent
+///     to JavaScript using `@{}` in `js!{}`, or serialized using
+///     [`serde::Serialize`]
+///   - this will also understand `RoomPosition`s in private servers versions
+///     `3.2.1` and below, prior to when `__packedPos` was added
+///
+/// # World vs. in-room coordinates
+///
+/// When converting `Position` to integer x/y coordinates, there are two main
+/// methods. The first is to use `x`/`y` as "in room" coordinates, which are
+/// bounded within `0..=49`. These coordinates only identify the location within
+/// a given room name. These are used by [`Position::x`], [`Position::y`],
+/// [`Position::new`] as well as [`Position::coords`],
+/// [`Position::coords_signed`] and the various implementations of `Into<([ui*],
+/// [ui*])>` for `Position`.
+///
+/// The second is to use `x`/`y` as "world" coordinates, which are coordinates
+/// spread across the world. To ensures they agree with in-room coordinates,
+/// south is positive `y`, north is negative `y`, east is positive `x` and west
+/// is negative `x`. One way to think of them is as extending the room
+/// coordinates of the room `E0S0` throughout the entire map.
+///
+/// World coordinates are used by [`Position::world_x`], [`Position::world_y`],
+/// [`Position::world_coords`], [`Position::from_world_coords`], and by all
+/// implementations which allow adding or subtracting positions (see [Addition
+/// and subtraction](#addition-and-subtraction)).
+///
+/// # Method Behavior
+///
+/// While this corresponds with the JavaScript `RoomPosition` type, it is not
+/// identical. In particular, all "calculation" methods which take in another
+/// position are re-implemented in pure Rust code, and some behave slightly
+/// different.
+///
+/// For instance, [`Position::get_range_to`] operates on positions as world
+/// coordinates, and will return accurate distances for positions in different
+/// rooms. This is in contrast to `RoomPosition.getRangeTo` in JavaScript, which
+/// will return `Infinity` for positions from different rooms.
+/// [`Position::in_range_to`] has a similar difference.
+///
+/// Besides extending behavior to work between rooms, we've tried to keep
+/// methods as in-sync with the JavaScript versions as possible. Everything
+/// will "just work", and there should be some speed advantage because of not
+/// having to call into JavaScript to perform calculations.
+///
+/// # Addition and subtraction
+///
+/// [`Position`] implements `Add<(i32, i32)>`, `Sub<(i32, i32)>` and
+/// `Sub<Position>`. All of these implementations work on positions as world
+/// positions, and will treat positions from different rooms just as if they're
+/// further apart.
+///
+/// The `Add` implementation can be used to add an offset to a position:
+///
+/// ```
+/// # use screeps::Position;
+/// let pos1 = Position::new(0, 0, "E1N1".parse().unwrap());
+/// let pos2 = Position::new(40, 20, "E1N1".parse().unwrap());
+/// assert_eq!(pos1 + (40, 20), pos2);
+/// ```
+///
+/// And the `Sub` implementation can be used to get the offset between two
+/// positions:
+///
+/// ```
+/// # use screeps::Position;
+/// let pos1 = Position::new(4, 20, "E20S21".parse().unwrap());
+/// let pos2 = Position::new(4, 30, "E20S22".parse().unwrap());
+/// assert_eq!(pos2 - pos1, (0, 60));
+///
+/// let pos3 = Position::new(0, 0, "E20S21".parse().unwrap());
+/// assert_eq!(pos3 - pos1, (-4, -20));
+/// ```
+///
 /// # Ordering
 ///
 /// To facilitate use as a key in a [`BTreeMap`] or other similar data
