@@ -273,7 +273,7 @@ function object_id_from_packed(slice) {
            res += slice[i].toString(16);
        }
     }
-    return res;
+    return res.padStart(15, "0");
 }
 
 function object_id_to_packed(id) {
