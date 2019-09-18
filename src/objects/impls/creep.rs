@@ -27,7 +27,7 @@ impl Creep {
 
         for i in 0..len {
             let boost_v =
-                js!(return __resource_type_str_to_num(@{self.as_ref()}.body[@{i}].boost););
+                js!(const b=@{self.as_ref()}.body[@{i}].boost||null;return b&&__resource_type_str_to_num(b););
             let boost = match boost_v {
                 Value::Number(_) => {
                     Some(ResourceType::try_from(boost_v).expect("Creep boost resource unknown."))
