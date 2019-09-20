@@ -185,7 +185,7 @@ impl Creep {
                         noPathFinding: @{no_path_finding},
                         visualizePathStyle: undefined,  // todo
                         ignoreCreeps: @{ignore_creeps},
-                        ignoreDestructibleStructures: @{ignore_destructible_structures}
+                        ignoreDestructibleStructures: @{ignore_destructible_structures},
                         costCallback: @{callback},
                         maxOps: @{max_ops},
                         heuristicWeight: @{heuristic_weight},
@@ -193,7 +193,7 @@ impl Creep {
                         maxRooms: @{max_rooms},
                         range: @{range},
                         plainCost: @{plain_cost},
-                        swampCost: @{swamp_cost},
+                        swampCost: @{swamp_cost}
                     }
                 )
             }
