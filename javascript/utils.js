@@ -40,6 +40,8 @@ function __look_num_to_str(num) {
         case 9: return LOOK_TERRAIN;
         case 10: return LOOK_TOMBSTONES;
         case 11: return LOOK_POWER_CREEPS;
+        case 12: return LOOK_DEPOSITS;
+        case 13: return LOOK_RUINS;
         default: throw new Error("unknown look integer encoding " + num);
     }
 }
@@ -58,6 +60,8 @@ function __look_str_to_num(num) {
         case LOOK_TERRAIN: return 9;
         case LOOK_TOMBSTONES: return 10;
         case LOOK_POWER_CREEPS: return 11;
+        case LOOK_DEPOSITS: return 12;
+        case LOOK_RUINS: return 13;
         default: throw new Error("unknown look constant " + num);
     }
 }
@@ -83,6 +87,8 @@ function __structure_type_num_to_str(num) {
         case 16: return STRUCTURE_TERMINAL;
         case 17: return STRUCTURE_CONTAINER;
         case 18: return STRUCTURE_NUKER;
+        case 19: return STRUCTURE_FACTORY;
+        case 20: return STRUCTURE_INVADER_CORE;
         default: throw new Error("unknown structure type integer encoding " + num);
     }
 }
@@ -108,6 +114,8 @@ function __structure_type_str_to_num(str) {
         case STRUCTURE_TERMINAL: return 16;
         case STRUCTURE_CONTAINER: return 17;
         case STRUCTURE_NUKER: return 18;
+        case STRUCTURE_FACTORY: return 19;
+        case STRUCTURE_INVADER_CORE: return 20;
         default: throw new Error("unknown structure type " + str);
     }
 }
@@ -173,6 +181,46 @@ function __resource_type_num_to_str(num) {
         case 42: return RESOURCE_CATALYZED_GHODIUM_ACID;
         case 43: return RESOURCE_CATALYZED_GHODIUM_ALKALIDE;
         case 44: return RESOURCE_OPS;
+        case 45: return RESOURCE_SILICON;
+        case 46: return RESOURCE_METAL;
+        case 47: return RESOURCE_BIOMASS;
+        case 48: return RESOURCE_MIST;
+        case 49: return RESOURCE_UTRIUM_BAR;
+        case 50: return RESOURCE_LEMERGIUM_BAR;
+        case 51: return RESOURCE_ZYNTHIUM_BAR;
+        case 52: return RESOURCE_KEANIUM_BAR;
+        case 53: return RESOURCE_GHODIUM_MELT;
+        case 54: return RESOURCE_OXIDANT;
+        case 55: return RESOURCE_REDUCTANT;
+        case 56: return RESOURCE_PURIFIER;
+        case 57: return RESOURCE_BATTERY;
+        case 58: return RESOURCE_COMPOSITE;
+        case 59: return RESOURCE_CRYSTAL;
+        case 60: return RESOURCE_LIQUID;
+        case 61: return RESOURCE_WIRE;
+        case 62: return RESOURCE_SWITCH;
+        case 63: return RESOURCE_TRANSISTOR;
+        case 64: return RESOURCE_MICROCHIP;
+        case 65: return RESOURCE_CIRCUIT;
+        case 66: return RESOURCE_DEVICE;
+        case 67: return RESOURCE_CELL;
+        case 68: return RESOURCE_PHLEGM;
+        case 69: return RESOURCE_TISSUE;
+        case 70: return RESOURCE_MUSCLE;
+        case 71: return RESOURCE_ORGANOID;
+        case 72: return RESOURCE_ORGANISM;
+        case 73: return RESOURCE_ALLOY;
+        case 74: return RESOURCE_TUBE;
+        case 75: return RESOURCE_FIXTURES;
+        case 76: return RESOURCE_FRAME;
+        case 77: return RESOURCE_HYDRAULICS;
+        case 78: return RESOURCE_MACHINE;
+        case 79: return RESOURCE_CONDENSATE;
+        case 80: return RESOURCE_CONCENTRATE;
+        case 81: return RESOURCE_EXTRACT;
+        case 82: return RESOURCE_SPIRIT;
+        case 83: return RESOURCE_EMANATION;
+        case 84: return RESOURCE_ESSENCE;
         default: throw new Error("unknown resource type integer encoding " + num);
     }
 }
@@ -223,6 +271,46 @@ function __resource_type_str_to_num(str) {
         case RESOURCE_CATALYZED_GHODIUM_ACID: return 42;
         case RESOURCE_CATALYZED_GHODIUM_ALKALIDE: return 43;
         case RESOURCE_OPS: return 44;
+        case RESOURCE_SILICON: return 45;
+        case RESOURCE_METAL: return 46;
+        case RESOURCE_BIOMASS: return 47;
+        case RESOURCE_MIST: return 48;
+        case RESOURCE_UTRIUM_BAR: return 49;
+        case RESOURCE_LEMERGIUM_BAR: return 50;
+        case RESOURCE_ZYNTHIUM_BAR: return 51;
+        case RESOURCE_KEANIUM_BAR: return 52;
+        case RESOURCE_GHODIUM_MELT: return 53;
+        case RESOURCE_OXIDANT: return 54;
+        case RESOURCE_REDUCTANT: return 55;
+        case RESOURCE_PURIFIER: return 56;
+        case RESOURCE_BATTERY: return 57;
+        case RESOURCE_COMPOSITE: return 58;
+        case RESOURCE_CRYSTAL: return 59;
+        case RESOURCE_LIQUID: return 60;
+        case RESOURCE_WIRE: return 61;
+        case RESOURCE_SWITCH: return 62;
+        case RESOURCE_TRANSISTOR: return 63;
+        case RESOURCE_MICROCHIP: return 64;
+        case RESOURCE_CIRCUIT: return 65;
+        case RESOURCE_DEVICE: return 66;
+        case RESOURCE_CELL: return 67;
+        case RESOURCE_PHLEGM: return 68;
+        case RESOURCE_TISSUE: return 69;
+        case RESOURCE_MUSCLE: return 70;
+        case RESOURCE_ORGANOID: return 71;
+        case RESOURCE_ORGANISM: return 72;
+        case RESOURCE_ALLOY: return 73;
+        case RESOURCE_TUBE: return 74;
+        case RESOURCE_FIXTURES: return 75;
+        case RESOURCE_FRAME: return 76;
+        case RESOURCE_HYDRAULICS: return 77;
+        case RESOURCE_MACHINE: return 78;
+        case RESOURCE_CONDENSATE: return 79;
+        case RESOURCE_CONCENTRATE: return 80;
+        case RESOURCE_EXTRACT: return 81;
+        case RESOURCE_SPIRIT: return 82;
+        case RESOURCE_EMANATION: return 83;
+        case RESOURCE_ESSENCE: return 84;
         default: throw new Error("unknown resource type " + str);
     }
 }

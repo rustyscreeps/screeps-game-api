@@ -1,5 +1,5 @@
 //! Plain data constants and functions returning plain data.
-use super::types::ResourceType;
+use super::types::{ResourceType, StructureType};
 
 pub const CREEP_LIFE_TIME: u32 = 1500;
 pub const CREEP_CLAIM_LIFE_TIME: u32 = 600;
@@ -218,6 +218,10 @@ pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
 pub const MINERAL_RANDOM_FACTOR: u32 = 2;
 pub const MINERAL_DENSITY_CHANGE: f32 = 0.05;
 
+pub const DEPOSIT_EXHAUST_MULTIPLY: f32 = 0.001;
+pub const DEPOSIT_EXHAUST_POW: f32 = 1.2;
+pub const DEPOSIT_DECAY_TIME: u32 = 50_000;
+
 pub const TERMINAL_HITS: u32 = 3000;
 pub const TERMINAL_CAPACITY: u32 = 300_000;
 pub const TERMINAL_SEND_COST: f32 = 0.1;
@@ -239,8 +243,21 @@ pub const NUKE_RANGE: u32 = 10;
 pub const NUKE_DAMAGE_RANGE_0: u32 = 10_000_000;
 pub const NUKE_DAMAGE_RANGE_2: u32 = 5_000_000;
 
+pub const FACTORY_HITS: u32 = 1000;
+pub const FACTORY_CAPACITY: u32 = 50_000;
+
 pub const TOMBSTONE_DECAY_PER_PART: u32 = 5;
 pub const TOMBSTONE_DECAY_POWER_CREEP: u32 = 500;
+
+pub const RUIN_DECAY: u32 = 500;
+
+#[inline]
+pub fn ruin_decay_structures(structure_type: StructureType) -> Option<u32> {
+    match structure_type {
+        StructureType::PowerBank => Some(10),
+        _ => None,
+    }
+}
 
 pub const PORTAL_DECAY: u32 = 30_000;
 
@@ -271,3 +288,35 @@ pub const POWER_CREEP_SPAWN_COOLDOWN: u32 = 8 * 3600 * 1000;
 pub const POWER_CREEP_DELETE_COOLDOWN: u32 = 24 * 3600 * 1000;
 pub const POWER_CREEP_MAX_LEVEL: u32 = 25;
 pub const POWER_CREEP_LIFE_TIME: u32 = 5000;
+
+pub const INVADER_CORE_HITS: u32 = 100_000;
+pub const INVADER_CORE_EXPAND_TIME: u32 = 2000;
+pub const INVADER_CORE_CONTROLLER_POWER: u32 = 2;
+pub const INVADER_CORE_CONTROLLER_DOWNGRADE: u32 = 5000;
+
+#[inline]
+pub fn invader_core_creep_spawn_time(core_level: u32) -> Option<u32> {
+    match core_level {
+        0 | 1 => Some(0),
+        2 => Some(6),
+        3 => Some(3),
+        4 => Some(2),
+        5 => Some(1),
+        _ => None,
+    }
+}
+
+pub const STRONGHOLD_DECAY_TICKS: u32 = 75_000;
+
+#[inline]
+pub fn stronghold_rampart_hits(core_level: u32) -> Option<u32> {
+    match core_level {
+        0 => Some(0),
+        1 => Some(50_000),
+        2 => Some(200_000),
+        3 => Some(500_000),
+        4 => Some(1_000_000),
+        5 => Some(2_000_000),
+        _ => None,
+    }
+}

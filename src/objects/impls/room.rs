@@ -19,9 +19,9 @@ use crate::{
     local::{Position, RoomName},
     memory::MemoryReference,
     objects::{
-        ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource, Room,
-        RoomTerrain, Source, Structure, StructureController, StructureStorage, StructureTerminal,
-        Tombstone,
+        ConstructionSite, Creep, Deposit, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource,
+        Room, RoomTerrain, Ruin, Source, Structure, StructureController, StructureStorage,
+        StructureTerminal, Tombstone,
     },
     pathfinder::CostMatrix,
     traits::{TryFrom, TryInto},
@@ -766,6 +766,7 @@ pub enum LookResult {
     Resource(Resource),
     Source(Source),
     Mineral(Mineral),
+    Deposit(Deposit),
     Structure(Structure),
     Flag(Flag),
     ConstructionSite(ConstructionSite),
@@ -773,6 +774,7 @@ pub enum LookResult {
     Terrain(Terrain),
     Tombstone(Tombstone),
     PowerCreep(PowerCreep),
+    Ruin(Ruin),
 }
 
 impl TryFrom<Value> for LookResult {
@@ -790,6 +792,7 @@ impl TryFrom<Value> for LookResult {
             Look::Resources => LookResult::Resource(js_unwrap_ref!(@{v}.resource)),
             Look::Sources => LookResult::Source(js_unwrap_ref!(@{v}.source)),
             Look::Minerals => LookResult::Mineral(js_unwrap_ref!(@{v}.mineral)),
+            Look::Deposits => LookResult::Deposit(js_unwrap_ref!(@{v}.deposit)),
             Look::Structures => LookResult::Structure(js_unwrap_ref!(@{v}.structure)),
             Look::Flags => LookResult::Flag(js_unwrap_ref!(@{v}.flag)),
             Look::ConstructionSites => {
@@ -799,6 +802,7 @@ impl TryFrom<Value> for LookResult {
             Look::Terrain => LookResult::Terrain(js_unwrap!(__terrain_str_to_num(@{v}.terrain))),
             Look::Tombstones => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
             Look::PowerCreeps => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
+            Look::Ruins => LookResult::Ruin(js_unwrap_ref!(@{v}.ruin)),
         };
         Ok(lr)
     }
