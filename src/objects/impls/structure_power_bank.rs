@@ -1,4 +1,4 @@
-use crate::{macros::*, objects::StructurePowerBank};
+use crate::objects::StructurePowerBank;
 
 simple_accessors! {
     impl StructurePowerBank {

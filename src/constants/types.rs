@@ -9,8 +9,6 @@ use serde::{
 };
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::macros::*;
-
 /// Translates `STRUCTURE_*` constants.
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`

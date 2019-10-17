@@ -1,4 +1,4 @@
-use crate::{local::RoomName, macros::*, objects::Nuke};
+use crate::{local::RoomName, objects::Nuke};
 
 simple_accessors! {
     impl Nuke {

@@ -19,7 +19,6 @@ use stdweb_derive::ReferenceType;
 use crate::{
     constants::{ResourceType, ReturnCode, StructureType},
     local::{ObjectId, Position, RawObjectId},
-    macros::*,
     traits::{IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };

@@ -14,7 +14,7 @@ use std::{f64, marker::PhantomData, mem};
 use scoped_tls::scoped_thread_local;
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
 
-use crate::{local::Position, macros::*, objects::HasPosition, traits::TryInto};
+use crate::{local::Position, objects::HasPosition, traits::TryInto};
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {

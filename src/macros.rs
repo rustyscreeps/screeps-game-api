@@ -9,11 +9,6 @@
 //!
 //! [macro-book]: https://danielkeep.github.io/tlborm/book/mbe-README.html
 
-pub use stdweb::{
-    __js_deserializable_serde_boilerplate, __js_raw_asm, __js_serializable_boilerplate,
-    __js_serializable_serde_boilerplate, _js_impl, js, js_deserializable, js_serializable,
-};
-
 /// Used to get data from a javascript reference back into rust code.
 ///
 /// Macro syntax (`$name` are expressions):
@@ -411,7 +406,7 @@ macro_rules! game_map_access {
     ($type:path, $js_inner:expr $(,)?) => {
         use std::collections::HashMap;
 
-        use crate::{macros::*, objects};
+        use crate::{objects};
 
         calculated_doc! {
             #[doc = concat!("Retrieve the full `HashMap<String, ",

@@ -57,7 +57,6 @@ use std::fmt;
 use stdweb::{JsSerialize, Reference, Value};
 
 use crate::{
-    macros::*,
     traits::{TryFrom, TryInto},
     ConversionError,
 };

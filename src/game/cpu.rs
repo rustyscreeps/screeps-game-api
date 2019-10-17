@@ -5,7 +5,7 @@ use std::collections;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{constants::ReturnCode, macros::*, traits::TryInto};
+use crate::{constants::ReturnCode, traits::TryInto};
 
 /// See [`v8_getheapstatistics`]
 ///

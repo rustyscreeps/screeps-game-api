@@ -365,10 +365,7 @@ impl Ord for Position {
 mod stdweb {
     use stdweb::{Reference, Value};
 
-    use crate::{
-        macros::*,
-        traits::{TryFrom, TryInto},
-    };
+    use crate::traits::{TryFrom, TryInto};
 
     use super::Position;
 

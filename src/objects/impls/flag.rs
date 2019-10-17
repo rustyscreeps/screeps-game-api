@@ -2,7 +2,6 @@ use stdweb::Value;
 
 use crate::{
     constants::{Color, ReturnCode},
-    macros::*,
     objects::{Flag, HasPosition},
     traits::TryFrom,
 };

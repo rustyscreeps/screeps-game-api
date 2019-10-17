@@ -1,6 +1,5 @@
 use crate::{
     constants::{ResourceType, ReturnCode},
-    macros::*,
     objects::{Creep, StructureLab},
 };
 

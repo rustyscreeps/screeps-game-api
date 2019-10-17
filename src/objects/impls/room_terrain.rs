@@ -3,7 +3,6 @@ use stdweb::UnsafeTypedArray;
 use crate::{
     constants::{ReturnCode, Terrain},
     local::RoomName,
-    macros::*,
     objects::RoomTerrain,
     traits::TryInto,
 };

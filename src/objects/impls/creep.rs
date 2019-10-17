@@ -7,7 +7,6 @@ use super::room::Step;
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
     local::{Position, RoomName},
-    macros::*,
     memory::MemoryReference,
     objects::{
         Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, Source,

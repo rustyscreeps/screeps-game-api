@@ -17,7 +17,6 @@ use crate::{
         ReturnCode, StructureType, Terrain,
     },
     local::{Position, RoomName},
-    macros::*,
     memory::MemoryReference,
     objects::{
         ConstructionSite, Creep, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource, Room,

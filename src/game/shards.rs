@@ -1,7 +1,6 @@
 //! See [http://docs.screeps.com/api/#Game.shard]
 //!
 //! [http://docs.screeps.com/api/#Game.shard]: http://docs.screeps.com/api/#Game.shard
-use crate::macros::*;
 
 /// See [http://docs.screeps.com/api/#Game.shard]
 ///

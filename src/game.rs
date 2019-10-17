@@ -6,7 +6,6 @@
 //! [`Game`]: http://docs.screeps.com/api/#Game
 use crate::{
     local::{ObjectId, RawObjectId},
-    macros::*,
     objects::{HasId, RoomObject, SizedRoomObject},
     traits::TryInto,
     ConversionError,
@@ -45,7 +44,7 @@ pub mod flags {
 pub mod resources {
     use std::collections::HashMap;
 
-    use crate::{constants::IntershardResourceType, macros::*};
+    use crate::constants::IntershardResourceType;
 
     /// Retrieve the full `HashMap<IntershardResourceType, u32>`.
     pub fn hashmap() -> HashMap<IntershardResourceType, u32> {
@@ -83,7 +82,7 @@ pub mod resources {
 pub mod rooms {
     use std::collections::HashMap;
 
-    use crate::{local::RoomName, macros::*, objects::Room};
+    use crate::{local::RoomName, objects::Room};
 
     /// Retrieve the full `HashMap<RoomName, Room>`.
     pub fn hashmap() -> HashMap<RoomName, Room> {

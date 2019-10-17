@@ -9,7 +9,6 @@ use stdweb::{Reference, UnsafeTypedArray};
 
 use super::errors::RawObjectIdParseError;
 use crate::{
-    macros::*,
     traits::{TryFrom, TryInto},
     ConversionError,
 };
