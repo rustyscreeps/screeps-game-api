@@ -1,4 +1,4 @@
-use crate::{constants::ReturnCode, macros::*, objects::StructureRampart};
+use crate::{constants::ReturnCode, objects::StructureRampart};
 
 simple_accessors! {
     impl StructureRampart {

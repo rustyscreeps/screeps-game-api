@@ -15,7 +15,6 @@
 //! > container.
 //!
 //! [`InterShardMemory`]: https://docs.screeps.com/api/#InterShardMemory
-use crate::macros::*;
 
 /// Returns the string contents of the current shard's data.
 pub fn get_local() -> String {

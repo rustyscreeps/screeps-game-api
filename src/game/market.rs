@@ -13,7 +13,6 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::{
     constants::{ResourceType, ReturnCode},
     local::RoomName,
-    macros::*,
     traits::TryInto,
     Room,
 };

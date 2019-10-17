@@ -1,6 +1,5 @@
 //! [`JsVec`]
 use crate::{
-    macros::*,
     traits::{FromExpectedType, IntoExpectedType, TryFrom, TryInto},
     ConversionError,
 };

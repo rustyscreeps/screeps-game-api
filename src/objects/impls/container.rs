@@ -1,4 +1,4 @@
-use crate::{macros::*, objects::StructureContainer};
+use crate::objects::StructureContainer;
 
 simple_accessors! {
     impl StructureContainer {

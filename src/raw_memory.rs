@@ -4,8 +4,6 @@
 
 use serde::Deserialize;
 
-use crate::macros::*;
-
 #[derive(Deserialize, Debug)]
 pub struct ForeignSegment {
     username: String,

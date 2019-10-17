@@ -11,7 +11,6 @@ use stdweb::Value;
 use crate::{
     constants::{Direction, ExitDirection, ReturnCode},
     local::RoomName,
-    macros::*,
     objects::RoomTerrain,
     traits::{TryFrom, TryInto},
 };

@@ -3,7 +3,6 @@ use stdweb::Value;
 
 use crate::{
     local::{Position, RoomName},
-    macros::*,
     objects::StructurePortal,
     traits::TryInto,
 };

@@ -1,4 +1,4 @@
-use crate::{constants::ReturnCode, local::RoomName, macros::*, objects::StructureObserver};
+use crate::{constants::ReturnCode, local::RoomName, objects::StructureObserver};
 
 impl StructureObserver {
     pub fn observe_room(&self, room_name: RoomName) -> ReturnCode {

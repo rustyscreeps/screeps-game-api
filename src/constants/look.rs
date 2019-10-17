@@ -19,7 +19,6 @@ use stdweb::Value;
 
 use super::Terrain;
 use crate::{
-    macros::*,
     objects::{
         ConstructionSite, Creep, Flag, Mineral, Nuke, PowerCreep, Resource, Source, Structure,
         Tombstone,

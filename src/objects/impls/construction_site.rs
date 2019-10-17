@@ -1,6 +1,5 @@
 use crate::{
     constants::{ReturnCode, StructureType},
-    macros::*,
     objects::ConstructionSite,
     traits::TryInto,
 };

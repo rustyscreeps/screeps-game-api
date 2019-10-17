@@ -404,7 +404,6 @@ mod serde {
     };
 
     use super::RoomName;
-    use crate::macros::*;
 
     impl Serialize for RoomName {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

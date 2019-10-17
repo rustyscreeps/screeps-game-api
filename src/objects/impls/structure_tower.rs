@@ -1,6 +1,5 @@
 use crate::{
     constants::ReturnCode,
-    macros::*,
     objects::{Creep, Structure, StructureTower},
 };
 

@@ -1,7 +1,4 @@
-use crate::{
-    macros::*,
-    objects::{Creep, Tombstone},
-};
+use crate::objects::{Creep, Tombstone};
 
 simple_accessors! {
     impl Tombstone {

@@ -20,6 +20,9 @@
 #![recursion_limit = "128"]
 
 #[macro_use]
+extern crate stdweb;
+
+#[macro_use]
 pub mod macros;
 
 pub mod constants;

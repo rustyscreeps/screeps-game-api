@@ -3,7 +3,6 @@ use crate::{
     constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType},
     game,
     local::RoomName,
-    macros::*,
     objects::{FindOptions, Flag, HasPosition, LookResult, Path},
     pathfinder::CostMatrix,
 };

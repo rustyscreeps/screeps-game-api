@@ -1,7 +1,6 @@
 //! See [http://docs.screeps.com/api/#Game.gcl]
 //!
 //! [http://docs.screeps.com/api/#Game.gcl]: http://docs.screeps.com/api/#Game.gcl
-use crate::macros::*;
 
 /// See [http://docs.screeps.com/api/#Game.gcl]
 ///

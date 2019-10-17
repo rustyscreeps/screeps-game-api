@@ -14,7 +14,6 @@ use super::{
     find,
     numbers::{TERRAIN_MASK_SWAMP, TERRAIN_MASK_WALL},
 };
-use crate::macros::*;
 
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
