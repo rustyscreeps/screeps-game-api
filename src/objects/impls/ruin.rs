@@ -11,6 +11,9 @@ simple_accessors! {
 }
 
 impl Ruin {
+    /// Ruin.structure doesn't return complete object data, so instead of implementing that
+    /// directly, this function exposes relevant properties of the ruin's structure directly in a
+    /// tuple of the type, id, and owner
     pub fn structure_info(&self) -> (StructureType, RawObjectId, Option<String>) {
         (
             js_unwrap!(__structure_type_str_to_num(@{self.as_ref()}.structure.structureType)),
