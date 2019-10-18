@@ -1,4 +1,4 @@
-use crate::{macros::*, objects::StructureInvaderCore};
+use crate::objects::StructureInvaderCore;
 
 simple_accessors! {
     impl StructureInvaderCore {

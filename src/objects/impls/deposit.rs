@@ -1,4 +1,4 @@
-use crate::{constants::ResourceType, macros::*, objects::Deposit};
+use crate::{constants::ResourceType, objects::Deposit};
 
 simple_accessors! {
     impl Deposit {

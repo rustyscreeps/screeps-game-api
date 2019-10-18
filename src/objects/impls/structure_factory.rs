@@ -1,4 +1,4 @@
-use crate::{constants::ResourceType, constants::ReturnCode, macros::*, objects::StructureFactory};
+use crate::{constants::ResourceType, constants::ReturnCode, objects::StructureFactory};
 
 impl StructureFactory {
     pub fn produce(&self, ty: ResourceType) -> ReturnCode {
