@@ -6,6 +6,8 @@ Unreleased
 - Add new resource types for factory commodities
 - Add `Deposit` objects and related find/look constants
 - Add `Ruin` objects and related find/look constants
+- Change `HasCooldown` trait to apply to objects with `RoomObjectProperties` instead of
+  `StructureProperties` due to addition of `Deposit` objects (breaking)
 - Change `Creep.harvest()` to work with any harvestable object type; `Deposit`, `Mineral`, and
   `Source`
 - Add `ObjectId<T>`, a typed binary object ID, and `RawObjectId`, an untyped binary object ID
