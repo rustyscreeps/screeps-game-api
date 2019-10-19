@@ -41,6 +41,8 @@ reference_wrappers! {
     pub struct ConstructionSite(...);
     #[reference(instance_of = "Creep")]
     pub struct Creep(...);
+    #[reference(instance_of = "Deposit")]
+    pub struct Deposit(...);
     #[reference(instance_of = "Flag")]
     pub struct Flag(...);
     #[reference(instance_of = "Mineral")]
@@ -57,6 +59,8 @@ reference_wrappers! {
     pub struct RoomObject(...);
     #[reference(instance_of = "Room.Terrain")]
     pub struct RoomTerrain(...);
+    #[reference(instance_of = "Ruin")]
+    pub struct Ruin(...);
     #[reference(instance_of = "Source")]
     pub struct Source(...);
     #[reference(instance_of = "StructureContainer")]
@@ -67,6 +71,10 @@ reference_wrappers! {
     pub struct StructureExtension(...);
     #[reference(instance_of = "StructureExtractor")]
     pub struct StructureExtractor(...);
+    #[reference(instance_of = "StructureFactory")]
+    pub struct StructureFactory(...);
+    #[reference(instance_of = "StructureInvaderCore")]
+    pub struct StructureInvaderCore(...);
     #[reference(instance_of = "StructureKeeperLair")]
     pub struct StructureKeeperLair(...);
     #[reference(instance_of = "StructureLab")]
@@ -166,9 +174,11 @@ pub unsafe trait HasId: RoomObjectProperties {
 impl_has_id! {
     ConstructionSite,
     Creep,
+    Deposit,
     Mineral,
     Nuke,
     Resource,
+    Ruin,
     Source,
     OwnedStructure,
     Structure,
@@ -176,6 +186,8 @@ impl_has_id! {
     StructureController,
     StructureExtension,
     StructureExtractor,
+    StructureFactory,
+    StructureInvaderCore,
     StructureKeeperLair,
     StructureLab,
     StructureLink,
@@ -371,7 +383,7 @@ pub unsafe trait HasEnergyForSpawn: CanStoreEnergy {}
 ///
 /// The reference returned from `AsRef<Reference>::as_ref` must be have a
 /// `cooldown` properties.
-pub unsafe trait HasCooldown: StructureProperties {
+pub unsafe trait HasCooldown: RoomObjectProperties {
     fn cooldown(&self) -> u32 {
         js_unwrap! { @{self.as_ref()}.cooldown }
     }
@@ -408,6 +420,15 @@ pub unsafe trait Transferable: RoomObjectProperties {}
 pub unsafe trait Withdrawable: RoomObjectProperties {}
 
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.harvest`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.harvest`.
+pub unsafe trait Harvestable: RoomObjectProperties {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
 /// target of `Creep.attack`.
 ///
 /// # Contracts
@@ -442,6 +463,7 @@ pub unsafe trait Attackable: RoomObjectProperties {
 unsafe impl Transferable for StructureExtension {}
 unsafe impl Transferable for Creep {}
 unsafe impl Transferable for StructureContainer {}
+unsafe impl Transferable for StructureFactory {}
 unsafe impl Transferable for StructureLab {}
 unsafe impl Transferable for StructureLink {}
 unsafe impl Transferable for StructureNuker {}
@@ -454,8 +476,10 @@ unsafe impl Transferable for StructureTerminal {}
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs
 
+unsafe impl Withdrawable for Ruin {}
 unsafe impl Withdrawable for StructureExtension {}
 unsafe impl Withdrawable for StructureContainer {}
+unsafe impl Withdrawable for StructureFactory {}
 unsafe impl Withdrawable for StructureLab {}
 unsafe impl Withdrawable for StructureLink {}
 unsafe impl Withdrawable for StructureSpawn {}
@@ -465,6 +489,10 @@ unsafe impl Withdrawable for StructurePowerSpawn {}
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
 
+unsafe impl Harvestable for Deposit {}
+unsafe impl Harvestable for Mineral {}
+unsafe impl Harvestable for Source {}
+
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs
 
@@ -473,6 +501,8 @@ unsafe impl Attackable for OwnedStructure {}
 unsafe impl Attackable for StructureContainer {}
 unsafe impl Attackable for StructureExtension {}
 unsafe impl Attackable for StructureExtractor {}
+unsafe impl Attackable for StructureFactory {}
+unsafe impl Attackable for StructureInvaderCore {}
 unsafe impl Attackable for StructureKeeperLair {}
 unsafe impl Attackable for StructureLab {}
 unsafe impl Attackable for StructureLink {}
@@ -490,17 +520,21 @@ unsafe impl Attackable for StructureWall {}
 
 unsafe impl RoomObjectProperties for ConstructionSite {}
 unsafe impl RoomObjectProperties for Creep {}
+unsafe impl RoomObjectProperties for Deposit {}
 unsafe impl RoomObjectProperties for Flag {}
 unsafe impl RoomObjectProperties for Mineral {}
 unsafe impl RoomObjectProperties for Nuke {}
 unsafe impl RoomObjectProperties for OwnedStructure {}
 unsafe impl RoomObjectProperties for Resource {}
 unsafe impl RoomObjectProperties for RoomObject {}
+unsafe impl RoomObjectProperties for Ruin {}
 unsafe impl RoomObjectProperties for Source {}
 unsafe impl RoomObjectProperties for StructureContainer {}
 unsafe impl RoomObjectProperties for StructureController {}
 unsafe impl RoomObjectProperties for StructureExtension {}
 unsafe impl RoomObjectProperties for StructureExtractor {}
+unsafe impl RoomObjectProperties for StructureFactory {}
+unsafe impl RoomObjectProperties for StructureInvaderCore {}
 unsafe impl RoomObjectProperties for StructureKeeperLair {}
 unsafe impl RoomObjectProperties for StructureLab {}
 unsafe impl RoomObjectProperties for StructureLink {}
@@ -527,6 +561,8 @@ impl_structure_properties! {
     StructureController,
     StructureExtension,
     StructureExtractor,
+    StructureFactory,
+    StructureInvaderCore,
     StructureKeeperLair,
     StructureLab,
     StructureLink,
@@ -548,6 +584,8 @@ unsafe impl OwnedStructureProperties for OwnedStructure {}
 unsafe impl OwnedStructureProperties for StructureController {}
 unsafe impl OwnedStructureProperties for StructureExtension {}
 unsafe impl OwnedStructureProperties for StructureExtractor {}
+unsafe impl OwnedStructureProperties for StructureFactory {}
+unsafe impl OwnedStructureProperties for StructureInvaderCore {}
 unsafe impl OwnedStructureProperties for StructureKeeperLair {}
 unsafe impl OwnedStructureProperties for StructureLab {}
 unsafe impl OwnedStructureProperties for StructureLink {}
@@ -564,7 +602,13 @@ unsafe impl OwnedStructureProperties for StructureTower {}
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs
 
+unsafe impl HasStore for Ruin {
+    fn store_capacity(&self) -> u32 {
+        0 // no storeCapacity property
+    }
+}
 unsafe impl HasStore for StructureContainer {}
+unsafe impl HasStore for StructureFactory {}
 unsafe impl HasStore for StructureStorage {}
 unsafe impl HasStore for StructureTerminal {}
 unsafe impl HasStore for Tombstone {
@@ -593,7 +637,9 @@ unsafe impl HasEnergyForSpawn for StructureSpawn {}
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs
 
+unsafe impl HasCooldown for Deposit {}
 unsafe impl HasCooldown for StructureExtractor {}
+unsafe impl HasCooldown for StructureFactory {}
 unsafe impl HasCooldown for StructureLab {}
 unsafe impl HasCooldown for StructureLink {}
 unsafe impl HasCooldown for StructureNuker {}
@@ -602,6 +648,8 @@ unsafe impl HasCooldown for StructureTerminal {}
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs
 
+unsafe impl CanDecay for Deposit {}
+unsafe impl CanDecay for Ruin {}
 unsafe impl CanDecay for StructureContainer {}
 unsafe impl CanDecay for StructurePowerBank {}
 unsafe impl CanDecay for StructurePortal {}

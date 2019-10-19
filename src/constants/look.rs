@@ -20,8 +20,8 @@ use stdweb::Value;
 use super::Terrain;
 use crate::{
     objects::{
-        ConstructionSite, Creep, Flag, Mineral, Nuke, PowerCreep, Resource, Source, Structure,
-        Tombstone,
+        ConstructionSite, Creep, Deposit, Flag, Mineral, Nuke, PowerCreep, Resource, Ruin, Source,
+        Structure, Tombstone,
     },
     traits::{IntoExpectedType, TryInto},
 };
@@ -52,6 +52,7 @@ pub enum Look {
     Sources = 3,
     #[display("mineral")]
     Minerals = 4,
+    // LOOK_DEPOSITS is defined here in constants.js but is implemented below to prevent renumbering
     #[display("structure")]
     Structures = 5,
     #[display("flag")]
@@ -66,6 +67,10 @@ pub enum Look {
     Tombstones = 10,
     #[display("powerCreep")]
     PowerCreeps = 11,
+    #[display("deposit")]
+    Deposits = 12,
+    #[display("ruin")]
+    Ruins = 13,
 }
 
 js_deserializable!(Look);
@@ -95,6 +100,7 @@ typesafe_look_constants! {
     pub struct RESOURCES = (Look::Resources, Resource, IntoExpectedType::into_expected_type);
     pub struct SOURCES = (Look::Sources, Source, IntoExpectedType::into_expected_type);
     pub struct MINERALS = (Look::Minerals, Mineral, IntoExpectedType::into_expected_type);
+    pub struct DEPOSITS = (Look::Deposits, Deposit, IntoExpectedType::into_expected_type);
     pub struct STRUCTURES = (Look::Structures, Structure, IntoExpectedType::into_expected_type);
     pub struct FLAGS = (Look::Flags, Flag, IntoExpectedType::into_expected_type);
     pub struct CONSTRUCTION_SITES = (Look::ConstructionSites, ConstructionSite,
@@ -103,4 +109,5 @@ typesafe_look_constants! {
     pub struct TERRAIN = (Look::Terrain, Terrain, TryInto::try_into);
     pub struct TOMBSTONES = (Look::Tombstones, Tombstone, IntoExpectedType::into_expected_type);
     pub struct POWER_CREEPS = (Look::PowerCreeps, PowerCreep, IntoExpectedType::into_expected_type);
+    pub struct RUINS = (Look::Ruins, Ruin, IntoExpectedType::into_expected_type);
 }

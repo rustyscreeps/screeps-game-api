@@ -9,7 +9,7 @@ use crate::{
     local::{Position, RoomName},
     memory::MemoryReference,
     objects::{
-        Attackable, ConstructionSite, Creep, FindOptions, HasPosition, Resource, Source,
+        Attackable, ConstructionSite, Creep, FindOptions, Harvestable, HasPosition, Resource,
         StructureController, StructureProperties, Transferable, Withdrawable,
     },
     pathfinder::{CostMatrix, SearchResults},
@@ -306,6 +306,7 @@ creep_simple_generic_action! {
     impl Creep {
         pub fn attack(Attackable) = attack();
         pub fn dismantle(StructureProperties) = dismantle();
+        pub fn harvest(Harvestable) = harvest();
         pub fn ranged_attack(Attackable) = rangedAttack();
         pub fn repair(StructureProperties) = repair();
     }
@@ -317,7 +318,6 @@ creep_simple_concrete_action! {
         pub fn build(ConstructionSite) = build();
         pub fn claim_controller(StructureController) = claimController();
         pub fn generate_safe_mode(StructureController) = generateSafeMode();
-        pub fn harvest(Source) = harvest();
         pub fn heal(Creep) = heal();
         pub fn pickup(Resource) = pickup();
         pub fn pull(Creep) = pull();

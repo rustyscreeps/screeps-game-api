@@ -41,6 +41,8 @@ pub enum StructureType {
     Terminal = 16,
     Container = 17,
     Nuker = 18,
+    Factory = 19,
+    InvaderCore = 20,
 }
 
 impl StructureType {
@@ -65,7 +67,8 @@ impl StructureType {
             Terminal => 100_000,
             Container => 5_000,
             Nuker => 100_000,
-            KeeperLair | PowerBank | Portal | Controller => return None,
+            Factory => 100_000,
+            KeeperLair | PowerBank | Portal | Controller | InvaderCore => return None,
         };
         Some(cost)
     }
@@ -92,6 +95,8 @@ impl StructureType {
             Terminal => TOWER_HITS,
             Container => CONTAINER_HITS,
             Nuker => NUKER_HITS,
+            Factory => FACTORY_HITS,
+            InvaderCore => INVADER_CORE_HITS,
             KeeperLair | Portal | Controller => return None,
         };
         Some(hits)
@@ -184,6 +189,9 @@ pub enum ResourceType {
     /// `"G"`
     #[display("G")]
     Ghodium = 10,
+    // constants.js has these base commodities ordered here, but they're assigned
+    // higher integer representations and implemented below to avoid renumbering:
+    // RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST
     /// `"OH"`
     #[display("OH")]
     Hydroxide = 11,
@@ -286,6 +294,127 @@ pub enum ResourceType {
     /// `"ops"`
     #[display("ops")]
     Ops = 44,
+    // these 4 base commodities are ordered earlier in constants.js
+    /// `"silicon"`
+    #[display("silicon")]
+    Silicon = 45,
+    /// `"metal"`
+    #[display("metal")]
+    Metal = 46,
+    /// `"biomass"`
+    #[display("biomass")]
+    Biomass = 47,
+    /// `"mist"`
+    #[display("mist")]
+    Mist = 48,
+    /// `"utrium_bar"`
+    #[display("utrium_bar")]
+    UtriumBar = 49,
+    /// `"lemergium_bar"`
+    #[display("lemergium_bar")]
+    LemergiumBar = 50,
+    /// `"zynthium_bar"`
+    #[display("zynthium_bar")]
+    ZynthiumBar = 51,
+    /// `"keanium_bar"`
+    #[display("keanium_bar")]
+    KeaniumBar = 52,
+    /// `"ghodium_melt"`
+    #[display("ghodium_melt")]
+    GhodiumMelt = 53,
+    /// `"oxidant"`
+    #[display("oxidant")]
+    Oxidant = 54,
+    /// `"reductant"`
+    #[display("reductant")]
+    Reductant = 55,
+    /// `"purifier"`
+    #[display("purifier")]
+    Purifier = 56,
+    /// `"battery"`
+    #[display("battery")]
+    Battery = 57,
+    /// `"composite"`
+    #[display("composite")]
+    Composite = 58,
+    /// `"crystal"`
+    #[display("crystal")]
+    Crystal = 59,
+    /// `"liquid"`
+    #[display("liquid")]
+    Liquid = 60,
+    /// `"wire"`
+    #[display("wire")]
+    Wire = 61,
+    /// `"switch"`
+    #[display("switch")]
+    Switch = 62,
+    /// `"transistor"`
+    #[display("transistor")]
+    Transistor = 63,
+    /// `"microchip"`
+    #[display("microchip")]
+    Microchip = 64,
+    /// `"circuit"`
+    #[display("circuit")]
+    Circuit = 65,
+    /// `"device"`
+    #[display("device")]
+    Device = 66,
+    /// `"cell"`
+    #[display("cell")]
+    Cell = 67,
+    /// `"phlegm"`
+    #[display("phlegm")]
+    Phlegm = 68,
+    /// `"tissue"`
+    #[display("tissue")]
+    Tissue = 69,
+    /// `"muscle"`
+    #[display("muscle")]
+    Muscle = 70,
+    /// `"organoid"`
+    #[display("organoid")]
+    Organoid = 71,
+    /// `"organism"`
+    #[display("organism")]
+    Organism = 72,
+    /// `"alloy"`
+    #[display("alloy")]
+    Alloy = 73,
+    /// `"tube"`
+    #[display("tube")]
+    Tube = 74,
+    /// `"fixtures"`
+    #[display("fixtures")]
+    Fixtures = 75,
+    /// `"frame"`
+    #[display("frame")]
+    Frame = 76,
+    /// `"hydraulics"`
+    #[display("hydraulics")]
+    Hydraulics = 77,
+    /// `"machine"`
+    #[display("machine")]
+    Machine = 78,
+    /// `"condensate"`
+    #[display("condensate")]
+    Condensate = 79,
+    /// `"concentrate"`
+    #[display("concentrate")]
+    Concentrate = 80,
+    /// `"extract"`
+    #[display("extract")]
+    Extract = 81,
+    /// `"spirit"`
+    #[display("spirit")]
+    Spirit = 82,
+    /// `"emanation"`
+    #[display("emanation")]
+    Emanation = 83,
+    /// `"essence"`
+    #[display("essence")]
+    Essence = 84,
 }
 
 impl ResourceType {
@@ -294,8 +423,6 @@ impl ResourceType {
     pub fn reaction_time(self) -> Option<u32> {
         use ResourceType::*;
         let time = match self {
-            Energy | Power | Hydrogen | Oxygen | Utrium | Lemergium | Keanium | Zynthium
-            | Catalyst | Ops => return None,
             // these comments copied directly from JavaScript 'constants.js' file.
             // OH: 20,
             Hydroxide => 20,
@@ -365,6 +492,8 @@ impl ResourceType {
             GhodiumAlkalide => 30,
             // XGHO2: 150,
             CatalyzedGhodiumAlkalide => 150,
+            // non-molecule resources
+            _ => return None,
         };
         Some(time)
     }

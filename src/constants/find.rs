@@ -26,8 +26,8 @@ use stdweb::Reference;
 use crate::{
     local::Position,
     objects::{
-        ConstructionSite, Creep, Flag, Mineral, Nuke, OwnedStructure, PowerCreep, Resource, Source,
-        Structure, StructureSpawn, Tombstone,
+        ConstructionSite, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, PowerCreep,
+        Resource, Ruin, Source, Structure, StructureSpawn, Tombstone,
     },
     traits::FromExpectedType,
 };
@@ -76,6 +76,11 @@ pub enum RoomObject {
     Minerals = 116,
     Nukes = 117,
     Tombstones = 118,
+    PowerCreeps = 119,
+    MyPowerCreeps = 120,
+    HostilePowerCreeps = 121,
+    Deposits = 122,
+    Ruins = 123,
 }
 
 unsafe impl FindConstant for RoomObject {
@@ -157,6 +162,8 @@ typesafe_find_constants! {
     pub struct POWER_CREEPS = (119, PowerCreep);
     pub struct MY_POWER_CREEPS = (120, PowerCreep);
     pub struct HOSTILE_POWER_CREEPS = (121, PowerCreep);
+    pub struct DEPOSITS = (122, Deposit);
+    pub struct RUINS = (123, Ruin);
     pub struct EXIT_TOP = (Exit::Top as i16, Position);
     pub struct EXIT_RIGHT = (Exit::Right as i16, Position);
     pub struct EXIT_BOTTOM = (Exit::Bottom as i16, Position);

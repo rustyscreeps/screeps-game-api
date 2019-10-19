@@ -1,6 +1,15 @@
 Unreleased
 ==========
 
+- Add new `StructureFactory` and `StructureInvaderCore` structure types
+- Add a number of new constants related to factory operation and strongholds
+- Add new resource types for factory commodities
+- Add `Deposit` objects and related find/look constants
+- Add `Ruin` objects and related find/look constants
+- Change `HasCooldown` trait to apply to objects with `RoomObjectProperties` instead of
+  `StructureProperties` due to addition of `Deposit` objects (breaking)
+- Change `Creep.harvest()` to work with any harvestable object type; `Deposit`, `Mineral`, and
+  `Source`
 - Add `ObjectId<T>`, a typed binary object ID, and `RawObjectId`, an untyped binary object ID
   - untyped ids can be converted to typed freely - the type is purely for type inference
   - `RoomObject::id` now returns `ObjectId<Self>`, and an `untyped_id` function is added for
