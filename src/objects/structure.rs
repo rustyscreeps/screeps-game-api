@@ -3,7 +3,7 @@ use stdweb::{InstanceOf, Reference, ReferenceType, Value};
 use super::*;
 use crate::{
     constants::StructureType,
-    objects::{Attackable, CanDecay, CanStoreEnergy, HasCooldown, HasEnergyForSpawn, HasStore},
+    objects::{Attackable, CanDecay, HasCooldown, HasEnergyForSpawn, HasStore},
     traits::FromExpectedType,
     ConversionError,
 };
@@ -192,16 +192,6 @@ impl Structure {
         )
     }
 
-    pub fn as_can_store_energy(&self) -> Option<&dyn CanStoreEnergy> {
-        match_some_structure_variants!(
-            self,
-            {
-                Extension, Lab, Link, Nuker, PowerSpawn, Spawn, Tower
-            },
-            v => v
-        )
-    }
-
     pub fn as_has_cooldown(&self) -> Option<&dyn HasCooldown> {
         match_some_structure_variants!(
             self,
@@ -226,7 +216,7 @@ impl Structure {
         match_some_structure_variants!(
             self,
             {
-                Container, Factory, Storage, Terminal
+                Container, Extension, Factory, Lab, Link, Nuker, PowerSpawn, Spawn, Storage, Terminal, Tower
             },
             v => v
         )

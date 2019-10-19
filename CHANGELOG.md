@@ -1,6 +1,14 @@
 Unreleased
 ==========
 
+- Remove `CanStoreEnergy` trait, moving all structures and creeps to `HasStore`, migrating from
+  deprecated Screeps API endpoints to new `.store` API (breaking)
+    - Remove `Creep::carry_total()`, `Creep::carry_types()`, `Creep::carry_of()`
+    - Remove `StructureLab::mineral_amount()`, `StructureLab::mineral_capacity()`
+    - Remove `StructureNuker::ghodium()`, `StructureNuker::ghodium_capacity()`
+    - Change `HasStore::store_capacity()` to use new API and now takes `Option<ResourceType>`
+    - Add `HasStore::store_free_capacity()` and `HasStore::store_used_capacity()`, which both
+    take `Option<ResourceType>`
 - Add new `StructureFactory` and `StructureInvaderCore` structure types
 - Add a number of new constants related to factory operation and strongholds
 - Add new resource types for factory commodities
