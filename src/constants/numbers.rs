@@ -291,6 +291,19 @@ pub const POWER_CREEP_LIFE_TIME: u32 = 5000;
 
 pub const INVADER_CORE_HITS: u32 = 100_000;
 pub const INVADER_CORE_EXPAND_TIME: u32 = 2000;
+
+#[inline]
+pub fn invader_core_expand_time(core_level: u32) -> Option<u32> {
+    match core_level {
+        1 => Some(4000),
+        2 => Some(3500),
+        3 => Some(3000),
+        4 => Some(2500),
+        5 => Some(2000),
+        _ => None,
+    }
+}
+
 pub const INVADER_CORE_CONTROLLER_POWER: u32 = 2;
 pub const INVADER_CORE_CONTROLLER_DOWNGRADE: u32 = 5000;
 
