@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+### Notably breaking:
+
 - Remove `CanStoreEnergy` trait, moving all structures and creeps to `HasStore`, migrating from
   deprecated Screeps API endpoints to new `.store` API (breaking)
     - Remove `Creep::carry_total()`, `Creep::carry_types()`, `Creep::carry_of()`
@@ -9,13 +11,18 @@ Unreleased
     - Change `HasStore::store_capacity()` to use new API and now takes `Option<ResourceType>`
     - Add `HasStore::store_free_capacity()` and `HasStore::store_used_capacity()`, which both
     take `Option<ResourceType>`
+- Change return type of `game::rooms::keys` from `Vec<String>` to `Vec<RoomName>`
+- Change `HasCooldown` trait to apply to objects with `RoomObjectProperties` instead of
+  `StructureProperties` due to addition of `Deposit` objects
+- Fix `Position::in_range_to` to be inclusive, to match documentation and JS behavior
+
+### Additions:
+
 - Add new `StructureFactory` and `StructureInvaderCore` structure types
 - Add a number of new constants related to factory operation and strongholds
 - Add new resource types for factory commodities
 - Add `Deposit` objects and related find/look constants
 - Add `Ruin` objects and related find/look constants
-- Change `HasCooldown` trait to apply to objects with `RoomObjectProperties` instead of
-  `StructureProperties` due to addition of `Deposit` objects (breaking)
 - Change `Creep.harvest()` to work with any harvestable object type; `Deposit`, `Mineral`, and
   `Source`
 - Add `ObjectId<T>`, a typed binary object ID, and `RawObjectId`, an untyped binary object ID
@@ -26,20 +33,24 @@ Unreleased
     taking either id type
   - both types are 12 bytes large, and can represent all hex-formatted object IDs from the official
     server, the default private servers backend and the private server with ags131's mongodb mod
-- Rename incorrectly spelled `Density::probabilitiy` to `probability`.
-- Rename incorrectly spelled `Nuke::lauch_room_name` to `launch_room_name`.
-- Rename constants with typo `SPAWN_RENEW_RATION` and  `LINK_LOSS_RATION` to `SPAWN_RENEW_RATIO`
-  and `LINK_LOSS_RATIO` respectively
-- Change return type of `game::rooms::keys` from `Vec<String>` to `Vec<RoomName>`
-- Fix typos in JavaScript code for `game::market::get_order` and `Nuke::launch_room_name`
-- Fix `Position::in_range_to` to be inclusive, to match documentation and JS behavior
-- Fix `Creep::body` crashing if body contained non-boosted parts
-- Fix JS syntax error in `Creep::move_to_with_options`
-- Remove usage of internal `stdweb` macros, which break with stdweb version changes
 - Add support for accessing intershard resource amounts, which currently only includes subscription
   tokens, under `game::resources`.
 - Implement `PartialOrd` and `Ord` for `Position`, `RoomName`, `RawObjectId` and `ObjectId`. See
   documentation for ordering specifications.
+
+### Bugfixes:
+
+- Fix typos in JavaScript code for `game::market::get_order` and `Nuke::launch_room_name`
+- Fix `Creep::body` crashing if body contained non-boosted parts
+- Fix JS syntax error in `Creep::move_to_with_options`
+- Remove usage of internal `stdweb` macros, which break with stdweb version changes
+- Rename incorrectly spelled `Density::probabilitiy` to `probability`.
+- Rename incorrectly spelled `Nuke::lauch_room_name` to `launch_room_name`.
+- Rename constants with typo `SPAWN_RENEW_RATION` and  `LINK_LOSS_RATION` to `SPAWN_RENEW_RATIO`
+  and `LINK_LOSS_RATIO` respectively
+
+### Misc:
+
 - Add a number of modules grouping constants together, such as `constants::creep` for creep related
   constants or `constants::minerals` for mineral related constants.
 - Remove remaining usages of internal `get_from_js!` macro, as it was minimally useful
