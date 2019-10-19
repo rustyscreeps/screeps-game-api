@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+
+0.7.0 (2019-10-19)
+==================
+
 ### Notably breaking:
 
 - Remove `CanStoreEnergy` trait, moving all structures and creeps to `HasStore`, migrating from
