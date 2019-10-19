@@ -32,6 +32,10 @@ Unreleased
   and `LINK_LOSS_RATIO` respectively
 - Change return type of `game::rooms::keys` from `Vec<String>` to `Vec<RoomName>`
 - Fix typos in JavaScript code for `game::market::get_order` and `Nuke::launch_room_name`
+- Fix `Position::in_range_to` to be inclusive, to match documentation and JS behavior
+- Fix `Creep::body` crashing if body contained non-boosted parts
+- Fix JS syntax error in `Creep::move_to_with_options`
+- Remove usage of internal `stdweb` macros, which break with stdweb version changes
 - Add support for accessing intershard resource amounts, which currently only includes subscription
   tokens, under `game::resources`.
 - Implement `PartialOrd` and `Ord` for `Position`, `RoomName`, `RawObjectId` and `ObjectId`. See
