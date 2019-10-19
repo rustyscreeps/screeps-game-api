@@ -66,7 +66,7 @@ pub type RoomPosition = Position;
 /// This module contains all base functionality traits, and no structures.
 pub mod prelude {
     pub use crate::objects::{
-        CanDecay, CanStoreEnergy, HasCooldown, HasId, HasPosition, HasStore,
-        OwnedStructureProperties, RoomObjectProperties, StructureProperties,
+        CanDecay, HasCooldown, HasId, HasPosition, HasStore, OwnedStructureProperties,
+        RoomObjectProperties, StructureProperties,
     };
 }

@@ -324,12 +324,10 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
 /// # Contracts
 ///
 /// The JavaScript object referenced by the return of `AsRef<Reference>::as_ref`
-/// must have a `store` property. Additionally, if it does not have a
-/// `storeCapacity` property, `HasStore::store_capacity` must be overridden.
+/// must have a `store` property.
 ///
-/// The `store` property must be a dict from string resource types to integers.
-///
-/// If present, the `storeCapacity` property must be an integer.
+/// The `store` property must be a dict from string resource types to integers,
+/// and have the `getCapacity`, `getFreeCapacity`, and `getUsedCapacity` functions
 pub unsafe trait HasStore: RoomObjectProperties {
     fn store_total(&self) -> u32 {
         js_unwrap!(_.sum(@{self.as_ref()}.store))
@@ -347,24 +345,31 @@ pub unsafe trait HasStore: RoomObjectProperties {
         js_unwrap!(@{self.as_ref()}.store[RESOURCE_ENERGY])
     }
 
-    fn store_capacity(&self) -> u32 {
-        js_unwrap!(@{self.as_ref()}.storeCapacity)
-    }
-}
-
-/// Trait for objects which can only store energy.
-///
-/// # Contract
-///
-/// The reference returned from `AsRef<Reference>::as_ref` must be have an
-/// `energy` and an `energyCapacity` properties.
-pub unsafe trait CanStoreEnergy: StructureProperties {
-    fn energy(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.energy }
+    fn store_capacity(&self, resource: Option<ResourceType>) -> u32 {
+        match resource {
+            Some(ty) => {
+                js_unwrap!(@{self.as_ref()}.store.getCapacity(__resource_type_num_to_str(@{ty as u32})) || 0)
+            }
+            None => js_unwrap!(@{self.as_ref()}.store.getCapacity() || 0),
+        }
     }
 
-    fn energy_capacity(&self) -> u32 {
-        js_unwrap! { @{self.as_ref()}.energyCapacity }
+    fn store_free_capacity(&self, resource: Option<ResourceType>) -> u32 {
+        match resource {
+            Some(ty) => {
+                js_unwrap!(@{self.as_ref()}.store.getFreeCapacity(__resource_type_num_to_str(@{ty as u32})) || 0)
+            }
+            None => js_unwrap!(@{self.as_ref()}.store.getFreeCapacity() || 0),
+        }
+    }
+
+    fn store_used_capacity(&self, resource: Option<ResourceType>) -> u32 {
+        match resource {
+            Some(ty) => {
+                js_unwrap!(@{self.as_ref()}.store.getUsedCapacity(__resource_type_num_to_str(@{ty as u32})) || 0)
+            }
+            None => js_unwrap!(@{self.as_ref()}.store.getUsedCapacity() || 0),
+        }
     }
 }
 
@@ -375,7 +380,7 @@ pub unsafe trait CanStoreEnergy: StructureProperties {
 ///
 /// The reference returned from `AsRef<Reference>::as_ref` must be able to be
 /// used by a spawner to create a new creep.
-pub unsafe trait HasEnergyForSpawn: CanStoreEnergy {}
+pub unsafe trait HasEnergyForSpawn: HasStore {}
 
 /// Trait for objects which have to cooldown.
 ///
@@ -602,31 +607,20 @@ unsafe impl OwnedStructureProperties for StructureTower {}
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs
 
-unsafe impl HasStore for Ruin {
-    fn store_capacity(&self) -> u32 {
-        0 // no storeCapacity property
-    }
-}
+unsafe impl HasStore for Creep {}
+unsafe impl HasStore for Ruin {}
 unsafe impl HasStore for StructureContainer {}
+unsafe impl HasStore for StructureExtension {}
 unsafe impl HasStore for StructureFactory {}
+unsafe impl HasStore for StructureLab {}
+unsafe impl HasStore for StructureLink {}
+unsafe impl HasStore for StructureNuker {}
+unsafe impl HasStore for StructurePowerSpawn {}
+unsafe impl HasStore for StructureSpawn {}
 unsafe impl HasStore for StructureStorage {}
 unsafe impl HasStore for StructureTerminal {}
-unsafe impl HasStore for Tombstone {
-    fn store_capacity(&self) -> u32 {
-        0 // no storeCapacity property
-    }
-}
-
-// NOTE: keep impls for Structure* in sync with accessor methods in
-// src/objects/structure.rs
-
-unsafe impl CanStoreEnergy for StructureExtension {}
-unsafe impl CanStoreEnergy for StructureLab {}
-unsafe impl CanStoreEnergy for StructureLink {}
-unsafe impl CanStoreEnergy for StructureNuker {}
-unsafe impl CanStoreEnergy for StructurePowerSpawn {}
-unsafe impl CanStoreEnergy for StructureSpawn {}
-unsafe impl CanStoreEnergy for StructureTower {}
+unsafe impl HasStore for StructureTower {}
+unsafe impl HasStore for Tombstone {}
 
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs

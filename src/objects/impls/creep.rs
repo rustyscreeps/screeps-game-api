@@ -46,18 +46,6 @@ impl Creep {
         body_parts
     }
 
-    pub fn carry_total(&self) -> u32 {
-        js_unwrap!(_.sum(@{self.as_ref()}.carry))
-    }
-
-    pub fn carry_types(&self) -> Vec<ResourceType> {
-        js_unwrap!(Object.keys(@{self.as_ref()}.carry).map(__resource_type_str_to_num))
-    }
-
-    pub fn carry_of(&self, ty: ResourceType) -> u32 {
-        js_unwrap!(@{self.as_ref()}.carry[__resource_type_num_to_str(@{ty as u32})] || 0)
-    }
-
     pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
         match amount {
             Some(v) => js_unwrap!(@{self.as_ref()}.drop(__resource_type_num_to_str(@{ty as u32}), @{v})),
@@ -292,7 +280,6 @@ pub struct Bodypart {
 
 simple_accessors! {
     impl Creep {
-        pub fn carry_capacity() -> u32 = carryCapacity;
         pub fn fatigue() -> u32 = fatigue;
         pub fn name() -> String = name;
         pub fn my() -> bool = my;
