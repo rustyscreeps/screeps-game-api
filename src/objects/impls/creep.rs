@@ -53,10 +53,6 @@ impl Creep {
         }
     }
 
-    pub fn energy(&self) -> u32 {
-        js_unwrap!(@{self.as_ref()}.carry[RESOURCE_ENERGY])
-    }
-
     pub fn owner_name(&self) -> String {
         js_unwrap!(@{self.as_ref()}.owner.username)
     }
