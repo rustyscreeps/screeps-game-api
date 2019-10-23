@@ -331,9 +331,9 @@ where
     G: ?Sized + HasPosition,
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {
-    let pos = goal.pos();
+    let pos = goal.pos().unwrap();
     search_real(
-        origin.pos(),
+        origin.pos().unwrap(),
         &js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}}),
         opts,
     )
@@ -350,12 +350,12 @@ where
     let goals: Vec<Object> = goal
         .into_iter()
         .map(|(target, range)| {
-            let pos = target.pos();
+            let pos = target.pos().unwrap();
             js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}})
         })
         .collect();
     let goals_js: Reference = js_unwrap!(@{goals});
-    search_real(origin.pos(), &goals_js, opts)
+    search_real(origin.pos().unwrap(), &goals_js, opts)
 }
 
 scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Reference);

@@ -50,7 +50,7 @@ impl Flag {
     }
 
     pub fn set_position<T: HasPosition>(&self, pos: T) {
-        let pos = pos.pos();
+        let pos = pos.pos().unwrap();
         js! { @(no_return)
             @{self.as_ref()}.setPosition(pos_from_packed(@{pos.packed_repr()}));
         }

@@ -4,6 +4,7 @@ use crate::{constants::ReturnCode, objects::StructureController};
 
 simple_accessors! {
     impl StructureController {
+        pub fn is_power_enabled() -> bool = isPowerEnabled;
         pub fn level() -> u32 = level;
         pub fn progress() -> Option<u32> = progress;
         pub fn progress_total() -> Option<u32> = progressTotal;

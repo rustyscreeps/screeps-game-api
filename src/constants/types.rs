@@ -513,11 +513,22 @@ impl ResourceType {
 
 js_deserializable!(ResourceType);
 
+/// Translates the `POWER_CLASS` constants.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[repr(u8)]
+pub enum PowerCreepClass {
+    /// `"operator"`
+    #[display("operator")]
+    Operator = 1,
+}
+
+js_deserializable!(PowerCreepClass);
+
 /// Translates the `PWR_*` constants.
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]
-#[repr(u8)]
+#[repr(u16)]
 pub enum PowerType {
     GenerateOps = 1,
     OperateSpawn = 2,
@@ -540,3 +551,60 @@ pub enum PowerType {
 }
 
 js_deserializable!(PowerType);
+
+/// Translates effect types which includes both `POWER_*` and `EFFECT_*` constants.
+#[derive(
+    Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
+)]
+#[repr(u16)]
+pub enum NaturalEffectType {
+    Invulnerability = 1001,
+    CollapseTimer = 1002,
+}
+
+js_deserializable!(NaturalEffectType);
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum EffectType {
+    PowerEffect(PowerType),
+    NaturalEffect(NaturalEffectType),
+}
+
+impl<'de> Deserialize<'de> for EffectType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let effect = u16::deserialize(deserializer)?;
+        let effect_type = match effect {
+            1 => EffectType::PowerEffect(PowerType::GenerateOps),
+            2 => EffectType::PowerEffect(PowerType::OperateSpawn),
+            3 => EffectType::PowerEffect(PowerType::OperateTower),
+            4 => EffectType::PowerEffect(PowerType::OperateStorage),
+            5 => EffectType::PowerEffect(PowerType::OperateLab),
+            6 => EffectType::PowerEffect(PowerType::OperateExtension),
+            7 => EffectType::PowerEffect(PowerType::OperateObserve),
+            8 => EffectType::PowerEffect(PowerType::OperateTerminal),
+            9 => EffectType::PowerEffect(PowerType::DisruptSpawn),
+            10 => EffectType::PowerEffect(PowerType::DisruptTower),
+            12 => EffectType::PowerEffect(PowerType::Shield),
+            13 => EffectType::PowerEffect(PowerType::RegenSource),
+            14 => EffectType::PowerEffect(PowerType::RegenMineral),
+            15 => EffectType::PowerEffect(PowerType::DisruptTerminal),
+            16 => EffectType::PowerEffect(PowerType::OperatePower),
+            17 => EffectType::PowerEffect(PowerType::Fortify),
+            18 => EffectType::PowerEffect(PowerType::OperateController),
+            19 => EffectType::PowerEffect(PowerType::OperateFactory),
+            1001 => EffectType::NaturalEffect(NaturalEffectType::Invulnerability),
+            1002 => EffectType::NaturalEffect(NaturalEffectType::CollapseTimer),
+            _ => {
+                return Err(D::Error::invalid_value(
+                    Unexpected::Unsigned(effect as u64),
+                    &"a valid POWER_* or EFFECT_* type integer",
+                ))
+            }
+        };
+
+        Ok(effect_type)
+    }
+}

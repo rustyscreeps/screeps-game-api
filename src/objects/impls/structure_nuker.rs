@@ -5,7 +5,7 @@ use crate::{
 
 impl StructureNuker {
     pub fn launch_nuke<T: HasPosition + ?Sized>(&self, target: &T) -> ReturnCode {
-        let pos = target.pos();
+        let pos = target.pos().unwrap();
         js_unwrap! {@{self.as_ref()}.launchNuke(pos_from_packed(@{pos.packed_repr()}))}
     }
 }

@@ -17,7 +17,7 @@ impl Position {
     {
         // Logic copied from https://github.com/screeps/engine/blob/
         // 020ba168a1fde9a8072f9f1c329d5c0be8b440d7/src/utils.js#L73-L107
-        let (dx, dy) = self - target.pos();
+        let (dx, dy) = self - target.pos().unwrap();
         if dx.abs() > dy.abs() * 2 {
             if dx > 0 {
                 Some(Direction::Right)
@@ -56,7 +56,7 @@ impl Position {
     where
         T: ?Sized + HasPosition,
     {
-        let (dx, dy) = self - target.pos();
+        let (dx, dy) = self - target.pos().unwrap();
         dx.abs().max(dy.abs()) as u32
     }
 
@@ -76,13 +76,13 @@ impl Position {
 
     /// Checks whether this position is the same as the specified position.
     ///
-    /// Note that this is equivalent to `this_pos == target.pos()`.
+    /// Note that this is equivalent to `this_pos == target.pos().unwrap()`.
     #[inline]
     pub fn is_equal_to<T>(self, target: &T) -> bool
     where
         T: ?Sized + HasPosition,
     {
-        self == target.pos()
+        self == target.pos().unwrap()
     }
 
     /// True if this position is in the same room as the target, and the range
@@ -92,7 +92,7 @@ impl Position {
     where
         T: ?Sized + HasPosition,
     {
-        let pos = target.pos();
+        let pos = target.pos().unwrap();
         self.room_name() == pos.room_name()
             && (self.x() as i32 - pos.x() as i32).abs() <= 1
             && (self.y() as i32 - pos.y() as i32).abs() <= 1
