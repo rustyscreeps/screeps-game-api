@@ -536,7 +536,7 @@ pub enum PowerType {
     OperateStorage = 4,
     OperateLab = 5,
     OperateExtension = 6,
-    OperateObserve = 7,
+    OperateObserver = 7,
     OperateTerminal = 8,
     DisruptSpawn = 9,
     DisruptTower = 10,
@@ -552,7 +552,7 @@ pub enum PowerType {
 
 js_deserializable!(PowerType);
 
-/// Translates effect types which includes both `POWER_*` and `EFFECT_*` constants.
+/// Translates effect types which includes both `PWR_*` and `EFFECT_*` constants.
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]
@@ -583,7 +583,7 @@ impl<'de> Deserialize<'de> for EffectType {
             4 => EffectType::PowerEffect(PowerType::OperateStorage),
             5 => EffectType::PowerEffect(PowerType::OperateLab),
             6 => EffectType::PowerEffect(PowerType::OperateExtension),
-            7 => EffectType::PowerEffect(PowerType::OperateObserve),
+            7 => EffectType::PowerEffect(PowerType::OperateObserver),
             8 => EffectType::PowerEffect(PowerType::OperateTerminal),
             9 => EffectType::PowerEffect(PowerType::DisruptSpawn),
             10 => EffectType::PowerEffect(PowerType::DisruptTower),
@@ -600,7 +600,7 @@ impl<'de> Deserialize<'de> for EffectType {
             _ => {
                 return Err(D::Error::invalid_value(
                     Unexpected::Unsigned(effect as u64),
-                    &"a valid POWER_* or EFFECT_* type integer",
+                    &"a valid PWR_* or EFFECT_* type integer",
                 ))
             }
         };
