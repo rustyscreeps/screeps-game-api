@@ -14,7 +14,7 @@ use stdweb::{Reference, Value};
 use crate::{
     constants::{
         Color, Direction, EffectType, ExitDirection, FindConstant, Look, LookConstant,
-        NaturalEffectType, PowerType, ResourceType, ReturnCode, StructureType, Terrain,
+        PowerType, ResourceType, ReturnCode, StructureType, Terrain,
     },
     local::{Position, RoomName},
     memory::MemoryReference,

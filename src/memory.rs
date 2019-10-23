@@ -230,7 +230,7 @@ impl MemoryReference {
     ///     }
     ///     None => {
     ///         info!("no position. saving new one!");
-    ///         let pos = creep.pos();
+    ///         let pos = creep.pos().unwrap();
     ///         mem.set("saved_pos", pos);
     ///         pos
     ///     }
