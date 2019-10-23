@@ -513,7 +513,7 @@ impl ResourceType {
 
 js_deserializable!(ResourceType);
 
-/// Translates the `POWER_CLASS` constants.
+/// Translates the `POWER_CLASS` constants, which are classes of power creeps
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
 #[repr(u8)]
 pub enum PowerCreepClass {
@@ -524,7 +524,7 @@ pub enum PowerCreepClass {
 
 js_deserializable!(PowerCreepClass);
 
-/// Translates the `PWR_*` constants.
+/// Translates the `PWR_*` constants, which are types of powers used by power creeps
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]
@@ -552,7 +552,7 @@ pub enum PowerType {
 
 js_deserializable!(PowerType);
 
-/// Translates effect types which includes both `PWR_*` and `EFFECT_*` constants.
+/// Translates the `EFFECT_*` constants, which are natural effect types
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]
@@ -564,6 +564,7 @@ pub enum NaturalEffectType {
 
 js_deserializable!(NaturalEffectType);
 
+/// Translates effect types which can include both `PWR_*` and `EFFECT_*` constants.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum EffectType {
     PowerEffect(PowerType),

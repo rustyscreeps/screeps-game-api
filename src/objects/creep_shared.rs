@@ -17,6 +17,12 @@ use crate::{
 
 scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(RoomName, Reference) -> Option<Reference>>);
 
+/// Trait for all wrappers over Screeps JavaScript objects that are creeps or power creeps
+///
+/// # Contracts
+///
+/// The reference returned by `AsRef<Reference>::as_ref` must reference a
+/// JavaScript object that an instance of `Creep` or `PowerCreep`
 pub unsafe trait SharedCreepProperties: RoomObjectProperties {
     fn cancel_order(&self, name: &str) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.cancelOrder(@{name}))
