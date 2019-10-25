@@ -230,7 +230,7 @@ impl MemoryReference {
     ///     }
     ///     None => {
     ///         info!("no position. saving new one!");
-    ///         let pos = creep.pos().expect("creep had no id, spawning started this tick");
+    ///         let pos = creep.pos();
     ///         mem.set("saved_pos", pos);
     ///         pos
     ///     }

@@ -55,9 +55,7 @@ impl Room {
     where
         T: ?Sized + HasPosition,
     {
-        let pos = at
-            .pos()
-            .expect("Room.create_construction_site got a target without a position");
+        let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
             pos_from_packed(@{pos.packed_repr()}),
             __structure_type_num_to_str(@{ty as u32})
@@ -73,9 +71,7 @@ impl Room {
     where
         T: ?Sized + HasPosition,
     {
-        let pos = at
-            .pos()
-            .expect("Room.create_named_construction_site got a target without a position");
+        let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
             pos_from_packed(@{pos.packed_repr()}),
             __structure_type_num_to_str(@{ty as u32}),
@@ -93,9 +89,7 @@ impl Room {
     where
         T: ?Sized + HasPosition,
     {
-        let pos = at
-            .pos()
-            .expect("Room.create_named_construction_site got a target without a position");
+        let pos = at.pos();
         Flag::interpret_creation_ret_value(js! {
             return @{self.as_ref()}.createFlag(
                 pos_from_packed(@{pos.packed_repr()}),
@@ -163,9 +157,7 @@ impl Room {
     }
 
     pub fn look_at<T: ?Sized + HasPosition>(&self, target: &T) -> Vec<LookResult> {
-        let pos = target
-            .pos()
-            .expect("Room.look_at got a target without a position");
+        let pos = target.pos();
         js_unwrap!(@{self.as_ref()}.lookAt(pos_from_packed(@{pos.packed_repr()})))
     }
 
@@ -189,12 +181,8 @@ impl Room {
         T: ?Sized + HasPosition,
         F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
-        let from = from_pos
-            .pos()
-            .expect("Room.find_path got source without a position");;
-        let to = to_pos
-            .pos()
-            .expect("Room.find_path got destination without a position");
+        let from = from_pos.pos();
+        let to = to_pos.pos();
 
         // This callback is the one actually passed to JavaScript.
         fn callback(room_name: String, cost_matrix: Reference) -> Option<Reference> {
@@ -280,9 +268,7 @@ impl Room {
         T: LookConstant,
         U: HasPosition,
     {
-        let pos = target
-            .pos()
-            .expect("Room.look_for_at got a target without a position");;
+        let pos = target.pos();
         T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
             __look_num_to_str(@{ty.look_code() as u32}),
             pos_from_packed(@{pos.packed_repr()}),

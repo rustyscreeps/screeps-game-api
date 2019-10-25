@@ -116,18 +116,21 @@ reference_wrappers! {
     pub struct Tombstone(...);
     #[reference(instance_of = "PowerCreep")]
     pub struct PowerCreep(...);
+    // representation returned by game::power_creeps::*, which may be alive on the current shard or not
+    #[reference(instance_of = "AccountPowerCreep")]
+    pub struct AccountPowerCreep(...);
 }
 
 /// Trait for things which have positions in the Screeps world.
 ///
 /// This can be freely implemented for anything with a way to get a position.
 pub trait HasPosition {
-    fn pos(&self) -> Result<Position, ConversionError>;
+    fn pos(&self) -> Position;
 }
 
 impl HasPosition for Position {
-    fn pos(&self) -> Result<Position, ConversionError> {
-        Ok(self.clone())
+    fn pos(&self) -> Position {
+        self.clone()
     }
 }
 
@@ -136,14 +139,8 @@ impl<T> HasPosition for T
 where
     T: RoomObjectProperties,
 {
-    fn pos(&self) -> Result<Position, ConversionError> {
-        let packed = crate::traits::TryInto::try_into(js! {
-            const posobj = @{self.as_ref()}.pos;
-            if (posobj) {
-                return posobj.__packedPos;
-            }
-        })?;
-        Ok(Position::from_packed(packed))
+    fn pos(&self) -> Position {
+        Position::from_packed(js_unwrap!(@{self.as_ref()}.pos.__packedPos))
     }
 }
 
@@ -154,14 +151,9 @@ pub unsafe trait HasId: RoomObjectProperties {
     /// This has no major differences from [`HasId::id`] except for the return
     /// value not being typed by the kind of thing it points to. As the type of
     /// an `ObjectId` can be freely changed, that isn't a big deal.
-    fn untyped_id(&self) -> Result<RawObjectId, ConversionError> {
-        let id = crate::traits::TryInto::try_into(js! {
-            const id = @{self.as_ref()}.id;
-            if (id) {
-                return object_id_to_packed(@{self.as_ref()}.id);
-            }
-        })?;
-        Ok(RawObjectId::from_packed_js_val(id)?)
+    fn untyped_id(&self) -> RawObjectId {
+        RawObjectId::from_packed_js_val(js_unwrap!(object_id_to_packed(@{self.as_ref()}.id)))
+            .expect("expected HasId type's JavaScript id to be a 12-byte number encoded in hex")
     }
 
     /// Retrieves this object's id as a typed, packed value.
@@ -176,11 +168,11 @@ pub unsafe trait HasId: RoomObjectProperties {
     /// the stack, so it's fairly efficient to move and copy around.
     ///
     /// [1]: crate::game::get_object_typed
-    fn id(&self) -> Result<ObjectId<Self>, ConversionError>
+    fn id(&self) -> ObjectId<Self>
     where
         Self: Sized,
     {
-        Ok(self.untyped_id()?.into())
+        self.untyped_id().into()
     }
 }
 
@@ -228,19 +220,12 @@ impl_has_id! {
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `RoomObject` class.
 pub unsafe trait RoomObjectProperties: AsRef<Reference> + HasPosition {
-    fn room(&self) -> Result<Room, ConversionError> {
-        let room = crate::traits::TryInto::try_into(js!(
-            return @{self.as_ref()}.room;
-        ))?;
-
-        Ok(room)
+    fn room(&self) -> Room {
+        js_unwrap_ref!(@{self.as_ref()}.room)
     }
 
     fn effects(&self) -> Vec<Effect> {
-        let effects = js! {
-            return @{self.as_ref()}.effects || [];
-        };
-        effects.try_into().unwrap()
+        js_unwrap!(@{self.as_ref()}.effects || [])
     }
 }
 

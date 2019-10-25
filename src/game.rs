@@ -43,7 +43,7 @@ pub mod flags {
 ///
 /// [http://docs.screeps.com/api/#Game.powerCreeps]: http://docs.screeps.com/api/#Game.powerCreeps
 pub mod power_creeps {
-    game_map_access!(objects::PowerCreep, Game.powerCreeps);
+    game_map_access!(objects::AccountPowerCreep, Game.powerCreeps);
 }
 
 /// See [http://docs.screeps.com/api/#Game.resources]

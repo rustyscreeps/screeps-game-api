@@ -179,7 +179,7 @@ impl RawObjectId {
     /// use screeps::{prelude::*, RawObjectId};
     /// use stdweb::js;
     ///
-    /// let object_id: RawObjectId = screeps::game::creeps::values()[0].untyped_id().unwrap();
+    /// let object_id: RawObjectId = screeps::game::creeps::values()[0].untyped_id();
     ///
     /// let str_repr = object_id.to_array_string();
     ///
@@ -219,7 +219,7 @@ impl RawObjectId {
     /// use screeps::{prelude::*, RawObjectId};
     /// use stdweb::js;
     ///
-    /// let object_id: RawObjectId = screeps::game::creeps::values()[0].untyped_id().unwrap();
+    /// let object_id: RawObjectId = screeps::game::creeps::values()[0].untyped_id();
     ///
     /// let array_view = unsafe { object_id.unsafe_as_uploaded() };
     ///

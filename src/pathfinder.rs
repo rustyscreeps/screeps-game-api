@@ -331,13 +331,9 @@ where
     G: ?Sized + HasPosition,
     F: Fn(String) -> CostMatrix<'a> + 'a,
 {
-    let pos = goal
-        .pos()
-        .expect("Pathfinder.search got a goal with a missing position");
+    let pos = goal.pos();
     search_real(
-        origin
-            .pos()
-            .expect("Pathfinder.search got an origin with a missing position"),
+        origin.pos(),
         &js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}}),
         opts,
     )
@@ -354,17 +350,13 @@ where
     let goals: Vec<Object> = goal
         .into_iter()
         .map(|(target, range)| {
-            let pos = target
-                .pos()
-                .expect("Pathfinder.search_many got a goal with a missing position");
+            let pos = target.pos();
             js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}})
         })
         .collect();
     let goals_js: Reference = js_unwrap!(@{goals});
     search_real(
-        origin
-            .pos()
-            .expect("Pathfinder.search_many got an origin with a missing position"),
+        origin.pos(),
         &goals_js,
         opts,
     )

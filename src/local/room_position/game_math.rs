@@ -17,10 +17,7 @@ impl Position {
     {
         // Logic copied from https://github.com/screeps/engine/blob/
         // 020ba168a1fde9a8072f9f1c329d5c0be8b440d7/src/utils.js#L73-L107
-        let (dx, dy) = self
-            - target
-                .pos()
-                .expect("Position.get_direction_to got a target with a missing position");
+        let (dx, dy) = self - target.pos();
         if dx.abs() > dy.abs() * 2 {
             if dx > 0 {
                 Some(Direction::Right)
@@ -59,10 +56,7 @@ impl Position {
     where
         T: ?Sized + HasPosition,
     {
-        let (dx, dy) = self
-            - target
-                .pos()
-                .expect("Position.get_range_to got a target with a missing position");
+        let (dx, dy) = self - target.pos();
         dx.abs().max(dy.abs()) as u32
     }
 
@@ -82,15 +76,13 @@ impl Position {
 
     /// Checks whether this position is the same as the specified position.
     ///
-    /// Note that this is equivalent to `this_pos == target.pos().unwrap()`.
+    /// Note that this is equivalent to `this_pos == target.pos()`.
     #[inline]
     pub fn is_equal_to<T>(self, target: &T) -> bool
     where
         T: ?Sized + HasPosition,
     {
-        self == target
-            .pos()
-            .expect("Position.is_equal_to got a target with a missing position")
+        self == target.pos()
     }
 
     /// True if this position is in the same room as the target, and the range
@@ -100,9 +92,7 @@ impl Position {
     where
         T: ?Sized + HasPosition,
     {
-        let pos = target
-            .pos()
-            .expect("Position.is_near_to got a target with a missing position");
+        let pos = target.pos();
         self.room_name() == pos.room_name()
             && (self.x() as i32 - pos.x() as i32).abs() <= 1
             && (self.y() as i32 - pos.y() as i32).abs() <= 1

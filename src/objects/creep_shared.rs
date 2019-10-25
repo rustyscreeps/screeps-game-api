@@ -54,12 +54,12 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
     where
         F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
-        let pos = Position::new(x, y, self.pos().unwrap().room_name());
+        let pos = Position::new(x, y, self.pos().room_name());
         self.move_to_with_options(&pos, move_options)
     }
 
     fn move_to<T: ?Sized + HasPosition>(&self, target: &T) -> ReturnCode {
-        let p = target.pos().unwrap();
+        let p = target.pos();
         js_unwrap!(@{self.as_ref()}.moveTo(pos_from_packed(@{p.packed_repr()})))
     }
 
@@ -134,7 +134,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
-            let rp = target.pos().unwrap();
+            let rp = target.pos();
             js_unwrap! {
                 @{ self.as_ref() }.moveTo(
                     pos_from_packed(@{rp.packed_repr()}),
