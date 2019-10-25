@@ -355,11 +355,7 @@ where
         })
         .collect();
     let goals_js: Reference = js_unwrap!(@{goals});
-    search_real(
-        origin.pos(),
-        &goals_js,
-        opts,
-    )
+    search_real(origin.pos(), &goals_js, opts)
 }
 
 scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Reference);

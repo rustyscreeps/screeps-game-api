@@ -1,10 +1,10 @@
 use crate::{
     constants::{PowerCreepClass, PowerType, ReturnCode},
     objects::{
-        AccountPowerCreep, PowerCreep, RoomObjectProperties, StructureController, StructurePowerSpawn,
-        StructureProperties,
+        AccountPowerCreep, PowerCreep, RoomObjectProperties, StructureController,
+        StructurePowerSpawn, StructureProperties,
     },
-    traits::{TryInto},
+    traits::TryInto,
 };
 
 impl PowerCreep {
@@ -73,12 +73,13 @@ impl AccountPowerCreep {
     pub fn get_power_creep(&self) -> Option<PowerCreep> {
         // if the power creep has a position, it's spawned on the current shard and safe to use as
         // a full power creep object
-        let upgrade_result = js!{
+        let upgrade_result = js! {
             const power_creep = @{self.as_ref()};
             if (power_creep.pos) {
                 return power_creep;
             }
-        }.try_into();
+        }
+        .try_into();
 
         match upgrade_result {
             Ok(v) => Some(v),
