@@ -69,7 +69,7 @@ impl AccountPowerCreep {
     }
 
     /// Convert this `AccountPowerCreep`, which can represent either a spawned or unspawned
-    /// power creep, into a full `PowerCreep` object re
+    /// power creep, into a full `PowerCreep` object representation
     pub fn get_power_creep(&self) -> Option<PowerCreep> {
         // if the power creep has a position, it's spawned on the current shard and safe to use as
         // a full power creep object
