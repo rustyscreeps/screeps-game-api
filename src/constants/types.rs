@@ -514,7 +514,8 @@ impl ResourceType {
 
 js_deserializable!(ResourceType);
 
-/// Translates effect types which can include both `PWR_*` and `EFFECT_*` constants.
+/// Translates market resource types which can include both `RESOURCE_*`
+/// and `INTERSHARD_RESOURCES` constants.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum MarketResourceType {
     Resource(ResourceType),
