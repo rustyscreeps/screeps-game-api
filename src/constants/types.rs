@@ -5,7 +5,7 @@ use num_derive::FromPrimitive;
 use parse_display::FromStr;
 use serde::{
     de::{Deserializer, Error as _, Unexpected},
-    Deserialize,
+    Deserialize, Serialize, Serializer,
 };
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -125,10 +125,11 @@ js_deserializable!(StructureType);
 ///
 /// See the [module-level documentation][crate::constants] for more details.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u8)]
+#[repr(u16)]
 pub enum IntershardResourceType {
+    /// `"token"`
     #[display("token")]
-    SubscriptionToken = 1,
+    SubscriptionToken = 1001,
 }
 
 impl IntershardResourceType {
@@ -512,6 +513,49 @@ impl ResourceType {
 }
 
 js_deserializable!(ResourceType);
+
+/// Translates effect types which can include both `PWR_*` and `EFFECT_*` constants.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum MarketResourceType {
+    Resource(ResourceType),
+    IntershardResource(IntershardResourceType),
+}
+
+impl<'de> Deserialize<'de> for MarketResourceType {
+    fn deserialize<D>(d: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: Cow<'de, str> = Cow::deserialize(d)?;
+
+        // first try to deserialize as a ResourceType
+        match ResourceType::from_str(&s) {
+            Ok(v) => Ok(MarketResourceType::Resource(v)),
+            Err(_) => {
+                // then try to deserialize as an IntershardResourceType
+                match IntershardResourceType::from_str(&s) {
+                    Ok(v) => Ok(MarketResourceType::IntershardResource(v)),
+                    Err(_) => Err(D::Error::invalid_value(
+                        Unexpected::Str(&s),
+                        &"a known constant string in RESOURCES_ALL or INTERSHARD_RESOURCES",
+                    )),
+                }
+            }
+        }
+    }
+}
+
+impl Serialize for MarketResourceType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            MarketResourceType::Resource(ty) => ty.serialize(serializer),
+            MarketResourceType::IntershardResource(ty) => ty.serialize(serializer),
+        }
+    }
+}
 
 /// Translates the `PWR_*` constants.
 #[derive(

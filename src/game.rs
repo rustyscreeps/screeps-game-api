@@ -65,14 +65,12 @@ pub mod resources {
 
     /// Retrieve the string keys of this object.
     pub fn keys() -> Vec<IntershardResourceType> {
-        js_unwrap!(Object
-            .keys(Game.resources)
-            .map(__intershard_resource_type_str_to_num))
+        js_unwrap!(Object.keys(Game.resources).map(__resource_type_str_to_num))
     }
 
     /// Retrieve a specific value by key.
     pub fn get(key: IntershardResourceType) -> Option<u32> {
-        js_unwrap!(Game.resources[__intershard_resource_type_num_to_str(@{key as u32})])
+        js_unwrap!(Game.resources[__resource_type_num_to_str(@{key as u32})])
     }
 }
 
