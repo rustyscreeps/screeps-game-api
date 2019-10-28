@@ -77,9 +77,11 @@ js_deserializable!(TransactionOrder);
 pub struct Transaction {
     pub transaction_id: String,
     pub time: u32,
-    /// The player who sent resources for this transaction, or `None` if it was an NPC terminal
+    /// The player who sent resources for this transaction, or `None` if it was
+    /// an NPC terminal
     pub sender: Option<Player>,
-    /// The recipient of the resources for this transaction, or `None` if it was an NPC terminal
+    /// The recipient of the resources for this transaction, or `None` if it was
+    /// an NPC terminal
     pub recipient: Option<Player>,
     #[serde(deserialize_with = "ResourceType::deserialize_from_str")]
     pub resource_type: ResourceType,
@@ -88,9 +90,11 @@ pub struct Transaction {
     pub from: RoomName,
     /// The room that received resources in this transaction
     pub to: RoomName,
-    /// The description set in the sender's `StructureTerminal::send()` call, if any
+    /// The description set in the sender's `StructureTerminal::send()` call, if
+    /// any
     pub description: Option<String>,
-    /// Information about the market order that this transaction was fulfilling, if any
+    /// Information about the market order that this transaction was fulfilling,
+    /// if any
     pub order: Option<TransactionOrder>,
 }
 js_deserializable!(Transaction);
@@ -217,8 +221,9 @@ pub fn create_order(
 
 /// Execute a market trade
 ///
-/// target_room is your owned room whose terminal will send or receive resources in this
-/// transaction resources, or `None` if this is an order for an intershard resource type
+/// `target_room` is your owned room whose terminal will send or receive
+/// resources in this transaction, or `None` if this is an order for an
+/// intershard resource type
 pub fn deal(order_id: &str, amount: u32, target_room: Option<RoomName>) -> ReturnCode {
     match target_room {
         Some(target_room_name) => {

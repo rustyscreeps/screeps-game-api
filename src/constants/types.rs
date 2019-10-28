@@ -529,20 +529,16 @@ impl<'de> Deserialize<'de> for MarketResourceType {
     {
         let s: Cow<'de, str> = Cow::deserialize(d)?;
 
-        // first try to deserialize as a ResourceType
-        match ResourceType::from_str(&s) {
-            Ok(v) => Ok(MarketResourceType::Resource(v)),
-            Err(_) => {
-                // then try to deserialize as an IntershardResourceType
-                match IntershardResourceType::from_str(&s) {
-                    Ok(v) => Ok(MarketResourceType::IntershardResource(v)),
-                    Err(_) => Err(D::Error::invalid_value(
-                        Unexpected::Str(&s),
-                        &"a known constant string in RESOURCES_ALL or INTERSHARD_RESOURCES",
-                    )),
-                }
-            }
-        }
+        ResourceType::from_str(&s)
+            .map(|ty| MarketResourceType::Resource(ty))
+            .or(IntershardResourceType::from_str(&s)
+                .map(|ty| MarketResourceType::IntershardResource(ty)))
+            .map_err(|_| {
+                D::Error::invalid_value(
+                    Unexpected::Str(&s),
+                    &"a known constant string in RESOURCES_ALL or INTERSHARD_RESOURCES",
+                )
+            })
     }
 }
 
