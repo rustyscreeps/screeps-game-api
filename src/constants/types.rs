@@ -524,7 +524,8 @@ pub enum PowerCreepClass {
 
 js_deserializable!(PowerCreepClass);
 
-/// Translates the `PWR_*` constants, which are types of powers used by power creeps
+/// Translates the `PWR_*` constants, which are types of powers used by power
+/// creeps
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]
@@ -564,7 +565,8 @@ pub enum NaturalEffectType {
 
 js_deserializable!(NaturalEffectType);
 
-/// Translates effect types which can include both `PWR_*` and `EFFECT_*` constants.
+/// Translates effect types which can include both `PWR_*` and `EFFECT_*`
+/// constants.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum EffectType {
     PowerEffect(PowerType),

@@ -3,8 +3,8 @@ use stdweb::Value;
 use crate::{
     constants::{Part, ResourceType, ReturnCode},
     objects::{
-        Attackable, ConstructionSite, Creep, Harvestable, StructureController, StructureProperties,
-        Transferable, Withdrawable,
+        Attackable, ConstructionSite, Creep, Harvestable, SharedCreepProperties,
+        StructureController, StructureProperties, Transferable, Withdrawable,
     },
     traits::TryFrom,
 };
@@ -111,7 +111,9 @@ creep_simple_generic_action! {
         pub fn attack(Attackable) = attack();
         pub fn dismantle(StructureProperties) = dismantle();
         pub fn harvest(Harvestable) = harvest();
+        pub fn heal(SharedCreepProperties) = heal();
         pub fn ranged_attack(Attackable) = rangedAttack();
+        pub fn ranged_heal(SharedCreepProperties) = rangedHeal();
         pub fn repair(StructureProperties) = repair();
     }
 }
@@ -122,9 +124,7 @@ creep_simple_concrete_action! {
         pub fn build(ConstructionSite) = build();
         pub fn claim_controller(StructureController) = claimController();
         pub fn generate_safe_mode(StructureController) = generateSafeMode();
-        pub fn heal(Creep) = heal();
         pub fn pull(Creep) = pull();
-        pub fn ranged_heal(Creep) = rangedHeal();
         pub fn reserve_controller(StructureController) = reserveController();
         pub fn upgrade_controller(StructureController) = upgradeController();
     }

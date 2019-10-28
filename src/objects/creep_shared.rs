@@ -17,7 +17,8 @@ use crate::{
 
 scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(RoomName, Reference) -> Option<Reference>>);
 
-/// Trait for all wrappers over Screeps JavaScript objects that are creeps or power creeps
+/// Trait for all wrappers over Screeps JavaScript objects that are creeps or
+/// power creeps
 ///
 /// # Contracts
 ///
