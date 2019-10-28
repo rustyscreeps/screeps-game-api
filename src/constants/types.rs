@@ -528,7 +528,7 @@ js_deserializable!(PowerCreepClass);
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
 )]
-#[repr(u16)]
+#[repr(u8)]
 pub enum PowerType {
     GenerateOps = 1,
     OperateSpawn = 2,
