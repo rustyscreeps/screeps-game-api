@@ -109,6 +109,7 @@ pub struct Order {
     pub created_timestamp: u64,
     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
     pub order_type: OrderType,
+    #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
     pub resource_type: MarketResourceType,
     /// Room that owns the order, `None` for intershard orders
     pub room_name: Option<RoomName>,
@@ -129,6 +130,7 @@ pub struct MyOrder {
     pub active: bool,
     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
     pub order_type: OrderType,
+    #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
     pub resource_type: MarketResourceType,
     /// Room that owns the order, `None` for intershard orders
     pub room_name: Option<RoomName>,
@@ -142,6 +144,7 @@ js_deserializable!(MyOrder);
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderHistoryRecord {
+    #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
     pub resource_type: MarketResourceType,
     /// Calendar date in string format, eg "2018-12-31"
     pub date: String,
@@ -171,7 +174,7 @@ pub fn orders() -> HashMap<String, MyOrder> {
     js_unwrap!(Game.market.orders)
 }
 
-pub fn calc_transaction_cost(amount: u32, room1: &RoomName, room2: &RoomName) -> f64 {
+pub fn calc_transaction_cost(amount: u32, room1: RoomName, room2: RoomName) -> f64 {
     js_unwrap!(Game.market.calcTransactionCost(@{amount}, @{room1.to_string()}, @{room2.to_string()}))
 }
 
@@ -188,7 +191,7 @@ pub fn create_order(
     resource_type: MarketResourceType,
     price: f64,
     total_amount: u32,
-    room: Option<&RoomName>,
+    room: Option<RoomName>,
 ) -> ReturnCode {
     let resource_num = match resource_type {
         MarketResourceType::Resource(ty) => ty as u32,
@@ -224,7 +227,7 @@ pub fn create_order(
 /// `target_room` is your owned room whose terminal will send or receive
 /// resources in this transaction, or `None` if this is an order for an
 /// intershard resource type
-pub fn deal(order_id: &str, amount: u32, target_room: Option<&RoomName>) -> ReturnCode {
+pub fn deal(order_id: &str, amount: u32, target_room: Option<RoomName>) -> ReturnCode {
     match target_room {
         Some(target_room_name) => {
             js_unwrap!(Game.market.deal(@{order_id}, @{amount}, @{target_room_name.to_string()}))

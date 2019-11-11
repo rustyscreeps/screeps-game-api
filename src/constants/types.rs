@@ -118,8 +118,8 @@ js_deserializable!(StructureType);
 ///
 /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
 /// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, use the `__intershard_resource_type_num_to_str`
-/// and `__intershard_resource_type_str_to_num` JavaScript functions,
+/// using these impls manually, use the `__resource_type_num_to_str`
+/// and `__resource_type_str_to_num` JavaScript functions,
 /// [`FromStr`][std::str::FromStr] or
 /// [`IntershardResourceType::deserialize_from_str`].
 ///
@@ -522,11 +522,10 @@ pub enum MarketResourceType {
     IntershardResource(IntershardResourceType),
 }
 
-impl<'de> Deserialize<'de> for MarketResourceType {
-    fn deserialize<D>(d: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
+impl MarketResourceType {
+    /// Helper function for deserializing from a string rather than a fake
+    /// integer value.
+    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
         let s: Cow<'de, str> = Cow::deserialize(d)?;
 
         ResourceType::from_str(&s)
@@ -539,6 +538,111 @@ impl<'de> Deserialize<'de> for MarketResourceType {
                     &"a known constant string in RESOURCES_ALL or INTERSHARD_RESOURCES",
                 )
             })
+    }
+}
+
+impl<'de> Deserialize<'de> for MarketResourceType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let resource = u16::deserialize(deserializer)?;
+        let resource_type = match resource {
+            1 => MarketResourceType::Resource(ResourceType::Energy),
+            2 => MarketResourceType::Resource(ResourceType::Power),
+            3 => MarketResourceType::Resource(ResourceType::Hydrogen),
+            4 => MarketResourceType::Resource(ResourceType::Oxygen),
+            5 => MarketResourceType::Resource(ResourceType::Utrium),
+            6 => MarketResourceType::Resource(ResourceType::Lemergium),
+            7 => MarketResourceType::Resource(ResourceType::Keanium),
+            8 => MarketResourceType::Resource(ResourceType::Zynthium),
+            9 => MarketResourceType::Resource(ResourceType::Catalyst),
+            10 => MarketResourceType::Resource(ResourceType::Ghodium),
+            11 => MarketResourceType::Resource(ResourceType::Hydroxide),
+            12 => MarketResourceType::Resource(ResourceType::ZynthiumKeanite),
+            13 => MarketResourceType::Resource(ResourceType::UtriumLemergite),
+            14 => MarketResourceType::Resource(ResourceType::UtriumHydride),
+            15 => MarketResourceType::Resource(ResourceType::UtriumOxide),
+            16 => MarketResourceType::Resource(ResourceType::KeaniumHydride),
+            17 => MarketResourceType::Resource(ResourceType::KeaniumOxide),
+            18 => MarketResourceType::Resource(ResourceType::LemergiumHydride),
+            19 => MarketResourceType::Resource(ResourceType::LemergiumOxide),
+            20 => MarketResourceType::Resource(ResourceType::ZynthiumHydride),
+            21 => MarketResourceType::Resource(ResourceType::ZynthiumOxide),
+            22 => MarketResourceType::Resource(ResourceType::GhodiumHydride),
+            23 => MarketResourceType::Resource(ResourceType::GhodiumOxide),
+            24 => MarketResourceType::Resource(ResourceType::UtriumAcid),
+            25 => MarketResourceType::Resource(ResourceType::UtriumAlkalide),
+            26 => MarketResourceType::Resource(ResourceType::KeaniumAcid),
+            27 => MarketResourceType::Resource(ResourceType::KeaniumAlkalide),
+            28 => MarketResourceType::Resource(ResourceType::LemergiumAcid),
+            29 => MarketResourceType::Resource(ResourceType::LemergiumAlkalide),
+            30 => MarketResourceType::Resource(ResourceType::ZynthiumAcid),
+            31 => MarketResourceType::Resource(ResourceType::ZynthiumAlkalide),
+            32 => MarketResourceType::Resource(ResourceType::GhodiumAcid),
+            33 => MarketResourceType::Resource(ResourceType::GhodiumAlkalide),
+            34 => MarketResourceType::Resource(ResourceType::CatalyzedUtriumAcid),
+            35 => MarketResourceType::Resource(ResourceType::CatalyzedUtriumAlkalide),
+            36 => MarketResourceType::Resource(ResourceType::CatalyzedKeaniumAcid),
+            37 => MarketResourceType::Resource(ResourceType::CatalyzedKeaniumAlkalide),
+            38 => MarketResourceType::Resource(ResourceType::CatalyzedLemergiumAcid),
+            39 => MarketResourceType::Resource(ResourceType::CatalyzedLemergiumAlkalide),
+            40 => MarketResourceType::Resource(ResourceType::CatalyzedZynthiumAcid),
+            41 => MarketResourceType::Resource(ResourceType::CatalyzedZynthiumAlkalide),
+            42 => MarketResourceType::Resource(ResourceType::CatalyzedGhodiumAcid),
+            43 => MarketResourceType::Resource(ResourceType::CatalyzedGhodiumAlkalide),
+            44 => MarketResourceType::Resource(ResourceType::Ops),
+            45 => MarketResourceType::Resource(ResourceType::Silicon),
+            46 => MarketResourceType::Resource(ResourceType::Metal),
+            47 => MarketResourceType::Resource(ResourceType::Biomass),
+            48 => MarketResourceType::Resource(ResourceType::Mist),
+            49 => MarketResourceType::Resource(ResourceType::UtriumBar),
+            50 => MarketResourceType::Resource(ResourceType::LemergiumBar),
+            51 => MarketResourceType::Resource(ResourceType::ZynthiumBar),
+            52 => MarketResourceType::Resource(ResourceType::KeaniumBar),
+            53 => MarketResourceType::Resource(ResourceType::GhodiumMelt),
+            54 => MarketResourceType::Resource(ResourceType::Oxidant),
+            55 => MarketResourceType::Resource(ResourceType::Reductant),
+            56 => MarketResourceType::Resource(ResourceType::Purifier),
+            57 => MarketResourceType::Resource(ResourceType::Battery),
+            58 => MarketResourceType::Resource(ResourceType::Composite),
+            59 => MarketResourceType::Resource(ResourceType::Crystal),
+            60 => MarketResourceType::Resource(ResourceType::Liquid),
+            61 => MarketResourceType::Resource(ResourceType::Wire),
+            62 => MarketResourceType::Resource(ResourceType::Switch),
+            63 => MarketResourceType::Resource(ResourceType::Transistor),
+            64 => MarketResourceType::Resource(ResourceType::Microchip),
+            65 => MarketResourceType::Resource(ResourceType::Circuit),
+            66 => MarketResourceType::Resource(ResourceType::Device),
+            67 => MarketResourceType::Resource(ResourceType::Cell),
+            68 => MarketResourceType::Resource(ResourceType::Phlegm),
+            69 => MarketResourceType::Resource(ResourceType::Tissue),
+            70 => MarketResourceType::Resource(ResourceType::Muscle),
+            71 => MarketResourceType::Resource(ResourceType::Organoid),
+            72 => MarketResourceType::Resource(ResourceType::Organism),
+            73 => MarketResourceType::Resource(ResourceType::Alloy),
+            74 => MarketResourceType::Resource(ResourceType::Tube),
+            75 => MarketResourceType::Resource(ResourceType::Fixtures),
+            76 => MarketResourceType::Resource(ResourceType::Frame),
+            77 => MarketResourceType::Resource(ResourceType::Hydraulics),
+            78 => MarketResourceType::Resource(ResourceType::Machine),
+            79 => MarketResourceType::Resource(ResourceType::Condensate),
+            80 => MarketResourceType::Resource(ResourceType::Concentrate),
+            81 => MarketResourceType::Resource(ResourceType::Extract),
+            82 => MarketResourceType::Resource(ResourceType::Spirit),
+            83 => MarketResourceType::Resource(ResourceType::Emanation),
+            84 => MarketResourceType::Resource(ResourceType::Essence),
+            1001 => {
+                MarketResourceType::IntershardResource(IntershardResourceType::SubscriptionToken)
+            }
+            _ => {
+                return Err(D::Error::invalid_value(
+                    Unexpected::Unsigned(resource as u64),
+                    &"a valid RESOURCES_ALL or INTERSHARD_RESOURCES type integer",
+                ))
+            }
+        };
+        Ok(resource_type)
     }
 }
 
