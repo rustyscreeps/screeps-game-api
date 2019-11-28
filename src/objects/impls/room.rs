@@ -238,12 +238,12 @@ impl Room {
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         COST_CALLBACK.set(&callback_lifetime_erased, || {
             let v = js! {
-                return @{&self.as_ref()}.search(
+                return @{&self.as_ref()}.findPath(
                     pos_from_packed(@{from.packed_repr()}),
                     pos_from_packed(@{to.packed_repr()}),
                     {
                         ignoreCreeps: @{ignore_creeps},
-                        ignoreDestructibleStructures: @{ignore_destructible_structures}
+                        ignoreDestructibleStructures: @{ignore_destructible_structures},
                         costCallback: @{callback},
                         maxOps: @{max_ops},
                         heuristicWeight: @{heuristic_weight},

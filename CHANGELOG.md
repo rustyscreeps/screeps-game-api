@@ -6,6 +6,7 @@ Unreleased
   using the `energy()` implementation from `HasStore`
 - Change `RoomObjectProperties::room()` to return `Option<Room>` to handle the cases that the base
   game API leaves it undefined: for construction sites and flags in non-visible rooms (breaking)
+- Fix `Room::find_path` function call to underlying javascript
 
 0.7.0 (2019-10-19)
 ==================
