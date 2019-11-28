@@ -4,6 +4,8 @@ Unreleased
 - Remove `StructurePowerSpawn::power()` and `power_capacity()` (replaced with `HasStore` functions)
 - Remove explicitly implemented `Creep::energy()` function which used deprecated `.carry`, now
   using the `energy()` implementation from `HasStore`
+- Change `RoomObjectProperties::room()` to return `Option<Room>` to handle the cases that the base
+  game API leaves it undefined: for construction sites and flags in non-visible rooms (breaking)
 
 0.7.0 (2019-10-19)
 ==================
