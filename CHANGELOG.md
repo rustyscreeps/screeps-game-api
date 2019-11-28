@@ -4,6 +4,7 @@ Unreleased
 - Remove `StructurePowerSpawn::power()` and `power_capacity()` (replaced with `HasStore` functions)
 - Remove explicitly implemented `Creep::energy()` function which used deprecated `.carry`, now
   using the `energy()` implementation from `HasStore`
+- Fix `Room::find_path` function call to underlying javascript
 
 0.7.0 (2019-10-19)
 ==================
