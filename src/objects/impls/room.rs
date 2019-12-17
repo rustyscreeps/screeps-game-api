@@ -73,7 +73,11 @@ impl Room {
     {
         let pos = at.pos();
         js_unwrap!(@{self.as_ref()}.createConstructionSite(
-            pos_from_packed(@{pos.packed_repr()}),
+            // pos_from_packed(@{pos.packed_repr()}),
+            // workaround - passing with a position and a name
+            // currently broken, use x,y instead
+            @{pos.x()},
+            @{pos.y()},
             __structure_type_num_to_str(@{ty as u32}),
             @{name}
         ))

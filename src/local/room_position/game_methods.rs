@@ -20,7 +20,7 @@ impl Position {
     pub fn create_named_construction_site(self, ty: StructureType, name: &str) -> ReturnCode {
         js_unwrap!(
             pos_from_packed(@{self.packed_repr()})
-                .createConstructionSite(__structure_type_num_to_str(@{ty as u32}, @{name}))
+                .createConstructionSite(__structure_type_num_to_str(@{ty as u32}), @{name})
         )
     }
 
