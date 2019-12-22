@@ -338,7 +338,8 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
 /// must have a `store` property.
 ///
 /// The `store` property must be a dict from string resource types to integers,
-/// and have the `getCapacity`, `getFreeCapacity`, and `getUsedCapacity` functions
+/// and have the `getCapacity`, `getFreeCapacity`, and `getUsedCapacity`
+/// functions
 pub unsafe trait HasStore: RoomObjectProperties {
     fn store_total(&self) -> u32 {
         js_unwrap!(_.sum(@{self.as_ref()}.store))
