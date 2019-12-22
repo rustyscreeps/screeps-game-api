@@ -220,7 +220,9 @@ impl_has_id! {
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `RoomObject` class.
 pub unsafe trait RoomObjectProperties: AsRef<Reference> + HasPosition {
-    fn room(&self) -> Room {
+    /// The room that the object is in, or `None` if an object is a flag or a
+    /// construction site and is placed in a room that is not visible to you.
+    fn room(&self) -> Option<Room> {
         js_unwrap_ref!(@{self.as_ref()}.room)
     }
 
