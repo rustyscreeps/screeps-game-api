@@ -8,7 +8,7 @@ use crate::{
 };
 
 impl PowerCreep {
-    pub fn create(name: String, class: PowerCreepClass) -> ReturnCode {
+    pub fn create(name: &str, class: PowerCreepClass) -> ReturnCode {
         js_unwrap!(PowerCreep.create(@{name}, __power_creep_class_num_to_str(@{class as u32})))
     }
 
@@ -60,7 +60,7 @@ impl AccountPowerCreep {
         js_unwrap!((@{self.as_ref()}.powers[@{power_type as u32}] || {}).level)
     }
 
-    pub fn rename(&self, new_name: String) -> ReturnCode {
+    pub fn rename(&self, new_name: &str) -> ReturnCode {
         js_unwrap!(@{self.as_ref()}.rename(@{new_name}))
     }
 
