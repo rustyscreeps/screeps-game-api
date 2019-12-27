@@ -52,7 +52,8 @@ pub enum Look {
     Sources = 3,
     #[display("mineral")]
     Minerals = 4,
-    // LOOK_DEPOSITS is defined here in constants.js but is implemented below to prevent renumbering
+    // LOOK_DEPOSITS is defined here in constants.js but is implemented below to prevent
+    // renumbering
     #[display("structure")]
     Structures = 5,
     #[display("flag")]

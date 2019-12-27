@@ -340,6 +340,20 @@ function __terrain_str_to_num(str) {
     }
 }
 
+function __power_creep_class_str_to_num(str) {
+    switch (str) {
+        case POWER_CLASS.OPERATOR: return 1;
+        default: throw new Error("unknown power creep class " + str);
+    }
+}
+
+function __power_creep_class_num_to_str(num) {
+    switch (num) {
+        case 1: return POWER_CLASS.OPERATOR;
+        default: throw new Error("unknown power creep class " + num);
+    }
+}
+
 function pos_from_packed(repr) {
     // mimick the RoomPosition constructor
     let pos = Object.create(RoomPosition.prototype);

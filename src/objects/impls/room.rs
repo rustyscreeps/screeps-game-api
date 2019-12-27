@@ -13,8 +13,8 @@ use stdweb::{Reference, Value};
 
 use crate::{
     constants::{
-        Color, Direction, ExitDirection, FindConstant, Look, LookConstant, PowerType, ResourceType,
-        ReturnCode, StructureType, Terrain,
+        Color, Direction, EffectType, ExitDirection, FindConstant, Look, LookConstant, PowerType,
+        ResourceType, ReturnCode, StructureType, Terrain,
     },
     local::{Position, RoomName},
     memory::MemoryReference,
@@ -763,6 +763,15 @@ pub struct PowerEvent {
     pub target_id: String,
     pub power: PowerType,
 }
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Effect {
+    pub effect: EffectType,
+    pub level: Option<u8>,
+    pub ticks_remaining: u32,
+}
+js_deserializable! {Effect}
 
 pub enum LookResult {
     Creep(Creep),
