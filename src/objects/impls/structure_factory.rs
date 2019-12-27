@@ -1,4 +1,7 @@
-use crate::{constants::ResourceType, constants::ReturnCode, objects::StructureFactory};
+use crate::{
+    constants::{ResourceType, ReturnCode},
+    objects::StructureFactory,
+};
 
 impl StructureFactory {
     pub fn produce(&self, ty: ResourceType) -> ReturnCode {

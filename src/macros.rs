@@ -300,7 +300,7 @@ macro_rules! creep_simple_concrete_action {
             )+
         }
     ) => (
-        impl Creep {
+        impl $struct_name {
             $(
                 $vis fn $method(&self, target: &$type) -> ReturnCode {
                     js_unwrap!(@{self.as_ref()}.$js_name(@{target.as_ref()}))

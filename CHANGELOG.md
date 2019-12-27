@@ -1,6 +1,22 @@
 Unreleased
 ==========
 
+- Add `effects()` to room objects, allowing access to the effects applied on room objects which
+  are used by both strongholds and power creeps.  New `EffectType` enum returned by this call
+  represents the `NaturalEffectType` (for stronghold effects) or `PowerType` (for power creeps)
+- Move creep functions which are implemented identically on power creeps to `SharedCreepProperties`
+  trait (breaking)
+- Add `game::gpl::level()`, `game::gpl::progress()` and `game::gpl::progress_total()`
+- Add `StructureController::is_power_enabled()`
+- Add `game::power_creeps` access, which returns a special `AccountPowerCreep` reference due
+  to the fact that these power creeps may not be spawned on the current shard and allow spawning.
+  Use `AccountPowerCreep::get_power_creep()` which returns `Option<PowerCreep>` to get the living
+  power creep, if spawned on the current shard.
+- Add `PowerCreepClass` enum to represent power creep classes, currently only `Operator`
+- Update `StructureTower::attack()` and `heal()` to allow targeting power creeps, and update
+  `repair()` to accept `StructureProperties` matching `Creep::repair()`
+- Update `Creep::heal()` and `ranged_heal()` to target anything with the `SharedCreepProperties`
+  trait to allow use on power creeps
 - Add `MarketResourceType` enum, which can wrap either a `ResourceType` or `IntershardResourceType`
   and switch to using it for `game::market` endpoints which accept either type (breaking)
 - Update integer representation of `IntershardResource::SubscriptionToken` to move out of conflict
@@ -20,6 +36,11 @@ Unreleased
 - Remove `StructurePowerSpawn::power()` and `power_capacity()` (replaced with `HasStore` functions)
 - Remove explicitly implemented `Creep::energy()` function which used deprecated `.carry`, now
   using the `energy()` implementation from `HasStore`
+- Change `RoomObjectProperties::room()` to return `Option<Room>` to handle the cases that the base
+  game API leaves it undefined: for construction sites and flags in non-visible rooms (breaking)
+- Fix `Room::find_path` function call to underlying javascript
+- Fix typo in `Position::create_named_construction_site` and work around screeps bug in
+  `Room::create_named_construction_site` by passing x and y instead of position object
 
 0.7.0 (2019-10-19)
 ==================

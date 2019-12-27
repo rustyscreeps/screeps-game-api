@@ -67,6 +67,6 @@ pub type RoomPosition = Position;
 pub mod prelude {
     pub use crate::objects::{
         CanDecay, HasCooldown, HasId, HasPosition, HasStore, OwnedStructureProperties,
-        RoomObjectProperties, StructureProperties,
+        RoomObjectProperties, SharedCreepProperties, StructureProperties,
     };
 }

@@ -23,13 +23,15 @@ use crate::{
     ConversionError,
 };
 
+mod creep_shared;
 mod impls;
 mod structure;
 
 pub use self::{
+    creep_shared::{MoveToOptions, SharedCreepProperties},
     impls::{
-        AttackEvent, AttackType, Bodypart, BuildEvent, Event, EventType, ExitEvent, FindOptions,
-        HarvestEvent, HealEvent, HealType, LookResult, MoveToOptions, ObjectDestroyedEvent, Path,
+        AttackEvent, AttackType, Bodypart, BuildEvent, Effect, Event, EventType, ExitEvent,
+        FindOptions, HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path,
         PortalDestination, PositionedLookResult, RepairEvent, Reservation, ReserveControllerEvent,
         Sign, SpawnOptions, Step, UpgradeControllerEvent,
     },
@@ -114,6 +116,9 @@ reference_wrappers! {
     pub struct Tombstone(...);
     #[reference(instance_of = "PowerCreep")]
     pub struct PowerCreep(...);
+    // representation returned by game::power_creeps::*, which may be alive on the current shard or not
+    #[reference(instance_of = "AccountPowerCreep")]
+    pub struct AccountPowerCreep(...);
 }
 
 /// Trait for things which have positions in the Screeps world.
@@ -215,8 +220,14 @@ impl_has_id! {
 /// The reference returned by `AsRef<Reference>::as_ref` must reference a
 /// JavaScript object extending the `RoomObject` class.
 pub unsafe trait RoomObjectProperties: AsRef<Reference> + HasPosition {
-    fn room(&self) -> Room {
+    /// The room that the object is in, or `None` if an object is a flag or a
+    /// construction site and is placed in a room that is not visible to you.
+    fn room(&self) -> Option<Room> {
         js_unwrap_ref!(@{self.as_ref()}.room)
+    }
+
+    fn effects(&self) -> Vec<Effect> {
+        js_unwrap!(@{self.as_ref()}.effects || [])
     }
 }
 
@@ -327,7 +338,8 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
 /// must have a `store` property.
 ///
 /// The `store` property must be a dict from string resource types to integers,
-/// and have the `getCapacity`, `getFreeCapacity`, and `getUsedCapacity` functions
+/// and have the `getCapacity`, `getFreeCapacity`, and `getUsedCapacity`
+/// functions
 pub unsafe trait HasStore: RoomObjectProperties {
     fn store_total(&self) -> u32 {
         js_unwrap!(_.sum(@{self.as_ref()}.store))
@@ -477,6 +489,7 @@ unsafe impl Transferable for StructureStorage {}
 unsafe impl Transferable for StructureTower {}
 unsafe impl Transferable for StructurePowerSpawn {}
 unsafe impl Transferable for StructureTerminal {}
+unsafe impl Transferable for PowerCreep {}
 
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs
@@ -522,6 +535,7 @@ unsafe impl Attackable for StructureStorage {}
 unsafe impl Attackable for StructureTerminal {}
 unsafe impl Attackable for StructureTower {}
 unsafe impl Attackable for StructureWall {}
+unsafe impl Attackable for PowerCreep {}
 
 unsafe impl RoomObjectProperties for ConstructionSite {}
 unsafe impl RoomObjectProperties for Creep {}
@@ -621,6 +635,7 @@ unsafe impl HasStore for StructureStorage {}
 unsafe impl HasStore for StructureTerminal {}
 unsafe impl HasStore for StructureTower {}
 unsafe impl HasStore for Tombstone {}
+unsafe impl HasStore for PowerCreep {}
 
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs

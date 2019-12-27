@@ -276,8 +276,7 @@ pub const INVADERS_ENERGY_GOAL: u32 = 100000;
 
 pub const SYSTEM_USERNAME: &str = "Screeps";
 
-pub const SIGN_PLANNED_AREA: &str =
-    "A new Novice or Respawn Area is being planned somewhere \
+pub const SIGN_PLANNED_AREA: &str = "A new Novice or Respawn Area is being planned somewhere \
      in this sector. Please make sure all important rooms are reserved.";
 
 // EVENT_* constants in src/objects/impls/room.rs

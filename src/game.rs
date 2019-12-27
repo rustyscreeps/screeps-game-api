@@ -13,6 +13,7 @@ use crate::{
 
 pub mod cpu;
 pub mod gcl;
+pub mod gpl;
 pub mod map;
 pub mod market;
 pub mod shards;
@@ -36,6 +37,13 @@ pub mod creeps {
 /// [http://docs.screeps.com/api/#Game.flags]: http://docs.screeps.com/api/#Game.flags
 pub mod flags {
     game_map_access!(objects::Flag, Game.flags);
+}
+
+/// See [http://docs.screeps.com/api/#Game.powerCreeps]
+///
+/// [http://docs.screeps.com/api/#Game.powerCreeps]: http://docs.screeps.com/api/#Game.powerCreeps
+pub mod power_creeps {
+    game_map_access!(objects::AccountPowerCreep, Game.powerCreeps);
 }
 
 /// See [http://docs.screeps.com/api/#Game.resources]
