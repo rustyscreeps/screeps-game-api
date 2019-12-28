@@ -124,6 +124,7 @@ creep_simple_concrete_action! {
         pub fn build(ConstructionSite) = build();
         pub fn claim_controller(StructureController) = claimController();
         pub fn generate_safe_mode(StructureController) = generateSafeMode();
+        pub fn move_pulled_by(Creep) = move();
         pub fn pull(Creep) = pull();
         pub fn reserve_controller(StructureController) = reserveController();
         pub fn upgrade_controller(StructureController) = upgradeController();

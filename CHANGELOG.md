@@ -17,6 +17,7 @@ Unreleased
   `repair()` to accept `StructureProperties` matching `Creep::repair()`
 - Update `Creep::heal()` and `ranged_heal()` to target anything with the `SharedCreepProperties`
   trait to allow use on power creeps
+- Add `Creep::move_pulled_by()` which allows a creep to accept another creep's attempt to `pull`
 - Remove `StructurePowerSpawn::power()` and `power_capacity()` (replaced with `HasStore` functions)
 - Remove explicitly implemented `Creep::energy()` function which used deprecated `.carry`, now
   using the `energy()` implementation from `HasStore`
