@@ -17,6 +17,22 @@ Unreleased
   `repair()` to accept `StructureProperties` matching `Creep::repair()`
 - Update `Creep::heal()` and `ranged_heal()` to target anything with the `SharedCreepProperties`
   trait to allow use on power creeps
+- Add `MarketResourceType` enum, which can wrap either a `ResourceType` or `IntershardResourceType`
+  and switch to using it for `game::market` endpoints which accept either type (breaking)
+- Update integer representation of `IntershardResource::SubscriptionToken` to move out of conflict
+  with normal resources to allow parsing market orders which might have either (breaking)
+- Add `game::market::get_history()` and `game::market::OrderHistoryRecord` exposing new
+  `getHistory()` API function
+- Update `game::market` functions to be able to work with intershard orders and transactions for
+  them, making `RoomName` optional in many cases as it's not used for intershard transactions
+  (breaking)
+- Update field visibility on `game::market` structs used as return values to public, update to
+  native types for `ResourceType` and `RoomName` values, and make a number of fields optional for
+  compatibility with intershard orders (breaking)
+- Update `game::market::create_order()` to use the currently documented object syntax and new
+  `MarketResourceType` to specify resource (breaking)
+- Update `game::market::calc_transaction_cost()` to work with `RoomName` instead of `&Room` to
+  avoid requiring visibility of both rooms (breaking)
 - Add `Creep::move_pulled_by()` which allows a creep to accept another creep's attempt to `pull`
 - Remove `StructurePowerSpawn::power()` and `power_capacity()` (replaced with `HasStore` functions)
 - Remove explicitly implemented `Creep::energy()` function which used deprecated `.carry`, now

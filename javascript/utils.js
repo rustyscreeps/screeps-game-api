@@ -120,21 +120,6 @@ function __structure_type_str_to_num(str) {
     }
 }
 
-function __intershard_resource_type_num_to_str(num) {
-    switch (num) {
-        case 1: return SUBSCRIPTION_TOKEN;
-        default: throw new Error("unknown inter-shard resource type integer encoding " + num);
-    }
-}
-
-function __intershard_resource_type_str_to_num(str) {
-    switch (str) {
-        case SUBSCRIPTION_TOKEN: return 1;
-        default: throw new Error("unknown inter-shard resource type " + str);
-    }
-}
-
-
 function __resource_type_num_to_str(num) {
     switch (num) {
         case 1: return RESOURCE_ENERGY;
@@ -221,6 +206,7 @@ function __resource_type_num_to_str(num) {
         case 82: return RESOURCE_SPIRIT;
         case 83: return RESOURCE_EMANATION;
         case 84: return RESOURCE_ESSENCE;
+        case 1001: return SUBSCRIPTION_TOKEN;
         default: throw new Error("unknown resource type integer encoding " + num);
     }
 }
@@ -311,6 +297,7 @@ function __resource_type_str_to_num(str) {
         case RESOURCE_SPIRIT: return 82;
         case RESOURCE_EMANATION: return 83;
         case RESOURCE_ESSENCE: return 84;
+        case SUBSCRIPTION_TOKEN: return 1001;
         default: throw new Error("unknown resource type " + str);
     }
 }
