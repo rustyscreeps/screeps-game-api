@@ -2,7 +2,7 @@ Unreleased
 ==========
 
 - Add `game::map::get_room_status()` as interface to new `Game.map.getRoomStatus()` function
-- Deprecate `game::map::is_room_available()`, the underlying function it uses is now deprecated
+- Remove deprecated `game::map::is_room_available()`, use new `get_room_status` instead
 - Add `StructureLab::reverse_reaction()` as interface to new `reverseReaction()`
 - Add `effects()` to room objects, allowing access to the effects applied on room objects which
   are used by both strongholds and power creeps.  New `EffectType` enum returned by this call

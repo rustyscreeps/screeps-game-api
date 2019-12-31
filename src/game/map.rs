@@ -10,7 +10,6 @@ use serde::{
     de::{Deserializer, Error as _, Unexpected},
     Deserialize,
 };
-use serde_repr::{Deserialize_repr, Serialize_repr};
 use stdweb::Value;
 
 use crate::{
@@ -60,17 +59,6 @@ pub fn get_world_size() -> u32 {
     js_unwrap!(Game.map.getWorldSize())
 }
 
-/// See [http://docs.screeps.com/api/#Game.map.isRoomAvailable]
-///
-/// [http://docs.screeps.com/api/#Game.map.isRoomAvailable]: http://docs.screeps.com/api/#Game.map.isRoomAvailable
-#[deprecated(
-    since = "0.8.0",
-    note = "Game.map.isRoomAvailable is deprecated, use get_room_status instead"
-)]
-pub fn is_room_available(room_name: RoomName) -> bool {
-    js_unwrap!(Game.map.isRoomAvailable(@{room_name}))
-}
-
 /// See [http://docs.screeps.com/api/#Game.map.getRoomStatus]
 ///
 /// [http://docs.screeps.com/api/#Game.map.getRoomStatus]: http://docs.screeps.com/api/#Game.map.getRoomStatus
@@ -82,27 +70,26 @@ pub fn get_room_status(room_name: RoomName) -> MapRoomStatus {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MapRoomStatus {
-    #[serde(deserialize_with = "RoomStatus::deserialize_from_str")]
     status: RoomStatus,
     timestamp: Option<u64>,
 }
 js_deserializable!(MapRoomStatus);
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u8)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, FromStr)]
 #[display(style = "camelCase")]
 pub enum RoomStatus {
-    Normal = 0,
-    Closed = 1,
-    Novice = 2,
-    Respawn = 3,
+    Normal,
+    Closed,
+    Novice,
+    Respawn,
 }
 
-impl RoomStatus {
-    /// Helper function for deserializing from a string rather than a fake
-    /// integer value.
-    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-        let s: Cow<'de, str> = Cow::deserialize(d)?;
+impl<'de> Deserialize<'de> for RoomStatus {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: Cow<'de, str> = Cow::deserialize(deserializer)?;
         Self::from_str(&s).map_err(|_| {
             D::Error::invalid_value(Unexpected::Str(&s), &"a known getRoomStatus status string")
         })
