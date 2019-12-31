@@ -33,6 +33,7 @@ Unreleased
   `MarketResourceType` to specify resource (breaking)
 - Update `game::market::calc_transaction_cost()` to work with `RoomName` instead of `&Room` to
   avoid requiring visibility of both rooms (breaking)
+- Add `Creep::move_pulled_by()` which allows a creep to accept another creep's attempt to `pull`
 - Remove `StructurePowerSpawn::power()` and `power_capacity()` (replaced with `HasStore` functions)
 - Remove explicitly implemented `Creep::energy()` function which used deprecated `.carry`, now
   using the `energy()` implementation from `HasStore`
