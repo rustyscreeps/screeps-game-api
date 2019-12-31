@@ -11,10 +11,9 @@ use serde::{
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
-    constants::{ResourceType, ReturnCode},
+    constants::{MarketResourceType, ResourceType, ReturnCode},
     local::RoomName,
     traits::TryInto,
-    Room,
 };
 
 /// Translates the `ORDER_SELL` and `ORDER_BUY` constants.
@@ -60,94 +59,123 @@ impl OrderType {
 
 #[derive(Deserialize, Debug)]
 pub struct Player {
-    username: String,
+    pub username: String,
 }
 js_deserializable!(Player);
 
 #[derive(Deserialize, Debug)]
 pub struct TransactionOrder {
-    id: String,
+    pub id: String,
     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
-    order_type: OrderType,
-    price: f64,
+    pub order_type: OrderType,
+    pub price: f64,
 }
 js_deserializable!(TransactionOrder);
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Transaction {
-    transaction_id: String,
-    time: u32,
-    sender: Player,
-    recipient: Player,
-    resource_type: String,
-    amount: u32,
-    from: String,
-    to: String,
-    description: String,
-    order: Option<TransactionOrder>,
+    pub transaction_id: String,
+    pub time: u32,
+    /// The player who sent resources for this transaction, or `None` if it was
+    /// an NPC terminal
+    pub sender: Option<Player>,
+    /// The recipient of the resources for this transaction, or `None` if it was
+    /// an NPC terminal
+    pub recipient: Option<Player>,
+    #[serde(deserialize_with = "ResourceType::deserialize_from_str")]
+    pub resource_type: ResourceType,
+    pub amount: u32,
+    /// The room that sent resources for this transaction
+    pub from: RoomName,
+    /// The room that received resources in this transaction
+    pub to: RoomName,
+    /// The description set in the sender's `StructureTerminal::send()` call, if
+    /// any
+    pub description: Option<String>,
+    /// Information about the market order that this transaction was fulfilling,
+    /// if any
+    pub order: Option<TransactionOrder>,
 }
 js_deserializable!(Transaction);
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Order {
-    id: String,
-    created: u32,
+    pub id: String,
+    /// Tick of order creation, `None` for intershard orders
+    pub created: Option<u32>,
+    /// Timestamp of order creation in milliseconds since epoch
+    pub created_timestamp: u64,
     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
-    order_type: OrderType,
-    resource_type: String,
-    room_name: RoomName,
-    amount: u32,
-    remaining_amount: u32,
-    price: f64,
+    pub order_type: OrderType,
+    #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
+    pub resource_type: MarketResourceType,
+    /// Room that owns the order, `None` for intershard orders
+    pub room_name: Option<RoomName>,
+    pub amount: u32,
+    pub remaining_amount: u32,
+    pub price: f64,
 }
 js_deserializable!(Order);
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MyOrder {
-    id: String,
-    created: u32,
-    active: bool,
+    pub id: String,
+    /// Tick of order creation, `None` for intershard orders
+    pub created: Option<u32>,
+    /// Timestamp of order creation in milliseconds since epoch
+    pub created_timestamp: u64,
+    pub active: bool,
     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
-    order_type: OrderType,
-    resource_type: String,
-    room_name: RoomName,
-    amount: u32,
-    remaining_amount: u32,
-    total_amount: u32,
-    price: f64,
+    pub order_type: OrderType,
+    #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
+    pub resource_type: MarketResourceType,
+    /// Room that owns the order, `None` for intershard orders
+    pub room_name: Option<RoomName>,
+    pub amount: u32,
+    pub remaining_amount: u32,
+    pub total_amount: u32,
+    pub price: f64,
 }
 js_deserializable!(MyOrder);
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct OrderHistoryRecord {
+    #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
+    pub resource_type: MarketResourceType,
+    /// Calendar date in string format, eg "2018-12-31"
+    pub date: String,
+    /// Total number of transactions for this resource on this day
+    pub transactions: u32,
+    /// Total volume of this resource bought and sold on this day
+    pub volume: u32,
+    pub avg_price: f64,
+    pub stddev_price: f64,
+}
+js_deserializable!(OrderHistoryRecord);
 
 pub fn credits() -> f64 {
     js_unwrap!(Game.market.credits)
 }
 
 pub fn incoming_transactions() -> Vec<Transaction> {
-    let arr_transaction_value = js! {
-        return Game.market.incomingTransactions;
-    };
-    arr_transaction_value.try_into().unwrap()
+    js_unwrap!(Game.market.incomingTransactions)
 }
 
 pub fn outgoing_transactions() -> Vec<Transaction> {
-    let arr_transaction_value = js! {
-        return Game.market.outgoingTransactions;
-    };
-    arr_transaction_value.try_into().unwrap()
+    js_unwrap!(Game.market.outgoingTransactions)
 }
 
+/// Get a `HashMap` of the player's currently-listed market orders
 pub fn orders() -> HashMap<String, MyOrder> {
-    let order_book_value = js! {
-        return Game.market.orders;
-    };
-    order_book_value.try_into().unwrap()
+    js_unwrap!(Game.market.orders)
 }
 
-pub fn calc_transaction_cost(amount: u32, room1: &Room, room2: &Room) -> f64 {
-    js_unwrap!(Game.market.calcTransactionCost(@{amount}, @{room1.name()}, @{room2.name()}))
+pub fn calc_transaction_cost(amount: u32, room1: RoomName, room2: RoomName) -> f64 {
+    js_unwrap!(Game.market.calcTransactionCost(@{amount}, @{room1.to_string()}, @{room2.to_string()}))
 }
 
 pub fn cancel_order(order_id: &str) -> ReturnCode {
@@ -160,41 +188,102 @@ pub fn change_order_price(order_id: &str, new_price: f64) -> ReturnCode {
 
 pub fn create_order(
     order_type: OrderType,
-    resource_type: ResourceType,
+    resource_type: MarketResourceType,
     price: f64,
     total_amount: u32,
-    room: &Room,
+    room: Option<RoomName>,
 ) -> ReturnCode {
-    js_unwrap! {
-        Game.market.createOrder(__order_type_num_to_str(@{order_type as u32}),
-                                __resource_type_num_to_str(@{resource_type as u32}),
-                                @{price},
-                                @{total_amount},
-                                @{room.name()})
+    let resource_num = match resource_type {
+        MarketResourceType::Resource(ty) => ty as u32,
+        MarketResourceType::IntershardResource(ty) => ty as u32,
+    };
+    match room {
+        Some(room_name) => {
+            js_unwrap! {
+                Game.market.createOrder({
+                    type: __order_type_num_to_str(@{order_type as u32}),
+                    resourceType: __resource_type_num_to_str(@{resource_num}),
+                    price: @{price},
+                    totalAmount: @{total_amount},
+                    roomName: @{room_name.to_string()}
+                })
+            }
+        }
+        None => {
+            js_unwrap! {
+                Game.market.createOrder({
+                    type: __order_type_num_to_str(@{order_type as u32}),
+                    resourceType: __resource_type_num_to_str(@{resource_num}),
+                    price: @{price},
+                    totalAmount: @{total_amount}
+                })
+            }
+        }
     }
 }
 
-pub fn deal(order_id: &str, amount: u32, target_room: &Room) -> ReturnCode {
-    js_unwrap! {Game.market.deal(@{order_id}, @{amount}, @{target_room.name()})}
+/// Execute a market trade
+///
+/// `target_room` is your owned room whose terminal will send or receive
+/// resources in this transaction, or `None` if this is an order for an
+/// intershard resource type
+pub fn deal(order_id: &str, amount: u32, target_room: Option<RoomName>) -> ReturnCode {
+    match target_room {
+        Some(target_room_name) => {
+            js_unwrap!(Game.market.deal(@{order_id}, @{amount}, @{target_room_name.to_string()}))
+        }
+        None => js_unwrap!(Game.market.deal(@{order_id}, @{amount})),
+    }
 }
 
 pub fn extend_order(order_id: &str, add_amount: u32) -> ReturnCode {
-    js_unwrap! {Game.market.extendOrder(@{order_id}, @{add_amount})}
+    js_unwrap!(Game.market.extendOrder(@{order_id}, @{add_amount}))
 }
 
 /// Get all orders from the market
 ///
 /// Contrary to the JS version, filtering should be done afterwards.
 pub fn get_all_orders() -> Vec<Order> {
-    let all_order = js! {
-        return Game.market.getAllOrders();
-    };
-    all_order.try_into().unwrap()
+    js_unwrap!(Game.market.getAllOrders())
+}
+
+/// Provides historical information on the price of each resource over the last
+/// 14 days
+///
+/// Provide a resource type to get history for using `Some(ResourceType)`, or
+/// get data for all resources by passing `None`
+pub fn get_history(resource: Option<MarketResourceType>) -> Vec<OrderHistoryRecord> {
+    match resource {
+        Some(resource_type) => {
+            match resource_type {
+                // workaround: Game.market.getHistory returns `{}` instead of `[]` when querying a resource type
+                // that has no history records
+                // Verify records are present otherwise return an empty array to prevent panics
+                MarketResourceType::Resource(ty) => js!(
+                    const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
+                    if (history && history.length > 0) {
+                        return history;
+                    } else {
+                        return [];
+                    }
+                ).try_into().unwrap(),
+                MarketResourceType::IntershardResource(ty) => js!(
+                    const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
+                    if (history && history.length > 0) {
+                        return history;
+                    } else {
+                        return [];
+                    }
+                ).try_into().unwrap(),
+            }
+        }
+        None => js_unwrap!(Game.market.getHistory()),
+    }
 }
 
 pub fn get_order(id: &str) -> Option<Order> {
     let order = js! {
-        return Game.market.getOrder(@{id});
+        return Game.market.getOrderById(@{id});
     };
     order.try_into().ok()
 }
