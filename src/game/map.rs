@@ -18,8 +18,8 @@ use crate::{
 /// See [http://docs.screeps.com/api/#Game.map.describeExits]
 ///
 /// [http://docs.screeps.com/api/#Game.map.describeExits]: http://docs.screeps.com/api/#Game.map.describeExits
-pub fn describe_exits(room_name: RoomName) -> collections::HashMap<Direction, String> {
-    let orig: collections::HashMap<String, String> =
+pub fn describe_exits(room_name: RoomName) -> collections::HashMap<Direction, RoomName> {
+    let orig: collections::HashMap<String, RoomName> =
         js_unwrap!(Game.map.describeExits(@{room_name}));
 
     orig.into_iter()
