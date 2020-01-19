@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+- Add `ResourceType::reaction_components` function translating the `REACTIONS` constant
+- Add `ResourceType::commodity_recipe` function and `FactoryRecipe` struct translating the
+  `COMMODITIES` constant
 - Add `effects()` to room objects, allowing access to the effects applied on room objects which
   are used by both strongholds and power creeps.  New `EffectType` enum returned by this call
   represents the `NaturalEffectType` (for stronghold effects) or `PowerType` (for power creeps)
