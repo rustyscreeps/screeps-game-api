@@ -43,6 +43,7 @@ Unreleased
 - Fix `Room::find_path` function call to underlying javascript
 - Fix typo in `Position::create_named_construction_site` and work around screeps bug in
   `Room::create_named_construction_site` by passing x and y instead of position object
+- Fix typo in `StructureController::reservation()` ticks_to_end return value
 
 0.7.0 (2019-10-19)
 ==================
