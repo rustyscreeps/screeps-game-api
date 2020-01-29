@@ -99,7 +99,7 @@ reference_wrappers! {
     pub struct StructureRoad(...);
     #[reference(instance_of = "StructureSpawn")]
     pub struct StructureSpawn(...);
-    #[reference(instance_of = "Spawning")]
+    #[reference(instance_of = "StructureSpawn.Spawning")]
     pub struct Spawning(...);
     #[reference(instance_of = "StructureStorage")]
     pub struct StructureStorage(...);
