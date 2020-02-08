@@ -46,6 +46,7 @@ Unreleased
 - Fix javascript associated object name for `StructureSpawn::spawning`
 - Correct swapped return types for `Mineral::density()` and `Mineral::mineral_amount()` and add
   a workaround for some private servers returning floating point `mineralAmount` values
+- Fix typo in `StructureController::reservation()` ticks_to_end return value
 
 0.7.0 (2019-10-19)
 ==================

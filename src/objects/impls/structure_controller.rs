@@ -39,7 +39,7 @@ impl StructureController {
         if let Value::Reference(r) = js!(return @{self.as_ref()}.reservation;) {
             Some(Reservation {
                 username: js_unwrap!(@{&r}.username),
-                ticks_to_end: js_unwrap!(@{&r}.ticks_to_end),
+                ticks_to_end: js_unwrap!(@{&r}.ticksToEnd),
             })
         } else {
             None
