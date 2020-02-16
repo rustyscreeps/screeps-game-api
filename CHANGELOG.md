@@ -47,6 +47,7 @@ Unreleased
 - Correct swapped return types for `Mineral::density()` and `Mineral::mineral_amount()` and add
   a workaround for some private servers returning floating point `mineralAmount` values
 - Fix typo in `StructureController::reservation()` ticks_to_end return value
+- Fix reversed conversion of `TOUGH` and `HEAL` parts
 
 0.7.0 (2019-10-19)
 ==================
