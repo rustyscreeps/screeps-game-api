@@ -48,6 +48,7 @@ Unreleased
   a workaround for some private servers returning floating point `mineralAmount` values
 - Fix typo in `StructureController::reservation()` ticks_to_end return value
 - Fix reversed conversion of `TOUGH` and `HEAL` parts
+- Fix `OwnedStructureProperties::has_owner()` to correctly return false for unowned structures
 
 0.7.0 (2019-10-19)
 ==================
