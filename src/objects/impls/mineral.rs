@@ -17,7 +17,8 @@ impl Mineral {
     }
 
     pub fn mineral_amount(&self) -> u32 {
-        // workaround for the fact that some private servers return floating point mineralAmount values
+        // workaround for the fact that some private servers return floating point
+        // mineralAmount values
         js_unwrap!(Math.floor(@{self.as_ref()}.mineralAmount))
     }
 }

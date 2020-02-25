@@ -49,6 +49,8 @@ Unreleased
 - Fix typo in `StructureController::reservation()` ticks_to_end return value
 - Fix reversed conversion of `TOUGH` and `HEAL` parts
 - Fix `OwnedStructureProperties::has_owner()` to correctly return false for unowned structures
+- Work around a case where `map::describe_exits()` would panic when a private server returns null
+  for an unavailable room
 
 0.7.0 (2019-10-19)
 ==================
