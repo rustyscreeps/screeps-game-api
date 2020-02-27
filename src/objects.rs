@@ -346,7 +346,7 @@ pub unsafe trait HasStore: RoomObjectProperties {
     }
 
     fn store_types(&self) -> Vec<ResourceType> {
-        js_unwrap!(Object.keys(@{self.as_ref()}.store).map(__resource_type_str_to_num))
+        js_unwrap!(Object.keys(@{self.as_ref()}.store).filter(function (r) { return r !== "_sum" }).map(__resource_type_str_to_num))
     }
 
     fn store_of(&self, ty: ResourceType) -> u32 {
