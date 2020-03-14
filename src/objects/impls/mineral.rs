@@ -7,7 +7,7 @@ simple_accessors! {
     impl Mineral {
         pub fn density() -> Density = density;
         // id from HasId trait
-        pub fn ticks_to_regeneration() -> u32 = ticksToRegeneration;
+        pub fn ticks_to_regeneration() -> Option<u32> = ticksToRegeneration;
     }
 }
 
