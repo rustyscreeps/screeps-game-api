@@ -9,6 +9,6 @@ simple_accessors! {
 
 impl Source {
     pub fn ticks_to_regeneration(&self) -> u32 {
-        js_unwrap!(Math.max(0, @{self.as_ref()}.ticksToRegeneration))
+        js_unwrap!(Math.max(0, @{self.as_ref()}.ticksToRegeneration || 0))
     }
 }
