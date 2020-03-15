@@ -51,8 +51,8 @@ Unreleased
 - Fix `OwnedStructureProperties::has_owner()` to correctly return false for unowned structures
 - Work around a case where `map::describe_exits()` would panic when a private server returns null
   for an unavailable room
-- Change `Source` and `Mineral` `ticks_to_regeneration()` functions to return `Option<u32>`, to
-  avoid a panic when js returns undefined when the regen timers have not been started
+- Change `Source` and `Mineral` `ticks_to_regeneration()` functions to return 0, preventing panics
+  in cases where the game API returns negative or undefined values
 
 0.7.0 (2019-10-19)
 ==================

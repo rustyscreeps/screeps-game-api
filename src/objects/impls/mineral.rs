@@ -7,7 +7,6 @@ simple_accessors! {
     impl Mineral {
         pub fn density() -> Density = density;
         // id from HasId trait
-        pub fn ticks_to_regeneration() -> Option<u32> = ticksToRegeneration;
     }
 }
 
@@ -20,5 +19,9 @@ impl Mineral {
         // workaround for the fact that some private servers return floating point
         // mineralAmount values
         js_unwrap!(Math.floor(@{self.as_ref()}.mineralAmount))
+    }
+
+    pub fn ticks_to_regeneration(&self) -> u32 {
+        js_unwrap!(Math.max(0, @{self.as_ref()}.ticksToRegeneration))
     }
 }
