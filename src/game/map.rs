@@ -1,11 +1,15 @@
 //! See [http://docs.screeps.com/api/#Game.map]
 //!
 //! [http://docs.screeps.com/api/#Game.map]: http://docs.screeps.com/api/#Game.map
-use std::{collections, mem};
+use std::{borrow::Cow, collections, mem, str::FromStr};
 
 use num_traits::FromPrimitive;
+use parse_display::FromStr;
 use scoped_tls::scoped_thread_local;
-use serde::Deserialize;
+use serde::{
+    de::{Deserializer, Error as _, Unexpected},
+    Deserialize,
+};
 use stdweb::Value;
 
 use crate::{
@@ -20,7 +24,7 @@ use crate::{
 /// [http://docs.screeps.com/api/#Game.map.describeExits]: http://docs.screeps.com/api/#Game.map.describeExits
 pub fn describe_exits(room_name: RoomName) -> collections::HashMap<Direction, RoomName> {
     let orig: collections::HashMap<String, RoomName> =
-        js_unwrap!(Game.map.describeExits(@{room_name}));
+        js_unwrap!(Game.map.describeExits(@{room_name}) || {});
 
     orig.into_iter()
         .map(|(key, value)| {
@@ -55,11 +59,41 @@ pub fn get_world_size() -> u32 {
     js_unwrap!(Game.map.getWorldSize())
 }
 
-/// See [http://docs.screeps.com/api/#Game.map.isRoomAvailable]
+/// See [http://docs.screeps.com/api/#Game.map.getRoomStatus]
 ///
-/// [http://docs.screeps.com/api/#Game.map.isRoomAvailable]: http://docs.screeps.com/api/#Game.map.isRoomAvailable
-pub fn is_room_available(room_name: RoomName) -> bool {
-    js_unwrap!(Game.map.isRoomAvailable(@{room_name}))
+/// [http://docs.screeps.com/api/#Game.map.getRoomStatus]: http://docs.screeps.com/api/#Game.map.getRoomStatus
+pub fn get_room_status(room_name: RoomName) -> MapRoomStatus {
+    js_unwrap!(Game.map.getRoomStatus(@{room_name}))
+}
+
+/// Represents the availability and respawn/novice state of a room on the map
+#[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MapRoomStatus {
+    status: RoomStatus,
+    timestamp: Option<u64>,
+}
+js_deserializable!(MapRoomStatus);
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, FromStr)]
+#[display(style = "camelCase")]
+pub enum RoomStatus {
+    Normal,
+    Closed,
+    Novice,
+    Respawn,
+}
+
+impl<'de> Deserialize<'de> for RoomStatus {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: Cow<'de, str> = Cow::deserialize(deserializer)?;
+        Self::from_str(&s).map_err(|_| {
+            D::Error::invalid_value(Unexpected::Str(&s), &"a known getRoomStatus status string")
+        })
+    }
 }
 
 /// Implements `Game.map.findExit`.

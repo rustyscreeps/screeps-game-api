@@ -5,8 +5,8 @@ function __part_num_to_str(num) {
         case 2: return CARRY;
         case 3: return ATTACK;
         case 4: return RANGED_ATTACK;
-        case 5: return HEAL;
-        case 6: return TOUGH;
+        case 5: return TOUGH;
+        case 6: return HEAL;
         case 7: return CLAIM;
         default: throw new Error("unknown part integer encoding " + num);
     }
@@ -19,8 +19,8 @@ function __part_str_to_num(str) {
         case CARRY: return 2;
         case ATTACK: return 3;
         case RANGED_ATTACK: return 4;
-        case HEAL: return 5;
-        case TOUGH: return 6;
+        case TOUGH: return 5;
+        case HEAL: return 6;
         case CLAIM: return 7;
         default: throw new Error("unknown part type " + str);
     }

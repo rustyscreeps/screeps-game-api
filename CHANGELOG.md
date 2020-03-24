@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+- Add `game::map::get_room_status()` as interface to new `Game.map.getRoomStatus()` function
+- Remove deprecated `game::map::is_room_available()`, use new `get_room_status` instead
+- Add `StructureLab::reverse_reaction()` as interface to new `reverseReaction()`
 - Add `ResourceType::boost` function translating the `BOOSTS` constant
 - Add `effects()` to room objects, allowing access to the effects applied on room objects which
   are used by both strongholds and power creeps.  New `EffectType` enum returned by this call
@@ -44,6 +47,16 @@ Unreleased
 - Fix `Room::find_path` function call to underlying javascript
 - Fix typo in `Position::create_named_construction_site` and work around screeps bug in
   `Room::create_named_construction_site` by passing x and y instead of position object
+- Fix javascript associated object name for `StructureSpawn::spawning`
+- Correct swapped return types for `Mineral::density()` and `Mineral::mineral_amount()` and add
+  a workaround for some private servers returning floating point `mineralAmount` values
+- Fix typo in `StructureController::reservation()` ticks_to_end return value
+- Fix reversed conversion of `TOUGH` and `HEAL` parts
+- Fix `OwnedStructureProperties::has_owner()` to correctly return false for unowned structures
+- Work around a case where `map::describe_exits()` would panic when a private server returns null
+  for an unavailable room
+- Change `Source` and `Mineral` `ticks_to_regeneration()` functions to return 0, preventing panics
+  in cases where the game API returns negative or undefined values
 
 0.7.0 (2019-10-19)
 ==================
