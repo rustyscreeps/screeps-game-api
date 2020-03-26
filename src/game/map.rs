@@ -70,8 +70,8 @@ pub fn get_room_status(room_name: RoomName) -> MapRoomStatus {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MapRoomStatus {
-    status: RoomStatus,
-    timestamp: Option<u64>,
+    pub status: RoomStatus,
+    pub timestamp: Option<u64>,
 }
 js_deserializable!(MapRoomStatus);
 
