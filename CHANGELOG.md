@@ -44,7 +44,6 @@ Unreleased
   Use `AccountPowerCreep::get_power_creep` which returns `Option<PowerCreep>` to get the living
   power creep, if spawned on the current shard.
 - Add `PowerCreepClass` enum to represent power creep classes, currently only `Operator`
-
 - Add `game::market::get_history` and `game::market::OrderHistoryRecord` exposing new
   `getHistory` API function
 - Add `Creep::move_pulled_by` which allows a creep to accept another creep's attempt to `pull`
