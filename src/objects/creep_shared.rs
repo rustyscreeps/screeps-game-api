@@ -1,6 +1,7 @@
 use std::{marker::PhantomData, mem};
 
 use scoped_tls::scoped_thread_local;
+use serde::{Deserialize, Serialize};
 use stdweb::Reference;
 
 use crate::{
@@ -77,7 +78,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
             reuse_path,
             serialize_memory,
             no_path_finding,
-            // visualize_path_style,
+            visualize_path_style,
             find_options:
                 FindOptions {
                     ignore_creeps,
@@ -129,7 +130,6 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         let callback_lifetime_erased: Box<
             dyn Fn(RoomName, Reference) -> Option<Reference> + 'static,
         > = unsafe { mem::transmute(callback_type_erased) };
-
         // Store callback_lifetime_erased in COST_CALLBACK for the duration of the
         // PathFinder call and make the call to PathFinder.
         //
@@ -143,7 +143,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
                         reusePath: @{reuse_path},
                         serializeMemory: @{serialize_memory},
                         noPathFinding: @{no_path_finding},
-                        visualizePathStyle: undefined,  // todo
+                        visualizePathStyle: @{visualize_path_style},
                         ignoreCreeps: @{ignore_creeps},
                         ignoreDestructibleStructures: @{ignore_destructible_structures},
                         costCallback: @{callback},
@@ -262,6 +262,71 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
 unsafe impl SharedCreepProperties for Creep {}
 unsafe impl SharedCreepProperties for PowerCreep {}
 
+#[derive(Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub enum LineStyle {
+    Undefined,
+    Dashed,
+    Dotted,
+}
+js_serializable!(LineStyle);
+impl ToString for LineStyle {
+    fn to_string(&self) -> String {
+        match self {
+            LineStyle::Undefined => "undefined".to_owned(),
+            LineStyle::Dashed => "dashed".to_owned(),
+            LineStyle::Dotted => "dotted".to_owned(),
+        }
+    }
+}
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct PolyStyle {
+    fill: String,
+    opacity: f64,
+    stroke: String,
+    stroke_width: f64,
+    line_style: LineStyle,
+}
+js_serializable!(PolyStyle);
+
+impl Default for PolyStyle {
+    fn default() -> Self {
+        PolyStyle {
+            fill: "#ffffff".to_string(),
+            opacity: 0.0,
+            stroke: "undefined".to_string(),
+            stroke_width: 0.1,
+            line_style: LineStyle::Undefined,
+        }
+    }
+}
+impl PolyStyle {
+    pub fn fill(mut self, fill: String) -> Self {
+        self.fill = fill;
+        self
+    }
+    pub fn opacity(mut self, opacity: f64) -> Self {
+        self.opacity = opacity;
+        self
+    }
+    pub fn stroke(mut self, stroke: String) -> Self {
+        self.stroke = stroke;
+        self
+    }
+    pub fn stroke_width(mut self, stroke_width: f64) -> Self {
+        self.stroke_width = stroke_width;
+        self
+    }
+    pub fn line_style(mut self, line_style: LineStyle) -> Self {
+        self.line_style = line_style;
+        self
+    }
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
 pub struct MoveToOptions<'a, F>
 where
     F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
@@ -269,7 +334,7 @@ where
     pub(crate) reuse_path: u32,
     pub(crate) serialize_memory: bool,
     pub(crate) no_path_finding: bool,
-    // pub(crate) visualize_path_style: PolyStyle,
+    pub(crate) visualize_path_style: PolyStyle,
     pub(crate) find_options: FindOptions<'a, F>,
 }
 
@@ -283,7 +348,7 @@ impl Default
             reuse_path: 5,
             serialize_memory: true,
             no_path_finding: false,
-            // visualize_path_style: None,
+            visualize_path_style: PolyStyle::default(),
             find_options: FindOptions::default(),
         }
     }
@@ -318,11 +383,12 @@ where
         self
     }
 
-    // /// Sets the style to trace the path used by this creep. See doc for default.
-    // pub fn visualize_path_style(mut self, style: ) -> Self {
-    //     self.visualize_path_style = style;
-    //     self
-    // }
+    /// Sets the style to trace the path used by this creep. See doc for
+    /// default.
+    pub fn visualize_path_style(mut self, style: PolyStyle) -> Self {
+        self.visualize_path_style = style;
+        self
+    }
 
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
@@ -338,15 +404,15 @@ where
     }
 
     /// Sets cost callback - default `|_, _| {}`.
-    pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> MoveToOptions<'b, F2>
+    pub fn cost_callback<'b: 'a, F2>(self, cost_callback: F2) -> MoveToOptions<'a, F2>
     where
-        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
+        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,
             serialize_memory: self.serialize_memory,
             no_path_finding: self.no_path_finding,
-            // self.visualize_path_style,
+            visualize_path_style: self.visualize_path_style,
             find_options: self.find_options.cost_callback(cost_callback),
         }
     }
@@ -393,15 +459,18 @@ where
     }
 
     /// Sets options related to FindOptions. Defaults to FindOptions default.
-    pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2>) -> MoveToOptions<'b, F2>
+    pub fn find_options<'b: 'a, F2>(
+        self,
+        find_options: FindOptions<'a, F2>,
+    ) -> MoveToOptions<'a, F2>
     where
-        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
+        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,
             serialize_memory: self.serialize_memory,
             no_path_finding: self.no_path_finding,
-            // self.visualize_path_style,
+            visualize_path_style: self.visualize_path_style,
             find_options,
         }
     }

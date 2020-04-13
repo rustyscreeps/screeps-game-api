@@ -28,7 +28,7 @@ mod impls;
 mod structure;
 
 pub use self::{
-    creep_shared::{MoveToOptions, SharedCreepProperties},
+    creep_shared::{LineStyle, MoveToOptions, PolyStyle, SharedCreepProperties},
     impls::{
         AttackEvent, AttackType, Bodypart, BuildEvent, Effect, Event, EventType, ExitEvent,
         FindOptions, HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path,
