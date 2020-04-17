@@ -402,6 +402,7 @@ where
         max_ops,
         max_rooms,
         heuristic_weight,
+        max_cost,
         ..
     } = opts;
 
@@ -418,6 +419,7 @@ where
                 flee: @{flee},
                 maxOps: @{max_ops},
                 maxRooms: @{max_rooms},
+                maxCost: @{max_cost},
                 heuristicWeight: @{heuristic_weight}
             })
         };
