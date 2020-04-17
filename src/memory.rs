@@ -238,9 +238,9 @@ impl MemoryReference {
     /// info!("final position: {}", pos);
     /// creep.move_to(&pos);
     /// ```
-    pub fn get<T>(&self, key: &str) -> Result<Option<T>, ConversionError>
+    pub fn get<T, E>(&self, key: &str) -> Result<Option<T>, E>
     where
-        T: TryFrom<Value, Error = ConversionError>,
+        T: TryFrom<Value, Error = E>,
     {
         let val = js! {
             return (@{self.as_ref()})[@{key}];
