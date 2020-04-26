@@ -99,7 +99,7 @@ reference_wrappers! {
     pub struct StructureRoad(...);
     #[reference(instance_of = "StructureSpawn")]
     pub struct StructureSpawn(...);
-    #[reference(instance_of = "Spawning")]
+    #[reference(instance_of = "StructureSpawn.Spawning")]
     pub struct Spawning(...);
     #[reference(instance_of = "StructureStorage")]
     pub struct StructureStorage(...);
@@ -302,10 +302,10 @@ pub unsafe trait OwnedStructureProperties: StructureProperties {
     fn my(&self) -> bool {
         js_unwrap!(@{self.as_ref()}.my || false)
     }
-    /// Whether this structure is currently owned by someone (in JS: `my !==
+    /// Whether this structure is currently owned by someone (in JS: `owner !==
     /// undefined`)
     fn has_owner(&self) -> bool {
-        js_unwrap!(@{self.as_ref()}.my !== undefined)
+        js_unwrap!(@{self.as_ref()}.owner !== undefined)
     }
     /// The name of the owner of this structure, if any.
     fn owner_name(&self) -> Option<String> {
