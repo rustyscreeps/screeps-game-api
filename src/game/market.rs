@@ -242,9 +242,24 @@ pub fn extend_order(order_id: &str, add_amount: u32) -> ReturnCode {
 
 /// Get all orders from the market
 ///
-/// Contrary to the JS version, filtering should be done afterwards.
-pub fn get_all_orders() -> Vec<Order> {
-    js_unwrap!(Game.market.getAllOrders())
+/// Full filtering support is not available, but filtering by resource type
+/// is available and will reduce the CPU cost compared to getting all orders
+pub fn get_all_orders(resource: Option<MarketResourceType>) -> Vec<Order> {
+    match resource {
+        Some(resource_type) => match resource_type {
+            MarketResourceType::Resource(ty) => js_unwrap! {
+                Game.market.getAllOrders({
+                    resourceType: __resource_type_num_to_str(@{ty as u32})
+                })
+            },
+            MarketResourceType::IntershardResource(ty) => js_unwrap! {
+                Game.market.getAllOrders({
+                    resourceType: __resource_type_num_to_str(@{ty as u32})
+                })
+            },
+        },
+        None => js_unwrap!(Game.market.getAllOrders()),
+    }
 }
 
 /// Provides historical information on the price of each resource over the last

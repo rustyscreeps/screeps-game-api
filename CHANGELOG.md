@@ -56,6 +56,8 @@ Unreleased
   for an unavailable room
 - Change `Source` and `Mineral` `ticks_to_regeneration()` functions to return 0, preventing panics
   in cases where the game API returns negative or undefined values
+- Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
+  since this is optimized in the server code (breaking)
 
 0.7.0 (2019-10-19)
 ==================
