@@ -62,6 +62,8 @@ Unreleased
   in cases where the game API returns negative or undefined values
 - Change `StructureTerminal::send` to take the destination room name as `RoomName` instead of
   `&str` (breaking)
+- Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
+  since this is optimized in the server code (breaking)
 
 0.7.0 (2019-10-19)
 ==================
