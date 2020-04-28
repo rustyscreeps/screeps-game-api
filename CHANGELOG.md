@@ -4,6 +4,10 @@ Unreleased
 - Add `game::map::get_room_status()` as interface to new `Game.map.getRoomStatus()` function
 - Remove deprecated `game::map::is_room_available()`, use new `get_room_status` instead
 - Add `StructureLab::reverse_reaction()` as interface to new `reverseReaction()`
+- Add `ResourceType::boost` function translating the `BOOSTS` constant
+- Add `ResourceType::reaction_components` function translating the `REACTIONS` constant
+- Add `ResourceType::commodity_recipe` function and `FactoryRecipe` struct translating the
+  `COMMODITIES` constant
 - Add `effects()` to room objects, allowing access to the effects applied on room objects which
   are used by both strongholds and power creeps.  New `EffectType` enum returned by this call
   represents the `NaturalEffectType` (for stronghold effects) or `PowerType` (for power creeps)
@@ -56,6 +60,8 @@ Unreleased
   for an unavailable room
 - Change `Source` and `Mineral` `ticks_to_regeneration()` functions to return 0, preventing panics
   in cases where the game API returns negative or undefined values
+- Change `StructureTerminal::send` to take the destination room name as `RoomName` instead of
+  `&str` (breaking)
 - Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
   since this is optimized in the server code (breaking)
 

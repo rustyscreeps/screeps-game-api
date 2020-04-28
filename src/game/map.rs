@@ -70,8 +70,8 @@ pub fn get_room_status(room_name: RoomName) -> MapRoomStatus {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MapRoomStatus {
-    status: RoomStatus,
-    timestamp: Option<u64>,
+    pub status: RoomStatus,
+    pub timestamp: Option<u64>,
 }
 js_deserializable!(MapRoomStatus);
 
@@ -201,7 +201,7 @@ fn parse_find_route_returned_value(v: Value) -> Result<Vec<RoomRouteStep>, Retur
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RoomRouteStep {
-    exit: ExitDirection,
-    room: String,
+    pub exit: ExitDirection,
+    pub room: String,
 }
 js_deserializable!(RoomRouteStep);
