@@ -179,15 +179,6 @@ impl ResourceType {
     pub fn commodity_recipe(self) -> Option<FactoryRecipe> {
         use ResourceType::*;
         let recipe = match self {
-            // these comments copied directly from JavaScript 'constants.js' file.
-            // [exports.RESOURCE_UTRIUM_BAR]: {
-            //     amount: 100,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_UTRIUM]: 500,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             UtriumBar => FactoryRecipe {
                 amount: 100,
                 cooldown: 20,
@@ -199,14 +190,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_UTRIUM]: {
-            //     amount: 500,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_UTRIUM_BAR]: 100,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Utrium => FactoryRecipe {
                 amount: 500,
                 cooldown: 20,
@@ -218,14 +201,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_LEMERGIUM_BAR]: {
-            //     amount: 100,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_LEMERGIUM]: 500,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             LemergiumBar => FactoryRecipe {
                 amount: 100,
                 cooldown: 20,
@@ -237,14 +212,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_LEMERGIUM]: {
-            //     amount: 500,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_LEMERGIUM_BAR]: 100,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Lemergium => FactoryRecipe {
                 amount: 500,
                 cooldown: 20,
@@ -256,14 +223,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_ZYNTHIUM_BAR]: {
-            //     amount: 100,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_ZYNTHIUM]: 500,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             ZynthiumBar => FactoryRecipe {
                 amount: 100,
                 cooldown: 20,
@@ -275,14 +234,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_ZYNTHIUM]: {
-            //     amount: 500,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_ZYNTHIUM_BAR]: 100,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Zynthium => FactoryRecipe {
                 amount: 500,
                 cooldown: 20,
@@ -294,14 +245,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_KEANIUM_BAR]: {
-            //     amount: 100,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_KEANIUM]: 500,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             KeaniumBar => FactoryRecipe {
                 amount: 100,
                 cooldown: 20,
@@ -313,14 +256,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_KEANIUM]: {
-            //     amount: 500,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_KEANIUM_BAR]: 100,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Keanium => FactoryRecipe {
                 amount: 500,
                 cooldown: 20,
@@ -332,14 +267,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_GHODIUM_MELT]: {
-            //     amount: 100,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_GHODIUM]: 500,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             GhodiumMelt => FactoryRecipe {
                 amount: 100,
                 cooldown: 20,
@@ -351,14 +278,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_GHODIUM]: {
-            //     amount: 500,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_GHODIUM_MELT]: 100,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Ghodium => FactoryRecipe {
                 amount: 500,
                 cooldown: 20,
@@ -370,14 +289,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_OXIDANT]: {
-            //     amount: 100,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_OXYGEN]: 500,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Oxidant => FactoryRecipe {
                 amount: 100,
                 cooldown: 20,
@@ -389,14 +300,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_OXYGEN]: {
-            //     amount: 500,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_OXIDANT]: 100,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Oxygen => FactoryRecipe {
                 amount: 500,
                 cooldown: 20,
@@ -408,14 +311,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_REDUCTANT]: {
-            //     amount: 100,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_HYDROGEN]: 500,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Reductant => FactoryRecipe {
                 amount: 100,
                 cooldown: 20,
@@ -427,14 +322,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_HYDROGEN]: {
-            //     amount: 500,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_REDUCTANT]: 100,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Hydrogen => FactoryRecipe {
                 amount: 500,
                 cooldown: 20,
@@ -446,14 +333,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_PURIFIER]: {
-            //     amount: 100,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_CATALYST]: 500,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Purifier => FactoryRecipe {
                 amount: 100,
                 cooldown: 20,
@@ -465,14 +344,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_CATALYST]: {
-            //     amount: 500,
-            //     cooldown: 20,
-            //     components: {
-            //         [exports.RESOURCE_PURIFIER]: 100,
-            //         [exports.RESOURCE_ENERGY]: 200
-            //     }
-            // },
             Catalyst => FactoryRecipe {
                 amount: 500,
                 cooldown: 20,
@@ -484,13 +355,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_BATTERY]: {
-            //     amount: 50,
-            //     cooldown: 10,
-            //     components: {
-            //         [exports.RESOURCE_ENERGY]: 600
-            //     }
-            // },
             Battery => FactoryRecipe {
                 amount: 50,
                 cooldown: 10,
@@ -501,13 +365,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_ENERGY]: {
-            //     amount: 500,
-            //     cooldown: 10,
-            //     components: {
-            //         [exports.RESOURCE_BATTERY]: 50
-            //     }
-            // },
             Energy => FactoryRecipe {
                 amount: 500,
                 cooldown: 10,
@@ -518,16 +375,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_COMPOSITE]: {
-            //     level: 1,
-            //     amount: 20,
-            //     cooldown: 50,
-            //     components: {
-            //         [exports.RESOURCE_UTRIUM_BAR]: 20,
-            //         [exports.RESOURCE_ZYNTHIUM_BAR]: 20,
-            //         [exports.RESOURCE_ENERGY]: 20
-            //     }
-            // },
             Composite => FactoryRecipe {
                 amount: 20,
                 cooldown: 50,
@@ -540,17 +387,6 @@ impl ResourceType {
                 },
                 level: Some(1),
             },
-            // [exports.RESOURCE_CRYSTAL]: {
-            //     level: 2,
-            //     amount: 6,
-            //     cooldown: 21,
-            //     components: {
-            //         [exports.RESOURCE_LEMERGIUM_BAR]: 6,
-            //         [exports.RESOURCE_KEANIUM_BAR]: 6,
-            //         [exports.RESOURCE_PURIFIER]: 6,
-            //         [exports.RESOURCE_ENERGY]: 45
-            //     }
-            // },
             Crystal => FactoryRecipe {
                 amount: 6,
                 cooldown: 21,
@@ -564,17 +400,6 @@ impl ResourceType {
                 },
                 level: Some(2),
             },
-            // [exports.RESOURCE_LIQUID]: {
-            //     level: 3,
-            //     amount: 12,
-            //     cooldown: 60,
-            //     components: {
-            //         [exports.RESOURCE_OXIDANT]: 12,
-            //         [exports.RESOURCE_REDUCTANT]: 12,
-            //         [exports.RESOURCE_GHODIUM_MELT]: 12,
-            //         [exports.RESOURCE_ENERGY]: 90
-            //     }
-            // },
             Liquid => FactoryRecipe {
                 amount: 12,
                 cooldown: 60,
@@ -588,15 +413,6 @@ impl ResourceType {
                 },
                 level: Some(3),
             },
-            // [exports.RESOURCE_WIRE]: {
-            //     amount: 20,
-            //     cooldown: 8,
-            //     components: {
-            //         [exports.RESOURCE_UTRIUM_BAR]: 20,
-            //         [exports.RESOURCE_SILICON]: 100,
-            //         [exports.RESOURCE_ENERGY]: 40
-            //     }
-            // },
             Wire => FactoryRecipe {
                 amount: 20,
                 cooldown: 8,
@@ -609,17 +425,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_SWITCH]: {
-            //     level: 1,
-            //     amount: 5,
-            //     cooldown: 70,
-            //     components: {
-            //         [exports.RESOURCE_WIRE]: 40,
-            //         [exports.RESOURCE_OXIDANT]: 95,
-            //         [exports.RESOURCE_UTRIUM_BAR]: 35,
-            //         [exports.RESOURCE_ENERGY]: 20
-            //     }
-            // },
             Switch => FactoryRecipe {
                 amount: 5,
                 cooldown: 70,
@@ -633,17 +438,6 @@ impl ResourceType {
                 },
                 level: Some(1),
             },
-            // [exports.RESOURCE_TRANSISTOR]: {
-            //     level: 2,
-            //     amount: 1,
-            //     cooldown: 59,
-            //     components: {
-            //         [exports.RESOURCE_SWITCH]: 4,
-            //         [exports.RESOURCE_WIRE]: 15,
-            //         [exports.RESOURCE_REDUCTANT]: 85,
-            //         [exports.RESOURCE_ENERGY]: 8
-            //     }
-            // },
             Transistor => FactoryRecipe {
                 amount: 1,
                 cooldown: 59,
@@ -657,18 +451,6 @@ impl ResourceType {
                 },
                 level: Some(2),
             },
-            // [exports.RESOURCE_MICROCHIP]: {
-            //     level: 3,
-            //     amount: 1,
-            //     cooldown: 250,
-            //     components: {
-            //         [exports.RESOURCE_TRANSISTOR]: 2,
-            //         [exports.RESOURCE_COMPOSITE]: 50,
-            //         [exports.RESOURCE_WIRE]: 117,
-            //         [exports.RESOURCE_PURIFIER]: 25,
-            //         [exports.RESOURCE_ENERGY]: 16
-            //     }
-            // },
             Microchip => FactoryRecipe {
                 amount: 1,
                 cooldown: 250,
@@ -683,18 +465,6 @@ impl ResourceType {
                 },
                 level: Some(3),
             },
-            // [exports.RESOURCE_CIRCUIT]: {
-            //     level: 4,
-            //     amount: 1,
-            //     cooldown: 800,
-            //     components: {
-            //         [exports.RESOURCE_MICROCHIP]: 1,
-            //         [exports.RESOURCE_TRANSISTOR]: 5,
-            //         [exports.RESOURCE_SWITCH]: 4,
-            //         [exports.RESOURCE_OXIDANT]: 115,
-            //         [exports.RESOURCE_ENERGY]: 32
-            //     }
-            // },
             Circuit => FactoryRecipe {
                 amount: 1,
                 cooldown: 800,
@@ -709,18 +479,6 @@ impl ResourceType {
                 },
                 level: Some(4),
             },
-            // [exports.RESOURCE_DEVICE]: {
-            //     level: 5,
-            //     amount: 1,
-            //     cooldown: 600,
-            //     components: {
-            //         [exports.RESOURCE_CIRCUIT]: 1,
-            //         [exports.RESOURCE_MICROCHIP]: 3,
-            //         [exports.RESOURCE_CRYSTAL]: 110,
-            //         [exports.RESOURCE_GHODIUM_MELT]: 150,
-            //         [exports.RESOURCE_ENERGY]: 64
-            //     }
-            // },
             Device => FactoryRecipe {
                 amount: 1,
                 cooldown: 600,
@@ -735,15 +493,6 @@ impl ResourceType {
                 },
                 level: Some(5),
             },
-            // [exports.RESOURCE_CELL]: {
-            //     amount: 20,
-            //     cooldown: 8,
-            //     components: {
-            //         [exports.RESOURCE_LEMERGIUM_BAR]: 20,
-            //         [exports.RESOURCE_BIOMASS]: 100,
-            //         [exports.RESOURCE_ENERGY]: 40
-            //     }
-            // },
             Cell => FactoryRecipe {
                 amount: 20,
                 cooldown: 8,
@@ -756,17 +505,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_PHLEGM]: {
-            //     level: 1,
-            //     amount: 2,
-            //     cooldown: 35,
-            //     components: {
-            //         [exports.RESOURCE_CELL]: 20,
-            //         [exports.RESOURCE_OXIDANT]: 36,
-            //         [exports.RESOURCE_LEMERGIUM_BAR]: 16,
-            //         [exports.RESOURCE_ENERGY]: 8
-            //     }
-            // },
             Phlegm => FactoryRecipe {
                 amount: 2,
                 cooldown: 35,
@@ -780,17 +518,6 @@ impl ResourceType {
                 },
                 level: Some(1),
             },
-            // [exports.RESOURCE_TISSUE]: {
-            //     level: 2,
-            //     amount: 2,
-            //     cooldown: 164,
-            //     components: {
-            //         [exports.RESOURCE_PHLEGM]: 10,
-            //         [exports.RESOURCE_CELL]: 10,
-            //         [exports.RESOURCE_REDUCTANT]: 110,
-            //         [exports.RESOURCE_ENERGY]: 16
-            //     }
-            // },
             Tissue => FactoryRecipe {
                 amount: 2,
                 cooldown: 164,
@@ -804,18 +531,6 @@ impl ResourceType {
                 },
                 level: Some(2),
             },
-            // [exports.RESOURCE_MUSCLE]: {
-            //     level: 3,
-            //     amount: 1,
-            //     cooldown: 250,
-            //     components: {
-            //         [exports.RESOURCE_TISSUE]: 3,
-            //         [exports.RESOURCE_PHLEGM]: 3,
-            //         [exports.RESOURCE_ZYNTHIUM_BAR]: 50,
-            //         [exports.RESOURCE_REDUCTANT]: 50,
-            //         [exports.RESOURCE_ENERGY]: 16
-            //     }
-            // },
             Muscle => FactoryRecipe {
                 amount: 1,
                 cooldown: 250,
@@ -830,18 +545,6 @@ impl ResourceType {
                 },
                 level: Some(3),
             },
-            // [exports.RESOURCE_ORGANOID]: {
-            //     level: 4,
-            //     amount: 1,
-            //     cooldown: 800,
-            //     components: {
-            //         [exports.RESOURCE_MUSCLE]: 1,
-            //         [exports.RESOURCE_TISSUE]: 5,
-            //         [exports.RESOURCE_PURIFIER]: 208,
-            //         [exports.RESOURCE_OXIDANT]: 256,
-            //         [exports.RESOURCE_ENERGY]: 32
-            //     }
-            // },
             Organoid => FactoryRecipe {
                 amount: 1,
                 cooldown: 800,
@@ -856,21 +559,9 @@ impl ResourceType {
                 },
                 level: Some(4),
             },
-            // [exports.RESOURCE_ORGANISM]: {
-            //     level: 5,
-            //     amount: 1,
-            //     cooldown: 600,
-            //     components: {
-            //         [exports.RESOURCE_ORGANOID]: 1,
-            //         [exports.RESOURCE_LIQUID]: 150,
-            //         [exports.RESOURCE_TISSUE]: 6,
-            //         [exports.RESOURCE_CELL]: 310,
-            //         [exports.RESOURCE_ENERGY]: 64
-            //     }
-            // },
             Organism => FactoryRecipe {
                 amount: 1,
-                cooldown: 800,
+                cooldown: 600,
                 components: {
                     let mut components = HashMap::new();
                     components.insert(Organoid, 1);
@@ -882,15 +573,6 @@ impl ResourceType {
                 },
                 level: Some(5),
             },
-            // [exports.RESOURCE_ALLOY]: {
-            //     amount: 20,
-            //     cooldown: 8,
-            //     components: {
-            //         [exports.RESOURCE_ZYNTHIUM_BAR]: 20,
-            //         [exports.RESOURCE_METAL]: 100,
-            //         [exports.RESOURCE_ENERGY]: 40
-            //     }
-            // },
             Alloy => FactoryRecipe {
                 amount: 20,
                 cooldown: 8,
@@ -903,16 +585,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_TUBE]: {
-            //     level: 1,
-            //     amount: 2,
-            //     cooldown: 45,
-            //     components: {
-            //         [exports.RESOURCE_ALLOY]: 40,
-            //         [exports.RESOURCE_ZYNTHIUM_BAR]: 16,
-            //         [exports.RESOURCE_ENERGY]: 8
-            //     }
-            // },
             Tube => FactoryRecipe {
                 amount: 2,
                 cooldown: 45,
@@ -925,17 +597,6 @@ impl ResourceType {
                 },
                 level: Some(1),
             },
-            // [exports.RESOURCE_FIXTURES]: {
-            //     level: 2,
-            //     amount: 1,
-            //     cooldown: 115,
-            //     components: {
-            //         [exports.RESOURCE_COMPOSITE]: 20,
-            //         [exports.RESOURCE_ALLOY]: 41,
-            //         [exports.RESOURCE_OXIDANT]: 161,
-            //         [exports.RESOURCE_ENERGY]: 8
-            //     }
-            // },
             Fixtures => FactoryRecipe {
                 amount: 1,
                 cooldown: 115,
@@ -949,18 +610,6 @@ impl ResourceType {
                 },
                 level: Some(2),
             },
-            // [exports.RESOURCE_FRAME]: {
-            //     level: 3,
-            //     amount: 1,
-            //     cooldown: 125,
-            //     components: {
-            //         [exports.RESOURCE_FIXTURES]: 2,
-            //         [exports.RESOURCE_TUBE]: 4,
-            //         [exports.RESOURCE_REDUCTANT]: 330,
-            //         [exports.RESOURCE_ZYNTHIUM_BAR]: 31,
-            //         [exports.RESOURCE_ENERGY]: 16
-            //     }
-            // },
             Frame => FactoryRecipe {
                 amount: 1,
                 cooldown: 125,
@@ -975,18 +624,6 @@ impl ResourceType {
                 },
                 level: Some(3),
             },
-            // [exports.RESOURCE_HYDRAULICS]: {
-            //     level: 4,
-            //     amount: 1,
-            //     cooldown: 800,
-            //     components: {
-            //         [exports.RESOURCE_LIQUID]: 150,
-            //         [exports.RESOURCE_FIXTURES]: 3,
-            //         [exports.RESOURCE_TUBE]: 15,
-            //         [exports.RESOURCE_PURIFIER]: 208,
-            //         [exports.RESOURCE_ENERGY]: 32
-            //     }
-            // },
             Hydraulics => FactoryRecipe {
                 amount: 1,
                 cooldown: 800,
@@ -1001,18 +638,6 @@ impl ResourceType {
                 },
                 level: Some(4),
             },
-            // [exports.RESOURCE_MACHINE]: {
-            //     level: 5,
-            //     amount: 1,
-            //     cooldown: 600,
-            //     components: {
-            //         [exports.RESOURCE_HYDRAULICS]: 1,
-            //         [exports.RESOURCE_FRAME]: 2,
-            //         [exports.RESOURCE_FIXTURES]: 3,
-            //         [exports.RESOURCE_TUBE]: 12,
-            //         [exports.RESOURCE_ENERGY]: 64
-            //     }
-            // },
             Machine => FactoryRecipe {
                 amount: 1,
                 cooldown: 600,
@@ -1027,15 +652,6 @@ impl ResourceType {
                 },
                 level: Some(5),
             },
-            // [exports.RESOURCE_CONDENSATE]: {
-            //     amount: 20,
-            //     cooldown: 8,
-            //     components: {
-            //         [exports.RESOURCE_KEANIUM_BAR]: 20,
-            //         [exports.RESOURCE_MIST]: 100,
-            //         [exports.RESOURCE_ENERGY]: 40
-            //     }
-            // },
             Condensate => FactoryRecipe {
                 amount: 20,
                 cooldown: 8,
@@ -1048,17 +664,6 @@ impl ResourceType {
                 },
                 level: None,
             },
-            // [exports.RESOURCE_CONCENTRATE]: {
-            //     level: 1,
-            //     amount: 3,
-            //     cooldown: 41,
-            //     components: {
-            //         [exports.RESOURCE_CONDENSATE]: 30,
-            //         [exports.RESOURCE_KEANIUM_BAR]: 15,
-            //         [exports.RESOURCE_REDUCTANT]: 54,
-            //         [exports.RESOURCE_ENERGY]: 12
-            //     }
-            // },
             Concentrate => FactoryRecipe {
                 amount: 3,
                 cooldown: 41,
@@ -1072,17 +677,6 @@ impl ResourceType {
                 },
                 level: Some(1),
             },
-            // [exports.RESOURCE_EXTRACT]: {
-            //     level: 2,
-            //     amount: 2,
-            //     cooldown: 128,
-            //     components: {
-            //         [exports.RESOURCE_CONCENTRATE]: 10,
-            //         [exports.RESOURCE_CONDENSATE]: 30,
-            //         [exports.RESOURCE_OXIDANT]: 60,
-            //         [exports.RESOURCE_ENERGY]: 16
-            //     }
-            // },
             Extract => FactoryRecipe {
                 amount: 2,
                 cooldown: 128,
@@ -1096,18 +690,6 @@ impl ResourceType {
                 },
                 level: Some(2),
             },
-            // [exports.RESOURCE_SPIRIT]: {
-            //     level: 3,
-            //     amount: 1,
-            //     cooldown: 200,
-            //     components: {
-            //         [exports.RESOURCE_EXTRACT]: 2,
-            //         [exports.RESOURCE_CONCENTRATE]: 6,
-            //         [exports.RESOURCE_REDUCTANT]: 90,
-            //         [exports.RESOURCE_PURIFIER]: 20,
-            //         [exports.RESOURCE_ENERGY]: 16
-            //     }
-            // },
             Spirit => FactoryRecipe {
                 amount: 1,
                 cooldown: 200,
@@ -1122,18 +704,6 @@ impl ResourceType {
                 },
                 level: Some(3),
             },
-            // [exports.RESOURCE_EMANATION]: {
-            //     level: 4,
-            //     amount: 1,
-            //     cooldown: 800,
-            //     components: {
-            //         [exports.RESOURCE_SPIRIT]: 2,
-            //         [exports.RESOURCE_EXTRACT]: 2,
-            //         [exports.RESOURCE_CONCENTRATE]: 3,
-            //         [exports.RESOURCE_KEANIUM_BAR]: 112,
-            //         [exports.RESOURCE_ENERGY]: 32
-            //     }
-            // },
             Emanation => FactoryRecipe {
                 amount: 1,
                 cooldown: 800,
@@ -1148,18 +718,6 @@ impl ResourceType {
                 },
                 level: Some(4),
             },
-            // [exports.RESOURCE_ESSENCE]: {
-            //     level: 5,
-            //     amount: 1,
-            //     cooldown: 600,
-            //     components: {
-            //         [exports.RESOURCE_EMANATION]: 1,
-            //         [exports.RESOURCE_SPIRIT]: 3,
-            //         [exports.RESOURCE_CRYSTAL]: 110,
-            //         [exports.RESOURCE_GHODIUM_MELT]: 150,
-            //         [exports.RESOURCE_ENERGY]: 64
-            //     }
-            // },
             Essence => FactoryRecipe {
                 amount: 1,
                 cooldown: 600,
