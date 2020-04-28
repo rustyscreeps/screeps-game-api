@@ -1,5 +1,6 @@
 use crate::{
     constants::{ResourceType, ReturnCode},
+    local::RoomName,
     objects::StructureTerminal,
 };
 
@@ -8,7 +9,7 @@ impl StructureTerminal {
         &self,
         resource_type: ResourceType,
         amount: u32,
-        destination: &str,
+        destination: RoomName,
         description: Option<&str>,
     ) -> ReturnCode {
         js_unwrap! {

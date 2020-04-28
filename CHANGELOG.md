@@ -60,6 +60,8 @@ Unreleased
   for an unavailable room
 - Change `Source` and `Mineral` `ticks_to_regeneration()` functions to return 0, preventing panics
   in cases where the game API returns negative or undefined values
+- Change `StructureTerminal::send` to take the destination room name as `RoomName` instead of
+  `&str` (breaking)
 
 0.7.0 (2019-10-19)
 ==================
