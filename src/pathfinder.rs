@@ -12,7 +12,7 @@
 use std::{f64, marker::PhantomData, mem};
 
 use scoped_tls::scoped_thread_local;
-use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray};
+use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray, Value};
 
 use crate::{local::Position, objects::HasPosition, traits::TryInto};
 
@@ -175,9 +175,57 @@ mod serde_impls {
     }
 }
 
+pub trait RoomCostResult: Into<Value> {}
+
+pub enum MultiRoomCostResult<'a> {
+    CostMatrix(CostMatrix<'a>),
+    Impassable,
+    Default
+}
+
+impl<'a> RoomCostResult for MultiRoomCostResult<'a> {}
+
+impl<'a> Default for MultiRoomCostResult<'a> {
+    fn default() -> Self {
+        MultiRoomCostResult::Default
+    }
+}
+
+impl<'a> Into<Value> for MultiRoomCostResult<'a> {
+    fn into(self) -> Value {
+        match self {
+            MultiRoomCostResult::CostMatrix(m) => m.inner.into(),
+            MultiRoomCostResult::Impassable => Value::Bool(false),
+            MultiRoomCostResult::Default => Value::Undefined
+        }
+    }
+}
+
+pub enum SingleRoomCostResult<'a> {
+    CostMatrix(CostMatrix<'a>),
+    Default
+}
+
+impl<'a> RoomCostResult for SingleRoomCostResult<'a> {}
+
+impl<'a> Default for SingleRoomCostResult<'a> {
+    fn default() -> Self {
+        SingleRoomCostResult::Default
+    }
+}
+
+impl<'a> Into<Value> for SingleRoomCostResult<'a> {
+    fn into(self) -> Value {
+        match self {
+            SingleRoomCostResult::CostMatrix(m) => m.inner.into(),
+            SingleRoomCostResult::Default => Value::Undefined
+        }
+    }
+}
+
 pub struct SearchOptions<'a, F>
 where
-    F: Fn(String) -> CostMatrix<'a>,
+    F: Fn(String) -> MultiRoomCostResult<'a>,
 {
     room_callback: F,
     plain_cost: u8,
@@ -189,10 +237,10 @@ where
     heuristic_weight: f64,
 }
 
-impl Default for SearchOptions<'static, fn(String) -> CostMatrix<'static>> {
+impl Default for SearchOptions<'static, fn(String) -> MultiRoomCostResult<'static>> {
     fn default() -> Self {
-        fn cost_matrix(_: String) -> CostMatrix<'static> {
-            CostMatrix::default()
+        fn cost_matrix(_: String) -> MultiRoomCostResult<'static> {
+            MultiRoomCostResult::Default
         }
 
         // TODO: should we fall back onto the game's default values, or is
@@ -210,7 +258,7 @@ impl Default for SearchOptions<'static, fn(String) -> CostMatrix<'static>> {
     }
 }
 
-impl SearchOptions<'static, fn(String) -> CostMatrix<'static>> {
+impl SearchOptions<'static, fn(String) -> MultiRoomCostResult<'static>> {
     /// Creates default SearchOptions
     #[inline]
     pub fn new() -> Self {
@@ -220,12 +268,12 @@ impl SearchOptions<'static, fn(String) -> CostMatrix<'static>> {
 
 impl<'a, F> SearchOptions<'a, F>
 where
-    F: Fn(String) -> CostMatrix<'a>,
+    F: Fn(String) -> MultiRoomCostResult<'a>,
 {
     /// Sets room callback - default `|_| { CostMatrix::default() }`.
     pub fn room_callback<'b, F2>(self, room_callback: F2) -> SearchOptions<'b, F2>
     where
-        F2: Fn(String) -> CostMatrix<'b>,
+        F2: Fn(String) -> MultiRoomCostResult<'b>,
     {
         let SearchOptions {
             room_callback: _,
@@ -329,7 +377,7 @@ pub fn search<'a, O, G, F>(
 where
     O: ?Sized + HasPosition,
     G: ?Sized + HasPosition,
-    F: Fn(String) -> CostMatrix<'a> + 'a,
+    F: Fn(String) -> MultiRoomCostResult<'a> + 'a,
 {
     let pos = goal.pos();
     search_real(
@@ -345,7 +393,7 @@ where
     O: HasPosition,
     G: IntoIterator<Item = (I, u32)>,
     I: HasPosition,
-    F: Fn(String) -> CostMatrix<'a> + 'a,
+    F: Fn(String) -> MultiRoomCostResult<'a> + 'a,
 {
     let goals: Vec<Object> = goal
         .into_iter()
@@ -358,7 +406,7 @@ where
     search_real(origin.pos(), &goals_js, opts)
 }
 
-scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Reference);
+scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Value);
 
 fn search_real<'a, F>(
     origin: Position,
@@ -366,13 +414,13 @@ fn search_real<'a, F>(
     opts: SearchOptions<'a, F>,
 ) -> SearchResults
 where
-    F: Fn(String) -> CostMatrix<'a> + 'a,
+    F: Fn(String) -> MultiRoomCostResult<'a> + 'a,
 {
     // TODO: should we just accept `fn()` and force the user
     // to do this? it would... greatly simplify all of this.
 
     // This callback is the one actually passed to JavaScript.
-    fn callback(input: String) -> Reference {
+    fn callback(input: String) -> Value {
         PF_CALLBACK.with(|callback| callback(input))
     }
 
@@ -380,11 +428,11 @@ where
     let raw_callback = opts.room_callback;
 
     // Wrapped user callback: rust String -> Reference
-    let callback_unboxed = move |input| raw_callback(input).inner;
+    let callback_unboxed = move |input| raw_callback(input).into();
 
     // Type erased and boxed callback: no longer a type specific to the closure
     // passed in, now unified as &Fn
-    let callback_type_erased: &(dyn Fn(String) -> Reference + 'a) = &callback_unboxed;
+    let callback_type_erased: &(dyn Fn(String) -> Value + 'a) = &callback_unboxed;
 
     // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
     // storage: it's now pretending to be static data. This should be entirely safe
@@ -392,7 +440,7 @@ where
     // use of it, but it's still necessary because "some lifetime above the
     // current scope but otherwise unknown" is not a valid lifetime to have
     // PF_CALLBACK have.
-    let callback_lifetime_erased: &'static dyn Fn(String) -> Reference =
+    let callback_lifetime_erased: &'static dyn Fn(String) -> Value =
         unsafe { mem::transmute(callback_type_erased) };
 
     let SearchOptions {
@@ -402,6 +450,7 @@ where
         max_ops,
         max_rooms,
         heuristic_weight,
+        max_cost,
         ..
     } = opts;
 
@@ -418,6 +467,7 @@ where
                 flee: @{flee},
                 maxOps: @{max_ops},
                 maxRooms: @{max_rooms},
+                maxCost: @{max_cost},
                 heuristicWeight: @{heuristic_weight}
             })
         };
