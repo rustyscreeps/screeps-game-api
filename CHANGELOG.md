@@ -55,6 +55,7 @@ Unreleased
 - Add `game::market::get_history` and `game::market::OrderHistoryRecord` exposing new
   `getHistory` API function
 - Add `Creep::move_pulled_by` which allows a creep to accept another creep's attempt to `pull`
+- Add `SearchOptions::max_cost` to limit the maximum path cost for pathfinder searches
 
 ### Bugfixes:
 
@@ -71,6 +72,7 @@ Unreleased
   for an unavailable room
 - Change `Source` and `Mineral` `ticks_to_regeneration` functions to return 0, preventing panics
   in cases where the game API returns negative or undefined values
+- Fix visibility of struct fields on `MapRoomStatus` and `RoomRouteStep`
 
 ### Misc:
 
