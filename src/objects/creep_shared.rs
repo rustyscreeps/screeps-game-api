@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, mem};
 
 use scoped_tls::scoped_thread_local;
-use stdweb::{Value, Reference};
+use stdweb::Reference;
 
 use crate::{
     constants::{Direction, ResourceType, ReturnCode},
@@ -11,11 +11,11 @@ use crate::{
         Creep, FindOptions, HasPosition, PowerCreep, Resource, RoomObjectProperties, Step,
         Transferable, Withdrawable,
     },
-    pathfinder::{MultiRoomCostResult, CostMatrix, SearchResults},
+    pathfinder::{CostMatrix, SearchResults},
     ConversionError,
 };
 
-scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(RoomName, Reference) -> Value>);
+scoped_thread_local!(static COST_CALLBACK: Box<dyn Fn(RoomName, Reference) -> Option<Reference>>);
 
 /// Trait for all wrappers over Screeps JavaScript objects that are creeps or
 /// power creeps
@@ -53,7 +53,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         move_options: MoveToOptions<'a, F>,
     ) -> ReturnCode
     where
-        F: Fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<'a> + 'a,
+        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let pos = Position::new(x, y, self.pos().room_name());
         self.move_to_with_options(&pos, move_options)
@@ -71,7 +71,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
     ) -> ReturnCode
     where
         T: ?Sized + HasPosition,
-        F: Fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<'a> + 'a,
+        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let MoveToOptions {
             reuse_path,
@@ -94,7 +94,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         } = move_options;
 
         // This callback is the one actually passed to JavaScript.
-        fn callback(room_name: String, cost_matrix: Reference) -> Value {
+        fn callback(room_name: String, cost_matrix: Reference) -> Option<Reference> {
             let room_name = room_name.parse().expect(
                 "expected room name passed into Creep.moveTo \
                  callback to be a valid room name",
@@ -111,12 +111,12 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
                 inner: cost_matrix_ref,
                 lifetime: PhantomData,
             };
-            raw_callback(room_name, cmatrix).into()
+            raw_callback(room_name, cmatrix).map(|cm| cm.inner)
         };
 
         // Type erased and boxed callback: no longer a type specific to the closure
         // passed in, now unified as Box<Fn>
-        let callback_type_erased: Box<dyn Fn(RoomName, Reference) -> Value + 'a> =
+        let callback_type_erased: Box<dyn Fn(RoomName, Reference) -> Option<Reference> + 'a> =
             Box::new(callback_boxed);
 
         // Overwrite lifetime of box inside closure so it can be stuck in
@@ -127,7 +127,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         // scope but otherwise unknown" is not a valid lifetime to have
         // PF_CALLBACK have.
         let callback_lifetime_erased: Box<
-            dyn Fn(RoomName, Reference) -> Value + 'static,
+            dyn Fn(RoomName, Reference) -> Option<Reference> + 'static,
         > = unsafe { mem::transmute(callback_type_erased) };
 
         // Store callback_lifetime_erased in COST_CALLBACK for the duration of the
@@ -264,17 +264,17 @@ unsafe impl SharedCreepProperties for PowerCreep {}
 
 pub struct MoveToOptions<'a, F>
 where
-    F: Fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<'a>,
+    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     pub(crate) reuse_path: u32,
     pub(crate) serialize_memory: bool,
     pub(crate) no_path_finding: bool,
     // pub(crate) visualize_path_style: PolyStyle,
-    pub(crate) find_options: FindOptions<F, MultiRoomCostResult<'a>>,
+    pub(crate) find_options: FindOptions<'a, F>,
 }
 
 impl Default
-    for MoveToOptions<'static, fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<'static>>
+    for MoveToOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>>
 {
     fn default() -> Self {
         // TODO: should we fall back onto the game's default values, or is
@@ -289,7 +289,7 @@ impl Default
     }
 }
 
-impl MoveToOptions<'static, fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<'static>> {
+impl MoveToOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -298,7 +298,7 @@ impl MoveToOptions<'static, fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<
 
 impl<'a, F> MoveToOptions<'a, F>
 where
-    F: Fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<'a>,
+    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     /// Enables caching of the calculated path. Default: 5 ticks
     pub fn reuse_path(mut self, n_ticks: u32) -> Self {
@@ -338,9 +338,9 @@ where
     }
 
     /// Sets cost callback - default `|_, _| {}`.
-    pub fn cost_callback<F2>(self, cost_callback: F2) -> MoveToOptions<'a, F2>
+    pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> MoveToOptions<'b, F2>
     where
-        F2: Fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<'a>,
+        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,
@@ -393,9 +393,9 @@ where
     }
 
     /// Sets options related to FindOptions. Defaults to FindOptions default.
-    pub fn find_options<'b, F2>(self, find_options: FindOptions<F2, MultiRoomCostResult<'b>>) -> MoveToOptions<'b, F2>
+    pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2>) -> MoveToOptions<'b, F2>
     where
-        F2: Fn(RoomName, CostMatrix<'_>) -> MultiRoomCostResult<'b>
+        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,
