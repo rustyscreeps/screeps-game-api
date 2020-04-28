@@ -4,11 +4,9 @@
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! Currently missing:
-//! - FIND_DROPPED_ENERGY (deprecated in Screeps)
 //! - OBSTACLE_OBJECT_TYPES
 //! - WORLD_WIDTH / WORLD_HEIGHT (deprecated in Screeps)
 //! - CONTROLLER_STRUCTURES
-//! - REACTIONS
 //! - POWER_INFO
 //!
 //! # Notes on Deserialization
@@ -61,6 +59,7 @@
 pub mod find;
 pub mod look;
 mod numbers;
+mod recipes;
 mod small_enums;
 mod types;
 
@@ -68,6 +67,7 @@ pub use self::{
     find::FindConstant,
     look::{Look, LookConstant},
     numbers::*,
+    recipes::FactoryRecipe,
     small_enums::*,
     types::*,
 };
