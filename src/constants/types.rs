@@ -418,6 +418,20 @@ pub enum ResourceType {
     Essence = 84,
 }
 
+#[derive(Copy, Clone, Debug)]
+pub enum Boost {
+    Harvest(f64),
+    BuildAndRepair(f64),
+    Dismantle(f64),
+    UpgradeController(f64),
+    Attack(f64),
+    RangedAttack(f64),
+    Heal(f64),
+    Carry(f64),
+    Move(f64),
+    Tough(f64),
+}
+
 impl ResourceType {
     /// Translates the `REACTION_TIME` constant.
     #[inline]
@@ -497,6 +511,147 @@ impl ResourceType {
             _ => return None,
         };
         Some(time)
+    }
+
+    /// Translates the `BOOSTS` constant.
+    #[inline]
+    pub fn boost(self) -> Option<Boost> {
+        use ResourceType::*;
+        let boost = match self {
+            // these comments copied directly from JavaScript 'constants.js' file.
+            // UH: {
+            //     attack: 2
+            // },
+            UtriumHydride => Boost::Attack(2.0),
+            // UH2O: {
+            //     attack: 3
+            // },
+            UtriumAcid => Boost::Attack(3.0),
+            // XUH2O: {
+            //     attack: 4
+            // }
+            CatalyzedUtriumAcid => Boost::Attack(4.0),
+            // UO: {
+            //     harvest: 3
+            // },
+            UtriumOxide => Boost::Harvest(3.0),
+            // UHO2: {
+            //     harvest: 5
+            // },
+            UtriumAlkalide => Boost::Harvest(5.0),
+            // XUHO2: {
+            //     harvest: 7
+            // },
+            CatalyzedUtriumAlkalide => Boost::Harvest(7.0),
+            // KH: {
+            //     capacity: 2
+            // },
+            KeaniumHydride => Boost::Carry(2.0),
+            // KH2O: {
+            //     capacity: 3
+            // },
+            KeaniumAcid => Boost::Carry(3.0),
+            // XKH2O: {
+            //     capacity: 4
+            // }
+            CatalyzedKeaniumAcid => Boost::Carry(4.0),
+            // KO: {
+            //     rangedAttack: 2,
+            //     rangedMassAttack: 2
+            // },
+            KeaniumOxide => Boost::RangedAttack(2.0),
+            // KHO2: {
+            //     rangedAttack: 3,
+            //     rangedMassAttack: 3
+            // },
+            KeaniumAlkalide => Boost::RangedAttack(4.0),
+            // XKHO2: {
+            //     rangedAttack: 4,
+            //     rangedMassAttack: 4
+            // }
+            CatalyzedKeaniumAlkalide => Boost::RangedAttack(4.0),
+            // LH: {
+            //     build: 1.5,
+            //     repair: 1.5
+            // },
+            LemergiumHydride => Boost::BuildAndRepair(1.5),
+            // LH2O: {
+            //     build: 1.8,
+            //     repair: 1.8
+            // },
+            LemergiumAcid => Boost::BuildAndRepair(1.8),
+            // XLH2O: {
+            //     build: 2,
+            //     repair: 2
+            // },
+            CatalyzedLemergiumAcid => Boost::BuildAndRepair(2.0),
+            // LO: {
+            //     heal: 2,
+            //     rangedHeal: 2
+            // },
+            LemergiumOxide => Boost::Heal(2.0),
+            // LHO2: {
+            //     heal: 3,
+            //     rangedHeal: 3
+            // },
+            LemergiumAlkalide => Boost::Heal(3.0),
+            // XLHO2: {
+            //     heal: 4,
+            //     rangedHeal: 4
+            // }
+            CatalyzedLemergiumAlkalide => Boost::Heal(4.0),
+            // ZH: {
+            //     dismantle: 2
+            // },
+            ZynthiumHydride => Boost::Dismantle(2.0),
+            // ZH2O: {
+            //     dismantle: 3
+            // },
+            ZynthiumAcid => Boost::Dismantle(3.0),
+            // XZH2O: {
+            //     dismantle: 4
+            // },
+            CatalyzedZynthiumAcid => Boost::Dismantle(4.0),
+            // ZO: {
+            //     fatigue: 2
+            // },
+            ZynthiumOxide => Boost::Move(2.0),
+            // ZHO2: {
+            //     fatigue: 3
+            // },
+            ZynthiumAlkalide => Boost::Move(3.0),
+            // XZHO2: {
+            //     fatigue: 4
+            // }
+            CatalyzedZynthiumAlkalide => Boost::Move(4.0),
+            // GH: {
+            //     upgradeController: 1.5
+            // },
+            GhodiumHydride => Boost::UpgradeController(1.5),
+            // GH2O: {
+            //     upgradeController: 1.8
+            // },
+            GhodiumAcid => Boost::UpgradeController(1.8),
+            // XGH2O: {
+            //     upgradeController: 2
+            // }
+            CatalyzedGhodiumAcid => Boost::UpgradeController(2.0),
+            // GO: {
+            //     damage: .7
+            // },
+            GhodiumOxide => Boost::Tough(0.7),
+            // GHO2: {
+            //     damage: .5
+            // },
+            GhodiumAlkalide => Boost::Tough(0.5),
+            // XGHO2: {
+            //     damage: .3
+            // }
+            CatalyzedGhodiumAlkalide => Boost::Tough(0.3),
+            // non-boost resources
+            _ => return None,
+        };
+        Some(boost)
     }
 
     /// Helper function for deserializing from a string rather than a fake

@@ -9,7 +9,6 @@
 //! - WORLD_WIDTH / WORLD_HEIGHT (deprecated in Screeps)
 //! - CONTROLLER_STRUCTURES
 //! - REACTIONS
-//! - BOOSTS
 //! - POWER_INFO
 //!
 //! # Notes on Deserialization
