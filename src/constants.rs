@@ -7,7 +7,6 @@
 //! - OBSTACLE_OBJECT_TYPES
 //! - WORLD_WIDTH / WORLD_HEIGHT (deprecated in Screeps)
 //! - CONTROLLER_STRUCTURES
-//! - BOOSTS
 //! - POWER_INFO
 //!
 //! # Notes on Deserialization
