@@ -64,6 +64,7 @@ Unreleased
   `&str` (breaking)
 - Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
   since this is optimized in the server code (breaking)
+- Change `MemoryReference::get` to return a generic error type
 
 0.7.0 (2019-10-19)
 ==================
