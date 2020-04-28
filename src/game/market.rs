@@ -246,17 +246,16 @@ pub fn extend_order(order_id: &str, add_amount: u32) -> ReturnCode {
 /// is available and will reduce the CPU cost compared to getting all orders
 pub fn get_all_orders(resource: Option<MarketResourceType>) -> Vec<Order> {
     match resource {
-        Some(resource_type) => match resource_type {
-            MarketResourceType::Resource(ty) => js_unwrap! {
+        Some(resource_type) => {
+            let resource_num = match resource_type {
+                MarketResourceType::Resource(ty) => ty as u32,
+                MarketResourceType::IntershardResource(ty) => ty as u32,
+            };
+            js_unwrap! {
                 Game.market.getAllOrders({
-                    resourceType: __resource_type_num_to_str(@{ty as u32})
+                    resourceType: __resource_type_num_to_str(@{resource_num})
                 })
-            },
-            MarketResourceType::IntershardResource(ty) => js_unwrap! {
-                Game.market.getAllOrders({
-                    resourceType: __resource_type_num_to_str(@{ty as u32})
-                })
-            },
+            }
         },
         None => js_unwrap!(Game.market.getAllOrders()),
     }
