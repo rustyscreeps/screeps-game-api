@@ -32,6 +32,10 @@ Unreleased
 
 ### Additions:
 
+- Add `ResourceType::reaction_components` function translating the `REACTIONS` constant
+- Add `ResourceType::commodity_recipe` function and `FactoryRecipe` struct translating the
+  `COMMODITIES` constant
+- Add `ResourceType::boost` function translating the `BOOSTS` constant
 - Add `game::map::get_room_status` as interface to new `Game.map.getRoomStatus` function
 - Add `StructureLab::reverse_reaction` as interface to new `reverseReaction`
 - Add `effects` to room objects, allowing access to the effects applied on room objects which
@@ -63,6 +67,10 @@ Unreleased
   for an unavailable room
 - Change `Source` and `Mineral` `ticks_to_regeneration` functions to return 0, preventing panics
   in cases where the game API returns negative or undefined values
+- Change `StructureTerminal::send` to take the destination room name as `RoomName` instead of
+  `&str` (breaking)
+- Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
+  since this is optimized in the server code (breaking)
 
 ### Misc:
 
