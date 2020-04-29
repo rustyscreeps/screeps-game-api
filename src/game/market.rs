@@ -256,7 +256,7 @@ pub fn get_all_orders(resource: Option<MarketResourceType>) -> Vec<Order> {
                     resourceType: __resource_type_num_to_str(@{resource_num})
                 })
             }
-        },
+        }
         None => js_unwrap!(Game.market.getAllOrders()),
     }
 }
