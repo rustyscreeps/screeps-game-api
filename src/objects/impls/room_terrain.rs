@@ -45,4 +45,26 @@ impl RoomTerrain {
             Err(ReturnCode::InvalidArgs)
         }
     }
+
+    pub fn get_raw_buffer_to_array<'a>(
+        &self,
+        buffer: &'a mut [u8; 2500],
+    ) -> Result<(), ReturnCode> {
+        let is_success: bool;
+        {
+            let arr: UnsafeTypedArray<'_, u8> = unsafe { UnsafeTypedArray::new(&buffer[0..2500]) };
+
+            is_success = js! {
+                var bytes = @{arr};
+                return @{self.as_ref()}.getRawBuffer(bytes) === bytes;
+            }
+            .try_into()
+            .unwrap();
+        }
+        if is_success {
+            Ok(())
+        } else {
+            Err(ReturnCode::InvalidArgs)
+        }
+    }
 }
