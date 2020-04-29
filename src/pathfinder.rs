@@ -9,12 +9,11 @@
 //! default, but you must configure any other obstacles you want it to consider.
 //!
 //! [`PathFinder`]: https://docs.screeps.com/api/#PathFinder
-use std::{f64, marker::PhantomData, mem};
+use std::{f64, marker::PhantomData, mem, borrow::{Borrow}};
 
-use scoped_tls::scoped_thread_local;
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray, Value};
 
-use crate::{local::Position, objects::HasPosition, traits::TryInto};
+use crate::{local::Position, objects::HasPosition, traits::TryInto, RoomName};
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
@@ -119,6 +118,18 @@ impl Into<Vec<u8>> for LocalCostMatrix {
     }
 }
 
+impl<'a> CostMatrixSet for &mut LocalCostMatrix {
+    fn set_multi<D, B, P, V>(self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
+        let iter = data.into_iter();
+
+        for entry in iter {
+            let (pos, cost) = entry.borrow();
+            
+            self.set(pos.x(), pos.y(), *cost.borrow());
+        }
+    }
+}
+
 /// A `CostMatrix` that's valid to pass as a result from a `PathFinder.search`
 /// room callback.
 ///
@@ -138,6 +149,58 @@ impl Default for CostMatrix<'static> {
             inner: js_unwrap!(new PathFinder.CostMatrix()),
             lifetime: PhantomData,
         }
+    }
+}
+
+impl<'a> Into<MultiRoomCostResult<'a>> for CostMatrix<'a> {
+    fn into(self) -> MultiRoomCostResult<'a> {
+        MultiRoomCostResult::CostMatrix(self)
+    }
+}
+
+impl<'a> Into<SingleRoomCostResult<'a>> for CostMatrix<'a> {
+    fn into(self) -> SingleRoomCostResult<'a> {
+        SingleRoomCostResult::CostMatrix(self)
+    }
+}
+
+pub trait HasLocalPosition {
+    fn x(&self) -> u8;
+    fn y(&self) -> u8;
+}
+
+pub trait CostMatrixSet {
+    //TODO: Add single value set?
+    //fn set<P, V>(position: P, cost: V) where P: HasLocalPosition, V: Borrow<u8>;
+
+    fn set_multi<D, B, P, V>(self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8>;
+}
+
+impl<'a> CostMatrixSet for &mut CostMatrix<'a> {
+    fn set_multi<D, B, P, V>(self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
+        let iter = data.into_iter();
+        let (minimum_size, _maximum_size) = iter.size_hint();
+        let mut storage: Vec<u8> = Vec::with_capacity(minimum_size * 3);
+
+        for entry in iter {
+            let (pos, cost) = entry.borrow();
+            storage.push(pos.x());
+            storage.push(pos.y());
+            storage.push(*cost.borrow());
+        }
+
+        let bits: TypedArray<u8> = storage.as_slice().into();
+
+        js!(
+            let matrix = @{&self.inner};
+            let raw_data = @{bits};
+
+            const element_count = raw_data.length / 3;
+
+            for (let index = 0; index < element_count; ++index) {
+                matrix.set(raw_data[index + 0], index[index + 1], index[index + 2]);
+            }
+        );
     }
 }
 
@@ -225,7 +288,7 @@ impl<'a> Into<Value> for SingleRoomCostResult<'a> {
 
 pub struct SearchOptions<'a, F>
 where
-    F: Fn(String) -> MultiRoomCostResult<'a>,
+    F: FnMut(RoomName) -> MultiRoomCostResult<'a>,
 {
     room_callback: F,
     plain_cost: u8,
@@ -237,9 +300,9 @@ where
     heuristic_weight: f64,
 }
 
-impl Default for SearchOptions<'static, fn(String) -> MultiRoomCostResult<'static>> {
+impl Default for SearchOptions<'static, fn(RoomName) -> MultiRoomCostResult<'static>> {
     fn default() -> Self {
-        fn cost_matrix(_: String) -> MultiRoomCostResult<'static> {
+        fn cost_matrix(_: RoomName) -> MultiRoomCostResult<'static> {
             MultiRoomCostResult::Default
         }
 
@@ -258,7 +321,7 @@ impl Default for SearchOptions<'static, fn(String) -> MultiRoomCostResult<'stati
     }
 }
 
-impl SearchOptions<'static, fn(String) -> MultiRoomCostResult<'static>> {
+impl SearchOptions<'static, fn(RoomName) -> MultiRoomCostResult<'static>> {
     /// Creates default SearchOptions
     #[inline]
     pub fn new() -> Self {
@@ -268,12 +331,12 @@ impl SearchOptions<'static, fn(String) -> MultiRoomCostResult<'static>> {
 
 impl<'a, F> SearchOptions<'a, F>
 where
-    F: Fn(String) -> MultiRoomCostResult<'a>,
+    F: FnMut(RoomName) -> MultiRoomCostResult<'a>,
 {
     /// Sets room callback - default `|_| { CostMatrix::default() }`.
     pub fn room_callback<'b, F2>(self, room_callback: F2) -> SearchOptions<'b, F2>
     where
-        F2: Fn(String) -> MultiRoomCostResult<'b>,
+        F2: FnMut(RoomName) -> MultiRoomCostResult<'b>,
     {
         let SearchOptions {
             room_callback: _,
@@ -377,7 +440,7 @@ pub fn search<'a, O, G, F>(
 where
     O: ?Sized + HasPosition,
     G: ?Sized + HasPosition,
-    F: Fn(String) -> MultiRoomCostResult<'a> + 'a,
+    F: FnMut(RoomName) -> MultiRoomCostResult<'a> + 'a,
 {
     let pos = goal.pos();
     search_real(
@@ -393,7 +456,7 @@ where
     O: HasPosition,
     G: IntoIterator<Item = (I, u32)>,
     I: HasPosition,
-    F: Fn(String) -> MultiRoomCostResult<'a> + 'a,
+    F: FnMut(RoomName) -> MultiRoomCostResult<'a> + 'a,
 {
     let goals: Vec<Object> = goal
         .into_iter()
@@ -406,43 +469,14 @@ where
     search_real(origin.pos(), &goals_js, opts)
 }
 
-scoped_thread_local!(static PF_CALLBACK: &'static dyn Fn(String) -> Value);
-
 fn search_real<'a, F>(
     origin: Position,
     goal: &Reference,
     opts: SearchOptions<'a, F>,
 ) -> SearchResults
 where
-    F: Fn(String) -> MultiRoomCostResult<'a> + 'a,
-{
-    // TODO: should we just accept `fn()` and force the user
-    // to do this? it would... greatly simplify all of this.
-
-    // This callback is the one actually passed to JavaScript.
-    fn callback(input: String) -> Value {
-        PF_CALLBACK.with(|callback| callback(input))
-    }
-
-    // User provided callback: rust String -> CostMatrix
-    let raw_callback = opts.room_callback;
-
-    // Wrapped user callback: rust String -> Reference
-    let callback_unboxed = move |input| raw_callback(input).into();
-
-    // Type erased and boxed callback: no longer a type specific to the closure
-    // passed in, now unified as &Fn
-    let callback_type_erased: &(dyn Fn(String) -> Value + 'a) = &callback_unboxed;
-
-    // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
-    // storage: it's now pretending to be static data. This should be entirely safe
-    // because we're only sticking it in scoped storage and we control the only
-    // use of it, but it's still necessary because "some lifetime above the
-    // current scope but otherwise unknown" is not a valid lifetime to have
-    // PF_CALLBACK have.
-    let callback_lifetime_erased: &'static dyn Fn(String) -> Value =
-        unsafe { mem::transmute(callback_type_erased) };
-
+    F: FnMut(RoomName) -> MultiRoomCostResult<'a> + 'a,
+{       
     let SearchOptions {
         plain_cost,
         swamp_cost,
@@ -454,29 +488,55 @@ where
         ..
     } = opts;
 
+    let mut raw_callback = opts.room_callback;
+
+    let mut callback_boxed = move |room_name: RoomName| -> Value {
+        raw_callback(room_name).into()
+    };
+
+    // Type erased and boxed callback: no longer a type specific to the closure
+    // passed in, now unified as &Fn
+    let callback_type_erased: &mut (dyn FnMut(RoomName) -> Value + 'a) =
+        &mut callback_boxed;
+
+    // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
+    // storage: it's now pretending to be static data. This should be entirely safe
+    // because we're only sticking it in scoped storage and we control the
+    // only use of it, but it's still necessary because "some lifetime above
+    // the  current scope but otherwise unknown" is not a valid lifetime to
+    // have PF_CALLBACK have.
+    let callback_lifetime_erased: &'static mut dyn FnMut(RoomName) -> Value =
+        unsafe { mem::transmute(callback_type_erased) };
+
     // Store callback_lifetime_erased in PF_CALLBACK for the duration of the
     // PathFinder call and make the call to PathFinder.
     //
     // See https://docs.rs/scoped-tls/0.1/scoped_tls/
-    PF_CALLBACK.set(&callback_lifetime_erased, || {
-        let res: ::stdweb::Reference = js_unwrap! {
-            PathFinder.search(pos_from_packed(@{origin.packed_repr()}), @{goal}, {
-                roomCallback: @{callback},
-                plainCost: @{plain_cost},
-                swampCost: @{swamp_cost},
-                flee: @{flee},
-                maxOps: @{max_ops},
-                maxRooms: @{max_rooms},
-                maxCost: @{max_cost},
-                heuristicWeight: @{heuristic_weight}
-            })
-        };
+    let res: ::stdweb::Reference = js!(
+        let cb = @{callback_lifetime_erased};
 
-        SearchResults {
-            path: js_unwrap!(@{&res}.path),
-            ops: js_unwrap!(@{&res}.ops),
-            cost: js_unwrap!(@{&res}.cost),
-            incomplete: js_unwrap!(@{&res}.incomplete),
-        }
-    })
+        let res = PathFinder.search(pos_from_packed(@{origin.packed_repr()}), @{goal}, {
+            roomCallback: cb,
+            plainCost: @{plain_cost},
+            swampCost: @{swamp_cost},
+            flee: @{flee},
+            maxOps: @{max_ops},
+            maxRooms: @{max_rooms},
+            maxCost: @{max_cost},
+            heuristicWeight: @{heuristic_weight}
+        })
+        
+        cb.drop();
+
+        return res;
+    )
+    .try_into()
+    .expect("expected reference from search");
+
+    SearchResults {
+        path: js_unwrap!(@{&res}.path),
+        ops: js_unwrap!(@{&res}.ops),
+        cost: js_unwrap!(@{&res}.cost),
+        incomplete: js_unwrap!(@{&res}.incomplete),
+    }
 }

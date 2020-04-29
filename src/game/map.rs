@@ -5,7 +5,6 @@ use std::{borrow::Cow, collections, mem, str::FromStr};
 
 use num_traits::FromPrimitive;
 use parse_display::FromStr;
-use scoped_tls::scoped_thread_local;
 use serde::{
     de::{Deserializer, Error as _, Unexpected},
     Deserialize,
@@ -106,41 +105,49 @@ pub fn find_exit(from_room: RoomName, to_room: RoomName) -> Result<ExitDirection
 pub fn find_exit_with_callback(
     from_room: RoomName,
     to_room: RoomName,
-    route_callback: impl Fn(RoomName, RoomName) -> f64,
+    route_callback: impl FnMut(RoomName, RoomName) -> f64,
 ) -> Result<ExitDirection, ReturnCode> {
-    // Actual callback
-    fn callback(room_name: String, from_room_name: String) -> f64 {
-        FR_CALLBACK.with(|callback| {
-            callback(
-                room_name.parse().expect(
-                    "expected room name passed into Game.map.findExit \
-                     callback to be a valid room name",
-                ),
-                from_room_name.parse().expect(
-                    "expected room name passed into Game.map.findExit \
-                     callback to be a valid room name",
-                ),
-            )
-        })
-    }
+    let mut raw_callback = route_callback;
 
-    let callback_type_erased: Box<dyn Fn(RoomName, RoomName) -> f64> = Box::new(route_callback);
+    let mut callback_boxed = move |to_name: RoomName, from_name: RoomName| -> f64 {
+        raw_callback(to_name, from_name).into()
+    };
 
-    let callback_lifetime_erased: Box<dyn Fn(RoomName, RoomName) -> f64 + 'static> =
+    // Type erased and boxed callback: no longer a type specific to the closure
+    // passed in, now unified as &Fn
+    let callback_type_erased: &mut (dyn FnMut(RoomName, RoomName) -> f64) =
+        &mut callback_boxed;
+
+    // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
+    // storage: it's now pretending to be static data. This should be entirely safe
+    // because we're only sticking it in scoped storage and we control the
+    // only use of it, but it's still necessary because "some lifetime above
+    // the  current scope but otherwise unknown" is not a valid lifetime to
+    // have PF_CALLBACK have.
+    let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, RoomName) -> f64 =
         unsafe { mem::transmute(callback_type_erased) };
 
-    FR_CALLBACK.set(&callback_lifetime_erased, || {
-        let code: i32 = js_unwrap! {Game.map.findExit(@{from_room}, @{to_room}, @{callback})};
-        ExitDirection::from_i32(code)
-            .map(Ok)
-            .or_else(|| ReturnCode::from_i32(code).map(Err))
-            .unwrap_or_else(|| {
-                panic!(
-                    "find_exit: return value {:?} not recognized as either Exit nor ReturnCode",
-                    code
-                )
-            })
-    })
+    let code: i32 = js!(
+        let cb = @{callback_lifetime_erased};
+        
+        let res = Game.map.findExit(@{from_room}, @{to_room}, cb);
+
+        cb.drop();
+
+        return res;
+    )
+    .try_into()
+    .expect("expected int from findExit");
+
+    ExitDirection::from_i32(code)
+        .map(Ok)
+        .or_else(|| ReturnCode::from_i32(code).map(Err))
+        .unwrap_or_else(|| {
+            panic!(
+                "find_exit: return value {:?} not recognized as either Exit nor ReturnCode",
+                code
+            )
+        })
 }
 
 pub fn find_route(from_room: &str, to_room: &str) -> Result<Vec<RoomRouteStep>, ReturnCode> {
@@ -148,38 +155,42 @@ pub fn find_route(from_room: &str, to_room: &str) -> Result<Vec<RoomRouteStep>, 
     parse_find_route_returned_value(v)
 }
 
-scoped_thread_local!(static FR_CALLBACK: Box<(dyn Fn(RoomName, RoomName) -> f64)>);
-
 pub fn find_route_with_callback(
     from_room: RoomName,
     to_room: RoomName,
-    route_callback: impl Fn(RoomName, RoomName) -> f64,
+    route_callback: impl FnMut(RoomName, RoomName) -> f64,
 ) -> Result<Vec<RoomRouteStep>, ReturnCode> {
-    // Actual callback
-    fn callback(room_name: String, from_room_name: String) -> f64 {
-        FR_CALLBACK.with(|callback| {
-            callback(
-                room_name.parse().expect(
-                    "expected room name passed into Game.map.findRoute \
-                     callback to be a valid room name",
-                ),
-                from_room_name.parse().expect(
-                    "expected room name passed into Game.map.findRoute \
-                     callback to be a valid room name",
-                ),
-            )
-        })
-    }
+    let mut raw_callback = route_callback;
 
-    let callback_type_erased: Box<dyn Fn(RoomName, RoomName) -> f64> = Box::new(route_callback);
+    let mut callback_boxed = move |to_name: RoomName, from_name: RoomName| -> f64 {
+        raw_callback(to_name, from_name).into()
+    };
 
-    let callback_lifetime_erased: Box<dyn Fn(RoomName, RoomName) -> f64 + 'static> =
+    // Type erased and boxed callback: no longer a type specific to the closure
+    // passed in, now unified as &Fn
+    let callback_type_erased: &mut (dyn FnMut(RoomName, RoomName) -> f64) =
+        &mut callback_boxed;
+
+    // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
+    // storage: it's now pretending to be static data. This should be entirely safe
+    // because we're only sticking it in scoped storage and we control the
+    // only use of it, but it's still necessary because "some lifetime above
+    // the  current scope but otherwise unknown" is not a valid lifetime to
+    // have PF_CALLBACK have.
+    let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, RoomName) -> f64 =
         unsafe { mem::transmute(callback_type_erased) };
 
-    FR_CALLBACK.set(&callback_lifetime_erased, || {
-        let v = js!(return Game.map.findRoute(@{from_room}, @{to_room}, @{callback}););
-        parse_find_route_returned_value(v)
-    })
+    let v = js!(
+        let cb = @{callback_lifetime_erased};
+
+        let res = Game.map.findRoute(@{from_room}, @{to_room}, cb);
+
+        cb.drop();
+
+        return res;
+    );
+
+    parse_find_route_returned_value(v)
 }
 
 fn parse_find_route_returned_value(v: Value) -> Result<Vec<RoomRouteStep>, ReturnCode> {
