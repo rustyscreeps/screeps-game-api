@@ -56,6 +56,7 @@ Unreleased
   `getHistory` API function
 - Add `Creep::move_pulled_by` which allows a creep to accept another creep's attempt to `pull`
 - Add `SearchOptions::max_cost` to limit the maximum path cost for pathfinder searches
+- Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
 
 ### Bugfixes:
 

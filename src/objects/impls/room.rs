@@ -23,7 +23,7 @@ use crate::{
         Room, RoomTerrain, Ruin, Source, Structure, StructureController, StructureStorage,
         StructureTerminal, Tombstone,
     },
-    pathfinder::{RoomCostResult, SingleRoomCostResult, CostMatrix},
+    pathfinder::CostMatrix,
     traits::{TryFrom, TryInto},
     ConversionError,
 };
@@ -40,7 +40,7 @@ simple_accessors! {
     }
 }
 
-scoped_thread_local!(static COST_CALLBACK: &'static dyn Fn(RoomName, Reference) -> Value);
+scoped_thread_local!(static COST_CALLBACK: &'static dyn Fn(RoomName, Reference) -> Option<Reference>);
 
 impl Room {
     pub fn serialize_path(&self, path: &[Step]) -> String {
@@ -179,17 +179,17 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.lookAtArea(@{top}, @{left}, @{bottom}, @{right}, true))
     }
 
-    pub fn find_path<'a, O, T, F,>(&self, from_pos: &O, to_pos: &T, opts: FindOptions<F, SingleRoomCostResult<'a>>) -> Path
+    pub fn find_path<'a, O, T, F>(&self, from_pos: &O, to_pos: &T, opts: FindOptions<'a, F>) -> Path
     where
         O: ?Sized + HasPosition,
         T: ?Sized + HasPosition,
-        F: Fn(RoomName, CostMatrix<'_>) -> SingleRoomCostResult<'a> + 'a,
+        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
     {
         let from = from_pos.pos();
         let to = to_pos.pos();
 
         // This callback is the one actually passed to JavaScript.
-        fn callback(room_name: String, cost_matrix: Reference) -> Value {
+        fn callback(room_name: String, cost_matrix: Reference) -> Option<Reference> {
             let room_name = room_name.parse().expect(
                 "expected room name passed into Room.findPath \
                  callback to be a valid room name",
@@ -206,12 +206,12 @@ impl Room {
                 inner: cost_matrix_ref,
                 lifetime: PhantomData,
             };
-            raw_callback(room_name, cmatrix).into()
+            raw_callback(room_name, cmatrix).map(|cm| cm.inner)
         };
 
         // Type erased and boxed callback: no longer a type specific to the closure
         // passed in, now unified as &Fn
-        let callback_type_erased: &(dyn Fn(RoomName, Reference) -> Value + 'a) =
+        let callback_type_erased: &(dyn Fn(RoomName, Reference) -> Option<Reference> + 'a) =
             &callback_boxed;
 
         // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
@@ -220,7 +220,7 @@ impl Room {
         // only use of it, but it's still necessary because "some lifetime above
         // the  current scope but otherwise unknown" is not a valid lifetime to
         // have PF_CALLBACK have.
-        let callback_lifetime_erased: &'static dyn Fn(RoomName, Reference) -> Value =
+        let callback_lifetime_erased: &'static dyn Fn(RoomName, Reference) -> Option<Reference> =
             unsafe { mem::transmute(callback_type_erased) };
 
         let FindOptions {
@@ -351,10 +351,9 @@ impl PartialEq for Room {
 
 impl Eq for Room {}
 
-pub struct FindOptions<F, R>
+pub struct FindOptions<'a, F>
 where
-    F: Fn(RoomName, CostMatrix<'_>) -> R,
-    R: RoomCostResult
+    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     pub(crate) ignore_creeps: bool,
     pub(crate) ignore_destructible_structures: bool,
@@ -368,14 +367,18 @@ where
     pub(crate) swamp_cost: u8,
 }
 
-impl<R> Default for FindOptions<fn(RoomName, CostMatrix<'_>) -> R, R> where R: RoomCostResult + Default {
+impl Default for FindOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     fn default() -> Self {
+        fn cost_callback(_: RoomName, _: CostMatrix<'_>) -> Option<CostMatrix<'static>> {
+            None
+        }
+
         // TODO: should we fall back onto the game's default values, or is
         // it alright to copy them here?
         FindOptions {
             ignore_creeps: false,
             ignore_destructible_structures: false,
-            cost_callback: |_, _| R::default(),
+            cost_callback,
             max_ops: 2000,
             heuristic_weight: 1.2,
             serialize: false,
@@ -387,17 +390,16 @@ impl<R> Default for FindOptions<fn(RoomName, CostMatrix<'_>) -> R, R> where R: R
     }
 }
 
-impl<R> FindOptions<fn(RoomName, CostMatrix<'_>) -> R, R> where R: RoomCostResult + Default {
+impl FindOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl<'a, F, R> FindOptions<F, R>
+impl<'a, F> FindOptions<'a, F>
 where
-    F: Fn(RoomName, CostMatrix<'_>) -> R,
-    R: RoomCostResult
+    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
 {
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
@@ -413,9 +415,9 @@ where
     }
 
     /// Sets cost callback - default `|_, _| {}`.
-    pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> FindOptions<F2, R>
+    pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> FindOptions<'b, F2>
     where
-        F2: Fn(RoomName, CostMatrix<'_>) -> R,
+        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
     {
         let FindOptions {
             ignore_creeps,
