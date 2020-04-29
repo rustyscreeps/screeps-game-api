@@ -369,9 +369,9 @@ pub unsafe trait HasStore: RoomObjectProperties {
     fn store_free_capacity(&self, resource: Option<ResourceType>) -> u32 {
         match resource {
             Some(ty) => {
-                js_unwrap!(@{self.as_ref()}.store.getFreeCapacity(__resource_type_num_to_str(@{ty as u32})) || 0)
+                js_unwrap!(Math.max(0, @{self.as_ref()}.store.getFreeCapacity(__resource_type_num_to_str(@{ty as u32})) || 0))
             }
-            None => js_unwrap!(@{self.as_ref()}.store.getFreeCapacity() || 0),
+            None => js_unwrap!(Math.max(0, @{self.as_ref()}.store.getFreeCapacity() || 0)),
         }
     }
 
