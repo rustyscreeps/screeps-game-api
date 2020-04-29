@@ -60,6 +60,12 @@ Unreleased
   for an unavailable room
 - Change `Source` and `Mineral` `ticks_to_regeneration()` functions to return 0, preventing panics
   in cases where the game API returns negative or undefined values
+- Change `StructureTerminal::send` to take the destination room name as `RoomName` instead of
+  `&str` (breaking)
+- Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
+  since this is optimized in the server code (breaking)
+- Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
+- Change `MemoryReference::get` to return a generic error type
 
 0.7.0 (2019-10-19)
 ==================
