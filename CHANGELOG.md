@@ -30,9 +30,9 @@ Unreleased
 - Add `MarketResourceType` enum, which can wrap either a `ResourceType` or `IntershardResourceType`
   and switch to using it for `game::market` endpoints which accept either type
 - Change `StructureTerminal::send` to take the destination room name as `RoomName` instead of
-  `&str` (breaking)
+  `&str`
 - Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
-  since this is optimized in the server code (breaking)
+  since this is optimized in the server code
 
 ### Additions:
 
