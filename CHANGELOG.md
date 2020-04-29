@@ -64,6 +64,7 @@ Unreleased
   `&str` (breaking)
 - Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
   since this is optimized in the server code (breaking)
+- Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
 
 0.7.0 (2019-10-19)
 ==================
