@@ -81,6 +81,7 @@ Unreleased
   `repair` to accept `StructureProperties` matching `Creep::repair`
 - Update `Creep::heal` and `ranged_heal` to target anything with the `SharedCreepProperties`
   trait to allow use on power creeps
+- Change `MemoryReference::get` to return a generic error type
 
 0.7.0 (2019-10-19)
 ==================
