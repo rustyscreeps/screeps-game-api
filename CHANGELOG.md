@@ -66,6 +66,8 @@ Unreleased
   since this is optimized in the server code (breaking)
 - Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
 - Change `MemoryReference::get` to return a generic error type
+- Change `StructureLab::mineral_type` to return `Option<ResourceType>`, avoiding panic when labs
+  are empty
 
 0.7.0 (2019-10-19)
 ==================

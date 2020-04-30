@@ -4,7 +4,7 @@ use crate::{
 };
 
 impl StructureLab {
-    pub fn mineral_type(&self) -> ResourceType {
+    pub fn mineral_type(&self) -> Option<ResourceType> {
         js_unwrap!(__resource_type_str_to_num(@{self.as_ref()}.mineralType))
     }
 
