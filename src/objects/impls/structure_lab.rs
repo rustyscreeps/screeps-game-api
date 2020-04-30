@@ -1,11 +1,25 @@
+use stdweb::Value;
+
 use crate::{
     constants::{ResourceType, ReturnCode},
     objects::{Creep, StructureLab},
+    traits::TryFrom,
 };
 
 impl StructureLab {
     pub fn mineral_type(&self) -> Option<ResourceType> {
-        js_unwrap!(__resource_type_str_to_num(@{self.as_ref()}.mineralType))
+        let mineral_v = js! {
+            const mineral = @{self.as_ref()}.mineralType;
+            if (mineral) {
+                return __resource_type_str_to_num(mineral);
+            }
+        };
+        match mineral_v {
+            Value::Number(_) => {
+                Some(ResourceType::try_from(mineral_v).expect("lab resource unknown."))
+            }
+            _ => None,
+        }
     }
 
     pub fn boost_creep(&self, creep: &Creep, body_part_count: Option<u32>) -> ReturnCode {
