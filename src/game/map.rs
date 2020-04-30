@@ -213,6 +213,6 @@ fn parse_find_route_returned_value(v: Value) -> Result<Vec<RoomRouteStep>, Retur
 #[serde(rename_all = "camelCase")]
 pub struct RoomRouteStep {
     pub exit: ExitDirection,
-    pub room: String,
+    pub room: RoomName,
 }
 js_deserializable!(RoomRouteStep);
