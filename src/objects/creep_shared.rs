@@ -8,8 +8,8 @@ use crate::{
     local::{Position, RoomName},
     memory::MemoryReference,
     objects::{
-        Creep, FindOptions, HasPosition, PowerCreep, Resource, RoomObjectProperties, Step,
-        Transferable, Withdrawable, PolyStyle
+        Creep, FindOptions, HasPosition, PolyStyle, PowerCreep, Resource, RoomObjectProperties,
+        Step, Transferable, Withdrawable,
     },
     pathfinder::{CostMatrix, SearchResults},
     ConversionError,
@@ -318,7 +318,8 @@ where
         self
     }
 
-    /// Sets the style to trace the path used by this creep. See doc for default.
+    /// Sets the style to trace the path used by this creep. See doc for
+    /// default.
     pub fn visualize_path_style(mut self, style: PolyStyle) -> Self {
         self.visualize_path_style = Some(style);
         self

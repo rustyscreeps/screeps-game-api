@@ -33,9 +33,14 @@ Unreleased
   `&str`
 - Change `game::market::get_all_orders` to accept an `Option<MarketResourceType>` as a filter
   since this is optimized in the server code
+- Change `HasStore::store_free_capacity` to return `i32`, handling potential negative values due
+  to expiration of `OPERATE_STORAGE`
 
 ### Additions:
 
+- Add `RoomVisual`, rendering primitives (`Circle`, `Line`, `Rect`, `Poly`, `Text`).
+- Add Visual rendering primitive enum for storage and batching.
+- Add `MoveToOptions::visualize_path_style`to allow for path visualization of movement system.
 - Add `ResourceType::reaction_components` function translating the `REACTIONS` constant
 - Add `ResourceType::commodity_recipe` function and `FactoryRecipe` struct translating the
   `COMMODITIES` constant
@@ -82,11 +87,6 @@ Unreleased
 - Update `Creep::heal` and `ranged_heal` to target anything with the `SharedCreepProperties`
   trait to allow use on power creeps
 - Change `MemoryReference::get` to return a generic error type
-- Add `RoomVisual`, rendering primitives (`Circle`, `Line`, `Rect`, `Poly`, `Text`).
-- Add Visual rendering primitive enum for storage and batching.
-- Add `MoveToOptions::visualize_path_style`to allow for path visualization of movement system.
-- Change `HasStore::store_free_capacity` to return `i32`, handling potential negative values due
-  to expiration of `OPERATE_STORAGE`
 
 0.7.0 (2019-10-19)
 ==================
