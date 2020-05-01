@@ -66,8 +66,8 @@ Unreleased
   since this is optimized in the server code (breaking)
 - Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
 - Change `MemoryReference::get` to return a generic error type
-- Change `HasStore::store_free_capacity` to prevent panics on negative values due to expiration of
-  `OPERATE_STORAGE`
+- Change `HasStore::store_free_capacity` to return `i32`, handling potential negative values due
+  to expiration of `OPERATE_STORAGE`
 
 0.7.0 (2019-10-19)
 ==================
