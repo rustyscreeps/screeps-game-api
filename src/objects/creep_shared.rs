@@ -90,7 +90,6 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
                     swamp_cost,
                     ..
                 },
-            phantom: PhantomData
         } = move_options;
 
         let mut raw_callback = cost_callback;
@@ -122,32 +121,6 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         // PathFinder call and make the call to PathFinder.
         //
         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
-<<<<<<< HEAD
-        COST_CALLBACK.set(&callback_lifetime_erased, || {
-            let rp = target.pos();
-            js_unwrap! {
-                @{ self.as_ref() }.moveTo(
-                    pos_from_packed(@{rp.packed_repr()}),
-                    {
-                        reusePath: @{reuse_path},
-                        serializeMemory: @{serialize_memory},
-                        noPathFinding: @{no_path_finding},
-                        visualizePathStyle: @{visualize_path_style},
-                        ignoreCreeps: @{ignore_creeps},
-                        ignoreDestructibleStructures: @{ignore_destructible_structures},
-                        costCallback: @{callback},
-                        maxOps: @{max_ops},
-                        heuristicWeight: @{heuristic_weight},
-                        serialize: @{serialize},
-                        maxRooms: @{max_rooms},
-                        range: @{range},
-                        plainCost: @{plain_cost},
-                        swampCost: @{swamp_cost}
-                    }
-                )
-            }
-        })
-=======
         let rp = target.pos();
         js!(
             let cb = @{callback_lifetime_erased};
@@ -158,7 +131,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
                     reusePath: @{reuse_path},
                     serializeMemory: @{serialize_memory},
                     noPathFinding: @{no_path_finding},
-                    visualizePathStyle: undefined,  // todo
+                    visualizePathStyle: @{visualize_path_style},
                     ignoreCreeps: @{ignore_creeps},
                     ignoreDestructibleStructures: @{ignore_destructible_structures},
                     costCallback: cb,
@@ -177,7 +150,6 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         )
         .try_into()
         .expect("expected return code from moveTo")
->>>>>>> Cost matrix and pathfinder improvements.
     }
 
     fn move_by_path_serialized(&self, path: &str) -> ReturnCode {
@@ -290,8 +262,7 @@ where
     pub(crate) serialize_memory: bool,
     pub(crate) no_path_finding: bool,
     pub(crate) visualize_path_style: Option<PolyStyle>,
-    pub(crate) find_options: FindOptions<F, MultiRoomCostResult<'a>>,
-    phantom: PhantomData<&'a ()>
+    pub(crate) find_options: FindOptions<'a, F, MultiRoomCostResult<'a>>,
 }
 
 impl Default
@@ -306,7 +277,6 @@ impl Default
             no_path_finding: false,
             visualize_path_style: None,
             find_options: FindOptions::default(),
-            phantom: PhantomData
         }
     }
 }
@@ -340,8 +310,7 @@ where
         self
     }
 
-    /// Sets the style to trace the path used by this creep. See doc for
-    /// default.
+    /// Sets the style to trace the path used by this creep. See doc for default.
     pub fn visualize_path_style(mut self, style: PolyStyle) -> Self {
         self.visualize_path_style = Some(style);
         self
@@ -371,7 +340,6 @@ where
             no_path_finding: self.no_path_finding,
             visualize_path_style: self.visualize_path_style,
             find_options: self.find_options.cost_callback(cost_callback),
-            phantom: PhantomData
         };
 
         new_options
@@ -429,7 +397,6 @@ where
             no_path_finding: self.no_path_finding,
             visualize_path_style: self.visualize_path_style,
             find_options,
-            phantom: PhantomData
         }
     }
 }
