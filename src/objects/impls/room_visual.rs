@@ -358,6 +358,40 @@ pub enum Visual {
 }
 js_serializable!(Visual);
 
+impl Visual {
+    pub fn circle(x: f32, y: f32, style: Option<CircleStyle>) -> Visual {
+        Visual::Circle(CircleData { x, y, style })
+    }
+
+    pub fn line(from: (f32, f32), to: (f32, f32), style: Option<LineStyle>) -> Visual {
+        Visual::Line(LineData {
+            x1: from.0,
+            y1: from.1,
+            x2: to.0,
+            y2: to.1,
+            style,
+        })
+    }
+
+    pub fn rect(x: f32, y: f32, width: f32, height: f32, style: Option<RectStyle>) -> Visual {
+        Visual::Rect(RectData {
+            x,
+            y,
+            width,
+            height,
+            style,
+        })
+    }
+
+    pub fn poly(points: Vec<(f32, f32)>, style: Option<PolyStyle>) -> Visual {
+        Visual::Poly(PolyData { points, style })
+    }
+
+    pub fn text(x: f32, y: f32, text: String, style: Option<TextStyle>) -> Visual {
+        Visual::Text(TextData { x, y, text, style })
+    }
+}
+
 pub struct RoomVisual {
     room_name: Option<RoomName>,
 }
@@ -378,34 +412,22 @@ impl RoomVisual {
     }
 
     pub fn circle(&self, x: f32, y: f32, style: Option<CircleStyle>) {
-        self.draw(&Visual::Circle(CircleData { x, y, style }));
+        self.draw(&Visual::circle(x, y, style));
     }
 
     pub fn line(&self, from: (f32, f32), to: (f32, f32), style: Option<LineStyle>) {
-        self.draw(&Visual::Line(LineData {
-            x1: from.0,
-            y1: from.1,
-            x2: to.0,
-            y2: to.1,
-            style,
-        }));
+        self.draw(&Visual::line(from, to, style));
     }
 
     pub fn rect(&self, x: f32, y: f32, width: f32, height: f32, style: Option<RectStyle>) {
-        self.draw(&Visual::Rect(RectData {
-            x,
-            y,
-            width,
-            height,
-            style,
-        }));
+        self.draw(&Visual::rect(x, y, width, height, style));
     }
 
     pub fn poly(&self, points: Vec<(f32, f32)>, style: Option<PolyStyle>) {
-        self.draw(&Visual::Poly(PolyData { points, style }));
+        self.draw(&Visual::poly(points, style));
     }
 
     pub fn text(&self, x: f32, y: f32, text: String, style: Option<TextStyle>) {
-        self.draw(&Visual::Text(TextData { x, y, text, style }));
+        self.draw(&Visual::text(x, y, text, style));
     }
 }
