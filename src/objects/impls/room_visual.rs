@@ -1,7 +1,7 @@
 use crate::local::RoomName;
 use serde::Serialize;
 
-#[derive(Serialize, Default)]
+#[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CircleStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -44,7 +44,7 @@ impl CircleStyle {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct CircleData {
     x: f32,
     y: f32,
@@ -53,7 +53,7 @@ pub struct CircleData {
 }
 js_serializable!(CircleData);
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum LineDrawStyle {
     Solid,
@@ -77,7 +77,7 @@ impl LineDrawStyle {
     }
 }
 
-#[derive(Serialize, Default)]
+#[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LineStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -113,7 +113,7 @@ impl LineStyle {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct LineData {
     x1: f32,
     y1: f32,
@@ -124,7 +124,7 @@ pub struct LineData {
 }
 js_serializable!(LineData);
 
-#[derive(Serialize, Default)]
+#[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RectStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -167,7 +167,7 @@ impl RectStyle {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct RectData {
     x: f32,
     y: f32,
@@ -180,7 +180,7 @@ pub struct RectData {
 }
 js_serializable!(RectData);
 
-#[derive(Serialize, Default)]
+#[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PolyStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -223,7 +223,7 @@ impl PolyStyle {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct PolyData {
     points: Vec<(f32, f32)>,
     #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
@@ -231,7 +231,7 @@ pub struct PolyData {
 }
 js_serializable!(PolyData);
 
-#[derive(Serialize, Clone)]
+#[derive(Clone, Serialize)]
 #[serde(untagged)]
 pub enum FontStyle {
     Size(f32),
@@ -239,7 +239,7 @@ pub enum FontStyle {
 }
 js_serializable!(FontStyle);
 
-#[derive(Serialize, Clone)]
+#[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum TextAlign {
     Center,
@@ -263,7 +263,7 @@ impl TextAlign {
     }
 }
 
-#[derive(Serialize, Default, Clone)]
+#[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TextStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -332,7 +332,7 @@ impl TextStyle {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct TextData {
     text: String,
     x: f32,
@@ -342,7 +342,7 @@ pub struct TextData {
 }
 js_serializable!(TextData);
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 #[serde(tag = "t")]
 pub enum Visual {
     #[serde(rename = "c")]
