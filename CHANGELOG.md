@@ -66,6 +66,9 @@ Unreleased
   since this is optimized in the server code (breaking)
 - Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
 - Change `MemoryReference::get` to return a generic error type
+- Add `RoomVisual`, rendering primitives (`Circle`, `Line`, `Rect`, `Poly`, `Text`).
+- Add Visual rendering primitive enum for storage and batching.
+- Add `MoveToOptions::visualize_path_style`to allow for path visualization of movement system.
 
 0.7.0 (2019-10-19)
 ==================
