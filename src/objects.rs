@@ -30,10 +30,11 @@ mod structure;
 pub use self::{
     creep_shared::{MoveToOptions, SharedCreepProperties},
     impls::{
-        AttackEvent, AttackType, Bodypart, BuildEvent, Effect, Event, EventType, ExitEvent,
-        FindOptions, HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path,
-        PortalDestination, PositionedLookResult, RepairEvent, Reservation, ReserveControllerEvent,
-        Sign, SpawnOptions, Step, UpgradeControllerEvent,
+        AttackEvent, AttackType, Bodypart, BuildEvent, CircleStyle, Effect, Event, EventType,
+        ExitEvent, FindOptions, FontStyle, HarvestEvent, HealEvent, HealType, LineDrawStyle,
+        LineStyle, LookResult, ObjectDestroyedEvent, Path, PolyStyle, PortalDestination,
+        PositionedLookResult, RectStyle, RepairEvent, Reservation, ReserveControllerEvent,
+        RoomVisual, Sign, SpawnOptions, Step, TextAlign, TextStyle, UpgradeControllerEvent, Visual,
     },
     structure::Structure,
 };
