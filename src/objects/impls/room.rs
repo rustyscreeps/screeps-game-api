@@ -19,8 +19,8 @@ use crate::{
     memory::MemoryReference,
     objects::{
         ConstructionSite, Creep, Deposit, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource,
-        Room, RoomTerrain, Ruin, Source, Structure, StructureController, StructureStorage,
-        StructureTerminal, Tombstone,
+        Room, RoomTerrain, RoomVisual, Ruin, Source, Structure, StructureController,
+        StructureStorage, StructureTerminal, Tombstone,
     },
     pathfinder::{RoomCostResult, SingleRoomCostResult, CostMatrix},
     traits::{TryFrom, TryInto},
@@ -35,7 +35,6 @@ simple_accessors! {
         pub fn name() -> RoomName = name;
         pub fn storage() -> Option<StructureStorage> = storage;
         pub fn terminal() -> Option<StructureTerminal> = terminal;
-        // todo: visual
     }
 }
 
@@ -325,6 +324,10 @@ impl Room {
 
     pub fn name_local(&self) -> RoomName {
         js_unwrap!(@{self.as_ref()}.name)
+    }
+
+    pub fn visual(&self) -> RoomVisual {
+        RoomVisual::new(Some(self.name()))
     }
 }
 
