@@ -9,6 +9,7 @@ mod power_creep;
 mod resource;
 mod room;
 mod room_terrain;
+mod room_visual;
 mod ruin;
 mod source;
 mod structure_controller;
@@ -34,6 +35,10 @@ pub use self::{
         AttackEvent, AttackType, BuildEvent, Effect, Event, EventType, ExitEvent, FindOptions,
         HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path,
         PositionedLookResult, RepairEvent, ReserveControllerEvent, Step, UpgradeControllerEvent,
+    },
+    room_visual::{
+        CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual,
+        TextAlign, TextStyle, Visual,
     },
     structure_controller::{Reservation, Sign},
     structure_portal::PortalDestination,
