@@ -23,10 +23,10 @@ pub fn progress_total() -> f64 {
     js_unwrap!(Game.gpl.progressTotal)
 }
 
-/// Provides the total number of processed power needed to acheieve each level
+/// Provides the total number of processed power needed to achieve each level
 /// of GPL
 ///
-/// Calculates the total number of power that need to be processed to acheive a
+/// Calculates the total number of power that need to be processed to achieve a
 /// given Global Power Level. The resulting value for your current level, added
 /// to your [`gpl::progress`][crate::game::gpl::progress], would calculate your
 /// total lifetime power points.

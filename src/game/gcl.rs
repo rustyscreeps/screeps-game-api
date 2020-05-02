@@ -23,10 +23,10 @@ pub fn progress_total() -> f64 {
     js_unwrap!(Game.gcl.progressTotal)
 }
 
-/// Provides the total number of control points needed to acheieve each level of
+/// Provides the total number of control points needed to achieve each level of
 /// GCL
 ///
-/// Calculates the total number of control points needed to acheive a given
+/// Calculates the total number of control points needed to achieve a given
 /// Global Control Level. The resulting value for your current level, added to
 /// your [`gcl::progress`][crate::game::gcl::progress], would calculate your
 /// total lifetime control points.
