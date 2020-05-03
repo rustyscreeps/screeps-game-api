@@ -185,7 +185,7 @@ pub const LAB_UNBOOST_MINERAL: u32 = 15;
 
 pub const LAB_REACTION_AMOUNT: u32 = 5;
 
-pub const GCL_POW: f32 = 2.4;
+pub const GCL_POW: f64 = 2.4;
 pub const GCL_MULTIPLY: u32 = 1_000_000;
 pub const GCL_NOVICE: u32 = 3;
 

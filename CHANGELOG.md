@@ -73,6 +73,8 @@ Unreleased
   to expiration of `OPERATE_STORAGE`
 - Add `game::gcl::total_for_level` and `game::gpl::total_for_level` which calculate the total
   lifetime points required for a given level of GCL or GPL
+- Change `constants::GCL_POW` to f64 from f32 due to slightly incorrect calculations when using
+  this from f32 to calculate GCL levels (breaking)
 
 0.7.0 (2019-10-19)
 ==================
