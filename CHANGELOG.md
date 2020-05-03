@@ -69,6 +69,8 @@ Unreleased
 - Add `RoomVisual`, rendering primitives (`Circle`, `Line`, `Rect`, `Poly`, `Text`).
 - Add Visual rendering primitive enum for storage and batching.
 - Add `MoveToOptions::visualize_path_style`to allow for path visualization of movement system.
+- Change `HasStore::store_free_capacity` to return `i32`, handling potential negative values due
+  to expiration of `OPERATE_STORAGE`
 
 0.7.0 (2019-10-19)
 ==================
