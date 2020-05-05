@@ -356,11 +356,7 @@ function object_id_from_packed(slice) {
     // reconstruct string in JS
     let res = "";
     for (var i = 0; i < slice.length; i++) {
-       if (i > 0) {
            res += slice[i].toString(16).padStart(8, "0");
-       } else {
-           res += slice[i].toString(16);
-       }
     }
     return res.padStart(15, "0");
 }

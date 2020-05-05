@@ -54,7 +54,7 @@ impl fmt::Debug for RawObjectId {
 
 impl fmt::Display for RawObjectId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:x}", self.to_u128())
+        write!(f, "{:024x}", self.to_u128())
     }
 }
 
@@ -272,14 +272,9 @@ mod test {
     use crate::traits::TryInto;
 
     const TEST_IDS: &[&str] = &[
-        "bc03381d32f6790",
-        "1",
+        "000000000000000000000000",
         "ffffffffffffffffffffffff",
-        "100000000000000000000000",
-        "10000000000000000",
-        "1000000000000000",
-        "100000000",
-        "10000000",
+        "044a9c7ba32ab2588bd6d3a5",
     ];
 
     #[test]
