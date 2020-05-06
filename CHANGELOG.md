@@ -77,6 +77,8 @@ Unreleased
   this from f32 to calculate GCL levels (breaking)
 - Add missed `StructureFactory::level` function to determine a factory's level (or `None` if a
   power creep has not yet used `OPERATE_FACTORY`)
+- Remove explicit `ticks_to_decay` implementations on `StructureContainer` and `Tombstone`, use
+  the implementation on `CanDecay` instead (breaking)
 
 0.7.0 (2019-10-19)
 ==================
