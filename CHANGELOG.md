@@ -79,6 +79,9 @@ Unreleased
   power creep has not yet used `OPERATE_FACTORY`)
 - Remove explicit `ticks_to_decay` implementations on `StructureContainer` and `Tombstone`, use
   the implementation on `CanDecay` instead (breaking)
+- Change `game::cpu::limit`, `tick_limit`, `bucket`, `shard_limits`, and `set_shard_limits` to
+  use `u32` from `f64`
+- Add `total_available_size` field to `game::cpu::HeapStatistics`
 
 0.7.0 (2019-10-19)
 ==================
