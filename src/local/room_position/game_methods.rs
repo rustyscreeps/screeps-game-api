@@ -3,9 +3,10 @@ use crate::{
     constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType},
     game,
     local::RoomName,
-    objects::{FindOptions, Flag, HasPosition, LookResult, Path},
+    objects::{FindOptions, Flag, HasPosition, LookResult, Path, SizedRoomObject},
     pathfinder::CostMatrix,
 };
+use stdweb::{Object, Reference, Value};
 
 use super::Position;
 
@@ -52,6 +53,37 @@ impl Position {
             pos_from_packed(@{self.packed_repr()})
                 .findClosestByRange(@{ty.find_code()})
         )
+    }
+
+    pub fn find_closest_by_range_obj<T>(self, objects: Vec<T>) -> Option<T> 
+    where
+      T: SizedRoomObject + Clone + HasPosition
+    {
+        let ret = objects.as_slice();
+        let mut i: i32 = -1;
+        let objs: Vec<Object> = ret
+          .into_iter()
+            .map(|obj| {
+                let pos = obj.pos();
+                i += 1;
+                js_unwrap!({i: @{i}, pos: pos_from_packed(@{pos.packed_repr()})})
+            })
+            .collect();
+        let objs_js: Reference = js_unwrap!(@{objs});
+        let v = js_unwrap! {
+            pos_from_packed(@{self.packed_repr()})
+                .findClosestByRange(@{objs_js})
+        };
+        match v {
+            Value::Reference(r) => {
+                let index: i32 = js_unwrap!(@{&r}.i);
+                match ret.get(index as usize) {
+                    Some(s) => Some(s.clone()),
+                    None => None
+                }
+            },
+            _ => None,
+        }
     }
 
     pub fn find_in_range<T>(self, ty: T, range: u32) -> Vec<T::Item>
