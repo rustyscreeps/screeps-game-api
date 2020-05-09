@@ -189,10 +189,17 @@ where
     T: HasId + SizedRoomObject,
 {
     let array_view = unsafe { id.unsafe_as_uploaded() };
-    (js! {
-        return Game.getObjectById(object_id_from_packed(@{array_view}));
-    })
-    .try_into()
+    let f;
+    if cfg!(feature = "short-ids") {
+        f = js! {
+            return Game.getObjectById(object_id_from_packed_16(@{array_view}));
+        }
+    } else {
+        f = js! {
+            return Game.getObjectById(object_id_from_packed(@{array_view}));
+        }
+    }
+    f.try_into()
 }
 
 /// See [http://docs.screeps.com/api/#Game.getObjectById]
@@ -209,7 +216,11 @@ where
 pub fn get_object_erased(id: impl Into<RawObjectId>) -> Option<RoomObject> {
     let id = id.into();
     let array_view = unsafe { id.unsafe_as_uploaded() };
-    js_unwrap_ref!(Game.getObjectById(object_id_from_packed(@{array_view})))
+    if cfg!(feature = "short-ids") {
+        js_unwrap_ref!(Game.getObjectById(object_id_from_packed_16(@{array_view})))
+    } else {
+        js_unwrap_ref!(Game.getObjectById(object_id_from_packed(@{array_view})))
+    }
 }
 
 pub fn notify(message: &str, group_interval: Option<u32>) {

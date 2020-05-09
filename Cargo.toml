@@ -42,3 +42,5 @@ stdweb-derive = "0.5"
 
 [features]
 check-all-casts = []
+#Shorten ObjectID representations to their minimum size.  Does not preserve leading 0s, see #311 for details
+short-ids = []
