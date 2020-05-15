@@ -69,6 +69,8 @@ Unreleased
 - Add `RoomVisual`, rendering primitives (`Circle`, `Line`, `Rect`, `Poly`, `Text`).
 - Add Visual rendering primitive enum for storage and batching.
 - Add `MoveToOptions::visualize_path_style`to allow for path visualization of movement system.
+- Change `pathfinder::search_many` to return an incomplete result when called with no goals to
+  prevent a panic due to unexpected return data from javascript.
 
 0.7.0 (2019-10-19)
 ==================

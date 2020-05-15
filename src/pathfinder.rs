@@ -354,7 +354,7 @@ where
             js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}})
         })
         .collect();
-    if goals.len() == 0 {
+    if goals.is_empty() {
         return SearchResults {
             cost: 0,
             incomplete: true,
