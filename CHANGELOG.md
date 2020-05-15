@@ -82,6 +82,8 @@ Unreleased
 - Change `game::cpu::limit`, `tick_limit`, `bucket`, `shard_limits`, and `set_shard_limits` to
   use `u32` from `f64`
 - Add `total_available_size` field to `game::cpu::HeapStatistics`
+- Change `pathfinder::search_many` to return an incomplete result when called with no goals to
+  prevent a panic due to unexpected return data from javascript.
 
 0.7.0 (2019-10-19)
 ==================

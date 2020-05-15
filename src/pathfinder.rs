@@ -354,6 +354,14 @@ where
             js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}})
         })
         .collect();
+    if goals.is_empty() {
+        return SearchResults {
+            cost: 0,
+            incomplete: true,
+            ops: 0,
+            path: js_unwrap!([]),
+        };
+    }
     let goals_js: Reference = js_unwrap!(@{goals});
     search_real(origin.pos(), &goals_js, opts)
 }
