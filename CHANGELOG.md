@@ -35,6 +35,12 @@ Unreleased
   since this is optimized in the server code
 - Change `HasStore::store_free_capacity` to return `i32`, handling potential negative values due
   to expiration of `OPERATE_STORAGE`
+- Change `constants::GCL_POW` to f64 from f32 due to slightly incorrect calculations when using
+  this from f32 to calculate GCL levels
+- Remove explicit `ticks_to_decay` implementations on `StructureContainer` and `Tombstone`, use
+  the implementation on `CanDecay` instead
+- Change `game::cpu::limit`, `tick_limit`, `bucket`, `shard_limits`, and `set_shard_limits` to
+  use `u32` from `f64`
 
 ### Additions:
 
@@ -62,6 +68,8 @@ Unreleased
 - Add `Creep::move_pulled_by` which allows a creep to accept another creep's attempt to `pull`
 - Add `SearchOptions::max_cost` to limit the maximum path cost for pathfinder searches
 - Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
+- Add `game::gcl::total_for_level` and `game::gpl::total_for_level` which calculate the total
+  lifetime points required for a given level of GCL or GPL
 
 ### Bugfixes:
 
@@ -79,6 +87,12 @@ Unreleased
 - Change `Source` and `Mineral` `ticks_to_regeneration` functions to return 0, preventing panics
   in cases where the game API returns negative or undefined values
 - Fix visibility of struct fields on `MapRoomStatus` and `RoomRouteStep`
+- Add `total_available_size` field to `game::cpu::HeapStatistics`
+- Add missed `StructureFactory::level` function to determine a factory's level (or `None` if a
+  power creep has not yet used `OPERATE_FACTORY`)
+- Change `pathfinder::search_many` to return an incomplete result when called with no goals to
+  prevent a panic due to unexpected return data from javascript.
+- Change `MemoryReference::get` to return a generic error type
 
 ### Misc:
 
@@ -86,7 +100,6 @@ Unreleased
   `repair` to accept `StructureProperties` matching `Creep::repair`
 - Update `Creep::heal` and `ranged_heal` to target anything with the `SharedCreepProperties`
   trait to allow use on power creeps
-- Change `MemoryReference::get` to return a generic error type
 
 0.7.0 (2019-10-19)
 ==================

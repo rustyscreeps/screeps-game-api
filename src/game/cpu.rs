@@ -15,6 +15,7 @@ pub struct HeapStatistics {
     pub total_heap_size: u32,
     pub total_heap_size_executable: u32,
     pub total_physical_size: u32,
+    pub total_available_size: i32,
     pub used_heap_size: u32,
     pub heap_size_limit: u32,
     pub malloced_memory: u32,
@@ -29,28 +30,28 @@ js_deserializable!(HeapStatistics);
 /// See [http://docs.screeps.com/api/#Game.cpu]
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
-pub fn limit() -> f64 {
+pub fn limit() -> u32 {
     js_unwrap!(Game.cpu.limit)
 }
 
 /// See [http://docs.screeps.com/api/#Game.cpu]
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
-pub fn tick_limit() -> f64 {
+pub fn tick_limit() -> u32 {
     js_unwrap!(Game.cpu.tickLimit)
 }
 
 /// See [http://docs.screeps.com/api/#Game.cpu]
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
-pub fn bucket() -> f64 {
+pub fn bucket() -> u32 {
     js_unwrap!(Game.cpu.bucket)
 }
 
 /// See [http://docs.screeps.com/api/#Game.cpu]
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
-pub fn shard_limits() -> collections::HashMap<String, f64> {
+pub fn shard_limits() -> collections::HashMap<String, u32> {
     js_unwrap!(Game.cpu.shardLimits)
 }
 
@@ -82,7 +83,7 @@ pub fn get_used() -> f64 {
 /// See [http://docs.screeps.com/api/#Game.setShardLimits]
 ///
 /// [http://docs.screeps.com/api/#Game.setShardLimits]: http://docs.screeps.com/api/#Game.setShardLimits
-pub fn set_shard_limits(limits: collections::HashMap<String, f64>) -> ReturnCode {
+pub fn set_shard_limits(limits: collections::HashMap<String, u32>) -> ReturnCode {
     js_unwrap!(Game.cpu.setShardLimits(@{limits}))
 }
 
