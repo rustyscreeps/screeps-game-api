@@ -10,7 +10,8 @@ pub struct FactoryRecipe {
     pub cooldown: u32,
     /// Components - resource type and amount
     pub components: HashMap<ResourceType, u32>,
-    /// Required factory level to be able to create this commodity, if restricted
+    /// Required factory level to be able to create this commodity, if
+    /// restricted
     pub level: Option<u32>,
 }
 
