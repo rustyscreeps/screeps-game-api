@@ -782,3 +782,27 @@ macro_rules! mem_set {
         compile_error!(concat!("Unexpected usage of mem_set! usage: ", stringify!($($not_valid)*)))
     }
 }
+
+macro_rules! impl_is_structure {
+    ($structure_struct_type: ty, $structure_type_pattern: pat,$c: ident,$structure_type: expr) => {
+        impl std::convert::TryFrom<Structure> for $structure_struct_type {
+            type Error = ConversionError;
+            fn try_from(s: Structure) -> Result<Self, Self::Error> {
+                match s {
+                    $structure_type_pattern => Ok($c),
+                    wrong => Err(ConversionError::Custom(format!(
+                        "Expected {}, got {:?}",
+                        stringify!($structure_struct_type),
+                        wrong.structure_type()
+                    ))),
+                }
+            }
+        }
+
+        impl IsStructure for $structure_struct_type {
+            fn structure_type() -> StructureType {
+                $structure_type
+            }
+        }
+    };
+}

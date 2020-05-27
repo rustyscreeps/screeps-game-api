@@ -3,7 +3,7 @@ use stdweb::{InstanceOf, Reference, ReferenceType, Value};
 use super::*;
 use crate::{
     constants::StructureType,
-    objects::{Attackable, CanDecay, HasCooldown, HasEnergyForSpawn, HasStore},
+    objects::{Attackable, CanDecay, HasCooldown, HasEnergyForSpawn, HasId, HasStore},
     traits::FromExpectedType,
     ConversionError,
 };
@@ -291,3 +291,99 @@ impl ReferenceType for Structure {
         )
     }
 }
+
+pub trait IsStructure: HasId + std::convert::TryFrom<Structure> + SizedRoomObject {
+    fn structure_type() -> StructureType;
+}
+//stdweb::unstable::TryFrom<stdweb::Value,Error=stdweb::private::ConversionError> + stdweb::unstable::TryFrom<stdweb::Reference,Error=stdweb::private::ConversionError>
+impl_is_structure!(
+    StructureContainer,
+    Structure::Container(c),
+    c,
+    StructureType::Container
+);
+impl_is_structure!(
+    StructureController,
+    Structure::Controller(c),
+    c,
+    StructureType::Controller
+);
+impl_is_structure!(
+    StructureExtension,
+    Structure::Extension(c),
+    c,
+    StructureType::Extension
+);
+impl_is_structure!(
+    StructureExtractor,
+    Structure::Extractor(c),
+    c,
+    StructureType::Extractor
+);
+impl_is_structure!(
+    StructureFactory,
+    Structure::Factory(c),
+    c,
+    StructureType::Factory
+);
+impl_is_structure!(
+    StructureInvaderCore,
+    Structure::InvaderCore(c),
+    c,
+    StructureType::InvaderCore
+);
+impl_is_structure!(
+    StructureKeeperLair,
+    Structure::KeeperLair(c),
+    c,
+    StructureType::KeeperLair
+);
+impl_is_structure!(StructureLab, Structure::Lab(c), c, StructureType::Lab);
+impl_is_structure!(StructureLink, Structure::Link(c), c, StructureType::Link);
+impl_is_structure!(StructureNuker, Structure::Nuker(c), c, StructureType::Nuker);
+impl_is_structure!(
+    StructureObserver,
+    Structure::Observer(c),
+    c,
+    StructureType::Observer
+);
+impl_is_structure!(
+    StructurePowerBank,
+    Structure::PowerBank(c),
+    c,
+    StructureType::PowerBank
+);
+impl_is_structure!(
+    StructurePowerSpawn,
+    Structure::PowerSpawn(c),
+    c,
+    StructureType::PowerSpawn
+);
+impl_is_structure!(
+    StructurePortal,
+    Structure::Portal(c),
+    c,
+    StructureType::Portal
+);
+impl_is_structure!(
+    StructureRampart,
+    Structure::Rampart(c),
+    c,
+    StructureType::Rampart
+);
+impl_is_structure!(StructureRoad, Structure::Road(c), c, StructureType::Road);
+impl_is_structure!(StructureSpawn, Structure::Spawn(c), c, StructureType::Spawn);
+impl_is_structure!(
+    StructureStorage,
+    Structure::Storage(c),
+    c,
+    StructureType::Storage
+);
+impl_is_structure!(
+    StructureTerminal,
+    Structure::Terminal(c),
+    c,
+    StructureType::Terminal
+);
+impl_is_structure!(StructureTower, Structure::Tower(c), c, StructureType::Tower);
+impl_is_structure!(StructureWall, Structure::Wall(c), c, StructureType::Wall);

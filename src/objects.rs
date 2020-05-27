@@ -36,7 +36,7 @@ pub use self::{
         PositionedLookResult, RectStyle, RepairEvent, Reservation, ReserveControllerEvent,
         RoomVisual, Sign, SpawnOptions, Step, TextAlign, TextStyle, UpgradeControllerEvent, Visual,
     },
-    structure::Structure,
+    structure::{IsStructure, Structure},
 };
 
 reference_wrappers! {
