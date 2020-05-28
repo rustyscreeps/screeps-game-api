@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+- Change `game::inter_shard_memory` functions to avoid panicking on private servers where the interface doesn't
+  exist
+- Change `game::inter_shard_memory::get_local` and `get_remote` to return `Option<String>` accounting for cases
+  where they have not been set
+
 
 0.8.0 (2020-03-26)
 ==================
