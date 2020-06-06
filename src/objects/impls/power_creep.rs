@@ -52,6 +52,10 @@ impl AccountPowerCreep {
         js_unwrap!(@{self.as_ref()}.delete())
     }
 
+    pub fn cancel_delete(&self) -> ReturnCode {
+        js_unwrap!(@{self.as_ref()}.delete(true))
+    }
+
     pub fn power_keys(&self) -> Vec<PowerType> {
         js_unwrap!(Object.keys(@{self.as_ref()}.powers).map(Number))
     }
