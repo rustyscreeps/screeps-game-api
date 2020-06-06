@@ -266,6 +266,14 @@ pub const PORTAL_DECAY: u32 = 30_000;
 pub const MARKET_FEE: f32 = 0.05;
 
 pub const FLAGS_LIMIT: u32 = 10_000;
+
+/// Cost, paid from [`game::cpu::bucket`], to generate a pixel using
+/// [`game::cpu::generate_pixel`]
+///
+/// [`game::cpu::bucket`]: crate::game::cpu::bucket
+/// [`game::cpu::generate_pixel`]: crate::game::cpu::generate_pixel
+pub const PIXEL_COST: u32 = 5000;
+
 pub const PORTAL_UNSTABLE: u32 = 10 * 24 * 3600 * 1000;
 pub const PORTAL_MIN_TIMEOUT: u32 = 12 * 24 * 3600 * 1000;
 pub const PORTAL_MAX_TIMEOUT: u32 = 22 * 24 * 3600 * 1000;

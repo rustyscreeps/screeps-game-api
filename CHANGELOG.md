@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+- Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
+  `IntershardResourceType::AccessKey` resources
+- Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
 
 0.8.0 (2020-03-26)
 ==================

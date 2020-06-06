@@ -51,6 +51,13 @@ pub fn bucket() -> u32 {
 /// See [http://docs.screeps.com/api/#Game.cpu]
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
+pub fn generate_pixel() -> ReturnCode {
+    js_unwrap!(Game.cpu.generatePixel())
+}
+
+/// See [http://docs.screeps.com/api/#Game.cpu]
+///
+/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
 pub fn shard_limits() -> collections::HashMap<String, u32> {
     js_unwrap!(Game.cpu.shardLimits)
 }
