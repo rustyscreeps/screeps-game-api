@@ -98,11 +98,11 @@ impl StructureType {
             Road => 2500,
             Wall => match current_rcl {
                 0 | 1 => 0,
-                2 => 2500,
+                _ => 2500,
             },
             Rampart => match current_rcl {
                 0 | 1 => 0,
-                2 => 2500,
+                _ => 2500,
             },
             Link => match current_rcl {
                 0..=4 => 0,
