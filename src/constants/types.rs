@@ -2,7 +2,7 @@
 use std::{borrow::Cow, str::FromStr};
 
 use num_derive::FromPrimitive;
-use parse_display::FromStr;
+use parse_display::{Display, FromStr};
 use serde::{
     de::{Deserializer, Error as _, Unexpected},
     Deserialize, Serialize, Serializer,
@@ -18,7 +18,9 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 /// [`FromStr`][std::str::FromStr] or [`StructureType::deserialize_from_str`].
 ///
 /// See the [module-level documentation][crate::constants] for more details.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[derive(
+    Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
+)]
 #[repr(u8)]
 #[display(style = "camelCase")]
 pub enum StructureType {
@@ -124,7 +126,9 @@ js_deserializable!(StructureType);
 /// [`IntershardResourceType::deserialize_from_str`].
 ///
 /// See the [module-level documentation][crate::constants] for more details.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[derive(
+    Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
+)]
 #[repr(u16)]
 pub enum IntershardResourceType {
     /// `"token"`
@@ -157,7 +161,9 @@ js_deserializable!(IntershardResourceType);
 /// [`FromStr`][std::str::FromStr] or [`ResourceType::deserialize_from_str`].
 ///
 /// See the [module-level documentation][crate::constants] for more details.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[derive(
+    Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
+)]
 #[repr(u16)]
 pub enum ResourceType {
     /// `"energy"`
@@ -734,11 +740,13 @@ impl Serialize for MarketResourceType {
 }
 
 /// Translates the `POWER_CLASS` constants, which are classes of power creeps
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[derive(
+    Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
+)]
 #[repr(u8)]
+#[display(style = "camelCase")]
 pub enum PowerCreepClass {
     /// `"operator"`
-    #[display("operator")]
     Operator = 1,
 }
 

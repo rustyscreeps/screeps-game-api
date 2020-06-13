@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Add the `parse_display::Display` trait to type constant enums which currently implement
+  `parse_display::FromStr`, allowing reversal of the conversion from native to constant string
 
 0.8.0 (2020-03-26)
 ==================

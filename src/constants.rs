@@ -52,10 +52,13 @@
 //!
 //! If you need to consume strings already in Rust, use either the [`FromStr`]
 //! trait, or one of the `deserialize_from_str` functions on each of these
-//! constants.
+//! constants. To get back to these values from Rust native enums (instead of
+//! the integer representation we serialize to), use the [`Display`] trait or
+//! the `to_string` fuctions on the native enums.
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
 //! [`FromStr`]: std::str::FromStr
+//! [`Display`]: std::fmt::Display
 pub mod find;
 pub mod look;
 mod numbers;
