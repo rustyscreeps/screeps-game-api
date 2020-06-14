@@ -183,7 +183,7 @@ pub fn find_route_with_callback(
     let v = js!(
         let cb = @{callback_lifetime_erased};
 
-        let res = Game.map.findRoute(@{from_room}, @{to_room}, cb);
+        let res = Game.map.findRoute(@{from_room}, @{to_room}, { routeCallback: cb });
 
         cb.drop();
 
