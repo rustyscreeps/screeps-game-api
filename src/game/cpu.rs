@@ -102,3 +102,33 @@ pub fn halt() {
         Game.cpu.halt();
     }
 }
+
+// todo verify link once docs exist
+/// Whether you have an active subscription and are able to use your full CPU
+/// limit
+///
+/// See [Game.cpu.unlocked](https://docs.screeps.com/api/#Game.unlocked).
+pub fn unlocked() -> bool {
+    js_unwrap!(Game.cpu.unlocked)
+}
+
+// todo verify link once docs exist, verify state with lifetime sub and on
+// private servers
+/// Time of expiration of your current CPU subscription in milliseconds since
+/// epoch
+///
+/// See [Game.cpu.unlockedTime](https://docs.screeps.com/api/#Game.unlockedTime).
+pub fn unlocked_time() -> u64 {
+    js_unwrap!(Game.cpu.unlockedTime)
+}
+
+// todo verify link once docs exist, verify state on private servers
+/// Spend a [`CPUUnlock`] from your intershard resource inventory to unlock your
+/// full CPU limit for 24 hours
+///
+/// See [Game.cpu.unlock](https://docs.screeps.com/api/#Game.unlock).
+///
+/// [`CPUUnlock`]: crate::constants::types::IntershardResourceType::CPUUnlock
+pub fn unlock() -> ReturnCode {
+    js_unwrap!(Game.cpu.unlock())
+}
