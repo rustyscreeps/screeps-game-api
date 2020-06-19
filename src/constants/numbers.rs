@@ -272,7 +272,7 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 ///
 /// [`game::cpu::bucket`]: crate::game::cpu::bucket
 /// [`game::cpu::generate_pixel`]: crate::game::cpu::generate_pixel
-pub const PIXEL_COST: u32 = 5000;
+pub const PIXEL_CPU_COST: u32 = 5000;
 
 pub const PORTAL_UNSTABLE: u32 = 10 * 24 * 3600 * 1000;
 pub const PORTAL_MIN_TIMEOUT: u32 = 12 * 24 * 3600 * 1000;
