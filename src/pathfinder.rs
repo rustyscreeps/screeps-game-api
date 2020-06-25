@@ -118,8 +118,8 @@ impl Into<Vec<u8>> for LocalCostMatrix {
     }
 }
 
-impl<'a> CostMatrixSet for &mut LocalCostMatrix {
-    fn set_multi<D, B, P, V>(self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
+impl<'a> CostMatrixSet for LocalCostMatrix {
+    fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
         let iter = data.into_iter();
 
         for entry in iter {
@@ -170,14 +170,15 @@ pub trait HasLocalPosition {
 }
 
 pub trait CostMatrixSet {
-    //TODO: Add single value set?
-    //fn set<P, V>(position: P, cost: V) where P: HasLocalPosition, V: Borrow<u8>;
+    fn set<P, V>(&mut self, position: P, cost: V) where P: HasLocalPosition, V: Borrow<u8> {
+        self.set_multi(&[(position, cost)])
+    }
 
-    fn set_multi<D, B, P, V>(self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8>;
+    fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8>;
 }
 
-impl<'a> CostMatrixSet for &mut CostMatrix<'a> {
-    fn set_multi<D, B, P, V>(self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
+impl<'a> CostMatrixSet for CostMatrix<'a> {
+    fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
         let iter = data.into_iter();
         let (minimum_size, _maximum_size) = iter.size_hint();
         let mut storage: Vec<u8> = Vec::with_capacity(minimum_size * 3);
