@@ -266,9 +266,6 @@ impl From<[u32; 3]> for RawObjectId {
 #[cfg(test)]
 mod test {
     use super::RawObjectId;
-
-    #[cfg(target_arch = "wasm32")]
-    use crate::macros::*;
     use crate::traits::TryInto;
 
     const TEST_IDS: &[&str] = &[
