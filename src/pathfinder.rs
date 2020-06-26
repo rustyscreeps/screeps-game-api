@@ -5,9 +5,10 @@
 //! optimized for Screeps.
 //!
 //! This is both more fine-grained and less automatic than other pathing
-//! methods, such as [`Room::find_path`]. `PathFinder` knows about terrain by
+//! methods, such as [`Room::find_path`][1]. `PathFinder` knows about terrain by
 //! default, but you must configure any other obstacles you want it to consider.
 //!
+//! [1]: crate::objects::Room::find_path
 //! [`PathFinder`]: https://docs.screeps.com/api/#PathFinder
 use std::{f64, marker::PhantomData, mem};
 
@@ -354,6 +355,14 @@ where
             js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}})
         })
         .collect();
+    if goals.is_empty() {
+        return SearchResults {
+            cost: 0,
+            incomplete: true,
+            ops: 0,
+            path: js_unwrap!([]),
+        };
+    }
     let goals_js: Reference = js_unwrap!(@{goals});
     search_real(origin.pos(), &goals_js, opts)
 }
@@ -402,6 +411,7 @@ where
         max_ops,
         max_rooms,
         heuristic_weight,
+        max_cost,
         ..
     } = opts;
 
@@ -418,6 +428,7 @@ where
                 flee: @{flee},
                 maxOps: @{max_ops},
                 maxRooms: @{max_rooms},
+                maxCost: @{max_cost},
                 heuristicWeight: @{heuristic_weight}
             })
         };

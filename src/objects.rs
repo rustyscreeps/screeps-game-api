@@ -30,10 +30,11 @@ mod structure;
 pub use self::{
     creep_shared::{MoveToOptions, SharedCreepProperties},
     impls::{
-        AttackEvent, AttackType, Bodypart, BuildEvent, Effect, Event, EventType, ExitEvent,
-        FindOptions, HarvestEvent, HealEvent, HealType, LookResult, ObjectDestroyedEvent, Path,
-        PortalDestination, PositionedLookResult, RepairEvent, Reservation, ReserveControllerEvent,
-        Sign, SpawnOptions, Step, UpgradeControllerEvent,
+        AttackEvent, AttackType, Bodypart, BuildEvent, CircleStyle, Effect, Event, EventType,
+        ExitEvent, FindOptions, FontStyle, HarvestEvent, HealEvent, HealType, LineDrawStyle,
+        LineStyle, LookResult, ObjectDestroyedEvent, Path, PolyStyle, PortalDestination,
+        PositionedLookResult, RectStyle, RepairEvent, Reservation, ReserveControllerEvent,
+        RoomVisual, Sign, SpawnOptions, Step, TextAlign, TextStyle, UpgradeControllerEvent, Visual,
     },
     structure::Structure,
 };
@@ -366,7 +367,7 @@ pub unsafe trait HasStore: RoomObjectProperties {
         }
     }
 
-    fn store_free_capacity(&self, resource: Option<ResourceType>) -> u32 {
+    fn store_free_capacity(&self, resource: Option<ResourceType>) -> i32 {
         match resource {
             Some(ty) => {
                 js_unwrap!(@{self.as_ref()}.store.getFreeCapacity(__resource_type_num_to_str(@{ty as u32})) || 0)

@@ -8,8 +8,8 @@ use crate::{
     local::{Position, RoomName},
     memory::MemoryReference,
     objects::{
-        Creep, FindOptions, HasPosition, PowerCreep, Resource, RoomObjectProperties, Step,
-        Transferable, Withdrawable,
+        Creep, FindOptions, HasPosition, PolyStyle, PowerCreep, Resource, RoomObjectProperties,
+        Step, Transferable, Withdrawable,
     },
     pathfinder::{CostMatrix, SearchResults},
     ConversionError,
@@ -77,7 +77,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
             reuse_path,
             serialize_memory,
             no_path_finding,
-            // visualize_path_style,
+            visualize_path_style,
             find_options:
                 FindOptions {
                     ignore_creeps,
@@ -143,7 +143,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
                         reusePath: @{reuse_path},
                         serializeMemory: @{serialize_memory},
                         noPathFinding: @{no_path_finding},
-                        visualizePathStyle: undefined,  // todo
+                        visualizePathStyle: @{visualize_path_style},
                         ignoreCreeps: @{ignore_creeps},
                         ignoreDestructibleStructures: @{ignore_destructible_structures},
                         costCallback: @{callback},
@@ -269,7 +269,7 @@ where
     pub(crate) reuse_path: u32,
     pub(crate) serialize_memory: bool,
     pub(crate) no_path_finding: bool,
-    // pub(crate) visualize_path_style: PolyStyle,
+    pub(crate) visualize_path_style: Option<PolyStyle>,
     pub(crate) find_options: FindOptions<'a, F>,
 }
 
@@ -283,7 +283,7 @@ impl Default
             reuse_path: 5,
             serialize_memory: true,
             no_path_finding: false,
-            // visualize_path_style: None,
+            visualize_path_style: None,
             find_options: FindOptions::default(),
         }
     }
@@ -318,11 +318,12 @@ where
         self
     }
 
-    // /// Sets the style to trace the path used by this creep. See doc for default.
-    // pub fn visualize_path_style(mut self, style: ) -> Self {
-    //     self.visualize_path_style = style;
-    //     self
-    // }
+    /// Sets the style to trace the path used by this creep. See doc for
+    /// default.
+    pub fn visualize_path_style(mut self, style: PolyStyle) -> Self {
+        self.visualize_path_style = Some(style);
+        self
+    }
 
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
@@ -346,7 +347,7 @@ where
             reuse_path: self.reuse_path,
             serialize_memory: self.serialize_memory,
             no_path_finding: self.no_path_finding,
-            // self.visualize_path_style,
+            visualize_path_style: self.visualize_path_style,
             find_options: self.find_options.cost_callback(cost_callback),
         }
     }
@@ -401,7 +402,7 @@ where
             reuse_path: self.reuse_path,
             serialize_memory: self.serialize_memory,
             no_path_finding: self.no_path_finding,
-            // self.visualize_path_style,
+            visualize_path_style: self.visualize_path_style,
             find_options,
         }
     }
