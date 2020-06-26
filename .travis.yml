@@ -32,6 +32,5 @@ script:
 - cargo web test --verbose --nodejs
 jobs:
   allow_failures:
-    - rust: 
-      - nightly
-      - stable
+    - rust: nightly
+    - rust: stable
