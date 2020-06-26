@@ -33,4 +33,3 @@ script:
 jobs:
   allow_failures:
     - rust: nightly
-    - rust: stable
