@@ -200,12 +200,11 @@ impl Room {
         let callback_type_erased: &mut (dyn FnMut(RoomName, Reference) -> Value + 'a) =
             &mut callback_boxed;
 
-        // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
-        // storage: it's now pretending to be static data. This should be entirely safe
+        // Overwrite lifetime of reference so it can be passed to javascript. 
+        // It's now pretending to be static data. This should be entirely safe
         // because we're only sticking it in scoped storage and we control the
         // only use of it, but it's still necessary because "some lifetime above
-        // the  current scope but otherwise unknown" is not a valid lifetime to
-        // have PF_CALLBACK have.
+        // the current scope but otherwise unknown" is not a valid lifetime.
         let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, Reference) -> Value =
             unsafe { mem::transmute(callback_type_erased) };
 
