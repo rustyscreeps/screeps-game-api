@@ -10,7 +10,7 @@ use crate::{
         Creep, FindOptions, HasPosition, PolyStyle, PowerCreep, Resource, RoomObjectProperties,
         Step, Transferable, Withdrawable,
     },
-    pathfinder::{MultiRoomCostResult, CostMatrix, SearchResults},
+    pathfinder::{SingleRoomCostResult, CostMatrix, SearchResults},
     ConversionError,
     traits::TryInto
 };
@@ -51,7 +51,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         move_options: MoveToOptions<'a, F>,
     ) -> ReturnCode
     where
-        F: FnMut(RoomName, CostMatrix<'a>) -> MultiRoomCostResult<'a> + 'a,
+        F: FnMut(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a> + 'a,
     {
         let pos = Position::new(x, y, self.pos().room_name());
         self.move_to_with_options(&pos, move_options)
@@ -69,7 +69,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
     ) -> ReturnCode
     where
         T: ?Sized + HasPosition,
-        F: FnMut(RoomName, CostMatrix<'a>) -> MultiRoomCostResult<'a> + 'a,
+        F: FnMut(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a> + 'a,
     {
         let MoveToOptions {
             reuse_path,
@@ -251,17 +251,17 @@ unsafe impl SharedCreepProperties for PowerCreep {}
 
 pub struct MoveToOptions<'a, F>
 where
-    F: FnMut(RoomName, CostMatrix<'a>) -> MultiRoomCostResult<'a>,
+    F: FnMut(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a>,
 {
     pub(crate) reuse_path: u32,
     pub(crate) serialize_memory: bool,
     pub(crate) no_path_finding: bool,
     pub(crate) visualize_path_style: Option<PolyStyle>,
-    pub(crate) find_options: FindOptions<'a, F, MultiRoomCostResult<'a>>,
+    pub(crate) find_options: FindOptions<'a, F, SingleRoomCostResult<'a>>,
 }
 
 impl Default
-    for MoveToOptions<'static, fn(RoomName, CostMatrix<'static>) -> MultiRoomCostResult<'static>>
+    for MoveToOptions<'static, fn(RoomName, CostMatrix<'static>) -> SingleRoomCostResult<'static>>
 {
     fn default() -> Self {
         // TODO: should we fall back onto the game's default values, or is
@@ -276,7 +276,7 @@ impl Default
     }
 }
 
-impl MoveToOptions<'static, fn(RoomName, CostMatrix<'static>) -> MultiRoomCostResult<'static>> {
+impl MoveToOptions<'static, fn(RoomName, CostMatrix<'static>) -> SingleRoomCostResult<'static>> {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -285,7 +285,7 @@ impl MoveToOptions<'static, fn(RoomName, CostMatrix<'static>) -> MultiRoomCostRe
 
 impl<'a, F> MoveToOptions<'a, F>
 where
-    F: FnMut(RoomName, CostMatrix<'a>) -> MultiRoomCostResult<'a>,
+    F: FnMut(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a>,
 {
     /// Enables caching of the calculated path. Default: 5 ticks
     pub fn reuse_path(mut self, n_ticks: u32) -> Self {
@@ -327,7 +327,7 @@ where
     /// Sets cost callback - default `|_, _| {}`.
     pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> MoveToOptions<'b, F2>
     where
-        F2: FnMut(RoomName, CostMatrix<'b>) -> MultiRoomCostResult<'b>,
+        F2: FnMut(RoomName, CostMatrix<'b>) -> SingleRoomCostResult<'b>,
     {
         let new_options: MoveToOptions<'b, F2> = MoveToOptions {
             reuse_path: self.reuse_path,
@@ -382,9 +382,9 @@ where
     }
 
     /// Sets options related to FindOptions. Defaults to FindOptions default.
-    pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2, MultiRoomCostResult<'b>>) -> MoveToOptions<'b, F2>
+    pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2, SingleRoomCostResult<'b>>) -> MoveToOptions<'b, F2>
     where
-        F2: FnMut(RoomName, CostMatrix<'b>) -> MultiRoomCostResult<'b>
+        F2: FnMut(RoomName, CostMatrix<'b>) -> SingleRoomCostResult<'b>
     {
         MoveToOptions {
             reuse_path: self.reuse_path,
