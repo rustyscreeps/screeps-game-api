@@ -108,19 +108,14 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         let callback_type_erased: &mut (dyn FnMut(RoomName, Reference) -> Value + 'a) =
             &mut callback_boxed;
 
-        // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
-        // storage: it's now pretending to be static data. This should be entirely safe
+        // Overwrite lifetime of reference so it can be passed to javascript. 
+        // It's now pretending to be static data. This should be entirely safe
         // because we're only sticking it in scoped storage and we control the
         // only use of it, but it's still necessary because "some lifetime above
-        // the  current scope but otherwise unknown" is not a valid lifetime to
-        // have PF_CALLBACK have.
+        // the current scope but otherwise unknown" is not a valid lifetime.
         let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, Reference) -> Value =
             unsafe { mem::transmute(callback_type_erased) };
 
-        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the
-        // PathFinder call and make the call to PathFinder.
-        //
-        // See https://docs.rs/scoped-tls/0.1/scoped_tls/
         let rp = target.pos();
         js!(
             let cb = @{callback_lifetime_erased};
