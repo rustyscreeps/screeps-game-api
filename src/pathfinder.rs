@@ -200,7 +200,9 @@ impl<'a> CostMatrixSet for CostMatrix<'a> {
             const element_count = raw_data.length / 3;
 
             for (let index = 0; index < element_count; ++index) {
-                matrix.set(raw_data[index + 0], index[index + 1], index[index + 2]);
+                const offset = index * 3;
+
+                matrix.set(raw_data[offset + 0], raw_data[offset + 1], raw_data[offset + 2]);
             }
         );
     }
