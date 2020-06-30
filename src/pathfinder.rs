@@ -519,7 +519,6 @@ where
 
     let res: ::stdweb::Reference = js!(
         let cb = @{callback_lifetime_erased};
-
         let res = PathFinder.search(pos_from_packed(@{origin.packed_repr()}), @{goal}, {
             roomCallback: cb,
             plainCost: @{plain_cost},
@@ -529,10 +528,8 @@ where
             maxRooms: @{max_rooms},
             maxCost: @{max_cost},
             heuristicWeight: @{heuristic_weight}
-        })
-        
+        });
         cb.drop();
-
         return res;
     )
     .try_into()

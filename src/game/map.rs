@@ -128,11 +128,8 @@ pub fn find_exit_with_callback(
 
     let code: i32 = js!(
         let cb = @{callback_lifetime_erased};
-        
         let res = Game.map.findExit(@{from_room}, @{to_room}, cb);
-
         cb.drop();
-
         return res;
     )
     .try_into()
@@ -180,11 +177,8 @@ pub fn find_route_with_callback(
 
     let v = js!(
         let cb = @{callback_lifetime_erased};
-
         let res = Game.map.findRoute(@{from_room}, @{to_room}, { routeCallback: cb });
-
         cb.drop();
-
         return res;
     );
 

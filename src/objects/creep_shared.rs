@@ -119,7 +119,6 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         let rp = target.pos();
         js!(
             let cb = @{callback_lifetime_erased};
-
             let res = @{ self.as_ref() }.moveTo(
                 pos_from_packed(@{rp.packed_repr()}),
                 {
@@ -138,9 +137,8 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
                     plainCost: @{plain_cost},
                     swampCost: @{swamp_cost}
                 }
-            );
+            );            
             cb.drop();
-
             return res;
         )
         .try_into()
