@@ -110,9 +110,9 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
 
         // Overwrite lifetime of reference so it can be passed to javascript. 
         // It's now pretending to be static data. This should be entirely safe
-        // because we're only sticking it in scoped storage and we control the
-        // only use of it, but it's still necessary because "some lifetime above
-        // the current scope but otherwise unknown" is not a valid lifetime.
+        // because we control the only use of it and it remains valid during the
+        // pathfinder callback. This transmute is necessary because "some lifetime 
+        // above the current scope but otherwise unknown" is not a valid lifetime.
         let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, Reference) -> Value =
             unsafe { mem::transmute(callback_type_erased) };
 
