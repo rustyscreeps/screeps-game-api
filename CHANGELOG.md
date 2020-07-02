@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+- Change `game::inter_shard_memory` functions to avoid panicking on private servers where the
+  interface doesn't exist
+- Change `game::inter_shard_memory::get_local` and `get_remote` to return `Option<String>`,
+  accounting for cases where they have not been set (breaking)
 - Add `AccountPowerCreep::cancel_delete`, which allows cancelling pending deletion of a power
   creep
 - Add `StructureType::controller_structures`, which translates the `CONTROLLER_STRUCTURES`
