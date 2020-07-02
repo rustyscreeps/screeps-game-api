@@ -5,8 +5,18 @@ Unreleased
   interface doesn't exist
 - Change `game::inter_shard_memory::get_local` and `get_remote` to return `Option<String>`,
   accounting for cases where they have not been set (breaking)
+- Add `AccountPowerCreep::cancel_delete`, which allows cancelling pending deletion of a power
+  creep
+- Add `StructureType::controller_structures`, which translates the `CONTROLLER_STRUCTURES`
+  constant, the number of each structure allowed at a given RCL
+- Update `constants::stronghold_rampart_hits` function with updated values from rebalancing
+- Add missing `constants::MARKET_MAX_ORDERS`, `constants::MARKET_ORDER_LIFE_TIME`, and
+  `constants::HARVEST_DEPOSIT_POWER`
+- Remove `constants::INVADER_CORE_EXPAND_TIME`, replaced by per-level
+  `constants::invader_core_expand_time`
+- Corrected value of `constants::RAMPART_HITS_MAX_RCL5` and `constants::POWER_SPAWN_HITS`
 
-0.8.0 (2020-03-26)
+0.8.0 (2020-05-30)
 ==================
 
 ### Notably breaking:
