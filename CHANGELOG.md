@@ -15,6 +15,8 @@ Unreleased
 - Remove `constants::INVADER_CORE_EXPAND_TIME`, replaced by per-level
   `constants::invader_core_expand_time`
 - Corrected value of `constants::RAMPART_HITS_MAX_RCL5` and `constants::POWER_SPAWN_HITS`
+- Add the `parse_display::Display` trait to type constant enums which currently implement
+  `parse_display::FromStr`, allowing reversal of the conversion from native to constant string
 
 0.8.0 (2020-05-30)
 ==================
