@@ -41,6 +41,8 @@ Unreleased
   the implementation on `CanDecay` instead
 - Change `game::cpu::limit`, `tick_limit`, `bucket`, `shard_limits`, and `set_shard_limits` to
   use `u32` from `f64`
+- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
+  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
 
 ### Additions:
 
@@ -70,6 +72,7 @@ Unreleased
 - Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
 - Add `game::gcl::total_for_level` and `game::gpl::total_for_level` which calculate the total
   lifetime points required for a given level of GCL or GPL
+- Add `CostMatrixSet` trait to allow applying costs to a cost matrix generically.
 
 ### Bugfixes:
 
