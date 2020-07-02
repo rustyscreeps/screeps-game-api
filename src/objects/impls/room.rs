@@ -1,7 +1,6 @@
 use std::{fmt, marker::PhantomData, mem, ops::Range};
 
 use num_traits::FromPrimitive;
-use scoped_tls::scoped_thread_local;
 use serde::{
     self,
     de::{self, Deserializer, MapAccess, Visitor},
@@ -23,7 +22,7 @@ use crate::{
         Room, RoomTerrain, RoomVisual, Ruin, Source, Structure, StructureController,
         StructureStorage, StructureTerminal, Tombstone,
     },
-    pathfinder::CostMatrix,
+    pathfinder::{RoomCostResult, SingleRoomCostResult, CostMatrix},
     traits::{TryFrom, TryInto},
     ConversionError,
 };
@@ -38,8 +37,6 @@ simple_accessors! {
         pub fn terminal() -> Option<StructureTerminal> = terminal;
     }
 }
-
-scoped_thread_local!(static COST_CALLBACK: &'static dyn Fn(RoomName, Reference) -> Option<Reference>);
 
 impl Room {
     pub fn serialize_path(&self, path: &[Step]) -> String {
@@ -178,48 +175,37 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.lookAtArea(@{top}, @{left}, @{bottom}, @{right}, true))
     }
 
-    pub fn find_path<'a, O, T, F>(&self, from_pos: &O, to_pos: &T, opts: FindOptions<'a, F>) -> Path
+    pub fn find_path<'a, 's, O, T, F,>(&'s self, from_pos: &O, to_pos: &T, opts: FindOptions<'a, F, SingleRoomCostResult<'a>>) -> Path
     where
         O: ?Sized + HasPosition,
         T: ?Sized + HasPosition,
-        F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
+        F: FnMut(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a> + 'a + 's,
     {
         let from = from_pos.pos();
         let to = to_pos.pos();
 
-        // This callback is the one actually passed to JavaScript.
-        fn callback(room_name: String, cost_matrix: Reference) -> Option<Reference> {
-            let room_name = room_name.parse().expect(
-                "expected room name passed into Room.findPath \
-                 callback to be a valid room name",
-            );
-            COST_CALLBACK.with(|callback| callback(room_name, cost_matrix))
-        }
+        let mut raw_callback = opts.cost_callback;
 
-        // User provided callback: rust String, CostMatrix -> Option<CostMatrix>
-        let raw_callback = opts.cost_callback;
-
-        // Wrapped user callback: rust String, Reference -> Option<Reference>
-        let callback_boxed = move |room_name, cost_matrix_ref| {
+        let mut callback_boxed = move |room_name: RoomName, cost_matrix_ref: Reference| -> Value {
             let cmatrix = CostMatrix {
                 inner: cost_matrix_ref,
                 lifetime: PhantomData,
             };
-            raw_callback(room_name, cmatrix).map(|cm| cm.inner)
+
+            raw_callback(room_name, cmatrix).into()
         };
 
         // Type erased and boxed callback: no longer a type specific to the closure
         // passed in, now unified as &Fn
-        let callback_type_erased: &(dyn Fn(RoomName, Reference) -> Option<Reference> + 'a) =
-            &callback_boxed;
+        let callback_type_erased: &mut (dyn FnMut(RoomName, Reference) -> Value + 'a) =
+            &mut callback_boxed;
 
-        // Overwrite lifetime of reference so it can be stuck in scoped_thread_local
-        // storage: it's now pretending to be static data. This should be entirely safe
-        // because we're only sticking it in scoped storage and we control the
-        // only use of it, but it's still necessary because "some lifetime above
-        // the  current scope but otherwise unknown" is not a valid lifetime to
-        // have PF_CALLBACK have.
-        let callback_lifetime_erased: &'static dyn Fn(RoomName, Reference) -> Option<Reference> =
+        // Overwrite lifetime of reference so it can be passed to javascript. 
+        // It's now pretending to be static data. This should be entirely safe
+        // because we control the only use of it and it remains valid during the
+        // pathfinder callback. This transmute is necessary because "some lifetime 
+        // above the current scope but otherwise unknown" is not a valid lifetime.
+        let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, Reference) -> Value =
             unsafe { mem::transmute(callback_type_erased) };
 
         let FindOptions {
@@ -235,35 +221,33 @@ impl Room {
             ..
         } = opts;
 
-        // Store callback_lifetime_erased in COST_CALLBACK for the duration of the
-        // PathFinder call and make the call to PathFinder.
-        //
-        // See https://docs.rs/scoped-tls/0.1/scoped_tls/
-        COST_CALLBACK.set(&callback_lifetime_erased, || {
-            let v = js! {
-                return @{&self.as_ref()}.findPath(
-                    pos_from_packed(@{from.packed_repr()}),
-                    pos_from_packed(@{to.packed_repr()}),
-                    {
-                        ignoreCreeps: @{ignore_creeps},
-                        ignoreDestructibleStructures: @{ignore_destructible_structures},
-                        costCallback: @{callback},
-                        maxOps: @{max_ops},
-                        heuristicWeight: @{heuristic_weight},
-                        serialize: @{serialize},
-                        maxRooms: @{max_rooms},
-                        range: @{range},
-                        plainCost: @{plain_cost},
-                        swampCost: @{swamp_cost}
-                    }
-                );
-            };
-            if serialize {
-                Path::Serialized(v.try_into().unwrap())
-            } else {
-                Path::Vectorized(v.try_into().unwrap())
-            }
-        })
+        let v = js! {
+            let cb = @{callback_lifetime_erased};
+            let res = @{&self.as_ref()}.findPath(
+                pos_from_packed(@{from.packed_repr()}),
+                pos_from_packed(@{to.packed_repr()}),
+                {
+                    ignoreCreeps: @{ignore_creeps},
+                    ignoreDestructibleStructures: @{ignore_destructible_structures},
+                    costCallback: cb,
+                    maxOps: @{max_ops},
+                    heuristicWeight: @{heuristic_weight},
+                    serialize: @{serialize},
+                    maxRooms: @{max_rooms},
+                    range: @{range},
+                    plainCost: @{plain_cost},
+                    swampCost: @{swamp_cost}
+                }
+            );
+            cb.drop();
+            return res;
+        };
+
+        if serialize {
+            Path::Serialized(v.try_into().unwrap())
+        } else {
+            Path::Vectorized(v.try_into().unwrap())
+        }
     }
 
     pub fn look_for_at<T, U>(&self, ty: T, target: &U) -> Vec<T::Item>
@@ -354,9 +338,10 @@ impl PartialEq for Room {
 
 impl Eq for Room {}
 
-pub struct FindOptions<'a, F>
+pub struct FindOptions<'a, F, R>
 where
-    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
+    F: FnMut(RoomName, CostMatrix<'a>) -> R,
+    R: RoomCostResult
 {
     pub(crate) ignore_creeps: bool,
     pub(crate) ignore_destructible_structures: bool,
@@ -368,20 +353,17 @@ where
     pub(crate) range: u32,
     pub(crate) plain_cost: u8,
     pub(crate) swamp_cost: u8,
+    pub(crate) phantom: PhantomData<&'a ()>
 }
 
-impl Default for FindOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
+impl<'a, R> Default for FindOptions<'a, fn(RoomName, CostMatrix<'a>) -> R, R> where R: RoomCostResult + Default {
     fn default() -> Self {
-        fn cost_callback(_: RoomName, _: CostMatrix<'_>) -> Option<CostMatrix<'static>> {
-            None
-        }
-
         // TODO: should we fall back onto the game's default values, or is
         // it alright to copy them here?
         FindOptions {
             ignore_creeps: false,
             ignore_destructible_structures: false,
-            cost_callback,
+            cost_callback: |_, _| R::default(),
             max_ops: 2000,
             heuristic_weight: 1.2,
             serialize: false,
@@ -389,20 +371,22 @@ impl Default for FindOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<Cos
             range: 0,
             plain_cost: 1,
             swamp_cost: 5,
+            phantom: PhantomData
         }
     }
 }
 
-impl FindOptions<'static, fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'static>>> {
+impl<'a, R> FindOptions<'a, fn(RoomName, CostMatrix<'a>) -> R, R> where R: RoomCostResult + Default {
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl<'a, F> FindOptions<'a, F>
+impl<'a, F, R> FindOptions<'a, F, R>
 where
-    F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>>,
+    F: FnMut(RoomName, CostMatrix<'a>) -> R,
+    R: RoomCostResult
 {
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
@@ -418,14 +402,14 @@ where
     }
 
     /// Sets cost callback - default `|_, _| {}`.
-    pub fn cost_callback<'b, F2>(self, cost_callback: F2) -> FindOptions<'b, F2>
+    pub fn cost_callback<'b, F2, R2>(self, cost_callback: F2) -> FindOptions<'b, F2, R2>
     where
-        F2: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'b>>,
+        F2: FnMut(RoomName, CostMatrix<'b>) -> R2,
+        R2: RoomCostResult
     {
         let FindOptions {
             ignore_creeps,
             ignore_destructible_structures,
-            cost_callback: _,
             max_ops,
             heuristic_weight,
             serialize,
@@ -433,7 +417,9 @@ where
             range,
             plain_cost,
             swamp_cost,
+            ..
         } = self;
+
         FindOptions {
             ignore_creeps,
             ignore_destructible_structures,
@@ -445,6 +431,7 @@ where
             range,
             plain_cost,
             swamp_cost,
+            phantom: PhantomData
         }
     }
 
