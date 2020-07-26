@@ -33,9 +33,7 @@ use wasm_bindgen::prelude::*;
 
 use screeps::game::{Game, Room, RoomName, log};
 
-// note that 'loop' is reserved but that's what screeps is looking for,
-// we'll rename in postprocessing but need a less wonky solution
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = loop)]
 pub fn game_loop() {
     log(&format!("Hello from bindgen! {}", Game::time()));
 
@@ -96,17 +94,4 @@ with
 
 ```
 const bytes = require('compiled');
-```
-
-
-### Move whatever main function you used to being named 'loop'
-
-```
-module.exports.game_loop = function() {
-```
-
-change to 
-
-```
-module.exports.loop = function() {
 ```
