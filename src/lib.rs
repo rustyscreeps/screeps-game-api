@@ -17,56 +17,56 @@
 //! # ...
 //! screeps-game-api = { version = "0.3", features = ["check-all-casts"] }
 //! ```
-#![recursion_limit = "128"]
+// #![recursion_limit = "128"]
 
-#[macro_use]
-extern crate stdweb;
+// #[macro_use]
+// extern crate stdweb;
 
-#[macro_use]
-pub mod macros;
+// #[macro_use]
+// pub mod macros;
 
-pub mod constants;
+// pub mod constants;
 pub mod game;
-pub mod inter_shard_memory;
-pub mod js_collections;
+// pub mod inter_shard_memory;
+// pub mod js_collections;
 pub mod local;
-pub mod memory;
+// pub mod memory;
 pub mod objects;
-pub mod pathfinder;
-pub mod raw_memory;
-pub mod traits;
+// pub mod pathfinder;
+// pub mod raw_memory;
+// pub mod traits;
 
-pub use stdweb::private::ConversionError;
+// pub use stdweb::private::ConversionError;
 
-pub use crate::{
-    constants::*,
-    js_collections::JsVec,
-    local::{ObjectId, Position, RawObjectId, RawObjectIdParseError, RoomName, RoomNameParseError},
-    objects::*,
-    traits::{FromExpectedType, IntoExpectedType},
-};
+// pub use crate::{
+//     constants::*,
+//     js_collections::JsVec,
+//     local::{ObjectId, Position, RawObjectId, RawObjectIdParseError, RoomName,
+// RoomNameParseError},     objects::*,
+//     traits::{FromExpectedType, IntoExpectedType},
+// };
 
-/// An alias for `Position` for those used to the JavaScript `RoomPosition`
-/// type.
-pub type RoomPosition = Position;
+// /// An alias for `Position` for those used to the JavaScript `RoomPosition`
+// /// type.
+// pub type RoomPosition = Position;
 
-/// Traits which implement base functionalities for Screeps types.
-///
-/// # Example
-///
-/// ```no_run
-/// use screeps::prelude::*;
-///
-/// let c = screeps::game::creeps::get("Bob").unwrap();
-///
-/// // `HasId` trait brought in from prelude
-/// let id = c.id();
-/// ```
-///
-/// This module contains all base functionality traits, and no structures.
-pub mod prelude {
-    pub use crate::objects::{
-        CanDecay, HasCooldown, HasId, HasPosition, HasStore, OwnedStructureProperties,
-        RoomObjectProperties, SharedCreepProperties, StructureProperties,
-    };
-}
+// /// Traits which implement base functionalities for Screeps types.
+// ///
+// /// # Example
+// ///
+// /// ```no_run
+// /// use screeps::prelude::*;
+// ///
+// /// let c = screeps::game::creeps::get("Bob").unwrap();
+// ///
+// /// // `HasId` trait brought in from prelude
+// /// let id = c.id();
+// /// ```
+// ///
+// /// This module contains all base functionality traits, and no structures.
+// pub mod prelude {
+//     pub use crate::objects::{
+//         CanDecay, HasCooldown, HasId, HasPosition, HasStore,
+// OwnedStructureProperties,         RoomObjectProperties,
+// SharedCreepProperties, StructureProperties,     };
+// }
