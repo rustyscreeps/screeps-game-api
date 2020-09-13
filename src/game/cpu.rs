@@ -60,6 +60,7 @@ pub fn shard_limits() -> collections::HashMap<String, u32> {
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
 pub fn unlocked() -> bool {
+    // undefined on private servers; return true in that case
     js_unwrap!(Game.cpu.unlocked || Game.cpu.unlocked === undefined)
 }
 
@@ -119,6 +120,7 @@ pub fn set_shard_limits(limits: collections::HashMap<String, u32>) -> ReturnCode
 ///
 /// [`CPUUnlock`]: crate::constants::types::IntershardResourceType::CPUUnlock
 pub fn unlock() -> ReturnCode {
+    // undefined on private servers, return OK in that case
     js_unwrap!(typeof(Game.cpu.unlock) == "function" && Game.cpu.unlock() || 0)
 }
 
@@ -130,5 +132,6 @@ pub fn unlock() -> ReturnCode {
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
 /// [`game::cpu::bucket`]: crate::game::cpu::bucket
 pub fn generate_pixel() -> ReturnCode {
+    // undefined on private servers, return OK in that case
     js_unwrap!(typeof(Game.cpu.generatePixel) == "function" && Game.cpu.generatePixel() || 0)
 }
