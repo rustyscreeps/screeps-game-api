@@ -55,13 +55,12 @@ pub fn shard_limits() -> collections::HashMap<String, u32> {
     js_unwrap!(Game.cpu.shardLimits)
 }
 
-// todo - have this fail safely on private servers
 /// Whether you have an active subscription and are able to use your full CPU
 /// limit. See [http://docs.screeps.com/api/#Game.cpu]
 ///
 /// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
 pub fn unlocked() -> bool {
-    js_unwrap!(Game.cpu.unlocked)
+    js_unwrap!(Game.cpu.unlocked || Game.cpu.unlocked === undefined)
 }
 
 /// Time of expiration of your current CPU subscription in milliseconds since
@@ -113,7 +112,6 @@ pub fn set_shard_limits(limits: collections::HashMap<String, u32>) -> ReturnCode
     js_unwrap!(Game.cpu.setShardLimits(@{limits}))
 }
 
-// todo - have this fail safely on private servers
 /// Spend a [`CPUUnlock`] from your intershard resource inventory to unlock your
 /// full CPU limit for 24 hours
 ///
@@ -121,10 +119,9 @@ pub fn set_shard_limits(limits: collections::HashMap<String, u32>) -> ReturnCode
 ///
 /// [`CPUUnlock`]: crate::constants::types::IntershardResourceType::CPUUnlock
 pub fn unlock() -> ReturnCode {
-    js_unwrap!(Game.cpu.unlock())
+    js_unwrap!(typeof(Game.cpu.unlock) == "function" && Game.cpu.unlock() || 0)
 }
 
-// todo - have this fail safely on private servers
 /// Generate a [`Pixel`], spending [`PIXEL_CPU_COST`] from [`game::cpu::bucket`]
 ///
 /// See [`Game.cpu.generatePixel`](https://docs.screeps.com/api/#Game.cpu.generatePixel).
@@ -133,5 +130,5 @@ pub fn unlock() -> ReturnCode {
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
 /// [`game::cpu::bucket`]: crate::game::cpu::bucket
 pub fn generate_pixel() -> ReturnCode {
-    js_unwrap!(Game.cpu.generatePixel())
+    js_unwrap!(typeof(Game.cpu.generatePixel) == "function" && Game.cpu.generatePixel() || 0)
 }

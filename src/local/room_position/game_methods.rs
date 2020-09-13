@@ -4,7 +4,7 @@ use crate::{
     game,
     local::RoomName,
     objects::{FindOptions, Flag, HasPosition, LookResult, Path},
-    pathfinder::{SingleRoomCostResult, CostMatrix},
+    pathfinder::{CostMatrix, SingleRoomCostResult},
 };
 
 use super::Position;
@@ -64,7 +64,11 @@ impl Position {
         )
     }
 
-    pub fn find_path_to<'a, F, T>(self, target: &T, opts: FindOptions<'a, F, SingleRoomCostResult<'a>>) -> Path
+    pub fn find_path_to<'a, F, T>(
+        self,
+        target: &T,
+        opts: FindOptions<'a, F, SingleRoomCostResult<'a>>,
+    ) -> Path
     where
         F: Fn(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a> + 'a,
         T: ?Sized + HasPosition,
@@ -73,7 +77,12 @@ impl Position {
         self_room.find_path(&self, target, opts)
     }
 
-    pub fn find_path_to_xy<'a, F>(self, x: u32, y: u32, opts: FindOptions<'a, F, SingleRoomCostResult<'a>>) -> Path
+    pub fn find_path_to_xy<'a, F>(
+        self,
+        x: u32,
+        y: u32,
+        opts: FindOptions<'a, F, SingleRoomCostResult<'a>>,
+    ) -> Path
     where
         F: Fn(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a> + 'a,
     {

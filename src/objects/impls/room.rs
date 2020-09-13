@@ -22,7 +22,7 @@ use crate::{
         Room, RoomTerrain, RoomVisual, Ruin, Source, Structure, StructureController,
         StructureStorage, StructureTerminal, Tombstone,
     },
-    pathfinder::{RoomCostResult, SingleRoomCostResult, CostMatrix},
+    pathfinder::{CostMatrix, RoomCostResult, SingleRoomCostResult},
     traits::{TryFrom, TryInto},
     ConversionError,
 };
@@ -175,7 +175,12 @@ impl Room {
         js_unwrap!(@{self.as_ref()}.lookAtArea(@{top}, @{left}, @{bottom}, @{right}, true))
     }
 
-    pub fn find_path<'a, 's, O, T, F,>(&'s self, from_pos: &O, to_pos: &T, opts: FindOptions<'a, F, SingleRoomCostResult<'a>>) -> Path
+    pub fn find_path<'a, 's, O, T, F>(
+        &'s self,
+        from_pos: &O,
+        to_pos: &T,
+        opts: FindOptions<'a, F, SingleRoomCostResult<'a>>,
+    ) -> Path
     where
         O: ?Sized + HasPosition,
         T: ?Sized + HasPosition,
@@ -200,10 +205,10 @@ impl Room {
         let callback_type_erased: &mut (dyn FnMut(RoomName, Reference) -> Value + 'a) =
             &mut callback_boxed;
 
-        // Overwrite lifetime of reference so it can be passed to javascript. 
+        // Overwrite lifetime of reference so it can be passed to javascript.
         // It's now pretending to be static data. This should be entirely safe
         // because we control the only use of it and it remains valid during the
-        // pathfinder callback. This transmute is necessary because "some lifetime 
+        // pathfinder callback. This transmute is necessary because "some lifetime
         // above the current scope but otherwise unknown" is not a valid lifetime.
         let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, Reference) -> Value =
             unsafe { mem::transmute(callback_type_erased) };
@@ -341,7 +346,7 @@ impl Eq for Room {}
 pub struct FindOptions<'a, F, R>
 where
     F: FnMut(RoomName, CostMatrix<'a>) -> R,
-    R: RoomCostResult
+    R: RoomCostResult,
 {
     pub(crate) ignore_creeps: bool,
     pub(crate) ignore_destructible_structures: bool,
@@ -353,10 +358,13 @@ where
     pub(crate) range: u32,
     pub(crate) plain_cost: u8,
     pub(crate) swamp_cost: u8,
-    pub(crate) phantom: PhantomData<&'a ()>
+    pub(crate) phantom: PhantomData<&'a ()>,
 }
 
-impl<'a, R> Default for FindOptions<'a, fn(RoomName, CostMatrix<'a>) -> R, R> where R: RoomCostResult + Default {
+impl<'a, R> Default for FindOptions<'a, fn(RoomName, CostMatrix<'a>) -> R, R>
+where
+    R: RoomCostResult + Default,
+{
     fn default() -> Self {
         // TODO: should we fall back onto the game's default values, or is
         // it alright to copy them here?
@@ -371,12 +379,15 @@ impl<'a, R> Default for FindOptions<'a, fn(RoomName, CostMatrix<'a>) -> R, R> wh
             range: 0,
             plain_cost: 1,
             swamp_cost: 5,
-            phantom: PhantomData
+            phantom: PhantomData,
         }
     }
 }
 
-impl<'a, R> FindOptions<'a, fn(RoomName, CostMatrix<'a>) -> R, R> where R: RoomCostResult + Default {
+impl<'a, R> FindOptions<'a, fn(RoomName, CostMatrix<'a>) -> R, R>
+where
+    R: RoomCostResult + Default,
+{
     /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
@@ -386,7 +397,7 @@ impl<'a, R> FindOptions<'a, fn(RoomName, CostMatrix<'a>) -> R, R> where R: RoomC
 impl<'a, F, R> FindOptions<'a, F, R>
 where
     F: FnMut(RoomName, CostMatrix<'a>) -> R,
-    R: RoomCostResult
+    R: RoomCostResult,
 {
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
@@ -405,7 +416,7 @@ where
     pub fn cost_callback<'b, F2, R2>(self, cost_callback: F2) -> FindOptions<'b, F2, R2>
     where
         F2: FnMut(RoomName, CostMatrix<'b>) -> R2,
-        R2: RoomCostResult
+        R2: RoomCostResult,
     {
         let FindOptions {
             ignore_creeps,
@@ -431,7 +442,7 @@ where
             range,
             plain_cost,
             swamp_cost,
-            phantom: PhantomData
+            phantom: PhantomData,
         }
     }
 
