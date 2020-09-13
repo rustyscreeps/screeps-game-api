@@ -273,6 +273,7 @@ pub fn get_history(resource: Option<MarketResourceType>) -> Vec<OrderHistoryReco
                 // workaround: Game.market.getHistory returns `{}` instead of `[]` when querying a resource type
                 // that has no history records
                 // Verify records are present otherwise return an empty array to prevent panics
+                // Workaround no longer needed if this PR gets merged: https://github.com/screeps/engine/pull/131
                 MarketResourceType::Resource(ty) => js!(
                     const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
                     if (history && history.length > 0) {
