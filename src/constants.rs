@@ -1,12 +1,12 @@
 //! Constants, most copied from [the game constants].
 //!
-//! Last updated on 2019-07-13, `068343753adf090fd1991944d2292be9e236b7dd` from
+//! Last updated on 2020-06-06, `3bc7337807d380ffb29b9dcec40fc19e707c2476` from
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! Currently missing:
 //! - OBSTACLE_OBJECT_TYPES
 //! - WORLD_WIDTH / WORLD_HEIGHT (deprecated in Screeps)
-//! - CONTROLLER_STRUCTURES
+//! - BODYPARTS_ALL, RESOURCES_ALL, COLORS_ALL
 //! - POWER_INFO
 //!
 //! # Notes on Deserialization
@@ -52,10 +52,13 @@
 //!
 //! If you need to consume strings already in Rust, use either the [`FromStr`]
 //! trait, or one of the `deserialize_from_str` functions on each of these
-//! constants.
+//! constants. To get back to these values from Rust native enums (instead of
+//! the integer representation we serialize to), use the [`Display`] trait or
+//! the `to_string` fuctions on the native enums.
 //!
 //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
 //! [`FromStr`]: std::str::FromStr
+//! [`Display`]: std::fmt::Display
 pub mod find;
 pub mod look;
 mod numbers;
@@ -80,8 +83,9 @@ pub mod creep {
         numbers::{
             ATTACK_POWER, BUILD_POWER, CARRY_CAPACITY, CREEP_CLAIM_LIFE_TIME, CREEP_CORPSE_RATE,
             CREEP_LIFE_TIME, CREEP_PART_MAX_ENERGY, CREEP_SPAWN_TIME, DISMANTLE_COST,
-            HARVEST_MINERAL_POWER, HARVEST_POWER, HEAL_POWER, MAX_CREEP_SIZE, RANGED_HEAL_POWER,
-            REPAIR_COST, REPAIR_POWER, SPAWN_RENEW_RATIO, UPGRADE_CONTROLLER_POWER,
+            HARVEST_DEPOSIT_POWER, HARVEST_MINERAL_POWER, HARVEST_POWER, HEAL_POWER,
+            MAX_CREEP_SIZE, RANGED_HEAL_POWER, REPAIR_COST, REPAIR_POWER, SPAWN_RENEW_RATIO,
+            UPGRADE_CONTROLLER_POWER,
         },
         small_enums::{Part, ReturnCode},
     };
@@ -184,7 +188,8 @@ pub mod source {
 /// [market]: crate::game::market
 pub mod market {
     pub use super::numbers::{
-        MARKET_FEE, TERMINAL_CAPACITY, TERMINAL_COOLDOWN, TERMINAL_MIN_SEND, TERMINAL_SEND_COST,
+        MARKET_FEE, MARKET_MAX_ORDERS, MARKET_ORDER_LIFE_TIME, TERMINAL_CAPACITY,
+        TERMINAL_COOLDOWN, TERMINAL_MIN_SEND, TERMINAL_SEND_COST,
     };
 }
 

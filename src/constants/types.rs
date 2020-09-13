@@ -2,7 +2,7 @@
 use std::{borrow::Cow, str::FromStr};
 
 use num_derive::FromPrimitive;
-use parse_display::FromStr;
+use parse_display::{Display, FromStr};
 use serde::{
     de::{Deserializer, Error as _, Unexpected},
     Deserialize, Serialize, Serializer,
@@ -18,7 +18,9 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 /// [`FromStr`][std::str::FromStr] or [`StructureType::deserialize_from_str`].
 ///
 /// See the [module-level documentation][crate::constants] for more details.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[derive(
+    Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
+)]
 #[repr(u8)]
 #[display(style = "camelCase")]
 pub enum StructureType {
@@ -73,6 +75,91 @@ impl StructureType {
         Some(cost)
     }
 
+    /// Translates the `CONTROLLER_STRUCTURES` constant
+    #[inline]
+    pub fn controller_structures(self, current_rcl: u32) -> u32 {
+        use self::StructureType::*;
+
+        match self {
+            Spawn => match current_rcl {
+                0 => 0,
+                1..=6 => 1,
+                7 => 2,
+                _ => 3,
+            },
+            Extension => match current_rcl {
+                0 | 1 => 0,
+                2 => 5,
+                3 => 10,
+                4 => 20,
+                5 => 30,
+                6 => 40,
+                7 => 50,
+                _ => 60,
+            },
+            Road => 2500,
+            Wall => match current_rcl {
+                0 | 1 => 0,
+                _ => 2500,
+            },
+            Rampart => match current_rcl {
+                0 | 1 => 0,
+                _ => 2500,
+            },
+            Link => match current_rcl {
+                0..=4 => 0,
+                5 => 2,
+                6 => 3,
+                7 => 4,
+                _ => 6,
+            },
+            Storage => match current_rcl {
+                0..=3 => 0,
+                _ => 1,
+            },
+            Tower => match current_rcl {
+                0 | 1 | 2 => 0,
+                3 | 4 => 1,
+                5 | 6 => 2,
+                7 => 3,
+                _ => 6,
+            },
+            Observer => match current_rcl {
+                0..=7 => 0,
+                _ => 1,
+            },
+            PowerSpawn => match current_rcl {
+                0..=7 => 0,
+                _ => 1,
+            },
+            Extractor => match current_rcl {
+                0..=5 => 0,
+                _ => 1,
+            },
+            Lab => match current_rcl {
+                0..=5 => 0,
+                6 => 3,
+                7 => 6,
+                _ => 10,
+            },
+            Terminal => match current_rcl {
+                0..=5 => 0,
+                _ => 1,
+            },
+            Container => 5,
+            Nuker => match current_rcl {
+                0..=7 => 0,
+                _ => 1,
+            },
+            Factory => match current_rcl {
+                0..=6 => 0,
+                _ => 1,
+            },
+            KeeperLair | PowerBank | Portal | Controller | InvaderCore => 0,
+        }
+    }
+
+    /// Translates the `*_HITS` constants, initial hits for structures
     #[inline]
     pub fn initial_hits(self) -> Option<u32> {
         use self::StructureType::*;
@@ -124,7 +211,9 @@ js_deserializable!(StructureType);
 /// [`IntershardResourceType::deserialize_from_str`].
 ///
 /// See the [module-level documentation][crate::constants] for more details.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[derive(
+    Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
+)]
 #[repr(u16)]
 pub enum IntershardResourceType {
     /// `"token"`
@@ -166,7 +255,9 @@ js_deserializable!(IntershardResourceType);
 /// [`FromStr`][std::str::FromStr] or [`ResourceType::deserialize_from_str`].
 ///
 /// See the [module-level documentation][crate::constants] for more details.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[derive(
+    Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
+)]
 #[repr(u16)]
 pub enum ResourceType {
     /// `"energy"`
@@ -748,11 +839,13 @@ impl Serialize for MarketResourceType {
 }
 
 /// Translates the `POWER_CLASS` constants, which are classes of power creeps
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
+#[derive(
+    Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
+)]
 #[repr(u8)]
+#[display(style = "camelCase")]
 pub enum PowerCreepClass {
     /// `"operator"`
-    #[display("operator")]
     Operator = 1,
 }
 

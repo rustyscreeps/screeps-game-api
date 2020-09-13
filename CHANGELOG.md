@@ -1,11 +1,27 @@
 Unreleased
 ==========
 
+- Change `game::inter_shard_memory` functions to avoid panicking on private servers where the
+  interface doesn't exist
+- Change `game::inter_shard_memory::get_local` and `get_remote` to return `Option<String>`,
+  accounting for cases where they have not been set (breaking)
+- Add `AccountPowerCreep::cancel_delete`, which allows cancelling pending deletion of a power
+  creep
+- Add `StructureType::controller_structures`, which translates the `CONTROLLER_STRUCTURES`
+  constant, the number of each structure allowed at a given RCL
+- Update `constants::stronghold_rampart_hits` function with updated values from rebalancing
+- Add missing `constants::MARKET_MAX_ORDERS`, `constants::MARKET_ORDER_LIFE_TIME`, and
+  `constants::HARVEST_DEPOSIT_POWER`
+- Remove `constants::INVADER_CORE_EXPAND_TIME`, replaced by per-level
+  `constants::invader_core_expand_time`
+- Corrected value of `constants::RAMPART_HITS_MAX_RCL5` and `constants::POWER_SPAWN_HITS`
+- Add the `parse_display::Display` trait to type constant enums which currently implement
+  `parse_display::FromStr`, allowing reversal of the conversion from native to constant string
 - Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
   `IntershardResourceType::AccessKey` resources
 - Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
 
-0.8.0 (2020-03-26)
+0.8.0 (2020-05-30)
 ==================
 
 ### Notably breaking:
@@ -44,6 +60,8 @@ Unreleased
   the implementation on `CanDecay` instead
 - Change `game::cpu::limit`, `tick_limit`, `bucket`, `shard_limits`, and `set_shard_limits` to
   use `u32` from `f64`
+- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
+  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
 
 ### Additions:
 
@@ -73,6 +91,7 @@ Unreleased
 - Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
 - Add `game::gcl::total_for_level` and `game::gpl::total_for_level` which calculate the total
   lifetime points required for a given level of GCL or GPL
+- Add `CostMatrixSet` trait to allow applying costs to a cost matrix generically.
 
 ### Bugfixes:
 
