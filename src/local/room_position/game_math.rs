@@ -17,7 +17,7 @@ impl Position {
     {
         // Logic copied from https://github.com/screeps/engine/blob/
         // 020ba168a1fde9a8072f9f1c329d5c0be8b440d7/src/utils.js#L73-L107
-        let (dx, dy) = self - target.pos();
+        let (dx, dy) = target.pos() - self;
         if dx.abs() > dy.abs() * 2 {
             if dx > 0 {
                 Some(Direction::Right)
@@ -96,5 +96,17 @@ impl Position {
         self.room_name() == pos.room_name()
             && (self.x() as i32 - pos.x() as i32).abs() <= 1
             && (self.y() as i32 - pos.y() as i32).abs() <= 1
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::{Position, RoomName, Direction};
+
+    #[test]
+    fn test_direction_to() {
+        let a= Position::new(1, 1, RoomName::from_coords(1, 1).unwrap());
+        let b= Position::new(2, 2, RoomName::from_coords(1, 1).unwrap());
+        assert_eq!(a.get_direction_to(&b), Some(Direction::BottomRight));
     }
 }
