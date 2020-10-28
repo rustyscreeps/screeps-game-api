@@ -1,29 +1,61 @@
-use crate::local::RoomName;
+//use crate::local::RoomName;
+use crate::{
+    constants::FindType,
+    objects::StructureController,
+};
 use wasm_bindgen::prelude::*;
+use js_sys::{Array, JsString};
 
 #[wasm_bindgen]
 extern "C" {
-    /// A reference to a [`Room`](https://docs.screeps.com/api/#Room) object
+    /// A reference to a [`Room`] object, a 50x50 chunk of the Screeps game world.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room)
     pub type Room;
 
-    /// Energy available for spawning at the start of the tick
+    /// The [`StructureController`] for the room, or `None` in rooms that cannot be claimed.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.controller)
+    #[wasm_bindgen(method, getter)]
+    pub fn controller(this: &Room) -> Option<StructureController>;
+
+    /// Energy available for spawning at the start of the current tick.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.energyAvailable)
     #[wasm_bindgen(method, getter = energyAvailable)]
     pub fn energy_available(this: &Room) -> u32;
 
-    /// Total energy capacity of all spawns and extensions in the room
+    /// Total energy capacity of all spawns and extensions in the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.energyCapacityAvailable)
     #[wasm_bindgen(method, getter = energyCapacityAvailable)]
     pub fn energy_capacity_available(this: &Room) -> u32;
 
-    /// The room's name as an owned [`String`] instead of a native [`RoomName`]
-    #[wasm_bindgen(method, getter = name)]
-    pub fn name_string(this: &Room) -> String;
-}
+    /// A shortcut to `Memory.rooms[room.name]`.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.memory)
+    #[wasm_bindgen(method, getter)]
+    pub fn memory(this: &Room) -> JsValue;
 
-impl Room {
-    /// Get the room's name as a [`RoomName`]
-    pub fn name(&self) -> RoomName {
-        RoomName::new(&self.name_string()).unwrap()
-    }
+    /// Sets a new value to `Memory.rooms[room.name]`.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.memory)
+    #[wasm_bindgen(method, setter)]
+    pub fn set_memory(this: &Room, val: &JsValue);
+
+    /// The room's name as an owned reference to a [`JsString`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.name)
+    #[wasm_bindgen(method, getter)]
+    pub fn name(this: &Room) -> JsString;
+
+    /// Find all objects of the specified type in the room, without passing additional options.
+    /// 
+    /// Returns an [`Array`] containing the found objects, which should be converted into the type of object you searched for.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
+    #[wasm_bindgen(method)]
+    pub fn find(this: &Room, ty: FindType) -> Array;
 }
 
 // use std::{fmt, marker::PhantomData, mem, ops::Range};

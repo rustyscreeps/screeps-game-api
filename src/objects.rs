@@ -25,9 +25,12 @@
 
 // mod creep_shared;
 mod impls;
+//mod structure;
 
-pub use self::impls::Room;
-// mod structure;
+pub use self::{
+    impls::{Room, RoomObject, RoomPosition, Structure, StructureController},
+    //structure::Structure,
+};
 
 // pub use self::{
 //     creep_shared::{MoveToOptions, SharedCreepProperties},

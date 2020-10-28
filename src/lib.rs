@@ -17,7 +17,7 @@
 //! # ...
 //! screeps-game-api = { version = "0.3", features = ["check-all-casts"] }
 //! ```
-// #![recursion_limit = "128"]
+#![recursion_limit = "128"]
 
 // #[macro_use]
 // extern crate stdweb;
@@ -25,11 +25,11 @@
 // #[macro_use]
 // pub mod macros;
 
-// pub mod constants;
+pub mod constants;
 pub mod game;
 // pub mod inter_shard_memory;
 // pub mod js_collections;
-pub mod local;
+// pub mod local;
 // pub mod memory;
 pub mod objects;
 // pub mod pathfinder;
@@ -38,11 +38,18 @@ pub mod objects;
 
 // pub use stdweb::private::ConversionError;
 
+pub use crate::{
+    constants::*,
+    game::*,
+    objects::*,
+};
+
 // pub use crate::{
 //     constants::*,
 //     js_collections::JsVec,
 //     local::{ObjectId, Position, RawObjectId, RawObjectIdParseError, RoomName,
-// RoomNameParseError},     objects::*,
+// RoomNameParseError},
+//     objects::*,
 //     traits::{FromExpectedType, IntoExpectedType},
 // };
 

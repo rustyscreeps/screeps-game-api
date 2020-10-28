@@ -7,11 +7,14 @@
 // mod power_creep;
 // mod resource;
 mod room;
+mod room_object;
+mod room_position;
 // mod room_terrain;
 // mod room_visual;
 // mod ruin;
 // mod source;
-// mod structure_controller;
+mod structure;
+mod structure_controller;
 // mod structure_factory;
 // mod structure_invader_core;
 // mod structure_keeper_lair;
@@ -28,7 +31,13 @@ mod room;
 // mod structure_tower;
 // mod tombstone;
 
-pub use self::room::Room;
+pub use self::{
+    room::Room,
+    room_object::RoomObject,
+    room_position::RoomPosition,
+    structure::Structure,
+    structure_controller::StructureController,
+};
 // pub use self::{
 //     creep::Bodypart,
 //     room::{

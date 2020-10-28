@@ -3,12 +3,12 @@
 //! This contains all functionality from the [`Game`] object in Screeps. That
 //! generally means all state which is true this tick throughout the world.
 //!
-//! [`Game`]: http://docs.screeps.com/api/#Game
+//! [Screeps documentation](http://docs.screeps.com/api/#Game)
 use js_sys::Object;
 
 use wasm_bindgen::prelude::*;
 
-pub use crate::{game::rooms::Room, local::RoomName};
+//pub use crate::{game::rooms::Room, local::RoomName};
 
 /// hacky little hook into js console.log for now
 #[wasm_bindgen]
@@ -30,20 +30,25 @@ extern "C" {
 // pub mod map;
 // pub mod market;
 // pub mod shards;
-pub mod rooms;
 
 #[wasm_bindgen]
 extern "C" {
     pub type Game;
 
-    /// See [http://docs.screeps.com/api/#Game.time]
+    /// Get the current time, the number of ticks the game has been running.
     ///
-    /// [http://docs.screeps.com/api/#Game.time]: http://docs.screeps.com/api/#Game.time
+    /// [Screeps documentation](http://docs.screeps.com/api/#Game.time)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn time() -> u32;
 
-    #[wasm_bindgen(static_method_of = Game, getter, js_name = rooms)]
-    fn rooms() -> Object;
+    /// Get an [`Object`], which has room names in [`JsString`] form as keys and [`Room`] objects as values.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
+    ///
+    /// [`JsString`]: js_sys::JsString
+    /// [`Room`]: crate::objects::Room
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn rooms() -> Object;
 
 }
 
