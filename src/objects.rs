@@ -28,7 +28,7 @@ mod impls;
 //mod structure;
 
 pub use self::{
-    impls::{Room, RoomObject, RoomPosition, Structure, StructureController},
+    impls::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Structure, StructureController},
     //structure::Structure,
 };
 

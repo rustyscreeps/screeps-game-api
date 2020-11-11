@@ -4,6 +4,8 @@
 // mod flag;
 // mod mineral;
 // mod nuke;
+mod owner;
+mod owned_structure;
 // mod power_creep;
 // mod resource;
 mod room;
@@ -32,6 +34,8 @@ mod structure_controller;
 // mod tombstone;
 
 pub use self::{
+    owner::Owner,
+    owned_structure::OwnedStructure,
     room::Room,
     room_object::RoomObject,
     room_position::RoomPosition,

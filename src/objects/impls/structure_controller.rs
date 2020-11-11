@@ -1,5 +1,5 @@
 use crate::{
-    objects::{RoomObject, Structure},
+    objects::{OwnedStructure, RoomObject, Structure},
 };
 use wasm_bindgen::prelude::*;
 
@@ -8,7 +8,7 @@ extern "C" {
     /// An object representing a room controller.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController)
-    #[wasm_bindgen(extends = RoomObject, extends = Structure)]
+    #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
     pub type StructureController;
 
     /// Whether power is enabled in the room, allowing power creeps to use powers.
@@ -34,8 +34,6 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.unclaim)
     #[wasm_bindgen(method)]
     pub fn unclaim(this: &StructureController) -> i8;
-
-
 }
 
 
