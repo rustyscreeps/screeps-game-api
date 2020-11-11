@@ -60,8 +60,6 @@
 //! [`FromStr`]: std::str::FromStr
 //! [`Display`]: std::fmt::Display
 
-
-mod find;
 // pub mod look;
 // mod numbers;
 // mod recipes;
@@ -69,7 +67,6 @@ mod small_enums;
 mod types;
 
 pub use self::{
-    find::FindType,
     small_enums::*,
     types::*,
 };

@@ -16,6 +16,40 @@ use wasm_bindgen::prelude::*;
 //     numbers::{TERRAIN_MASK_SWAMP, TERRAIN_MASK_WALL},
 // };
 
+#[wasm_bindgen]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize_repr, Serialize_repr)]
+#[repr(u8)]
+pub enum FindType {
+    /// Find all exit positions at the top of the room
+    ExitTop = 1,
+    ExitRight = 3,
+    ExitBottom = 5,
+    ExitLeft = 7,
+    Exit = 10,
+    Creeps = 101,
+    MyCreeps = 102,
+    HostileCreeps = 103,
+    SourcesActive = 104,
+    Sources = 105,
+    DroppedResources = 106,
+    Structures = 107,
+    MyStructures = 108,
+    HostileStructures = 109,
+    Flags = 110,
+    ConstructionSites = 111,
+    MySpawns = 112,
+    HostileSpawns = 113,
+    MyConstructionSites = 114,
+    HostileConstructionSites = 115,
+    Minerals = 116,
+    Nukes = 117,
+    Tombstones = 118,
+    PowerCreeps = 119,
+    MyPowerCreeps = 120,
+    HostilePowerCreeps = 121,
+    Deposits = 122,
+    Ruins = 123,
+}
 
 //#[wasm_bindgen]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize_repr, Serialize_repr)]

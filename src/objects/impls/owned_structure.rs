@@ -17,7 +17,7 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn my(this: &OwnedStructure) -> bool;
 
-    /// The name of the player that owns this structure as a [`JsString`], or `None` if it's an ownable structure currently not under a player's control.
+    /// The [`Owner`] of this structure that contains the owner's username, or `None` if it's an ownable structure currently not under a player's control.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#OwnedStructure.owner)
     #[wasm_bindgen(method, getter)]
