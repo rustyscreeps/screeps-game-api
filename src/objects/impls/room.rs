@@ -1,6 +1,6 @@
 //use crate::local::RoomName;
 use crate::{
-    constants::FindType,
+    constants::Find,
     objects::StructureController,
 };
 use wasm_bindgen::prelude::*;
@@ -55,7 +55,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
     #[wasm_bindgen(method)]
-    pub fn find(this: &Room, ty: FindType) -> Array;
+    pub fn find(this: &Room, ty: Find) -> Array;
 }
 
 // use std::{fmt, marker::PhantomData, mem, ops::Range};

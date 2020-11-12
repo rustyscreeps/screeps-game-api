@@ -3,11 +3,11 @@ use super::types::{ResourceType, StructureType};
 
 // OK and ERR_* defined in ReturnCode in `small_enums.rs`
 
-// FIND_* defined in `find.rs`
+// FIND_* defined in `small_enums.rs`
 
 // directions and colors defined in `small_enums.rs`
 
-// LOOK_* defined in `look.rs`
+// LOOK_* defined in `small_enums.rs`
 
 // OBSTACLE_OBJECT_TYPES not yet implemented
 
@@ -131,7 +131,9 @@ pub fn rampart_hits_max(rcl: u32) -> u32 {
 /// [`Creep::harvest`]: crate::objects::Creep::harvest
 pub const ENERGY_REGEN_TIME: u32 = 300;
 /// The total amount of a resource that must be accumulated in a dropped
-/// resource for one unit of that resource to decay each tick, rounded up.
+/// [`Resource`] for one unit of that resource to decay each tick, rounded up.
+///
+/// [`Resource`]: crate::objects::Resource
 pub const ENERGY_DECAY: u32 = 1000;
 
 /// Initial hits for spawn structures; consider using the
@@ -588,9 +590,10 @@ pub const DEPOSIT_DECAY_TIME: u32 = 50_000;
 pub const TERMINAL_HITS: u32 = 3000;
 /// Store capacity of terminal structures.
 pub const TERMINAL_CAPACITY: u32 = 300_000;
-/// Currently unused in game (see [`market::calc_transaction_cost`] instead).
+/// Currently unused in game (see [`market::calc_transaction_cost`] and [`TERMINAL_SEND_COST_SCALE`] instead).
 ///
 /// [`market::calc_transaction_cost`]: [`crate::market::calc_transaction_cost`].
+/// [`TERMINAL_SEND_COST_SCALE`]: [`crate::constants::TERMINAL_SEND_COST_SCALE`].
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 /// Currently unused in game.
 pub const TERMINAL_MIN_SEND: u32 = 100;
@@ -677,11 +680,11 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 
 // REACTION_TIME defined in `recipes.rs`
 
-/// Seems to be currently unused
+/// Seems to be currently unused.
 pub const PORTAL_UNSTABLE: u32 = 10 * 24 * 3600 * 1000;
-/// Minimum lifetime, in milliseconds, of random center room portals
+/// Minimum lifetime, in milliseconds, of random center room portals.
 pub const PORTAL_MIN_TIMEOUT: u32 = 12 * 24 * 3600 * 1000;
-/// Maximum lifetime, in milliseconds, of random center room portals
+/// Maximum lifetime, in milliseconds, of random center room portals.
 pub const PORTAL_MAX_TIMEOUT: u32 = 22 * 24 * 3600 * 1000;
 
 /// Base value for power bank respawn time calculation.

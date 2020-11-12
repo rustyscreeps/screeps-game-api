@@ -13,29 +13,19 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject)]
     pub type Structure;
 
-    /// Retrieve this hits of this structure, or `0` if this structure doesn't
-    /// have a hit count.
-    ///
-    /// For instance, this retrieves the hitpoints of a `Creep`. Or for a
-    /// `StructureWall` that's part of a novice area border, this will return
-    /// `0`.
+    /// Retrieve the current hits of this structure, or `0` if this structure is indestructible, such as a notice area border wall, portal, or room controller.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.hits)
     #[wasm_bindgen(method, getter)]
     pub fn hits(this: &Structure) -> u32;
 
-    /// Retrieve the maximum hits of this structure, or `0` if this structure
-    /// doesn't have a hit count.
-    ///
-    /// For instance, this retrieves the maximum full health of a `Creep`. Or
-    /// for a `StructureWall` that's part of a novice area border, this will
-    /// return `0`.
+    /// Retrieve the maximum hits of this structure, or `0` if this structure is indestructible, such as a notice area border wall, portal, or room controller.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.hitsMax)
     #[wasm_bindgen(method, getter = hitsMax)]
     pub fn hits_max(this: &Structure) -> u32;
 
-    /// Object ID of the structure, which can be used to efficiently fetch the object on subsequent ticks.
+    /// Object ID of the structure, which can be used to efficiently fetch a fresh reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.id)
     #[wasm_bindgen(method, getter)]

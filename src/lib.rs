@@ -25,6 +25,7 @@
 // #[macro_use]
 // pub mod macros;
 
+pub mod console;
 pub mod constants;
 pub mod game;
 // pub mod inter_shard_memory;
@@ -32,7 +33,7 @@ pub mod game;
 // pub mod local;
 // pub mod memory;
 pub mod objects;
-// pub mod pathfinder;
+pub mod pathfinder;
 // pub mod raw_memory;
 // pub mod traits;
 

@@ -1,4 +1,5 @@
-// //! `*Type` constants.
+//! `*Type` constants.
+
 // use std::{borrow::Cow, str::FromStr};
 
 // use num_derive::FromPrimitive;
@@ -9,8 +10,9 @@
 // };
 // use serde_repr::{Deserialize_repr, Serialize_repr};
 
+use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};
-//use serde_repr::{Deserialize_repr, Serialize_repr};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
 // /// Translates `STRUCTURE_*` constants.
@@ -268,15 +270,184 @@ pub enum StructureType {
 
 // js_deserializable!(IntershardResourceType);
 
-// /// Resource type constant for all possible types of resources.
-// ///
-// /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
-// /// implementations only operate on made-up integer constants. If you're ever
-// /// using these impls manually, use the `__resource_type_num_to_str`
-// /// and `__resource_type_str_to_num` JavaScript functions,
-// /// [`FromStr`][std::str::FromStr] or [`ResourceType::deserialize_from_str`].
-// ///
-// /// See the [module-level documentation][crate::constants] for more details.
+/// Resource type constant for all possible types of resources.
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum ResourceType {
+    /// `"energy"`
+    Energy = "energy",
+    /// `"power"`
+    Power = "power",
+    /// `"H"`
+    Hydrogen = "H",
+    /// `"O"`
+    Oxygen = "O",
+    /// `"U"`
+    Utrium = "U",
+    /// `"L"`
+    Lemergium = "L",
+    /// `"K"`
+    Keanium = "K",
+    /// `"Z"`
+    Zynthium = "Z",
+    /// `"X"`
+    Catalyst = "X",
+    /// `"G"`
+    Ghodium = "G",
+    /// `"silicon"`
+    Silicon = "silicon",
+    /// `"metal"`
+    Metal = "metal",
+    /// `"biomass"`
+    Biomass = "biomass",
+    /// `"mist"`
+    Mist = "mist",
+    /// `"OH"`
+    Hydroxide = "OH",
+    /// `"ZK"`
+    ZynthiumKeanite = "ZK",
+    /// `"UL"`
+    UtriumLemergite = "UL",
+    /// `"UH"`
+    UtriumHydride = "UH",
+    /// `"UO"`
+    UtriumOxide = "UO",
+    /// `"KH"`
+    KeaniumHydride = "KH",
+    /// `"KO"`
+    KeaniumOxide = "KO",
+    /// `"LH"`
+    LemergiumHydride = "LH",
+    /// `"LO"`
+    LemergiumOxide = "LO",
+    /// `"ZH"`
+    ZynthiumHydride = "ZH",
+    /// `"ZO"`
+    ZynthiumOxide = "ZO",
+    /// `"GH"`
+    GhodiumHydride = "GH",
+    /// `"GO"`
+    GhodiumOxide = "GO",
+    /// `"UH2O"`
+    UtriumAcid = "UH2O",
+    /// `"UHO2"`
+    UtriumAlkalide = "UHO2",
+    /// `"KH2O"`
+    KeaniumAcid = "KH2O",
+    /// `"KHO2"`
+    KeaniumAlkalide = "KHO2",
+    /// `"LH2O"`
+    LemergiumAcid = "LH2O",
+    /// `"LHO2"`
+    LemergiumAlkalide = "LHO2",
+    /// `"ZH2O"`
+    ZynthiumAcid = "ZH2O",
+    /// `"ZHO2"`
+    ZynthiumAlkalide = "ZHO2",
+    /// `"GH2O"`
+    GhodiumAcid = "GH2O",
+    /// `"GHO2"`
+    GhodiumAlkalide = "GHO2",
+    /// `"XUH2O"`
+    CatalyzedUtriumAcid = "XUH2O",
+    /// `"XUHO2"`
+    CatalyzedUtriumAlkalide = "XUHO2",
+    /// `"XKH2O"`
+    CatalyzedKeaniumAcid = "XKH2O",
+    /// `"XKHO2"`
+    CatalyzedKeaniumAlkalide = "XKHO2",
+    /// `"XLH2O"`
+    CatalyzedLemergiumAcid = "XLH2O",
+    /// `"XLHO2"`
+    CatalyzedLemergiumAlkalide = "XLHO2",
+    /// `"XZH2O"`
+    CatalyzedZynthiumAcid = "XZH2O",
+    /// `"XZHO2"`
+    CatalyzedZynthiumAlkalide = "XZHO2",
+    /// `"XGH2O"`
+    CatalyzedGhodiumAcid = "XGH2O",
+    /// `"XGHO2"`
+    CatalyzedGhodiumAlkalide = "XGHO2",
+    /// `"ops"`
+    Ops = "ops",
+    /// `"utrium_bar"`
+    UtriumBar = "utrium_bar",
+    /// `"lemergium_bar"`
+    LemergiumBar = "lemergium_bar",
+    /// `"zynthium_bar"`
+    ZynthiumBar = "zynthium_bar",
+    /// `"keanium_bar"`
+    KeaniumBar = "keanium_bar",
+    /// `"ghodium_melt"`
+    GhodiumMelt = "ghodium_melt",
+    /// `"oxidant"`
+    Oxidant = "oxidant",
+    /// `"reductant"`
+    Reductant = "reductant",
+    /// `"purifier"`
+    Purifier = "purifier",
+    /// `"battery"`
+    Battery = "battery",
+    /// `"composite"`
+    Composite = "composite",
+    /// `"crystal"`
+    Crystal = "crystal",
+    /// `"liquid"`
+    Liquid = "liquid",
+    /// `"wire"`
+    Wire = "wire",
+    /// `"switch"`
+    Switch = "switch",
+    /// `"transistor"`
+    Transistor = "transistor",
+    /// `"microchip"`
+    Microchip = "microchip",
+    /// `"circuit"`
+    Circuit = "circuit",
+    /// `"device"`
+    Device = "device",
+    /// `"cell"`
+    Cell = "cell",
+    /// `"phlegm"`
+    Phlegm = "phlegm",
+    /// `"tissue"`
+    Tissue = "tissue",
+    /// `"muscle"`
+    Muscle = "muscle",
+    /// `"organoid"`
+    Organoid = "organoid",
+    /// `"organism"`
+    Organism = "organism",
+    /// `"alloy"`
+    Alloy = "alloy",
+    /// `"tube"`
+    Tube = "tube",
+    /// `"fixtures"`
+    Fixtures = "fixtures",
+    /// `"frame"`
+    Frame = "frame",
+    /// `"hydraulics"`
+    Hydraulics = "hydraulics",
+    /// `"machine"`
+    Machine = "machine",
+    /// `"condensate"`
+    Condensate = "condensate",
+    /// `"concentrate"`
+    Concentrate = "concentrate",
+    /// `"extract"`
+    Extract = "extract",
+    /// `"spirit"`
+    Spirit = "spirit",
+    /// `"emanation"`
+    Emanation = "emanation",
+    /// `"essence"`
+    Essence = "essence",
+}
+
+
+
+
+
 // #[derive(
 //     Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
 // )]
@@ -855,45 +1026,39 @@ pub enum StructureType {
 //     }
 // }
 
-// /// Translates the `POWER_CLASS` constants, which are classes of power creeps
-// #[derive(
-//     Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
-// )]
-// #[repr(u8)]
-// #[display(style = "camelCase")]
-// pub enum PowerCreepClass {
-//     /// `"operator"`
-//     Operator = 1,
-// }
+/// Translates the `POWER_CLASS` constants, which are classes of power creeps
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum PowerCreepClass {
+    Operator = "operator",
+}
 
 // js_deserializable!(PowerCreepClass);
 
-// /// Translates the `PWR_*` constants, which are types of powers used by power
-// /// creeps
-// #[derive(
-//     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
-// )]
-// #[repr(u8)]
-// pub enum PowerType {
-//     GenerateOps = 1,
-//     OperateSpawn = 2,
-//     OperateTower = 3,
-//     OperateStorage = 4,
-//     OperateLab = 5,
-//     OperateExtension = 6,
-//     OperateObserver = 7,
-//     OperateTerminal = 8,
-//     DisruptSpawn = 9,
-//     DisruptTower = 10,
-//     Shield = 12,
-//     RegenSource = 13,
-//     RegenMineral = 14,
-//     DisruptTerminal = 15,
-//     OperatePower = 16,
-//     Fortify = 17,
-//     OperateController = 18,
-//     OperateFactory = 19,
-// }
+/// Translates the `PWR_*` constants, which are types of powers used by power
+#[wasm_bindgen]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr)]
+#[repr(u8)]
+pub enum PowerType {
+    GenerateOps = 1,
+    OperateSpawn = 2,
+    OperateTower = 3,
+    OperateStorage = 4,
+    OperateLab = 5,
+    OperateExtension = 6,
+    OperateObserver = 7,
+    OperateTerminal = 8,
+    DisruptSpawn = 9,
+    DisruptTower = 10,
+    Shield = 12,
+    RegenSource = 13,
+    RegenMineral = 14,
+    DisruptTerminal = 15,
+    OperatePower = 16,
+    Fortify = 17,
+    OperateController = 18,
+    OperateFactory = 19,
+}
 
 // js_deserializable!(PowerType);
 

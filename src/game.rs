@@ -10,13 +10,6 @@ use wasm_bindgen::prelude::*;
 
 //pub use crate::{game::rooms::Room, local::RoomName};
 
-/// hacky little hook into js console.log for now
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    pub fn log(s: &str);
-}
-
 // use crate::{
 //     local::{ObjectId, RawObjectId},
 //     objects::{HasId, RoomObject, SizedRoomObject},
@@ -24,24 +17,84 @@ extern "C" {
 //     ConversionError,
 // };
 
-// pub mod cpu;
-// pub mod gcl;
-// pub mod gpl;
+pub mod cpu;
+pub mod gcl;
+pub mod gpl;
 // pub mod map;
 // pub mod market;
 // pub mod shards;
+
+use self::{
+    cpu::{CpuInfo, HeapStatistics},
+    gcl::GclInfo,
+    gpl::GplInfo,
+};
 
 #[wasm_bindgen]
 extern "C" {
     pub type Game;
 
-    /// Get the current time, the number of ticks the game has been running.
+    /// Get an [`Object`] with all of your construction sites, which contains object ids in [`JsString`] form as keys and [`ConstructionSite`] values.
     ///
-    /// [Screeps documentation](http://docs.screeps.com/api/#Game.time)
-    #[wasm_bindgen(static_method_of = Game, getter)]
-    pub fn time() -> u32;
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.constructionSites)
+    ///
+    /// [`JsString`]: js_sys::JsString
+    /// [`ConstructionSite`]: crate::objects::ConstructionSite
+    #[wasm_bindgen(static_method_of = Game, getter = constructionSites)]
+    pub fn construction_sites() -> Object;
 
-    /// Get an [`Object`], which has room names in [`JsString`] form as keys and [`Room`] objects as values.
+    /// Get a [`CpuInfo`] object, which contains properties about your CPU usage.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu)
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn cpu() -> CpuInfo;
+
+    /// Get an [`Object`] with all of your creeps, which contains creep names in [`JsString`] form as keys and [`Creep`] objects as values. Note that newly spawned creeps are immediately added to the hash, but will not have an id until the following tick.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
+    ///
+    /// [`JsString`]: js_sys::JsString
+    /// [`Creep`]: crate::objects::Creep
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn creeps() -> Object;
+
+    /// Get an [`Object`] with all of your flags, which contains flag names in [`JsString`] form as keys and [`Flag`] objects as values.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.flags)
+    ///
+    /// [`JsString`]: js_sys::JsString
+    /// [`Flag`]: crate::objects::Flag
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn flags() -> Object;
+
+    /// Get a [`GclInfo`] object, which contains properties about your global control level (GCL).
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.gcl)
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn gcl() -> GclInfo;
+
+    /// Get a [`GplInfo`] object, which contains properties about your global power level (GPL).
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.gpl)
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn gpl() -> GplInfo;
+
+    // todo - map
+
+    // todo - market
+
+    /// Get an [`Object`] with all of your power creeps, which contains creep names in [`JsString`] form as keys and [`PowerCreep`] objects as values. Note that these power creeps may not be spawned on the current shard, and will not have a position or id if they are not.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.powerCreeps)
+    ///
+    /// [`JsString`]: js_sys::JsString
+    /// [`PowerCreep`]: crate::objects::PowerCreep
+    #[wasm_bindgen(static_method_of = Game, getter = powerCreeps)]
+    pub fn power_creeps() -> Object;
+
+    // todo - resources
+
+    /// Get an [`Object`] with the rooms visible for the current tick, which contains room names in [`JsString`] form as keys and [`Room`] objects as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
     ///
@@ -50,7 +103,28 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn rooms() -> Object;
 
+    // todo shard and down from there
+
+    /// Get the current time, the number of ticks the game has been running.
+    ///
+    /// [Screeps documentation](http://docs.screeps.com/api/#Game.time)
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn time() -> u32;
+
+    /// Get information about your script's memory heap usage
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = getHeapStatistics)]
+    pub fn cpu_get_heap_statistics() -> HeapStatistics;
+
+    /// Get the amount of CPU time used for execution so far this tick
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getUsed)
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = getUsed)]
+    pub fn cpu_get_used() -> f64;
 }
+
+
 
 // /// See [http://docs.screeps.com/api/#Game.constructionSites]
 // ///

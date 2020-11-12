@@ -1,6 +1,7 @@
 use crate::{
-    objects::{Owner, RoomObject, Structure},
+    objects::{RoomObject, Structure},
 };
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -22,4 +23,15 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#OwnedStructure.owner)
     #[wasm_bindgen(method, getter)]
     pub fn owner(this: &OwnedStructure) -> Option<Owner>;
+}
+
+#[wasm_bindgen]
+extern "C" {
+    /// Object with owner info for an owned game object.
+    #[wasm_bindgen]
+    pub type Owner;
+
+    /// The name of the player that owns this structure as a [`JsString`].
+    #[wasm_bindgen(method, getter)]
+    pub fn username(this: &Owner) -> JsString;
 }

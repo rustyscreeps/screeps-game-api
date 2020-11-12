@@ -1,36 +1,57 @@
 use crate::{
-    constants::{ReturnCode, StructureType},
-    objects::ConstructionSite,
-    traits::TryInto,
+    constants::StructureType,
+    objects::{RoomObject, Owner},
 };
+use wasm_bindgen::prelude::*;
+use js_sys::JsString;
 
-simple_accessors! {
-    impl ConstructionSite {
-        pub fn my() -> bool = my;
-        pub fn progress() -> u32 = progress;
-        pub fn progress_total() -> u32 = progressTotal;
-    }
-}
+#[wasm_bindgen]
+extern "C" {
+    /// A [`ConstructionSite`] which is an object representing a structure under construction.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite)
+    #[wasm_bindgen(extends = RoomObject)]
+    pub type ConstructionSite;
 
-impl ConstructionSite {
-    pub fn owner_name(&self) -> String {
-        (js! {
-            var self = @{self.as_ref()};
-            if (self.owner) {
-                return self.owner.username;
-            } else {
-                return null;
-            }
-        })
-        .try_into()
-        .expect("expected ConstructionSite.owner.username to be a non-null string")
-    }
+    /// The Object ID of the [`ConstructionSite`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.id)
+    #[wasm_bindgen(method, getter)]
+    pub fn id(this: &ConstructionSite) -> JsString;
 
-    pub fn remove(&self) -> ReturnCode {
-        js_unwrap!(@{self.as_ref()}.remove())
-    }
+    /// Whether you own the [`ConstructionSite`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.my)
+    #[wasm_bindgen(method, getter)]
+    pub fn my(this: &ConstructionSite) -> bool;
 
-    pub fn structure_type(&self) -> StructureType {
-        js_unwrap!(__structure_type_str_to_num(@{self.as_ref()}.structureType))
-    }
+    /// The [`Owner`] of this construction site, which contains the owner's username.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.owner)
+    #[wasm_bindgen(method, getter)]
+    pub fn owner(this: &ConstructionSite) -> Owner;
+
+    /// The current progress toward completion of the structure being built.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.progress)
+    #[wasm_bindgen(method, getter)]
+    pub fn progress(this: &ConstructionSite) -> u32;
+
+    /// The total progess toward constuction progress needed for the structure to be completed.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.progressTotal)
+    #[wasm_bindgen(method, getter = progressTotal)]
+    pub fn progress_total(this: &ConstructionSite) -> u32;
+
+    /// The type of structure being constructed.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.structureType)
+    #[wasm_bindgen(method, getter = structureType)]
+    pub fn structure_type(this: &ConstructionSite) -> StructureType;
+
+    /// Remove the [`ConstructionSite`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.remove)
+    #[wasm_bindgen(method)]
+    pub fn remove(this: &ConstructionSite) -> i8;
 }

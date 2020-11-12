@@ -1,6 +1,6 @@
 [package]
 name = "screeps-game-api"
-version = "0.8.0"
+version = "0.9.0"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://docs.rs/screeps-game-api/"
 edition = "2018"
@@ -8,7 +8,6 @@ include = [
     "Cargo.toml",
     "Web.toml",
     "src/**/*",
-    "javascript/**/*",
     "tests/**/*",
     "examples/**/*",
     "README.md",
@@ -27,12 +26,15 @@ name = "screeps"
 travis-ci = { repository = "rustyscreeps/screeps-game-api" }
 
 [dependencies]
-wasm-bindgen = "0.2"
-js-sys = "0.3"
 arrayvec = "0.4"
-serde = {version = "1", features = ["derive"]}
+enum-iterator = "0.3"
+js-sys = "0.3"
+num-derive = "0.2"
+num-traits = "0.2"
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 serde_repr = "0.1"
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 
 [features]
 check-all-casts = []
