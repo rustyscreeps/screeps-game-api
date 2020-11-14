@@ -25,7 +25,7 @@ pub mod gpl;
 // pub mod shards;
 
 use self::{
-    cpu::{CpuInfo, HeapStatistics},
+    cpu::CpuInfo,
     gcl::GclInfo,
     gpl::GplInfo,
 };
@@ -110,18 +110,6 @@ extern "C" {
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.time)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn time() -> u32;
-
-    /// Get information about your script's memory heap usage
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
-    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = getHeapStatistics)]
-    pub fn cpu_get_heap_statistics() -> HeapStatistics;
-
-    /// Get the amount of CPU time used for execution so far this tick
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getUsed)
-    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = getUsed)]
-    pub fn cpu_get_used() -> f64;
 }
 
 

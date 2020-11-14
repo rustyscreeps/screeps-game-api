@@ -1,3 +1,5 @@
+//! An interface to the javascript console
+
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

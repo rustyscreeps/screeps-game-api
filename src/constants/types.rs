@@ -1,60 +1,15 @@
 //! `*Type` constants.
 
 // use std::{borrow::Cow, str::FromStr};
-
-// use num_derive::FromPrimitive;
-// use parse_display::{Display, FromStr};
-// use serde::{
-//     de::{Deserializer, Error as _, Unexpected},
-//     Deserialize, Serialize, Serializer,
-// };
-// use serde_repr::{Deserialize_repr, Serialize_repr};
-
 use num_derive::FromPrimitive;
+use enum_iterator::IntoEnumIterator;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
-// /// Translates `STRUCTURE_*` constants.
-// ///
-// /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
-// /// implementations only operate on made-up integer constants. If you're ever
-// /// using these impls manually, use the `__structure_type_num_to_str` and
-// /// `__structure_type_str_to_num` JavaScript functions,
-// /// [`FromStr`][std::str::FromStr] or [`StructureType::deserialize_from_str`].
-// ///
-// /// See the [module-level documentation][crate::constants] for more details.
-// #[derive(
-//     Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
-// )]
-// #[repr(u8)]
-// #[display(style = "camelCase")]
-// pub enum StructureType {
-//     Spawn = 0,
-//     Extension = 1,
-//     Road = 2,
-//     Wall = 3,
-//     Rampart = 4,
-//     KeeperLair = 5,
-//     Portal = 6,
-//     Controller = 7,
-//     Link = 8,
-//     Storage = 9,
-//     Tower = 10,
-//     Observer = 11,
-//     PowerBank = 12,
-//     PowerSpawn = 13,
-//     Extractor = 14,
-//     Lab = 15,
-//     Terminal = 16,
-//     Container = 17,
-//     Nuker = 18,
-//     Factory = 19,
-//     InvaderCore = 20,
-// }
-
+/// Translates `STRUCTURE_*` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
 pub enum StructureType {
     Spawn = "spawn",
     Extension = "extension",
@@ -80,807 +35,406 @@ pub enum StructureType {
 }
 
 
-// impl StructureType {
-//     /// Translates the `CONSTRUCTION_COST` constant.
-//     #[inline]
-//     pub fn construction_cost(self) -> Option<u32> {
-//         use self::StructureType::*;
+impl StructureType {
+    /// Translates the `CONSTRUCTION_COST` constant.
+    #[inline]
+    pub fn construction_cost(self) -> Option<u32> {
+        use self::StructureType::*;
 
-//         let cost = match self {
-//             Spawn => 15_000,
-//             Extension => 3_000,
-//             Road => 300,
-//             Wall => 1,
-//             Rampart => 1,
-//             Link => 5_000,
-//             Storage => 30_000,
-//             Tower => 5_000,
-//             Observer => 8_000,
-//             PowerSpawn => 100_000,
-//             Extractor => 5_000,
-//             Lab => 50_000,
-//             Terminal => 100_000,
-//             Container => 5_000,
-//             Nuker => 100_000,
-//             Factory => 100_000,
-//             KeeperLair | PowerBank | Portal | Controller | InvaderCore => return None,
-//         };
-//         Some(cost)
-//     }
+        let cost = match self {
+            Spawn => 15_000,
+            Extension => 3_000,
+            Road => 300,
+            Wall => 1,
+            Rampart => 1,
+            Link => 5_000,
+            Storage => 30_000,
+            Tower => 5_000,
+            Observer => 8_000,
+            PowerSpawn => 100_000,
+            Extractor => 5_000,
+            Lab => 50_000,
+            Terminal => 100_000,
+            Container => 5_000,
+            Nuker => 100_000,
+            Factory => 100_000,
+            _ => return None,
+        };
+        Some(cost)
+    }
 
-//     /// Translates the `CONTROLLER_STRUCTURES` constant
-//     #[inline]
-//     pub fn controller_structures(self, current_rcl: u32) -> u32 {
-//         use self::StructureType::*;
+    /// Translates the `CONTROLLER_STRUCTURES` constant
+    #[inline]
+    pub fn controller_structures(self, current_rcl: u32) -> u32 {
+        use self::StructureType::*;
 
-//         match self {
-//             Spawn => match current_rcl {
-//                 0 => 0,
-//                 1..=6 => 1,
-//                 7 => 2,
-//                 _ => 3,
-//             },
-//             Extension => match current_rcl {
-//                 0 | 1 => 0,
-//                 2 => 5,
-//                 3 => 10,
-//                 4 => 20,
-//                 5 => 30,
-//                 6 => 40,
-//                 7 => 50,
-//                 _ => 60,
-//             },
-//             Road => 2500,
-//             Wall => match current_rcl {
-//                 0 | 1 => 0,
-//                 _ => 2500,
-//             },
-//             Rampart => match current_rcl {
-//                 0 | 1 => 0,
-//                 _ => 2500,
-//             },
-//             Link => match current_rcl {
-//                 0..=4 => 0,
-//                 5 => 2,
-//                 6 => 3,
-//                 7 => 4,
-//                 _ => 6,
-//             },
-//             Storage => match current_rcl {
-//                 0..=3 => 0,
-//                 _ => 1,
-//             },
-//             Tower => match current_rcl {
-//                 0 | 1 | 2 => 0,
-//                 3 | 4 => 1,
-//                 5 | 6 => 2,
-//                 7 => 3,
-//                 _ => 6,
-//             },
-//             Observer => match current_rcl {
-//                 0..=7 => 0,
-//                 _ => 1,
-//             },
-//             PowerSpawn => match current_rcl {
-//                 0..=7 => 0,
-//                 _ => 1,
-//             },
-//             Extractor => match current_rcl {
-//                 0..=5 => 0,
-//                 _ => 1,
-//             },
-//             Lab => match current_rcl {
-//                 0..=5 => 0,
-//                 6 => 3,
-//                 7 => 6,
-//                 _ => 10,
-//             },
-//             Terminal => match current_rcl {
-//                 0..=5 => 0,
-//                 _ => 1,
-//             },
-//             Container => 5,
-//             Nuker => match current_rcl {
-//                 0..=7 => 0,
-//                 _ => 1,
-//             },
-//             Factory => match current_rcl {
-//                 0..=6 => 0,
-//                 _ => 1,
-//             },
-//             KeeperLair | PowerBank | Portal | Controller | InvaderCore => 0,
-//         }
-//     }
+        match self {
+            Spawn => match current_rcl {
+                0 => 0,
+                1..=6 => 1,
+                7 => 2,
+                _ => 3,
+            },
+            Extension => match current_rcl {
+                0 | 1 => 0,
+                2 => 5,
+                3 => 10,
+                4 => 20,
+                5 => 30,
+                6 => 40,
+                7 => 50,
+                _ => 60,
+            },
+            Road => 2500,
+            Wall => match current_rcl {
+                0 | 1 => 0,
+                _ => 2500,
+            },
+            Rampart => match current_rcl {
+                0 | 1 => 0,
+                _ => 2500,
+            },
+            Link => match current_rcl {
+                0..=4 => 0,
+                5 => 2,
+                6 => 3,
+                7 => 4,
+                _ => 6,
+            },
+            Storage => match current_rcl {
+                0..=3 => 0,
+                _ => 1,
+            },
+            Tower => match current_rcl {
+                0 | 1 | 2 => 0,
+                3 | 4 => 1,
+                5 | 6 => 2,
+                7 => 3,
+                _ => 6,
+            },
+            Observer => match current_rcl {
+                0..=7 => 0,
+                _ => 1,
+            },
+            PowerSpawn => match current_rcl {
+                0..=7 => 0,
+                _ => 1,
+            },
+            Extractor => match current_rcl {
+                0..=5 => 0,
+                _ => 1,
+            },
+            Lab => match current_rcl {
+                0..=5 => 0,
+                6 => 3,
+                7 => 6,
+                _ => 10,
+            },
+            Terminal => match current_rcl {
+                0..=5 => 0,
+                _ => 1,
+            },
+            Container => 5,
+            Nuker => match current_rcl {
+                0..=7 => 0,
+                _ => 1,
+            },
+            Factory => match current_rcl {
+                0..=6 => 0,
+                _ => 1,
+            },
+            _ => 0,
+        }
+    }
 
-//     /// Translates the `*_HITS` constants, initial hits for structures
-//     #[inline]
-//     pub fn initial_hits(self) -> Option<u32> {
-//         use self::StructureType::*;
-//         use super::numbers::*;
+    /// Translates the `*_HITS` constants, initial hits for structures
+    #[inline]
+    pub fn initial_hits(self) -> Option<u32> {
+        use self::StructureType::*;
+        use super::numbers::*;
 
-//         let hits = match self {
-//             Spawn => SPAWN_HITS,
-//             Extension => EXTENSION_HITS,
-//             Road => ROAD_HITS,
-//             Wall => WALL_HITS,
-//             Rampart => RAMPART_HITS,
-//             Link => LINK_HITS,
-//             Storage => STORAGE_HITS,
-//             Tower => TOWER_HITS,
-//             Observer => OBSERVER_HITS,
-//             PowerBank => POWER_BANK_HITS,
-//             PowerSpawn => POWER_SPAWN_HITS,
-//             Extractor => EXTENSION_HITS,
-//             Lab => LAB_HITS,
-//             Terminal => TOWER_HITS,
-//             Container => CONTAINER_HITS,
-//             Nuker => NUKER_HITS,
-//             Factory => FACTORY_HITS,
-//             InvaderCore => INVADER_CORE_HITS,
-//             KeeperLair | Portal | Controller => return None,
-//         };
-//         Some(hits)
-//     }
-
-//     /// Helper function for deserializing from a string rather than a fake
-//     /// integer value.
-//     pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-//         let s: Cow<'de, str> = Cow::deserialize(d)?;
-//         Self::from_str(&s).map_err(|_| {
-//             D::Error::invalid_value(Unexpected::Str(&s), &"a known STRUCTURE_* constant string")
-//         })
-//     }
-// }
-
-// js_deserializable!(StructureType);
+        let hits = match self {
+            Spawn => SPAWN_HITS,
+            Extension => EXTENSION_HITS,
+            Road => ROAD_HITS,
+            Wall => WALL_HITS,
+            Rampart => RAMPART_HITS,
+            Link => LINK_HITS,
+            Storage => STORAGE_HITS,
+            Tower => TOWER_HITS,
+            Observer => OBSERVER_HITS,
+            PowerBank => POWER_BANK_HITS,
+            PowerSpawn => POWER_SPAWN_HITS,
+            Extractor => EXTENSION_HITS,
+            Lab => LAB_HITS,
+            Terminal => TOWER_HITS,
+            Container => CONTAINER_HITS,
+            Nuker => NUKER_HITS,
+            Factory => FACTORY_HITS,
+            InvaderCore => INVADER_CORE_HITS,
+            _ => return None,
+        };
+        Some(hits)
+    }
+}
 
 // /// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
-// ///
-// /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
-// /// implementations only operate on made-up integer constants. If you're ever
-// /// using these impls manually, use the `__resource_type_num_to_str`
-// /// and `__resource_type_str_to_num` JavaScript functions,
-// /// [`FromStr`][std::str::FromStr] or
-// /// [`IntershardResourceType::deserialize_from_str`].
-// ///
-// /// See the [module-level documentation][crate::constants] for more details.
-// #[derive(
-//     Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
-// )]
-// #[repr(u16)]
-// pub enum IntershardResourceType {
-//     /// `"token"`
-//     #[display("token")]
-//     SubscriptionToken = 1001,
-// }
-
-// impl IntershardResourceType {
-//     /// Helper function for deserializing from a string rather than a fake
-//     /// integer value.
-//     pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-//         let s: Cow<'de, str> = Cow::deserialize(d)?;
-//         Self::from_str(&s).map_err(|_| {
-//             D::Error::invalid_value(
-//                 Unexpected::Str(&s),
-//                 &"a known constant string in INTERSHARD_RESOURCES",
-//             )
-//         })
-//     }
-// }
-
-// js_deserializable!(IntershardResourceType);
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+pub enum IntershardResourceType {
+    // no longer used, not implemented
+    // SubscriptionToken = "token",
+    CpuUnlock = "cpuUnlock",
+    Pixel = "pixel",
+    AccessKey = "AccessKey",
+}
 
 /// Resource type constant for all possible types of resources.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
 pub enum ResourceType {
-    /// `"energy"`
     Energy = "energy",
-    /// `"power"`
     Power = "power",
-    /// `"H"`
     Hydrogen = "H",
-    /// `"O"`
     Oxygen = "O",
-    /// `"U"`
     Utrium = "U",
-    /// `"L"`
     Lemergium = "L",
-    /// `"K"`
     Keanium = "K",
-    /// `"Z"`
     Zynthium = "Z",
-    /// `"X"`
     Catalyst = "X",
-    /// `"G"`
     Ghodium = "G",
-    /// `"silicon"`
     Silicon = "silicon",
-    /// `"metal"`
     Metal = "metal",
-    /// `"biomass"`
     Biomass = "biomass",
-    /// `"mist"`
     Mist = "mist",
-    /// `"OH"`
     Hydroxide = "OH",
-    /// `"ZK"`
     ZynthiumKeanite = "ZK",
-    /// `"UL"`
     UtriumLemergite = "UL",
-    /// `"UH"`
     UtriumHydride = "UH",
-    /// `"UO"`
     UtriumOxide = "UO",
-    /// `"KH"`
     KeaniumHydride = "KH",
-    /// `"KO"`
     KeaniumOxide = "KO",
-    /// `"LH"`
     LemergiumHydride = "LH",
-    /// `"LO"`
     LemergiumOxide = "LO",
-    /// `"ZH"`
     ZynthiumHydride = "ZH",
-    /// `"ZO"`
     ZynthiumOxide = "ZO",
-    /// `"GH"`
     GhodiumHydride = "GH",
-    /// `"GO"`
     GhodiumOxide = "GO",
-    /// `"UH2O"`
     UtriumAcid = "UH2O",
-    /// `"UHO2"`
     UtriumAlkalide = "UHO2",
-    /// `"KH2O"`
     KeaniumAcid = "KH2O",
-    /// `"KHO2"`
     KeaniumAlkalide = "KHO2",
-    /// `"LH2O"`
     LemergiumAcid = "LH2O",
-    /// `"LHO2"`
     LemergiumAlkalide = "LHO2",
-    /// `"ZH2O"`
     ZynthiumAcid = "ZH2O",
-    /// `"ZHO2"`
     ZynthiumAlkalide = "ZHO2",
-    /// `"GH2O"`
     GhodiumAcid = "GH2O",
-    /// `"GHO2"`
     GhodiumAlkalide = "GHO2",
-    /// `"XUH2O"`
     CatalyzedUtriumAcid = "XUH2O",
-    /// `"XUHO2"`
     CatalyzedUtriumAlkalide = "XUHO2",
-    /// `"XKH2O"`
     CatalyzedKeaniumAcid = "XKH2O",
-    /// `"XKHO2"`
     CatalyzedKeaniumAlkalide = "XKHO2",
-    /// `"XLH2O"`
     CatalyzedLemergiumAcid = "XLH2O",
-    /// `"XLHO2"`
     CatalyzedLemergiumAlkalide = "XLHO2",
-    /// `"XZH2O"`
     CatalyzedZynthiumAcid = "XZH2O",
-    /// `"XZHO2"`
     CatalyzedZynthiumAlkalide = "XZHO2",
-    /// `"XGH2O"`
     CatalyzedGhodiumAcid = "XGH2O",
-    /// `"XGHO2"`
     CatalyzedGhodiumAlkalide = "XGHO2",
-    /// `"ops"`
     Ops = "ops",
-    /// `"utrium_bar"`
     UtriumBar = "utrium_bar",
-    /// `"lemergium_bar"`
     LemergiumBar = "lemergium_bar",
-    /// `"zynthium_bar"`
     ZynthiumBar = "zynthium_bar",
-    /// `"keanium_bar"`
     KeaniumBar = "keanium_bar",
-    /// `"ghodium_melt"`
     GhodiumMelt = "ghodium_melt",
-    /// `"oxidant"`
     Oxidant = "oxidant",
-    /// `"reductant"`
     Reductant = "reductant",
-    /// `"purifier"`
     Purifier = "purifier",
-    /// `"battery"`
     Battery = "battery",
-    /// `"composite"`
     Composite = "composite",
-    /// `"crystal"`
     Crystal = "crystal",
-    /// `"liquid"`
     Liquid = "liquid",
-    /// `"wire"`
     Wire = "wire",
-    /// `"switch"`
     Switch = "switch",
-    /// `"transistor"`
     Transistor = "transistor",
-    /// `"microchip"`
     Microchip = "microchip",
-    /// `"circuit"`
     Circuit = "circuit",
-    /// `"device"`
     Device = "device",
-    /// `"cell"`
     Cell = "cell",
-    /// `"phlegm"`
     Phlegm = "phlegm",
-    /// `"tissue"`
     Tissue = "tissue",
-    /// `"muscle"`
     Muscle = "muscle",
-    /// `"organoid"`
     Organoid = "organoid",
-    /// `"organism"`
     Organism = "organism",
-    /// `"alloy"`
     Alloy = "alloy",
-    /// `"tube"`
     Tube = "tube",
-    /// `"fixtures"`
     Fixtures = "fixtures",
-    /// `"frame"`
     Frame = "frame",
-    /// `"hydraulics"`
     Hydraulics = "hydraulics",
-    /// `"machine"`
     Machine = "machine",
-    /// `"condensate"`
     Condensate = "condensate",
-    /// `"concentrate"`
     Concentrate = "concentrate",
-    /// `"extract"`
     Extract = "extract",
-    /// `"spirit"`
     Spirit = "spirit",
-    /// `"emanation"`
     Emanation = "emanation",
-    /// `"essence"`
     Essence = "essence",
 }
 
+#[derive(Copy, Clone, Debug)]
+pub enum Boost {
+    Harvest(u32),
+    BuildAndRepair(f32),
+    Dismantle(u32),
+    UpgradeController(f32),
+    Attack(u32),
+    RangedAttack(u32),
+    Heal(u32),
+    Carry(u32),
+    Move(u32),
+    Tough(f32),
+}
 
-
-
-
-// #[derive(
-//     Copy, Clone, Debug, Display, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr,
-// )]
-// #[repr(u16)]
-// pub enum ResourceType {
-//     /// `"energy"`
-//     #[display("energy")]
-//     Energy = 1,
-//     /// `"power"`
-//     #[display("power")]
-//     Power = 2,
-//     /// `"H"`
-//     #[display("H")]
-//     Hydrogen = 3,
-//     /// `"O"`
-//     #[display("O")]
-//     Oxygen = 4,
-//     /// `"U"`
-//     #[display("U")]
-//     Utrium = 5,
-//     /// `"L"`
-//     #[display("L")]
-//     Lemergium = 6,
-//     /// `"K"`
-//     #[display("K")]
-//     Keanium = 7,
-//     /// `"Z"`
-//     #[display("Z")]
-//     Zynthium = 8,
-//     /// `"X"`
-//     #[display("X")]
-//     Catalyst = 9,
-//     /// `"G"`
-//     #[display("G")]
-//     Ghodium = 10,
-//     // constants.js has these base commodities ordered here, but they're assigned
-//     // higher integer representations and implemented below to avoid renumbering:
-//     // RESOURCE_SILICON, RESOURCE_METAL, RESOURCE_BIOMASS, RESOURCE_MIST
-//     /// `"OH"`
-//     #[display("OH")]
-//     Hydroxide = 11,
-//     /// `"ZK"`
-//     #[display("ZK")]
-//     ZynthiumKeanite = 12,
-//     /// `"UL"`
-//     #[display("UL")]
-//     UtriumLemergite = 13,
-//     /// `"UH"`
-//     #[display("UH")]
-//     UtriumHydride = 14,
-//     /// `"UO"`
-//     #[display("UO")]
-//     UtriumOxide = 15,
-//     /// `"KH"`
-//     #[display("KH")]
-//     KeaniumHydride = 16,
-//     /// `"KO"`
-//     #[display("KO")]
-//     KeaniumOxide = 17,
-//     /// `"LH"`
-//     #[display("LH")]
-//     LemergiumHydride = 18,
-//     /// `"LO"`
-//     #[display("LO")]
-//     LemergiumOxide = 19,
-//     /// `"ZH"`
-//     #[display("ZH")]
-//     ZynthiumHydride = 20,
-//     /// `"ZO"`
-//     #[display("ZO")]
-//     ZynthiumOxide = 21,
-//     /// `"GH"`
-//     #[display("GH")]
-//     GhodiumHydride = 22,
-//     /// `"GO"`
-//     #[display("GO")]
-//     GhodiumOxide = 23,
-//     /// `"UH2O"`
-//     #[display("UH2O")]
-//     UtriumAcid = 24,
-//     /// `"UHO2"`
-//     #[display("UHO2")]
-//     UtriumAlkalide = 25,
-//     /// `"KH2O"`
-//     #[display("KH2O")]
-//     KeaniumAcid = 26,
-//     /// `"KHO2"`
-//     #[display("KHO2")]
-//     KeaniumAlkalide = 27,
-//     /// `"LH2O"`
-//     #[display("LH2O")]
-//     LemergiumAcid = 28,
-//     /// `"LHO2"`
-//     #[display("LHO2")]
-//     LemergiumAlkalide = 29,
-//     /// `"ZH2O"`
-//     #[display("ZH2O")]
-//     ZynthiumAcid = 30,
-//     /// `"ZHO2"`
-//     #[display("ZHO2")]
-//     ZynthiumAlkalide = 31,
-//     /// `"GH2O"`
-//     #[display("GH2O")]
-//     GhodiumAcid = 32,
-//     /// `"GHO2"`
-//     #[display("GHO2")]
-//     GhodiumAlkalide = 33,
-//     /// `"XUH2O"`
-//     #[display("XUH2O")]
-//     CatalyzedUtriumAcid = 34,
-//     /// `"XUHO2"`
-//     #[display("XUHO2")]
-//     CatalyzedUtriumAlkalide = 35,
-//     /// `"XKH2O"`
-//     #[display("XKH2O")]
-//     CatalyzedKeaniumAcid = 36,
-//     /// `"XKHO2"`
-//     #[display("XKHO2")]
-//     CatalyzedKeaniumAlkalide = 37,
-//     /// `"XLH2O"`
-//     #[display("XLH2O")]
-//     CatalyzedLemergiumAcid = 38,
-//     /// `"XLHO2"`
-//     #[display("XLHO2")]
-//     CatalyzedLemergiumAlkalide = 39,
-//     /// `"XZH2O"`
-//     #[display("XZH2O")]
-//     CatalyzedZynthiumAcid = 40,
-//     /// `"XZHO2"`
-//     #[display("XZHO2")]
-//     CatalyzedZynthiumAlkalide = 41,
-//     /// `"XGH2O"`
-//     #[display("XGH2O")]
-//     CatalyzedGhodiumAcid = 42,
-//     /// `"XGHO2"`
-//     #[display("XGHO2")]
-//     CatalyzedGhodiumAlkalide = 43,
-//     /// `"ops"`
-//     #[display("ops")]
-//     Ops = 44,
-//     // these 4 base commodities are ordered earlier in constants.js
-//     /// `"silicon"`
-//     #[display("silicon")]
-//     Silicon = 45,
-//     /// `"metal"`
-//     #[display("metal")]
-//     Metal = 46,
-//     /// `"biomass"`
-//     #[display("biomass")]
-//     Biomass = 47,
-//     /// `"mist"`
-//     #[display("mist")]
-//     Mist = 48,
-//     /// `"utrium_bar"`
-//     #[display("utrium_bar")]
-//     UtriumBar = 49,
-//     /// `"lemergium_bar"`
-//     #[display("lemergium_bar")]
-//     LemergiumBar = 50,
-//     /// `"zynthium_bar"`
-//     #[display("zynthium_bar")]
-//     ZynthiumBar = 51,
-//     /// `"keanium_bar"`
-//     #[display("keanium_bar")]
-//     KeaniumBar = 52,
-//     /// `"ghodium_melt"`
-//     #[display("ghodium_melt")]
-//     GhodiumMelt = 53,
-//     /// `"oxidant"`
-//     #[display("oxidant")]
-//     Oxidant = 54,
-//     /// `"reductant"`
-//     #[display("reductant")]
-//     Reductant = 55,
-//     /// `"purifier"`
-//     #[display("purifier")]
-//     Purifier = 56,
-//     /// `"battery"`
-//     #[display("battery")]
-//     Battery = 57,
-//     /// `"composite"`
-//     #[display("composite")]
-//     Composite = 58,
-//     /// `"crystal"`
-//     #[display("crystal")]
-//     Crystal = 59,
-//     /// `"liquid"`
-//     #[display("liquid")]
-//     Liquid = 60,
-//     /// `"wire"`
-//     #[display("wire")]
-//     Wire = 61,
-//     /// `"switch"`
-//     #[display("switch")]
-//     Switch = 62,
-//     /// `"transistor"`
-//     #[display("transistor")]
-//     Transistor = 63,
-//     /// `"microchip"`
-//     #[display("microchip")]
-//     Microchip = 64,
-//     /// `"circuit"`
-//     #[display("circuit")]
-//     Circuit = 65,
-//     /// `"device"`
-//     #[display("device")]
-//     Device = 66,
-//     /// `"cell"`
-//     #[display("cell")]
-//     Cell = 67,
-//     /// `"phlegm"`
-//     #[display("phlegm")]
-//     Phlegm = 68,
-//     /// `"tissue"`
-//     #[display("tissue")]
-//     Tissue = 69,
-//     /// `"muscle"`
-//     #[display("muscle")]
-//     Muscle = 70,
-//     /// `"organoid"`
-//     #[display("organoid")]
-//     Organoid = 71,
-//     /// `"organism"`
-//     #[display("organism")]
-//     Organism = 72,
-//     /// `"alloy"`
-//     #[display("alloy")]
-//     Alloy = 73,
-//     /// `"tube"`
-//     #[display("tube")]
-//     Tube = 74,
-//     /// `"fixtures"`
-//     #[display("fixtures")]
-//     Fixtures = 75,
-//     /// `"frame"`
-//     #[display("frame")]
-//     Frame = 76,
-//     /// `"hydraulics"`
-//     #[display("hydraulics")]
-//     Hydraulics = 77,
-//     /// `"machine"`
-//     #[display("machine")]
-//     Machine = 78,
-//     /// `"condensate"`
-//     #[display("condensate")]
-//     Condensate = 79,
-//     /// `"concentrate"`
-//     #[display("concentrate")]
-//     Concentrate = 80,
-//     /// `"extract"`
-//     #[display("extract")]
-//     Extract = 81,
-//     /// `"spirit"`
-//     #[display("spirit")]
-//     Spirit = 82,
-//     /// `"emanation"`
-//     #[display("emanation")]
-//     Emanation = 83,
-//     /// `"essence"`
-//     #[display("essence")]
-//     Essence = 84,
-// }
-
-// #[derive(Copy, Clone, Debug)]
-// pub enum Boost {
-//     Harvest(f64),
-//     BuildAndRepair(f64),
-//     Dismantle(f64),
-//     UpgradeController(f64),
-//     Attack(f64),
-//     RangedAttack(f64),
-//     Heal(f64),
-//     Carry(f64),
-//     Move(f64),
-//     Tough(f64),
-// }
-
-// impl ResourceType {
-//     /// Translates the `BOOSTS` constant.
-//     #[inline]
-//     pub fn boost(self) -> Option<Boost> {
-//         use ResourceType::*;
-//         let boost = match self {
-//             // these comments copied directly from JavaScript 'constants.js' file.
-//             // UH: {
-//             //     attack: 2
-//             // },
-//             UtriumHydride => Boost::Attack(2.0),
-//             // UH2O: {
-//             //     attack: 3
-//             // },
-//             UtriumAcid => Boost::Attack(3.0),
-//             // XUH2O: {
-//             //     attack: 4
-//             // }
-//             CatalyzedUtriumAcid => Boost::Attack(4.0),
-//             // UO: {
-//             //     harvest: 3
-//             // },
-//             UtriumOxide => Boost::Harvest(3.0),
-//             // UHO2: {
-//             //     harvest: 5
-//             // },
-//             UtriumAlkalide => Boost::Harvest(5.0),
-//             // XUHO2: {
-//             //     harvest: 7
-//             // },
-//             CatalyzedUtriumAlkalide => Boost::Harvest(7.0),
-//             // KH: {
-//             //     capacity: 2
-//             // },
-//             KeaniumHydride => Boost::Carry(2.0),
-//             // KH2O: {
-//             //     capacity: 3
-//             // },
-//             KeaniumAcid => Boost::Carry(3.0),
-//             // XKH2O: {
-//             //     capacity: 4
-//             // }
-//             CatalyzedKeaniumAcid => Boost::Carry(4.0),
-//             // KO: {
-//             //     rangedAttack: 2,
-//             //     rangedMassAttack: 2
-//             // },
-//             KeaniumOxide => Boost::RangedAttack(2.0),
-//             // KHO2: {
-//             //     rangedAttack: 3,
-//             //     rangedMassAttack: 3
-//             // },
-//             KeaniumAlkalide => Boost::RangedAttack(4.0),
-//             // XKHO2: {
-//             //     rangedAttack: 4,
-//             //     rangedMassAttack: 4
-//             // }
-//             CatalyzedKeaniumAlkalide => Boost::RangedAttack(4.0),
-//             // LH: {
-//             //     build: 1.5,
-//             //     repair: 1.5
-//             // },
-//             LemergiumHydride => Boost::BuildAndRepair(1.5),
-//             // LH2O: {
-//             //     build: 1.8,
-//             //     repair: 1.8
-//             // },
-//             LemergiumAcid => Boost::BuildAndRepair(1.8),
-//             // XLH2O: {
-//             //     build: 2,
-//             //     repair: 2
-//             // },
-//             CatalyzedLemergiumAcid => Boost::BuildAndRepair(2.0),
-//             // LO: {
-//             //     heal: 2,
-//             //     rangedHeal: 2
-//             // },
-//             LemergiumOxide => Boost::Heal(2.0),
-//             // LHO2: {
-//             //     heal: 3,
-//             //     rangedHeal: 3
-//             // },
-//             LemergiumAlkalide => Boost::Heal(3.0),
-//             // XLHO2: {
-//             //     heal: 4,
-//             //     rangedHeal: 4
-//             // }
-//             CatalyzedLemergiumAlkalide => Boost::Heal(4.0),
-//             // ZH: {
-//             //     dismantle: 2
-//             // },
-//             ZynthiumHydride => Boost::Dismantle(2.0),
-//             // ZH2O: {
-//             //     dismantle: 3
-//             // },
-//             ZynthiumAcid => Boost::Dismantle(3.0),
-//             // XZH2O: {
-//             //     dismantle: 4
-//             // },
-//             CatalyzedZynthiumAcid => Boost::Dismantle(4.0),
-//             // ZO: {
-//             //     fatigue: 2
-//             // },
-//             ZynthiumOxide => Boost::Move(2.0),
-//             // ZHO2: {
-//             //     fatigue: 3
-//             // },
-//             ZynthiumAlkalide => Boost::Move(3.0),
-//             // XZHO2: {
-//             //     fatigue: 4
-//             // }
-//             CatalyzedZynthiumAlkalide => Boost::Move(4.0),
-//             // GH: {
-//             //     upgradeController: 1.5
-//             // },
-//             GhodiumHydride => Boost::UpgradeController(1.5),
-//             // GH2O: {
-//             //     upgradeController: 1.8
-//             // },
-//             GhodiumAcid => Boost::UpgradeController(1.8),
-//             // XGH2O: {
-//             //     upgradeController: 2
-//             // }
-//             CatalyzedGhodiumAcid => Boost::UpgradeController(2.0),
-//             // GO: {
-//             //     damage: .7
-//             // },
-//             GhodiumOxide => Boost::Tough(0.7),
-//             // GHO2: {
-//             //     damage: .5
-//             // },
-//             GhodiumAlkalide => Boost::Tough(0.5),
-//             // XGHO2: {
-//             //     damage: .3
-//             // }
-//             CatalyzedGhodiumAlkalide => Boost::Tough(0.3),
-//             // non-boost resources
-//             _ => return None,
-//         };
-//         Some(boost)
-//     }
-
-//     /// Helper function for deserializing from a string rather than a fake
-//     /// integer value.
-//     pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-//         let s: Cow<'de, str> = Cow::deserialize(d)?;
-//         Self::from_str(&s).map_err(|_| {
-//             D::Error::invalid_value(
-//                 Unexpected::Str(&s),
-//                 &"a known constant string in RESOURCES_ALL",
-//             )
-//         })
-//     }
-// }
-
-// js_deserializable!(ResourceType);
+impl ResourceType {
+    /// Translates the `BOOSTS` constant.
+    #[inline]
+    pub fn boost(self) -> Option<Boost> {
+        use ResourceType::*;
+        let boost = match self {
+            // these comments copied directly from JavaScript 'constants.js' file.
+            // UH: {
+            //     attack: 2
+            // },
+            UtriumHydride => Boost::Attack(2),
+            // UH2O: {
+            //     attack: 3
+            // },
+            UtriumAcid => Boost::Attack(3),
+            // XUH2O: {
+            //     attack: 4
+            // }
+            CatalyzedUtriumAcid => Boost::Attack(4),
+            // UO: {
+            //     harvest: 3
+            // },
+            UtriumOxide => Boost::Harvest(3),
+            // UHO2: {
+            //     harvest: 5
+            // },
+            UtriumAlkalide => Boost::Harvest(5),
+            // XUHO2: {
+            //     harvest: 7
+            // },
+            CatalyzedUtriumAlkalide => Boost::Harvest(7),
+            // KH: {
+            //     capacity: 2
+            // },
+            KeaniumHydride => Boost::Carry(2),
+            // KH2O: {
+            //     capacity: 3
+            // },
+            KeaniumAcid => Boost::Carry(3),
+            // XKH2O: {
+            //     capacity: 4
+            // }
+            CatalyzedKeaniumAcid => Boost::Carry(4),
+            // KO: {
+            //     rangedAttack: 2,
+            //     rangedMassAttack: 2
+            // },
+            KeaniumOxide => Boost::RangedAttack(2),
+            // KHO2: {
+            //     rangedAttack: 3,
+            //     rangedMassAttack: 3
+            // },
+            KeaniumAlkalide => Boost::RangedAttack(4),
+            // XKHO2: {
+            //     rangedAttack: 4,
+            //     rangedMassAttack: 4
+            // }
+            CatalyzedKeaniumAlkalide => Boost::RangedAttack(4),
+            // LH: {
+            //     build: 1.5,
+            //     repair: 1.5
+            // },
+            LemergiumHydride => Boost::BuildAndRepair(1.5),
+            // LH2O: {
+            //     build: 1.8,
+            //     repair: 1.8
+            // },
+            LemergiumAcid => Boost::BuildAndRepair(1.8),
+            // XLH2O: {
+            //     build: 2,
+            //     repair: 2
+            // },
+            CatalyzedLemergiumAcid => Boost::BuildAndRepair(2.0),
+            // LO: {
+            //     heal: 2,
+            //     rangedHeal: 2
+            // },
+            LemergiumOxide => Boost::Heal(2),
+            // LHO2: {
+            //     heal: 3,
+            //     rangedHeal: 3
+            // },
+            LemergiumAlkalide => Boost::Heal(3),
+            // XLHO2: {
+            //     heal: 4,
+            //     rangedHeal: 4
+            // }
+            CatalyzedLemergiumAlkalide => Boost::Heal(4),
+            // ZH: {
+            //     dismantle: 2
+            // },
+            ZynthiumHydride => Boost::Dismantle(2),
+            // ZH2O: {
+            //     dismantle: 3
+            // },
+            ZynthiumAcid => Boost::Dismantle(3),
+            // XZH2O: {
+            //     dismantle: 4
+            // },
+            CatalyzedZynthiumAcid => Boost::Dismantle(4),
+            // ZO: {
+            //     fatigue: 2
+            // },
+            ZynthiumOxide => Boost::Move(2),
+            // ZHO2: {
+            //     fatigue: 3
+            // },
+            ZynthiumAlkalide => Boost::Move(3),
+            // XZHO2: {
+            //     fatigue: 4
+            // }
+            CatalyzedZynthiumAlkalide => Boost::Move(4),
+            // GH: {
+            //     upgradeController: 1.5
+            // },
+            GhodiumHydride => Boost::UpgradeController(1.5),
+            // GH2O: {
+            //     upgradeController: 1.8
+            // },
+            GhodiumAcid => Boost::UpgradeController(1.8),
+            // XGH2O: {
+            //     upgradeController: 2
+            // }
+            CatalyzedGhodiumAcid => Boost::UpgradeController(2.0),
+            // GO: {
+            //     damage: .7
+            // },
+            GhodiumOxide => Boost::Tough(0.7),
+            // GHO2: {
+            //     damage: .5
+            // },
+            GhodiumAlkalide => Boost::Tough(0.5),
+            // XGHO2: {
+            //     damage: .3
+            // }
+            CatalyzedGhodiumAlkalide => Boost::Tough(0.3),
+            // non-boost resources
+            _ => return None,
+        };
+        Some(boost)
+    }
+}
 
 // /// Translates market resource types which can include both `RESOURCE_*`
 // /// and `INTERSHARD_RESOURCES` constants.
@@ -1028,7 +582,7 @@ pub enum ResourceType {
 
 /// Translates the `POWER_CLASS` constants, which are classes of power creeps
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
 pub enum PowerCreepClass {
     Operator = "operator",
 }
@@ -1037,7 +591,7 @@ pub enum PowerCreepClass {
 
 /// Translates the `PWR_*` constants, which are types of powers used by power
 #[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr, IntoEnumIterator)]
 #[repr(u8)]
 pub enum PowerType {
     GenerateOps = 1,

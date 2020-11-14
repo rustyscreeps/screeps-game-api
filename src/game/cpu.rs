@@ -38,6 +38,18 @@ extern "C" {
     /// If your account has been unlocked for a limited time, contains the time it's unlocked until in milliseconds since epoch.
     #[wasm_bindgen(method, getter = unlockedTime)]
     pub fn unlocked_time(this: &CpuInfo) -> Option<u64>;
+
+    /// Get information about your script's memory heap usage
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
+    #[wasm_bindgen(method, js_name = getHeapStatistics)]
+    pub fn get_heap_statistics(this: &CpuInfo) -> HeapStatistics;
+
+    /// Get the amount of CPU time used for execution so far this tick
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getUsed)
+    #[wasm_bindgen(method, js_name = getUsed)]
+    pub fn get_used(this: &CpuInfo) -> f64;
 }
 
 #[wasm_bindgen]

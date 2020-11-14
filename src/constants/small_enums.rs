@@ -2,9 +2,9 @@
 // use std::{borrow::Cow, fmt, str::FromStr};
 
 use std::fmt;
+use enum_iterator::IntoEnumIterator;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
-use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 // use parse_display::FromStr;
 use serde::{
@@ -13,6 +13,7 @@ use serde::{
 };
 
 // bindgen can't take an i8, needs custom boundary functions
+/// Translates return code constants.
 //#[wasm_bindgen]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr)]
 #[repr(i8)]
@@ -50,6 +51,7 @@ pub enum ReturnCode {
 
 // js_deserializable!(ReturnCode);
 
+/// Translates `FIND_*` constants.
 #[wasm_bindgen]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr)]
 #[repr(u8)]
@@ -85,6 +87,7 @@ pub enum Find {
     Ruins = 123,
 }
 
+/// Translates direction constants.
 #[wasm_bindgen]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr, IntoEnumIterator)]
 #[repr(u8)]
@@ -98,8 +101,6 @@ pub enum Direction {
     Left = 7,
     TopLeft = 8,
 }
-
-// js_deserializable!(Direction);
 
 impl ::std::ops::Neg for Direction {
     type Output = Direction;
@@ -193,6 +194,27 @@ pub enum ExitDirection {
 //     }
 // }
 
+/// Translates `LOOK_*` constants.
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+pub enum Look {
+    Creeps = "creep",
+    Energy = "energy",
+    Resources = "resource",
+    Sources = "source",
+    Minerals = "mineral",
+    Structures = "structure",
+    Flags = "flag",
+    ConstructionSites = "constructionSite",
+    Nukes = "nuke",
+    Terrain = "terrain",
+    Tombstones = "tombstone",
+    PowerCreeps = "powerCreep",
+    Deposits = "deposit",
+    Ruins = "ruin",
+}
+
+/// Translates `COLOR_*` constants.
 #[wasm_bindgen]
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr, IntoEnumIterator
@@ -211,76 +233,19 @@ pub enum Color {
     White = 10,
 }
 
-// js_deserializable!(Color);
+/// Translates `TERRAIN_*` constants.
+#[wasm_bindgen]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr, IntoEnumIterator)]
+#[repr(u8)]
+pub enum Terrain {
+    Plain = 0,
+    Wall = 1,
+    Swamp = 2,
+    // unimplemented in game
+    //Lava = 4,
+}
 
-// /// Terrain constant.
-// ///
-// /// This constant is in a unique position of being represented both by strings
-// /// and by integers in various parts of the API.
-// ///
-// /// *Note:* This constant's `TryFrom<Value>` and `Deserialize` implementations
-// /// _only work with the integer constants_. If you're ever consuming strings
-// /// such as `"plain"`, `"swamp"`, `"wall"`, you can use the
-// /// `__terrain_str_to_num` JavaScript function, [`FromStr`][std::str::FromStr]
-// /// or [`Terrain::deserialize_from_str`].
-// ///
-// /// See the [module-level documentation][crate::constants] for more details.
-// #[derive(
-//     Copy,
-//     Clone,
-//     Debug,
-//     PartialEq,
-//     Eq,
-//     Hash,
-//     Deserialize_repr,
-//     Serialize_repr,
-//     FromPrimitive,
-//     FromStr,
-// )]
-// #[repr(u8)]
-// #[display(style = "snake_case")]
-// pub enum Terrain {
-//     Plain = 0,
-//     Wall = TERRAIN_MASK_WALL,
-//     Swamp = TERRAIN_MASK_SWAMP,
-// }
-
-// impl Terrain {
-//     /// Helper function for deserializing from a string rather than from an
-//     /// integer.
-//     pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-//         let s: Cow<'de, str> = Cow::deserialize(d)?;
-//         Self::from_str(&s).map_err(|_| {
-//             D::Error::invalid_value(Unexpected::Str(&s), &r#""plain", "wall" or "swamp""#)
-//         })
-//     }
-// }
-
-// js_deserializable!(Terrain);
-
-// /// Creep part types.
-// ///
-// /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
-// /// implementations only operate on made-up integer constants. If you're ever
-// /// using these impls manually, use the `__part_num_to_str` and
-// /// `__part_str_to_num` JavaScript functions, [`FromStr`][std::str::FromStr] or
-// /// [`Part::deserialize_from_str`].
-// ///
-// /// See the [module-level documentation][crate::constants] for more details.
-// #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-// #[repr(u8)]
-// #[display(style = "snake_case")]
-// pub enum Part {
-//     Move = 0,
-//     Work = 1,
-//     Carry = 2,
-//     Attack = 3,
-//     RangedAttack = 4,
-//     Tough = 5,
-//     Heal = 6,
-//     Claim = 7,
-// }
-
+/// Translates body part constants.
 #[wasm_bindgen]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, Serialize)]
 pub enum Part {
@@ -325,8 +290,6 @@ impl Part {
     // }
 }
 
-// js_deserializable!(Part);
-
 /// Translates the `DENSITY_*` constants.
 #[wasm_bindgen]
 #[derive(
@@ -348,8 +311,6 @@ pub enum Density {
     High = 3,
     Ultra = 4,
 }
-
-// js_deserializable!(Density);
 
 impl Density {
     /// Translates the `MINERAL_DENSITY` constant, the amount of mineral

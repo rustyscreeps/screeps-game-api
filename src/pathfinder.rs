@@ -11,8 +11,77 @@
 //! [Screeps documentation](https://docs.screeps.com/api/#PathFinder)
 //!
 //! [1]: crate::objects::Room::find_path
+
+use crate::objects::RoomPosition;
 use wasm_bindgen::prelude::*;
-use js_sys::{Array, Uint8Array};
+use js_sys::{Array, JsString, Uint8Array};
+
+#[wasm_bindgen]
+extern "C" {
+    /// Interfaces for calling the default Screeps [`PathFinder`].
+    #[wasm_bindgen]
+    pub type PathFinder;
+
+    /// Search for a path from an origin to a goal or array of goals.
+    ///
+    /// The goal, or each entry in the goal array if using an array, must be an object with a position and optionally a `range` key, if a target distance other than 0 is needed.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.search)
+    #[wasm_bindgen(static_method_of = PathFinder)]
+    pub fn search(origin: &RoomPosition, goal: &JsValue, options: Option<&SearchOptions>) -> SearchResults;
+}
+
+#[wasm_bindgen]
+extern "C" {
+    /// Object that represents a set of options for a call to [`PathFinder::search`].
+    #[wasm_bindgen]
+    pub type SearchOptions;
+
+    /// Room callback, which should return a cost matrix or false.
+    #[wasm_bindgen(method, setter = roomCallback)]
+    //pub fn room_callback(this: &SearchOptions, callback: JsValue);
+    pub fn room_callback(this: &SearchOptions, callback: &Closure<dyn FnMut(JsString) -> JsValue>);
+
+    /// plain_cost
+    #[wasm_bindgen(method, setter = plainCost)]
+    pub fn plain_cost(this: &SearchOptions, cost: u8);
+
+}
+
+// #[wasm_bindgen]
+// pub struct SearchOptions {
+//     pub room_callback: Closure<dyn FnMut(&JsString)>),
+//     pub plain_cost: u8,
+//     pub swamp_cost: u8,
+//     pub flee: bool,
+//     pub max_ops: u32,
+//     pub max_rooms: u32,
+//     pub max_cost: f64,
+//     pub heuristic_weight: f64,
+// }
+
+#[wasm_bindgen]
+extern "C" {
+    /// An object representing the results of a [`PathFinder::search`].
+    #[wasm_bindgen]
+    pub type SearchResults;
+
+    /// Get the path that was found, an [`Array`] of [`RoomPosition`]. May be incomplete.
+    #[wasm_bindgen(method, getter)]
+    pub fn path(this: &SearchResults) -> Array;
+
+    /// The number of operations the pathfinding operation performed.
+    #[wasm_bindgen(method, getter)]
+    pub fn ops(this: &SearchResults) -> u32;
+
+    /// Total cost of all tiles used in the path
+    #[wasm_bindgen(method, getter)]
+    pub fn cost(this: &SearchResults) -> u32;
+
+    /// Whether this search successfully found a complete path.
+    #[wasm_bindgen(method, getter)]
+    pub fn incomplete(this: &SearchResults) -> bool;
+}
 
 #[wasm_bindgen]
 extern "C" {
@@ -27,6 +96,11 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.CostMatrix.constructor)
     #[wasm_bindgen(constructor, js_namespace = PathFinder)]
     pub fn new() -> CostMatrix;
+
+    // TODO make a new_with_bits
+    // https://github.com/rustwasm/wasm-bindgen/blob/master/crates/js-sys/tests/wasm/Object.rs#L36
+    //     #[wasm_bindgen(js_name = prototype, js_namespace = Foo)]
+    //     static FOO_PROTOTYPE: Object;
 
     /// Gets a reference to the [`Uint8Array`] underlying this [`CostMatrix`].
     #[wasm_bindgen(method, getter = _bits)]
@@ -66,11 +140,6 @@ extern "C" {
     #[wasm_bindgen(static_method_of = CostMatrix, js_namespace = PathFinder)]
     pub fn deserialize(val: Array) -> CostMatrix;
 }
-
-// TODO make a new_with_bits
-// https://github.com/rustwasm/wasm-bindgen/blob/master/crates/js-sys/tests/wasm/Object.rs#L36
-//     #[wasm_bindgen(js_name = prototype, js_namespace = Foo)]
-//     static FOO_PROTOTYPE: Object;
 
 
 
@@ -367,27 +436,6 @@ extern "C" {
 //     max_rooms: u32,
 //     max_cost: f64,
 //     heuristic_weight: f64,
-// }
-
-// impl Default for SearchOptions<'static, fn(RoomName) -> MultiRoomCostResult<'static>> {
-//     fn default() -> Self {
-//         fn cost_matrix(_: RoomName) -> MultiRoomCostResult<'static> {
-//             MultiRoomCostResult::Default
-//         }
-
-//         // TODO: should we fall back onto the game's default values, or is
-//         // it alright to copy them here?
-//         SearchOptions {
-//             room_callback: cost_matrix,
-//             plain_cost: 1,
-//             swamp_cost: 5,
-//             flee: false,
-//             max_ops: 2000,
-//             max_rooms: 16,
-//             max_cost: f64::INFINITY,
-//             heuristic_weight: 1.2,
-//         }
-//     }
 // }
 
 // impl SearchOptions<'static, fn(RoomName) -> MultiRoomCostResult<'static>> {

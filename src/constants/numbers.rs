@@ -509,18 +509,7 @@ pub const GCL_MULTIPLY: u32 = 1_000_000;
 /// Maximum GCL for players allowed to spawn in a Novice area.
 pub const GCL_NOVICE: u32 = 3;
 
-/// Terrain bitmask value representing natural walls; represented by
-/// [`Terrain::Wall`] when using terrain functions.
-///
-/// [`Terrain::Wall`]: crate::constants::Terrain::Wall
-pub const TERRAIN_MASK_WALL: u8 = 1;
-/// Terrain bitmask value representing swamps; represented by [`Terrain::Swamp`]
-/// when using terrain functions.
-///
-/// [`Terrain::Swamp`]: crate::constants::Terrain::Swamp
-pub const TERRAIN_MASK_SWAMP: u8 = 2;
-/// Lava terrain, not implemented in game.
-pub const TERRAIN_MASK_LAVA: u8 = 4;
+// TERRAIN_* defined in `small_enums.rs`
 
 /// Maximum allowed construction sites at once per player.
 pub const MAX_CONSTRUCTION_SITES: u32 = 100;
@@ -744,12 +733,9 @@ pub const POWER_LEVEL_POW: u32 = 2;
 /// Time, in milliseconds, that a power creep must wait to respawn after dying.
 pub const POWER_CREEP_SPAWN_COOLDOWN: u32 = 8 * 3600 * 1000;
 /// Time, in milliseconds, after a deletion is started via
-/// [`AccountPowerCreep::delete`] that it can no longer be canceled via
-/// [`AccountPowerCreep::cancel_delete`].
+/// [`PowerCreep::delete`] that it can no longer be canceled.
 ///
-/// [`AccountPowerCreep::delete`]: crate::objects::AccountPowerCreep::delete
-/// [`AccountPowerCreep::cancel_delete`]:
-/// crate::objects::AccountPowerCreep::cancel_delete
+/// [`PowerCreep::delete`]: crate::objects::PowerCreep::delete
 pub const POWER_CREEP_DELETE_COOLDOWN: u32 = 24 * 3600 * 1000;
 /// Maximum level for power creeps.
 pub const POWER_CREEP_MAX_LEVEL: u32 = 25;
