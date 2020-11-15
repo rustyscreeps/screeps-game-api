@@ -1,10 +1,10 @@
 //use crate::local::RoomName;
 use crate::{
-    constants::Find,
-    objects::StructureController,
+    constants::{ExitDirection, Find, Look, StructureType},
+    objects::{RoomPosition, RoomTerrain, StructureController, StructureStorage, StructureTerminal},
 };
 use wasm_bindgen::prelude::*;
-use js_sys::{Array, JsString};
+use js_sys::{Array, Object, JsString};
 
 #[wasm_bindgen]
 extern "C" {
@@ -49,13 +49,117 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn name(this: &Room) -> JsString;
 
+    /// The [`StructureStorage`] built in the room, or `None` in rooms where there isn't one.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.storage)
+    #[wasm_bindgen(method, getter)]
+    pub fn storage(this: &Room) -> Option<StructureStorage>;
+
+    /// The [`StructureTerminal`] built in the room, or `None` in rooms where there isn't one.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.terminal)
+    #[wasm_bindgen(method, getter)]
+    pub fn terminal(this: &Room) -> Option<StructureTerminal>;
+
+    // todo https://docs.screeps.com/api/#Room.visual
+
+    /// Serialize a path array from [`Room::find_path`] into a string representation safe to store in memory.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.serializePath)
+    #[wasm_bindgen(static_method_of = Room, js_name = serializePath)]
+    pub fn serialize_path(path: &Array) -> JsString;
+
+    /// Deserialize a string representation from [`Room::serialize_path`] back to a path array.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.deserializePath)
+    #[wasm_bindgen(static_method_of = Room, js_name = deserializePath)]
+    pub fn deserialize_path(path: &JsString) -> Array;
+
+    /// Creates a construction site at given corrdinates within this room. If it's a [`StructureSpawn`], a name can optionally be assigned for the structure.
+    ///
+    /// See [`RoomPosition::create_construction_site`] to create at a specified position.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
+    ///
+    /// [`StructureSpawn`]: crate::objects::StructureSpawn
+    /// [`RoomPosition::create_construction_site`]: crate::objects::RoomPosition::create_construction_site
+    #[wasm_bindgen(method, js_name = createConstructionSite)]
+    pub fn create_construction_site(this: &Room, x: u8, y: u8, ty: StructureType, name: Option<&JsString>) -> i8;
+
+    // todo FindOptions
     /// Find all objects of the specified type in the room, without passing additional options.
     /// 
     /// Returns an [`Array`] containing the found objects, which should be converted into the type of object you searched for.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
     #[wasm_bindgen(method)]
-    pub fn find(this: &Room, ty: Find) -> Array;
+    pub fn find(this: &Room, ty: Find, options: Option<&Object>) -> Array;
+
+    /// Find an exit from the current room which leads to a target room, either a [`Room`] object or [`JsString`] representation of the room name.
+    /// 
+    /// Returns an [`Array`] containing the found objects, which should be converted into the type of object you searched for.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.findExitTo)
+    #[wasm_bindgen(method, js_name = findExitTo)]
+    pub fn find_exit_to(this: &Room, room: &JsValue) -> ExitDirection;
+
+    // todo FindPathOptions
+    /// Find a path within the room from one position to another.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
+    #[wasm_bindgen(method, js_name = findPathTo)]
+    pub fn find_path_to(this: &Room, origin: &RoomPosition, goal: &RoomPosition, options: Option<&Object>) -> Array;
+
+    // todo event log
+
+
+    /// Gets the [`RoomPosition`] for the given coordinates.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.getPositionAt)
+    #[wasm_bindgen(method, js_name = getPositionAt)]
+    pub fn get_position_at(this: &Room, x: u8, y: u8) -> RoomPosition;
+
+    /// Gets the [`RoomTerrain`] object for this room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.getTerrain)
+    #[wasm_bindgen(method, js_name = getTerrain)]
+    pub fn get_terrain(this: &Room) -> RoomTerrain;
+
+    /// Get an array of all objects at a position.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAt)
+    #[wasm_bindgen(method, js_name = lookAt)]
+    pub fn look_at(this: &Room, target: &RoomPosition) -> Array;
+
+    /// Get an array of all objects at the given coordinates.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAt)
+    #[wasm_bindgen(method, js_name = lookAt)]
+    pub fn look_at_xy(this: &Room, x: u8, y: u8) -> Array;
+
+    /// Get an array of all objects in a certain area, in either object or array format depending on the `as_array` option.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
+    #[wasm_bindgen(method, js_name = lookAtArea)]
+    pub fn look_at_area(this: &Room, top_y: u8, left_x: u8, bottom_y: u8, right_x: u8, as_array: bool) -> JsValue;
+
+    /// Get an array of all objects of a given type at this position, if any.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
+    #[wasm_bindgen(method, js_name = lookFor)]
+    pub fn look_for_at(this: &Room, ty: Look, target: &RoomPosition) -> Option<Array>;
+
+    /// Get an array of all objects of a given type at the given coordinates, if any.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
+    #[wasm_bindgen(method, js_name = lookFor)]
+    pub fn look_for_at_xy(this: &Room, ty: Look, x: u8, y: u8) -> Option<Array>;
+
+    /// Get an array of all objects in a certain area, in either object or array format depending on the `as_array` option.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
+    #[wasm_bindgen(method, js_name = lookAtArea)]
+    pub fn look_for_at_area(this: &Room, ty: Look, top_y: u8, left_x: u8, bottom_y: u8, right_x: u8, as_array: bool) -> JsValue;
 }
 
 // use std::{fmt, marker::PhantomData, mem, ops::Range};

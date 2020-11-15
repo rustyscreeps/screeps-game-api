@@ -1,6 +1,6 @@
-use crate::constants::StructureType;
+use crate::constants::{Direction, Look, StructureType};
 use wasm_bindgen::prelude::*;
-use js_sys::JsString;
+use js_sys::{Array, JsString, Object};
 
 #[wasm_bindgen]
 extern "C" {
@@ -61,15 +61,128 @@ extern "C" {
     #[wasm_bindgen(method, setter = __packedPos)]
     pub fn set_packed(this: &RoomPosition, val: i32);
     
-    /// Creates a construction site at this position.
+    /// Creates a [`ConstructionSite`] at this position. If it's a [`StructureSpawn`], a name can optionally be assigned for the structure.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
+    ///
+    /// [`ConstructionSite`]: crate::objects::ConstructionSite
     #[wasm_bindgen(method, js_name = createConstructionSite)]
-    pub fn create_construction_site(this: &RoomPosition, ty: StructureType) -> i8;
+    pub fn create_construction_site(this: &RoomPosition, ty: StructureType, name: Option<&JsString>) -> i8;
 
-    /// Creates a construction site at this position with a name for the structure.
+    /// Creates a [`Flag`] at this position.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
-    #[wasm_bindgen(method, js_name = createConstructionSite)]
-    pub fn create_named_construction_site(this: &RoomPosition, ty: StructureType, name: &JsString) -> i8;
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createFlag)
+    ///
+    /// [`Flag`]: crate::objects::Flag
+    #[wasm_bindgen(method, js_name = createFlag)]
+    pub fn create_flag(this: &RoomPosition, name: Option<&JsString>, color: Option<&JsString>, secondary_color: Option<&JsString>) -> i8;
+
+    // todo FindOptions
+    /// Find the closest object by path among an [`Array`] of objects, or among a [`FindType`] to search for all objects of that type in the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByPath)
+    ///
+    /// [`Flag`]: crate::objects::Flag
+    #[wasm_bindgen(method, js_name = findClosestByPath)]
+    pub fn find_closest_by_path(this: &RoomPosition, goal: &JsValue, options: Option<&Object>) -> Option<Object>;
+
+    // todo FindOptions
+    /// Find the closest object by range among an [`Array`] of objects, or among a [`FindType`] to search for all objects of that type in the room. Will not work for objects in other rooms.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByRange)
+    #[wasm_bindgen(method, js_name = findClosestByRange)]
+    pub fn find_closest_by_range(this: &RoomPosition, goal: &JsValue, options: Option<&Object>) -> Option<Object>;
+
+    // todo FindOptions
+    /// Find all relevant objects within a certain range among an [`Array`] of objects, or among a [`FindType`] to search all objects of that type in the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findInRange)
+    #[wasm_bindgen(method, js_name = findInRange)]
+    pub fn find_in_range(this: &RoomPosition, goal: &JsValue, range: u8, options: Option<&Object>) -> Array;
+
+    // todo FindPathOptions
+    /// Find a path from this position to a position or room object, with an optional options object
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
+    #[wasm_bindgen(method, js_name = findPathTo)]
+    pub fn find_path_to(this: &RoomPosition, goal: &JsValue, options: Option<&Object>) -> Array;
+
+    // todo FindPathOptions
+    /// Find a path from this position to the given coordinates in the same room, with an optional options object.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
+    #[wasm_bindgen(method, js_name = findPathTo)]
+    pub fn find_path_to_xy(this: &RoomPosition, x: u8, y: u8, options: Option<&Object>) -> Array;
+
+    /// Get the [`Direction`] toward a position or room object.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.getDirectionTo)
+    #[wasm_bindgen(method, js_name = getDirectionTo)]
+    pub fn get_direction_to(this: &RoomPosition, goal: &JsValue) -> Direction;
+
+    /// Get the [`Direction`] toward the given coordinates in the same room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.getDirectionTo)
+    #[wasm_bindgen(method, js_name = getDirectionTo)]
+    pub fn get_direction_to_xy(this: &RoomPosition, x: u8, y: u8) -> Direction;
+
+    /// Get the range to a position or room object in the same room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.getRangeTo)
+    #[wasm_bindgen(method, js_name = getRangeTo)]
+    pub fn get_range_to(this: &RoomPosition, goal: &JsValue) -> u32;
+
+    /// Get the range to the given coordinates in the same room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.getRangeTo)
+    #[wasm_bindgen(method, js_name = getRangeTo)]
+    pub fn get_range_to_xy(this: &RoomPosition, x: u8, y: u8) -> u32;
+
+    /// Get the range to a position or room object in the same room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.inRangeTo)
+    #[wasm_bindgen(method, js_name = inRangeTo)]
+    pub fn in_range_to(this: &RoomPosition, goal: &JsValue, range: u8) -> bool;
+
+    /// Get the range to the given coordinates in the same room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.inRangeTo)
+    #[wasm_bindgen(method, js_name = inRangeTo)]
+    pub fn in_range_to_xy(this: &RoomPosition, x: u8, y: u8, range: u8) -> bool;
+
+    /// Determine whether this position is at the same position as another position or room object.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.isEqualTo)
+    #[wasm_bindgen(method, js_name = isEqualTo)]
+    pub fn is_equal_to(this: &RoomPosition, goal: &JsValue) -> bool;
+
+    /// Determine whether this position is at the given coordinates in the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.isEqualTo)
+    #[wasm_bindgen(method, js_name = isEqualTo)]
+    pub fn is_equal_to_xy(this: &RoomPosition, x: u8, y: u8) -> bool;
+
+    /// Determine whether this position is within 1 range of another position or room object.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.isNearTo)
+    #[wasm_bindgen(method, js_name = isNearTo)]
+    pub fn is_near_to(this: &RoomPosition, goal: &JsValue) -> bool;
+
+    /// Determine whether this position is within 1 range of the given coordinates in the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.isNearTo)
+    #[wasm_bindgen(method, js_name = isNearTo)]
+    pub fn is_near_to_xy(this: &RoomPosition, x: u8, y: u8) -> bool;
+
+    /// Get an array of all objects at this position.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.look)
+    #[wasm_bindgen(method)]
+    pub fn look(this: &RoomPosition) -> Array;
+
+    /// Get an array of all objects of a given type at this position, if any.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
+    #[wasm_bindgen(method, js_name = lookFor)]
+    pub fn look_for(this: &RoomPosition, ty: Look) -> Option<Array>;
 }

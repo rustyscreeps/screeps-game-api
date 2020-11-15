@@ -522,7 +522,7 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 /// Translates the `MINERAL_MIN_AMOUNT` constant; currently unused in game (see
 /// [`Density::amount`] instead).
 ///
-/// [`Density::amount`]: crate::constants::minerals::Density::amount
+/// [`Density::amount`]: crate::constants::Density::amount
 #[inline]
 pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
     match mineral {
@@ -539,7 +539,7 @@ pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
 
 /// Currently unused in game (see [`Density::probability`] instead).
 ///
-/// [`Density::probability`]: crate::constants::minerals::Density::probability
+/// [`Density::probability`]: crate::constants::Density::probability
 pub const MINERAL_RANDOM_FACTOR: u32 = 2;
 
 // MINERAL_DENSITY, MINERAL_DENSITY_PROBABILITY defined in `small_enums.rs`
@@ -661,11 +661,11 @@ pub const MARKET_ORDER_LIFE_TIME: u32 = 30 * 24 * 3600 * 1000;
 /// Maximum number of total flags a player is allowed to have on a shard.
 pub const FLAGS_LIMIT: u32 = 10_000;
 
-/// Cost, paid from [`game::cpu::bucket`], to generate a pixel using
-/// [`game::cpu::generate_pixel`]
+/// Cost, paid from [`CpuInfo::bucket`], to generate a pixel using
+/// [`CpuInfo::generate_pixel`]
 ///
-/// [`game::cpu::bucket`]: crate::game::cpu::bucket
-/// [`game::cpu::generate_pixel`]: crate::game::cpu::generate_pixel
+/// [`CpuInfo::bucket`]: crate::game::cpu::CpuInfo::bucket
+/// [`CpuInfo::generate_pixel`]: crate::game::cpu::CpuInfo::generate_pixel
 pub const PIXEL_CPU_COST: u32 = 5000;
 
 // Resources defined in `types.rs`

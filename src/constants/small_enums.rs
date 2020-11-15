@@ -155,7 +155,7 @@ impl fmt::Display for Direction {
 /// Restricted more than `Direction` in that it can't be diagonal. Used as the
 /// result of [`Room::find_exit_to`].
 ///
-/// Can be converted to both [`find::Exit`] for immediate use of [`Room::find`]
+/// Can be converted to [`Find`] for immediate use of [`Room::find`]
 /// and [`Direction`].
 ///
 /// [`Room::find`]: crate::objects::Room::find
@@ -170,29 +170,29 @@ pub enum ExitDirection {
     Left = 7,
 }
 
-// impl From<ExitDirection> for find::Exit {
-//     #[inline]
-//     fn from(dir: ExitDirection) -> Self {
-//         match dir {
-//             ExitDirection::Top => find::Exit::Top,
-//             ExitDirection::Right => find::Exit::Right,
-//             ExitDirection::Bottom => find::Exit::Bottom,
-//             ExitDirection::Left => find::Exit::Left,
-//         }
-//     }
-// }
+impl From<ExitDirection> for Find {
+    #[inline]
+    fn from(dir: ExitDirection) -> Self {
+        match dir {
+            ExitDirection::Top => Find::ExitTop,
+            ExitDirection::Right => Find::ExitRight,
+            ExitDirection::Bottom => Find::ExitBottom,
+            ExitDirection::Left => Find::ExitLeft,
+        }
+    }
+}
 
-// impl From<ExitDirection> for Direction {
-//     #[inline]
-//     fn from(dir: ExitDirection) -> Self {
-//         match dir {
-//             ExitDirection::Top => Direction::Top,
-//             ExitDirection::Right => Direction::Right,
-//             ExitDirection::Bottom => Direction::Bottom,
-//             ExitDirection::Left => Direction::Left,
-//         }
-//     }
-// }
+impl From<ExitDirection> for Direction {
+    #[inline]
+    fn from(dir: ExitDirection) -> Self {
+        match dir {
+            ExitDirection::Top => Direction::Top,
+            ExitDirection::Right => Direction::Right,
+            ExitDirection::Bottom => Direction::Bottom,
+            ExitDirection::Left => Direction::Left,
+        }
+    }
+}
 
 /// Translates `LOOK_*` constants.
 #[wasm_bindgen]

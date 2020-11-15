@@ -5,12 +5,12 @@
 //! optimized for Screeps.
 //!
 //! This is both more fine-grained and less automatic than other pathing
-//! methods, such as [`Room::find_path`][1]. `PathFinder` knows about terrain by
+//! methods, such as [`Room::find_path_to`]. [`PathFinder`] knows about terrain by
 //! default, but you must configure any other obstacles you want it to consider.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#PathFinder)
 //!
-//! [1]: crate::objects::Room::find_path
+//! [`Room::find_path_to`]: crate::objects::Room::find_path_to
 
 use crate::objects::RoomPosition;
 use wasm_bindgen::prelude::*;

@@ -60,19 +60,16 @@
 //! [`FromStr`]: std::str::FromStr
 //! [`Display`]: std::fmt::Display
 
-mod extra;
-// pub mod look;
-mod numbers;
-// mod recipes;
+pub mod extra;
+pub mod numbers;
+mod recipes;
 mod small_enums;
 mod types;
 
 pub use self::{
     extra::*,
-    // find::FindConstant,
-    // look::{Look, LookConstant},
     numbers::*,
-    // recipes::FactoryRecipe,
+    recipes::FactoryRecipe,
     small_enums::*,
     types::*,
 };

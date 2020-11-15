@@ -5,7 +5,7 @@ pub const CPU_BUCKET_MAX: u32 = 10_000;
 
 /// Maximum value of [`CpuInfo::tick_limit`] if more bucket is available than can be used this tick.
 ///
-/// [`CpuInfo::tick_limit`]: crate::objects::game::CpuInfo::tick_limit
+/// [`CpuInfo::tick_limit`]: crate::game::cpu::CpuInfo::tick_limit
 pub const CPU_TICK_LIMIT_MAX: u32 = 500;
 
 /// Hits per creep body part.

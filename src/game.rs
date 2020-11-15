@@ -4,7 +4,7 @@
 //! generally means all state which is true this tick throughout the world.
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
-use js_sys::Object;
+use js_sys::{JsString, Object};
 
 use wasm_bindgen::prelude::*;
 
@@ -22,13 +22,13 @@ pub mod gcl;
 pub mod gpl;
 // pub mod map;
 // pub mod market;
-// pub mod shards;
 
 use self::{
     cpu::CpuInfo,
     gcl::GclInfo,
     gpl::GplInfo,
 };
+use crate::objects::RoomObject;
 
 #[wasm_bindgen]
 extern "C" {
@@ -38,7 +38,6 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.constructionSites)
     ///
-    /// [`JsString`]: js_sys::JsString
     /// [`ConstructionSite`]: crate::objects::ConstructionSite
     #[wasm_bindgen(static_method_of = Game, getter = constructionSites)]
     pub fn construction_sites() -> Object;
@@ -53,7 +52,6 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
     ///
-    /// [`JsString`]: js_sys::JsString
     /// [`Creep`]: crate::objects::Creep
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn creeps() -> Object;
@@ -62,7 +60,6 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.flags)
     ///
-    /// [`JsString`]: js_sys::JsString
     /// [`Flag`]: crate::objects::Flag
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn flags() -> Object;
@@ -87,32 +84,64 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.powerCreeps)
     ///
-    /// [`JsString`]: js_sys::JsString
     /// [`PowerCreep`]: crate::objects::PowerCreep
     #[wasm_bindgen(static_method_of = Game, getter = powerCreeps)]
     pub fn power_creeps() -> Object;
 
-    // todo - resources
+    /// Get an [`Object`] with all of your account resources, with [`IntershardResourceType`] keys and integer values.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.resources)
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn resources() -> Object;
 
     /// Get an [`Object`] with the rooms visible for the current tick, which contains room names in [`JsString`] form as keys and [`Room`] objects as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
     ///
-    /// [`JsString`]: js_sys::JsString
     /// [`Room`]: crate::objects::Room
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn rooms() -> Object;
 
-    // todo shard and down from there
+    /// Get a [`JsString`] with the name of the shard being run on.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.shard)
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn shard() -> JsString;
+
+    /// Get an [`Object`] with all of your spawns, which contains spawn names in [`JsString`] form as keys and [`StructureSpawn`] objects as values.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
+    ///
+    /// [`StructureSpawn`]: crate::objects::StructureSpawn
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn spawns() -> Object;
+
+    /// Get an [`Object`] with all of your owned structures, which contains object IDs in [`JsString`] form as keys and [`Structure`] objects as values.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
+    ///
+    /// [`Structure`]: crate::objects::Structure
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn structures() -> Object;
 
     /// Get the current time, the number of ticks the game has been running.
     ///
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.time)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn time() -> u32;
+
+    /// Get the [`RoomObject`] represented by a given object ID, if it is still alive and visible.
+    ///
+    /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
+    #[wasm_bindgen(static_method_of = Game, js_name = getObjectById)]
+    pub fn get_object_by_id(id: &JsString) -> Option<RoomObject>;
+
+    /// Send an email message to yourself with a given message. Set a group interval to only send messages every `group_interval` minutes.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.notify)
+    #[wasm_bindgen(static_method_of = Game)]
+    pub fn notify(message: &JsString, group_interval: Option<u32>);
 }
-
-
 
 // /// See [http://docs.screeps.com/api/#Game.constructionSites]
 // ///

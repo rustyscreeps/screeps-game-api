@@ -18,10 +18,11 @@ cargo generate --git https://github.com/rustwasm/wasm-pack-template
 
 ## Add some bits to the bot!
 
-Add the library dependency to the `Cargo.toml`:
+Add the library dependency to the `Cargo.toml` as well as web-sys which is used for console logging hooks:
 
 ```
 screeps-game-api = { path = "../screeps-game-api" }
+web-sys = { version = "0.3", features = ["console"] }
 ```
 
 and some lib.rs contents:
@@ -31,14 +32,15 @@ and some lib.rs contents:
 use std::fmt;
 use wasm_bindgen::prelude::*;
 
-use screeps::game::{Game, Room, RoomName, log};
+use screeps::game::{Game, Room, RoomName};
+use web_sys::console;
 
 #[wasm_bindgen(js_name = loop)]
 pub fn game_loop() {
-    log(&format!("Hello from bindgen! {}", Game::time()));
+    console::log_1(&JsString::from(format!("Hello from bindgen! {}", Game::time())));
 
     for room in screeps::game::rooms::values() {
-        log(&format!("{} {}", room.name(), room.energy_available()));
+        console::log_1(&JsString::from(format!("{} {}", String::from(room.name()), room.energy_available())));
     }
 }
 ```

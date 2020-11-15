@@ -10,7 +10,7 @@ mod resource;
 mod room;
 mod room_object;
 mod room_position;
-// mod room_terrain;
+mod room_terrain;
 // mod room_visual;
 mod ruin;
 mod source;
@@ -52,6 +52,7 @@ pub use self::{
     room::Room,
     room_object::RoomObject,
     room_position::RoomPosition,
+    room_terrain::RoomTerrain,
     ruin::Ruin,
     source::Source,
     store::Store,

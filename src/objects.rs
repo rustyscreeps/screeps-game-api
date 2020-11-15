@@ -30,7 +30,7 @@ mod impls;
 pub use self::{
     impls::{
         ConstructionSite, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, Owner, PowerCreep,
-        Reservation, Resource, Room, RoomObject, RoomPosition, Sign, Source, Store, Structure, StructureContainer,
+        Reservation, Resource, Room, RoomObject, RoomPosition, RoomTerrain, Sign, Source, Store, Structure, StructureContainer,
         StructureController, StructureExtension, StructureExtractor, StructureFactory, StructureInvaderCore, StructureLab, StructureLink, StructureNuker,
         StructureObserver, StructurePowerBank, StructurePowerSpawn, StructureRampart, StructureRoad, StructureSpawn, StructureStorage, StructureTerminal,
         StructureTower, StructureWall, Tombstone},
