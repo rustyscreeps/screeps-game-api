@@ -27,7 +27,7 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn bucket(this: &CpuInfo) -> u32;
 
-    /// Your assigned CPU limits for each shard in an [`Object`], with shard names in [`JsString`] form as keys and numbers as values. This is the same format accepted by [`Game::cpu_set_shard_limits`].
+    /// Your assigned CPU limits for each shard in an [`Object`], with shard names in [`JsString`] form as keys and numbers as values. This is the same format accepted by [`CpuInfo::set_shard_limits`].
     #[wasm_bindgen(method, getter = shardLimits)]
     pub fn shard_limits(this: &CpuInfo) -> Object;
 
@@ -50,6 +50,33 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getUsed)
     #[wasm_bindgen(method, js_name = getUsed)]
     pub fn get_used(this: &CpuInfo) -> f64;
+
+    /// Stop execution of your script, starting with a fresh environment next tick.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.halt)
+    #[wasm_bindgen(method)]
+    pub fn halt(this: &CpuInfo);
+
+    /// Sets new shard limits for your script in an [`Object`], with shard names in [`JsString`] form as keys and numbers as values. This is the same format accepted by [`CpuInfo::shard_limits`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
+    #[wasm_bindgen(method, js_name = setShardLimits)]
+    pub fn set_shard_limits(this: &CpuInfo, limits: &Object) -> i8;
+
+    /// Consume a [`CpuUnlock`] to unlock your full CPU for 24 hours.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.unlock)
+    #[wasm_bindgen(method)]
+    pub fn unlock(this: &CpuInfo) -> i8;
+
+    /// Generate a [`Pixel`], consuming [`PIXEL_COST`] CPU from your bucket.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.unlock)
+    ///
+    /// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
+    /// [`PIXEL_COST`]: crate::constants::PIXEL_COST
+    #[wasm_bindgen(method, js_name = generatePixel)]
+    pub fn generate_pixel(this: &CpuInfo) -> i8;
 }
 
 #[wasm_bindgen]

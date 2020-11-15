@@ -661,6 +661,13 @@ pub const MARKET_ORDER_LIFE_TIME: u32 = 30 * 24 * 3600 * 1000;
 /// Maximum number of total flags a player is allowed to have on a shard.
 pub const FLAGS_LIMIT: u32 = 10_000;
 
+/// Cost, paid from [`game::cpu::bucket`], to generate a pixel using
+/// [`game::cpu::generate_pixel`]
+///
+/// [`game::cpu::bucket`]: crate::game::cpu::bucket
+/// [`game::cpu::generate_pixel`]: crate::game::cpu::generate_pixel
+pub const PIXEL_CPU_COST: u32 = 5000;
+
 // Resources defined in `types.rs`
 
 // REACTIONS defined in `recipes.rs`
