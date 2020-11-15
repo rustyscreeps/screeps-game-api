@@ -645,6 +645,8 @@ extern "C" {
 // 8 => Some(EventType::ReserveController(map.next_value()?)),                  
 // 9 => Some(EventType::UpgradeController(map.next_value()?)),                  
 // 10 => Some(EventType::Exit(map.next_value()?)),                              
+// 11 => Some(EventType::Power(map.next_value()?)),
+// 12 => Some(EventType::Transfer(map.next_value()?)),
 // _ => {                                             return
 // Err(de::Error::custom(format!(                                               
 // "Event Type Unrecognized: {}",                                               
