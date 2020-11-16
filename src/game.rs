@@ -20,13 +20,14 @@ use wasm_bindgen::prelude::*;
 pub mod cpu;
 pub mod gcl;
 pub mod gpl;
-// pub mod map;
+pub mod map;
 // pub mod market;
 
 use self::{
     cpu::CpuInfo,
     gcl::GclInfo,
     gpl::GplInfo,
+    map::MapInfo,
 };
 use crate::objects::RoomObject;
 
@@ -42,7 +43,7 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter = constructionSites)]
     pub fn construction_sites() -> Object;
 
-    /// Get a [`CpuInfo`] object, which contains properties about your CPU usage.
+    /// Get a [`CpuInfo`] object, which contains properties and methods to get information about and manage your CPU and memory resource usage.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu)
     #[wasm_bindgen(static_method_of = Game, getter)]
@@ -76,7 +77,11 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn gpl() -> GplInfo;
 
-    // todo - map
+    /// Get a [`MapInfo`] object, which contains methods for getting information about and finding your way between the rooms making up the game world.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map)
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn map() -> MapInfo;
 
     // todo - market
 

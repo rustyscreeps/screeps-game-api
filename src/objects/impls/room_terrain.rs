@@ -27,7 +27,7 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn get_raw_buffer(this: &RoomTerrain) -> Uint8Array;
 
-    /// Copy the contents of the array buffer into an existing [`Uint8Array`].
+    /// Copy the data about the room's terrain into an existing [`Uint8Array`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.get)
     #[wasm_bindgen(method)]

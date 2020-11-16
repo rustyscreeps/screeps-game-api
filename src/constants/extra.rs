@@ -14,8 +14,17 @@ pub const CREEP_HITS_PER_PART: u32 = 50;
 /// Percentage of energy spent on construction that is list if the construction site is destroyed by being stepped on by a hostile creep.
 pub const CONSTRUCTION_SITE_STOMP_RATIO: f32 = 0.5;
 
+/// Maximum size in bytes (100 KiB) of the string contents allowed for inter shard memory.
+pub const INTER_SHARD_MEMORY_SIZE_LIMIT: u32 = 100 * 1024;
+
 /// Owner username of hostile non-player structures and creeps which create strongholds and spawn in rooms due to energy harvesting.
 pub const INVADER_USERNAME: &str = "Invader";
+
+/// Maximum size in bytes (2 MiB) of the string contents allowed in memory.
+pub const MEMORY_SIZE_LIMIT: u32 = 2 * 1024 * 1024;
+
+/// Maximum size in bytes (100 KiB) of the string contents allowed in memory segments.
+pub const MEMORY_SEGMENT_SIZE_LIMIT: u32 = 100 * 1024;
 
 /// Fatigue points removed per effective move part per tick.
 pub const MOVE_POWER: u32 = 2;

@@ -21,7 +21,7 @@
 
 pub mod constants;
 pub mod game;
-// pub mod inter_shard_memory;
+pub mod inter_shard_memory;
 // pub mod local;
 // pub mod memory;
 pub mod objects;

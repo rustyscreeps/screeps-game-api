@@ -30,9 +30,11 @@ extern "C" {
     #[wasm_bindgen(static_method_of = RawMemory)]
     pub fn get() -> JsString;
 
-    /// Overwrite the stored memory with a new [`JsString`]
+    /// Overwrite the stored memory with a new [`JsString`].  Maximum size [`MEMORY_SIZE_LIMIT`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.set)
+    ///
+    /// [`MEMORY_SIZE_LIMIT`]: crate::constants::MEMORY_SIZE_LIMIT
     #[wasm_bindgen(static_method_of = RawMemory)]
     pub fn set(val: &JsString);
 

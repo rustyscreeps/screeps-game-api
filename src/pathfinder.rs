@@ -37,15 +37,15 @@ extern "C" {
     #[wasm_bindgen]
     pub type SearchOptions;
 
-    /// Room callback, which should return a cost matrix or false.
+    /// Room callback, which should return a [`CostMatrix`], or [`JsValue::FALSE`] to avoid pathing through a room.
     #[wasm_bindgen(method, setter = roomCallback)]
-    //pub fn room_callback(this: &SearchOptions, callback: JsValue);
     pub fn room_callback(this: &SearchOptions, callback: &Closure<dyn FnMut(JsString) -> JsValue>);
 
     /// plain_cost
     #[wasm_bindgen(method, setter = plainCost)]
     pub fn plain_cost(this: &SearchOptions, cost: u8);
 
+    // todo the rest of these
 }
 
 // #[wasm_bindgen]

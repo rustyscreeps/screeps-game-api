@@ -238,11 +238,14 @@ pub enum Color {
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr, IntoEnumIterator)]
 #[repr(u8)]
 pub enum Terrain {
+    // There's no constant for plains, but the absense of a terrain value indicates a plain
     Plain = 0,
+    // TERRAIN_MASK_WALL
     Wall = 1,
+    // TERRAIN_MASK_SWAMP
     Swamp = 2,
-    // unimplemented in game
-    //Lava = 4,
+    // TERRAIN_MASK_LAVA, unimplemented in game
+    // Lava = 4,
 }
 
 /// Translates body part constants.
