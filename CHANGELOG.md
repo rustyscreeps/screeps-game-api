@@ -17,6 +17,7 @@ Unreleased
 - Corrected value of `constants::RAMPART_HITS_MAX_RCL5` and `constants::POWER_SPAWN_HITS`
 - Add the `parse_display::Display` trait to type constant enums which currently implement
   `parse_display::FromStr`, allowing reversal of the conversion from native to constant string
+- Fixed `Position::get_direction_to` which always returned the opposite of what it should
 - Fixed deserialization of `EVENT_POWER` and `EVENT_TRANSFER` events
 - Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
   `IntershardResourceType::AccessKey` resources
