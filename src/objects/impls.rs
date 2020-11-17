@@ -1,4 +1,5 @@
 mod construction_site;
+mod cost_matrix;
 mod creep;
 mod deposit;
 mod flag;
@@ -42,6 +43,7 @@ mod tombstone;
 pub use self::{
     creep::Creep,
     construction_site::ConstructionSite,
+    cost_matrix::CostMatrix,
     deposit::Deposit,
     flag::Flag,
     mineral::Mineral,

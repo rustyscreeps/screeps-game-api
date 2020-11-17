@@ -648,7 +648,7 @@ pub fn ruin_decay_structures(structure_type: StructureType) -> Option<u32> {
 /// remain before decaying.
 pub const PORTAL_DECAY: u32 = 30_000;
 
-// ORDER_SELL / ORDER_BUY defined in `src/game.rs`
+// ORDER_SELL / ORDER_BUY defined in `small_enums.rs`
 
 /// Percentage of order value in credits charged as a fee for market listings.
 pub const MARKET_FEE: f32 = 0.05;

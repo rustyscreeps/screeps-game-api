@@ -2,7 +2,8 @@
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#InterShardMemory)
 
-use js_sys::{Array, JsString, Object};
+use js_sys::JsString;
+
 
 use wasm_bindgen::prelude::*;
 
@@ -30,7 +31,6 @@ extern "C" {
     #[wasm_bindgen(static_method_of = InterShardMemory, js_name = getRemote)]
     pub fn get_remote(val: &JsString) -> Option<JsString>;
 }
-
 
 // //! An interface for communicating between shards.
 // //!

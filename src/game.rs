@@ -21,13 +21,14 @@ pub mod cpu;
 pub mod gcl;
 pub mod gpl;
 pub mod map;
-// pub mod market;
+pub mod market;
 
 use self::{
     cpu::CpuInfo,
     gcl::GclInfo,
     gpl::GplInfo,
     map::MapInfo,
+    market::MarketInfo,
 };
 use crate::objects::RoomObject;
 
@@ -83,7 +84,11 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn map() -> MapInfo;
 
-    // todo - market
+    /// Get a [`MarketInfo`] object, which contains methods for getting information about the market and trading with other players.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market)
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn market() -> MarketInfo;
 
     /// Get an [`Object`] with all of your power creeps, which contains creep names in [`JsString`] form as keys and [`PowerCreep`] objects as values. Note that these power creeps may not be spawned on the current shard, and will not have a position or id if they are not.
     ///

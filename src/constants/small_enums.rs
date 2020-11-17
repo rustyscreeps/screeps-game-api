@@ -360,3 +360,11 @@ impl Density {
         <Density as enum_iterator::IntoEnumIterator>::into_enum_iter()
     }
 }
+
+/// Translates `ORDER_*` constants.
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+pub enum OrderType {
+    Sell = "sell",
+    Buy = "buy",
+}

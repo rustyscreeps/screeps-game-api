@@ -178,7 +178,7 @@ impl StructureType {
     }
 }
 
-// /// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
+/// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
 #[wasm_bindgen]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
 pub enum IntershardResourceType {

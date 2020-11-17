@@ -1,4 +1,5 @@
 use crate::{
+    constants::ResourceType,
     objects::{Creep, OwnedStructure, RoomObject, Structure, Store},
 };
 use wasm_bindgen::prelude::*;
@@ -22,6 +23,12 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.store)
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureLab) -> Store;
+
+    /// Get the type of mineral currently contained in the lab, which can only hold one type at a time
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.mineralType)
+    #[wasm_bindgen(method, getter = mineralType)]
+    pub fn mineral_type(this: &StructureLab) -> Option<ResourceType>;
 
     /// Boost a [`Creep`] in melee range, consuming [`LAB_BOOST_ENERGY`] energy and [`LAB_BOOST_MINERAL`] of the boost compound from the [`StructureLab::store`] per boosted body part.
     ///

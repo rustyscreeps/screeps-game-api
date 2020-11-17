@@ -29,12 +29,11 @@ mod impls;
 
 pub use self::{
     impls::{
-        ConstructionSite, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, Owner, PowerCreep,
-        Reservation, Resource, Room, RoomObject, RoomPosition, RoomTerrain, Sign, Source, Store, Structure, StructureContainer,
-        StructureController, StructureExtension, StructureExtractor, StructureFactory, StructureInvaderCore, StructureLab, StructureLink, StructureNuker,
-        StructureObserver, StructurePowerBank, StructurePowerSpawn, StructureRampart, StructureRoad, StructureSpawn, StructureStorage, StructureTerminal,
-        StructureTower, StructureWall, Tombstone},
-    //structure::Structure,
+        ConstructionSite, CostMatrix, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, Owner, PowerCreep,
+        Reservation, Resource, Room, RoomObject, RoomPosition, RoomTerrain, Ruin, Sign, Source, Spawning, Store, Structure, StructureContainer,
+        StructureController, StructureExtension, StructureExtractor, StructureFactory, StructureInvaderCore, StructureKeeperLair, StructureLab, StructureLink, StructureNuker,
+        StructureObserver, StructurePowerBank, StructurePowerSpawn, StructurePortal, StructureRampart, StructureRoad, StructureSpawn, StructureStorage, StructureTerminal,
+        StructureTower, StructureWall, Tombstone, },
 };
 
 // pub use self::{

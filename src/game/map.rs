@@ -1,6 +1,6 @@
 //! Game map related functionality.
 //!
-//! [Screeps documentation](http://docs.screeps.com/api/#Game.map)
+//! [Screeps documentation](https://docs.screeps.com/api/#Game-map)
 
 use js_sys::{Array, JsString, Object};
 

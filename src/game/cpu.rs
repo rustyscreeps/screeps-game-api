@@ -39,13 +39,13 @@ extern "C" {
     #[wasm_bindgen(method, getter = unlockedTime)]
     pub fn unlocked_time(this: &CpuInfo) -> Option<u64>;
 
-    /// Get information about your script's memory heap usage
+    /// Get information about your script's memory heap usage.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
     #[wasm_bindgen(method, js_name = getHeapStatistics)]
     pub fn get_heap_statistics(this: &CpuInfo) -> HeapStatistics;
 
-    /// Get the amount of CPU time used for execution so far this tick
+    /// Get the amount of CPU time used for execution so far this tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getUsed)
     #[wasm_bindgen(method, js_name = getUsed)]
@@ -81,7 +81,7 @@ extern "C" {
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object with info about the memory heap of your virtual machine
+    /// Object with info about the memory heap of your virtual machine.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
     #[wasm_bindgen]
