@@ -18,6 +18,10 @@ Unreleased
 - Add the `parse_display::Display` trait to type constant enums which currently implement
   `parse_display::FromStr`, allowing reversal of the conversion from native to constant string
 - Fixed `Position::get_direction_to` which always returned the opposite of what it should
+- Fixed deserialization of `EVENT_POWER` and `EVENT_TRANSFER` events
+- Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
+  `IntershardResourceType::AccessKey` resources
+- Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
 
 0.8.0 (2020-05-30)
 ==================
@@ -113,6 +117,8 @@ Unreleased
 - Change `pathfinder::search_many` to return an incomplete result when called with no goals to
   prevent a panic due to unexpected return data from javascript.
 - Change `MemoryReference::get` to return a generic error type
+- Change `StructureLab::mineral_type` to return `Option<ResourceType>`, avoiding panic when labs
+  are empty
 
 ### Misc:
 
