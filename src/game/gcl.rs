@@ -10,6 +10,8 @@ extern "C" {
     /// Object with info about your Global Control Level from [`Game::gcl`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.gcl)
+    ///
+    /// [`Game::gcl`]: crate::game::Game::gcl
     #[wasm_bindgen]
     pub type GclInfo;
 

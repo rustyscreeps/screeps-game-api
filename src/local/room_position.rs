@@ -13,7 +13,7 @@ use super::{RoomName, HALF_WORLD_SIZE};
 mod approximate_offsets;
 mod extra_math;
 mod game_math;
-mod game_methods;
+//mod game_methods;
 mod pair_utils;
 mod world_utils;
 
@@ -58,26 +58,18 @@ mod world_utils;
 /// *Note:* serializing using `js!{}` or `MemoryReference::set` will _not_
 /// create a JavaScript `RoomPosition`, only something with the same properties.
 ///
-/// If you need a reference to a `RoomPosition` in JavaScript to use manually,
-/// you have two options:
+/// If you need a reference to a `RoomPosition` in JavaScript to use manually, 
+/// convert the room position to an integer with [`Position::packed_repr`],
+/// then use the [`RoomPosition::new_from_packed`] function to get a reference
+/// to a js-native position.
 ///
-/// - Use `.remote()` to get a `stdweb::Reference`, and then use that reference
-///   in JavaScript
+/// ```no_run
+/// use screeps::{Position, objects::RoomPosition};
 ///
-/// - Convert the room position to an integer with [`Position::packed_repr`],
-///   send that to JS, and use the `pos_from_packed` JavaScript function
-///   provided by this library:
-///
-///   ```no_run
-///   use stdweb::js;
-///   use screeps::Position;
-///
-///   let pos = Position::new(20, 21, "E5N6".parse().unwrap());
-///   let result = js! {
-///       let pos = pos_from_packed(@{pos.packed_repr()});
-///       pos.roomName
-///   };
-///   ```
+/// let pos = Position::new(20, 21, "E5N6".parse().unwrap());
+/// let js_pos = RoomPosition::new_from_packed(pos.packed_repr());
+/// let result = js_pos.room_name();
+/// ```
 ///
 /// # Deserialization
 ///
@@ -363,52 +355,52 @@ impl Ord for Position {
     }
 }
 
-mod stdweb {
-    use stdweb::{Reference, Value};
+// mod stdweb {
+//     use stdweb::{Reference, Value};
 
-    use crate::traits::{TryFrom, TryInto};
+//     use crate::traits::{TryFrom, TryInto};
 
-    use super::Position;
+//     use super::Position;
 
-    impl Position {
-        pub fn remote(self) -> Reference {
-            js_unwrap!(pos_from_packed(@{self.packed_repr()}))
-        }
-    }
+//     impl Position {
+//         pub fn remote(self) -> Reference {
+//             js_unwrap!(pos_from_packed(@{self.packed_repr()}))
+//         }
+//     }
 
-    impl TryFrom<Value> for Position {
-        type Error = <Value as TryInto<String>>::Error;
+//     impl TryFrom<Value> for Position {
+//         type Error = <Value as TryInto<String>>::Error;
 
-        fn try_from(v: Value) -> Result<Position, Self::Error> {
-            if let Value::Number(v) = v {
-                let packed: i32 = v.try_into()?;
-                return Ok(Position::from_packed(packed));
-            }
+//         fn try_from(v: Value) -> Result<Position, Self::Error> {
+//             if let Value::Number(v) = v {
+//                 let packed: i32 = v.try_into()?;
+//                 return Ok(Position::from_packed(packed));
+//             }
 
-            let value = js! {
-                return @{v}.__packedPos;
-            };
+//             let value = js! {
+//                 return @{v}.__packedPos;
+//             };
 
-            match value {
-                Value::Undefined => {
-                    let x = js! {v.x}.try_into()?;
-                    let y = js! {v.y}.try_into()?;
-                    let room_name = js! {v.roomName}.try_into()?;
-                    Ok(Self::new(x, y, room_name))
-                }
-                other => Ok(Self::from_packed(other.try_into()?)),
-            }
-        }
-    }
+//             match value {
+//                 Value::Undefined => {
+//                     let x = js! {v.x}.try_into()?;
+//                     let y = js! {v.y}.try_into()?;
+//                     let room_name = js! {v.roomName}.try_into()?;
+//                     Ok(Self::new(x, y, room_name))
+//                 }
+//                 other => Ok(Self::from_packed(other.try_into()?)),
+//             }
+//         }
+//     }
 
-    impl crate::traits::FromExpectedType<Reference> for Position {
-        fn from_expected_type(reference: Reference) -> Result<Self, crate::ConversionError> {
-            Self::try_from(Value::Reference(reference))
-        }
-    }
+//     impl crate::traits::FromExpectedType<Reference> for Position {
+//         fn from_expected_type(reference: Reference) -> Result<Self, crate::ConversionError> {
+//             Self::try_from(Value::Reference(reference))
+//         }
+//     }
 
-    js_serializable!(Position);
-}
+//     js_serializable!(Position);
+// }
 
 mod serde {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -477,6 +469,7 @@ mod test {
         (-2139160576i32, (0, 0, "E0N0")),
         (2139095040i32, (0, 0, "W0S0")),
         (-2139095040i32, (0, 0, "E0S0")),
+        (1285i32, (5, 5, "sim")),
     ];
 
     #[test]

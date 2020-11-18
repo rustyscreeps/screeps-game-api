@@ -22,9 +22,10 @@
 pub mod constants;
 pub mod game;
 pub mod inter_shard_memory;
-// pub mod local;
+pub mod local;
 // pub mod memory;
 pub mod objects;
+pub mod prototypes;
 pub mod pathfinder;
 pub mod raw_memory;
 // pub mod traits;
@@ -35,6 +36,7 @@ pub use crate::{
     constants::*,
     game::*,
     objects::*,
+    local::*,
 };
 
 // pub use crate::{

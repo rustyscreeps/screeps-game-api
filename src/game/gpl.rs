@@ -10,6 +10,8 @@ extern "C" {
     /// Object with info about your Global Power Level from [`Game::gpl`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.gpl)
+    ///
+    /// [`Game::gpl`]: crate::game::Game::gpl
     #[wasm_bindgen]
     pub type GplInfo;
 

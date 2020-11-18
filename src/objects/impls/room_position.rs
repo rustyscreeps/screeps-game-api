@@ -1,4 +1,7 @@
-use crate::constants::{Direction, Look, StructureType};
+use crate::{
+    constants::{Direction, Look, StructureType},
+    prototypes::ROOM_POSITION_PROTOTYPE,
+};
 use wasm_bindgen::prelude::*;
 use js_sys::{Array, JsString, Object};
 
@@ -185,4 +188,13 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
     #[wasm_bindgen(method, js_name = lookFor)]
     pub fn look_for(this: &RoomPosition, ty: Look) -> Option<Array>;
+}
+
+impl RoomPosition {
+    /// Create a new [`RoomPosition`], taking a packed position instead of passing a room name string (which must be parsed) and coordinates.
+    pub fn new_from_packed(packed_pos: i32) -> RoomPosition {
+        let pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
+        pos.set_packed(packed_pos);
+        pos
+    }
 }

@@ -1,4 +1,4 @@
-//! Game map related functionality.
+//! Access the in-game market to buy or sell resources.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-market)
 
@@ -10,9 +10,11 @@ use crate::constants::ResourceType;
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object with info about your credits and market orders and methods for managing your participation in the market
+    /// Object with info about your credits and market orders and methods for managing your participation in the market from [`Game::market`]
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game-market)
+    ///
+    /// [`Game::market`]: crate::game::Game::market
     #[wasm_bindgen]
     pub type MarketInfo;
 

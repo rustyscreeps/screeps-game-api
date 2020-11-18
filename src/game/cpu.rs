@@ -10,6 +10,8 @@ extern "C" {
     /// Object with info about your CPU allocations and limits from [`Game::cpu`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu)
+    ///
+    /// [`Game::cpu`]: crate::game::Game::cpu
     #[wasm_bindgen]
     pub type CpuInfo;
 
@@ -17,11 +19,11 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn limit(this: &CpuInfo) -> u32;
 
-    /// The amount of CPU available for execution this tick, which consists of your [`CpuInfo::limit`] and [`CpuInfo::bucket`] up to a maximum of 500 ([`CPU_TICK_LIMIT_MAX`]).
+    /// The amount of CPU available for execution this tick, which consists of your [`CpuInfo::limit`] and [`CpuInfo::bucket`] up to a maximum of 500 ([`CPU_TICK_LIMIT_MAX`]), or [`f64::INFINITY`] on sim.
     ///
     /// [`CPU_TICK_LIMIT_MAX`]: crate::constants::extra::CPU_TICK_LIMIT_MAX
     #[wasm_bindgen(method, getter = tickLimit)]
-    pub fn tick_limit(this: &CpuInfo) -> u32;
+    pub fn tick_limit(this: &CpuInfo) -> f64;
 
     /// The amount of CPU that has accumulated in your bucket.
     #[wasm_bindgen(method, getter)]
