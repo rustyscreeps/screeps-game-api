@@ -10,7 +10,7 @@
 //!
 //! [1]: crate::objects::Room::find_path
 //! [`PathFinder`]: https://docs.screeps.com/api/#PathFinder
-use std::{f64, marker::PhantomData, mem, borrow::{Borrow}};
+use std::{borrow::Borrow, f64, marker::PhantomData, mem};
 
 use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray, Value};
 
@@ -120,12 +120,18 @@ impl Into<Vec<u8>> for LocalCostMatrix {
 }
 
 impl<'a> CostMatrixSet for LocalCostMatrix {
-    fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
+    fn set_multi<D, B, P, V>(&mut self, data: D)
+    where
+        D: IntoIterator<Item = B>,
+        B: Borrow<(P, V)>,
+        P: HasLocalPosition,
+        V: Borrow<u8>,
+    {
         let iter = data.into_iter();
 
         for entry in iter {
             let (pos, cost) = entry.borrow();
-            
+
             self.set(pos.x(), pos.y(), *cost.borrow());
         }
     }
@@ -171,15 +177,30 @@ pub trait HasLocalPosition {
 }
 
 pub trait CostMatrixSet {
-    fn set<P, V>(&mut self, position: P, cost: V) where P: HasLocalPosition, V: Borrow<u8> {
+    fn set<P, V>(&mut self, position: P, cost: V)
+    where
+        P: HasLocalPosition,
+        V: Borrow<u8>,
+    {
         self.set_multi(&[(position, cost)])
     }
 
-    fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8>;
+    fn set_multi<D, B, P, V>(&mut self, data: D)
+    where
+        D: IntoIterator<Item = B>,
+        B: Borrow<(P, V)>,
+        P: HasLocalPosition,
+        V: Borrow<u8>;
 }
 
 impl<'a> CostMatrixSet for CostMatrix<'a> {
-    fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
+    fn set_multi<D, B, P, V>(&mut self, data: D)
+    where
+        D: IntoIterator<Item = B>,
+        B: Borrow<(P, V)>,
+        P: HasLocalPosition,
+        V: Borrow<u8>,
+    {
         let iter = data.into_iter();
         let (minimum_size, _maximum_size) = iter.size_hint();
         let mut storage: Vec<u8> = Vec::with_capacity(minimum_size * 3);
@@ -247,7 +268,7 @@ pub trait RoomCostResult: Into<Value> {}
 pub enum MultiRoomCostResult<'a> {
     CostMatrix(CostMatrix<'a>),
     Impassable,
-    Default
+    Default,
 }
 
 impl<'a> RoomCostResult for MultiRoomCostResult<'a> {}
@@ -263,14 +284,14 @@ impl<'a> Into<Value> for MultiRoomCostResult<'a> {
         match self {
             MultiRoomCostResult::CostMatrix(m) => m.inner.into(),
             MultiRoomCostResult::Impassable => Value::Bool(false),
-            MultiRoomCostResult::Default => Value::Undefined
+            MultiRoomCostResult::Default => Value::Undefined,
         }
     }
 }
 
 pub enum SingleRoomCostResult<'a> {
     CostMatrix(CostMatrix<'a>),
-    Default
+    Default,
 }
 
 impl<'a> RoomCostResult for SingleRoomCostResult<'a> {}
@@ -285,7 +306,7 @@ impl<'a> Into<Value> for SingleRoomCostResult<'a> {
     fn into(self) -> Value {
         match self {
             SingleRoomCostResult::CostMatrix(m) => m.inner.into(),
-            SingleRoomCostResult::Default => Value::Undefined
+            SingleRoomCostResult::Default => Value::Undefined,
         }
     }
 }
@@ -488,7 +509,7 @@ fn search_real<'a, F>(
 ) -> SearchResults
 where
     F: FnMut(RoomName) -> MultiRoomCostResult<'a> + 'a,
-{       
+{
     let SearchOptions {
         plain_cost,
         swamp_cost,
@@ -502,19 +523,16 @@ where
 
     let mut raw_callback = opts.room_callback;
 
-    let mut callback_boxed = move |room_name: RoomName| -> Value {
-        raw_callback(room_name).into()
-    };
+    let mut callback_boxed = move |room_name: RoomName| -> Value { raw_callback(room_name).into() };
 
     // Type erased and boxed callback: no longer a type specific to the closure
     // passed in, now unified as &Fn
-    let callback_type_erased: &mut (dyn FnMut(RoomName) -> Value + 'a) =
-        &mut callback_boxed;
+    let callback_type_erased: &mut (dyn FnMut(RoomName) -> Value + 'a) = &mut callback_boxed;
 
-    // Overwrite lifetime of reference so it can be passed to javascript. 
+    // Overwrite lifetime of reference so it can be passed to javascript.
     // It's now pretending to be static data. This should be entirely safe
     // because we control the only use of it and it remains valid during the
-    // pathfinder callback. This transmute is necessary because "some lifetime 
+    // pathfinder callback. This transmute is necessary because "some lifetime
     // above the current scope but otherwise unknown" is not a valid lifetime.
     let callback_lifetime_erased: &'static mut dyn FnMut(RoomName) -> Value =
         unsafe { mem::transmute(callback_type_erased) };

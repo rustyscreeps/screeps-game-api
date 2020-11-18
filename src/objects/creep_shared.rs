@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, mem};
 
-use stdweb::{Value, Reference};
+use stdweb::{Reference, Value};
 
 use crate::{
     constants::{Direction, ResourceType, ReturnCode},
@@ -10,9 +10,9 @@ use crate::{
         Creep, FindOptions, HasPosition, PolyStyle, PowerCreep, Resource, RoomObjectProperties,
         Step, Transferable, Withdrawable,
     },
-    pathfinder::{SingleRoomCostResult, CostMatrix, SearchResults},
+    pathfinder::{CostMatrix, SearchResults, SingleRoomCostResult},
+    traits::TryInto,
     ConversionError,
-    traits::TryInto
 };
 
 /// Trait for all wrappers over Screeps JavaScript objects that are creeps or
@@ -108,10 +108,10 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
         let callback_type_erased: &mut (dyn FnMut(RoomName, Reference) -> Value + 'a) =
             &mut callback_boxed;
 
-        // Overwrite lifetime of reference so it can be passed to javascript. 
+        // Overwrite lifetime of reference so it can be passed to javascript.
         // It's now pretending to be static data. This should be entirely safe
         // because we control the only use of it and it remains valid during the
-        // pathfinder callback. This transmute is necessary because "some lifetime 
+        // pathfinder callback. This transmute is necessary because "some lifetime
         // above the current scope but otherwise unknown" is not a valid lifetime.
         let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, Reference) -> Value =
             unsafe { mem::transmute(callback_type_erased) };
@@ -137,7 +137,7 @@ pub unsafe trait SharedCreepProperties: RoomObjectProperties {
                     plainCost: @{plain_cost},
                     swampCost: @{swamp_cost}
                 }
-            );            
+            );
             cb.drop();
             return res;
         )
@@ -303,7 +303,8 @@ where
         self
     }
 
-    /// Sets the style to trace the path used by this creep. See doc for default.
+    /// Sets the style to trace the path used by this creep. See doc for
+    /// default.
     pub fn visualize_path_style(mut self, style: PolyStyle) -> Self {
         self.visualize_path_style = Some(style);
         self
@@ -380,9 +381,12 @@ where
     }
 
     /// Sets options related to FindOptions. Defaults to FindOptions default.
-    pub fn find_options<'b, F2>(self, find_options: FindOptions<'b, F2, SingleRoomCostResult<'b>>) -> MoveToOptions<'b, F2>
+    pub fn find_options<'b, F2>(
+        self,
+        find_options: FindOptions<'b, F2, SingleRoomCostResult<'b>>,
+    ) -> MoveToOptions<'b, F2>
     where
-        F2: FnMut(RoomName, CostMatrix<'b>) -> SingleRoomCostResult<'b>
+        F2: FnMut(RoomName, CostMatrix<'b>) -> SingleRoomCostResult<'b>,
     {
         MoveToOptions {
             reuse_path: self.reuse_path,

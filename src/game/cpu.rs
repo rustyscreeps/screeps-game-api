@@ -55,9 +55,26 @@ pub fn shard_limits() -> collections::HashMap<String, u32> {
     js_unwrap!(Game.cpu.shardLimits)
 }
 
-/// See [http://docs.screeps.com/api/#Game.getHeapStatistics]
+/// Whether you have an active subscription and are able to use your full CPU
+/// limit. See [http://docs.screeps.com/api/#Game.cpu]
 ///
-/// [http://docs.screeps.com/api/#Game.getHeapStatistics]: http://docs.screeps.com/api/#Game.getHeapStatistics
+/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
+pub fn unlocked() -> bool {
+    // undefined on private servers; return true in that case
+    js_unwrap!(Game.cpu.unlocked || Game.cpu.unlocked === undefined)
+}
+
+/// Time of expiration of your current CPU subscription in milliseconds since
+/// epoch, or None when locked, or unlocked via subscription. See [http://docs.screeps.com/api/#Game.cpu]
+///
+/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
+pub fn unlocked_time() -> Option<u64> {
+    js_unwrap!(Game.cpu.unlockedTime)
+}
+
+/// See [https://docs.screeps.com/api/#Game.cpu.getHeapStatistics]
+///
+/// [https://docs.screeps.com/api/#Game.cpu.getHeapStatistics]: https://docs.screeps.com/api/#Game.cpu.getHeapStatistics
 ///
 /// Returns object with all 0 values if heap statistics are not available.
 pub fn get_heap_statistics() -> HeapStatistics {
@@ -73,25 +90,48 @@ pub fn get_heap_statistics() -> HeapStatistics {
     }
 }
 
-/// See [http://docs.screeps.com/api/#Game.getUsed]
+/// See [https://docs.screeps.com/api/#Game.cpu.getUsed]
 ///
-/// [http://docs.screeps.com/api/#Game.getUsed]: http://docs.screeps.com/api/#Game.getUsed
+/// [https://docs.screeps.com/api/#Game.cpu.getUsed]: https://docs.screeps.com/api/#Game.cpu.getUsed
 pub fn get_used() -> f64 {
     js_unwrap!(Game.cpu.getUsed())
 }
 
-/// See [http://docs.screeps.com/api/#Game.setShardLimits]
-///
-/// [http://docs.screeps.com/api/#Game.setShardLimits]: http://docs.screeps.com/api/#Game.setShardLimits
-pub fn set_shard_limits(limits: collections::HashMap<String, u32>) -> ReturnCode {
-    js_unwrap!(Game.cpu.setShardLimits(@{limits}))
-}
-
 /// Reset your runtime environment and wipe all data in heap memory.
 ///
-/// See [Game.cpu.halt()](https://docs.screeps.com/api/#Game.halt).
+/// See [`Game.cpu.halt`](https://docs.screeps.com/api/#Game.cpu.halt).
 pub fn halt() {
     js! {
         Game.cpu.halt();
     }
+}
+
+/// See [https://docs.screeps.com/api/#Game.cpu.setShardLimits]
+///
+/// [https://docs.screeps.com/api/#Game.cpu.setShardLimits]: https://docs.screeps.com/api/#Game.cpu.setShardLimits
+pub fn set_shard_limits(limits: collections::HashMap<String, u32>) -> ReturnCode {
+    js_unwrap!(Game.cpu.setShardLimits(@{limits}))
+}
+
+/// Spend a [`CPUUnlock`] from your intershard resource inventory to unlock your
+/// full CPU limit for 24 hours
+///
+/// See [`Game.cpu.unlock`](https://docs.screeps.com/api/#Game.cpu.unlock).
+///
+/// [`CPUUnlock`]: crate::constants::types::IntershardResourceType::CPUUnlock
+pub fn unlock() -> ReturnCode {
+    // undefined on private servers, return OK in that case
+    js_unwrap!(typeof(Game.cpu.unlock) == "function" && Game.cpu.unlock() || 0)
+}
+
+/// Generate a [`Pixel`], spending [`PIXEL_CPU_COST`] from [`game::cpu::bucket`]
+///
+/// See [`Game.cpu.generatePixel`](https://docs.screeps.com/api/#Game.cpu.generatePixel).
+///
+/// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
+/// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
+/// [`game::cpu::bucket`]: crate::game::cpu::bucket
+pub fn generate_pixel() -> ReturnCode {
+    // undefined on private servers, return OK in that case
+    js_unwrap!(typeof(Game.cpu.generatePixel) == "function" && Game.cpu.generatePixel() || 0)
 }

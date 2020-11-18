@@ -207,6 +207,9 @@ function __resource_type_num_to_str(num) {
         case 83: return RESOURCE_EMANATION;
         case 84: return RESOURCE_ESSENCE;
         case 1001: return SUBSCRIPTION_TOKEN;
+        case 1002: return CPU_UNLOCK;
+        case 1003: return PIXEL;
+        case 1004: return ACCESS_KEY;
         default: throw new Error("unknown resource type integer encoding " + num);
     }
 }
@@ -298,6 +301,9 @@ function __resource_type_str_to_num(str) {
         case RESOURCE_EMANATION: return 83;
         case RESOURCE_ESSENCE: return 84;
         case SUBSCRIPTION_TOKEN: return 1001;
+        case CPU_UNLOCK: return 1002;
+        case PIXEL: return 1003;
+        case ACCESS_KEY: return 1004;
         default: throw new Error("unknown resource type " + str);
     }
 }
