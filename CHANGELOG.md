@@ -113,6 +113,8 @@ Unreleased
 - Change `pathfinder::search_many` to return an incomplete result when called with no goals to
   prevent a panic due to unexpected return data from javascript.
 - Change `MemoryReference::get` to return a generic error type
+- Change `StructureLab::mineral_type` to return `Option<ResourceType>`, avoiding panic when labs
+  are empty
 
 ### Misc:
 
