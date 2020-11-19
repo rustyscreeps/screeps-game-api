@@ -20,12 +20,15 @@ use crate::{
     objects::{
         ConstructionSite, Creep, Deposit, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource,
         Room, RoomTerrain, RoomVisual, Ruin, Source, Structure, StructureController,
-        StructureStorage, StructureTerminal, Tombstone,
+        StructureStorage, Tombstone,
     },
     pathfinder::{CostMatrix, RoomCostResult, SingleRoomCostResult},
     traits::{TryFrom, TryInto},
     ConversionError,
 };
+
+#[cfg(not(feature = "seasonal-season-1"))]
+use crate::objects::StructureTerminal;
 
 simple_accessors! {
     impl Room {
@@ -34,6 +37,12 @@ simple_accessors! {
         pub fn energy_capacity_available() -> u32 = energyCapacityAvailable;
         pub fn name() -> RoomName = name;
         pub fn storage() -> Option<StructureStorage> = storage;
+    }
+}
+
+#[cfg(not(feature = "seasonal-season-1"))]
+simple_accessors! {
+    impl Room {
         pub fn terminal() -> Option<StructureTerminal> = terminal;
     }
 }

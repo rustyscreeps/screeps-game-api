@@ -41,3 +41,6 @@ stdweb-derive = "0.5"
 
 [features]
 check-all-casts = []
+
+# Seasonal server, season 1; market and terminal structures removed, score structures and resource added
+seasonal-season-1 = []

@@ -66,6 +66,7 @@ pub enum Structure {
     Road(StructureRoad),
     Spawn(StructureSpawn),
     Storage(StructureStorage),
+    #[cfg(not(feature = "seasonal-season-1"))]
     Terminal(StructureTerminal),
     Tower(StructureTower),
     Wall(StructureWall),
@@ -92,6 +93,7 @@ impl Structure {
     ///     }
     /// }
     /// ```
+    #[cfg(not(feature = "seasonal-season-1"))]
     pub fn as_transferable(&self) -> Option<&dyn Transferable> {
         match_some_structure_variants!(
             self,
@@ -102,12 +104,35 @@ impl Structure {
         )
     }
 
+    #[cfg(feature = "seasonal-season-1")]
+    pub fn as_transferable(&self) -> Option<&dyn Transferable> {
+        match_some_structure_variants!(
+            self,
+            {
+                Container, Extension, Factory, Lab, Link, Nuker, PowerSpawn, Spawn, Storage, Tower
+            },
+            v => v
+        )
+    }
+
     /// Cast this as something which can be withdrawn from
+    #[cfg(not(feature = "seasonal-season-1"))]
     pub fn as_withdrawable(&self) -> Option<&dyn Withdrawable> {
         match_some_structure_variants!(
             self,
             {
                 Container, Extension, Factory, Lab, Link, PowerSpawn, Spawn, Storage, Terminal, Tower
+            },
+            v => v
+        )
+    }
+
+    #[cfg(feature = "seasonal-season-1")]
+    pub fn as_withdrawable(&self) -> Option<&dyn Withdrawable> {
+        match_some_structure_variants!(
+            self,
+            {
+                Container, Extension, Factory, Lab, Link, PowerSpawn, Spawn, Storage, Tower
             },
             v => v
         )
@@ -140,6 +165,7 @@ impl Structure {
             Structure::Road(v) => Some(v),
             Structure::Spawn(v) => Some(v),
             Structure::Storage(v) => Some(v),
+            #[cfg(not(feature = "seasonal-season-1"))]
             Structure::Terminal(v) => Some(v),
             Structure::Tower(v) => Some(v),
             Structure::Wall(v) => Some(v),
@@ -176,6 +202,7 @@ impl Structure {
             Structure::Road(_) => None,
             Structure::Spawn(v) => Some(v),
             Structure::Storage(v) => Some(v),
+            #[cfg(not(feature = "seasonal-season-1"))]
             Structure::Terminal(v) => Some(v),
             Structure::Tower(v) => Some(v),
             Structure::Wall(_) => None,
@@ -192,11 +219,23 @@ impl Structure {
         )
     }
 
+    #[cfg(not(feature = "seasonal-season-1"))]
     pub fn as_has_cooldown(&self) -> Option<&dyn HasCooldown> {
         match_some_structure_variants!(
             self,
             {
                 Extractor, Factory, Lab, Link, Nuker, Terminal
+            },
+            v => v
+        )
+    }
+
+    #[cfg(feature = "seasonal-season-1")]
+    pub fn as_has_cooldown(&self) -> Option<&dyn HasCooldown> {
+        match_some_structure_variants!(
+            self,
+            {
+                Extractor, Factory, Lab, Link, Nuker
             },
             v => v
         )
@@ -212,11 +251,23 @@ impl Structure {
         )
     }
 
+    #[cfg(not(feature = "seasonal-season-1"))]
     pub fn as_has_store(&self) -> Option<&dyn HasStore> {
         match_some_structure_variants!(
             self,
             {
                 Container, Extension, Factory, Lab, Link, Nuker, PowerSpawn, Spawn, Storage, Terminal, Tower
+            },
+            v => v
+        )
+    }
+
+    #[cfg(feature = "seasonal-season-1")]
+    pub fn as_has_store(&self) -> Option<&dyn HasStore> {
+        match_some_structure_variants!(
+            self,
+            {
+                Container, Extension, Factory, Lab, Link, Nuker, PowerSpawn, Spawn, Storage, Tower
             },
             v => v
         )

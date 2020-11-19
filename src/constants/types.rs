@@ -40,6 +40,7 @@ pub enum StructureType {
     PowerSpawn = 13,
     Extractor = 14,
     Lab = 15,
+    #[cfg(not(feature = "seasonal-season-1"))]
     Terminal = 16,
     Container = 17,
     Nuker = 18,

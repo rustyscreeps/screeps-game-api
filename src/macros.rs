@@ -457,6 +457,7 @@ macro_rules! match_structure_variants {
             Structure::Road($name) => $action,
             Structure::Spawn($name) => $action,
             Structure::Storage($name) => $action,
+            #[cfg(not(feature = "seasonal-season-1"))]
             Structure::Terminal($name) => $action,
             Structure::Tower($name) => $action,
             Structure::Wall($name) => $action,
@@ -487,6 +488,7 @@ macro_rules! construct_structure_variants {
             StructureType::Road => Structure::Road($action),
             StructureType::Spawn => Structure::Spawn($action),
             StructureType::Storage => Structure::Storage($action),
+            #[cfg(not(feature = "seasonal-season-1"))]
             StructureType::Terminal => Structure::Terminal($action),
             StructureType::Tower => Structure::Tower($action),
             StructureType::Wall => Structure::Wall($action),

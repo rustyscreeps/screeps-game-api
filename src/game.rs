@@ -15,6 +15,7 @@ pub mod cpu;
 pub mod gcl;
 pub mod gpl;
 pub mod map;
+#[cfg(not(feature = "seasonal-season-1"))]
 pub mod market;
 pub mod shards;
 
