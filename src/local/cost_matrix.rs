@@ -1,3 +1,5 @@
+use crate::objects::CostMatrix;
+
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
     /// Length should be 2500.
@@ -32,6 +34,12 @@ impl LocalCostMatrix {
     pub fn get(&self, x: u8, y: u8) -> u8 {
         self.bits[pos_as_idx(x, y)]
     }
+
+
+    pub fn get_bits<'a>(&'a self) -> &'a [u8] {
+        &self.bits
+    }
+
 
     // /// Copies all data into an JavaScript CostMatrix for use.
     // ///
@@ -100,6 +108,17 @@ impl Into<Vec<u8>> for LocalCostMatrix {
         self.bits
     }
 }
+
+impl From<CostMatrix> for LocalCostMatrix {
+    fn from(js_matrix: CostMatrix) -> Self {
+        let array = js_matrix.get_bits();
+
+        LocalCostMatrix {
+            bits: array.to_vec(),
+        }
+    }
+}
+
 
 // impl<'a> CostMatrixSet for LocalCostMatrix {
 //     fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {

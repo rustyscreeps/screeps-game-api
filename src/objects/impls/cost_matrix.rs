@@ -1,6 +1,11 @@
 use wasm_bindgen::prelude::*;
 
-use js_sys::{Array, Uint8Array};
+use crate::{
+    local::LocalCostMatrix,
+    prototypes::COST_MATRIX_PROTOTYPE,
+};
+
+use js_sys::{Array, Object, Uint8Array};
 
 #[wasm_bindgen]
 extern "C" {
@@ -58,4 +63,23 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.CostMatrix.deserialize)
     #[wasm_bindgen(static_method_of = CostMatrix, js_namespace = PathFinder)]
     pub fn deserialize(val: Array) -> CostMatrix;
+}
+
+impl CostMatrix {
+    /// Create a new [`CostMatrix`], taking a u8 slice with 2500 members such as that returned from [`LocalCostMatrix::get_bits`] which will be copied across the memory boundary.
+    ///
+    /// [`LocalCostMatrix::get_bits`]: crate::local::LocalCostMatrix
+    pub fn new_from_bits(bits: &[u8]) -> CostMatrix {
+        let matrix = CostMatrix::from(JsValue::from(Object::create(&COST_MATRIX_PROTOTYPE)));
+        matrix.set_bits(&Uint8Array::from(bits));
+        matrix
+    }
+
+    // todo also a function that takes the unsafe view into wasm linear mem with view for a matrix that'll easily go bad
+}
+
+impl From<LocalCostMatrix> for CostMatrix {
+    fn from(matrix: LocalCostMatrix) -> Self {
+        CostMatrix::new_from_bits(matrix.get_bits())
+    }
 }

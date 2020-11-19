@@ -1,5 +1,6 @@
 use crate::{
     constants::{Direction, Look, StructureType},
+    local::Position,
     prototypes::ROOM_POSITION_PROTOTYPE,
 };
 use wasm_bindgen::prelude::*;
@@ -190,11 +191,10 @@ extern "C" {
     pub fn look_for(this: &RoomPosition, ty: Look) -> Option<Array>;
 }
 
-impl RoomPosition {
-    /// Create a new [`RoomPosition`], taking a packed position instead of passing a room name string (which must be parsed) and coordinates.
-    pub fn new_from_packed(packed_pos: i32) -> RoomPosition {
-        let pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
-        pos.set_packed(packed_pos);
-        pos
+impl From<Position> for RoomPosition {
+    fn from(pos: Position) -> Self {
+        let js_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
+        js_pos.set_packed(pos.packed_repr());
+        js_pos
     }
 }

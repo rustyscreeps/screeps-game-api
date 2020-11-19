@@ -10,6 +10,8 @@ use std::{
 
 use super::{RoomName, HALF_WORLD_SIZE};
 
+use crate::objects::RoomPosition;
+
 mod approximate_offsets;
 mod extra_math;
 mod game_math;
@@ -59,15 +61,13 @@ mod world_utils;
 /// create a JavaScript `RoomPosition`, only something with the same properties.
 ///
 /// If you need a reference to a `RoomPosition` in JavaScript to use manually, 
-/// convert the room position to an integer with [`Position::packed_repr`],
-/// then use the [`RoomPosition::new_from_packed`] function to get a reference
-/// to a js-native position.
+/// convert the native [`Position`] to a [`RoomPosition`]:
 ///
 /// ```no_run
 /// use screeps::{Position, objects::RoomPosition};
 ///
 /// let pos = Position::new(20, 21, "E5N6".parse().unwrap());
-/// let js_pos = RoomPosition::new_from_packed(pos.packed_repr());
+/// let js_pos = RoomPosition::from(pos);
 /// let result = js_pos.room_name();
 /// ```
 ///
@@ -352,6 +352,12 @@ impl Ord for Position {
         self.world_y()
             .cmp(&other.world_y())
             .then_with(|| self.world_x().cmp(&other.world_x()))
+    }
+}
+
+impl From<RoomPosition> for Position {
+    fn from(js_pos: RoomPosition) -> Self {
+        Position::from_packed(js_pos.packed())
     }
 }
 
