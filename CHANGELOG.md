@@ -22,6 +22,8 @@ Unreleased
 - Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
   `IntershardResourceType::AccessKey` resources
 - Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
+- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
+  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
 
 0.8.0 (2020-05-30)
 ==================
@@ -62,8 +64,6 @@ Unreleased
   the implementation on `CanDecay` instead
 - Change `game::cpu::limit`, `tick_limit`, `bucket`, `shard_limits`, and `set_shard_limits` to
   use `u32` from `f64`
-- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
-  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
 
 ### Additions:
 
