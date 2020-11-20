@@ -11,10 +11,12 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
     pub type StructureRoad;
 
-    /// The number of ticks until the road will decay, losing TODO CONSTANTS
-    /// hits
+    /// The number of ticks until the road will decay, losing [`ROAD_DECAY_AMOUNT`]
+    /// hits.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureRoad.ticksToDecay)
+    ///
+    /// [`ROAD_DECAY_AMOUNT`]: crate::constants::ROAD_DECAY_AMOUNT
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &StructureRoad) -> u32;
 }

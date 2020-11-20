@@ -25,12 +25,3 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToDeploy)]
     pub fn ticks_to_deploy(this: &StructureInvaderCore) -> u32;
 }
-
-// use crate::objects::StructureInvaderCore;
-
-// simple_accessors! {
-//     impl StructureInvaderCore {
-//         pub fn level() -> u32 = level;
-//         pub fn ticks_to_deploy() -> Option<u32> = ticksToDeploy;
-//     }
-// }

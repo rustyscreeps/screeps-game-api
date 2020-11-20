@@ -22,11 +22,3 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &StructurePowerBank) -> u32;
 }
-
-// use crate::objects::StructurePowerBank;
-
-// simple_accessors! {
-//     impl StructurePowerBank {
-//         pub fn power() -> u32 = power;
-//     }
-// }

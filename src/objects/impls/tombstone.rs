@@ -45,12 +45,3 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &Tombstone) -> u32;
 }
-
-// use crate::objects::{Creep, Tombstone};
-
-// simple_accessors! {
-//     impl Tombstone {
-//         pub fn creep() -> Creep = creep;
-//         pub fn death_time() -> u32 = deathTime;
-//     }
-// }

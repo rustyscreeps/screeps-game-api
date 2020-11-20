@@ -17,11 +17,3 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToSpawn)]
     pub fn ticks_to_spawn(this: &StructureKeeperLair) -> u32;
 }
-
-// use crate::objects::StructureKeeperLair;
-
-// simple_accessors! {
-//     impl StructureKeeperLair {
-//         pub fn ticks_to_spawn() -> u32 = ticksToSpawn;
-//     }
-// }
