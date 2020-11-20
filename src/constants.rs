@@ -91,7 +91,7 @@ pub mod creep {
 /// Re-export of all constants related to structures.
 pub mod structure {
     pub use super::{
-        extra::TERMINAL_SEND_COST_SCALE,
+        extra::{LAB_REACTION_RANGE, TERMINAL_SEND_COST_SCALE},
         numbers::{
             extension_energy_capacity, invader_core_creep_spawn_time, invader_core_expand_time,
             rampart_hits_max, ruin_decay_structures, stronghold_rampart_hits,

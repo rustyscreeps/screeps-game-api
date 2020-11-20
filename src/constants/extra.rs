@@ -25,6 +25,9 @@ pub const INTER_SHARD_MEMORY_SIZE_LIMIT: u32 = 100 * 1024;
 /// strongholds and spawn in rooms due to energy harvesting.
 pub const INVADER_USERNAME: &str = "Invader";
 
+/// Maximum range from a lab to the input or output labs it's interacting with.
+pub const LAB_REACTION_RANGE: u32 = 2;
+
 /// Maximum size in bytes (2 MiB) of the string contents allowed in memory.
 pub const MEMORY_SIZE_LIMIT: u32 = 2 * 1024 * 1024;
 
