@@ -1,13 +1,14 @@
 use crate::{
     constants::StructureType,
-    objects::{RoomObject, Owner},
+    objects::{Owner, RoomObject},
 };
-use wasm_bindgen::prelude::*;
 use js_sys::JsString;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// A [`ConstructionSite`] which is an object representing a structure under construction.
+    /// A [`ConstructionSite`] which is an object representing a structure under
+    /// construction.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite)
     #[wasm_bindgen(extends = RoomObject)]
@@ -25,7 +26,8 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn my(this: &ConstructionSite) -> bool;
 
-    /// The [`Owner`] of this construction site, which contains the owner's username.
+    /// The [`Owner`] of this construction site, which contains the owner's
+    /// username.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.owner)
     #[wasm_bindgen(method, getter)]
@@ -37,7 +39,8 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn progress(this: &ConstructionSite) -> u32;
 
-    /// The total progess toward constuction progress needed for the structure to be completed.
+    /// The total progess toward constuction progress needed for the structure
+    /// to be completed.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.progressTotal)
     #[wasm_bindgen(method, getter = progressTotal)]

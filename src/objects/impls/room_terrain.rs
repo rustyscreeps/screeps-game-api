@@ -1,5 +1,5 @@
-use wasm_bindgen::prelude::*;
 use js_sys::{JsString, Uint8Array};
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -9,7 +9,8 @@ extern "C" {
     #[wasm_bindgen(js_namespace = Room, js_name = Terrain)]
     pub type RoomTerrain;
 
-    /// Gets the terrain for any room by name, regardless of current visibility of the room.
+    /// Gets the terrain for any room by name, regardless of current visibility
+    /// of the room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.constructor)
     #[wasm_bindgen(constructor, js_namespace = Room)]
@@ -21,7 +22,8 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn get(this: &RoomTerrain, x: u8, y: u8) -> u8;
 
-    /// Get a copy of the underlying Uint8Array with the data about the room's terrain.
+    /// Get a copy of the underlying Uint8Array with the data about the room's
+    /// terrain.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.get)
     #[wasm_bindgen(method)]
@@ -33,8 +35,6 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn get_raw_buffer_to_array(this: &RoomTerrain, destination: &Uint8Array) -> i8;
 }
-
-
 
 // use stdweb::UnsafeTypedArray;
 
@@ -90,7 +90,8 @@ extern "C" {
 //     ) -> Result<(), ReturnCode> {
 //         let is_success: bool;
 //         {
-//             let arr: UnsafeTypedArray<'_, u8> = unsafe { UnsafeTypedArray::new(&buffer[0..2500]) };
+//             let arr: UnsafeTypedArray<'_, u8> = unsafe {
+// UnsafeTypedArray::new(&buffer[0..2500]) };
 
 //             is_success = js! {
 //                 var bytes = @{arr};

@@ -1,6 +1,4 @@
-use crate::{
-    objects::{OwnedStructure, RoomObject, Structure},
-};
+use crate::objects::{OwnedStructure, RoomObject, Structure};
 use js_sys::{Date, JsString};
 use wasm_bindgen::prelude::*;
 
@@ -12,7 +10,8 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
     pub type StructureController;
 
-    /// Whether power is enabled in the room, allowing power creeps to use powers.
+    /// Whether power is enabled in the room, allowing power creeps to use
+    /// powers.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.isPowerEnabled)
     #[wasm_bindgen(method, getter = isPowerEnabled)]
@@ -30,25 +29,29 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn progress(this: &StructureController) -> u32;
 
-    /// The total [`StructureController::progress`] needed to upgrade the controller to the next level.
+    /// The total [`StructureController::progress`] needed to upgrade the
+    /// controller to the next level.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.progressTotal)
     #[wasm_bindgen(method, getter = progressTotal)]
     pub fn progress_total(this: &StructureController) -> u32;
 
-    /// Information about the reservation of this controller, if it is currently reserved.
+    /// Information about the reservation of this controller, if it is currently
+    /// reserved.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.reservation)
     #[wasm_bindgen(method, getter)]
     pub fn reservation(this: &StructureController) -> Option<Reservation>;
 
-    /// The number of ticks remaining in safe mode, or 0 if safe mode isn't currently active.
+    /// The number of ticks remaining in safe mode, or 0 if safe mode isn't
+    /// currently active.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.safeMode)
     #[wasm_bindgen(method, getter = safeMode)]
     pub fn safe_mode(this: &StructureController) -> u32;
 
-    /// The number of of available safe mode activations, which can be increased by using [`Creep::generate_safe_mode`]
+    /// The number of of available safe mode activations, which can be increased
+    /// by using [`Creep::generate_safe_mode`]
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.safeModeAvailable)
     ///
@@ -62,7 +65,8 @@ extern "C" {
     #[wasm_bindgen(method, getter = safeModeCooldown)]
     pub fn safe_mode_cooldown(this: &StructureController) -> u32;
 
-    /// Information about the sign on this controller, if it has been signed by [`Creep::sign_controller`].
+    /// Information about the sign on this controller, if it has been signed by
+    /// [`Creep::sign_controller`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.sign)
     ///
@@ -70,13 +74,15 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn sign(this: &StructureController) -> Option<Sign>;
 
-    /// The number of ticks until the level of the controller will be decremented due to a lack of [`Creep::upgrade_controller`] activity.
+    /// The number of ticks until the level of the controller will be
+    /// decremented due to a lack of [`Creep::upgrade_controller`] activity.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.ticksToDowngrade)
     #[wasm_bindgen(method, getter = ticksToDowngrade)]
     pub fn ticks_to_downgrade(this: &StructureController) -> u32;
 
-    /// The number of ticks until the controller can be upgraded, or have safe mode activated, due to [`Creep::attack_controller`].
+    /// The number of ticks until the controller can be upgraded, or have safe
+    /// mode activated, due to [`Creep::attack_controller`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.upgradeBlocked)
     ///
@@ -84,7 +90,8 @@ extern "C" {
     #[wasm_bindgen(method, getter = upgradeBlocked)]
     pub fn upgrade_blocked(this: &StructureController) -> u32;
 
-    /// Activate safe mode for the room, preventing hostile creep actions in the room for 20,000 ticks
+    /// Activate safe mode for the room, preventing hostile creep actions in the
+    /// room for 20,000 ticks
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.activateSafeMode)
     #[wasm_bindgen(method, js_name = activateSafeMode)]
@@ -97,7 +104,6 @@ extern "C" {
     pub fn unclaim(this: &StructureController) -> i8;
 }
 
-
 #[wasm_bindgen]
 extern "C" {
     /// Object with info on who has reserved this [`StructureController`]
@@ -106,7 +112,8 @@ extern "C" {
     #[wasm_bindgen]
     pub type Reservation;
 
-    /// The name of the player that has reserved this controller as a [`JsString`].
+    /// The name of the player that has reserved this controller as a
+    /// [`JsString`].
     #[wasm_bindgen(method, getter)]
     pub fn username(this: &Reservation) -> JsString;
 
@@ -114,7 +121,6 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToEnd)]
     pub fn ticks_to_end(this: &Reservation) -> u32;
 }
-
 
 #[wasm_bindgen]
 extern "C" {
@@ -124,7 +130,8 @@ extern "C" {
     #[wasm_bindgen]
     pub type Sign;
 
-    /// The name of the player that has reserved this controller as a [`JsString`].
+    /// The name of the player that has reserved this controller as a
+    /// [`JsString`].
     #[wasm_bindgen(method, getter)]
     pub fn username(this: &Sign) -> JsString;
 
@@ -140,7 +147,6 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn datetime(this: &Sign) -> Date;
 }
-
 
 // use stdweb::Value;
 

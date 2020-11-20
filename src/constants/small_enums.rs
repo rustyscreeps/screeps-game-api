@@ -1,21 +1,20 @@
 //! Various constants translated as small enums.
 // use std::{borrow::Cow, fmt, str::FromStr};
 
-use std::fmt;
 use enum_iterator::IntoEnumIterator;
-use serde_repr::{Deserialize_repr, Serialize_repr};
-use wasm_bindgen::prelude::*;
 use num_derive::FromPrimitive;
+use serde_repr::{Deserialize_repr, Serialize_repr};
+use std::fmt;
+use wasm_bindgen::prelude::*;
 // use parse_display::FromStr;
-use serde::{
-    // de::{Deserializer, Error as _, Unexpected},
-    Deserialize, Serialize,
-};
+use serde::{Deserialize, Serialize};
 
 // bindgen can't take an i8, needs custom boundary functions
 /// Translates return code constants.
 //#[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr)]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
+)]
 #[repr(i8)]
 pub enum ReturnCode {
     Ok = 0,
@@ -53,7 +52,9 @@ pub enum ReturnCode {
 
 /// Translates `FIND_*` constants.
 #[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr)]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
+)]
 #[repr(u8)]
 pub enum Find {
     /// Find all exit positions at the top of the room
@@ -89,7 +90,18 @@ pub enum Find {
 
 /// Translates direction constants.
 #[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr, IntoEnumIterator)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Hash,
+    FromPrimitive,
+    Serialize_repr,
+    Deserialize_repr,
+    IntoEnumIterator,
+)]
 #[repr(u8)]
 pub enum Direction {
     Top = 1,
@@ -161,7 +173,18 @@ impl fmt::Display for Direction {
 /// [`Room::find`]: crate::objects::Room::find
 /// [`Room::find_exit_to`]: crate::objects::Room::find_exit_to
 #[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr, IntoEnumIterator)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Hash,
+    FromPrimitive,
+    Serialize_repr,
+    Deserialize_repr,
+    IntoEnumIterator,
+)]
 #[repr(u8)]
 pub enum ExitDirection {
     Top = 1,
@@ -217,7 +240,16 @@ pub enum Look {
 /// Translates `COLOR_*` constants.
 #[wasm_bindgen]
 #[derive(
-    Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr, IntoEnumIterator
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    FromPrimitive,
+    Hash,
+    Deserialize_repr,
+    Serialize_repr,
+    IntoEnumIterator,
 )]
 #[repr(u8)]
 pub enum Color {
@@ -235,7 +267,18 @@ pub enum Color {
 
 /// Translates `TERRAIN_*` constants.
 #[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr, IntoEnumIterator)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Hash,
+    FromPrimitive,
+    Serialize_repr,
+    Deserialize_repr,
+    IntoEnumIterator,
+)]
 #[repr(u8)]
 pub enum Terrain {
     // There's no constant for plains, but the absense of a terrain value indicates a plain
@@ -244,8 +287,8 @@ pub enum Terrain {
     Wall = 1,
     // TERRAIN_MASK_SWAMP
     Swamp = 2,
-    // TERRAIN_MASK_LAVA, unimplemented in game
-    // Lava = 4,
+    /* TERRAIN_MASK_LAVA, unimplemented in game
+     * Lava = 4, */
 }
 
 /// Translates body part constants.
@@ -275,15 +318,16 @@ impl Part {
             Part::Tough => 10,
             Part::Heal => 250,
             Part::Claim => 600,
-            // I guess bindgen is adding a `#[non_exhaustive]` onto the enum and forcing us to do this:
+            // I guess bindgen is adding a `#[non_exhaustive]` onto the enum and forcing us to do
+            // this:
             _ => 0,
         }
     }
 
     // /// Helper function for deserializing from a string rather than a fake
     // /// integer value.
-    // pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-    //     let s: Cow<'de, str> = Cow::deserialize(d)?;
+    // pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self,
+    // D::Error> {     let s: Cow<'de, str> = Cow::deserialize(d)?;
     //     Self::from_str(&s).map_err(|_| {
     //         D::Error::invalid_value(
     //             Unexpected::Str(&s),

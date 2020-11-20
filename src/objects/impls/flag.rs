@@ -5,10 +5,11 @@ use crate::{
 use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
-
 #[wasm_bindgen]
 extern "C" {
-    /// A [`Flag`], which can be placed by the player or created automatically and are only visible to their owners. You can't create more than [`FLAGS_LIMIT`].
+    /// A [`Flag`], which can be placed by the player or created automatically
+    /// and are only visible to their owners. You can't create more than
+    /// [`FLAGS_LIMIT`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Flag)
     ///
@@ -58,7 +59,6 @@ extern "C" {
     #[wasm_bindgen(method, js_name = setPosition)]
     pub fn set_position(this: &Flag, pos: RoomPosition);
 }
-
 
 // use stdweb::Value;
 

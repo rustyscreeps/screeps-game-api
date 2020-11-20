@@ -5,16 +5,17 @@
 //! optimized for Screeps.
 //!
 //! This is both more fine-grained and less automatic than other pathing
-//! methods, such as [`Room::find_path_to`]. [`PathFinder`] knows about terrain by
-//! default, but you must configure any other obstacles you want it to consider.
+//! methods, such as [`Room::find_path_to`]. [`PathFinder`] knows about terrain
+//! by default, but you must configure any other obstacles you want it to
+//! consider.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#PathFinder)
 //!
 //! [`Room::find_path_to`]: crate::objects::Room::find_path_to
 
 use crate::objects::RoomPosition;
-use wasm_bindgen::prelude::*;
 use js_sys::{Array, JsString};
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -24,40 +25,53 @@ extern "C" {
 
     /// Search for a path from an origin to a goal or array of goals.
     ///
-    /// The goal, or each entry in the goal array if using an array, must be an object with a position and optionally a `range` key, if a target distance other than 0 is needed.
+    /// The goal, or each entry in the goal array if using an array, must be an
+    /// object with a position and optionally a `range` key, if a target
+    /// distance other than 0 is needed.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.search)
     #[wasm_bindgen(static_method_of = PathFinder)]
-    pub fn search(origin: &RoomPosition, goal: &JsValue, options: Option<&SearchOptions>) -> SearchResults;
+    pub fn search(
+        origin: &RoomPosition,
+        goal: &JsValue,
+        options: Option<&SearchOptions>,
+    ) -> SearchResults;
 }
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object that represents a set of options for a call to [`PathFinder::search`].
+    /// Object that represents a set of options for a call to
+    /// [`PathFinder::search`].
     #[wasm_bindgen]
     pub type SearchOptions;
 
-    /// Room callback, which should return a [`CostMatrix`], or [`JsValue::FALSE`] to avoid pathing through a room.
+    /// Room callback, which should return a [`CostMatrix`], or
+    /// [`JsValue::FALSE`] to avoid pathing through a room.
     #[wasm_bindgen(method, setter = roomCallback)]
     pub fn room_callback(this: &SearchOptions, callback: &Closure<dyn FnMut(JsString) -> JsValue>);
 
-    /// Set the cost of moving on plains tiles during this pathfinder search. Defaults to 1.
+    /// Set the cost of moving on plains tiles during this pathfinder search.
+    /// Defaults to 1.
     #[wasm_bindgen(method, setter = plainCost)]
     pub fn plain_cost(this: &SearchOptions, cost: u8);
 
-    /// Set the cost of moving on swamp tiles during this pathfinder search. Defaults to 5.
+    /// Set the cost of moving on swamp tiles during this pathfinder search.
+    /// Defaults to 5.
     #[wasm_bindgen(method, setter = swampCost)]
     pub fn swamp_cost(this: &SearchOptions, cost: u8);
 
-    /// Set whether to flee to a certain distance away from the target instead of attempting to find a path to it. Defaults to false.
+    /// Set whether to flee to a certain distance away from the target instead
+    /// of attempting to find a path to it. Defaults to false.
     #[wasm_bindgen(method, setter = flee)]
     pub fn flee(this: &SearchOptions, val: bool);
 
-    /// Set the maximum number of operations to allow the pathfinder to complete before returning an incomplete path. Defaults to 2,000.
+    /// Set the maximum number of operations to allow the pathfinder to complete
+    /// before returning an incomplete path. Defaults to 2,000.
     #[wasm_bindgen(method, setter = maxOps)]
     pub fn max_ops(this: &SearchOptions, ops: u32);
 
-    /// Set the maximum number of rooms allowed to be pathed through. Defaults to 16, maximum of 64.
+    /// Set the maximum number of rooms allowed to be pathed through. Defaults
+    /// to 16, maximum of 64.
     #[wasm_bindgen(method, setter = maxRooms)]
     pub fn max_rooms(this: &SearchOptions, rooms: u8);
 
@@ -65,7 +79,8 @@ extern "C" {
     #[wasm_bindgen(method, setter = maxCost)]
     pub fn max_cost(this: &SearchOptions, cost: u32);
 
-    /// Heuristic weight to use for the A* algorithm to be guided toward the goal. Defaults to 1.2.
+    /// Heuristic weight to use for the A* algorithm to be guided toward the
+    /// goal. Defaults to 1.2.
     #[wasm_bindgen(method, setter = heuristicWeight)]
     pub fn heuristic_weight(this: &SearchOptions, weight: u32);
 }
@@ -76,7 +91,8 @@ extern "C" {
     #[wasm_bindgen]
     pub type SearchResults;
 
-    /// Get the path that was found, an [`Array`] of [`RoomPosition`]. May be incomplete.
+    /// Get the path that was found, an [`Array`] of [`RoomPosition`]. May be
+    /// incomplete.
     #[wasm_bindgen(method, getter)]
     pub fn path(this: &SearchResults) -> Array;
 

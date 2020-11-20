@@ -18,14 +18,15 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral.density)
     #[wasm_bindgen(method, getter)]
     pub fn density(this: &Mineral) -> Density;
-    
+
     /// Type of resource contained in this mineral.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral.mineralType)
     #[wasm_bindgen(method, getter = mineralType)]
     pub fn mineral_type(this: &Mineral) -> ResourceType;
 
-    /// Object ID of the mineral, which can be used to efficiently fetch a fresh reference to the object on subsequent ticks.
+    /// Object ID of the mineral, which can be used to efficiently fetch a fresh
+    /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral.id)
     #[wasm_bindgen(method, getter)]

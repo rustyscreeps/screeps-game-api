@@ -1,6 +1,6 @@
 use crate::objects::{Room, RoomPosition};
-use wasm_bindgen::prelude::*;
 use js_sys::Array;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -15,13 +15,16 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn effects(this: &RoomObject) -> Array;
 
-    /// Position of the object, or `None` if the object is a power creep not spawned on the current shard.
+    /// Position of the object, or `None` if the object is a power creep not
+    /// spawned on the current shard.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.pos)
     #[wasm_bindgen(method, getter)]
     pub fn pos(this: &RoomObject) -> Option<RoomPosition>;
 
-    /// A link to the room that the object is currently in, or `None` if the object is a power creep not spawned on the current shard, or a flag or construction site not in a visible room.
+    /// A link to the room that the object is currently in, or `None` if the
+    /// object is a power creep not spawned on the current shard, or a flag or
+    /// construction site not in a visible room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.room)
     #[wasm_bindgen(method, getter)]

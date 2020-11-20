@@ -60,11 +60,11 @@ mod world_utils;
 /// *Note:* serializing using `js!{}` or `MemoryReference::set` will _not_
 /// create a JavaScript `RoomPosition`, only something with the same properties.
 ///
-/// If you need a reference to a `RoomPosition` in JavaScript to use manually, 
+/// If you need a reference to a `RoomPosition` in JavaScript to use manually,
 /// convert the native [`Position`] to a [`RoomPosition`]:
 ///
 /// ```no_run
-/// use screeps::{Position, objects::RoomPosition};
+/// use screeps::{objects::RoomPosition, Position};
 ///
 /// let pos = Position::new(20, 21, "E5N6".parse().unwrap());
 /// let js_pos = RoomPosition::from(pos);

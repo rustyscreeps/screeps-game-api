@@ -35,11 +35,9 @@ impl LocalCostMatrix {
         self.bits[pos_as_idx(x, y)]
     }
 
-
     pub fn get_bits<'a>(&'a self) -> &'a [u8] {
         &self.bits
     }
-
 
     // /// Copies all data into an JavaScript CostMatrix for use.
     // ///

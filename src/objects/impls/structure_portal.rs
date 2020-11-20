@@ -1,11 +1,10 @@
-use crate::{
-    objects::{RoomObject, Structure},
-};
+use crate::objects::{RoomObject, Structure};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// An object representing a [`StructurePortal`], which allows movement between remote locations or other shards.
+    /// An object representing a [`StructurePortal`], which allows movement
+    /// between remote locations or other shards.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructurePortal)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
@@ -19,8 +18,6 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &StructurePortal) -> Option<u32>;
 }
-
-
 
 // use serde::Deserialize;
 // use stdweb::Value;

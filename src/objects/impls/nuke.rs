@@ -4,13 +4,15 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// A [`Nuke`] in flight, which will deal damage in an area and kill all creeps in the room when it lands.
+    /// A [`Nuke`] in flight, which will deal damage in an area and kill all
+    /// creeps in the room when it lands.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Nuke)
     #[wasm_bindgen(extends = RoomObject)]
     pub type Nuke;
 
-    /// Object ID of the Nuke, which can be used to efficiently fetch a fresh reference to the object on subsequent ticks.
+    /// Object ID of the Nuke, which can be used to efficiently fetch a fresh
+    /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Nuke.id)
     #[wasm_bindgen(method, getter)]
@@ -26,9 +28,8 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Nuke.timeToLand)
     #[wasm_bindgen(method, getter = timeToLand)]
-    pub fn time_to_land	(this: &Nuke) -> u32;
+    pub fn time_to_land(this: &Nuke) -> u32;
 }
-
 
 // use crate::{local::RoomName, objects::Nuke};
 
@@ -39,4 +40,3 @@ extern "C" {
 //         pub fn time_to_land() -> u32 = timeToLand;
 //     }
 // }
-

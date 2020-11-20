@@ -23,20 +23,15 @@ pub mod gpl;
 pub mod map;
 pub mod market;
 
-use self::{
-    cpu::CpuInfo,
-    gcl::GclInfo,
-    gpl::GplInfo,
-    map::MapInfo,
-    market::MarketInfo,
-};
+use self::{cpu::CpuInfo, gcl::GclInfo, gpl::GplInfo, map::MapInfo, market::MarketInfo};
 use crate::objects::RoomObject;
 
 #[wasm_bindgen]
 extern "C" {
     pub type Game;
 
-    /// Get an [`Object`] with all of your construction sites, which contains object ids in [`JsString`] form as keys and [`ConstructionSite`] values.
+    /// Get an [`Object`] with all of your construction sites, which contains
+    /// object ids in [`JsString`] form as keys and [`ConstructionSite`] values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.constructionSites)
     ///
@@ -44,13 +39,17 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter = constructionSites)]
     pub fn construction_sites() -> Object;
 
-    /// Get a [`CpuInfo`] object, which contains properties and methods to get information about and manage your CPU and memory resource usage.
+    /// Get a [`CpuInfo`] object, which contains properties and methods to get
+    /// information about and manage your CPU and memory resource usage.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn cpu() -> CpuInfo;
 
-    /// Get an [`Object`] with all of your creeps, which contains creep names in [`JsString`] form as keys and [`Creep`] objects as values. Note that newly spawned creeps are immediately added to the hash, but will not have an id until the following tick.
+    /// Get an [`Object`] with all of your creeps, which contains creep names in
+    /// [`JsString`] form as keys and [`Creep`] objects as values. Note that
+    /// newly spawned creeps are immediately added to the hash, but will not
+    /// have an id until the following tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
     ///
@@ -58,7 +57,8 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn creeps() -> Object;
 
-    /// Get an [`Object`] with all of your flags, which contains flag names in [`JsString`] form as keys and [`Flag`] objects as values.
+    /// Get an [`Object`] with all of your flags, which contains flag names in
+    /// [`JsString`] form as keys and [`Flag`] objects as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.flags)
     ///
@@ -66,31 +66,38 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn flags() -> Object;
 
-    /// Get a [`GclInfo`] object, which contains properties about your global control level (GCL).
+    /// Get a [`GclInfo`] object, which contains properties about your global
+    /// control level (GCL).
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.gcl)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn gcl() -> GclInfo;
 
-    /// Get a [`GplInfo`] object, which contains properties about your global power level (GPL).
+    /// Get a [`GplInfo`] object, which contains properties about your global
+    /// power level (GPL).
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.gpl)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn gpl() -> GplInfo;
 
-    /// Get a [`MapInfo`] object, which contains methods for getting information about and finding your way between the rooms making up the game world.
+    /// Get a [`MapInfo`] object, which contains methods for getting information
+    /// about and finding your way between the rooms making up the game world.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn map() -> MapInfo;
 
-    /// Get a [`MarketInfo`] object, which contains methods for getting information about the market and trading with other players.
+    /// Get a [`MarketInfo`] object, which contains methods for getting
+    /// information about the market and trading with other players.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn market() -> MarketInfo;
 
-    /// Get an [`Object`] with all of your power creeps, which contains creep names in [`JsString`] form as keys and [`PowerCreep`] objects as values. Note that these power creeps may not be spawned on the current shard, and will not have a position or id if they are not.
+    /// Get an [`Object`] with all of your power creeps, which contains creep
+    /// names in [`JsString`] form as keys and [`PowerCreep`] objects as values.
+    /// Note that these power creeps may not be spawned on the current shard,
+    /// and will not have a position or id if they are not.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.powerCreeps)
     ///
@@ -98,13 +105,16 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter = powerCreeps)]
     pub fn power_creeps() -> Object;
 
-    /// Get an [`Object`] with all of your account resources, with [`IntershardResourceType`] keys and integer values.
+    /// Get an [`Object`] with all of your account resources, with
+    /// [`IntershardResourceType`] keys and integer values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.resources)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn resources() -> Object;
 
-    /// Get an [`Object`] with the rooms visible for the current tick, which contains room names in [`JsString`] form as keys and [`Room`] objects as values.
+    /// Get an [`Object`] with the rooms visible for the current tick, which
+    /// contains room names in [`JsString`] form as keys and [`Room`] objects as
+    /// values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
     ///
@@ -118,7 +128,8 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn shard() -> JsString;
 
-    /// Get an [`Object`] with all of your spawns, which contains spawn names in [`JsString`] form as keys and [`StructureSpawn`] objects as values.
+    /// Get an [`Object`] with all of your spawns, which contains spawn names in
+    /// [`JsString`] form as keys and [`StructureSpawn`] objects as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
     ///
@@ -126,7 +137,9 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn spawns() -> Object;
 
-    /// Get an [`Object`] with all of your owned structures, which contains object IDs in [`JsString`] form as keys and [`Structure`] objects as values.
+    /// Get an [`Object`] with all of your owned structures, which contains
+    /// object IDs in [`JsString`] form as keys and [`Structure`] objects as
+    /// values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
     ///
@@ -140,13 +153,15 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn time() -> u32;
 
-    /// Get the [`RoomObject`] represented by a given object ID, if it is still alive and visible.
+    /// Get the [`RoomObject`] represented by a given object ID, if it is still
+    /// alive and visible.
     ///
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
     #[wasm_bindgen(static_method_of = Game, js_name = getObjectById)]
     pub fn get_object_by_id(id: &JsString) -> Option<RoomObject>;
 
-    /// Send an email message to yourself with a given message. Set a group interval to only send messages every `group_interval` minutes.
+    /// Send an email message to yourself with a given message. Set a group
+    /// interval to only send messages every `group_interval` minutes.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.notify)
     #[wasm_bindgen(static_method_of = Game)]

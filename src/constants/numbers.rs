@@ -579,10 +579,12 @@ pub const DEPOSIT_DECAY_TIME: u32 = 50_000;
 pub const TERMINAL_HITS: u32 = 3000;
 /// Store capacity of terminal structures.
 pub const TERMINAL_CAPACITY: u32 = 300_000;
-/// Currently unused in game (see [`market::calc_transaction_cost`] and [`TERMINAL_SEND_COST_SCALE`] instead).
+/// Currently unused in game (see [`market::calc_transaction_cost`] and
+/// [`TERMINAL_SEND_COST_SCALE`] instead).
 ///
 /// [`market::calc_transaction_cost`]: [`crate::market::calc_transaction_cost`].
-/// [`TERMINAL_SEND_COST_SCALE`]: [`crate::constants::TERMINAL_SEND_COST_SCALE`].
+/// [`TERMINAL_SEND_COST_SCALE`]:
+/// [`crate::constants::TERMINAL_SEND_COST_SCALE`].
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 /// Currently unused in game.
 pub const TERMINAL_MIN_SEND: u32 = 100;

@@ -25,19 +25,14 @@ pub mod inter_shard_memory;
 pub mod local;
 // pub mod memory;
 pub mod objects;
-pub mod prototypes;
 pub mod pathfinder;
+pub mod prototypes;
 pub mod raw_memory;
 // pub mod traits;
 
 // pub use stdweb::private::ConversionError;
 
-pub use crate::{
-    constants::*,
-    game::*,
-    objects::*,
-    local::*,
-};
+pub use crate::{constants::*, game::*, local::*, objects::*};
 
 // pub use crate::{
 //     constants::*,

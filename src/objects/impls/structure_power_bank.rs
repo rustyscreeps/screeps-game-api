@@ -1,11 +1,10 @@
-use crate::{
-    objects::{RoomObject, Structure},
-};
+use crate::objects::{RoomObject, Structure};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// An object representing a [`StructurePowerBank`], which can be destroyed for power resources.
+    /// An object representing a [`StructurePowerBank`], which can be destroyed
+    /// for power resources.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructurePowerBank)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
@@ -23,7 +22,6 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &StructurePowerBank) -> u32;
 }
-
 
 // use crate::objects::StructurePowerBank;
 

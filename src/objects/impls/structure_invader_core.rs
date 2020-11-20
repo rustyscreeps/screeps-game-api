@@ -1,23 +1,25 @@
-use crate::{
-    objects::{OwnedStructure, RoomObject, Structure},
-};
+use crate::objects::{OwnedStructure, RoomObject, Structure};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// An object representing a [`StructureInvaderCore`], which is at the center of NPC strongholds, as well as reserving neutral rooms.
+    /// An object representing a [`StructureInvaderCore`], which is at the
+    /// center of NPC strongholds, as well as reserving neutral rooms.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureInvaderCore)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
     pub type StructureInvaderCore;
 
-    /// The level of the [`StructureInvaderCore`]; 0 is a lesser invader core that simply reserves rooms, while levels 1-5 are strongholds which defend themselves.
+    /// The level of the [`StructureInvaderCore`]; 0 is a lesser invader core
+    /// that simply reserves rooms, while levels 1-5 are strongholds which
+    /// defend themselves.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureInvaderCore.level)
     #[wasm_bindgen(method, getter)]
     pub fn level(this: &StructureInvaderCore) -> u8;
 
-    /// The number of ticks until the [`StructureInvaderCore`] is fully deployed and can be attacked.
+    /// The number of ticks until the [`StructureInvaderCore`] is fully deployed
+    /// and can be attacked.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureInvaderCore.ticksToDeploy)
     #[wasm_bindgen(method, getter = ticksToDeploy)]

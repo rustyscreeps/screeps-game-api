@@ -1,5 +1,5 @@
-use crate::objects::{Creep, OwnedStructure, RoomObject, Structure, Store};
-use js_sys::{Array, Object, JsString};
+use crate::objects::{Creep, OwnedStructure, RoomObject, Store, Structure};
+use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -34,31 +34,40 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn spawning(this: &StructureSpawn) -> Option<Spawning>;
 
-    /// The [`Store`] of the spawn, which contains information about what resources it is it holding.
+    /// The [`Store`] of the spawn, which contains information about what
+    /// resources it is it holding.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.store)
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureSpawn) -> Store;
 
-    /// Create a new creep with the specified body part [`Array`], name [`JsString`], and optional spawning options.
+    /// Create a new creep with the specified body part [`Array`], name
+    /// [`JsString`], and optional spawning options.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.spawnCreep)
     #[wasm_bindgen(method, js_name = spawnCreep)]
-    pub fn spawn_creep(this: &StructureSpawn, body: &Array, name: &JsString, options: Option<Object>) -> i8;
+    pub fn spawn_creep(
+        this: &StructureSpawn,
+        body: &Array,
+        name: &JsString,
+        options: Option<Object>,
+    ) -> i8;
 
-    /// Kill a [`Creep`] in melee range, returning 100% of its TTL-adjusted resources (5x more than if the creep is killed another way). Can be used while spawning.
+    /// Kill a [`Creep`] in melee range, returning 100% of its TTL-adjusted
+    /// resources (5x more than if the creep is killed another way). Can be used
+    /// while spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.recycleCreep)
     #[wasm_bindgen(method, js_name = recycleCreep)]
     pub fn recycle_creep(this: &StructureSpawn, creep: &Creep) -> i8;
 
-    /// Renew a [`Creep`] in melee range, removing all boosts adding to its TTL. Cannot be used while spawning.
+    /// Renew a [`Creep`] in melee range, removing all boosts adding to its TTL.
+    /// Cannot be used while spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.renewCreep)
     #[wasm_bindgen(method, js_name = renewCreep)]
     pub fn renew_creep(this: &StructureSpawn, creep: &Creep) -> i8;
 }
-
 
 #[wasm_bindgen]
 extern "C" {
@@ -68,7 +77,8 @@ extern "C" {
     #[wasm_bindgen(js_namespace = StructureSpawn)]
     pub type Spawning;
 
-    /// Allowed directions for the creep to exit the spawn; can be changed with [`Spawning::set_directions`].
+    /// Allowed directions for the creep to exit the spawn; can be changed with
+    /// [`Spawning::set_directions`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.directions)
     #[wasm_bindgen(method, getter)]
@@ -104,21 +114,21 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn cancel(this: &Spawning) -> i8;
 
-    /// Change allowed directions for the creep to leave the spawn once it's ready.
+    /// Change allowed directions for the creep to leave the spawn once it's
+    /// ready.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.setDirections)
     #[wasm_bindgen(method, js_name = setDirections)]
     pub fn set_directions(this: &Spawning) -> i8;
 }
 
-
 // use stdweb::Reference;
 
 // use crate::{
 //     constants::{Direction, Part, ReturnCode},
 //     memory::MemoryReference,
-//     objects::{Creep, HasEnergyForSpawn, SizedRoomObject, Spawning, StructureSpawn},
-//     traits::TryInto,
+//     objects::{Creep, HasEnergyForSpawn, SizedRoomObject, Spawning,
+// StructureSpawn},     traits::TryInto,
 // };
 
 // simple_accessors! {

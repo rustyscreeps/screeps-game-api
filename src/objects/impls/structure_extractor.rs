@@ -1,11 +1,10 @@
-use crate::{
-    objects::{OwnedStructure, RoomObject, Structure},
-};
+use crate::objects::{OwnedStructure, RoomObject, Structure};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// An object representing a [`StructureExtractor`], which can be placed on top of a [`Mineral`] to extract resources.
+    /// An object representing a [`StructureExtractor`], which can be placed on
+    /// top of a [`Mineral`] to extract resources.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureExtractor)
     ///
@@ -13,7 +12,8 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
     pub type StructureExtractor;
 
-    /// Ticks until this extractor can be used to [`Creep::harvest`] its [`Mineral`] after a previous harvest.
+    /// Ticks until this extractor can be used to [`Creep::harvest`] its
+    /// [`Mineral`] after a previous harvest.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureExtractor.cooldown)
     ///

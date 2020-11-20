@@ -1,5 +1,5 @@
-use wasm_bindgen::prelude::*;
 use crate::constants::ResourceType;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -9,7 +9,9 @@ extern "C" {
     #[wasm_bindgen]
     pub type Store;
 
-    /// Get the capacity of the [`Store`] for the specified resource. If the [`Store`] can contain any resource, passing `None` as the type will get the general store capacity.
+    /// Get the capacity of the [`Store`] for the specified resource. If the
+    /// [`Store`] can contain any resource, passing `None` as the type will get
+    /// the general store capacity.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Store.getCapacity)
     #[wasm_bindgen(method, js_name = getCapacity)]
@@ -21,7 +23,9 @@ extern "C" {
     #[wasm_bindgen(method, js_name = getFreeCapacity)]
     pub fn get_free_capacity(this: &Store, ty: Option<ResourceType>) -> u32;
 
-    /// Return the used capacity of the [`Store`] for the specified resource. If the [`Store`] can contain any resource, passing `None` as the type will get the total used capacity.
+    /// Return the used capacity of the [`Store`] for the specified resource. If
+    /// the [`Store`] can contain any resource, passing `None` as the type will
+    /// get the total used capacity.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Store.getUsedCapacity)
     #[wasm_bindgen(method, js_name = getUsedCapacity)]

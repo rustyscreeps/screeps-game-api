@@ -1,19 +1,23 @@
 //use crate::local::RoomName;
 use crate::{
     constants::{ExitDirection, Find, Look, StructureType},
-    objects::{RoomPosition, RoomTerrain, StructureController, StructureStorage, StructureTerminal},
+    objects::{
+        RoomPosition, RoomTerrain, StructureController, StructureStorage, StructureTerminal,
+    },
 };
+use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
-use js_sys::{Array, Object, JsString};
 
 #[wasm_bindgen]
 extern "C" {
-    /// A reference to a [`Room`] object, a 50x50 chunk of the Screeps game world.
+    /// A reference to a [`Room`] object, a 50x50 chunk of the Screeps game
+    /// world.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room)
     pub type Room;
 
-    /// The [`StructureController`] for the room, or `None` in rooms that cannot be claimed.
+    /// The [`StructureController`] for the room, or `None` in rooms that cannot
+    /// be claimed.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.controller)
     #[wasm_bindgen(method, getter)]
@@ -49,13 +53,15 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn name(this: &Room) -> JsString;
 
-    /// The [`StructureStorage`] built in the room, or `None` in rooms where there isn't one.
+    /// The [`StructureStorage`] built in the room, or `None` in rooms where
+    /// there isn't one.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.storage)
     #[wasm_bindgen(method, getter)]
     pub fn storage(this: &Room) -> Option<StructureStorage>;
 
-    /// The [`StructureTerminal`] built in the room, or `None` in rooms where there isn't one.
+    /// The [`StructureTerminal`] built in the room, or `None` in rooms where
+    /// there isn't one.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.terminal)
     #[wasm_bindgen(method, getter)]
@@ -63,41 +69,57 @@ extern "C" {
 
     // todo https://docs.screeps.com/api/#Room.visual
 
-    /// Serialize a path array from [`Room::find_path`] into a string representation safe to store in memory.
+    /// Serialize a path array from [`Room::find_path`] into a string
+    /// representation safe to store in memory.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.serializePath)
     #[wasm_bindgen(static_method_of = Room, js_name = serializePath)]
     pub fn serialize_path(path: &Array) -> JsString;
 
-    /// Deserialize a string representation from [`Room::serialize_path`] back to a path array.
+    /// Deserialize a string representation from [`Room::serialize_path`] back
+    /// to a path array.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.deserializePath)
     #[wasm_bindgen(static_method_of = Room, js_name = deserializePath)]
     pub fn deserialize_path(path: &JsString) -> Array;
 
-    /// Creates a construction site at given corrdinates within this room. If it's a [`StructureSpawn`], a name can optionally be assigned for the structure.
+    /// Creates a construction site at given corrdinates within this room. If
+    /// it's a [`StructureSpawn`], a name can optionally be assigned for the
+    /// structure.
     ///
-    /// See [`RoomPosition::create_construction_site`] to create at a specified position.
+    /// See [`RoomPosition::create_construction_site`] to create at a specified
+    /// position.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
     ///
     /// [`StructureSpawn`]: crate::objects::StructureSpawn
-    /// [`RoomPosition::create_construction_site`]: crate::objects::RoomPosition::create_construction_site
+    /// [`RoomPosition::create_construction_site`]:
+    /// crate::objects::RoomPosition::create_construction_site
     #[wasm_bindgen(method, js_name = createConstructionSite)]
-    pub fn create_construction_site(this: &Room, x: u8, y: u8, ty: StructureType, name: Option<&JsString>) -> i8;
+    pub fn create_construction_site(
+        this: &Room,
+        x: u8,
+        y: u8,
+        ty: StructureType,
+        name: Option<&JsString>,
+    ) -> i8;
 
     // todo FindOptions
-    /// Find all objects of the specified type in the room, without passing additional options.
-    /// 
-    /// Returns an [`Array`] containing the found objects, which should be converted into the type of object you searched for.
+    /// Find all objects of the specified type in the room, without passing
+    /// additional options.
+    ///
+    /// Returns an [`Array`] containing the found objects, which should be
+    /// converted into the type of object you searched for.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
     #[wasm_bindgen(method)]
     pub fn find(this: &Room, ty: Find, options: Option<&Object>) -> Array;
 
-    /// Find an exit from the current room which leads to a target room, either a [`Room`] object or [`JsString`] representation of the room name.
-    /// 
-    /// Returns an [`Array`] containing the found objects, which should be converted into the type of object you searched for.
+    /// Find an exit from the current room which leads to a target room, either
+    /// a [`Room`] object or [`JsString`] representation of the room name.
+    ///
+    /// Returns an [`Array`] containing the found objects, which should be
+    /// converted into the type of object you searched for.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.findExitTo)
     #[wasm_bindgen(method, js_name = findExitTo)]
@@ -108,10 +130,14 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
     #[wasm_bindgen(method, js_name = findPathTo)]
-    pub fn find_path_to(this: &Room, origin: &RoomPosition, goal: &RoomPosition, options: Option<&Object>) -> Array;
+    pub fn find_path_to(
+        this: &Room,
+        origin: &RoomPosition,
+        goal: &RoomPosition,
+        options: Option<&Object>,
+    ) -> Array;
 
     // todo event log
-
 
     /// Gets the [`RoomPosition`] for the given coordinates.
     ///
@@ -137,11 +163,19 @@ extern "C" {
     #[wasm_bindgen(method, js_name = lookAt)]
     pub fn look_at_xy(this: &Room, x: u8, y: u8) -> Array;
 
-    /// Get an array of all objects in a certain area, in either object or array format depending on the `as_array` option.
+    /// Get an array of all objects in a certain area, in either object or array
+    /// format depending on the `as_array` option.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
     #[wasm_bindgen(method, js_name = lookAtArea)]
-    pub fn look_at_area(this: &Room, top_y: u8, left_x: u8, bottom_y: u8, right_x: u8, as_array: bool) -> JsValue;
+    pub fn look_at_area(
+        this: &Room,
+        top_y: u8,
+        left_x: u8,
+        bottom_y: u8,
+        right_x: u8,
+        as_array: bool,
+    ) -> JsValue;
 
     /// Get an array of all objects of a given type at this position, if any.
     ///
@@ -149,17 +183,27 @@ extern "C" {
     #[wasm_bindgen(method, js_name = lookFor)]
     pub fn look_for_at(this: &Room, ty: Look, target: &RoomPosition) -> Option<Array>;
 
-    /// Get an array of all objects of a given type at the given coordinates, if any.
+    /// Get an array of all objects of a given type at the given coordinates, if
+    /// any.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
     #[wasm_bindgen(method, js_name = lookFor)]
     pub fn look_for_at_xy(this: &Room, ty: Look, x: u8, y: u8) -> Option<Array>;
 
-    /// Get an array of all objects in a certain area, in either object or array format depending on the `as_array` option.
+    /// Get an array of all objects in a certain area, in either object or array
+    /// format depending on the `as_array` option.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
     #[wasm_bindgen(method, js_name = lookAtArea)]
-    pub fn look_for_at_area(this: &Room, ty: Look, top_y: u8, left_x: u8, bottom_y: u8, right_x: u8, as_array: bool) -> JsValue;
+    pub fn look_for_at_area(
+        this: &Room,
+        ty: Look,
+        top_y: u8,
+        left_x: u8,
+        bottom_y: u8,
+        right_x: u8,
+        as_array: bool,
+    ) -> JsValue;
 }
 
 // use std::{fmt, marker::PhantomData, mem, ops::Range};
@@ -491,7 +535,7 @@ extern "C" {
 //         assert!(vert.end <= 50);
 
 //         T::convert_and_check_items(js_unwrap!
-// {@{self.as_ref()}.lookForAtArea(             
+// {@{self.as_ref()}.lookForAtArea(
 // __look_num_to_str(@{ty.look_code() as u32}),             @{vert.start},
 //             @{horiz.start},
 //             @{vert.end},
@@ -739,21 +783,21 @@ extern "C" {
 //                                 Some(event_id) => {
 //                                     data = match event_id {
 //                                         1 =>
-// Some(EventType::Attack(map.next_value()?)),                                  
-// 2 => Some(EventType::ObjectDestroyed(map.next_value()?)),                    
-// 3 => Some(EventType::AttackController),                                      
-// 4 => Some(EventType::Build(map.next_value()?)),                              
-// 5 => Some(EventType::Harvest(map.next_value()?)),                            
-// 6 => Some(EventType::Heal(map.next_value()?)),                               
-// 7 => Some(EventType::Repair(map.next_value()?)),                             
-// 8 => Some(EventType::ReserveController(map.next_value()?)),                  
-// 9 => Some(EventType::UpgradeController(map.next_value()?)),                  
-// 10 => Some(EventType::Exit(map.next_value()?)),                              
+// Some(EventType::Attack(map.next_value()?)),
+// 2 => Some(EventType::ObjectDestroyed(map.next_value()?)),
+// 3 => Some(EventType::AttackController),
+// 4 => Some(EventType::Build(map.next_value()?)),
+// 5 => Some(EventType::Harvest(map.next_value()?)),
+// 6 => Some(EventType::Heal(map.next_value()?)),
+// 7 => Some(EventType::Repair(map.next_value()?)),
+// 8 => Some(EventType::ReserveController(map.next_value()?)),
+// 9 => Some(EventType::UpgradeController(map.next_value()?)),
+// 10 => Some(EventType::Exit(map.next_value()?)),
 // 11 => Some(EventType::Power(map.next_value()?)),
 // 12 => Some(EventType::Transfer(map.next_value()?)),
 // _ => {                                             return
-// Err(de::Error::custom(format!(                                               
-// "Event Type Unrecognized: {}",                                               
+// Err(de::Error::custom(format!(
+// "Event Type Unrecognized: {}",
 // event_id                                             )));
 //                                         }
 //                                     };
@@ -785,7 +829,7 @@ extern "C" {
 //                                 serde_json::from_value(val).map_err(err)?,
 //                             )),
 //                             6 =>
-// Some(EventType::Heal(serde_json::from_value(val).map_err(err)?)),            
+// Some(EventType::Heal(serde_json::from_value(val).map_err(err)?)),
 // 7 => Some(EventType::Repair(serde_json::from_value(val).map_err(err)?)),
 //                             8 => Some(EventType::ReserveController(
 //                                 serde_json::from_value(val).map_err(err)?,
@@ -794,7 +838,7 @@ extern "C" {
 //                                 serde_json::from_value(val).map_err(err)?,
 //                             )),
 //                             10 =>
-// Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),            
+// Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
 // 11 => Some(EventType::Power(serde_json::from_value(val).map_err(err)?)),
 //                             12 => Some(EventType::Transfer(
 //                                 serde_json::from_value(val).map_err(err)?,
@@ -980,22 +1024,22 @@ extern "C" {
 //             Look::Creeps => LookResult::Creep(js_unwrap_ref!(@{v}.creep)),
 //             Look::Energy => LookResult::Energy(js_unwrap_ref!(@{v}.energy)),
 //             Look::Resources =>
-// LookResult::Resource(js_unwrap_ref!(@{v}.resource)),             
-// Look::Sources => LookResult::Source(js_unwrap_ref!(@{v}.source)),            
+// LookResult::Resource(js_unwrap_ref!(@{v}.resource)),
+// Look::Sources => LookResult::Source(js_unwrap_ref!(@{v}.source)),
 // Look::Minerals => LookResult::Mineral(js_unwrap_ref!(@{v}.mineral)),
 //             Look::Deposits =>
-// LookResult::Deposit(js_unwrap_ref!(@{v}.deposit)),             
+// LookResult::Deposit(js_unwrap_ref!(@{v}.deposit)),
 // Look::Structures => LookResult::Structure(js_unwrap_ref!(@{v}.structure)),
 //             Look::Flags => LookResult::Flag(js_unwrap_ref!(@{v}.flag)),
 //             Look::ConstructionSites => {
-//                 
+//
 // LookResult::ConstructionSite(js_unwrap_ref!(@{v}.constructionSite))
 //             }
 //             Look::Nukes => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
 //             Look::Terrain =>
 // LookResult::Terrain(js_unwrap!(__terrain_str_to_num(@{v}.terrain))),
 //             Look::Tombstones =>
-// LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),             
+// LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
 // Look::PowerCreeps => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
 //             Look::Ruins => LookResult::Ruin(js_unwrap_ref!(@{v}.ruin)),
 //         };

@@ -11,14 +11,17 @@ extern "C" {
     pub type RawMemory;
 
     // todo docs; Reflect::get_u32
-    /// Get an [`Object`] with all of the segments requested on the previous tick, with segment numbers as keys and segment data in [`JsString`] form as values.
+    /// Get an [`Object`] with all of the segments requested on the previous
+    /// tick, with segment numbers as keys and segment data in [`JsString`] form
+    /// as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)
     #[wasm_bindgen(static_method_of = RawMemory, getter)]
     pub fn segments() -> Object;
 
     // todo ForeignSegment struct
-    /// Get the foreign memory segment belonging to another player requested last tick.
+    /// Get the foreign memory segment belonging to another player requested
+    /// last tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.foreignSegment)
     #[wasm_bindgen(static_method_of = RawMemory, getter = ForeignSegment)]
@@ -30,7 +33,8 @@ extern "C" {
     #[wasm_bindgen(static_method_of = RawMemory)]
     pub fn get() -> JsString;
 
-    /// Overwrite the stored memory with a new [`JsString`].  Maximum size [`MEMORY_SIZE_LIMIT`].
+    /// Overwrite the stored memory with a new [`JsString`].  Maximum size
+    /// [`MEMORY_SIZE_LIMIT`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.set)
     ///
@@ -38,32 +42,35 @@ extern "C" {
     #[wasm_bindgen(static_method_of = RawMemory)]
     pub fn set(val: &JsString);
 
-    /// Sets available memory segments for the next tick, as an array of numbers from 0 to 99.
+    /// Sets available memory segments for the next tick, as an array of numbers
+    /// from 0 to 99.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setActiveSegments)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setActiveSegments)]
     pub fn set_active_segments(segment_ids: &Array);
 
-    /// Sets available foreign memory segment for the next tick to a memory segment marked as public by another user. If no id is passed, the user's default public segment is retrieved.
+    /// Sets available foreign memory segment for the next tick to a memory
+    /// segment marked as public by another user. If no id is passed, the user's
+    /// default public segment is retrieved.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setActiveForeignSegment)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setActiveForeignSegment)]
     pub fn set_active_foreign_segment(username: &JsString, segment_id: Option<u8>);
 
-    /// Sets your default foreign memory segment for other players to read, or remove your public segment with `None`.
+    /// Sets your default foreign memory segment for other players to read, or
+    /// remove your public segment with `None`.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setDefaultPublicSegment)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setDefaultPublicSegment)]
     pub fn set_default_public_segment(segment_id: Option<u8>);
 
-    /// Sets available memory segments for the next tick, as an array of numbers from 0 to 99.
+    /// Sets available memory segments for the next tick, as an array of numbers
+    /// from 0 to 99.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setPublicSegments)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setPublicSegments)]
     pub fn set_public_segments(segment_ids: &Array);
 }
-
-
 
 // use serde::Deserialize;
 

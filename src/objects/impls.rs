@@ -41,9 +41,9 @@ mod structure_wall;
 mod tombstone;
 
 pub use self::{
-    creep::Creep,
     construction_site::ConstructionSite,
     cost_matrix::CostMatrix,
+    creep::Creep,
     deposit::Deposit,
     flag::Flag,
     mineral::Mineral,

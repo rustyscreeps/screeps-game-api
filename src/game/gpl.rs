@@ -15,7 +15,8 @@ extern "C" {
     #[wasm_bindgen]
     pub type GplInfo;
 
-    /// Your current Global Power Level, which determines the number of rooms you are allowed to claim.
+    /// Your current Global Power Level, which determines the number of rooms
+    /// you are allowed to claim.
     #[wasm_bindgen(method, getter)]
     pub fn level(this: &GplInfo) -> u32;
 
@@ -33,7 +34,8 @@ extern "C" {
 ///
 /// Calculates the total number of power that need to be processed to achieve a
 /// given Global Power Level. The resulting value for your current level, added
-/// to your [`GplInfo::progress`], would calculate your total lifetime power points.
+/// to your [`GplInfo::progress`], would calculate your total lifetime power
+/// points.
 pub fn total_for_level(level: u32) -> u64 {
     // formula from
     // https://github.com/screeps/engine/blob/6d498f2f0db4e0744fa6bf8563836d36b49b6a29/src/game/game.js#L120

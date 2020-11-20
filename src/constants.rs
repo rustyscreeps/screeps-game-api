@@ -66,20 +66,17 @@ mod recipes;
 mod small_enums;
 mod types;
 
-pub use self::{
-    extra::*,
-    numbers::*,
-    recipes::FactoryRecipe,
-    small_enums::*,
-    types::*,
-};
+pub use self::{extra::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*};
 
 /// Re-export of all constants related to [`Creep`] behavior and operations.
 ///
 /// [`Creep`]: crate::objects::Creep
 pub mod creep {
     pub use super::{
-        extra::{CREEP_HITS_PER_PART, MOVE_POWER, RANGED_MASS_ATTACK_POWER_RANGE_1, RANGED_MASS_ATTACK_POWER_RANGE_2, RANGED_MASS_ATTACK_POWER_RANGE_3},
+        extra::{
+            CREEP_HITS_PER_PART, MOVE_POWER, RANGED_MASS_ATTACK_POWER_RANGE_1,
+            RANGED_MASS_ATTACK_POWER_RANGE_2, RANGED_MASS_ATTACK_POWER_RANGE_3,
+        },
         numbers::{
             ATTACK_POWER, BUILD_POWER, CARRY_CAPACITY, CREEP_CLAIM_LIFE_TIME, CREEP_CORPSE_RATE,
             CREEP_LIFE_TIME, CREEP_PART_MAX_ENERGY, CREEP_SPAWN_TIME, DISMANTLE_COST,
@@ -94,7 +91,7 @@ pub mod creep {
 /// Re-export of all constants related to structures.
 pub mod structure {
     pub use super::{
-        extra::{TERMINAL_SEND_COST_SCALE},
+        extra::TERMINAL_SEND_COST_SCALE,
         numbers::{
             extension_energy_capacity, invader_core_creep_spawn_time, invader_core_expand_time,
             rampart_hits_max, ruin_decay_structures, stronghold_rampart_hits,

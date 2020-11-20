@@ -1,9 +1,6 @@
 use wasm_bindgen::prelude::*;
 
-use crate::{
-    local::LocalCostMatrix,
-    prototypes::COST_MATRIX_PROTOTYPE,
-};
+use crate::{local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
 
 use js_sys::{Array, Object, Uint8Array};
 
@@ -15,7 +12,8 @@ extern "C" {
     #[wasm_bindgen(js_namespace = PathFinder)]
     pub type CostMatrix;
 
-    /// Create a new reference to a CostMatrix, containing 0s in all positions, using the normal constructor.
+    /// Create a new reference to a CostMatrix, containing 0s in all positions,
+    /// using the normal constructor.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.CostMatrix.constructor)
     #[wasm_bindgen(constructor, js_namespace = PathFinder)]
@@ -30,7 +28,8 @@ extern "C" {
     #[wasm_bindgen(method, getter = _bits)]
     pub fn get_bits(this: &CostMatrix) -> Uint8Array;
 
-    /// Sets a [`Uint8Array`] to this [`CostMatrix`], overwriting any current contents.
+    /// Sets a [`Uint8Array`] to this [`CostMatrix`], overwriting any current
+    /// contents.
     #[wasm_bindgen(method, setter = _bits)]
     pub fn set_bits(this: &CostMatrix, arr: &Uint8Array);
 
@@ -52,13 +51,15 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn clone(this: &CostMatrix) -> CostMatrix;
 
-    /// Get an [`Array`] of numbers representing the [`CostMatrix`] that's appropriate for memory serialization.
+    /// Get an [`Array`] of numbers representing the [`CostMatrix`] that's
+    /// appropriate for memory serialization.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.CostMatrix.serialize)
     #[wasm_bindgen(method)]
     pub fn serialize(this: &CostMatrix) -> Array;
-    
-    /// Get a new [`CostMatrix`] using the array representation from [`CostMatrix::serialize`].
+
+    /// Get a new [`CostMatrix`] using the array representation from
+    /// [`CostMatrix::serialize`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.CostMatrix.deserialize)
     #[wasm_bindgen(static_method_of = CostMatrix, js_namespace = PathFinder)]
@@ -66,7 +67,9 @@ extern "C" {
 }
 
 impl CostMatrix {
-    /// Create a new [`CostMatrix`], taking a u8 slice with 2500 members such as that returned from [`LocalCostMatrix::get_bits`] which will be copied across the memory boundary.
+    /// Create a new [`CostMatrix`], taking a u8 slice with 2500 members such as
+    /// that returned from [`LocalCostMatrix::get_bits`] which will be copied
+    /// across the memory boundary.
     ///
     /// [`LocalCostMatrix::get_bits`]: crate::local::LocalCostMatrix
     pub fn new_from_bits(bits: &[u8]) -> CostMatrix {
@@ -75,7 +78,8 @@ impl CostMatrix {
         matrix
     }
 
-    // todo also a function that takes the unsafe view into wasm linear mem with view for a matrix that'll easily go bad
+    // todo also a function that takes the unsafe view into wasm linear mem with
+    // view for a matrix that'll easily go bad
 }
 
 impl From<LocalCostMatrix> for CostMatrix {

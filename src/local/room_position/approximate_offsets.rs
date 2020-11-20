@@ -85,18 +85,9 @@ mod test {
     fn midpoint_accurate() {
         for room in test_rooms() {
             let start = pos(room, 10, 10);
-            assert_eq!(
-                start.midpoint_between(pos(room, 10, 16)),
-                pos(room, 10, 13)
-            );
-            assert_eq!(
-                start.midpoint_between(pos(room, 20, 10)),
-                pos(room, 15, 10)
-            );
-            assert_eq!(
-                start.midpoint_between(pos(room, 12, 12)),
-                pos(room, 11, 11)
-            );
+            assert_eq!(start.midpoint_between(pos(room, 10, 16)), pos(room, 10, 13));
+            assert_eq!(start.midpoint_between(pos(room, 20, 10)), pos(room, 15, 10));
+            assert_eq!(start.midpoint_between(pos(room, 12, 12)), pos(room, 11, 11));
             assert_eq!(start.midpoint_between(pos(room, 4, 4)), pos(room, 7, 7));
         }
     }
@@ -104,26 +95,11 @@ mod test {
     fn midpoint_approximate() {
         for room in test_rooms() {
             let start = pos(room, 10, 10);
-            assert_eq!(
-                start.midpoint_between(pos(room, 10, 15)),
-                pos(room, 10, 13)
-            );
-            assert_eq!(
-                start.midpoint_between(pos(room, 19, 10)),
-                pos(room, 15, 10)
-            );
-            assert_eq!(
-                start.midpoint_between(pos(room, 11, 11)),
-                pos(room, 11, 11)
-            );
-            assert_eq!(
-                start.midpoint_between(pos(room, 15, 15)),
-                pos(room, 13, 13)
-            );
-            assert_eq!(
-                start.midpoint_between(pos(room, 15, 25)),
-                pos(room, 13, 18)
-            );
+            assert_eq!(start.midpoint_between(pos(room, 10, 15)), pos(room, 10, 13));
+            assert_eq!(start.midpoint_between(pos(room, 19, 10)), pos(room, 15, 10));
+            assert_eq!(start.midpoint_between(pos(room, 11, 11)), pos(room, 11, 11));
+            assert_eq!(start.midpoint_between(pos(room, 15, 15)), pos(room, 13, 13));
+            assert_eq!(start.midpoint_between(pos(room, 15, 25)), pos(room, 13, 18));
             assert_eq!(start.midpoint_between(pos(room, 9, 10)), pos(room, 9, 10));
             assert_eq!(start.midpoint_between(pos(room, 7, 10)), pos(room, 8, 10));
             assert_eq!(start.midpoint_between(pos(room, 1, 3)), pos(room, 5, 6));

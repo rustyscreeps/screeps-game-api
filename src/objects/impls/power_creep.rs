@@ -1,10 +1,9 @@
 use crate::{
-    constants::{Direction, PowerType, ResourceType, PowerCreepClass},
+    constants::{Direction, PowerCreepClass, PowerType, ResourceType},
     objects::{Owner, Resource, RoomObject, Store, StructureController, StructurePowerSpawn},
 };
 use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
-
 
 #[wasm_bindgen]
 extern "C" {
@@ -14,7 +13,8 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject)]
     pub type PowerCreep;
 
-    /// Create a new power creep in your account. Note that it will not initially be spawned.
+    /// Create a new power creep in your account. Note that it will not
+    /// initially be spawned.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.create)
     #[wasm_bindgen(static_method_of = PowerCreep)]
@@ -26,7 +26,9 @@ extern "C" {
     #[wasm_bindgen(method, getter = className)]
     pub fn class(this: &PowerCreep) -> PowerCreepClass;
 
-    /// The timestamp, in milliseconds since epoch, when the [`PowerCreep`] will be permanently deleted due to [`PowerCreep::delete`]. Can be cancelled with the same function until then.
+    /// The timestamp, in milliseconds since epoch, when the [`PowerCreep`] will
+    /// be permanently deleted due to [`PowerCreep::delete`]. Can be cancelled
+    /// with the same function until then.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.deleteTime)
     #[wasm_bindgen(method, getter = deleteTime)]
@@ -44,13 +46,15 @@ extern "C" {
     #[wasm_bindgen(method, getter = hitsMax)]
     pub fn hits_max(this: &PowerCreep) -> u32;
 
-    /// Object ID of the power creep, which can be used to efficiently fetch a fresh reference to the object on subsequent ticks.
+    /// Object ID of the power creep, which can be used to efficiently fetch a
+    /// fresh reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.id)
     #[wasm_bindgen(method, getter)]
     pub fn id(this: &PowerCreep) -> JsString;
 
-    /// Current level of the power creep, which can be increased with [`PowerCreep::upgrade`] if you have unspent GPL.
+    /// Current level of the power creep, which can be increased with
+    /// [`PowerCreep::upgrade`] if you have unspent GPL.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.level)
     #[wasm_bindgen(method, getter)]
@@ -86,7 +90,8 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn owner(this: &PowerCreep) -> Owner;
 
-    /// The levels of this power creep's abilities, with [`PowerType`] keys and values containing power level and cooldown.
+    /// The levels of this power creep's abilities, with [`PowerType`] keys and
+    /// values containing power level and cooldown.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.powers)
     #[wasm_bindgen(method, getter)]
@@ -98,7 +103,8 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn saying(this: &PowerCreep) -> Option<JsString>;
 
-    /// The [`Store`] of the power creep, which contains information about what resources it is it carrying.
+    /// The [`Store`] of the power creep, which contains information about what
+    /// resources it is it carrying.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.store)
     #[wasm_bindgen(method, getter)]
@@ -110,37 +116,43 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn shard(this: &PowerCreep) -> Option<JsString>;
 
-    /// The timestamp, in milliseconds since epoch, when the power creep will be allowed to spawn again after dying.
+    /// The timestamp, in milliseconds since epoch, when the power creep will be
+    /// allowed to spawn again after dying.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.spawnCooldownTime)
     #[wasm_bindgen(method, getter = spawnCooldownTime)]
     pub fn spawn_cooldown_time(this: &PowerCreep) -> Option<u64>;
 
-    /// The number of ticks the power creep has left to live, which can be renewed at a [`StructurePowerSpawn`] or [`StructurePowerBank`]
+    /// The number of ticks the power creep has left to live, which can be
+    /// renewed at a [`StructurePowerSpawn`] or [`StructurePowerBank`]
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.ticksToLive)
     #[wasm_bindgen(method, getter = ticksToLive)]
     pub fn ticks_to_live(this: &PowerCreep) -> u32;
 
-    /// Cancel an a successfully called power creep function from earlier in the tick, with a [`JsString`] that must contain the JS version of the function name.
+    /// Cancel an a successfully called power creep function from earlier in the
+    /// tick, with a [`JsString`] that must contain the JS version of the
+    /// function name.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.cancelOrder)
     #[wasm_bindgen(method, js_name = cancelOrder)]
     pub fn cancel_order(this: &PowerCreep, target: &JsString) -> i8;
 
-    /// Set a power creep that is not currently spawned to be deleted. Can be cancelled with `true` for the cancel paramater.
+    /// Set a power creep that is not currently spawned to be deleted. Can be
+    /// cancelled with `true` for the cancel paramater.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.delete)
     #[wasm_bindgen(method)]
     pub fn delete(this: &PowerCreep, cancel: bool) -> i8;
 
     /// Drop a resource on the ground from the power creep's [`Store`].
-    /// 
+    ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.drop)
     #[wasm_bindgen(method)]
     pub fn drop(this: &PowerCreep, ty: ResourceType, amount: Option<u32>) -> i8;
 
-    /// Enable powers to be used in this room on a [`StructureController`] in melee range. You do not need to own the controller.
+    /// Enable powers to be used in this room on a [`StructureController`] in
+    /// melee range. You do not need to own the controller.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.enableRoom)
     #[wasm_bindgen(method, js_name = enableRoom)]
@@ -152,13 +164,18 @@ extern "C" {
     #[wasm_bindgen(method, js_name = move)]
     pub fn move_direction(this: &PowerCreep, direction: Direction) -> i8;
 
-    /// Move the power creep along a previously determined path returned from a pathfinding function, in array or serialized string form.
+    /// Move the power creep along a previously determined path returned from a
+    /// pathfinding function, in array or serialized string form.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveByPath)
     #[wasm_bindgen(method, js_name = moveByPath)]
     pub fn move_by_path(this: &PowerCreep, path: &JsValue) -> i8;
 
-    /// Move the creep toward the specified goal, either a [`RoomPosition`] or [`RoomObject`]. Note that using this function will store data in `Memory.creeps[creep_name]` and enable the default serialization behavior of the `Memory` object, which may hamper attempts to directly use `RawMemory`.
+    /// Move the creep toward the specified goal, either a [`RoomPosition`] or
+    /// [`RoomObject`]. Note that using this function will store data in
+    /// `Memory.creeps[creep_name]` and enable the default serialization
+    /// behavior of the `Memory` object, which may hamper attempts to directly
+    /// use `RawMemory`.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveByPath)
     #[wasm_bindgen(method, js_name = moveTo)]
@@ -170,7 +187,8 @@ extern "C" {
     #[wasm_bindgen(method, js_name = notifyWhenAttacked)]
     pub fn notify_when_attacked(this: &PowerCreep, enabled: bool) -> i8;
 
-    /// Pick up a [`Resource`] in melee range (or at the same position as the creep).
+    /// Pick up a [`Resource`] in melee range (or at the same position as the
+    /// creep).
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.pickup)
     #[wasm_bindgen(method)]
@@ -182,13 +200,15 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn rename(this: &PowerCreep, name: &JsString) -> i8;
 
-    /// Renew the power creep's TTL using a [`StructurePowerSpawn`] or [`StructurePowerBank`] in melee range.
+    /// Renew the power creep's TTL using a [`StructurePowerSpawn`] or
+    /// [`StructurePowerBank`] in melee range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.renew)
     #[wasm_bindgen(method)]
     pub fn renew(this: &PowerCreep, target: &RoomObject) -> i8;
 
-    /// Display a string in a bubble above the power creep next tick. 10 character limit.
+    /// Display a string in a bubble above the power creep next tick. 10
+    /// character limit.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.say)
     #[wasm_bindgen(method)]
@@ -206,13 +226,20 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn suicide(this: &PowerCreep) -> i8;
 
-    /// Transfer a resource from the power creep's store to [`Structure`], [`Creep`], or another [`PowerCreep`].
+    /// Transfer a resource from the power creep's store to [`Structure`],
+    /// [`Creep`], or another [`PowerCreep`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.transfer)
     #[wasm_bindgen(method)]
-    pub fn transfer(this: &PowerCreep, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> i8;
+    pub fn transfer(
+        this: &PowerCreep,
+        target: &RoomObject,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> i8;
 
-    /// Upgrade this power creep, consuming one available GPL and adding a new level to one of its powers.
+    /// Upgrade this power creep, consuming one available GPL and adding a new
+    /// level to one of its powers.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.upgrade)
     #[wasm_bindgen(method)]
@@ -228,49 +255,52 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.withdraw)
     #[wasm_bindgen(method)]
-    pub fn withdraw(this: &PowerCreep, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> i8;
+    pub fn withdraw(
+        this: &PowerCreep,
+        target: &RoomObject,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> i8;
 }
-
-
 
 // use crate::{
 //     constants::{PowerCreepClass, PowerType, ReturnCode},
 //     objects::{
-//         AccountPowerCreep, PowerCreep, RoomObjectProperties, StructureController,
-//         StructurePowerSpawn, StructureProperties,
+//         AccountPowerCreep, PowerCreep, RoomObjectProperties,
+// StructureController,         StructurePowerSpawn, StructureProperties,
 //     },
 //     traits::TryInto,
 // };
 
 // impl PowerCreep {
 //     pub fn create(name: &str, class: PowerCreepClass) -> ReturnCode {
-//         js_unwrap!(PowerCreep.create(@{name}, __power_creep_class_num_to_str(@{class as u32})))
-//     }
+//         js_unwrap!(PowerCreep.create(@{name},
+// __power_creep_class_num_to_str(@{class as u32})))     }
 
 //     pub fn class(&self) -> PowerCreepClass {
-//         js_unwrap!(__power_creep_class_str_to_num(@{self.as_ref()}.className))
-//     }
+//         js_unwrap!(__power_creep_class_str_to_num(@{self.as_ref()}.
+// className))     }
 
 //     pub fn power_cooldown(&self, power_type: PowerType) -> Option<u32> {
-//         js_unwrap!((@{self.as_ref()}.powers[@{power_type as u32}] || {}).cooldown)
-//     }
+//         js_unwrap!((@{self.as_ref()}.powers[@{power_type as u32}] ||
+// {}).cooldown)     }
 
 //     pub fn power_keys(&self) -> Vec<PowerType> {
 //         js_unwrap!(Object.keys(@{self.as_ref()}.powers).map(Number))
 //     }
 
 //     pub fn power_level(&self, power_type: PowerType) -> Option<u8> {
-//         js_unwrap!((@{self.as_ref()}.powers[@{power_type as u32}] || {}).level)
-//     }
+//         js_unwrap!((@{self.as_ref()}.powers[@{power_type as u32}] ||
+// {}).level)     }
 
-//     pub fn use_power<T>(&self, power_type: PowerType, target: Option<&T>) -> ReturnCode
-//     where
+//     pub fn use_power<T>(&self, power_type: PowerType, target: Option<&T>) ->
+// ReturnCode     where
 //         T: ?Sized + RoomObjectProperties,
 //     {
 //         match target {
-//             Some(v) => js_unwrap!(@{self.as_ref()}.usePower(@{power_type as u32}, @{v.as_ref()})),
-//             None => js_unwrap!(@{self.as_ref()}.usePower(@{power_type as u32})),
-//         }
+//             Some(v) => js_unwrap!(@{self.as_ref()}.usePower(@{power_type as
+// u32}, @{v.as_ref()})),             None =>
+// js_unwrap!(@{self.as_ref()}.usePower(@{power_type as u32})),         }
 //     }
 
 //     pub fn upgrade(&self, power_type: PowerType) -> ReturnCode {

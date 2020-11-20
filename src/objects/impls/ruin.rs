@@ -1,10 +1,11 @@
-use crate::objects::{RoomObject, Structure, Store};
+use crate::objects::{RoomObject, Store, Structure};
 use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// A [`Ruin`], which represents a destroyed structure and can have resources withdrawn from it.
+    /// A [`Ruin`], which represents a destroyed structure and can have
+    /// resources withdrawn from it.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Ruin)
     #[wasm_bindgen(extends = RoomObject)]
@@ -16,7 +17,8 @@ extern "C" {
     #[wasm_bindgen(method, getter = destroyTime)]
     pub fn destroy_time(this: &Ruin) -> u32;
 
-    /// Object ID of the ruin, which can be used to efficiently fetch a fresh reference to the object on subsequent ticks.
+    /// Object ID of the ruin, which can be used to efficiently fetch a fresh
+    /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Ruin.id)
     #[wasm_bindgen(method, getter)]
@@ -28,7 +30,11 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &Ruin) -> Store;
 
-    /// The destroyed [`Structure`] that this ruin represents. Note that this object is not fully safe to use as a [`Structure`], missing critical properties such as position; it's only safe to access basic information about the structure on this object, like the structure type, owner name, and id.
+    /// The destroyed [`Structure`] that this ruin represents. Note that this
+    /// object is not fully safe to use as a [`Structure`], missing critical
+    /// properties such as position; it's only safe to access basic information
+    /// about the structure on this object, like the structure type, owner name,
+    /// and id.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Ruin.structure)
     #[wasm_bindgen(method, getter)]
@@ -40,7 +46,6 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &Ruin) -> u32;
 }
-
 
 // use crate::{
 //     constants::StructureType,

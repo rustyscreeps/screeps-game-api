@@ -1,8 +1,8 @@
 //! `*Type` constants.
 
 // use std::{borrow::Cow, str::FromStr};
-use num_derive::FromPrimitive;
 use enum_iterator::IntoEnumIterator;
+use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
@@ -33,7 +33,6 @@ pub enum StructureType {
     Factory = "factory",
     InvaderCore = "invaderCore",
 }
-
 
 impl StructureType {
     /// Translates the `CONSTRUCTION_COST` constant.
@@ -596,7 +595,18 @@ pub enum PowerCreepClass {
 
 /// Translates the `PWR_*` constants, which are types of powers used by power
 #[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr, IntoEnumIterator)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Hash,
+    FromPrimitive,
+    Deserialize_repr,
+    Serialize_repr,
+    IntoEnumIterator,
+)]
 #[repr(u8)]
 pub enum PowerType {
     GenerateOps = 1,
