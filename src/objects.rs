@@ -104,8 +104,6 @@ reference_wrappers! {
     pub struct Spawning(...);
     #[reference(instance_of = "StructureStorage")]
     pub struct StructureStorage(...);
-    #[reference(instance_of = "StructureTerminal")]
-    pub struct StructureTerminal(...);
     #[reference(instance_of = "StructureTower")]
     pub struct StructureTower(...);
     #[reference(instance_of = "StructureWall")]
