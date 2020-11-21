@@ -15,6 +15,7 @@
 
 // use stdweb::{Reference, ReferenceType, Value};
 // use stdweb_derive::ReferenceType;
+use wasm_bindgen::JsCast;
 
 // use crate::{
 //     constants::{ResourceType, ReturnCode, StructureType},
@@ -36,6 +37,66 @@ pub use self::impls::{
     StructurePortal, StructurePowerBank, StructurePowerSpawn, StructureRampart, StructureRoad,
     StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
 };
+
+/// Enum type for converting a [`Structure`] into a typed object of its type.
+pub enum TypedStructure {
+    Spawn(StructureSpawn),
+    Extension(StructureExtension),
+    Road(StructureRoad),
+    Wall(StructureWall),
+    Rampart(StructureRampart),
+    KeeperLair(StructureKeeperLair),
+    Portal(StructurePortal),
+    Controller(StructureController),
+    Link(StructureLink),
+    Storage(StructureStorage),
+    Tower(StructureTower),
+    Observer(StructureObserver),
+    PowerBank(StructurePowerBank),
+    PowerSpawn(StructurePowerSpawn),
+    Extractor(StructureExtractor),
+    Lab(StructureLab),
+    Terminal(StructureTerminal),
+    Container(StructureContainer),
+    Nuker(StructureNuker),
+    Factory(StructureFactory),
+    InvaderCore(StructureInvaderCore),
+    // todo figure out how to disable non_exhaustive
+    Unknown,
+}
+
+impl From<Structure> for TypedStructure {
+    fn from(structure: Structure) -> Self {
+        use crate::constants::StructureType::*;
+        
+        match structure.structure_type() {
+            Spawn => Self::Spawn(structure.unchecked_into()),
+            Extension => Self::Extension(structure.unchecked_into()),
+            Road => Self::Road(structure.unchecked_into()),
+            Wall => Self::Wall(structure.unchecked_into()),
+            Rampart => Self::Rampart(structure.unchecked_into()),
+            KeeperLair => Self::KeeperLair(structure.unchecked_into()),
+            Portal => Self::Portal(structure.unchecked_into()),
+            Controller => Self::Controller(structure.unchecked_into()),
+            Link => Self::Link(structure.unchecked_into()),
+            Storage => Self::Storage(structure.unchecked_into()),
+            Tower => Self::Tower(structure.unchecked_into()),
+            Observer => Self::Observer(structure.unchecked_into()),
+            PowerBank => Self::PowerBank(structure.unchecked_into()),
+            PowerSpawn => Self::PowerSpawn(structure.unchecked_into()),
+            Extractor => Self::Extractor(structure.unchecked_into()),
+            Lab => Self::Lab(structure.unchecked_into()),
+            Terminal => Self::Terminal(structure.unchecked_into()),
+            Container => Self::Container(structure.unchecked_into()),
+            Nuker => Self::Nuker(structure.unchecked_into()),
+            Factory => Self::Factory(structure.unchecked_into()),
+            InvaderCore => Self::InvaderCore(structure.unchecked_into()),
+            // todo figure out how to disable non_exhaustive
+            _ => Self::Unknown,
+        }
+    }
+}
+
 
 // pub use self::{
 //     creep_shared::{MoveToOptions, SharedCreepProperties},

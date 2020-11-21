@@ -14,11 +14,11 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject)]
     pub type ConstructionSite;
 
-    /// The Object ID of the [`ConstructionSite`].
+    /// The Object ID of the [`ConstructionSite`], or `None` if it was created this tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.id)
     #[wasm_bindgen(method, getter)]
-    pub fn id(this: &ConstructionSite) -> JsString;
+    pub fn id(this: &ConstructionSite) -> Option<JsString>;
 
     /// Whether you own the [`ConstructionSite`].
     ///

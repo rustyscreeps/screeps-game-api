@@ -47,7 +47,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
     #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Creep) -> JsString;
+    pub fn id(this: &Creep) -> Option<JsString>;
 
     /// A shortcut to `Memory.creeps[creep.name]`.
     ///

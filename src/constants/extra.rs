@@ -64,7 +64,7 @@ pub const RANGED_MASS_ATTACK_POWER_RANGE_1: u32 = 10;
 /// [`Creep::ranged_mass_attack`]: crate::objects::Creep::ranged_mass_attack
 pub const RANGED_MASS_ATTACK_POWER_RANGE_2: u32 = 4;
 /// Hits of damage per effective ranged attack part per
-/// [`Creep::ranged_mass_attack`] action at range 1
+/// [`Creep::ranged_mass_attack`] action at range 3.
 ///
 /// [`Creep::ranged_mass_attack`]: crate::objects::Creep::ranged_mass_attack
 pub const RANGED_MASS_ATTACK_POWER_RANGE_3: u32 = 1;
