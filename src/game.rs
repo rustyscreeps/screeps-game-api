@@ -10,9 +10,7 @@ use wasm_bindgen::prelude::*;
 
 //pub use crate::{game::rooms::Room, local::RoomName};
 
-use crate::{
-    local::{JsObjectId, ObjectId, RawObjectId},
-};
+use crate::local::{JsObjectId, ObjectId, RawObjectId};
 
 pub mod cpu;
 pub mod gcl;
@@ -166,11 +164,13 @@ extern "C" {
 }
 
 impl Game {
-    /// Get the typed object represented by a given [`JsObjectId`], if it's still alive and visible.
+    /// Get the typed object represented by a given [`JsObjectId`], if it's
+    /// still alive and visible.
     ///
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
-    pub fn get_object_by_js_id_typed<T>(id: &JsObjectId<T>) -> Option<T> where
-        T: From<JsValue>
+    pub fn get_object_by_js_id_typed<T>(id: &JsObjectId<T>) -> Option<T>
+    where
+        T: From<JsValue>,
     {
         match Game::get_object_by_id(&id.raw) {
             Some(object) => Some(JsValue::from(object).into()),
@@ -178,11 +178,13 @@ impl Game {
         }
     }
 
-    /// Get the typed object represented by a given [`ObjectId`], if it's still alive and visible.
+    /// Get the typed object represented by a given [`ObjectId`], if it's still
+    /// alive and visible.
     ///
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
-    pub fn get_object_by_id_typed<T>(id: &ObjectId<T>) -> Option<T> where
-        T: From<JsValue>
+    pub fn get_object_by_id_typed<T>(id: &ObjectId<T>) -> Option<T>
+    where
+        T: From<JsValue>,
     {
         // construct a reference to a javascript string using the id data
         let js_str = JsString::from(id.to_string());
@@ -193,7 +195,8 @@ impl Game {
         }
     }
 
-    /// Get the [`RoomObject`] represented by a given [`RawObjectId`], if it's still alive and visible.
+    /// Get the [`RoomObject`] represented by a given [`RawObjectId`], if it's
+    /// still alive and visible.
     ///
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
     pub fn get_object_by_id_erased(id: &RawObjectId) -> Option<RoomObject> {
@@ -203,7 +206,6 @@ impl Game {
         Game::get_object_by_id(&js_str)
     }
 }
-
 
 // pub fn get_object_typed<T>(id: ObjectId<T>) -> Result<Option<T>,
 // ConversionError> where

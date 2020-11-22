@@ -2,19 +2,25 @@ use std::{
     cmp::{Eq, PartialEq},
     fmt,
     marker::PhantomData,
-    // str::FromStr,
 };
 
 use js_sys::JsString;
+use wasm_bindgen::prelude::*;
 
-/// Represents a reference to an Object ID string held on the javascript heap and a type that the ID points to.
+use crate::game::Game;
+
+/// Represents a reference to an Object ID string held on the javascript heap
+/// and a type that the ID points to.
 ///
-/// This representation is less useful on the Rust side due to lack of visibility on the underlying string and lack of most trait implementations, and consumes more memory, but is faster to
-/// resolve and may be useful with objects you plan to resolve frequently.
+/// This representation is less useful on the Rust side due to lack of
+/// visibility on the underlying string and lack of most trait implementations,
+/// and consumes more memory, but is faster to resolve and may be useful with
+/// objects you plan to resolve frequently.
 ///
-/// This object ID is typed, but not strictly, and can be converted into referring into another type of object with [`JsObjectId::into_type`].
-///
-// Copy, Clone, Debug, PartialEq, Eq, Hash, PartialEq, Eq implemented manually below
+/// This object ID is typed, but not strictly, and can be converted into
+/// referring into another type of object with [`JsObjectId::into_type`].
+// Copy, Clone, Debug, PartialEq, Eq, Hash, PartialEq, Eq implemented manually
+// below
 pub struct JsObjectId<T> {
     pub raw: JsString,
     phantom: PhantomData<T>,
@@ -90,27 +96,19 @@ impl<T> JsObjectId<T> {
     //     crate::game::get_object_typed(self)
     // }
 
-    // /// Resolves this ID into an object, panicking on type mismatch.
-    // ///
-    // /// This is a shortcut for [`id.try_resolve().expect(...)`][1]
-    // ///
-    // /// # Panics
-    // ///
-    // /// Will panic if this ID points to an object which is not of type `T`.
-    // ///
-    // /// Will return `None` if this object no longer exists, or is in a room we
-    // /// don't have vision for.
-    // ///
-    // /// [1]: ObjectId::try_resolve
-    // pub fn resolve(self) -> Option<T>
-    // where
-    //     T: HasId + SizedRoomObject,
-    // {
-    //     match self.try_resolve() {
-    //         Ok(v) => v,
-    //         Err(e) => panic!("error resolving id {}: {}", self, e),
-    //     }
-    // }
+    /// Resolves this ID into an object, assuming the type `T` is the correct
+    /// type of object that this ID refers to. If the ID has been converted to
+    /// an invalid type, using the returned object in a way not valid for its
+    /// type will cause a panic.
+    ///
+    /// Will return `None` if this object no longer exists, or is in a room we
+    /// don't have vision for.
+    pub fn resolve(self) -> Option<T>
+    where
+        T: From<JsValue>,
+    {
+        Game::get_object_by_js_id_typed(&self)
+    }
 }
 
 impl<T> From<JsString> for JsObjectId<T> {

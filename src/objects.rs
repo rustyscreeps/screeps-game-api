@@ -38,7 +38,8 @@ pub use self::impls::{
     StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
 };
 
-/// Enum used for converting a [`Structure`] into a typed object of its specific structure type.
+/// Enum used for converting a [`Structure`] into a typed object of its specific
+/// structure type.
 pub enum TypedStructure {
     Spawn(StructureSpawn),
     Extension(StructureExtension),
@@ -68,7 +69,7 @@ pub enum TypedStructure {
 impl From<Structure> for TypedStructure {
     fn from(structure: Structure) -> Self {
         use crate::constants::StructureType::*;
-        
+
         match structure.structure_type() {
             Spawn => Self::Spawn(structure.unchecked_into()),
             Extension => Self::Extension(structure.unchecked_into()),
@@ -96,7 +97,6 @@ impl From<Structure> for TypedStructure {
         }
     }
 }
-
 
 // pub use self::{
 //     creep_shared::{MoveToOptions, SharedCreepProperties},
