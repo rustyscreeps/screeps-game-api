@@ -277,17 +277,20 @@ mod test {
     // use crate::traits::TryInto;
 
     const TEST_IDS: &[&str] = &[
-        "bc03381d32f6790",
         "0",
         "1",
+        // max allowed ID
         "ffffffffffffffffffffffff",
         // 24 char, leading 0 (#278)
         "06aebab343040c9baaa22322",
+        "000000000000000000000001",
         "100000000000000000000000",
         "10000000000000000",
         "1000000000000000",
+        "bc03381d32f6790",
         // 15 char, leading 0 (#244)
         "0df4aea318bd552",
+        "000000000000f00",
         "100000000",
         "10000000",
     ];
