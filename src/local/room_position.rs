@@ -35,7 +35,7 @@ mod world_utils;
 /// # Using Position
 ///
 /// You can retrieve a `Position` by getting the position of a game object using
-/// [`HasPosition::pos`], or by creating one from coordinates with
+/// [`RoomObject::pos`], or by creating one from coordinates with
 /// [`Position::new`].
 ///
 /// You can use any of the math methods available on this page to manipulate
@@ -51,16 +51,7 @@ mod world_utils;
 /// u32}` in "human readable" formats like JSON, and will serialize as a single
 /// `i32` in "non-human readable" formats like [`bincode`].
 ///
-/// You can also pass `Position` into JavaScript using the `js!{}`
-/// macro provided by `stdweb`, or helper methods using the same code like
-/// [`MemoryReference::set`][crate::memory::MemoryReference::set]. It will be
-/// serialized the same as in JSON, as an object with `roomName`, `x` and `y`
-/// properties.
-///
-/// *Note:* serializing using `js!{}` or `MemoryReference::set` will _not_
-/// create a JavaScript `RoomPosition`, only something with the same properties.
-///
-/// If you need a reference to a `RoomPosition` in JavaScript to use manually,
+/// If you need a reference to a `RoomPosition` in JavaScript,
 /// convert the native [`Position`] to a [`RoomPosition`]:
 ///
 /// ```no_run
@@ -179,8 +170,9 @@ mod world_utils;
 /// from above.
 ///
 /// [`bincode`]: https://github.com/servo/bincode
-/// [`HasPosition::pos`]: crate::HasPosition::pos
+/// [`RoomObject::pos`]: crate::RoomObject::pos
 /// [`BTreeMap`]: std::collections::BTreeMap
+/// [`serde::Serialize`]: ::serde::Serialize
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(transparent)]
 pub struct Position {
