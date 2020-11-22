@@ -38,7 +38,7 @@ pub use self::impls::{
     StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
 };
 
-/// Enum type for converting a [`Structure`] into a typed object of its type.
+/// Enum used for converting a [`Structure`] into a typed object of its specific structure type.
 pub enum TypedStructure {
     Spawn(StructureSpawn),
     Extension(StructureExtension),
@@ -62,7 +62,7 @@ pub enum TypedStructure {
     Factory(StructureFactory),
     InvaderCore(StructureInvaderCore),
     // todo figure out how to disable non_exhaustive
-    Unknown,
+    Unknown(Structure),
 }
 
 impl From<Structure> for TypedStructure {
@@ -92,7 +92,7 @@ impl From<Structure> for TypedStructure {
             Factory => Self::Factory(structure.unchecked_into()),
             InvaderCore => Self::InvaderCore(structure.unchecked_into()),
             // todo figure out how to disable non_exhaustive
-            _ => Self::Unknown,
+            _ => Self::Unknown(structure),
         }
     }
 }
