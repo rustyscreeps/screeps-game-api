@@ -11,8 +11,8 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
     pub type StructureRoad;
 
-    /// The number of ticks until the road will decay, losing [`ROAD_DECAY_AMOUNT`]
-    /// hits.
+    /// The number of ticks until the road will decay, losing
+    /// [`ROAD_DECAY_AMOUNT`] hits.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureRoad.ticksToDecay)
     ///

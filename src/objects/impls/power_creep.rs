@@ -47,7 +47,8 @@ extern "C" {
     pub fn hits_max(this: &PowerCreep) -> u32;
 
     /// Object ID of the power creep, which can be used to efficiently fetch a
-    /// fresh reference to the object on subsequent ticks, or `None` if not spawned on the current shard.
+    /// fresh reference to the object on subsequent ticks, or `None` if not
+    /// spawned on the current shard.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.id)
     #[wasm_bindgen(method, getter)]

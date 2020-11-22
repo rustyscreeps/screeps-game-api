@@ -10,12 +10,9 @@ use wasm_bindgen::prelude::*;
 
 //pub use crate::{game::rooms::Room, local::RoomName};
 
-// use crate::{
-//     local::{ObjectId, RawObjectId},
-//     objects::{HasId, RoomObject, SizedRoomObject},
-//     traits::TryInto,
-//     ConversionError,
-// };
+use crate::{
+    local::{JsObjectId, ObjectId, RawObjectId},
+};
 
 pub mod cpu;
 pub mod gcl;
@@ -167,6 +164,57 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game)]
     pub fn notify(message: &JsString, group_interval: Option<u32>);
 }
+
+impl Game {
+    /// Get the typed object represented by a given [`JsObjectId`], if it's still alive and visible.
+    ///
+    /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
+    pub fn get_object_by_js_id_typed<T>(id: &JsObjectId<T>) -> Option<T> where
+        T: From<JsValue>
+    {
+        match Game::get_object_by_id(&id.raw) {
+            Some(object) => Some(JsValue::from(object).into()),
+            None => None,
+        }
+    }
+
+    /// Get the typed object represented by a given [`ObjectId`], if it's still alive and visible.
+    ///
+    /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
+    pub fn get_object_by_id_typed<T>(id: &ObjectId<T>) -> Option<T> where
+        T: From<JsValue>
+    {
+        // construct a reference to a javascript string using the id data
+        let js_str = JsString::from(id.to_string());
+
+        match Game::get_object_by_id(&js_str) {
+            Some(object) => Some(JsValue::from(object).into()),
+            None => None,
+        }
+    }
+
+    /// Get the [`RoomObject`] represented by a given [`RawObjectId`], if it's still alive and visible.
+    ///
+    /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
+    pub fn get_object_by_id_erased(id: &RawObjectId) -> Option<RoomObject> {
+        // construct a reference to a javascript string using the id data
+        let js_str = JsString::from(id.to_string());
+
+        Game::get_object_by_id(&js_str)
+    }
+}
+
+
+// pub fn get_object_typed<T>(id: ObjectId<T>) -> Result<Option<T>,
+// ConversionError> where
+//     T: HasId + SizedRoomObject,
+// {
+//     let array_view = unsafe { id.unsafe_as_uploaded() };
+//     (js! {
+//         return Game.getObjectById(object_id_from_packed(@{array_view}));
+//     })
+//     .try_into()
+// }
 
 // /// See [http://docs.screeps.com/api/#Game.constructionSites]
 // ///
