@@ -27,7 +27,7 @@ use crate::{
     ConversionError,
 };
 
-#[cfg(not(feature = "seasonal-season-1"))]
+#[cfg(not(feature = "disable-terminal"))]
 use crate::objects::StructureTerminal;
 
 simple_accessors! {
@@ -40,7 +40,7 @@ simple_accessors! {
     }
 }
 
-#[cfg(not(feature = "seasonal-season-1"))]
+#[cfg(not(feature = "disable-terminal"))]
 simple_accessors! {
     impl Room {
         pub fn terminal() -> Option<StructureTerminal> = terminal;

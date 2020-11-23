@@ -42,5 +42,14 @@ stdweb-derive = "0.5"
 [features]
 check-all-casts = []
 
-# Seasonal server, season 1; market and terminal structures removed, score structures and resource added
-seasonal-season-1 = []
+# Disable Game.market interfaces - used in season 1
+disable-market = []
+
+# Disable terminal structures - proposed but not used in season 1
+disable-terminal = []
+
+# Enable score structures and resource - used in season 1
+enable-score = []
+
+# Seasonal server, season 1; market removed, score structures and resource added
+seasonal-season-1 = ["disable-market", "enable-score"]

@@ -24,7 +24,7 @@ mod structure_power_bank;
 mod structure_power_spawn;
 mod structure_rampart;
 mod structure_spawn;
-#[cfg(not(feature = "seasonal-season-1"))]
+#[cfg(not(feature = "disable-terminal"))]
 mod structure_terminal;
 mod structure_tower;
 mod tombstone;
