@@ -166,7 +166,7 @@ impl StructureType {
             PowerSpawn => POWER_SPAWN_HITS,
             Extractor => EXTENSION_HITS,
             Lab => LAB_HITS,
-            Terminal => TOWER_HITS,
+            Terminal => TERMINAL_HITS,
             Container => CONTAINER_HITS,
             Nuker => NUKER_HITS,
             Factory => FACTORY_HITS,
