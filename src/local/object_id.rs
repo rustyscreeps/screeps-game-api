@@ -7,6 +7,9 @@ use std::{
 };
 
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::prelude::*;
+
+use crate::game::Game;
 
 // use crate::{
 //     objects::{HasId, SizedRoomObject},
@@ -265,25 +268,19 @@ impl<T> ObjectId<T> {
     //     self.raw.unsafe_as_uploaded()
     // }
 
-    // /// Resolves this object ID into an object.
-    // ///
-    // /// This is a shortcut for [`game::get_object_typed(id)`][1]
-    // ///
-    // /// # Errors
-    // ///
-    // /// Will return an error if this ID's type does not match the object it
-    // /// points to.
-    // ///
-    // /// Will return `Ok(None)` if the object no longer exists, or is in a room
-    // /// we don't have vision for.
-    // ///
-    // /// [1]: crate::game::get_object_typed
-    // pub fn try_resolve(self) -> Result<Option<T>, ConversionError>
-    // where
-    //     T: HasId + SizedRoomObject,
-    // {
-    //     crate::game::get_object_typed(self)
-    // }
+    /// Resolves this ID into an object, assuming the type `T` is the correct
+    /// type of object that this ID refers to. If the ID has been converted to
+    /// an invalid type, using the returned object in a way not valid for its
+    /// type will cause a panic.
+    ///
+    /// Will return `None` if this object no longer exists, or is in a room we
+    /// don't have vision for.
+    pub fn resolve(self) -> Option<T>
+    where
+        T: From<JsValue>,
+    {
+        Game::get_object_by_id_typed(&self)
+    }
 
     // /// Resolves this ID into an object, panicking on type mismatch.
     // ///
