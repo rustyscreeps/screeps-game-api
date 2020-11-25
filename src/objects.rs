@@ -15,6 +15,7 @@
 
 // use stdweb::{Reference, ReferenceType, Value};
 // use stdweb_derive::ReferenceType;
+use enum_dispatch::enum_dispatch;
 use wasm_bindgen::JsCast;
 
 // use crate::{
@@ -94,6 +95,69 @@ impl From<Structure> for TypedStructure {
             InvaderCore => Self::InvaderCore(structure.unchecked_into()),
             // todo figure out how to disable non_exhaustive
             _ => Self::Unknown(structure),
+        }
+    }
+}
+
+// impl HasStore for StructureTerminal {
+//     fn store(&self) -> Store {
+//         Self::store(self)
+//     }
+// }
+
+// impl HasStore for StructureStorage {
+//     fn store(&self) -> Store {
+//         Self::store(self)
+//     }
+// }
+
+// impl<T> HasStore for T
+// where
+//     T: HasStore,
+// {
+//     fn store(&self) -> Store {
+//         Self::store(self)
+//     }
+// }
+
+#[enum_dispatch]
+pub trait HasStore {
+    fn store(&self) -> Store {
+        Self::store(self)
+    }
+}
+
+impl HasStore for StructureTerminal {}
+impl HasStore for StructureStorage {}
+
+#[enum_dispatch(HasStore)]
+pub enum ObjectWithStore {
+    StructureStorage,
+    StructureTerminal,
+}
+
+
+#[enum_dispatch]
+pub trait Attackable {}
+
+impl Attackable for StructureTerminal {}
+impl Attackable for StructureStorage {}
+
+#[enum_dispatch(Attackable)]
+pub enum AttackableObject {
+    StructureStorage,
+    StructureSpawn,
+    StructureTerminal,
+}
+
+impl From<AttackableObject> for RoomObject {
+    fn from(attackable: AttackableObject) -> Self {
+        use AttackableObject::*;
+
+        match attackable {
+            StructureStorage(o) => RoomObject::from(o),
+            StructureSpawn(o) => RoomObject::from(o),
+            StructureTerminal(o) => RoomObject::from(o),
         }
     }
 }

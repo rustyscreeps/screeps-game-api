@@ -27,6 +27,7 @@ travis-ci = { repository = "rustyscreeps/screeps-game-api" }
 
 [dependencies]
 arrayvec = "0.4"
+enum_dispatch = "0.3"
 enum-iterator = "0.3"
 js-sys = "0.3"
 num-derive = "0.2"
