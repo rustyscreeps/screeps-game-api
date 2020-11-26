@@ -1,6 +1,7 @@
 use crate::{
     constants::{Direction, Look, StructureType},
     local::Position,
+    prelude::*,
     prototypes::ROOM_POSITION_PROTOTYPE,
 };
 use js_sys::{Array, JsString, Object};
@@ -225,6 +226,14 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
     #[wasm_bindgen(method, js_name = lookFor)]
     pub fn look_for(this: &RoomPosition, ty: Look) -> Option<Array>;
+}
+
+impl HasPosition for RoomPosition {
+    fn pos(&self) -> Option<Self> {
+        let new_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
+        new_pos.set_packed(self.packed());
+        Some(new_pos)
+    }
 }
 
 impl From<Position> for RoomPosition {

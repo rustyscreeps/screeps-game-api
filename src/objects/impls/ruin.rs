@@ -1,5 +1,8 @@
-use crate::objects::{RoomObject, Store, Structure};
-use js_sys::JsString;
+use crate::{
+    objects::{Room, RoomObject, RoomPosition, Store, Structure},
+    prelude::*,
+};
+use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -46,3 +49,34 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &Ruin) -> u32;
 }
+
+impl CanDecay for Ruin {
+    fn ticks_to_decay(&self) -> u32 {
+        Self::ticks_to_decay(self)
+    }
+}
+impl HasId for Ruin {
+    fn id(&self) -> Option<JsString> {
+        Some(Self::id(self))
+    }
+}
+impl HasPosition for Ruin {
+    fn pos(&self) -> Option<RoomPosition> {
+        RoomObject::pos(self.as_ref())
+    }
+}
+impl HasStore for Ruin {
+    fn store(&self) -> Store {
+        Self::store(self)
+    }
+}
+impl RoomObjectProperties for Ruin {
+    fn effects(&self) -> Array {
+        RoomObject::effects(self.as_ref())
+    }
+
+    fn room(&self) -> Option<Room> {
+        RoomObject::room(self.as_ref())
+    }
+}
+

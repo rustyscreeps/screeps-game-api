@@ -1,5 +1,8 @@
-use crate::objects::{OwnedStructure, RoomObject, Structure};
-use js_sys::{Date, JsString};
+use crate::{
+    objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Structure},
+    prelude::*,
+};
+use js_sys::{Array, Date, JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -103,6 +106,36 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn unclaim(this: &StructureController) -> i8;
 }
+
+impl HasId for StructureController {
+    fn id(&self) -> Option<JsString> {
+        Self::id(self.as_ref())
+    }
+}
+impl HasPosition for StructureController {
+    fn pos(&self) -> Option<RoomPosition> {
+        RoomObject::pos(self.as_ref())
+    }
+}
+impl OwnedStructureProperties for StructureController {
+    fn my(&self) -> bool {
+        OwnedStructure::my(self.as_ref())
+    }
+
+    fn owner(&self) -> Option<Owner> {
+        OwnedStructure::owner(self.as_ref())
+    }
+}
+impl RoomObjectProperties for StructureController {
+    fn effects(&self) -> Array {
+        RoomObject::effects(self.as_ref())
+    }
+
+    fn room(&self) -> Option<Room> {
+        RoomObject::room(self.as_ref())
+    }
+}
+impl StructureProperties for StructureController {}
 
 #[wasm_bindgen]
 extern "C" {

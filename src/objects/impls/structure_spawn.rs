@@ -1,6 +1,6 @@
 use crate::{
+    objects::{Creep, OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
-    objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
 };
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
@@ -45,7 +45,10 @@ extern "C" {
     pub fn store(this: &StructureSpawn) -> Store;
 
     /// Create a new creep with the specified body part [`Array`], name
-    /// [`JsString`], and optional spawning options.
+    /// [`JsString`], and optional spawning options. Note that successfully spawning will store data in
+    /// `Memory.creeps[creep_name]` _regardless of whether any memory data was passed in the options object_ and enable the default serialization
+    /// behavior of the `Memory` object, which may hamper attempts to directly
+    /// use `RawMemory`. todo, add note+docs about how to replace Memory and/or delete RawMemory._parsed
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.spawnCreep)
     #[wasm_bindgen(method, js_name = spawnCreep)]
@@ -72,13 +75,49 @@ extern "C" {
     pub fn renew_creep(this: &StructureSpawn, creep: &Creep) -> i8;
 }
 
-impl Attackable for StructureSpawn {}
-impl IsStructure for StructureSpawn {}
+impl Attackable for StructureSpawn {
+    fn hits(&self) -> u32 {
+        Structure::hits(self.as_ref())
+    }
+
+    fn hits_max(&self) -> u32 {
+        Structure::hits_max(self.as_ref())
+    }
+}
+impl HasId for StructureSpawn {
+    fn id(&self) -> Option<JsString> {
+        Some(Structure::id(self.as_ref()))
+    }
+}
+impl HasPosition for StructureSpawn {
+    fn pos(&self) -> Option<RoomPosition> {
+        RoomObject::pos(self.as_ref())
+    }
+}
 impl HasStore for StructureSpawn {
     fn store(&self) -> Store {
         Self::store(self)
     }
 }
+impl OwnedStructureProperties for StructureSpawn {
+    fn my(&self) -> bool {
+        OwnedStructure::my(self.as_ref())
+    }
+
+    fn owner(&self) -> Option<Owner> {
+        OwnedStructure::owner(self.as_ref())
+    }
+}
+impl RoomObjectProperties for StructureSpawn {
+    fn effects(&self) -> Array {
+        RoomObject::effects(self.as_ref())
+    }
+
+    fn room(&self) -> Option<Room> {
+        RoomObject::room(self.as_ref())
+    }
+}
+impl StructureProperties for StructureSpawn {}
 
 
 #[wasm_bindgen]

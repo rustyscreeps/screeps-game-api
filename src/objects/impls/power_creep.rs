@@ -1,8 +1,9 @@
 use crate::{
     constants::{Direction, PowerCreepClass, PowerType, ResourceType},
-    objects::{Owner, Resource, RoomObject, Store, StructureController, StructurePowerSpawn},
+    objects::{Owner, Resource, Room, RoomObject, RoomPosition, Store, StructureController, StructurePowerSpawn},
+    prelude::*,
 };
-use js_sys::{JsString, Object};
+use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -262,4 +263,111 @@ extern "C" {
         ty: ResourceType,
         amount: Option<u32>,
     ) -> i8;
+}
+
+impl Attackable for PowerCreep {
+    fn hits(&self) -> u32 {
+        Self::hits(self)
+    }
+
+    fn hits_max(&self) -> u32 {
+        Self::hits_max(self)
+    }
+}
+impl HasId for PowerCreep {
+    fn id(&self) -> Option<JsString> {
+        Self::id(self)
+    }
+}
+impl HasPosition for PowerCreep {
+    fn pos(&self) -> Option<RoomPosition> {
+        RoomObject::pos(self.as_ref())
+    }
+}
+impl HasStore for PowerCreep {
+    fn store(&self) -> Store {
+        Self::store(self)
+    }
+}
+impl RoomObjectProperties for PowerCreep {
+    fn effects(&self) -> Array {
+        RoomObject::effects(self.as_ref())
+    }
+
+    fn room(&self) -> Option<Room> {
+        RoomObject::room(self.as_ref())
+    }
+}
+impl SharedCreepProperties for PowerCreep {
+    fn memory(&self) -> JsValue {
+        Self::memory(self)
+    }
+
+    fn set_memory(&self, val: &JsValue) {
+        Self::set_memory(self, val)
+    }
+
+    fn my(&self) -> bool {
+        Self::my(self)
+    }
+
+    fn name(&self) -> JsString {
+        Self::name(self)
+    }
+
+    fn owner(&self) -> Owner {
+        Self::owner(self)
+    }
+
+    fn saying(&self) -> Option<JsString> {
+        Self::saying(self)
+    }
+
+    fn ticks_to_live(&self) -> u32 {
+        Self::ticks_to_live(self)
+    }
+
+    fn cancel_order(&self, target: &JsString) -> i8 {
+        Self::cancel_order(self, target)
+    }
+
+    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> i8 {
+        Self::drop(self, ty, amount)
+    }
+
+    fn move_direction(&self, direction: Direction) -> i8 {
+        Self::move_direction(self, direction)
+    }
+
+    fn move_by_path(&self, path: &JsValue) -> i8 {
+        Self::move_by_path(self, path)
+    }
+
+    fn move_to(&self, target: &JsValue, options: Option<Object>) -> i8 {
+        Self::move_to(self, target, options)
+    }
+
+    fn notify_when_attacked(&self, enabled: bool) -> i8 {
+        Self::notify_when_attacked(self, enabled)
+    }
+
+    fn pickup(&self, target: &Resource) -> i8 {
+        Self::pickup(self, target)
+    }
+
+    fn say(&self, message: &JsString, public: bool) -> i8 {
+        Self::say(self, message, public)
+    }
+
+    fn suicide(&self) -> i8 {
+        Self::suicide(self)
+    }
+
+    fn transfer(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> i8 {
+        Self::transfer(self, target, ty, amount)
+    }
+
+    fn withdraw(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> i8 {
+        Self::withdraw(self, target, ty, amount)
+    }
 }

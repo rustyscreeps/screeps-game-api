@@ -1,5 +1,8 @@
-use crate::objects::{RoomObject, Store};
-use js_sys::JsString;
+use crate::{
+    objects::{Room, RoomObject, RoomPosition, Store},
+    prelude::*,
+};
+use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -33,7 +36,7 @@ extern "C" {
     pub fn id(this: &Tombstone) -> JsString;
 
     /// The [`Store`] of the tombstone, which contains any resources in the
-    /// tombston.
+    /// tombstone.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Tombstone.store)
     #[wasm_bindgen(method, getter)]
@@ -44,4 +47,34 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Tombstone.ticksToDecay)
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &Tombstone) -> u32;
+}
+
+impl CanDecay for Tombstone {
+    fn ticks_to_decay(&self) -> u32 {
+        Self::ticks_to_decay(self)
+    }
+}
+impl HasId for Tombstone {
+    fn id(&self) -> Option<JsString> {
+        Some(Self::id(self))
+    }
+}
+impl HasPosition for Tombstone {
+    fn pos(&self) -> Option<RoomPosition> {
+        RoomObject::pos(self.as_ref())
+    }
+}
+impl HasStore for Tombstone {
+    fn store(&self) -> Store {
+        Self::store(self)
+    }
+}
+impl RoomObjectProperties for Tombstone {
+    fn effects(&self) -> Array {
+        RoomObject::effects(self.as_ref())
+    }
+
+    fn room(&self) -> Option<Room> {
+        RoomObject::room(self.as_ref())
+    }
 }

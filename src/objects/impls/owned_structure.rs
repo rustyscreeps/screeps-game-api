@@ -1,5 +1,8 @@
-use crate::objects::{RoomObject, Structure};
-use js_sys::JsString;
+use crate::{
+    objects::{Room, RoomObject, RoomPosition, Structure},
+    prelude::*,
+};
+use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -25,6 +28,22 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn owner(this: &OwnedStructure) -> Option<Owner>;
 }
+
+impl HasPosition for OwnedStructure {
+    fn pos(&self) -> Option<RoomPosition> {
+        RoomObject::pos(self.as_ref())
+    }
+}
+impl RoomObjectProperties for OwnedStructure {
+    fn effects(&self) -> Array {
+        RoomObject::effects(self.as_ref())
+    }
+
+    fn room(&self) -> Option<Room> {
+        RoomObject::room(self.as_ref())
+    }
+}
+
 
 #[wasm_bindgen]
 extern "C" {
