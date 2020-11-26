@@ -15,8 +15,6 @@
 
 // use stdweb::{Reference, ReferenceType, Value};
 // use stdweb_derive::ReferenceType;
-use enum_dispatch::enum_dispatch;
-use wasm_bindgen::JsCast;
 
 // use crate::{
 //     constants::{ResourceType, ReturnCode, StructureType},
@@ -39,128 +37,6 @@ pub use self::impls::{
     StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
 };
 
-/// Enum used for converting a [`Structure`] into a typed object of its specific
-/// structure type.
-pub enum TypedStructure {
-    Spawn(StructureSpawn),
-    Extension(StructureExtension),
-    Road(StructureRoad),
-    Wall(StructureWall),
-    Rampart(StructureRampart),
-    KeeperLair(StructureKeeperLair),
-    Portal(StructurePortal),
-    Controller(StructureController),
-    Link(StructureLink),
-    Storage(StructureStorage),
-    Tower(StructureTower),
-    Observer(StructureObserver),
-    PowerBank(StructurePowerBank),
-    PowerSpawn(StructurePowerSpawn),
-    Extractor(StructureExtractor),
-    Lab(StructureLab),
-    Terminal(StructureTerminal),
-    Container(StructureContainer),
-    Nuker(StructureNuker),
-    Factory(StructureFactory),
-    InvaderCore(StructureInvaderCore),
-    // todo figure out how to disable non_exhaustive
-    Unknown(Structure),
-}
-
-impl From<Structure> for TypedStructure {
-    fn from(structure: Structure) -> Self {
-        use crate::constants::StructureType::*;
-
-        match structure.structure_type() {
-            Spawn => Self::Spawn(structure.unchecked_into()),
-            Extension => Self::Extension(structure.unchecked_into()),
-            Road => Self::Road(structure.unchecked_into()),
-            Wall => Self::Wall(structure.unchecked_into()),
-            Rampart => Self::Rampart(structure.unchecked_into()),
-            KeeperLair => Self::KeeperLair(structure.unchecked_into()),
-            Portal => Self::Portal(structure.unchecked_into()),
-            Controller => Self::Controller(structure.unchecked_into()),
-            Link => Self::Link(structure.unchecked_into()),
-            Storage => Self::Storage(structure.unchecked_into()),
-            Tower => Self::Tower(structure.unchecked_into()),
-            Observer => Self::Observer(structure.unchecked_into()),
-            PowerBank => Self::PowerBank(structure.unchecked_into()),
-            PowerSpawn => Self::PowerSpawn(structure.unchecked_into()),
-            Extractor => Self::Extractor(structure.unchecked_into()),
-            Lab => Self::Lab(structure.unchecked_into()),
-            Terminal => Self::Terminal(structure.unchecked_into()),
-            Container => Self::Container(structure.unchecked_into()),
-            Nuker => Self::Nuker(structure.unchecked_into()),
-            Factory => Self::Factory(structure.unchecked_into()),
-            InvaderCore => Self::InvaderCore(structure.unchecked_into()),
-            // todo figure out how to disable non_exhaustive
-            _ => Self::Unknown(structure),
-        }
-    }
-}
-
-// impl HasStore for StructureTerminal {
-//     fn store(&self) -> Store {
-//         Self::store(self)
-//     }
-// }
-
-// impl HasStore for StructureStorage {
-//     fn store(&self) -> Store {
-//         Self::store(self)
-//     }
-// }
-
-// impl<T> HasStore for T
-// where
-//     T: HasStore,
-// {
-//     fn store(&self) -> Store {
-//         Self::store(self)
-//     }
-// }
-
-#[enum_dispatch]
-pub trait HasStore {
-    fn store(&self) -> Store {
-        Self::store(self)
-    }
-}
-
-impl HasStore for StructureTerminal {}
-impl HasStore for StructureStorage {}
-
-#[enum_dispatch(HasStore)]
-pub enum ObjectWithStore {
-    StructureStorage,
-    StructureTerminal,
-}
-
-
-#[enum_dispatch]
-pub trait Attackable {}
-
-impl Attackable for StructureTerminal {}
-impl Attackable for StructureStorage {}
-
-#[enum_dispatch(Attackable)]
-pub enum AttackableObject {
-    StructureStorage,
-    StructureSpawn,
-    StructureTerminal,
-}
-
-impl From<AttackableObject> for RoomObject {
-    fn from(attackable: AttackableObject) -> Self {
-        use AttackableObject::*;
-
-        match attackable {
-            StructureStorage(o) => RoomObject::from(o),
-            StructureSpawn(o) => RoomObject::from(o),
-            StructureTerminal(o) => RoomObject::from(o),
-        }
-    }
-}
 
 // pub use self::{
 //     creep_shared::{MoveToOptions, SharedCreepProperties},

@@ -1,4 +1,7 @@
-use crate::objects::{Creep, OwnedStructure, RoomObject, Store, Structure};
+use crate::{
+    prelude::*,
+    objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
+};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
@@ -68,6 +71,15 @@ extern "C" {
     #[wasm_bindgen(method, js_name = renewCreep)]
     pub fn renew_creep(this: &StructureSpawn, creep: &Creep) -> i8;
 }
+
+impl Attackable for StructureSpawn {}
+impl IsStructure for StructureSpawn {}
+impl HasStore for StructureSpawn {
+    fn store(&self) -> Store {
+        Self::store(self)
+    }
+}
+
 
 #[wasm_bindgen]
 extern "C" {

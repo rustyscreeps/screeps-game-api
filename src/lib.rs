@@ -20,6 +20,7 @@
 #![recursion_limit = "128"]
 
 pub mod constants;
+pub mod enums;
 pub mod game;
 pub mod inter_shard_memory;
 pub mod local;
@@ -28,11 +29,11 @@ pub mod objects;
 pub mod pathfinder;
 pub mod prototypes;
 pub mod raw_memory;
-// pub mod traits;
+pub mod traits;
 
 // pub use stdweb::private::ConversionError;
 
-pub use crate::{constants::*, game::*, local::*, objects::*};
+pub use crate::{constants::*, game::*, local::*, objects::*, traits::*};
 
 // pub use crate::{
 //     constants::*,
@@ -61,9 +62,6 @@ pub use crate::{constants::*, game::*, local::*, objects::*};
 // /// ```
 // ///
 // /// This module contains all base functionality traits, and no structures.
-// pub mod prelude {
-//     pub use crate::objects::{
-//         CanDecay, HasCooldown, HasId, HasPosition, HasStore,
-// OwnedStructureProperties,         RoomObjectProperties,
-// SharedCreepProperties, StructureProperties,     };
-// }
+pub mod prelude {
+    pub use crate::traits::*;
+}

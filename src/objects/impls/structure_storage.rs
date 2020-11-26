@@ -1,4 +1,7 @@
-use crate::objects::{OwnedStructure, RoomObject, Store, Structure};
+use crate::{
+    prelude::*,
+    objects::{OwnedStructure, RoomObject, Store, Structure}
+};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -16,4 +19,12 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureStorage.store)
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureStorage) -> Store;
+}
+
+impl Attackable for StructureStorage {}
+impl IsStructure for StructureStorage {}
+impl HasStore for StructureStorage {
+    fn store(&self) -> Store {
+        Self::store(self)
+    }
 }

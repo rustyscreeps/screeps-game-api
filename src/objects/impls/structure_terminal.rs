@@ -1,4 +1,5 @@
 use crate::{
+    prelude::*,
     constants::ResourceType,
     objects::{OwnedStructure, RoomObject, Store, Structure},
 };
@@ -39,4 +40,12 @@ extern "C" {
         destination: &JsString,
         description: Option<&JsString>,
     ) -> i8;
+}
+
+impl Attackable for StructureTerminal {}
+impl IsStructure for StructureTerminal {}
+impl HasStore for StructureTerminal {
+    fn store(&self) -> Store {
+        Self::store(self)
+    }
 }
