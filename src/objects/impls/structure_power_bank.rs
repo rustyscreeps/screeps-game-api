@@ -62,4 +62,3 @@ impl RoomObjectProperties for StructurePowerBank {
     }
 }
 impl StructureProperties for StructurePowerBank {}
-

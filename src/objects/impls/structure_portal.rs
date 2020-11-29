@@ -1,5 +1,5 @@
 use crate::{
-    objects::{RoomObject, Room, RoomPosition, Structure},
+    objects::{Room, RoomObject, RoomPosition, Structure},
     prelude::*,
 };
 use js_sys::{Array, JsString};
@@ -16,7 +16,8 @@ extern "C" {
 
     // todo: destination
 
-    /// The number of ticks until the portal will decay, if it's unstable, or 0 if it's stable.
+    /// The number of ticks until the portal will decay, if it's unstable, or 0
+    /// if it's stable.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructurePortal.ticksToDecay)
     #[wasm_bindgen(method, getter = ticksToDecay)]
@@ -49,7 +50,6 @@ impl RoomObjectProperties for StructurePortal {
     }
 }
 impl StructureProperties for StructurePortal {}
-
 
 // use serde::Deserialize;
 // use stdweb::Value;
@@ -86,12 +86,12 @@ impl StructureProperties for StructurePortal {}
 //         match v {
 //             Value::Number(_) => PortalDestination::InterRoom(
 //                 v.try_into()
-//                     .expect("expected Position::try_from(pos.__packedPos) to succeed"),
-//             ),
+//                     .expect("expected Position::try_from(pos.__packedPos) to
+// succeed"),             ),
 //             _ => PortalDestination::InterShard(
 //                 v.try_into()
-//                     .expect("Value couldn't be converted into an InterShardPortalDestination"),
-//             ),
+//                     .expect("Value couldn't be converted into an
+// InterShardPortalDestination"),             ),
 //         }
 //     }
 // }

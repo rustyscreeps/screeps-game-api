@@ -24,6 +24,7 @@ pub enum AttackableObject {
     StructureRoad,
     StructureSpawn,
     StructureStorage,
+    #[cfg(not(feature = "disable-terminal"))]
     StructureTerminal,
     StructureTower,
     StructureWall,
@@ -51,6 +52,7 @@ impl From<AttackableObject> for RoomObject {
             StructureRoad(o) => RoomObject::from(o),
             StructureSpawn(o) => RoomObject::from(o),
             StructureStorage(o) => RoomObject::from(o),
+            #[cfg(not(feature = "disable-terminal"))]
             StructureTerminal(o) => RoomObject::from(o),
             StructureTower(o) => RoomObject::from(o),
             StructureWall(o) => RoomObject::from(o),
@@ -81,6 +83,7 @@ impl AsRef<RoomObject> for AttackableObject {
             StructureRoad(o) => o.as_ref(),
             StructureSpawn(o) => o.as_ref(),
             StructureStorage(o) => o.as_ref(),
+            #[cfg(not(feature = "disable-terminal"))]
             StructureTerminal(o) => o.as_ref(),
             StructureTower(o) => o.as_ref(),
             StructureWall(o) => o.as_ref(),
@@ -109,6 +112,7 @@ pub enum CooldownObject {
     StructureLab,
     StructureLink,
     StructureNuker,
+    #[cfg(not(feature = "disable-terminal"))]
     StructureTerminal,
 }
 
@@ -142,6 +146,7 @@ pub enum ObjectWithId {
     StructureRoad,
     StructureSpawn,
     StructureStorage,
+    #[cfg(not(feature = "disable-terminal"))]
     StructureTerminal,
     StructureTower,
     StructureWall,
@@ -180,6 +185,7 @@ pub enum ObjectWithPosition {
     StructureRoad,
     StructureSpawn,
     StructureStorage,
+    #[cfg(not(feature = "disable-terminal"))]
     StructureTerminal,
     StructureTower,
     StructureWall,
@@ -200,6 +206,7 @@ pub enum StoreObject {
     StructurePowerSpawn,
     StructureSpawn,
     StructureStorage,
+    #[cfg(not(feature = "disable-terminal"))]
     StructureTerminal,
     StructureTower,
     Tombstone,
@@ -223,6 +230,7 @@ pub enum OwnedStructureObject {
     StructureRampart,
     StructureSpawn,
     StructureStorage,
+    #[cfg(not(feature = "disable-terminal"))]
     StructureTerminal,
     StructureTower,
 }
@@ -260,6 +268,7 @@ pub enum TypedRoomObject {
     StructureRoad,
     StructureSpawn,
     StructureStorage,
+    #[cfg(not(feature = "disable-terminal"))]
     StructureTerminal,
     StructureTower,
     StructureWall,
@@ -295,6 +304,7 @@ pub enum StructureObject {
     StructureRoad,
     StructureSpawn,
     StructureStorage,
+    #[cfg(not(feature = "disable-terminal"))]
     StructureTerminal,
     StructureTower,
     StructureWall,
@@ -323,6 +333,7 @@ impl From<Structure> for StructureObject {
             Road => Self::StructureRoad(structure.unchecked_into()),
             Spawn => Self::StructureSpawn(structure.unchecked_into()),
             Storage => Self::StructureStorage(structure.unchecked_into()),
+            #[cfg(not(feature = "disable-terminal"))]
             Terminal => Self::StructureTerminal(structure.unchecked_into()),
             Tower => Self::StructureTower(structure.unchecked_into()),
             Wall => Self::StructureWall(structure.unchecked_into()),

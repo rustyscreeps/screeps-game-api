@@ -45,10 +45,12 @@ extern "C" {
     pub fn store(this: &StructureSpawn) -> Store;
 
     /// Create a new creep with the specified body part [`Array`], name
-    /// [`JsString`], and optional spawning options. Note that successfully spawning will store data in
-    /// `Memory.creeps[creep_name]` _regardless of whether any memory data was passed in the options object_ and enable the default serialization
-    /// behavior of the `Memory` object, which may hamper attempts to directly
-    /// use `RawMemory`. todo, add note+docs about how to replace Memory and/or delete RawMemory._parsed
+    /// [`JsString`], and optional spawning options. Note that successfully
+    /// spawning will store data in `Memory.creeps[creep_name]` _regardless
+    /// of whether any memory data was passed in the options object_ and enable
+    /// the default serialization behavior of the `Memory` object, which may
+    /// hamper attempts to directly use `RawMemory`. todo, add note+docs
+    /// about how to replace Memory and/or delete RawMemory._parsed
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.spawnCreep)
     #[wasm_bindgen(method, js_name = spawnCreep)]
@@ -118,7 +120,6 @@ impl RoomObjectProperties for StructureSpawn {
     }
 }
 impl StructureProperties for StructureSpawn {}
-
 
 #[wasm_bindgen]
 extern "C" {

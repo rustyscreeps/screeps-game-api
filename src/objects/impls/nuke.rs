@@ -1,4 +1,7 @@
-use crate::{objects::{Room, RoomObject, RoomPosition}, prelude::*};
+use crate::{
+    objects::{Room, RoomObject, RoomPosition},
+    prelude::*,
+};
 use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
@@ -50,5 +53,3 @@ impl RoomObjectProperties for Nuke {
         RoomObject::room(self.as_ref())
     }
 }
-
-

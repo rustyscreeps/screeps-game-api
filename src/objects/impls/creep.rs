@@ -1,7 +1,8 @@
 use crate::{
     constants::{Direction, Part, ResourceType},
     objects::{
-        ConstructionSite, Owner, Resource, Room, RoomObject, RoomPosition, Store, Structure, StructureController,
+        ConstructionSite, Owner, Resource, Room, RoomObject, RoomPosition, Store, Structure,
+        StructureController,
     },
     prelude::*,
 };
@@ -414,4 +415,3 @@ impl SharedCreepProperties for Creep {
         Self::withdraw(self, target, ty, amount)
     }
 }
-

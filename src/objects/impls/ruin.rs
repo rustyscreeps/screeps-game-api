@@ -79,4 +79,3 @@ impl RoomObjectProperties for Ruin {
         RoomObject::room(self.as_ref())
     }
 }
-

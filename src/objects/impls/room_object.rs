@@ -48,4 +48,3 @@ impl RoomObjectProperties for RoomObject {
         Self::room(self)
     }
 }
-

@@ -2,11 +2,7 @@ use enum_dispatch::enum_dispatch;
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
-use crate::{
-    constants::*,
-    enums::*,
-    objects::*,
-};
+use crate::{constants::*, enums::*, objects::*};
 
 #[enum_dispatch]
 pub trait Attackable {
@@ -32,7 +28,8 @@ pub trait HasCooldown {
 #[enum_dispatch]
 pub trait HasId {
     /// Object ID of the object, which can be used to efficiently fetch a
-    /// fresh reference to the object on subsequent ticks, or `None` if the object doesn't currently have an id.
+    /// fresh reference to the object on subsequent ticks, or `None` if the
+    /// object doesn't currently have an id.
     fn id(&self) -> Option<JsString>;
 }
 
@@ -43,10 +40,10 @@ pub trait HasPosition {
     fn pos(&self) -> Option<RoomPosition>;
 }
 
-
 #[enum_dispatch]
 pub trait HasStore {
-    /// The store of the object, containing information about the resources it is holding.
+    /// The store of the object, containing information about the resources it
+    /// is holding.
     fn store(&self) -> Store;
 }
 
@@ -82,12 +79,12 @@ pub trait RoomObjectProperties {
 
 #[enum_dispatch]
 pub trait SharedCreepProperties {
-    /// A shortcut to the part of the `Memory` tree used for this creep by default
+    /// A shortcut to the part of the `Memory` tree used for this creep by
+    /// default
     fn memory(&self) -> JsValue;
 
     /// Sets a new value to the memory object shortcut for this creep.
     fn set_memory(&self, val: &JsValue);
-
 
     /// Whether this creep is owned by the player.
     fn my(&self) -> bool;

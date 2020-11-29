@@ -74,4 +74,3 @@ impl RoomObjectProperties for StructurePowerSpawn {
     }
 }
 impl StructureProperties for StructurePowerSpawn {}
-

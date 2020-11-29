@@ -87,4 +87,3 @@ impl RoomObjectProperties for StructureNuker {
     }
 }
 impl StructureProperties for StructureNuker {}
-

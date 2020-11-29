@@ -1,4 +1,8 @@
-use crate::{constants::ResourceType, objects::{Room, RoomObject, RoomPosition}, prelude::*};
+use crate::{
+    constants::ResourceType,
+    objects::{Room, RoomObject, RoomPosition},
+    prelude::*,
+};
 use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
@@ -72,4 +76,3 @@ impl RoomObjectProperties for Deposit {
         RoomObject::room(self.as_ref())
     }
 }
-

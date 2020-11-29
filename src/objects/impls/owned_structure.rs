@@ -44,7 +44,6 @@ impl RoomObjectProperties for OwnedStructure {
     }
 }
 
-
 #[wasm_bindgen]
 extern "C" {
     /// Object with owner info for an owned game object.

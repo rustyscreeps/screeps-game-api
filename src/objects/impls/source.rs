@@ -72,4 +72,3 @@ impl RoomObjectProperties for Source {
         RoomObject::room(self.as_ref())
     }
 }
-

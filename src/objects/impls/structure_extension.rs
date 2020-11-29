@@ -26,7 +26,7 @@ impl Attackable for StructureExtension {
     fn hits(&self) -> u32 {
         Structure::hits(self.as_ref())
     }
-    
+
     fn hits_max(&self) -> u32 {
         Structure::hits_max(self.as_ref())
     }

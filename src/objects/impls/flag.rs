@@ -75,4 +75,3 @@ impl RoomObjectProperties for Flag {
         RoomObject::room(self.as_ref())
     }
 }
-

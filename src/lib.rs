@@ -22,6 +22,7 @@
 pub mod constants;
 pub mod enums;
 pub mod game;
+#[cfg(not(feature = "disable-inter-shard-memory"))]
 pub mod inter_shard_memory;
 pub mod local;
 // pub mod memory;

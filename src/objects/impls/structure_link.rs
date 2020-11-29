@@ -86,4 +86,3 @@ impl RoomObjectProperties for StructureLink {
     }
 }
 impl StructureProperties for StructureLink {}
-

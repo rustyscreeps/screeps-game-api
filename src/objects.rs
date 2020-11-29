@@ -34,9 +34,11 @@ pub use self::impls::{
     StructureExtension, StructureExtractor, StructureFactory, StructureInvaderCore,
     StructureKeeperLair, StructureLab, StructureLink, StructureNuker, StructureObserver,
     StructurePortal, StructurePowerBank, StructurePowerSpawn, StructureRampart, StructureRoad,
-    StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
+    StructureSpawn, StructureStorage, StructureTower, StructureWall, Tombstone,
 };
 
+#[cfg(not(feature = "disable-terminal"))]
+pub use self::impls::StructureTerminal;
 
 // pub use self::{
 //     creep_shared::{MoveToOptions, SharedCreepProperties},

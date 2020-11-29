@@ -70,4 +70,3 @@ impl RoomObjectProperties for StructureExtractor {
     }
 }
 impl StructureProperties for StructureExtractor {}
-

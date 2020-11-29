@@ -61,4 +61,3 @@ impl RoomObjectProperties for StructureObserver {
     }
 }
 impl StructureProperties for StructureObserver {}
-

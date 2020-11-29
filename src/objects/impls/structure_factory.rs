@@ -92,4 +92,3 @@ impl RoomObjectProperties for StructureFactory {
     }
 }
 impl StructureProperties for StructureFactory {}
-

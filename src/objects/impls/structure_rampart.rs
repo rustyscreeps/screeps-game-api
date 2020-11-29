@@ -84,4 +84,3 @@ impl RoomObjectProperties for StructureRampart {
     }
 }
 impl StructureProperties for StructureRampart {}
-

@@ -1,6 +1,9 @@
 use crate::{
     constants::{Direction, PowerCreepClass, PowerType, ResourceType},
-    objects::{Owner, Resource, Room, RoomObject, RoomPosition, Store, StructureController, StructurePowerSpawn},
+    objects::{
+        Owner, Resource, Room, RoomObject, RoomPosition, Store, StructureController,
+        StructurePowerSpawn,
+    },
     prelude::*,
 };
 use js_sys::{Array, JsString, Object};

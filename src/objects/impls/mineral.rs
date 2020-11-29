@@ -59,5 +59,3 @@ impl RoomObjectProperties for Mineral {
         RoomObject::room(self.as_ref())
     }
 }
-
-
