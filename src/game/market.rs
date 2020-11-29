@@ -28,21 +28,18 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn credits(this: &MarketInfo) -> f64;
 
-    // todo type to deserialize into
-    /// An [`Array`] of the last 100 transactions sent to your terminals.
+    /// An [`Array`] of the last 100 [`Transaction`]s sent to your terminals.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.incomingTransactions)
     #[wasm_bindgen(method, getter = incomingTransactions)]
     pub fn incoming_transactions(this: &MarketInfo) -> Array;
 
-    // todo type to deserialize into
-    /// An [`Array`] of the last 100 transactions sent from your terminals.
+    /// An [`Array`] of the last 100 [`Transaction`]s sent from your terminals.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.outgoingTransactions)
     #[wasm_bindgen(method, getter = outgoingTransactions)]
     pub fn outgoing_transactions(this: &MarketInfo) -> Array;
 
-    // todo type to deserialize into
     /// An [`Object`] with your current buy and sell orders on the market, with
     /// order ID [`JsString`] keys and [`MyOrder`] values.
     ///
@@ -80,7 +77,7 @@ extern "C" {
     #[wasm_bindgen(method, js_name = changeOrderPrice)]
     pub fn change_order_price(this: &MarketInfo, order_id: &JsString, new_price: f64) -> i8;
 
-    // todo type to serialize into
+    // todo type to serialize call options into
     /// Create a new order on the market.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.createOrder)
@@ -107,8 +104,8 @@ extern "C" {
     #[wasm_bindgen(method, js_name = extendOrder)]
     pub fn extend_order(this: &MarketInfo, order_id: &JsString, add_amount: u32) -> i8;
 
-    // todo type to serialize into - special efficient behavior when passed a
-    // `{resourceType: type}` filter
+    // todo type to serialize call options into - special efficient behavior when
+    // passed a `{resourceType: type}` filter
     /// Get an [`Array`[] of all [`Order`]s on the market, with an optional
     /// filter object. Note that a filter key of `resourceType` with a type
     /// restriction has special handling in the engine to be more efficient
@@ -122,13 +119,14 @@ extern "C" {
 
     // todo this is probably breaking in an interesting way on private servers due to the {} return https://github.com/screeps/engine/pull/131 - maybe catch?
     /// Get information about the price history on the market for the last 14
-    /// days for a given resource, or for all resource if `None`.
+    /// days for a given resource as an [`Array`] of [`OrderHistoryRecord`]s, or
+    /// for all resources if `None`. Warning: returns an empty [`Object`]
+    /// instead of an array if there is no history for the resource, verifying
+    /// the type is recommended before use if the market might be empty.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getHistory)
-    ///
-    /// [source]: https://github.com/screeps/engine/blob/f7a09e637c20689084fcf4eb43eacdfd51d31476/src/game/market.js#L37
     #[wasm_bindgen(method, js_name = getHistory)]
-    pub fn get_history(this: &MarketInfo, resource: Option<ResourceType>) -> Array;
+    pub fn get_history(this: &MarketInfo, resource: Option<ResourceType>) -> JsValue;
 
     /// Get an object with information about a specific order, in the same
     /// format as returned by [`MarketInfo::get_all_orders`]

@@ -14,6 +14,10 @@ mod room_position;
 mod room_terrain;
 // mod room_visual;
 mod ruin;
+#[cfg(feature = "enable-score")]
+mod score_collector;
+#[cfg(feature = "enable-score")]
+mod score_container;
 mod source;
 mod store;
 mod structure;
@@ -85,6 +89,9 @@ pub use self::{
 
 #[cfg(not(feature = "disable-terminal"))]
 pub use self::structure_terminal::StructureTerminal;
+
+#[cfg(feature = "enable-score")]
+pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer};
 
 // pub use self::{
 //     creep::Bodypart,

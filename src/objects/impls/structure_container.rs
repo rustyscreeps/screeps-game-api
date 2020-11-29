@@ -22,7 +22,7 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureContainer) -> Store;
 
-    /// The number of ticks until the rampart will decay, losing TODO CONSTANT
+    /// The number of ticks until the container will decay, losing TODO CONSTANT
     /// hits.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureContainer.ticksToDecay)

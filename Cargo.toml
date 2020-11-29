@@ -38,23 +38,17 @@ serde_repr = "0.1"
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 
 [features]
-# Disable the interface for pixel generation, not present on private servers
+# Disable the interface for pixel generation, not present on private servers or seasonal
 disable-generate-pixel = []
 
-# Disable the interface for inter-shard memory, not present on private servers
+# Disable the interface for inter-shard memory, not present on private servers or seasonal
 disable-inter-shard-memory = []
 
-# Disable inter-player market transactions - used in season 1
-disable-market = []
-
-# Disable terminal structures - proposed but not used in season 1
-disable-terminal = []
-
-# Enable score structures and resource - used in season 1
+# Enable score container, collector, and resource - used in season 1
 enable-score = []
 
 # Disable interfaces that don't exist (and will panic if used) on private servers
-private-server = ["disable-inter-shard-memory", "disable-generate-pixel"]
+private-server = ["disable-generate-pixel", "disable-inter-shard-memory"]
 
-# Seasonal server, season 1; market removed, score structures and resource added
-seasonal-season-1 = ["disable-market", "enable-score"]
+# Seasonal server, season 1
+seasonal-season-1 = ["disable-generate-pixel", "disable-inter-shard-memory", "enable-score"]

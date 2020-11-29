@@ -1,9 +1,7 @@
 use enum_dispatch::enum_dispatch;
 use wasm_bindgen::JsCast;
 
-use crate::{
-    objects::*,
-};
+use crate::objects::*;
 
 #[enum_dispatch(Attackable)]
 pub enum AttackableObject {
@@ -60,7 +58,6 @@ impl From<AttackableObject> for RoomObject {
     }
 }
 
-
 impl AsRef<RoomObject> for AttackableObject {
     fn as_ref(&self) -> &RoomObject {
         use AttackableObject::*;
@@ -95,6 +92,8 @@ impl AsRef<RoomObject> for AttackableObject {
 pub enum DecayingObject {
     Deposit,
     Ruin,
+    #[cfg(feature = "enable-score")]
+    ScoreContainer,
     StructureContainer,
     StructurePortal,
     StructurePowerBank,
@@ -102,7 +101,6 @@ pub enum DecayingObject {
     StructureRoad,
     Tombstone,
 }
-
 
 #[enum_dispatch(HasCooldown)]
 pub enum CooldownObject {
@@ -116,7 +114,6 @@ pub enum CooldownObject {
     StructureTerminal,
 }
 
-
 #[enum_dispatch(HasId)]
 pub enum ObjectWithId {
     ConstructionSite,
@@ -127,6 +124,10 @@ pub enum ObjectWithId {
     PowerCreep,
     Resource,
     Ruin,
+    #[cfg(feature = "enable-score")]
+    ScoreCollector,
+    #[cfg(feature = "enable-score")]
+    ScoreContainer,
     Source,
     StructureContainer,
     StructureController,
@@ -153,7 +154,6 @@ pub enum ObjectWithId {
     Tombstone,
 }
 
-
 #[enum_dispatch(HasPosition)]
 pub enum ObjectWithPosition {
     ConstructionSite,
@@ -166,6 +166,10 @@ pub enum ObjectWithPosition {
     Resource,
     RoomPosition,
     Ruin,
+    #[cfg(feature = "enable-score")]
+    ScoreCollector,
+    #[cfg(feature = "enable-score")]
+    ScoreContainer,
     Source,
     StructureContainer,
     StructureController,
@@ -197,6 +201,10 @@ pub enum StoreObject {
     Creep,
     PowerCreep,
     Ruin,
+    #[cfg(feature = "enable-score")]
+    ScoreCollector,
+    #[cfg(feature = "enable-score")]
+    ScoreContainer,
     StructureContainer,
     StructureExtension,
     StructureFactory,
@@ -249,6 +257,10 @@ pub enum TypedRoomObject {
     PowerCreep,
     Resource,
     Ruin,
+    #[cfg(feature = "enable-score")]
+    ScoreCollector,
+    #[cfg(feature = "enable-score")]
+    ScoreContainer,
     Source,
     StructureContainer,
     StructureController,
@@ -274,7 +286,6 @@ pub enum TypedRoomObject {
     StructureWall,
     Tombstone,
 }
-
 
 #[enum_dispatch(SharedCreepProperties)]
 pub enum MovableObject {

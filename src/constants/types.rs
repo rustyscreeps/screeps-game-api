@@ -276,6 +276,8 @@ pub enum ResourceType {
     Spirit = "spirit",
     Emanation = "emanation",
     Essence = "essence",
+    #[cfg(feature = "enable-score")]
+    Score = "score",
 }
 
 // todo, can we make this an enum wrapper around both normal and inter-shard types before instead of this?
@@ -373,7 +375,6 @@ pub enum MarketResourceType {
     Pixel = "pixel",
     AccessKey = "AccessKey",
 }
-
 
 #[derive(Copy, Clone, Debug)]
 pub enum Boost {

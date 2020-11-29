@@ -40,6 +40,9 @@ pub use self::impls::{
 #[cfg(not(feature = "disable-terminal"))]
 pub use self::impls::StructureTerminal;
 
+#[cfg(feature = "enable-score")]
+pub use self::impls::{ScoreCollector, ScoreContainer};
+
 // pub use self::{
 //     creep_shared::{MoveToOptions, SharedCreepProperties},
 //     impls::{
@@ -375,7 +378,7 @@ pub use self::impls::StructureTerminal;
 //     fn store_capacity(&self, resource: Option<ResourceType>) -> u32 {
 //         match resource {
 //             Some(ty) => {
-//                 
+//
 // js_unwrap!(@{self.as_ref()}.store.getCapacity(__resource_type_num_to_str(@{ty
 // as u32})) || 0)             }
 //             None => js_unwrap!(@{self.as_ref()}.store.getCapacity() || 0),
@@ -385,7 +388,7 @@ pub use self::impls::StructureTerminal;
 //     fn store_free_capacity(&self, resource: Option<ResourceType>) -> i32 {
 //         match resource {
 //             Some(ty) => {
-//                 
+//
 // js_unwrap!(@{self.as_ref()}.store.
 // getFreeCapacity(__resource_type_num_to_str(@{ty as u32})) || 0)             }
 //             None => js_unwrap!(@{self.as_ref()}.store.getFreeCapacity() ||
@@ -395,7 +398,7 @@ pub use self::impls::StructureTerminal;
 //     fn store_used_capacity(&self, resource: Option<ResourceType>) -> u32 {
 //         match resource {
 //             Some(ty) => {
-//                 
+//
 // js_unwrap!(@{self.as_ref()}.store.
 // getUsedCapacity(__resource_type_num_to_str(@{ty as u32})) || 0)             }
 //             None => js_unwrap!(@{self.as_ref()}.store.getUsedCapacity() ||
