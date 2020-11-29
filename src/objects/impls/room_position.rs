@@ -1,5 +1,5 @@
 use crate::{
-    constants::{Direction, Look, StructureType},
+    constants::{Color, Direction, Look, StructureType},
     local::Position,
     prelude::*,
     prototypes::ROOM_POSITION_PROTOTYPE,
@@ -82,6 +82,8 @@ extern "C" {
         name: Option<&JsString>,
     ) -> i8;
 
+    // todo we need to handle the fact that if this succeeds the name of the flag is returned, and maybe also the fact
+    // that it'll throw a js exception when created in a non visible room.. hmm
     /// Creates a [`Flag`] at this position.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createFlag)
@@ -91,8 +93,8 @@ extern "C" {
     pub fn create_flag(
         this: &RoomPosition,
         name: Option<&JsString>,
-        color: Option<&JsString>,
-        secondary_color: Option<&JsString>,
+        color: Option<Color>,
+        secondary_color: Option<Color>,
     ) -> i8;
 
     // todo FindOptions
