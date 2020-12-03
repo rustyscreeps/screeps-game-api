@@ -206,14 +206,11 @@ impl_has_id! {
     StructureRoad,
     StructureSpawn,
     StructureStorage,
+    StructureTerminal,
     StructureTower,
     StructureWall,
     Tombstone,
     PowerCreep,
-}
-
-impl_has_id! {
-    StructureTerminal
 }
 
 /// Trait for all wrappers over Screeps JavaScript objects extending
@@ -598,12 +595,9 @@ impl_structure_properties! {
     StructureRoad,
     StructureSpawn,
     StructureStorage,
+    StructureTerminal,
     StructureTower,
     StructureWall
-}
-
-impl_structure_properties! {
-    StructureTerminal
 }
 
 unsafe impl OwnedStructureProperties for OwnedStructure {}
