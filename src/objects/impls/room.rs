@@ -20,15 +20,12 @@ use crate::{
     objects::{
         ConstructionSite, Creep, Deposit, Flag, HasPosition, Mineral, Nuke, PowerCreep, Resource,
         Room, RoomTerrain, RoomVisual, Ruin, Source, Structure, StructureController,
-        StructureStorage, Tombstone,
+        StructureStorage, StructureTerminal, Tombstone,
     },
     pathfinder::{CostMatrix, RoomCostResult, SingleRoomCostResult},
     traits::{TryFrom, TryInto},
     ConversionError,
 };
-
-#[cfg(not(feature = "disable-terminal"))]
-use crate::objects::StructureTerminal;
 
 simple_accessors! {
     impl Room {
@@ -37,12 +34,6 @@ simple_accessors! {
         pub fn energy_capacity_available() -> u32 = energyCapacityAvailable;
         pub fn name() -> RoomName = name;
         pub fn storage() -> Option<StructureStorage> = storage;
-    }
-}
-
-#[cfg(not(feature = "disable-terminal"))]
-simple_accessors! {
-    impl Room {
         pub fn terminal() -> Option<StructureTerminal> = terminal;
     }
 }

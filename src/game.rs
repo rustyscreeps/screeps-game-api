@@ -15,7 +15,6 @@ pub mod cpu;
 pub mod gcl;
 pub mod gpl;
 pub mod map;
-#[cfg(not(feature = "disable-market"))]
 pub mod market;
 pub mod shards;
 

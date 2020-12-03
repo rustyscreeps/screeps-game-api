@@ -104,6 +104,8 @@ reference_wrappers! {
     pub struct Spawning(...);
     #[reference(instance_of = "StructureStorage")]
     pub struct StructureStorage(...);
+    #[reference(instance_of = "StructureTerminal")]
+    pub struct StructureTerminal(...);
     #[reference(instance_of = "StructureTower")]
     pub struct StructureTower(...);
     #[reference(instance_of = "StructureWall")]
@@ -118,12 +120,6 @@ reference_wrappers! {
     // representation returned by game::power_creeps::*, which may be alive on the current shard or not
     #[reference(instance_of = "AccountPowerCreep")]
     pub struct AccountPowerCreep(...);
-}
-
-#[cfg(not(feature = "disable-terminal"))]
-reference_wrappers! {
-    #[reference(instance_of = "StructureTerminal")]
-    pub struct StructureTerminal(...);
 }
 
 /// Trait for things which have positions in the Screeps world.
@@ -216,7 +212,6 @@ impl_has_id! {
     PowerCreep,
 }
 
-#[cfg(not(feature = "disable-terminal"))]
 impl_has_id! {
     StructureTerminal
 }
@@ -497,7 +492,6 @@ unsafe impl Transferable for StructureSpawn {}
 unsafe impl Transferable for StructureStorage {}
 unsafe impl Transferable for StructureTower {}
 unsafe impl Transferable for StructurePowerSpawn {}
-#[cfg(not(feature = "disable-terminal"))]
 unsafe impl Transferable for StructureTerminal {}
 unsafe impl Transferable for PowerCreep {}
 
@@ -514,7 +508,6 @@ unsafe impl Withdrawable for StructureSpawn {}
 unsafe impl Withdrawable for StructureStorage {}
 unsafe impl Withdrawable for StructureTower {}
 unsafe impl Withdrawable for StructurePowerSpawn {}
-#[cfg(not(feature = "disable-terminal"))]
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
 
@@ -543,7 +536,6 @@ unsafe impl Attackable for StructureRampart {}
 unsafe impl Attackable for StructureRoad {}
 unsafe impl Attackable for StructureSpawn {}
 unsafe impl Attackable for StructureStorage {}
-#[cfg(not(feature = "disable-terminal"))]
 unsafe impl Attackable for StructureTerminal {}
 unsafe impl Attackable for StructureTower {}
 unsafe impl Attackable for StructureWall {}
@@ -578,7 +570,6 @@ unsafe impl RoomObjectProperties for StructureRampart {}
 unsafe impl RoomObjectProperties for StructureRoad {}
 unsafe impl RoomObjectProperties for StructureSpawn {}
 unsafe impl RoomObjectProperties for StructureStorage {}
-#[cfg(not(feature = "disable-terminal"))]
 unsafe impl RoomObjectProperties for StructureTerminal {}
 unsafe impl RoomObjectProperties for StructureTower {}
 unsafe impl RoomObjectProperties for StructureWall {}
@@ -611,7 +602,6 @@ impl_structure_properties! {
     StructureWall
 }
 
-#[cfg(not(feature = "disable-terminal"))]
 impl_structure_properties! {
     StructureTerminal
 }
@@ -632,7 +622,6 @@ unsafe impl OwnedStructureProperties for StructurePowerSpawn {}
 unsafe impl OwnedStructureProperties for StructureRampart {}
 unsafe impl OwnedStructureProperties for StructureSpawn {}
 unsafe impl OwnedStructureProperties for StructureStorage {}
-#[cfg(not(feature = "disable-terminal"))]
 unsafe impl OwnedStructureProperties for StructureTerminal {}
 unsafe impl OwnedStructureProperties for StructureTower {}
 
@@ -650,7 +639,6 @@ unsafe impl HasStore for StructureNuker {}
 unsafe impl HasStore for StructurePowerSpawn {}
 unsafe impl HasStore for StructureSpawn {}
 unsafe impl HasStore for StructureStorage {}
-#[cfg(not(feature = "disable-terminal"))]
 unsafe impl HasStore for StructureTerminal {}
 unsafe impl HasStore for StructureTower {}
 unsafe impl HasStore for Tombstone {}
@@ -671,7 +659,6 @@ unsafe impl HasCooldown for StructureFactory {}
 unsafe impl HasCooldown for StructureLab {}
 unsafe impl HasCooldown for StructureLink {}
 unsafe impl HasCooldown for StructureNuker {}
-#[cfg(not(feature = "disable-terminal"))]
 unsafe impl HasCooldown for StructureTerminal {}
 
 // NOTE: keep impls for Structure* in sync with accessor methods in

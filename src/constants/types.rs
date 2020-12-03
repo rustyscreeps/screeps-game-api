@@ -40,7 +40,6 @@ pub enum StructureType {
     PowerSpawn = 13,
     Extractor = 14,
     Lab = 15,
-    #[cfg(not(feature = "disable-terminal"))]
     Terminal = 16,
     Container = 17,
     Nuker = 18,
@@ -67,7 +66,6 @@ impl StructureType {
             PowerSpawn => 100_000,
             Extractor => 5_000,
             Lab => 50_000,
-            #[cfg(not(feature = "disable-terminal"))]
             Terminal => 100_000,
             Container => 5_000,
             Nuker => 100_000,
@@ -144,7 +142,6 @@ impl StructureType {
                 7 => 6,
                 _ => 10,
             },
-            #[cfg(not(feature = "disable-terminal"))]
             Terminal => match current_rcl {
                 0..=5 => 0,
                 _ => 1,
@@ -182,7 +179,6 @@ impl StructureType {
             PowerSpawn => POWER_SPAWN_HITS,
             Extractor => EXTENSION_HITS,
             Lab => LAB_HITS,
-            #[cfg(not(feature = "disable-terminal"))]
             Terminal => TERMINAL_HITS,
             Container => CONTAINER_HITS,
             Nuker => NUKER_HITS,
