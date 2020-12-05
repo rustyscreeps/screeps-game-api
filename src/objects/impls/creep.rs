@@ -45,7 +45,8 @@ extern "C" {
     pub fn hits_max(this: &Creep) -> u32;
 
     /// Object ID of the creep, which can be used to efficiently fetch a fresh
-    /// reference to the object on subsequent ticks.
+    /// reference to the object on subsequent ticks.  `None` if the creep began
+    /// spawning this tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
     #[wasm_bindgen(method, getter)]

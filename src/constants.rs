@@ -63,6 +63,7 @@
 pub mod extra;
 pub mod numbers;
 mod recipes;
+pub mod seasonal;
 mod small_enums;
 mod types;
 

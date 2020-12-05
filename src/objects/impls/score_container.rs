@@ -31,7 +31,8 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &ScoreContainer) -> Store;
 
-    /// The number of ticks until the [`ScoreContainer`] will decay, disappearing completely.
+    /// The number of ticks until the [`ScoreContainer`] will decay,
+    /// disappearing completely.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#ScoreContainer.ticksToDecay)
     #[wasm_bindgen(method, getter = ticksToDecay)]
