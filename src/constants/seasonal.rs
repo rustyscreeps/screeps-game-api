@@ -2,7 +2,7 @@
 //!
 //! [Screeps seasonal documentation](https://docs-season.screeps.com/api/#Season-constants)
 // Season 1's RESOURCE_SCORE defined in `types.rs`
-// Season 1's FIND_SCORE_CONTAINERS defined in `find.rs`
+// Season 1's FIND_SCORE_CONTAINERS and FIND_SCORE_COLLECTORS defined in `small_enums.rs`
 /// Radius around each [`ScoreCollector`] that starts surrounded with
 /// constructed walls with random hit points.
 ///

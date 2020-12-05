@@ -86,6 +86,10 @@ pub enum Find {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
+    #[cfg(feature = "enable-score")]
+    ScoreContainers = 10011,
+    #[cfg(feature = "enable-score")]
+    ScoreCollectors = 10012,
 }
 
 /// Translates direction constants.
