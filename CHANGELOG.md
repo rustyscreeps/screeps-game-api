@@ -24,6 +24,7 @@ Unreleased
 - Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
 - Add the ability to mark a room as impassable when using the pathfinder. Converts callback
   functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
+- Update `PIXEL_CPU_COST` to match game balance change.
 
 0.8.0 (2020-05-30)
 ==================
