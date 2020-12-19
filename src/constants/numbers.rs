@@ -668,7 +668,7 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 ///
 /// [`CpuInfo::bucket`]: crate::game::cpu::CpuInfo::bucket
 /// [`CpuInfo::generate_pixel`]: crate::game::cpu::CpuInfo::generate_pixel
-pub const PIXEL_CPU_COST: u32 = 5000;
+pub const PIXEL_CPU_COST: u32 = 10_000;
 
 // Resources defined in `types.rs`
 
