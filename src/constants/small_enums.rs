@@ -55,7 +55,7 @@ pub enum ReturnCode {
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
 )]
-#[repr(u8)]
+#[repr(u16)]
 pub enum Find {
     /// Find all exit positions at the top of the room
     ExitTop = 1,
@@ -86,9 +86,10 @@ pub enum Find {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
-    #[cfg(feature = "enable-score")]
+    // todo these seem to not work when conditionally compiled out - they're not hurting to leave in but need to figure that out
+    //#[cfg(feature = "enable-score")]
     ScoreContainers = 10011,
-    #[cfg(feature = "enable-score")]
+    //#[cfg(feature = "enable-score")]
     ScoreCollectors = 10012,
 }
 
