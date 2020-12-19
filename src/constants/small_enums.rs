@@ -300,14 +300,14 @@ pub enum Terrain {
 #[wasm_bindgen]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, Serialize)]
 pub enum Part {
-    Move = "MOVE",
-    Work = "WORK",
-    Carry = "CARRY",
-    Attack = "ATTACK",
-    RangedAttack = "RANGED_ATTACK",
-    Tough = "TOUGH",
-    Heal = "HEAL",
-    Claim = "CLAIM",
+    Move = "move",
+    Work = "work",
+    Carry = "carry",
+    Attack = "attack",
+    RangedAttack = "ranged_attack",
+    Tough = "tough",
+    Heal = "heal",
+    Claim = "claim",
 }
 
 impl Part {
