@@ -16,7 +16,7 @@ pub mod season_1 {
     ///
     /// [`ScoreCollector`]: crate::objects::ScoreCollector
     /// [`StructureWall`]: crate::objects::StructureWall
-    pub const WALLS_RADIUS: u32 = 5;
+    pub const WALLS_RADIUS: u8 = 5;
     /// The percentage chance that a given room will have a [`ScoreContainer`]
     /// spawned in it every [`SCORE_CONTAINER_SPAWN_INTERVAL_TICKS`] ticks.
     ///
