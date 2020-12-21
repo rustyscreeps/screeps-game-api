@@ -678,11 +678,11 @@ pub const PIXEL_CPU_COST: u32 = 10_000;
 
 // REACTION_TIME defined in `recipes.rs`
 
-/// Seems to be currently unused.
+/// The amount of time after spawning, in milliseconds, that random center room portals will become unstable and begin to decay, disappearing [`PORTAL_DECAY`] ticks later.
 pub const PORTAL_UNSTABLE: u32 = 10 * 24 * 3600 * 1000;
-/// Minimum lifetime, in milliseconds, of random center room portals.
+/// Minimum time after a portal decays in a center room that a new portal will appear, in milliseconds.
 pub const PORTAL_MIN_TIMEOUT: u32 = 12 * 24 * 3600 * 1000;
-/// Maximum lifetime, in milliseconds, of random center room portals.
+/// Maximum time after a portal decays in a center room that a new portal will appear, in milliseconds.
 pub const PORTAL_MAX_TIMEOUT: u32 = 22 * 24 * 3600 * 1000;
 
 /// Base value for power bank respawn time calculation.
