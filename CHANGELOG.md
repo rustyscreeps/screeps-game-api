@@ -22,6 +22,10 @@ Unreleased
 - Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
   `IntershardResourceType::AccessKey` resources
 - Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
+- Add the `private-server` feature which disables the inter-shard memory and pixel generation
+  interfaces which don't exist on private servers.
+- Add the `seasonal-season-1` feature for season 1 - score objects, types and constants are
+  enabled and the interfaces disabled on private servers are also disabled.
 
 0.8.0 (2020-05-30)
 ==================
