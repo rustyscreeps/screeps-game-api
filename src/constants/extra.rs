@@ -18,7 +18,7 @@ pub const CREEP_HITS_PER_PART: u32 = 50;
 pub const CONSTRUCTION_SITE_STOMP_RATIO: f32 = 0.5;
 
 /// Maximum length of names used for flag objects.
-pub const FLAG_NAME_MAX_LENGTH: u32: 60;
+pub const FLAG_NAME_MAX_LENGTH: u32 = 60;
 
 /// Maximum size in bytes (100 KiB) of the string contents allowed for inter
 /// shard memory.
@@ -45,10 +45,10 @@ pub const MOVE_POWER: u32 = 2;
 pub const POWER_CREEP_HITS_PER_LEVEL: u32 = 1000;
 
 /// Maximum length of strings that creeps and power creeps can say.
-pub const SAY_MAX_LENGTH: u32: 10;
+pub const SAY_MAX_LENGTH: u32 = 10;
 
 /// Maximum length of signs on controllers.
-pub const CONTROLLER_SIGN_MAX_LENGTH: u32: 100;
+pub const CONTROLLER_SIGN_MAX_LENGTH: u32 = 100;
 
 /// Exponential scaling rate for terminal energy costs.
 ///
