@@ -103,11 +103,11 @@ impl<T> JsObjectId<T> {
     ///
     /// Will return `None` if this object no longer exists, or is in a room we
     /// don't have vision for.
-    pub fn resolve(self) -> Option<T>
+    pub fn resolve(&self) -> Option<T>
     where
         T: From<JsValue>,
     {
-        Game::get_object_by_js_id_typed(&self)
+        Game::get_object_by_js_id_typed(self)
     }
 }
 
