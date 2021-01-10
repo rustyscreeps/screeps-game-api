@@ -22,6 +22,8 @@ Unreleased
 - Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
   `IntershardResourceType::AccessKey` resources
 - Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
+- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
+  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
 - Add the `private-server` feature which disables the inter-shard memory and pixel generation
   interfaces which don't exist on private servers.
 - Add the `seasonal-season-1` feature for season 1 - score objects, types and constants are
@@ -66,8 +68,6 @@ Unreleased
   the implementation on `CanDecay` instead
 - Change `game::cpu::limit`, `tick_limit`, `bucket`, `shard_limits`, and `set_shard_limits` to
   use `u32` from `f64`
-- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
-  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
 
 ### Additions:
 
