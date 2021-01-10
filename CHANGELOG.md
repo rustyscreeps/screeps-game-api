@@ -24,10 +24,12 @@ Unreleased
 - Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
 - Add the ability to mark a room as impassable when using the pathfinder. Converts callback
   functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
-- Add the `private-server` feature which disables the inter-shard memory and pixel generation
-  interfaces which don't exist on private servers.
-- Add the `seasonal-season-1` feature for season 1 - score objects, types and constants are
-  enabled and the interfaces disabled on private servers are also disabled.
+- Add the `disable-generate-pixel`, `disable-inter-shard-memory`, and `enable-score` features
+  which enable or disable features that are not all present on all server environments.
+- Add the `private-server` feature which activates the `disable-generate-pixel` and
+  `disable-inter-shard-memory` because these interfaces don't exist on private servers.
+- Add the `seasonal-season-1` feature for season 1, which activates the `disable-generate-pixel`,
+  `disable-inter-shard-memory`, and `enable-score` features.
 
 0.8.0 (2020-05-30)
 ==================
