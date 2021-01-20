@@ -1,9 +1,5 @@
 # Project setup
 
-## Install wasm-pack
-
-[link](https://rustwasm.github.io/wasm-pack/installer/#)
-
 ## Generate wasm-pack template
 
 ```
