@@ -35,7 +35,7 @@ use web_sys::console;
 pub fn game_loop() {
     console::log_1(&JsString::from(format!("Hello from bindgen! {}", Game::time())));
 
-    for room in Object::values(&screeps::game::Game::rooms()).iter().map(Room::from) {
+    for room in Object::values(&Game::rooms()).iter().map(Room::from) {
         console::log_1(&JsString::from(format!("{} {}", String::from(room.name()), room.energy_available())));
     }
 }
