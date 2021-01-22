@@ -28,7 +28,7 @@ and some lib.rs contents:
 use std::fmt;
 use wasm_bindgen::prelude::*;
 
-use screeps::game::{Game, Room, RoomName};
+use screeps::{Game, Room, RoomName};
 use web_sys::console;
 
 #[wasm_bindgen(js_name = loop)]
