@@ -1,30 +1,43 @@
 Unreleased
 ==========
 
-- Change `game::inter_shard_memory` functions to avoid panicking on private servers where the
-  interface doesn't exist
+
+
+0.9.0 (2021-01-23)
+==================
+
+### Notably breaking:
+
 - Change `game::inter_shard_memory::get_local` and `get_remote` to return `Option<String>`,
   accounting for cases where they have not been set (breaking)
+- Remove `constants::INVADER_CORE_EXPAND_TIME`, replaced by per-level
+  `constants::invader_core_expand_time`
+- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
+  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
+
+### Additions:
+
 - Add `AccountPowerCreep::cancel_delete`, which allows cancelling pending deletion of a power
   creep
 - Add `StructureType::controller_structures`, which translates the `CONTROLLER_STRUCTURES`
   constant, the number of each structure allowed at a given RCL
-- Update `constants::stronghold_rampart_hits` function with updated values from rebalancing
 - Add missing `constants::MARKET_MAX_ORDERS`, `constants::MARKET_ORDER_LIFE_TIME`, and
   `constants::HARVEST_DEPOSIT_POWER`
-- Remove `constants::INVADER_CORE_EXPAND_TIME`, replaced by per-level
-  `constants::invader_core_expand_time`
-- Corrected value of `constants::RAMPART_HITS_MAX_RCL5` and `constants::POWER_SPAWN_HITS`
 - Add the `parse_display::Display` trait to type constant enums which currently implement
   `parse_display::FromStr`, allowing reversal of the conversion from native to constant string
-- Fixed `Position::get_direction_to` which always returned the opposite of what it should
-- Fixed deserialization of `EVENT_POWER` and `EVENT_TRANSFER` events
 - Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
   `IntershardResourceType::AccessKey` resources
 - Add `game::cpu::generate_pixel` and `constants::PIXEL_CPU_COST`
-- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
-  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
-- Update `PIXEL_CPU_COST` to match game balance change.
+- Update `constants::PIXEL_CPU_COST` to match game balance change.
+
+### Bugfixes:
+
+- Change `game::inter_shard_memory` functions to avoid panicking on private servers where the
+  interface doesn't exist
+- Update `constants::stronghold_rampart_hits` function with updated values from rebalancing
+- Corrected value of `constants::RAMPART_HITS_MAX_RCL5` and `constants::POWER_SPAWN_HITS`
+- Fixed `Position::get_direction_to` which always returned the opposite of what it should
+- Fixed deserialization of `EVENT_POWER` and `EVENT_TRANSFER` events
 
 0.8.0 (2020-05-30)
 ==================
