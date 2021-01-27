@@ -123,7 +123,8 @@ impl StructureProperties for StructureSpawn {}
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object with info on what a [`StructureSpawn`] is currently spawning.
+    /// Object with info on what a [`StructureSpawn`] or
+    /// [`StructureInvaderCore`] is currently spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn-Spawning)
     #[wasm_bindgen(js_namespace = StructureSpawn)]
@@ -154,11 +155,12 @@ extern "C" {
     #[wasm_bindgen(method, getter = remainingTime)]
     pub fn remaining_time(this: &Spawning) -> u32;
 
-    /// Get a reference to the spawn.
+    /// Get a reference to the [`Structure`] spawning the creep, either a
+    /// [`StructureSpawn`] or a [`StructureInvaderCore`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.spawn)
     #[wasm_bindgen(method, getter)]
-    pub fn spawn(this: &Spawning) -> StructureSpawn;
+    pub fn spawn(this: &Spawning) -> Structure;
 
     /// Cancel spawning this creep, without refunding any energy.
     ///
@@ -171,5 +173,5 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.setDirections)
     #[wasm_bindgen(method, js_name = setDirections)]
-    pub fn set_directions(this: &Spawning) -> i8;
+    pub fn set_directions(this: &Spawning, directions: &Array) -> i8;
 }

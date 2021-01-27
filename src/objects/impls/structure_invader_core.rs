@@ -1,5 +1,5 @@
 use crate::{
-    objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Structure},
+    objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Spawning, Structure},
     prelude::*,
 };
 use js_sys::{Array, JsString};
@@ -28,6 +28,12 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureInvaderCore.ticksToDeploy)
     #[wasm_bindgen(method, getter = ticksToDeploy)]
     pub fn ticks_to_deploy(this: &StructureInvaderCore) -> u32;
+
+    /// Information about the spawning creep, if one is currently being spawned.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureInvaderCore.spawning)
+    #[wasm_bindgen(method, getter)]
+    pub fn spawning(this: &StructureInvaderCore) -> Option<Spawning>;
 }
 
 impl Attackable for StructureInvaderCore {

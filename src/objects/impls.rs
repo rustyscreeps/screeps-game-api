@@ -39,7 +39,6 @@ mod structure_rampart;
 mod structure_road;
 mod structure_spawn;
 mod structure_storage;
-#[cfg(not(feature = "disable-terminal"))]
 mod structure_terminal;
 mod structure_tower;
 mod structure_wall;
@@ -82,13 +81,11 @@ pub use self::{
     structure_road::StructureRoad,
     structure_spawn::{Spawning, StructureSpawn},
     structure_storage::StructureStorage,
+    structure_terminal::StructureTerminal,
     structure_tower::StructureTower,
     structure_wall::StructureWall,
     tombstone::Tombstone,
 };
-
-#[cfg(not(feature = "disable-terminal"))]
-pub use self::structure_terminal::StructureTerminal;
 
 #[cfg(feature = "enable-score")]
 pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer};

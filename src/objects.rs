@@ -34,11 +34,8 @@ pub use self::impls::{
     StructureExtension, StructureExtractor, StructureFactory, StructureInvaderCore,
     StructureKeeperLair, StructureLab, StructureLink, StructureNuker, StructureObserver,
     StructurePortal, StructurePowerBank, StructurePowerSpawn, StructureRampart, StructureRoad,
-    StructureSpawn, StructureStorage, StructureTower, StructureWall, Tombstone,
+    StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
 };
-
-#[cfg(not(feature = "disable-terminal"))]
-pub use self::impls::StructureTerminal;
 
 #[cfg(feature = "enable-score")]
 pub use self::impls::{ScoreCollector, ScoreContainer};
