@@ -32,37 +32,27 @@ pub mod prototypes;
 pub mod raw_memory;
 pub mod traits;
 
-// pub use stdweb::private::ConversionError;
+pub use crate::{
+    constants::*, enums::*, game::*, local::*, objects::*, pathfinder::*, raw_memory::*, traits::*,
+};
 
-pub use crate::{constants::*, game::*, local::*, objects::*, traits::*};
+#[cfg(not(feature = "disable-inter-shard-memory"))]
+pub use crate::inter_shard_memory::*;
 
-// pub use crate::{
-//     constants::*,
-//     js_collections::JsVec,
-//     local::{ObjectId, Position, RawObjectId, RawObjectIdParseError, RoomName,
-// RoomNameParseError},
-//     objects::*,
-//     traits::{FromExpectedType, IntoExpectedType},
-// };
-
-// /// An alias for `Position` for those used to the JavaScript `RoomPosition`
-// /// type.
-// pub type RoomPosition = Position;
-
-// /// Traits which implement base functionalities for Screeps types.
-// ///
-// /// # Example
-// ///
-// /// ```no_run
-// /// use screeps::prelude::*;
-// ///
-// /// let c = screeps::game::creeps::get("Bob").unwrap();
-// ///
-// /// // `HasId` trait brought in from prelude
-// /// let id = c.id();
-// /// ```
-// ///
-// /// This module contains all base functionality traits, and no structures.
+/// Traits which implement base functionalities for Screeps types.
+///
+/// # Example
+///
+/// ```no_run
+/// use screeps::prelude::*;
+///
+/// let c = screeps::game::creeps::get("Bob").unwrap();
+///
+/// // `HasId` trait brought in from prelude
+/// let id = c.id();
+/// ```
+///
+/// This module contains all base functionality traits, and no structures.
 pub mod prelude {
     pub use crate::traits::*;
 }
