@@ -65,7 +65,7 @@ impl FromStr for RawObjectId {
         // MAX_PACKED_VAL
         let pad_length = s.len() as u128;
 
-        if u128_id > MAX_PACKED_VAL {
+        if u128_id > MAX_PACKED_VAL || pad_length > 24 {
             return Err(RawObjectIdParseError::value_too_large(u128_id));
         }
 
@@ -322,13 +322,29 @@ mod test {
         }
     }
 
+    const INVALID_IDS: &[&str] = &[
+        // empty string
+        "",
+        // negative number
+        "-1",
+        "-0",
+        // longer than 24 characters
+        "1000000000000000000000000",
+        // valid number but padded beyond what we can store in 96 bits
+        "000000000000000000000000f",
+        // u128::MAX
+        "340282366920938463463374607431768211455",
+        // even longer
+        "000000000000000000000000000000000000000999000340282366920938463463374607431768211455",
+        // bad characters
+        "g",
+        "💣",
+        "\n",
+    ];
+
     #[test]
-    fn large_values_do_not_parse() {
-        let large_ids = &[
-            "1000000000000000000000000".to_owned(),
-            format!("{:x}", u128::max_value()),
-        ];
-        for id in large_ids {
+    fn invalid_values_do_not_parse() {
+        for id in INVALID_IDS {
             let res: Result<RawObjectId, _> = id.parse();
             assert!(res.is_err());
         }
