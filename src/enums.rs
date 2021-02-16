@@ -90,6 +90,7 @@ pub enum DecayingObject {
     Deposit,
     Ruin,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreContainer,
     StructureContainer,
     StructurePortal,
@@ -121,8 +122,10 @@ pub enum ObjectWithId {
     Resource,
     Ruin,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreCollector,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreContainer,
     Source,
     StructureContainer,
@@ -162,8 +165,10 @@ pub enum ObjectWithPosition {
     RoomPosition,
     Ruin,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreCollector,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreContainer,
     Source,
     StructureContainer,
@@ -196,8 +201,10 @@ pub enum StoreObject {
     PowerCreep,
     Ruin,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreCollector,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreContainer,
     StructureContainer,
     StructureExtension,
@@ -250,8 +257,10 @@ pub enum TypedRoomObject {
     Resource,
     Ruin,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreCollector,
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     ScoreContainer,
     Source,
     StructureContainer,

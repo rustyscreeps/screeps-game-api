@@ -86,7 +86,8 @@ extern "C" {
     ///
     /// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
     /// [`PIXEL_COST`]: crate::constants::PIXEL_COST
-    #[cfg(not(feature = "disable-generate-pixel"))]
+    #[cfg(feature = "enable-generate-pixel")]
+    #[doc(cfg(feature = "enable-generate-pixel"))]
     #[wasm_bindgen(method, js_name = generatePixel)]
     pub fn generate_pixel(this: &CpuInfo) -> i8;
 }

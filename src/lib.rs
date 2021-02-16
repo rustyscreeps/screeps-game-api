@@ -18,11 +18,13 @@
 // //! screeps-game-api = { version = "0.9", features = ["check-all-casts"] }
 // //! ```
 #![recursion_limit = "128"]
+#![feature(doc_cfg)]
 
 pub mod constants;
 pub mod enums;
 pub mod game;
-#[cfg(not(feature = "disable-inter-shard-memory"))]
+#[cfg(feature = "enable-inter-shard-memory")]
+#[doc(cfg(feature = "enable-inter-shard-memory"))]
 pub mod inter_shard_memory;
 pub mod local;
 // pub mod memory;
@@ -36,7 +38,7 @@ pub use crate::{
     constants::*, enums::*, game::*, local::*, objects::*, pathfinder::*, raw_memory::*, traits::*,
 };
 
-#[cfg(not(feature = "disable-inter-shard-memory"))]
+#[cfg(feature = "enable-inter-shard-memory")]
 pub use crate::inter_shard_memory::*;
 
 /// Traits which implement base functionalities for Screeps types.
@@ -44,9 +46,10 @@ pub use crate::inter_shard_memory::*;
 /// # Example
 ///
 /// ```no_run
-/// use screeps::prelude::*;
+/// use js_sys::{JsString, Reflect};
+/// use screeps::{prelude::*, Creep, Game};
 ///
-/// let c = screeps::game::creeps::get("Bob").unwrap();
+/// let c = Creep::from(Reflect::get(&Game::creeps(), &JsString::from("Bob")).unwrap());
 ///
 /// // `HasId` trait brought in from prelude
 /// let id = c.id();

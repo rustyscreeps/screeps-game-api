@@ -25,6 +25,9 @@ name = "screeps"
 [badges]
 travis-ci = { repository = "rustyscreeps/screeps-game-api" }
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 arrayvec = "0.5"
 enum_dispatch = "0.3"
@@ -38,17 +41,27 @@ serde_repr = "0.1"
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 
 [features]
-# Disable the interface for pixel generation, not present on private servers or seasonal
-disable-generate-pixel = []
+## Specific features to enable and disable conditional API endpoints
 
-# Disable the interface for inter-shard memory, not present on private servers or seasonal
-disable-inter-shard-memory = []
+# Enable the function call for pixel generation - only present on official MMO servers
+enable-generate-pixel = []
+
+# Disable the interface for inter-shard memory - only present on official MMO servers
+enable-inter-shard-memory = []
 
 # Enable score container, collector, and resource - used in season 1
 enable-score = []
 
-# Disable interfaces that don't exist (and will panic if used) on private servers
-private-server = ["disable-generate-pixel", "disable-inter-shard-memory"]
+# Enable symbol container, decoder, and resources - used in season 2
+enable-symbols = []
+
+## Sets of the above features for different server environments
+
+# Official MMO server features not present on other environments
+mmo = ["enable-generate-pixel", "enable-inter-shard-memory"]
 
 # Seasonal server, season 1
-seasonal-season-1 = ["disable-generate-pixel", "disable-inter-shard-memory", "enable-score"]
+seasonal-season-1 = ["enable-score"]
+
+# Seasonal server, season 2
+seasonal-season-2 = ["enable-symbols"]

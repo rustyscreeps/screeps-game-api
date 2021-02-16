@@ -14,10 +14,6 @@ mod room_position;
 mod room_terrain;
 // mod room_visual;
 mod ruin;
-#[cfg(feature = "enable-score")]
-mod score_collector;
-#[cfg(feature = "enable-score")]
-mod score_container;
 mod source;
 mod store;
 mod structure;
@@ -43,6 +39,20 @@ mod structure_terminal;
 mod structure_tower;
 mod structure_wall;
 mod tombstone;
+
+#[cfg(feature = "enable-score")]
+#[doc(cfg(feature = "enable-score"))]
+mod score_collector;
+#[cfg(feature = "enable-score")]
+#[doc(cfg(feature = "enable-score"))]
+mod score_container;
+
+#[cfg(feature = "enable-symbols")]
+#[doc(cfg(feature = "enable-symbols"))]
+mod symbol_container;
+#[cfg(feature = "enable-symbols")]
+#[doc(cfg(feature = "enable-symbols"))]
+mod symbol_decoder;
 
 pub use self::{
     construction_site::ConstructionSite,
@@ -90,18 +100,5 @@ pub use self::{
 #[cfg(feature = "enable-score")]
 pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer};
 
-// pub use self::{
-//     creep::Bodypart,
-//     room::{
-//         AttackEvent, AttackType, BuildEvent, Effect, Event, EventType,
-// ExitEvent, FindOptions,         HarvestEvent, HealEvent, HealType,
-// LookResult, ObjectDestroyedEvent, Path,         PositionedLookResult,
-// RepairEvent, ReserveControllerEvent, Step, UpgradeControllerEvent,     },
-//     room_visual::{
-//         CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle,
-// RectStyle, RoomVisual,         TextAlign, TextStyle, Visual,
-//     },
-//     structure_controller::{Reservation, Sign},
-//     structure_portal::PortalDestination,
-//     structure_spawn::SpawnOptions,
-// };
+#[cfg(feature = "enable-symbols")]
+pub use self::{symbol_container::SymbolContainer, symbol_decoder::SymbolDecoder};

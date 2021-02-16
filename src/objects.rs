@@ -40,6 +40,9 @@ pub use self::impls::{
 #[cfg(feature = "enable-score")]
 pub use self::impls::{ScoreCollector, ScoreContainer};
 
+#[cfg(feature = "enable-symbols")]
+pub use self::impls::{SymbolContainer, SymbolDecoder};
+
 // pub use self::{
 //     creep_shared::{MoveToOptions, SharedCreepProperties},
 //     impls::{

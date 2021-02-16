@@ -277,7 +277,74 @@ pub enum ResourceType {
     Emanation = "emanation",
     Essence = "essence",
     #[cfg(feature = "enable-score")]
+    #[doc(cfg(feature = "enable-score"))]
     Score = "score",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolAleph = "symbol_aleph",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolBeth = "symbol_beth",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolGimmel = "symbol_gimmel",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolDaleth = "symbol_daleth",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolHe = "symbol_he",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolWaw = "symbol_waw",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolZayin = "symbol_zayin",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolHeth = "symbol_heth",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolTeth = "symbol_teth",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolYodh = "symbol_yodh",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolKaph = "symbol_kaph",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolLamedh = "symbol_lamedh",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolMem = "symbol_mem",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolNun = "symbol_nun",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolSamekh = "symbol_samekh",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolAyin = "symbol_ayin",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolPe = "symbol_pe",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolTsade = "symbol_tsade",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolQoph = "symbol_qoph",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolRes = "symbol_res",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolSim = "symbol_sim",
+    #[cfg(feature = "enable-symbols")]
+    #[doc(cfg(feature = "enable-symbols"))]
+    SymbolTaw = "symbol_taw",
 }
 
 // todo, can we make this an enum wrapper around both normal and inter-shard types before instead of this?
@@ -688,8 +755,6 @@ impl ResourceType {
 pub enum PowerCreepClass {
     Operator = "operator",
 }
-
-// js_deserializable!(PowerCreepClass);
 
 /// Translates the `PWR_*` constants, which are types of powers used by power
 #[wasm_bindgen]
