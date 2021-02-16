@@ -51,8 +51,14 @@ disable-inter-shard-memory = []
 # Enable score container, collector, and resource - used in season 1
 enable-score = []
 
+# Enable symbol containers, decoders, and resources - used in season 2
+enable-symbols = []
+
 # Disable interfaces that don't exist (and will panic if used) on private servers
 private-server = ["disable-generate-pixel", "disable-inter-shard-memory"]
 
 # Seasonal server, season 1
 seasonal-season-1 = ["disable-generate-pixel", "disable-inter-shard-memory", "enable-score"]
+
+# Seasonal server, season 2
+seasonal-season-2 = ["disable-generate-pixel", "disable-inter-shard-memory", "enable-symbols"]

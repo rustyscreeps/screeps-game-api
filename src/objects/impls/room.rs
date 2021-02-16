@@ -30,6 +30,9 @@ use crate::{
 #[cfg(feature = "enable-score")]
 use crate::objects::{ScoreCollector, ScoreContainer};
 
+#[cfg(feature = "enable-symbols")]
+use crate::objects::{SymbolContainer, SymbolDecoder};
+
 simple_accessors! {
     impl Room {
         pub fn controller() -> Option<StructureController> = controller;
@@ -798,6 +801,10 @@ pub enum LookResult {
     ScoreContainer(ScoreContainer),
     #[cfg(feature = "enable-score")]
     ScoreCollector(ScoreCollector),
+    #[cfg(feature = "enable-symbols")]
+    SymbolContainer(SymbolContainer),
+    #[cfg(feature = "enable-symbols")]
+    SymbolDecoder(SymbolDecoder),
 }
 
 impl TryFrom<Value> for LookResult {
@@ -834,6 +841,12 @@ impl TryFrom<Value> for LookResult {
             Look::ScoreCollectors => {
                 LookResult::ScoreCollector(js_unwrap_ref!(@{v}.scoreCollector))
             }
+            #[cfg(feature = "enable-symbols")]
+            Look::SymbolContainers => {
+                LookResult::SymbolContainer(js_unwrap_ref!(@{v}.symbolContainer))
+            }
+            #[cfg(feature = "enable-symbols")]
+            Look::SymbolDecoders => LookResult::SymbolDecoder(js_unwrap_ref!(@{v}.symbolDecoder)),
         };
         Ok(lr)
     }
