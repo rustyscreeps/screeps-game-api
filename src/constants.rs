@@ -1,6 +1,6 @@
 //! Constants, most copied from [the game constants].
 //!
-//! Last updated on 2020-06-06, `3bc7337807d380ffb29b9dcec40fc19e707c2476` from
+//! Last updated on 2020-12-13, `e4589666113334bb1f967b9a5540b642141b6dab` from
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! Currently missing:
