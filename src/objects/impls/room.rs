@@ -526,7 +526,7 @@ impl<'de> Deserialize<'de> for Event {
             Event,
             ObjectId,
             Data,
-        };
+        }
 
         struct EventVisitor;
 
@@ -791,6 +791,10 @@ pub enum LookResult {
     Tombstone(Tombstone),
     PowerCreep(PowerCreep),
     Ruin(Ruin),
+    #[cfg(feature = "enable-score")]
+    ScoreContainer(ScoreContainer),
+    #[cfg(feature = "enable-score")]
+    ScoreCollector(ScoreCollector),
 }
 
 impl TryFrom<Value> for LookResult {
@@ -819,6 +823,14 @@ impl TryFrom<Value> for LookResult {
             Look::Tombstones => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
             Look::PowerCreeps => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
             Look::Ruins => LookResult::Ruin(js_unwrap_ref!(@{v}.ruin)),
+            #[cfg(feature = "enable-score")]
+            Look::ScoreContainers => {
+                LookResult::ScoreContainer(js_unwrap_ref!(@{v}.scoreContainer))
+            }
+            #[cfg(feature = "enable-score")]
+            Look::ScoreCollectors => {
+                LookResult::ScoreCollector(js_unwrap_ref!(@{v}.scoreCollector))
+            }
         };
         Ok(lr)
     }

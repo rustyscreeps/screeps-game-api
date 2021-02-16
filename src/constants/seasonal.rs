@@ -10,7 +10,8 @@
 #[cfg(feature = "seasonal-season-1")]
 pub mod season_1 {
     // RESOURCE_SCORE defined in `types.rs`
-    // FIND_SCORE_CONTAINERS defined in `find.rs`
+    // FIND_SCORE_CONTAINERS / FIND_SCORE_COLLECTORS defined in `find.rs`
+    // LOOK_SCORE_CONTAINERS / LOOK_SCORE_COLLECTORS defined in `look.rs`
     /// Radius around each [`ScoreCollector`] that starts surrounded with
     /// [`StructureWall`]s with random hit points.
     ///

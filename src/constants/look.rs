@@ -40,7 +40,7 @@ use crate::{
 /// See the [module-level documentation][crate::constants] for more details.
 #[doc(hidden)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u8)]
+#[repr(u16)]
 pub enum Look {
     #[display("creep")]
     Creeps = 0,
@@ -72,6 +72,12 @@ pub enum Look {
     Deposits = 12,
     #[display("ruin")]
     Ruins = 13,
+    #[cfg(feature = "enable-score")]
+    #[display("scoreContainer")]
+    ScoreContainers = 10011,
+    #[cfg(feature = "enable-score")]
+    #[display("scoreCollector")]
+    ScoreCollectors = 10012,
 }
 
 js_deserializable!(Look);
@@ -111,4 +117,10 @@ typesafe_look_constants! {
     pub struct TOMBSTONES = (Look::Tombstones, Tombstone, IntoExpectedType::into_expected_type);
     pub struct POWER_CREEPS = (Look::PowerCreeps, PowerCreep, IntoExpectedType::into_expected_type);
     pub struct RUINS = (Look::Ruins, Ruin, IntoExpectedType::into_expected_type);
+}
+
+#[cfg(feature = "enable-score")]
+typesafe_look_constants! {
+    pub struct SCORE_CONTAINERS = (Look::ScoreContainers, crate::objects::ScoreContainer, IntoExpectedType::into_expected_type);
+    pub struct SCORE_COLLECTORS = (Look::ScoreCollectors, crate::objects::ScoreCollector, IntoExpectedType::into_expected_type);
 }

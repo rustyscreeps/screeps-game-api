@@ -42,6 +42,8 @@ function __look_num_to_str(num) {
         case 11: return LOOK_POWER_CREEPS;
         case 12: return LOOK_DEPOSITS;
         case 13: return LOOK_RUINS;
+        case 10011: return LOOK_SCORE_CONTAINERS;
+        case 10012: return LOOK_SCORE_COLLECTORS;
         default: throw new Error("unknown look integer encoding " + num);
     }
 }
@@ -62,6 +64,8 @@ function __look_str_to_num(num) {
         case LOOK_POWER_CREEPS: return 11;
         case LOOK_DEPOSITS: return 12;
         case LOOK_RUINS: return 13;
+        case LOOK_SCORE_CONTAINERS: return 10011;
+        case LOOK_SCORE_COLLECTORS: return 10012;
         default: throw new Error("unknown look constant " + num);
     }
 }
