@@ -27,6 +27,9 @@ use crate::{
     ConversionError,
 };
 
+#[cfg(feature = "enable-score")]
+use crate::objects::{ScoreCollector, ScoreContainer};
+
 simple_accessors! {
     impl Room {
         pub fn controller() -> Option<StructureController> = controller;

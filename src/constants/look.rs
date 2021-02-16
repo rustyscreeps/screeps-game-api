@@ -26,6 +26,9 @@ use crate::{
     traits::{IntoExpectedType, TryInto},
 };
 
+#[cfg(feature = "enable-score")]
+use crate::objects::{ScoreCollector, ScoreContainer};
+
 /// Internal enum representing each LOOK_* constant.
 ///
 /// It's recommended to use the constants in the `look` module instead for type
@@ -121,6 +124,6 @@ typesafe_look_constants! {
 
 #[cfg(feature = "enable-score")]
 typesafe_look_constants! {
-    pub struct SCORE_CONTAINERS = (Look::ScoreContainers, crate::objects::ScoreContainer, IntoExpectedType::into_expected_type);
-    pub struct SCORE_COLLECTORS = (Look::ScoreCollectors, crate::objects::ScoreCollector, IntoExpectedType::into_expected_type);
+    pub struct SCORE_CONTAINERS = (Look::ScoreContainers, ScoreContainer, IntoExpectedType::into_expected_type);
+    pub struct SCORE_COLLECTORS = (Look::ScoreCollectors, ScoreCollector, IntoExpectedType::into_expected_type);
 }
