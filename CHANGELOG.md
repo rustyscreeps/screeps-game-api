@@ -1,9 +1,6 @@
 Unreleased
 ==========
 
-- Add `game::cpu::generate_pixel` and `constants::PIXEL_COST`
-- Add the ability to mark a room as impassable when using the pathfinder. Converts callback
-  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
 - Add the `disable-generate-pixel`, `disable-inter-shard-memory`, and `enable-score` features
   which enable or disable features that are not all present on all server environments.
 - Add the `private-server` feature which activates the `disable-generate-pixel` and
