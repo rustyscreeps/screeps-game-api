@@ -91,7 +91,8 @@ pub mod season_2 {
     /// [`SymbolContainer`]: crate::objects::SymbolContainer
     pub const SYMBOL_CONTAINER_SPAWN_INTERVAL_TICKS: u32 = 250;
     /// Translates the `CONTROLLER_LEVEL_SCORE_MULTIPLIERS` constant, the score
-    /// multipler for the room's [`SymbolDecoder`] depending on the RCL of the room.
+    /// multipler for the room's [`SymbolDecoder`] depending on the RCL of the
+    /// room.
     ///
     /// [`SymbolDecoder`]: crate::objects::SymbolDecoder
     #[inline]
