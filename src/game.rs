@@ -144,6 +144,39 @@ pub fn time() -> u32 {
     js_unwrap!(Game.time)
 }
 
+/// Your current score, as determined by the symbols you have decoded.
+///
+/// See [https://docs-season.screeps.com/api/#Game.score]
+///
+/// [https://docs-season.screeps.com/api/#Game.score]: https://docs-season.screeps.com/api/#Game.score
+#[cfg(feature = "enable-symbols")]
+pub fn score() -> u32 {
+    js_unwrap!(Game.score)
+}
+
+/// The symbols you've decoded after multiplier adjustments, used to determine
+/// your score.
+///
+/// See [https://docs-season.screeps.com/api/#Game.symbols]
+///
+/// [https://docs-season.screeps.com/api/#Game.symbols]: https://docs-season.screeps.com/api/#Game.symbols
+#[cfg(feature = "enable-symbols")]
+pub fn hashmap() -> HashMap<ResourceType, u32> {
+    // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
+    //
+    // See https://github.com/koute/stdweb/issues/359.
+    let map: HashMap<String, u32> = js_unwrap!(Game.symbols);
+    map.into_iter()
+        .map(|(key, val)| {
+            (
+                key.parse()
+                    .expect("expected resource key in Game.symbols to be a known resource type"),
+                val,
+            )
+        })
+        .collect()
+}
+
 /// See [http://docs.screeps.com/api/#Game.getObjectById]
 ///
 /// This gets an object expecting a specific type and will return a
