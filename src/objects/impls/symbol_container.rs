@@ -9,7 +9,7 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 extern "C" {
     /// An object representing a [`SymbolContainer`], which appears randomly
-    /// around the map and contains [`ResourceType::Score`] which can be
+    /// around the map and contains symbol resources which can be
     /// collected.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#SymbolContainer)

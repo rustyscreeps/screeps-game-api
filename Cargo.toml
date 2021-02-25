@@ -41,7 +41,7 @@ serde_repr = "0.1"
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 
 [features]
-## Specific features to enable and disable conditional API endpoints
+## Specific features to enable conditional API endpoints
 
 # Enable the function call for pixel generation - only present on official MMO servers
 enable-generate-pixel = []
@@ -57,7 +57,7 @@ enable-symbols = []
 
 ## Sets of the above features for different server environments
 
-# Official MMO server features not present on other environments
+# Official MMO server features, not present on other environments
 mmo = ["enable-generate-pixel", "enable-inter-shard-memory"]
 
 # Seasonal server, season 1

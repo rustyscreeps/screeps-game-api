@@ -823,6 +823,7 @@ pub fn stronghold_rampart_hits(core_level: u32) -> Option<u32> {
 pub const STRONGHOLD_DECAY_TICKS: u32 = 75_000;
 
 // POWER_INFO not yet implemented
+// todo all of these can be IntoEnumIterator..
 // BODYPARTS_ALL, RESOURCES_ALL, COLORS_ALL not yet implemented
 // INTERSHARD_RESOURCES defined in `types.rs`
 // COMMODITIES defined in `recipes.rs`
