@@ -161,7 +161,7 @@ pub fn score() -> u32 {
 ///
 /// [https://docs-season.screeps.com/api/#Game.symbols]: https://docs-season.screeps.com/api/#Game.symbols
 #[cfg(feature = "enable-symbols")]
-pub fn hashmap() -> HashMap<ResourceType, u32> {
+pub fn symbols() -> HashMap<ResourceType, u32> {
     // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
     //
     // See https://github.com/koute/stdweb/issues/359.
