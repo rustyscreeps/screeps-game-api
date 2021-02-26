@@ -27,6 +27,8 @@ travis-ci = { repository = "rustyscreeps/screeps-game-api" }
 
 [package.metadata.docs.rs]
 all-features = true
+# this workaround (and the cfg_attr wrapping around the doc(cfg()) calls) can go once the doc_cfg feature is stablized
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 arrayvec = "0.5"
