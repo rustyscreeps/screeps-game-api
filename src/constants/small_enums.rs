@@ -88,16 +88,16 @@ pub enum Find {
     Ruins = 123,
     // todo these seem to not work when conditionally compiled out - they're not hurting to leave in but need to figure that out
     //#[cfg(feature = "enable-score")]
-    //#[doc(cfg(feature = "enable-score"))]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
     ScoreContainers = 10011,
     //#[cfg(feature = "enable-score")]
-    //#[doc(cfg(feature = "enable-score"))]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
     ScoreCollectors = 10012,
     //#[cfg(feature = "enable-symbols")]
-    //#[doc(cfg(feature = "enable-symbols"))]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
     SymbolContainers = 10021,
     //#[cfg(feature = "enable-symbols")]
-    //#[doc(cfg(feature = "enable-symbols"))]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
     SymbolDecoders = 10022,
 }
 
@@ -250,16 +250,16 @@ pub enum Look {
     Ruins = "ruin",
     // todo these seem to not work when conditionally compiled out - they're not hurting to leave in but need to figure that out
     //#[cfg(feature = "enable-score")]
-    //#[doc(cfg(feature = "enable-score"))]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
     ScoreContainers = "scoreContainer",
     //#[cfg(feature = "enable-score")]
-    //#[doc(cfg(feature = "enable-score"))]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
     ScoreCollectors = "scoreCollector",
     //#[cfg(feature = "enable-symbols")]
-    //#[doc(cfg(feature = "enable-symbols"))]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
     SymbolContainers = "symbolContainer",
     //#[cfg(feature = "enable-symbols")]
-    //#[doc(cfg(feature = "enable-symbols"))]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
     SymbolDecoders = "symbolDecoder",
 }
 

@@ -38,7 +38,7 @@ pub const INVADER_USERNAME: &str = "Invader";
 pub const LAB_REACTION_RANGE: u32 = 2;
 
 /// The maximum size of the serialized [`MapVisual`] data.
-pub const MAP_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 1000 * 1024;
+pub const MAP_VISUAL_SIZE_LIMIT: u32 = 1000 * 1024;
 
 /// Maximum size in bytes (100 KiB) of the string contents allowed in memory
 /// segments.

@@ -18,13 +18,13 @@
 // //! screeps-game-api = { version = "0.9", features = ["check-all-casts"] }
 // //! ```
 #![recursion_limit = "128"]
-#![feature(doc_cfg)]
+#[cfg_attr(docsrs, feature(doc_cfg))]
 
 pub mod constants;
 pub mod enums;
 pub mod game;
 #[cfg(feature = "enable-inter-shard-memory")]
-#[doc(cfg(feature = "enable-inter-shard-memory"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "enable-inter-shard-memory")))]
 pub mod inter_shard_memory;
 pub mod local;
 // pub mod memory;

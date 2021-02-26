@@ -41,17 +41,17 @@ mod structure_wall;
 mod tombstone;
 
 #[cfg(feature = "enable-score")]
-#[doc(cfg(feature = "enable-score"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
 mod score_collector;
 #[cfg(feature = "enable-score")]
-#[doc(cfg(feature = "enable-score"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
 mod score_container;
 
 #[cfg(feature = "enable-symbols")]
-#[doc(cfg(feature = "enable-symbols"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
 mod symbol_container;
 #[cfg(feature = "enable-symbols")]
-#[doc(cfg(feature = "enable-symbols"))]
+#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
 mod symbol_decoder;
 
 pub use self::{

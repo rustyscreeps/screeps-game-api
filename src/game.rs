@@ -4,13 +4,18 @@
 //! generally means all state which is true this tick throughout the world.
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
+use std::collections::HashMap;
+
 use js_sys::{JsString, Object};
 
 use wasm_bindgen::prelude::*;
 
 //pub use crate::{game::rooms::Room, local::RoomName};
 
-use crate::local::{JsObjectId, ObjectId, RawObjectId};
+use crate::{
+    local::{JsObjectId, ObjectId, RawObjectId},
+    ResourceType,
+};
 
 pub mod cpu;
 pub mod gcl;
@@ -147,6 +152,23 @@ extern "C" {
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.time)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn time() -> u32;
+
+    /// Your current score, as determined by the symbols you have decoded.
+    ///
+    /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.score)
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn score() -> u32;
+
+    /// The symbols you've decoded after multiplier adjustments, used to determine
+    /// your score.
+    ///
+    /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[wasm_bindgen(static_method_of = Game, getter)]
+    pub fn symbols() -> HashMap<ResourceType, u32>;
 
     /// Get the [`RoomObject`] represented by a given object ID, if it is still
     /// alive and visible.
