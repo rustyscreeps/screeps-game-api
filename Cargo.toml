@@ -45,7 +45,7 @@ wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 # Enable the function call for pixel generation - only present on official MMO servers
 enable-generate-pixel = []
 
-# Disable the interface for inter-shard memory - only present on official MMO servers
+# Enable the interface for inter-shard memory - only present on official MMO servers
 enable-inter-shard-memory = []
 
 # Enable score container, collector, and resource - used in season 1

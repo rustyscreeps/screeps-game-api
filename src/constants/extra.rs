@@ -37,7 +37,7 @@ pub const INVADER_USERNAME: &str = "Invader";
 /// Maximum range from a lab to the input or output labs it's interacting with.
 pub const LAB_REACTION_RANGE: u32 = 2;
 
-/// The maximum size of the serialized [`MapVisual`] data.
+/// The maximum size (1000 KiB) of the serialized [`MapVisual`] data.
 pub const MAP_VISUAL_SIZE_LIMIT: u32 = 1000 * 1024;
 
 /// Maximum size in bytes (100 KiB) of the string contents allowed in memory
@@ -72,7 +72,7 @@ pub const RANGED_MASS_ATTACK_POWER_RANGE_2: u32 = 4;
 /// [`Creep::ranged_mass_attack`]: crate::objects::Creep::ranged_mass_attack
 pub const RANGED_MASS_ATTACK_POWER_RANGE_3: u32 = 1;
 
-/// The maximum size of the serialized [`RoomVisual`] data for each room.
+/// The maximum size (500 KiB) of the serialized [`RoomVisual`] data for each room.
 pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
 
 /// Maximum length of strings that creeps and power creeps can say.
