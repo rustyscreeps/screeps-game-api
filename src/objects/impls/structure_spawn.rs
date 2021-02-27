@@ -58,7 +58,7 @@ extern "C" {
         this: &StructureSpawn,
         body: &Array,
         name: &JsString,
-        options: Option<Object>,
+        options: Option<&Object>,
     ) -> i8;
 
     /// Kill a [`Creep`] in melee range, returning 100% of its TTL-adjusted

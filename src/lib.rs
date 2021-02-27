@@ -18,7 +18,9 @@
 // //! screeps-game-api = { version = "0.9", features = ["check-all-casts"] }
 // //! ```
 #![recursion_limit = "128"]
-#[cfg_attr(docsrs, feature(doc_cfg))]
+// to build locally with doc_cfg enabled, run:
+// `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 pub mod constants;
 pub mod enums;
