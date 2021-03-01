@@ -4,11 +4,13 @@
 //! generally means all state which is true this tick throughout the world.
 //!
 //! [`Game`]: http://docs.screeps.com/api/#Game
+use std::collections::HashMap;
+
 use crate::{
     local::{ObjectId, RawObjectId},
     objects::{HasId, RoomObject, SizedRoomObject},
     traits::TryInto,
-    ConversionError,
+    ConversionError, ResourceType,
 };
 
 pub mod cpu;
