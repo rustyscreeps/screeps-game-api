@@ -1,4 +1,5 @@
 use crate::{
+    constants::ReturnCode,
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Structure},
     prelude::*,
 };
@@ -19,7 +20,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureObserver.observeRoom)
     #[wasm_bindgen(method, js_name = observeRoom)]
-    pub fn observe_room(this: &StructureObserver, target: &JsString) -> i8;
+    pub fn observe_room(this: &StructureObserver, target: &JsString) -> ReturnCode;
 }
 
 impl Attackable for StructureObserver {

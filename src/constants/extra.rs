@@ -72,13 +72,14 @@ pub const RANGED_MASS_ATTACK_POWER_RANGE_2: u32 = 4;
 /// [`Creep::ranged_mass_attack`]: crate::objects::Creep::ranged_mass_attack
 pub const RANGED_MASS_ATTACK_POWER_RANGE_3: u32 = 1;
 
-/// The maximum size (500 KiB) of the serialized [`RoomVisual`] data for each room.
+/// The maximum size (500 KiB) of the serialized [`RoomVisual`] data for each
+/// room.
 pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
 
 /// Maximum length of strings that creeps and power creeps can say.
 pub const SAY_MAX_LENGTH: u32 = 10;
 
-/// Owner username of hostile non-player structures and creeps which occupy 
+/// Owner username of hostile non-player structures and creeps which occupy
 pub const SOURCE_KEEPER_USERNAME: &str = "Source Keeper";
 
 /// Maximum length of names of spawns.

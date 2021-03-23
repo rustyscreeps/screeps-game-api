@@ -1,4 +1,5 @@
 use crate::{
+    constants::ReturnCode,
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Structure},
     prelude::*,
 };
@@ -98,13 +99,13 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.activateSafeMode)
     #[wasm_bindgen(method, js_name = activateSafeMode)]
-    pub fn activate_safe_mode(this: &StructureController) -> i8;
+    pub fn activate_safe_mode(this: &StructureController) -> ReturnCode;
 
     /// Relinquish ownership of the controller and its room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.unclaim)
     #[wasm_bindgen(method)]
-    pub fn unclaim(this: &StructureController) -> i8;
+    pub fn unclaim(this: &StructureController) -> ReturnCode;
 }
 
 impl HasId for StructureController {

@@ -7,7 +7,7 @@ use serde::Deserialize;
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{MarketResourceType, OrderType, ResourceType},
+    constants::{MarketResourceType, OrderType, ResourceType, ReturnCode},
     local::RoomName,
 };
 
@@ -68,21 +68,22 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.cancelOrder)
     #[wasm_bindgen(method, js_name = cancelOrder)]
-    pub fn cancel_order(this: &MarketInfo, order_id: &JsString) -> i8;
+    pub fn cancel_order(this: &MarketInfo, order_id: &JsString) -> ReturnCode;
 
     /// Cancel one of your existing orders on the market, without refunding
     /// associated fees.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.changeOrderPrice)
     #[wasm_bindgen(method, js_name = changeOrderPrice)]
-    pub fn change_order_price(this: &MarketInfo, order_id: &JsString, new_price: f64) -> i8;
+    pub fn change_order_price(this: &MarketInfo, order_id: &JsString, new_price: f64)
+        -> ReturnCode;
 
     // todo type to serialize call options into
     /// Create a new order on the market.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.createOrder)
     #[wasm_bindgen(method, js_name = createOrder)]
-    pub fn create_order(this: &MarketInfo, order_parameters: &Object) -> i8;
+    pub fn create_order(this: &MarketInfo, order_parameters: &Object) -> ReturnCode;
 
     /// Execute a trade on an order on the market. Name of a room with a
     /// terminal from which to send or receive resources is required unless the
@@ -95,14 +96,14 @@ extern "C" {
         order_id: &JsString,
         amount: u32,
         room_name: Option<&JsString>,
-    ) -> i8;
+    ) -> ReturnCode;
 
     /// Adds more capacity to one of your existing orders, offering or
     /// requesting more of the resource and incurring additional fees.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.extendOrder)
     #[wasm_bindgen(method, js_name = extendOrder)]
-    pub fn extend_order(this: &MarketInfo, order_id: &JsString, add_amount: u32) -> i8;
+    pub fn extend_order(this: &MarketInfo, order_id: &JsString, add_amount: u32) -> ReturnCode;
 
     // todo type to serialize call options into - special efficient behavior when
     // passed a `{resourceType: type}` filter

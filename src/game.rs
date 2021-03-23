@@ -4,7 +4,6 @@
 //! generally means all state which is true this tick throughout the world.
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
-use std::collections::HashMap;
 
 use js_sys::{JsString, Object};
 
@@ -12,10 +11,7 @@ use wasm_bindgen::prelude::*;
 
 //pub use crate::{game::rooms::Room, local::RoomName};
 
-use crate::{
-    local::{JsObjectId, ObjectId, RawObjectId},
-    ResourceType,
-};
+use crate::local::{JsObjectId, ObjectId, RawObjectId};
 
 pub mod cpu;
 pub mod gcl;
@@ -161,8 +157,8 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn score() -> u32;
 
-    /// The symbols you've decoded after multiplier adjustments, used to determine
-    /// your score.
+    /// The symbols you've decoded after multiplier adjustments, used to
+    /// determine your score.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
     #[cfg(feature = "enable-symbols")]

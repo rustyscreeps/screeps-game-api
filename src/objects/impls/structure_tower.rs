@@ -1,4 +1,5 @@
 use crate::{
+    constants::ReturnCode,
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -26,21 +27,21 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.attack)
     #[wasm_bindgen(method)]
-    pub fn attack(this: &StructureTower, target: &RoomObject) -> i8;
+    pub fn attack(this: &StructureTower, target: &RoomObject) -> ReturnCode;
 
     /// Heal a [`Creep`] or [`PowerCreep`] in the room, adding hit points
     /// depending on range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.heal)
     #[wasm_bindgen(method)]
-    pub fn heal(this: &StructureTower, target: &RoomObject) -> i8;
+    pub fn heal(this: &StructureTower, target: &RoomObject) -> ReturnCode;
 
     /// Repair a [`Structure`] in the room, adding hit points depending on
     /// range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.repair)
     #[wasm_bindgen(method)]
-    pub fn repair(this: &StructureTower, target: &Structure) -> i8;
+    pub fn repair(this: &StructureTower, target: &Structure) -> ReturnCode;
 }
 
 impl Attackable for StructureTower {

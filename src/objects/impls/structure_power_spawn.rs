@@ -1,4 +1,5 @@
 use crate::{
+    constants::ReturnCode,
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -28,7 +29,7 @@ extern "C" {
     /// [`POWER_SPAWN_ENERGY_RATIO`]:
     /// crate::constants::numbers::POWER_SPAWN_ENERGY_RATIO
     #[wasm_bindgen(method)]
-    pub fn process_power(this: &StructurePowerSpawn) -> i8;
+    pub fn process_power(this: &StructurePowerSpawn) -> ReturnCode;
 }
 
 impl Attackable for StructurePowerSpawn {

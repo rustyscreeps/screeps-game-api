@@ -1,6 +1,6 @@
 //use crate::local::RoomName;
 use crate::{
-    constants::{ExitDirection, Find, Look, StructureType},
+    constants::{ExitDirection, Find, Look, ReturnCode, StructureType},
     objects::{RoomPosition, RoomTerrain, StructureController, StructureStorage},
 };
 
@@ -105,7 +105,7 @@ extern "C" {
         y: u8,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> i8;
+    ) -> ReturnCode;
 
     // todo FindOptions
     /// Find all objects of the specified type in the room, without passing

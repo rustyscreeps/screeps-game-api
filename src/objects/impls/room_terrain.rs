@@ -1,6 +1,8 @@
 use js_sys::{JsString, Uint8Array};
 use wasm_bindgen::prelude::*;
 
+use crate::ReturnCode;
+
 #[wasm_bindgen]
 extern "C" {
     /// An object representing a room's terrain held in the javascript heap.
@@ -25,13 +27,13 @@ extern "C" {
     /// Get a copy of the underlying Uint8Array with the data about the room's
     /// terrain.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.get)
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
     #[wasm_bindgen(method)]
     pub fn get_raw_buffer(this: &RoomTerrain) -> Uint8Array;
 
     /// Copy the data about the room's terrain into an existing [`Uint8Array`].
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.get)
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
     #[wasm_bindgen(method)]
-    pub fn get_raw_buffer_to_array(this: &RoomTerrain, destination: &Uint8Array) -> i8;
+    pub fn get_raw_buffer_to_array(this: &RoomTerrain, destination: &Uint8Array) -> ReturnCode;
 }

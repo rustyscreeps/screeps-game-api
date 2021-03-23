@@ -1,5 +1,5 @@
 use crate::{
-    constants::StructureType,
+    constants::{ReturnCode, StructureType},
     objects::{Owner, Room, RoomObject, RoomPosition},
     prelude::*,
 };
@@ -58,7 +58,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.remove)
     #[wasm_bindgen(method)]
-    pub fn remove(this: &ConstructionSite) -> i8;
+    pub fn remove(this: &ConstructionSite) -> ReturnCode;
 }
 
 impl HasId for ConstructionSite {

@@ -1,4 +1,5 @@
 use crate::{
+    constants::ReturnCode,
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Structure},
     prelude::*,
 };
@@ -36,7 +37,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureRampart.setPublic)
     #[wasm_bindgen(method, js_name = setPublic)]
-    pub fn set_public(this: &StructureRampart, val: bool) -> i8;
+    pub fn set_public(this: &StructureRampart, val: bool) -> ReturnCode;
 }
 
 impl Attackable for StructureRampart {

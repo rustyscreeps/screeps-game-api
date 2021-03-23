@@ -1,4 +1,5 @@
 use crate::{
+    constants::ReturnCode,
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -36,7 +37,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureNuker.launchNuke)
     #[wasm_bindgen(method, js_name = launchNuke)]
-    pub fn launch_nuke(this: &StructureNuker, target: &RoomPosition) -> i8;
+    pub fn launch_nuke(this: &StructureNuker, target: &RoomPosition) -> ReturnCode;
 }
 
 impl Attackable for StructureNuker {

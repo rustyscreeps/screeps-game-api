@@ -1,4 +1,5 @@
 use crate::{
+    constants::ReturnCode,
     objects::{Creep, OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -59,7 +60,7 @@ extern "C" {
         body: &Array,
         name: &JsString,
         options: Option<&Object>,
-    ) -> i8;
+    ) -> ReturnCode;
 
     /// Kill a [`Creep`] in melee range, returning 100% of its TTL-adjusted
     /// resources (5x more than if the creep is killed another way). Can be used
@@ -67,14 +68,14 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.recycleCreep)
     #[wasm_bindgen(method, js_name = recycleCreep)]
-    pub fn recycle_creep(this: &StructureSpawn, creep: &Creep) -> i8;
+    pub fn recycle_creep(this: &StructureSpawn, creep: &Creep) -> ReturnCode;
 
     /// Renew a [`Creep`] in melee range, removing all boosts adding to its TTL.
     /// Cannot be used while spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.renewCreep)
     #[wasm_bindgen(method, js_name = renewCreep)]
-    pub fn renew_creep(this: &StructureSpawn, creep: &Creep) -> i8;
+    pub fn renew_creep(this: &StructureSpawn, creep: &Creep) -> ReturnCode;
 }
 
 impl Attackable for StructureSpawn {
@@ -166,12 +167,12 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.cancel)
     #[wasm_bindgen(method)]
-    pub fn cancel(this: &Spawning) -> i8;
+    pub fn cancel(this: &Spawning) -> ReturnCode;
 
     /// Change allowed directions for the creep to leave the spawn once it's
     /// ready.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.setDirections)
     #[wasm_bindgen(method, js_name = setDirections)]
-    pub fn set_directions(this: &Spawning, directions: &Array) -> i8;
+    pub fn set_directions(this: &Spawning, directions: &Array) -> ReturnCode;
 }

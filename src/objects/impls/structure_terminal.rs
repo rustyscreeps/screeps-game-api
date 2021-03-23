@@ -1,5 +1,5 @@
 use crate::{
-    constants::ResourceType,
+    constants::{ResourceType, ReturnCode},
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -39,7 +39,7 @@ extern "C" {
         amount: u32,
         destination: &JsString,
         description: Option<&JsString>,
-    ) -> i8;
+    ) -> ReturnCode;
 }
 
 impl Attackable for StructureTerminal {

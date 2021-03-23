@@ -1,5 +1,5 @@
 use crate::{
-    constants::ResourceType,
+    constants::{ResourceType, ReturnCode},
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -41,7 +41,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureFactory.produce)
     #[wasm_bindgen(method)]
-    pub fn produce(this: &StructureFactory, ty: ResourceType) -> i8;
+    pub fn produce(this: &StructureFactory, ty: ResourceType) -> ReturnCode;
 }
 
 impl Attackable for StructureFactory {

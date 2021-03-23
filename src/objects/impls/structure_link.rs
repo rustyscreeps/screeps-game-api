@@ -1,4 +1,5 @@
 use crate::{
+    constants::ReturnCode,
     objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -34,7 +35,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLink.transferEnergy)
     #[wasm_bindgen(method, js_name = transferEnergy)]
-    pub fn transfer_energy(this: &StructureLink, target: &StructureLink) -> i8;
+    pub fn transfer_energy(this: &StructureLink, target: &StructureLink) -> ReturnCode;
 }
 
 impl Attackable for StructureLink {

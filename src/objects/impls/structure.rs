@@ -1,5 +1,5 @@
 use crate::{
-    constants::StructureType,
+    constants::{ReturnCode, StructureType},
     objects::{Room, RoomObject, RoomPosition},
     prelude::*,
 };
@@ -48,7 +48,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.destroy)
     #[wasm_bindgen(method)]
-    pub fn destroy(this: &Structure) -> i8;
+    pub fn destroy(this: &Structure) -> ReturnCode;
 
     /// Determine if the structure is active and can be used at the current RCL.
     ///
@@ -61,7 +61,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.notifyWhenAttacked)
     #[wasm_bindgen(method, js_name = notifyWhenAttacked)]
-    pub fn notify_when_attacked(this: &Structure, val: bool) -> i8;
+    pub fn notify_when_attacked(this: &Structure, val: bool) -> ReturnCode;
 }
 
 impl HasPosition for Structure {

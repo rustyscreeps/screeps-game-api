@@ -1,5 +1,5 @@
 use crate::{
-    constants::ResourceType,
+    constants::{ResourceType, ReturnCode},
     objects::{Creep, OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -45,21 +45,33 @@ extern "C" {
     /// [`LAB_BOOST_ENERGY`]: crate::constants::numbers::LAB_BOOST_ENERGY
     /// [`LAB_BOOST_MINERAL`]: crate::constants::numbers::LAB_BOOST_MINERAL
     #[wasm_bindgen(method, js_name = boostCreep)]
-    pub fn boost_creep(this: &StructureLab, creep: &Creep, body_part_count: Option<u32>) -> i8;
+    pub fn boost_creep(
+        this: &StructureLab,
+        creep: &Creep,
+        body_part_count: Option<u32>,
+    ) -> ReturnCode;
 
     /// Reverse a reaction, splitting the compound in this [`StructureLab`] into
     /// its components in two other labs.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.reverseReaction)
     #[wasm_bindgen(method, js_name = reverseReaction)]
-    pub fn reverse_reaction(this: &StructureLab, lab1: &StructureLab, lab2: &StructureLab) -> i8;
+    pub fn reverse_reaction(
+        this: &StructureLab,
+        lab1: &StructureLab,
+        lab2: &StructureLab,
+    ) -> ReturnCode;
 
     /// Run a reaction, combining components from two other [`StructureLab`]s
     /// into a new compound in this lab.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.runReaction)
     #[wasm_bindgen(method, js_name = runReaction)]
-    pub fn run_reaction(this: &StructureLab, lab1: &StructureLab, lab2: &StructureLab) -> i8;
+    pub fn run_reaction(
+        this: &StructureLab,
+        lab1: &StructureLab,
+        lab2: &StructureLab,
+    ) -> ReturnCode;
 
     /// Unboost a [`Creep`], removing all boosts from its body and dropping
     /// [`LAB_UNBOOST_MINERAL`] per body part on the ground, with a cooldown
@@ -69,7 +81,7 @@ extern "C" {
     ///
     /// [`LAB_UNBOOST_ENERGY`]: crate::constants::numbers::LAB_UNBOOST_ENERGY
     #[wasm_bindgen(method, js_name = unboostCreep)]
-    pub fn unboost_creep(this: &StructureLab, creep: &Creep) -> i8;
+    pub fn unboost_creep(this: &StructureLab, creep: &Creep) -> ReturnCode;
 }
 
 impl Attackable for StructureLab {

@@ -3,15 +3,16 @@
 
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use std::fmt;
 use wasm_bindgen::prelude::*;
 // use parse_display::FromStr;
 use serde::{Deserialize, Serialize};
 
-// bindgen can't take an i8, needs custom boundary functions
+// Bindgen does not correctly handle i8 negative return values. Use custom
+// return values.
 /// Translates return code constants.
-//#[wasm_bindgen]
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
 )]
@@ -47,6 +48,19 @@ pub enum ReturnCode {
 //         }
 //     }
 // }
+
+impl wasm_bindgen::convert::FromWasmAbi for ReturnCode {
+    type Abi = i32;
+    #[inline]
+    unsafe fn from_abi(js: i32) -> Self {
+        Self::from_i32(js).unwrap()
+    }
+}
+impl wasm_bindgen::describe::WasmDescribe for ReturnCode {
+    fn describe() {
+        wasm_bindgen::describe::inform(wasm_bindgen::describe::I32)
+    }
+}
 
 // js_deserializable!(ReturnCode);
 
@@ -86,7 +100,8 @@ pub enum Find {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
-    // todo these seem to not work when conditionally compiled out - they're not hurting to leave in but need to figure that out
+    // todo these seem to not work when conditionally compiled out - they're not hurting to leave
+    // in but need to figure that out
     //#[cfg(feature = "enable-score")]
     //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
     ScoreContainers = 10011,
@@ -248,7 +263,8 @@ pub enum Look {
     PowerCreeps = "powerCreep",
     Deposits = "deposit",
     Ruins = "ruin",
-    // todo these seem to not work when conditionally compiled out - they're not hurting to leave in but need to figure that out
+    // todo these seem to not work when conditionally compiled out - they're not hurting to leave
+    // in but need to figure that out
     //#[cfg(feature = "enable-score")]
     //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
     ScoreContainers = "scoreContainer",

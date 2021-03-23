@@ -1,5 +1,5 @@
 use crate::{
-    constants::{Color, Direction, Look, StructureType},
+    constants::{Color, Direction, Look, ReturnCode, StructureType},
     local::Position,
     prelude::*,
     prototypes::ROOM_POSITION_PROTOTYPE,
@@ -80,10 +80,11 @@ extern "C" {
         this: &RoomPosition,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> i8;
+    ) -> ReturnCode;
 
-    // todo we need to handle the fact that if this succeeds the name of the flag is returned, and maybe also the fact
-    // that it'll throw a js exception when created in a non visible room.. hmm
+    // todo we need to handle the fact that if this succeeds the name of the flag is
+    // returned, and maybe also the fact that it'll throw a js exception when
+    // created in a non visible room.. hmm
     /// Creates a [`Flag`] at this position.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createFlag)
@@ -95,7 +96,7 @@ extern "C" {
         name: Option<&JsString>,
         color: Option<Color>,
         secondary_color: Option<Color>,
-    ) -> i8;
+    ) -> ReturnCode;
 
     // todo FindOptions
     /// Find the closest object by path among an [`Array`] of objects, or among

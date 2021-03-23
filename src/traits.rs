@@ -104,45 +104,45 @@ pub trait SharedCreepProperties {
     /// Cancel an a successfully called creep function from earlier in the tick,
     /// with a [`JsString`] that must contain the JS version of the function
     /// name.
-    fn cancel_order(&self, target: &JsString) -> i8;
+    fn cancel_order(&self, target: &JsString) -> ReturnCode;
 
     /// Drop a resource on the ground from the creep's [`Store`].
-    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> i8;
+    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
 
     /// Move one square in the specified direction.
-    fn move_direction(&self, direction: Direction) -> i8;
+    fn move_direction(&self, direction: Direction) -> ReturnCode;
 
     /// Move the creep along a previously determined path returned from a
     /// pathfinding function, in array or serialized string form.
-    fn move_by_path(&self, path: &JsValue) -> i8;
+    fn move_by_path(&self, path: &JsValue) -> ReturnCode;
 
     /// Move the creep toward the specified goal, either a [`RoomPosition`] or
     /// [`RoomObject`]. Note that using this function will store data in
     /// `Memory.creeps[creep_name]` and enable the default serialization
     /// behavior of the `Memory` object, which may hamper attempts to directly
     /// use `RawMemory`.
-    fn move_to(&self, target: &JsValue, options: Option<Object>) -> i8;
+    fn move_to(&self, target: &JsValue, options: Option<Object>) -> ReturnCode;
 
     /// Whether to send an email notification when this creep is attacked.
-    fn notify_when_attacked(&self, enabled: bool) -> i8;
+    fn notify_when_attacked(&self, enabled: bool) -> ReturnCode;
 
     /// Pick up a [`Resource`] in melee range (or at the same position as the
     /// creep).
-    fn pickup(&self, target: &Resource) -> i8;
+    fn pickup(&self, target: &Resource) -> ReturnCode;
 
     /// Display a string in a bubble above the creep next tick. 10 character
     /// limit.
-    fn say(&self, message: &JsString, public: bool) -> i8;
+    fn say(&self, message: &JsString, public: bool) -> ReturnCode;
 
     /// Immediately kill the creep.
-    fn suicide(&self) -> i8;
+    fn suicide(&self) -> ReturnCode;
 
     /// Transfer a resource from the creep's store to [`Structure`],
     /// [`PowerCreep`], or another [`Creep`].
-    fn transfer(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> i8;
+    fn transfer(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
 
     /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
-    fn withdraw(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> i8;
+    fn withdraw(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
 }
 
 #[enum_dispatch]

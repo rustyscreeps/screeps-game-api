@@ -2,8 +2,9 @@
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game.cpu)
 use js_sys::Object;
-
 use wasm_bindgen::prelude::*;
+
+use crate::constants::ReturnCode;
 
 #[wasm_bindgen]
 extern "C" {
@@ -30,7 +31,7 @@ extern "C" {
 
     /// The amount of CPU that has accumulated in your bucket.
     #[wasm_bindgen(method, getter)]
-    pub fn bucket(this: &CpuInfo) -> u32;
+    pub fn bucket(this: &CpuInfo) -> i32;
 
     /// Your assigned CPU limits for each shard in an [`Object`], with shard
     /// names in [`JsString`] form as keys and numbers as values. This is the
@@ -72,13 +73,13 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
     #[wasm_bindgen(method, js_name = setShardLimits)]
-    pub fn set_shard_limits(this: &CpuInfo, limits: &Object) -> i8;
+    pub fn set_shard_limits(this: &CpuInfo, limits: &Object) -> ReturnCode;
 
     /// Consume a [`CpuUnlock`] to unlock your full CPU for 24 hours.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.unlock)
     #[wasm_bindgen(method)]
-    pub fn unlock(this: &CpuInfo) -> i8;
+    pub fn unlock(this: &CpuInfo) -> ReturnCode;
 
     /// Generate a [`Pixel`], consuming [`PIXEL_COST`] CPU from your bucket.
     ///
@@ -89,7 +90,7 @@ extern "C" {
     #[cfg(feature = "enable-generate-pixel")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-generate-pixel")))]
     #[wasm_bindgen(method, js_name = generatePixel)]
-    pub fn generate_pixel(this: &CpuInfo) -> i8;
+    pub fn generate_pixel(this: &CpuInfo) -> ReturnCode;
 }
 
 #[wasm_bindgen]

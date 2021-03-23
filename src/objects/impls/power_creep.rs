@@ -1,5 +1,5 @@
 use crate::{
-    constants::{Direction, PowerCreepClass, PowerType, ResourceType},
+    constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode},
     objects::{
         Owner, Resource, Room, RoomObject, RoomPosition, Store, StructureController,
         StructurePowerSpawn,
@@ -22,7 +22,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.create)
     #[wasm_bindgen(static_method_of = PowerCreep)]
-    pub fn create(name: &JsString, class: PowerCreepClass) -> i8;
+    pub fn create(name: &JsString, class: PowerCreepClass) -> ReturnCode;
 
     /// Retrieve this power creep's [`PowerCreepClass`].
     ///
@@ -141,40 +141,40 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.cancelOrder)
     #[wasm_bindgen(method, js_name = cancelOrder)]
-    pub fn cancel_order(this: &PowerCreep, target: &JsString) -> i8;
+    pub fn cancel_order(this: &PowerCreep, target: &JsString) -> ReturnCode;
 
     /// Set a power creep that is not currently spawned to be deleted. Can be
     /// cancelled with `true` for the cancel paramater.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.delete)
     #[wasm_bindgen(method)]
-    pub fn delete(this: &PowerCreep, cancel: bool) -> i8;
+    pub fn delete(this: &PowerCreep, cancel: bool) -> ReturnCode;
 
     /// Drop a resource on the ground from the power creep's [`Store`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.drop)
     #[wasm_bindgen(method)]
-    pub fn drop(this: &PowerCreep, ty: ResourceType, amount: Option<u32>) -> i8;
+    pub fn drop(this: &PowerCreep, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
 
     /// Enable powers to be used in this room on a [`StructureController`] in
     /// melee range. You do not need to own the controller.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.enableRoom)
     #[wasm_bindgen(method, js_name = enableRoom)]
-    pub fn enable_room(this: &PowerCreep, target: &StructureController) -> i8;
+    pub fn enable_room(this: &PowerCreep, target: &StructureController) -> ReturnCode;
 
     /// Move one square in the specified direction.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.move)
     #[wasm_bindgen(method, js_name = move)]
-    pub fn move_direction(this: &PowerCreep, direction: Direction) -> i8;
+    pub fn move_direction(this: &PowerCreep, direction: Direction) -> ReturnCode;
 
     /// Move the power creep along a previously determined path returned from a
     /// pathfinding function, in array or serialized string form.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveByPath)
     #[wasm_bindgen(method, js_name = moveByPath)]
-    pub fn move_by_path(this: &PowerCreep, path: &JsValue) -> i8;
+    pub fn move_by_path(this: &PowerCreep, path: &JsValue) -> ReturnCode;
 
     /// Move the creep toward the specified goal, either a [`RoomPosition`] or
     /// [`RoomObject`]. Note that using this function will store data in
@@ -184,52 +184,52 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveByPath)
     #[wasm_bindgen(method, js_name = moveTo)]
-    pub fn move_to(this: &PowerCreep, target: &JsValue, options: Option<Object>) -> i8;
+    pub fn move_to(this: &PowerCreep, target: &JsValue, options: Option<Object>) -> ReturnCode;
 
     /// Whether to send an email notification when this power creep is attacked.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.notifyWhenAttacked)
     #[wasm_bindgen(method, js_name = notifyWhenAttacked)]
-    pub fn notify_when_attacked(this: &PowerCreep, enabled: bool) -> i8;
+    pub fn notify_when_attacked(this: &PowerCreep, enabled: bool) -> ReturnCode;
 
     /// Pick up a [`Resource`] in melee range (or at the same position as the
     /// creep).
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.pickup)
     #[wasm_bindgen(method)]
-    pub fn pickup(this: &PowerCreep, target: &Resource) -> i8;
+    pub fn pickup(this: &PowerCreep, target: &Resource) -> ReturnCode;
 
     /// Change the name of the power creep. Must not be spawned.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.rename)
     #[wasm_bindgen(method)]
-    pub fn rename(this: &PowerCreep, name: &JsString) -> i8;
+    pub fn rename(this: &PowerCreep, name: &JsString) -> ReturnCode;
 
     /// Renew the power creep's TTL using a [`StructurePowerSpawn`] or
     /// [`StructurePowerBank`] in melee range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.renew)
     #[wasm_bindgen(method)]
-    pub fn renew(this: &PowerCreep, target: &RoomObject) -> i8;
+    pub fn renew(this: &PowerCreep, target: &RoomObject) -> ReturnCode;
 
     /// Display a string in a bubble above the power creep next tick. 10
     /// character limit.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.say)
     #[wasm_bindgen(method)]
-    pub fn say(this: &PowerCreep, message: &JsString, public: bool) -> i8;
+    pub fn say(this: &PowerCreep, message: &JsString, public: bool) -> ReturnCode;
 
     /// Spawn the power creep at a [`StructurePowerSpawn`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.spawn)
     #[wasm_bindgen(method)]
-    pub fn spawn(this: &PowerCreep, target: &StructurePowerSpawn) -> i8;
+    pub fn spawn(this: &PowerCreep, target: &StructurePowerSpawn) -> ReturnCode;
 
     /// Immediately kill the power creep.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.suicide)
     #[wasm_bindgen(method)]
-    pub fn suicide(this: &PowerCreep) -> i8;
+    pub fn suicide(this: &PowerCreep) -> ReturnCode;
 
     /// Transfer a resource from the power creep's store to [`Structure`],
     /// [`Creep`], or another [`PowerCreep`].
@@ -241,20 +241,24 @@ extern "C" {
         target: &RoomObject,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> i8;
+    ) -> ReturnCode;
 
     /// Upgrade this power creep, consuming one available GPL and adding a new
     /// level to one of its powers.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.upgrade)
     #[wasm_bindgen(method)]
-    pub fn upgrade(this: &PowerCreep, power: PowerType) -> i8;
+    pub fn upgrade(this: &PowerCreep, power: PowerType) -> ReturnCode;
 
     /// Use one of the power creep's powers.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.usePower)
     #[wasm_bindgen(method, js_name = usePower)]
-    pub fn use_power(this: &PowerCreep, power: PowerType, target: Option<&RoomObject>) -> i8;
+    pub fn use_power(
+        this: &PowerCreep,
+        power: PowerType,
+        target: Option<&RoomObject>,
+    ) -> ReturnCode;
 
     /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
     ///
@@ -265,7 +269,7 @@ extern "C" {
         target: &RoomObject,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> i8;
+    ) -> ReturnCode;
 }
 
 impl Attackable for PowerCreep {
@@ -330,47 +334,47 @@ impl SharedCreepProperties for PowerCreep {
         Self::ticks_to_live(self)
     }
 
-    fn cancel_order(&self, target: &JsString) -> i8 {
+    fn cancel_order(&self, target: &JsString) -> ReturnCode {
         Self::cancel_order(self, target)
     }
 
-    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> i8 {
+    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
         Self::drop(self, ty, amount)
     }
 
-    fn move_direction(&self, direction: Direction) -> i8 {
+    fn move_direction(&self, direction: Direction) -> ReturnCode {
         Self::move_direction(self, direction)
     }
 
-    fn move_by_path(&self, path: &JsValue) -> i8 {
+    fn move_by_path(&self, path: &JsValue) -> ReturnCode {
         Self::move_by_path(self, path)
     }
 
-    fn move_to(&self, target: &JsValue, options: Option<Object>) -> i8 {
+    fn move_to(&self, target: &JsValue, options: Option<Object>) -> ReturnCode {
         Self::move_to(self, target, options)
     }
 
-    fn notify_when_attacked(&self, enabled: bool) -> i8 {
+    fn notify_when_attacked(&self, enabled: bool) -> ReturnCode {
         Self::notify_when_attacked(self, enabled)
     }
 
-    fn pickup(&self, target: &Resource) -> i8 {
+    fn pickup(&self, target: &Resource) -> ReturnCode {
         Self::pickup(self, target)
     }
 
-    fn say(&self, message: &JsString, public: bool) -> i8 {
+    fn say(&self, message: &JsString, public: bool) -> ReturnCode {
         Self::say(self, message, public)
     }
 
-    fn suicide(&self) -> i8 {
+    fn suicide(&self) -> ReturnCode {
         Self::suicide(self)
     }
 
-    fn transfer(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> i8 {
+    fn transfer(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
         Self::transfer(self, target, ty, amount)
     }
 
-    fn withdraw(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> i8 {
+    fn withdraw(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
         Self::withdraw(self, target, ty, amount)
     }
 }
