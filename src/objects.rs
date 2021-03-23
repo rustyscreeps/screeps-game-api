@@ -43,6 +43,8 @@ pub use self::impls::{ScoreCollector, ScoreContainer};
 #[cfg(feature = "enable-symbols")]
 pub use self::impls::{SymbolContainer, SymbolDecoder};
 
+pub use self::impls::{CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign, TextStyle, Visual};
+
 // pub use self::{
 //     creep_shared::{MoveToOptions, SharedCreepProperties},
 //     impls::{

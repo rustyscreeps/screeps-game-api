@@ -24,6 +24,7 @@
 
 pub mod constants;
 pub mod enums;
+pub mod console;
 pub mod game;
 #[cfg(feature = "enable-inter-shard-memory")]
 #[cfg_attr(docsrs, doc(cfg(feature = "enable-inter-shard-memory")))]

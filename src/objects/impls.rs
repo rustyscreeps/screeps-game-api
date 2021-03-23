@@ -12,7 +12,7 @@ mod room;
 mod room_object;
 mod room_position;
 mod room_terrain;
-// mod room_visual;
+mod room_visual;
 mod ruin;
 mod source;
 mod store;
@@ -96,6 +96,8 @@ pub use self::{
     structure_wall::StructureWall,
     tombstone::Tombstone,
 };
+
+pub use self::room_visual::{CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign, TextStyle, Visual};
 
 #[cfg(feature = "enable-score")]
 pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer};
