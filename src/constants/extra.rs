@@ -79,7 +79,7 @@ pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
 /// Maximum length of strings that creeps and power creeps can say.
 pub const SAY_MAX_LENGTH: u32 = 10;
 
-/// Owner username of hostile non-player structures and creeps which occupy
+/// Owner username of hostile non-player structures and creeps which occupy sector center rooms.
 pub const SOURCE_KEEPER_USERNAME: &str = "Source Keeper";
 
 /// Maximum length of names of spawns.
