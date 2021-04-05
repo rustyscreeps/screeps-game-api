@@ -28,7 +28,7 @@ mod impls;
 //mod structure;
 
 pub use self::impls::{
-    ConstructionSite, CostMatrix, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, Owner,
+    ConstructionSite, CostMatrix, CostMatrixSet, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, Owner,
     PowerCreep, Reservation, Resource, Room, RoomObject, RoomPosition, RoomTerrain, Ruin, Sign,
     Source, Spawning, Store, Structure, StructureContainer, StructureController,
     StructureExtension, StructureExtractor, StructureFactory, StructureInvaderCore,

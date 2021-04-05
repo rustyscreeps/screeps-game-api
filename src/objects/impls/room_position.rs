@@ -231,11 +231,18 @@ extern "C" {
     pub fn look_for(this: &RoomPosition, ty: Look) -> Option<Array>;
 }
 
-impl HasPosition for RoomPosition {
-    fn pos(&self) -> Option<Self> {
+impl Clone for RoomPosition {
+    fn clone(&self) -> Self {
         let new_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
         new_pos.set_packed(self.packed());
-        Some(new_pos)
+        new_pos        
+    }
+}
+
+impl HasPosition for RoomPosition {
+    fn pos(&self) -> Self {
+        //TODO: Should this clone or just return self?
+        self.clone()
     }
 }
 

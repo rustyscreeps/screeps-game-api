@@ -1,5 +1,4 @@
 //! Various constants translated as small enums.
-// use std::{borrow::Cow, fmt, str::FromStr};
 
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
@@ -243,40 +242,6 @@ impl From<ExitDirection> for Direction {
             ExitDirection::Left => Direction::Left,
         }
     }
-}
-
-/// Translates `LOOK_*` constants.
-#[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
-pub enum Look {
-    Creeps = "creep",
-    Energy = "energy",
-    Resources = "resource",
-    Sources = "source",
-    Minerals = "mineral",
-    Structures = "structure",
-    Flags = "flag",
-    ConstructionSites = "constructionSite",
-    Nukes = "nuke",
-    Terrain = "terrain",
-    Tombstones = "tombstone",
-    PowerCreeps = "powerCreep",
-    Deposits = "deposit",
-    Ruins = "ruin",
-    // todo these seem to not work when conditionally compiled out - they're not hurting to leave
-    // in but need to figure that out
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
-    ScoreContainers = "scoreContainer",
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
-    ScoreCollectors = "scoreCollector",
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
-    SymbolContainers = "symbolContainer",
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
-    SymbolDecoders = "symbolDecoder",
 }
 
 /// Translates `COLOR_*` constants.

@@ -190,10 +190,9 @@ impl Game {
     where
         T: From<JsValue>,
     {
-        match Game::get_object_by_id(&id.raw) {
-            Some(object) => Some(JsValue::from(object).into()),
-            None => None,
-        }
+        Game::get_object_by_id(&id.raw)
+            .map(JsValue::from)
+            .map(Into::into)
     }
 
     /// Get the typed object represented by a given [`ObjectId`], if it's still
@@ -207,10 +206,9 @@ impl Game {
         // construct a reference to a javascript string using the id data
         let js_str = JsString::from(id.to_string());
 
-        match Game::get_object_by_id(&js_str) {
-            Some(object) => Some(JsValue::from(object).into()),
-            None => None,
-        }
+        Game::get_object_by_id(&js_str)
+            .map(JsValue::from)
+            .map(Into::into)
     }
 
     /// Get the [`RoomObject`] represented by a given [`RawObjectId`], if it's

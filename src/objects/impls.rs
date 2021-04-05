@@ -57,6 +57,7 @@ mod symbol_decoder;
 pub use self::{
     construction_site::ConstructionSite,
     cost_matrix::CostMatrix,
+    cost_matrix::CostMatrixSet,
     creep::Creep,
     deposit::Deposit,
     flag::Flag,

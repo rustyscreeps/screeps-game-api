@@ -1,7 +1,8 @@
-//use crate::local::RoomName;
 use crate::{
+    prelude::*,
     constants::{ExitDirection, Find, Look, ReturnCode, StructureType},
-    objects::{RoomPosition, RoomTerrain, StructureController, StructureStorage},
+    objects::*,
+    constants::look::*,
 };
 
 #[cfg(not(feature = "disable-terminal"))]
@@ -184,21 +185,21 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
     #[wasm_bindgen(method, js_name = lookFor)]
-    pub fn look_for_at(this: &Room, ty: Look, target: &RoomPosition) -> Option<Array>;
+    fn look_for_at_internal(this: &Room, ty: Look, target: &RoomPosition) -> Option<Array>;
 
     /// Get an array of all objects of a given type at the given coordinates, if
     /// any.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
     #[wasm_bindgen(method, js_name = lookFor)]
-    pub fn look_for_at_xy(this: &Room, ty: Look, x: u8, y: u8) -> Option<Array>;
+    fn look_for_at_xy_internal(this: &Room, ty: Look, x: u8, y: u8) -> Option<Array>;
 
     /// Get an array of all objects in a certain area, in either object or array
     /// format depending on the `as_array` option.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
     #[wasm_bindgen(method, js_name = lookAtArea)]
-    pub fn look_for_at_area(
+    fn look_for_at_area_internal(
         this: &Room,
         ty: Look,
         top_y: u8,
@@ -208,6 +209,30 @@ extern "C" {
         as_array: bool,
     ) -> JsValue;
 }
+
+impl Room {
+    pub fn look_for_at<T, U>(&self, _ty: T, target: &U) -> Vec<T::Item>
+    where
+        T: LookConstant,
+        U: HasPosition,
+    {
+        let pos = target.pos();
+
+        self.look_for_at_internal(T::look_code(), &pos)
+            .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
+            .unwrap_or_else(Vec::new)
+    }
+
+    pub fn look_for_at_xy<T>(&self, _ty: T, x: u8, y: u8) -> Vec<T::Item>
+    where
+        T: LookConstant,
+    {
+        self.look_for_at_xy_internal(T::look_code(), x, y)
+            .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
+            .unwrap_or_else(Vec::new)
+    }
+}
+
 
 // use std::{fmt, marker::PhantomData, mem, ops::Range};
 

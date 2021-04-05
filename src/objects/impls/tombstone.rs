@@ -1,8 +1,8 @@
 use crate::{
-    objects::{Room, RoomObject, RoomPosition, Store},
+    objects::{RoomObject, Store},
     prelude::*,
 };
-use js_sys::{Array, JsString};
+use js_sys::{JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -54,27 +54,15 @@ impl CanDecay for Tombstone {
         Self::ticks_to_decay(self)
     }
 }
+
 impl HasId for Tombstone {
-    fn id(&self) -> Option<JsString> {
-        Some(Self::id(self))
+    fn id(&self) -> JsString {
+        Self::id(self)
     }
 }
-impl HasPosition for Tombstone {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
+
 impl HasStore for Tombstone {
     fn store(&self) -> Store {
         Self::store(self)
-    }
-}
-impl RoomObjectProperties for Tombstone {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
     }
 }

@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 use crate::{constants::*, enums::*, objects::*};
 
 #[enum_dispatch]
-pub trait Attackable {
+pub trait HasHits {
     /// Retrieve the current hits of this object.
     fn hits(&self) -> u32;
 
@@ -28,13 +28,32 @@ pub trait HasCooldown {
 #[enum_dispatch]
 pub trait HasId {
     /// Object ID of the object, which can be used to efficiently fetch a
+    /// fresh reference to the object on subsequent ticks.
+    fn id(&self) -> JsString;
+}
+
+#[enum_dispatch]
+pub trait MaybeHasId {
+    /// Object ID of the object, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks, or `None` if the
     /// object doesn't currently have an id.
     fn id(&self) -> Option<JsString>;
 }
 
+impl<T> MaybeHasId for T where T: HasId {
+    fn id(&self) -> Option<JsString> {
+        Some(self.id())
+    }
+}
+
 #[enum_dispatch]
 pub trait HasPosition {
+    /// Position of the object.
+    fn pos(&self) -> RoomPosition;
+}
+
+#[enum_dispatch]
+pub trait MaybeHasPosition {
     /// Position of the object, or `None` if the object is a power creep not
     /// spawned on the current shard.
     fn pos(&self) -> Option<RoomPosition>;
@@ -146,4 +165,12 @@ pub trait SharedCreepProperties {
 }
 
 #[enum_dispatch]
-pub trait StructureProperties {}
+pub trait StructureProperties {
+    fn structure_type(&self) -> StructureType;
+
+    fn destroy(&self) -> ReturnCode;
+
+    fn is_active(&self) -> bool;
+
+    fn notify_when_attacked(&self, val: bool) -> ReturnCode;
+}

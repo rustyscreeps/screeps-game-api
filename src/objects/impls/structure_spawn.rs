@@ -1,6 +1,6 @@
 use crate::{
     constants::ReturnCode,
-    objects::{Creep, OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
+    objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
 use js_sys::{Array, JsString, Object};
@@ -78,49 +78,11 @@ extern "C" {
     pub fn renew_creep(this: &StructureSpawn, creep: &Creep) -> ReturnCode;
 }
 
-impl Attackable for StructureSpawn {
-    fn hits(&self) -> u32 {
-        Structure::hits(self.as_ref())
-    }
-
-    fn hits_max(&self) -> u32 {
-        Structure::hits_max(self.as_ref())
-    }
-}
-impl HasId for StructureSpawn {
-    fn id(&self) -> Option<JsString> {
-        Some(Structure::id(self.as_ref()))
-    }
-}
-impl HasPosition for StructureSpawn {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
 impl HasStore for StructureSpawn {
     fn store(&self) -> Store {
         Self::store(self)
     }
 }
-impl OwnedStructureProperties for StructureSpawn {
-    fn my(&self) -> bool {
-        OwnedStructure::my(self.as_ref())
-    }
-
-    fn owner(&self) -> Option<Owner> {
-        OwnedStructure::owner(self.as_ref())
-    }
-}
-impl RoomObjectProperties for StructureSpawn {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
-    }
-}
-impl StructureProperties for StructureSpawn {}
 
 #[wasm_bindgen]
 extern "C" {

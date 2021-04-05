@@ -1,7 +1,7 @@
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
     objects::{
-        ConstructionSite, Owner, Resource, Room, RoomObject, RoomPosition, Store, Structure,
+        ConstructionSite, Owner, Resource, RoomObject, Store, Structure,
         StructureController,
     },
     prelude::*,
@@ -45,8 +45,7 @@ extern "C" {
     pub fn hits_max(this: &Creep) -> u32;
 
     /// Object ID of the creep, which can be used to efficiently fetch a fresh
-    /// reference to the object on subsequent ticks.  `None` if the creep began
-    /// spawning this tick.
+    /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
     #[wasm_bindgen(final, method, getter)]
@@ -317,7 +316,7 @@ extern "C" {
     ) -> ReturnCode;
 }
 
-impl Attackable for Creep {
+impl HasHits for Creep {
     fn hits(&self) -> u32 {
         Self::hits(self)
     }
@@ -326,28 +325,16 @@ impl Attackable for Creep {
         Self::hits_max(self)
     }
 }
-impl HasId for Creep {
+
+impl MaybeHasId for Creep {
     fn id(&self) -> Option<JsString> {
         Self::id(self)
     }
 }
-impl HasPosition for Creep {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
+
 impl HasStore for Creep {
     fn store(&self) -> Store {
         Self::store(self)
-    }
-}
-impl RoomObjectProperties for Creep {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
     }
 }
 

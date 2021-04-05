@@ -1,8 +1,7 @@
 use crate::{
-    objects::{Room, RoomObject, RoomPosition, Structure},
+    objects::{RoomObject, Structure},
     prelude::*,
 };
-use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -29,27 +28,6 @@ impl CanDecay for StructurePortal {
         Self::ticks_to_decay(self)
     }
 }
-
-impl HasId for StructurePortal {
-    fn id(&self) -> Option<JsString> {
-        Some(Structure::id(self.as_ref()))
-    }
-}
-impl HasPosition for StructurePortal {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
-impl RoomObjectProperties for StructurePortal {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
-    }
-}
-impl StructureProperties for StructurePortal {}
 
 // use serde::Deserialize;
 // use stdweb::Value;

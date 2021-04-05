@@ -109,7 +109,6 @@ extern "C" {
     pub fn incomplete(this: &SearchResults) -> bool;
 }
 
-
 // use std::{f64, marker::PhantomData, mem, borrow::{Borrow}};
 
 // use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray, Value};

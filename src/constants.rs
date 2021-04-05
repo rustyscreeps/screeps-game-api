@@ -66,8 +66,9 @@ mod recipes;
 pub mod seasonal;
 mod small_enums;
 mod types;
+pub mod look;
 
-pub use self::{extra::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*};
+pub use self::{extra::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*, look::*};
 
 /// Re-export of all constants related to [`Creep`] behavior and operations.
 ///

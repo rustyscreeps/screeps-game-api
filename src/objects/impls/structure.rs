@@ -1,9 +1,9 @@
 use crate::{
     constants::{ReturnCode, StructureType},
-    objects::{Room, RoomObject, RoomPosition},
+    objects::{RoomObject},
     prelude::*,
 };
-use js_sys::{Array, JsString};
+use js_sys::{JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -64,18 +64,36 @@ extern "C" {
     pub fn notify_when_attacked(this: &Structure, val: bool) -> ReturnCode;
 }
 
-impl HasPosition for Structure {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
+impl<T> HasId for T where T: AsRef<Structure> {
+    fn id(&self) -> JsString {
+        Structure::id(self.as_ref())
     }
 }
 
-impl RoomObjectProperties for Structure {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
+impl<T> HasHits for T where T: AsRef<Structure> {
+    fn hits(&self) -> u32 {
+        Structure::hits(self.as_ref())
     }
 
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
+    fn hits_max(&self) -> u32 {
+        Structure::hits_max(self.as_ref())
+    }
+}
+
+impl<T> StructureProperties for T where T: AsRef<Structure> {
+    fn structure_type(&self) -> StructureType {
+        Structure::structure_type(self.as_ref())
+    }
+
+    fn destroy(&self) -> ReturnCode {
+        Structure::destroy(self.as_ref())
+    }
+
+    fn is_active(&self) -> bool {
+        Structure::is_active(self.as_ref())
+    }
+
+    fn notify_when_attacked(&self, val: bool) -> ReturnCode {
+        Structure::notify_when_attacked(self.as_ref(), val)
     }
 }

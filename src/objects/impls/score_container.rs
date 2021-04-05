@@ -45,27 +45,15 @@ impl CanDecay for ScoreContainer {
         Self::ticks_to_decay(self)
     }
 }
+
 impl HasId for ScoreContainer {
     fn id(&self) -> Option<JsString> {
         Some(Self::id(self.as_ref()))
     }
 }
-impl HasPosition for ScoreContainer {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
+
 impl HasStore for ScoreContainer {
     fn store(&self) -> Store {
         Self::store(self)
-    }
-}
-impl RoomObjectProperties for ScoreContainer {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
     }
 }
