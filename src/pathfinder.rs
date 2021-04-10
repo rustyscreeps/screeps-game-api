@@ -115,53 +115,56 @@ extern "C" {
 
 // use crate::{local::Position, objects::HasPosition, traits::TryInto, RoomName};
 
-// pub trait RoomCostResult: Into<Value> {}
+pub trait RoomCostResult: Into<JsValue> {}
 
-// pub enum MultiRoomCostResult<'a> {
-//     CostMatrix(CostMatrix<'a>),
-//     Impassable,
-//     Default
-// }
+pub enum MultiRoomCostResult {
+    //TODO: wiarchbe: Add back.
+    //CostMatrix(CostMatrix),
+    Impassable,
+    Default
+}
 
-// impl<'a> RoomCostResult for MultiRoomCostResult<'a> {}
+impl RoomCostResult for MultiRoomCostResult {}
 
-// impl<'a> Default for MultiRoomCostResult<'a> {
-//     fn default() -> Self {
-//         MultiRoomCostResult::Default
-//     }
-// }
+impl Default for MultiRoomCostResult {
+    fn default() -> Self {
+        MultiRoomCostResult::Default
+    }
+}
 
-// impl<'a> Into<Value> for MultiRoomCostResult<'a> {
-//     fn into(self) -> Value {
-//         match self {
-//             MultiRoomCostResult::CostMatrix(m) => m.inner.into(),
-//             MultiRoomCostResult::Impassable => Value::Bool(false),
-//             MultiRoomCostResult::Default => Value::Undefined
-//         }
-//     }
-// }
+impl<'a> Into<JsValue> for MultiRoomCostResult {
+    fn into(self) -> JsValue {
+        match self {
+            //TODO: wiarchbe: Add back.
+            //MultiRoomCostResult::CostMatrix(m) => m.inner.into(),
+            MultiRoomCostResult::Impassable => JsValue::from_bool(false),
+            MultiRoomCostResult::Default => JsValue::undefined()
+        }
+    }
+}
 
-// pub enum SingleRoomCostResult<'a> {
-//     CostMatrix(CostMatrix<'a>),
-//     Default
-// }
+pub enum SingleRoomCostResult {
+    //TODO: wiarchbe: Add back.
+    //CostMatrix(CostMatrix<'a>),
+    Default
+}
 
-// impl<'a> RoomCostResult for SingleRoomCostResult<'a> {}
+impl RoomCostResult for SingleRoomCostResult {}
 
-// impl<'a> Default for SingleRoomCostResult<'a> {
-//     fn default() -> Self {
-//         SingleRoomCostResult::Default
-//     }
-// }
+impl Default for SingleRoomCostResult {
+    fn default() -> Self {
+        SingleRoomCostResult::Default
+    }
+}
 
-// impl<'a> Into<Value> for SingleRoomCostResult<'a> {
-//     fn into(self) -> Value {
-//         match self {
-//             SingleRoomCostResult::CostMatrix(m) => m.inner.into(),
-//             SingleRoomCostResult::Default => Value::Undefined
-//         }
-//     }
-// }
+impl<'a> Into<JsValue> for SingleRoomCostResult {
+    fn into(self) -> JsValue {
+        match self {
+            //SingleRoomCostResult::CostMatrix(m) => m.inner.into(),
+            SingleRoomCostResult::Default => JsValue::undefined()
+        }
+    }
+}
 
 // pub struct SearchOptions<'a, F>
 // where

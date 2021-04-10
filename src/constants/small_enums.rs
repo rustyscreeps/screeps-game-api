@@ -4,10 +4,11 @@ use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use std::fmt;
+use std::{fmt};
 use wasm_bindgen::prelude::*;
 // use parse_display::FromStr;
 use serde::{Deserialize, Serialize};
+use crate::constants::find::Find;
 
 // Bindgen does not correctly handle i8 negative return values. Use custom
 // return values.
@@ -34,85 +35,28 @@ pub enum ReturnCode {
     GclNotEnough = -15,
 }
 
-// impl ReturnCode {
-//     /// Turns this return code into a result.
-//     ///
-//     /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned
-//     /// into `Result::Err(code)`
-//     #[inline]
-//     pub fn as_result(self) -> Result<(), Self> {
-//         match self {
-//             ReturnCode::Ok => Ok(()),
-//             other => Err(other),
-//         }
-//     }
-// }
+impl wasm_bindgen::convert::IntoWasmAbi for ReturnCode {
+    type Abi = i32;
+
+    #[inline]
+    fn into_abi(self) -> Self::Abi {
+        (self as i32).into_abi()
+    }
+}
 
 impl wasm_bindgen::convert::FromWasmAbi for ReturnCode {
     type Abi = i32;
+
     #[inline]
     unsafe fn from_abi(js: i32) -> Self {
         Self::from_i32(js).unwrap()
     }
 }
+
 impl wasm_bindgen::describe::WasmDescribe for ReturnCode {
     fn describe() {
         wasm_bindgen::describe::inform(wasm_bindgen::describe::I32)
     }
-}
-
-// js_deserializable!(ReturnCode);
-
-/// Translates `FIND_*` constants.
-#[wasm_bindgen]
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
-)]
-#[repr(u16)]
-pub enum Find {
-    /// Find all exit positions at the top of the room
-    ExitTop = 1,
-    ExitRight = 3,
-    ExitBottom = 5,
-    ExitLeft = 7,
-    Exit = 10,
-    Creeps = 101,
-    MyCreeps = 102,
-    HostileCreeps = 103,
-    SourcesActive = 104,
-    Sources = 105,
-    DroppedResources = 106,
-    Structures = 107,
-    MyStructures = 108,
-    HostileStructures = 109,
-    Flags = 110,
-    ConstructionSites = 111,
-    MySpawns = 112,
-    HostileSpawns = 113,
-    MyConstructionSites = 114,
-    HostileConstructionSites = 115,
-    Minerals = 116,
-    Nukes = 117,
-    Tombstones = 118,
-    PowerCreeps = 119,
-    MyPowerCreeps = 120,
-    HostilePowerCreeps = 121,
-    Deposits = 122,
-    Ruins = 123,
-    // todo these seem to not work when conditionally compiled out - they're not hurting to leave
-    // in but need to figure that out
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
-    ScoreContainers = 10011,
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
-    ScoreCollectors = 10012,
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
-    SymbolContainers = 10021,
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
-    SymbolDecoders = 10022,
 }
 
 /// Translates direction constants.
@@ -284,7 +228,7 @@ pub enum Color {
     FromPrimitive,
     Serialize_repr,
     Deserialize_repr,
-    IntoEnumIterator,
+    IntoEnumIterator
 )]
 #[repr(u8)]
 pub enum Terrain {

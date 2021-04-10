@@ -1,9 +1,4 @@
-use crate::{
-    prelude::*,
-    constants::{ExitDirection, Find, Look, ReturnCode, StructureType},
-    objects::*,
-    constants::look::*,
-};
+use crate::{FindConstant, constants::{ExitDirection, Find, Look, ReturnCode, StructureType}, constants::look::*, objects::*, prelude::*};
 
 #[cfg(not(feature = "disable-terminal"))]
 use crate::objects::StructureTerminal;
@@ -108,7 +103,6 @@ extern "C" {
         name: Option<&JsString>,
     ) -> ReturnCode;
 
-    // todo FindOptions
     /// Find all objects of the specified type in the room, without passing
     /// additional options.
     ///
@@ -117,7 +111,8 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
     #[wasm_bindgen(method)]
-    pub fn find(this: &Room, ty: Find, options: Option<&Object>) -> Array;
+    //TODO: wiarchbe: Find options!    
+    fn find_internal(this: &Room, ty: Find, options: Option<&Object>) -> Array;
 
     /// Find an exit from the current room which leads to a target room, either
     /// a [`Room`] object or [`JsString`] representation of the room name.
@@ -211,6 +206,17 @@ extern "C" {
 }
 
 impl Room {
+    //TODO: wiarchbe: Find options!
+    pub fn find<T>(&self, ty: T) -> Vec<T::Item>
+    where
+        T: FindConstant
+    {
+        self.find_internal(ty.find_code(), None)
+            .iter()
+            .map(Into::into)
+            .collect()
+    }
+
     pub fn look_for_at<T, U>(&self, _ty: T, target: &U) -> Vec<T::Item>
     where
         T: LookConstant,

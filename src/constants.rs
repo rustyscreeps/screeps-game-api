@@ -67,8 +67,13 @@ pub mod seasonal;
 mod small_enums;
 mod types;
 pub mod look;
+pub mod find;
 
 pub use self::{extra::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*, look::*};
+
+pub use self::find::{FindConstant, Find, CREEPS, MY_CREEPS, HOSTILE_CREEPS, SOURCES_ACTIVE, SOURCES, DROPPED_RESOURCES, STRUCTURES, MY_STRUCTURES, HOSTILE_STRUCTURES, FLAGS, CONSTRUCTION_SITES, MY_SPAWNS, HOSTILE_SPAWNS, MY_CONSTRUCTION_SITES, HOSTILE_CONSTRUCTION_SITES,
+    MINERALS, NUKES, TOMBSTONES, POWER_CREEPS, MY_POWER_CREEPS, HOSTILE_POWER_CREEPS, DEPOSITS, RUINS, EXIT_TOP, EXIT_RIGHT, EXIT_BOTTOM, EXIT_LEFT, EXIT
+};
 
 /// Re-export of all constants related to [`Creep`] behavior and operations.
 ///

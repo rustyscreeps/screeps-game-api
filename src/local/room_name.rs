@@ -7,6 +7,8 @@ use std::{
 };
 
 use arrayvec::ArrayString;
+use wasm_bindgen::{JsCast, JsValue};
+use js_sys::JsString;
 
 use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 
@@ -150,6 +152,55 @@ impl RoomName {
         let mut res = ArrayString::new();
         write!(res, "{}", self).expect("expected ArrayString write to be infallible");
         res
+    }
+}
+
+impl Into<JsValue> for RoomName {
+    fn into(self) -> JsValue {
+        let name = self.to_array_string();
+
+        JsValue::from_str(name.as_str())
+    }
+}
+
+impl Into<JsValue> for &RoomName {
+    fn into(self) -> JsValue {
+        let name = self.to_array_string();
+
+        JsValue::from_str(name.as_str())
+    }
+}
+
+impl Into<JsString> for RoomName {
+    fn into(self) -> JsString {
+        let val: JsValue = self.into();
+
+        val.unchecked_into()
+    }
+}
+
+impl Into<JsString> for &RoomName {
+    fn into(self) -> JsString {
+        let val: JsValue = self.into();
+
+        val.unchecked_into()
+    }
+}
+
+impl From<JsValue> for RoomName {
+    fn from(val: JsValue) -> Self {
+        let val: JsString = val.unchecked_into();
+        let val: String = val.into();
+
+        RoomName::from_str(&val).expect("expected room name to be parseable")
+    }
+}
+
+impl From<JsString> for RoomName {
+    fn from(val: JsString) -> Self {
+        let val: String = val.into();
+
+        RoomName::from_str(&val).expect("expected room name to be parseable")
     }
 }
 

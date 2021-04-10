@@ -6,7 +6,7 @@ use js_sys::{Array, JsString, Object};
 
 use wasm_bindgen::prelude::*;
 
-use crate::{constants::ExitDirection, objects::RoomTerrain};
+use crate::{RoomName, constants::ExitDirection, objects::RoomTerrain};
 
 #[wasm_bindgen]
 extern "C" {
@@ -74,7 +74,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomTerrain)
     #[wasm_bindgen(method, js_name = getRoomTerrain)]
-    pub fn get_room_terrain(this: &MapInfo, room_name: &JsString) -> RoomTerrain;
+    fn get_room_terrain_internal(this: &MapInfo, room_name: &JsString) -> RoomTerrain;
 
     /// Get the size of the world map.
     ///
@@ -88,7 +88,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomStatus)
     #[wasm_bindgen(method, js_name = getRoomStatus)]
-    pub fn get_room_status(this: &MapInfo, room_name: &JsString) -> Object;
+    fn get_room_status_internal(this: &MapInfo, room_name: &JsString) -> RoomStatusResult;
 
     // todo
     // /// Get a [`MapVisual`] object, allowing rendering visual indicators on the
@@ -96,6 +96,41 @@ extern "C" {
     // /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.visual)
     // #[wasm_bindgen(method, getter)]
     // pub fn visual(this: &MapInfo) -> MapVisual;
+}
+
+impl MapInfo {
+    pub fn get_room_terrain(&self, room_name: RoomName) -> RoomTerrain {
+        let name = room_name.into();
+
+        MapInfo::get_room_terrain_internal(self, &name)
+    }
+
+    pub fn get_room_status(&self, room_name: RoomName) -> RoomStatusResult {
+        let name = room_name.into();
+
+        MapInfo::get_room_status_internal(self, &name)
+    }
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen]
+    pub type RoomStatusResult;
+
+    #[wasm_bindgen(method, getter = status)]
+    pub fn status(this: &RoomStatusResult) -> RoomStatus;
+
+    #[wasm_bindgen(method, getter = timestamp)]
+    pub fn timestamp(this: &RoomStatusResult) -> Option<u64>;
+}
+
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum RoomStatus {
+    Normal = "normal",
+    Closed = "closed",
+    Novice = "novice",
+    Respawn = "respawn"
 }
 
 #[wasm_bindgen]

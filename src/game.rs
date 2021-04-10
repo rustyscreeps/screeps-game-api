@@ -5,13 +5,18 @@
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
 
-use js_sys::{JsString, Object};
+use std::marker::PhantomData;
 
-use wasm_bindgen::prelude::*;
+use js_sys::{JsString, Object, Array};
+
+use wasm_bindgen::{
+    JsCast,
+    prelude::*
+};
 
 //pub use crate::{game::rooms::Room, local::RoomName};
 
-use crate::local::{JsObjectId, ObjectId, RawObjectId};
+use crate::{RoomName, local::{JsObjectId, ObjectId, RawObjectId}};
 
 pub mod cpu;
 pub mod gcl;
@@ -20,7 +25,95 @@ pub mod map;
 pub mod market;
 
 use self::{cpu::CpuInfo, gcl::GclInfo, gpl::GplInfo, map::MapInfo, market::MarketInfo};
+use crate::Room;
 use crate::objects::RoomObject;
+
+
+pub struct JsHashMap<K, V> {
+    map: Object,
+    _phantom: PhantomData<(K, V)>
+}
+
+impl<K, V> JsHashMap<K, V> where K: From<JsValue>, V: From<JsValue> {
+    pub fn keys(&self) -> impl Iterator<Item = K> {
+        let array = Object::keys(self.map.unchecked_ref());
+
+        OwnedArrayIter::new(array)
+    }
+
+    pub fn values(&self) -> impl Iterator<Item = K> {
+        let array = Object::values(self.map.unchecked_ref());
+
+        OwnedArrayIter::new(array)
+    }
+
+    pub fn get<'a>(&self, key: &'a K) -> Option<V> where &'a K: Into<JsValue> {
+        let key = key.into();
+        let val = js_sys::Reflect::get(&self.map, &key).ok()?;
+
+        Some(val.into())
+    }    
+}
+
+impl<K, V> From<Object> for JsHashMap<K, V> {
+    fn from(map: Object) -> Self {
+        Self {
+            map,
+            _phantom: Default::default()
+        }
+    }
+}
+
+impl<K, V> From<JsValue> for JsHashMap<K, V> {
+    fn from(val: JsValue) -> Self {
+        Self {
+            map: val.into(),
+            _phantom: Default::default()
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct OwnedArrayIter<T> {
+    range: std::ops::Range<u32>,
+    array: Array,
+    _phantom: PhantomData<T>
+}
+
+impl<T> OwnedArrayIter<T> {
+    pub fn new(array: Array) -> Self {
+        OwnedArrayIter {
+            range: 0..array.length(),
+            array: array,
+            _phantom: Default::default()
+        }
+    }
+}
+
+impl<T> std::iter::Iterator for OwnedArrayIter<T> where T: From<JsValue> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let index = self.range.next()?;
+        Some(self.array.get(index).into())
+    }
+
+    #[inline]
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.range.size_hint()
+    }
+}
+
+impl<T> std::iter::DoubleEndedIterator for OwnedArrayIter<T> where T: From<JsValue> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        let index = self.range.next_back()?;
+        Some(self.array.get(index).into())
+    }
+}
+
+impl<T> std::iter::FusedIterator for OwnedArrayIter<T> where T: From<JsValue> {}
+
+impl<T> std::iter::ExactSizeIterator for OwnedArrayIter<T> where T: From<JsValue> {}
 
 #[wasm_bindgen]
 extern "C" {
@@ -116,7 +209,7 @@ extern "C" {
     ///
     /// [`Room`]: crate::objects::Room
     #[wasm_bindgen(static_method_of = Game, getter)]
-    pub fn rooms() -> Object;
+    fn rooms_internal() -> Object;
 
     /// Get a [`JsString`] with the name of the shard being run on.
     ///
@@ -220,6 +313,10 @@ impl Game {
         let js_str = JsString::from(id.to_string());
 
         Game::get_object_by_id(&js_str)
+    }
+
+    pub fn rooms() -> JsHashMap<RoomName, Room> {
+        Game::rooms_internal().into()
     }
 }
 

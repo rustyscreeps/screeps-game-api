@@ -51,7 +51,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.safeMode)
     #[wasm_bindgen(method, getter = safeMode)]
-    pub fn safe_mode(this: &StructureController) -> u32;
+    pub fn safe_mode(this: &StructureController) -> Option<u32>;
 
     /// The number of of available safe mode activations, which can be increased
     /// by using [`Creep::generate_safe_mode`]
@@ -66,7 +66,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.safeModeCooldown)
     #[wasm_bindgen(method, getter = safeModeCooldown)]
-    pub fn safe_mode_cooldown(this: &StructureController) -> u32;
+    pub fn safe_mode_cooldown(this: &StructureController) -> Option<u32>;
 
     /// Information about the sign on this controller, if it has been signed by
     /// [`Creep::sign_controller`].

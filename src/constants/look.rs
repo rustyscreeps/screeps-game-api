@@ -38,6 +38,7 @@ pub enum Look {
     SymbolDecoders = "symbolDecoder",
 }
 
+//TODO: wiarchbe: Add back in calculated doc.
 macro_rules! typesafe_look_constants {
     (
         $(
