@@ -1,5 +1,6 @@
 use std::convert::TryInto;
 use std::ops::{Index, IndexMut};
+use std::collections::HashMap;
 
 use crate::objects::CostMatrix;
 
@@ -59,6 +60,14 @@ impl LocalCostMatrix {
 
     pub fn get_bits(&self) -> &[u8; 2500] {
         &self.bits
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), u8)> + '_ {
+        self.bits.iter().copied().enumerate().map(|(idx, val)| { (((idx / 50) as u8, (idx % 50) as u8), val) })
+    }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = ((u8, u8), &mut u8)> {
+        self.bits.iter_mut().enumerate().map(|(idx, val)| { (((idx / 50) as u8, (idx % 50) as u8), val) })
     }
 
     // /// Copies all data into an JavaScript CostMatrix for use.
@@ -265,12 +274,83 @@ impl IndexMut<Position> for LocalCostMatrix {
 //     }
 // }
 
+#[derive(Clone, Debug)]
+pub struct SparseCostMatrix {
+    inner: HashMap<(u8, u8), u8>
+}
+
+impl Default for SparseCostMatrix {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl SparseCostMatrix {
+    pub fn new() -> Self {
+        SparseCostMatrix { inner: HashMap::new() }
+    }
+
+    pub fn get(&self, x: u8, y: u8) -> u8 {
+        assert!(x < 50, "out of bounds x: {}", x);
+        assert!(y < 50, "out of bounds y: {}", y);
+        if let Some(ref_val) = self.inner.get(&(x, y)) {
+            *ref_val
+        } else {
+            0
+        }
+    }
+
+    pub fn set(&mut self, x: u8, y: u8, val: u8) {
+        assert!(x < 50, "out of bounds x: {}", x);
+        assert!(y < 50, "out of bounds y: {}", y);
+        self.inner.insert((x, y), val);
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), u8)> + '_ {
+        self.inner.iter().map(|(pos, val)| { (*pos, *val) })
+    }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = ((u8, u8), &mut u8)> {
+        self.inner.iter_mut().map(|(pos, val)| { (*pos, val) })
+    }
+}
+
+impl From<HashMap<(u8, u8), u8>> for SparseCostMatrix {
+    fn from(mut map: HashMap<(u8, u8), u8>) -> Self {
+        map.retain(|pos, _| { pos.0 < 50 && pos.1 < 50 });
+        SparseCostMatrix { inner: map }
+    }
+}
+
+impl From<HashMap<Position, u8>> for SparseCostMatrix {
+    fn from(mut map: HashMap<Position, u8>) -> Self {
+        SparseCostMatrix { inner: map.drain().map(|(pos, val)| { (pos.into(), val) }).collect() }
+    }
+}
+
+impl From<LocalCostMatrix> for SparseCostMatrix {
+    fn from(lcm: LocalCostMatrix) -> Self {
+        SparseCostMatrix { inner: lcm.iter().filter(|(_, val)| { *val > 0 }).collect() }
+    }
+}
+
+impl From<SparseCostMatrix> for LocalCostMatrix {
+    fn from(mut scm: SparseCostMatrix) -> Self {
+        let mut lcm = LocalCostMatrix::new();
+        for (pos, val) in scm.inner.drain() {
+            lcm[pos] = val;
+        }
+        lcm
+    }
+}
+
 // need custom implementation in order to ensure length of 'bits' is always 2500
 mod serde_impls {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+    use serde::{de::Error, de::Unexpected, Deserialize, Deserializer, Serialize, Serializer};
     use std::convert::TryInto;
+    use std::collections::HashMap;
 
-    use super::LocalCostMatrix;
+    use super::{LocalCostMatrix, SparseCostMatrix};
 
     impl Serialize for LocalCostMatrix {
         fn serialize<S>(&self, s: S) -> Result<S::Ok, S::Error>
@@ -297,6 +377,33 @@ mod serde_impls {
 
             // SAFETY: If the length wasn't right, we would have hit the check above
             Ok(LocalCostMatrix { bits: vec_bits.try_into().unwrap() })
+        }
+    }
+
+    impl Serialize for SparseCostMatrix {
+        fn serialize<S>(&self, s: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            self.inner.serialize(s)
+        }
+    }
+
+    impl<'de> Deserialize<'de> for SparseCostMatrix {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            let map: HashMap<(u8, u8), u8> = HashMap::deserialize(deserializer)?;
+
+            if map.keys().any(|pos| { pos.0 >= 50 || pos.1 >= 50 }) {
+                return Err(D::Error::invalid_value(
+                    Unexpected::Map,
+                    &"a map whose keys are (u8, u8) with both values in 0..50",
+                ));
+            }
+
+            Ok(SparseCostMatrix { inner: map })
         }
     }
 }
