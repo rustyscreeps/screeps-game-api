@@ -37,6 +37,24 @@ impl LocalCostMatrix {
         self.bits[pos_as_idx(x, y)]
     }
 
+    // # Safety
+    // Calling this method with x >= 50 or y >= 50 is undefined behaviour.
+    #[inline]
+    pub unsafe fn get_unchecked(&self, x: u8, y: u8) -> u8 {
+        debug_assert!(x < 50, "out of bounds x: {}", x);
+        debug_assert!(y < 50, "out of bounds y: {}", y);
+        *self.bits.get_unchecked(pos_as_idx(x,y))
+    }
+
+    // # Safety
+    // Calling this method with x >= 50 or y >= 50 is undefined behaviour.
+    #[inline]
+    pub unsafe fn set_unchecked(&mut self, x: u8, y: u8, val: u8) {
+        debug_assert!(x < 50, "out of bounds x: {}", x);
+        debug_assert!(y < 50, "out of bounds y: {}", y);
+        *self.bits.get_unchecked_mut(pos_as_idx(x, y)) = val;
+    }
+
     pub fn get_bits(&self) -> &[u8; 2500] {
         &self.bits
     }
