@@ -31,18 +31,12 @@ impl LocalCostMatrix {
 
     #[inline]
     pub fn set(&mut self, x: u8, y: u8, val: u8) {
-        assert!(x < 50, "out of bounds x: {}", x);
-        assert!(y < 50, "out of bounds y: {}", y);
-        // SAFETY: 0 <= x < 50, 0 <= y < 50, 0 <=pos_as_idx(x, y) < 2500
-        unsafe { *self.bits.get_unchecked_mut(pos_as_idx(x, y)) = val; }
+        self[(x, y)] = val;
     }
 
     #[inline]
     pub fn get(&self, x: u8, y: u8) -> u8 {
-        assert!(x < 50, "out of bounds x: {}", x);
-        assert!(y < 50, "out of bounds y: {}", y);
-        // SAFETY: 0 <= x < 50, 0 <= y < 50, 0 <=pos_as_idx(x, y) < 2500
-        unsafe { *self.bits.get_unchecked(pos_as_idx(x, y)) }
+        self[(x, y)]
     }
 
     // # Safety
@@ -151,7 +145,8 @@ impl Index<(u8, u8)> for LocalCostMatrix {
     fn index(&self, idx: (u8, u8)) -> &Self::Output {
         assert!(idx.0 < 50, "out of bounds x: {}", idx.0);
         assert!(idx.1 < 50, "out of bounds y: {}", idx.1);
-        &self.bits[pos_as_idx(idx.0, idx.1)]
+        // SAFETY: Just did bounds checking above.
+        unsafe { self.bits.get_unchecked(pos_as_idx(idx.0, idx.1)) }
     }
 }
 
@@ -159,7 +154,8 @@ impl IndexMut<(u8, u8)> for LocalCostMatrix {
     fn index_mut(&mut self, idx: (u8, u8)) -> &mut Self::Output {
         assert!(idx.0 < 50, "out of bounds x: {}", idx.0);
         assert!(idx.1 < 50, "out of bounds y: {}", idx.1);
-        &mut self.bits[pos_as_idx(idx.0, idx.1)]
+        // SAFETY: Just did bounds checking above.
+        unsafe { self.bits.get_unchecked_mut(pos_as_idx(idx.0, idx.1)) }
     }
 }
 
