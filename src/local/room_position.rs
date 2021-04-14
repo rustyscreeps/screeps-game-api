@@ -250,7 +250,7 @@ impl Position {
     #[inline]
     fn from_coords_adjusted_and_room_packed(x: u8, y: u8, room_repr_packed: u16) -> Self {
         Position {
-            packed: ((room_repr_packed as u32) << 16) | ((x as u8) << 8) | (y as u8),
+            packed: ((room_repr_packed as u32) << 16) | ((x as u32) << 8) | (y as u32),
         }
     }
 
@@ -414,7 +414,7 @@ mod serde {
     struct ReadableFormat {
         room_name: RoomName,
         x: u8,
-        y: u88888888,
+        y: u8,
     }
 
     impl From<ReadableFormat> for Position {
