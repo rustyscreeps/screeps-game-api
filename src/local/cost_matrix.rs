@@ -1,5 +1,7 @@
-use crate::objects::CostMatrix;
 use std::convert::TryInto;
+use std::ops::{Index, IndexMut};
+
+use crate::objects::CostMatrix;
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
@@ -114,6 +116,24 @@ impl From<CostMatrix> for LocalCostMatrix {
         LocalCostMatrix {
             bits: array.to_vec().try_into().expect("JS CostMatrix was not length 2500."),
         }
+    }
+}
+
+impl Index<(u8, u8)> for LocalCostMatrix {
+    type Output = u8;
+
+    fn index(&self, idx: (u8, u8)) -> &Self::Output {
+        assert!(idx.0 < 50, "out of bounds x: {}", idx.0);
+        assert!(idx.1 < 50, "out of bounds y: {}", idx.1);
+        &self.bits[pos_as_idx(idx.0, idx.1)]
+    }
+}
+
+impl IndexMut<(u8, u8)> for LocalCostMatrix {
+    fn index_mut(&mut self, idx: (u8, u8)) -> &mut Self::Output {
+        assert!(idx.0 < 50, "out of bounds x: {}", idx.0);
+        assert!(idx.1 < 50, "out of bounds y: {}", idx.1);
+        &mut self.bits[pos_as_idx(idx.0, idx.1)]
     }
 }
 
