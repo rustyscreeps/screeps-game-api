@@ -5,15 +5,15 @@ impl Position {
     /// Returns this position's in-room coordinates as a pair of unsigned
     /// integers.
     #[inline]
-    pub fn coords(&self) -> (u32, u32) {
+    pub fn coords(&self) -> (u8, u8) {
         (self.x(), self.y())
     }
 
     /// Returns this position's in-room coordinates as a pair of signed
     /// integers.
     #[inline]
-    pub fn coords_signed(&self) -> (i32, i32) {
-        (self.x() as i32, self.y() as i32)
+    pub fn coords_signed(&self) -> (i8, i8) {
+        (self.x() as i8, self.y() as i8)
     }
 }
 
@@ -21,12 +21,14 @@ impl Position {
 // implementation is not allowed as it'd be implementing it on a nested type,
 // and both the outer type (`(T, T)`), and the inner ones (`u8`) are from an
 // external crate.
+// TODO: We can do stuff like impl From<LocalCostMatrix> for Vec<u8>, so maybe
+// we can do the same here for more idiomatic code?
 
 impl Into<(u8, u8)> for Position {
     /// Turns this positions's in-room coordinates into a pair of `u8` values.
     #[inline]
     fn into(self) -> (u8, u8) {
-        (self.x() as u8, self.y() as u8)
+        (self.x(), self.y())
     }
 }
 
@@ -42,7 +44,7 @@ impl Into<(u32, u32)> for Position {
     /// Turns this positions's in-room coordinates into a pair of `u32` values.
     #[inline]
     fn into(self) -> (u32, u32) {
-        (self.x(), self.y())
+        (self.x() as u32, self.y() as u32)
     }
 }
 

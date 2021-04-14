@@ -225,7 +225,7 @@ impl Position {
     /// Will panic if either `x` or `y` is larger than 49, or if `room_name` is
     /// outside of the range `E127N127 - W127S127`.
     #[inline]
-    pub fn new(x: u32, y: u32, room_name: RoomName) -> Self {
+    pub fn new(x: u8, y: u8, room_name: RoomName) -> Self {
         assert!(x < 50, "out of bounds x: {}", x);
         assert!(y < 50, "out of bounds y: {}", y);
 
@@ -237,9 +237,9 @@ impl Position {
     ///
     /// Non-public as this doesn't check the bounds for any of these values.
     #[inline]
-    fn from_coords_and_world_coords_adjusted(x: u32, y: u32, room_x: u32, room_y: u32) -> Self {
+    fn from_coords_and_world_coords_adjusted(x: u8, y: u8, room_x: u32, room_y: u32) -> Self {
         Position {
-            packed: (room_x << 24) | (room_y << 16) | (x << 8) | y,
+            packed: (room_x << 24) | (room_y << 16) | ((x as u32) << 8) | (y as u32),
         }
     }
 
@@ -248,9 +248,9 @@ impl Position {
     ///
     /// Non-public as this doesn't check the bounds for any of these values.
     #[inline]
-    fn from_coords_adjusted_and_room_packed(x: u32, y: u32, room_repr_packed: u16) -> Self {
+    fn from_coords_adjusted_and_room_packed(x: u8, y: u8, room_repr_packed: u16) -> Self {
         Position {
-            packed: ((room_repr_packed as u32) << 16) | (x << 8) | y,
+            packed: ((room_repr_packed as u32) << 16) | ((x as u8) << 8) | (y as u8),
         }
     }
 
@@ -261,6 +261,10 @@ impl Position {
 
     #[inline]
     pub fn from_packed(packed: i32) -> Self {
+        let x = packed >> 8 & 0xFF;
+        let y = packed & 0xFF;
+        assert!(x < 50, "out of bounds x: {}", x);
+        assert!(y < 50, "out of bounds y: {}", y);
         Position {
             packed: packed as u32,
         }
@@ -280,14 +284,14 @@ impl Position {
 
     /// Gets this position's in-room x coordinate.
     #[inline]
-    pub fn x(self) -> u32 {
-        self.packed >> 8 & 0xFF
+    pub fn x(self) -> u8 {
+        (self.packed >> 8 & 0xFF) as u8
     }
 
     /// Gets this position's in-room y coordinate.
     #[inline]
-    pub fn y(self) -> u32 {
-        self.packed & 0xFF
+    pub fn y(self) -> u8 {
+        (self.packed & 0xFF) as u8
     }
 
     #[inline]
@@ -296,15 +300,15 @@ impl Position {
     }
 
     #[inline]
-    pub fn set_x(&mut self, x: u32) {
+    pub fn set_x(&mut self, x: u8) {
         assert!(x < 50, "out of bounds x: {}", x);
-        self.packed = (self.packed & !(0xFF << 8)) | (x << 8);
+        self.packed = (self.packed & !(0xFF << 8)) | ((x as u32) << 8);
     }
 
     #[inline]
-    pub fn set_y(&mut self, y: u32) {
+    pub fn set_y(&mut self, y: u8) {
         assert!(y < 50, "out of bounds y: {}", y);
-        self.packed = (self.packed & !0xFF) | y;
+        self.packed = (self.packed & !0xFF) | (y as u32);
     }
 
     #[inline]
@@ -314,13 +318,13 @@ impl Position {
     }
 
     #[inline]
-    pub fn with_x(mut self, x: u32) -> Self {
+    pub fn with_x(mut self, x: u8) -> Self {
         self.set_x(x);
         self
     }
 
     #[inline]
-    pub fn with_y(mut self, y: u32) -> Self {
+    pub fn with_y(mut self, y: u8) -> Self {
         self.set_y(y);
         self
     }
@@ -409,8 +413,8 @@ mod serde {
     #[serde(rename_all = "camelCase")]
     struct ReadableFormat {
         room_name: RoomName,
-        x: u32,
-        y: u32,
+        x: u8,
+        y: u88888888,
     }
 
     impl From<ReadableFormat> for Position {
@@ -460,7 +464,7 @@ mod serde {
 mod test {
     use super::Position;
 
-    const TEST_POSITIONS: &[(i32, (u32, u32, &str))] = &[
+    const TEST_POSITIONS: &[(i32, (u8, u8, &str))] = &[
         (-2122440404i32, (33, 44, "E1N1")),
         (-1803615720i32, (2, 24, "E20N0")),
         (2139029504i32, (0, 0, "W0N0")),

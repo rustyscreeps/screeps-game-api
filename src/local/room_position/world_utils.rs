@@ -64,8 +64,8 @@ impl Position {
         let pos_y = (y + HALF_WORLD_SIZE * 50) as u32;
         let room_x = pos_x / 50;
         let room_y = pos_y / 50;
-        let x = pos_x % 50;
-        let y = pos_y % 50;
+        let x = (pos_x % 50) as u8;
+        let y = (pos_y % 50) as u8;
 
         Self::from_coords_and_world_coords_adjusted(x, y, room_x, room_y)
     }
@@ -79,7 +79,7 @@ mod test {
         "E1N1", "E20N0", "W0N0", "E0N0", "W0S0", "E0S0", "W0N0", "E0N0", "W0S0", "E0S0", "W50S20",
         "W127S127", "W127N127", "E127S127", "E127N127",
     ];
-    const TEST_COORDS: &[u32] = &[0, 21, 44, 49];
+    const TEST_COORDS: &[u8] = &[0, 21, 44, 49];
 
     #[test]
     fn world_coords_round_trip() {
