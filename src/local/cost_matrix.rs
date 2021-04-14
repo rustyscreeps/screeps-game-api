@@ -328,6 +328,23 @@ impl From<HashMap<Position, u8>> for SparseCostMatrix {
     }
 }
 
+impl From<CostMatrix> for SparseCostMatrix {
+    fn from(js_matrix: CostMatrix) -> Self {
+        let array = js_matrix.get_bits();
+
+        SparseCostMatrix {
+            inner: array.to_vec().into_iter().enumerate().filter_map(|(idx, val)| {
+                    assert!(idx < 2500);
+                    if val > 0 {
+                        Some((((idx / 50) as u8, (idx % 50) as u8), val))
+                    } else {
+                        None
+                    }
+                }).collect()
+        }
+    }
+}
+
 impl From<LocalCostMatrix> for SparseCostMatrix {
     fn from(lcm: LocalCostMatrix) -> Self {
         SparseCostMatrix { inner: lcm.iter().filter(|(_, val)| { *val > 0 }).collect() }
