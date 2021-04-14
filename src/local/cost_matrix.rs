@@ -1,9 +1,9 @@
 use crate::objects::CostMatrix;
+use std::convert::TryInto;
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
-    /// Length should be 2500.
-    bits: Vec<u8>,
+    bits: [u8; 2500],
 }
 
 #[inline]
@@ -21,7 +21,7 @@ impl LocalCostMatrix {
     #[inline]
     pub fn new() -> Self {
         LocalCostMatrix {
-            bits: vec![0; 2500],
+            bits: [0; 2500],
         }
     }
 
@@ -35,7 +35,7 @@ impl LocalCostMatrix {
         self.bits[pos_as_idx(x, y)]
     }
 
-    pub fn get_bits<'a>(&'a self) -> &'a [u8] {
+    pub fn get_bits(&self) -> &[u8; 2500] {
         &self.bits
     }
 
@@ -98,12 +98,12 @@ impl LocalCostMatrix {
     // }
 }
 
-impl Into<Vec<u8>> for LocalCostMatrix {
+impl From<LocalCostMatrix> for Vec<u8> {
     /// Returns a vector of bits length 2500, where each position is
     /// `idx = ((x * 50) + y)`.
     #[inline]
-    fn into(self) -> Vec<u8> {
-        self.bits
+    fn from(lcm: LocalCostMatrix) -> Vec<u8> {
+        lcm.bits.into()
     }
 }
 
@@ -112,7 +112,7 @@ impl From<CostMatrix> for LocalCostMatrix {
         let array = js_matrix.get_bits();
 
         LocalCostMatrix {
-            bits: array.to_vec(),
+            bits: array.to_vec().try_into().expect("JS CostMatrix was not length 2500."),
         }
     }
 }
@@ -210,6 +210,7 @@ impl From<CostMatrix> for LocalCostMatrix {
 // need custom implementation in order to ensure length of 'bits' is always 2500
 mod serde_impls {
     use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+    use std::convert::TryInto;
 
     use super::LocalCostMatrix;
 
@@ -227,16 +228,17 @@ mod serde_impls {
         where
             D: Deserializer<'de>,
         {
-            let bits: Vec<u8> = Vec::deserialize(deserializer)?;
+            let vec_bits: Vec<u8> = Vec::deserialize(deserializer)?;
 
-            if bits.len() != 2500 {
+            if vec_bits.len() != 2500 {
                 return Err(D::Error::invalid_length(
-                    bits.len(),
+                    vec_bits.len(),
                     &"a vec of length 2500",
                 ));
             }
 
-            Ok(LocalCostMatrix { bits })
+            // SAFETY: If the length wasn't right, we would have hit the check above
+            Ok(LocalCostMatrix { bits: vec_bits.try_into().unwrap() })
         }
     }
 }
