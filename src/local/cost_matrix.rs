@@ -330,11 +330,11 @@ impl From<HashMap<Position, u8>> for SparseCostMatrix {
 
 impl From<CostMatrix> for SparseCostMatrix {
     fn from(js_matrix: CostMatrix) -> Self {
-        let array = js_matrix.get_bits();
+        let vals: Vec<u8> = js_matrix.get_bits().to_vec();
+        assert!(vals.len() == 2500, "JS CostMatrix had length {} instead of 2500.", vals.len());
 
         SparseCostMatrix {
-            inner: array.to_vec().into_iter().enumerate().filter_map(|(idx, val)| {
-                    assert!(idx < 2500);
+            inner: vals.into_iter().enumerate().filter_map(|(idx, val)| {
                     if val > 0 {
                         Some((((idx / 50) as u8, (idx % 50) as u8), val))
                     } else {
