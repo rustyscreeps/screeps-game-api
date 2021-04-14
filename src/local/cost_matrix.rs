@@ -29,12 +29,18 @@ impl LocalCostMatrix {
 
     #[inline]
     pub fn set(&mut self, x: u8, y: u8, val: u8) {
-        self.bits[pos_as_idx(x, y)] = val;
+        assert!(x < 50, "out of bounds x: {}", x);
+        assert!(y < 50, "out of bounds y: {}", y);
+        // SAFETY: 0 <= x < 50, 0 <= y < 50, 0 <=pos_as_idx(x, y) < 2500
+        unsafe { *self.bits.get_unchecked_mut(pos_as_idx(x, y)) = val; }
     }
 
     #[inline]
     pub fn get(&self, x: u8, y: u8) -> u8 {
-        self.bits[pos_as_idx(x, y)]
+        assert!(x < 50, "out of bounds x: {}", x);
+        assert!(y < 50, "out of bounds y: {}", y);
+        // SAFETY: 0 <= x < 50, 0 <= y < 50, 0 <=pos_as_idx(x, y) < 2500
+        unsafe { *self.bits.get_unchecked(pos_as_idx(x, y)) }
     }
 
     // # Safety
