@@ -3,6 +3,8 @@ use std::ops::{Index, IndexMut};
 
 use crate::objects::CostMatrix;
 
+use super::Position;
+
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
     bits: [u8; 2500],
@@ -161,6 +163,22 @@ impl IndexMut<(u8, u8)> for LocalCostMatrix {
     }
 }
 
+// TODO: Remove the casts when #346 is merged.
+impl Index<Position> for LocalCostMatrix {
+    type Output = u8;
+
+    fn index(&self,  idx: Position) -> &Self::Output {
+        // SAFETY: Position always gives a valid in-room coordinate.
+        unsafe { self.bits.get_unchecked(pos_as_idx(idx.x() as u8, idx.y() as u8)) }
+    }
+}
+
+impl IndexMut<Position> for LocalCostMatrix {
+    fn index_mut(&mut self, idx: Position) -> &mut Self::Output {
+        // SAFETY: Position always gives a valid in-room coordinate.
+        unsafe { self.bits.get_unchecked_mut(pos_as_idx(idx.x() as u8, idx.y() as u8)) }
+    }
+}
 
 // impl<'a> CostMatrixSet for LocalCostMatrix {
 //     fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
