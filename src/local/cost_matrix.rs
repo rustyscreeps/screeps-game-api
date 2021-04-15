@@ -75,6 +75,29 @@ impl LocalCostMatrix {
         self.bits.iter_mut().enumerate().map(|(idx, val)| { (idx_as_pos(idx), val) })
     }
 
+    // Takes all non-zero entries in `src`, and inserts them into `self`.
+    //
+    // If an entry for that position exists already, overwrites it with the new
+    // value.
+    pub fn merge_from_dense(&mut self, src: &LocalCostMatrix) {
+        for i in 0..2500 {
+            let val = unsafe { *src.bits.get_unchecked(i) };
+            if val > 0 {
+                unsafe { *self.bits.get_unchecked_mut(i) = val; }
+            }
+        }
+    }
+
+    // Takes all entries in `src` and merges them into `self`.
+    //
+    // If an entry for that position exists already, overwrites it with the new
+    // value.
+    pub fn merge_from_sparse(&mut self, src: &SparseCostMatrix) {
+        for (pos, val) in src.iter() {
+            unsafe { *self.bits.get_unchecked_mut(pos_as_idx(pos.0, pos.1)) = val; }
+        }
+    }
+
     // /// Copies all data into an JavaScript CostMatrix for use.
     // ///
     // /// This is slower than [`as_uploaded`], but much safer.
@@ -147,6 +170,7 @@ impl From<CostMatrix> for LocalCostMatrix {
     fn from(js_matrix: CostMatrix) -> Self {
         let array = js_matrix.get_bits();
 
+        // SAFETY: CostMatrix is always 2500 long.
         LocalCostMatrix {
             bits: array.to_vec().try_into().expect("JS CostMatrix was not length 2500."),
         }
@@ -317,6 +341,22 @@ impl SparseCostMatrix {
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = ((u8, u8), &mut u8)> {
         self.inner.iter_mut().map(|(pos, val)| { (*pos, val) })
+    }
+
+    // Takes all non-zero entries in `src`, and inserts them into `self`.
+    //
+    // If an entry for that position exists already, overwrites it with the new
+    // value.
+    pub fn merge_from_dense(&mut self, src: &LocalCostMatrix) {
+        self.inner.extend(src.iter().filter(|(_, val)| { *val > 0 }));
+    }
+
+    // Takes all entries in `src` and merges them into `self`.
+    //
+    // If an entry for that position exists already, overwrites it with the new
+    // value.
+    pub fn merge_from_sparse(&mut self, src: &SparseCostMatrix) {
+        self.inner.extend(src.inner.iter());
     }
 }
 
