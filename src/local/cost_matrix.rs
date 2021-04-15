@@ -16,6 +16,11 @@ fn pos_as_idx(x: u8, y: u8) -> usize {
     (x as usize) * 50 + (y as usize)
 }
 
+#[inline]
+fn idx_as_pos(idx: usize) -> (u8, u8) {
+    ((idx / 50) as u8, (idx % 50) as u8)
+}
+
 impl Default for LocalCostMatrix {
     fn default() -> Self {
         Self::new()
@@ -63,11 +68,11 @@ impl LocalCostMatrix {
     }
 
     pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), u8)> + '_ {
-        self.bits.iter().copied().enumerate().map(|(idx, val)| { (((idx / 50) as u8, (idx % 50) as u8), val) })
+        self.bits.iter().copied().enumerate().map(|(idx, val)| { (idx_as_pos(idx), val) })
     }
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = ((u8, u8), &mut u8)> {
-        self.bits.iter_mut().enumerate().map(|(idx, val)| { (((idx / 50) as u8, (idx % 50) as u8), val) })
+        self.bits.iter_mut().enumerate().map(|(idx, val)| { (idx_as_pos(idx), val) })
     }
 
     // /// Copies all data into an JavaScript CostMatrix for use.
@@ -336,7 +341,7 @@ impl From<CostMatrix> for SparseCostMatrix {
         SparseCostMatrix {
             inner: vals.into_iter().enumerate().filter_map(|(idx, val)| {
                     if val > 0 {
-                        Some((((idx / 50) as u8, (idx % 50) as u8), val))
+                        Some((idx_as_pos(idx), val))
                     } else {
                         None
                     }
