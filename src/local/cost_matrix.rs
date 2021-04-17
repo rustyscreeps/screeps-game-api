@@ -67,8 +67,8 @@ impl LocalCostMatrix {
         &self.bits
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), u8)> + '_ {
-        self.bits.iter().copied().enumerate().map(|(idx, val)| { (idx_as_pos(idx), val) })
+    pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), &u8)> {
+        self.bits.iter().enumerate().map(|(idx, val)| { (idx_as_pos(idx), val) })
     }
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = ((u8, u8), &mut u8)> {
@@ -335,8 +335,8 @@ impl SparseCostMatrix {
         self.inner.insert((x, y), val);
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), u8)> + '_ {
-        self.inner.iter().map(|(pos, val)| { (*pos, *val) })
+    pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), &u8)> {
+        self.inner.iter().map(|(pos, val)| { (*pos, val) })
     }
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = ((u8, u8), &mut u8)> {
