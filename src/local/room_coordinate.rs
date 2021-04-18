@@ -1,8 +1,7 @@
-use std::convert::TryFrom;
+use std::convert::{TryFrom, TryInto};
 use std::fmt;
 
 pub const ROOM_SIZE: u8 = 50;
-pub const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
 
 #[derive(Debug, Clone, Copy)]
 pub struct OutOfBoundsError(u8);
@@ -20,11 +19,9 @@ pub fn xy_to_linear_index(xy: RoomXY) -> usize {
 
 #[inline]
 pub fn linear_index_to_xy(idx: usize) -> RoomXY {
-    assert!(idx < ROOM_AREA, "Out of bounds index: {}", idx);
-    // SAFETY: bounds checking above ensures both are within range.
     RoomXY {
-        x: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_SIZE as usize)) as u8) },
-        y: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_SIZE as usize)) as u8) }
+        x: RoomCoordinate::new((idx / (ROOM_SIZE as usize)) as u8),
+        y: RoomCoordinate::new((idx % (ROOM_SIZE as usize)) as u8)
     }
 }
 
@@ -44,10 +41,14 @@ impl fmt::Display for RoomXY {
 }
 
 impl RoomCoordinate {
-    // # Safety
-    // Calling this method with `coord >= 50` can result in undefined behaviour when used.
     #[inline]
-    pub unsafe fn unchecked_new(coord: u8) -> Self {
+    pub fn new(coord: u8) -> Self {
+        assert!(coord < ROOM_SIZE, "Out of bounds coordinate: {}", coord);
+        RoomCoordinate(coord)
+    }
+
+    #[inline]
+    pub(crate) fn unchecked_new(coord: u8) -> Self {
         debug_assert!(coord < ROOM_SIZE, "Out of bounds unchecked coordinate: {}", coord);
         RoomCoordinate(coord)
     }
@@ -93,8 +94,8 @@ impl TryFrom<(u8, u8)> for RoomXY {
 
     fn try_from(xy: (u8, u8)) -> Result<RoomXY, OutOfBoundsError> {
         Ok(RoomXY {
-            x: RoomCoordinate::try_from(xy.0)?,
-            y: RoomCoordinate::try_from(xy.1)?
+            x: xy.0.try_into()?,
+            y: xy.1.try_into()?
         })
     }
 }
