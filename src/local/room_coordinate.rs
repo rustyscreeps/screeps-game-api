@@ -20,9 +20,11 @@ pub fn xy_to_linear_index(xy: RoomXY) -> usize {
 
 #[inline]
 pub fn linear_index_to_xy(idx: usize) -> RoomXY {
+    assert!(idx < ROOM_AREA, "Out of bounds index: {}", idx);
+    // SAFETY: bounds checking above ensures both are within range.
     RoomXY {
-        x: RoomCoordinate::new((idx / (ROOM_SIZE as usize)) as u8),
-        y: RoomCoordinate::new((idx % (ROOM_SIZE as usize)) as u8)
+        x: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_SIZE as usize)) as u8) },
+        y: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_SIZE as usize)) as u8) }
     }
 }
 
