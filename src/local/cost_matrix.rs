@@ -1,6 +1,7 @@
-use std::convert::TryInto;
-use std::ops::{Index, IndexMut};
 use std::collections::HashMap;
+use std::convert::TryInto;
+use std::iter::IntoIterator;
+use std::ops::{Index, IndexMut};
 
 use crate::objects::CostMatrix;
 
@@ -97,64 +98,6 @@ impl LocalCostMatrix {
             unsafe { *self.bits.get_unchecked_mut(pos_as_idx(pos.0, pos.1)) = *val; }
         }
     }
-
-    // /// Copies all data into an JavaScript CostMatrix for use.
-    // ///
-    // /// This is slower than [`as_uploaded`], but much safer.
-    // ///
-    // /// [`as_uploaded`]: #method.as_uploaded
-    // pub fn upload(&self) -> CostMatrix<'static> {
-    //     let bits: TypedArray<u8> = self.bits[..].into();
-
-    //     CostMatrix {
-    //         inner: (js! {
-    //             var matrix = Object.create(PathFinder.CostMatrix.prototype);
-    //             matrix._bits = @{bits};
-    //             return matrix;
-    //         })
-    //         .try_into()
-    //         .expect("expected function returning CostMatrix to return a Reference"),
-    //         lifetime: PhantomData,
-    //     }
-    // }
-
-    // /// Temporarily exposes the bits of this matrix as a cost matrix.
-    // ///
-    // /// # Unsafety
-    // ///
-    // /// There are two main invariants you must uphold after using this function:
-    // ///
-    // /// 1. The `CostMatrix` can only be used in JS code as long as this
-    // /// `LocalCostMatrix` is alive.    Doing otherwise will result in
-    // /// undefined behavior, mainly JS being allowed to read/    manipulate
-    // /// uninitialized rust memory or rust memory that's been repurposed.
-    // ///
-    // /// 2. The `set` method of the cost matrix must not be used - it must be
-    // /// read only. This takes    &self, but technically allows mutation of
-    // /// the inner Vec via JavaScript access. You    should not use this
-    // /// method, or you will invoke Rust undefined behavior.
-    // ///
-    // /// The CostMatrix returned will _reference the internal data of this
-    // /// `LocalCostMatrix`_.
-    // pub unsafe fn as_uploaded<'a>(&'a self) -> CostMatrix<'a> {
-    //     let bits: UnsafeTypedArray<'_, u8> = UnsafeTypedArray::new(&self.bits);
-
-    //     CostMatrix {
-    //         inner: (js! {
-    //             // using this first is necessary in order to uphold the invariant of
-    //             // `UnsafeTypedArray`.
-    //             var bits = @{bits};
-
-    //             var matrix = Object.create(PathFinder.CostMatrix.prototype);
-    //             matrix._bits = bits;
-
-    //             return matrix;
-    //         })
-    //         .try_into()
-    //         .expect("expected function returning CostMatrix to return a Reference"),
-    //         lifetime: PhantomData,
-    //     }
-    // }
 }
 
 impl From<LocalCostMatrix> for Vec<u8> {
