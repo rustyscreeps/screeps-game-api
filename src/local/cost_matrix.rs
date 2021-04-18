@@ -1,9 +1,13 @@
+use std::convert::TryInto;
+use std::ops::{Index, IndexMut};
+
 use crate::objects::CostMatrix;
+
+use super::Position;
 
 #[derive(Clone, Debug)]
 pub struct LocalCostMatrix {
-    /// Length should be 2500.
-    bits: Vec<u8>,
+    bits: [u8; 2500],
 }
 
 #[inline]
@@ -21,21 +25,39 @@ impl LocalCostMatrix {
     #[inline]
     pub fn new() -> Self {
         LocalCostMatrix {
-            bits: vec![0; 2500],
+            bits: [0; 2500],
         }
     }
 
     #[inline]
     pub fn set(&mut self, x: u8, y: u8, val: u8) {
-        self.bits[pos_as_idx(x, y)] = val;
+        self[(x, y)] = val;
     }
 
     #[inline]
     pub fn get(&self, x: u8, y: u8) -> u8 {
-        self.bits[pos_as_idx(x, y)]
+        self[(x, y)]
     }
 
-    pub fn get_bits<'a>(&'a self) -> &'a [u8] {
+    // # Safety
+    // Calling this method with x >= 50 or y >= 50 is undefined behaviour.
+    #[inline]
+    pub unsafe fn get_unchecked(&self, x: u8, y: u8) -> u8 {
+        debug_assert!(x < 50, "out of bounds x: {}", x);
+        debug_assert!(y < 50, "out of bounds y: {}", y);
+        *self.bits.get_unchecked(pos_as_idx(x,y))
+    }
+
+    // # Safety
+    // Calling this method with x >= 50 or y >= 50 is undefined behaviour.
+    #[inline]
+    pub unsafe fn set_unchecked(&mut self, x: u8, y: u8, val: u8) {
+        debug_assert!(x < 50, "out of bounds x: {}", x);
+        debug_assert!(y < 50, "out of bounds y: {}", y);
+        *self.bits.get_unchecked_mut(pos_as_idx(x, y)) = val;
+    }
+
+    pub fn get_bits(&self) -> &[u8; 2500] {
         &self.bits
     }
 
@@ -98,12 +120,12 @@ impl LocalCostMatrix {
     // }
 }
 
-impl Into<Vec<u8>> for LocalCostMatrix {
+impl From<LocalCostMatrix> for Vec<u8> {
     /// Returns a vector of bits length 2500, where each position is
     /// `idx = ((x * 50) + y)`.
     #[inline]
-    fn into(self) -> Vec<u8> {
-        self.bits
+    fn from(lcm: LocalCostMatrix) -> Vec<u8> {
+        lcm.bits.into()
     }
 }
 
@@ -112,11 +134,47 @@ impl From<CostMatrix> for LocalCostMatrix {
         let array = js_matrix.get_bits();
 
         LocalCostMatrix {
-            bits: array.to_vec(),
+            bits: array.to_vec().try_into().expect("JS CostMatrix was not length 2500."),
         }
     }
 }
 
+impl Index<(u8, u8)> for LocalCostMatrix {
+    type Output = u8;
+
+    fn index(&self, idx: (u8, u8)) -> &Self::Output {
+        assert!(idx.0 < 50, "out of bounds x: {}", idx.0);
+        assert!(idx.1 < 50, "out of bounds y: {}", idx.1);
+        // SAFETY: Just did bounds checking above.
+        unsafe { self.bits.get_unchecked(pos_as_idx(idx.0, idx.1)) }
+    }
+}
+
+impl IndexMut<(u8, u8)> for LocalCostMatrix {
+    fn index_mut(&mut self, idx: (u8, u8)) -> &mut Self::Output {
+        assert!(idx.0 < 50, "out of bounds x: {}", idx.0);
+        assert!(idx.1 < 50, "out of bounds y: {}", idx.1);
+        // SAFETY: Just did bounds checking above.
+        unsafe { self.bits.get_unchecked_mut(pos_as_idx(idx.0, idx.1)) }
+    }
+}
+
+// TODO: Remove the casts when #346 is merged.
+impl Index<Position> for LocalCostMatrix {
+    type Output = u8;
+
+    fn index(&self,  idx: Position) -> &Self::Output {
+        // SAFETY: Position always gives a valid in-room coordinate.
+        unsafe { self.bits.get_unchecked(pos_as_idx(idx.x() as u8, idx.y() as u8)) }
+    }
+}
+
+impl IndexMut<Position> for LocalCostMatrix {
+    fn index_mut(&mut self, idx: Position) -> &mut Self::Output {
+        // SAFETY: Position always gives a valid in-room coordinate.
+        unsafe { self.bits.get_unchecked_mut(pos_as_idx(idx.x() as u8, idx.y() as u8)) }
+    }
+}
 
 // impl<'a> CostMatrixSet for LocalCostMatrix {
 //     fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
@@ -210,6 +268,7 @@ impl From<CostMatrix> for LocalCostMatrix {
 // need custom implementation in order to ensure length of 'bits' is always 2500
 mod serde_impls {
     use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+    use std::convert::TryInto;
 
     use super::LocalCostMatrix;
 
@@ -227,16 +286,17 @@ mod serde_impls {
         where
             D: Deserializer<'de>,
         {
-            let bits: Vec<u8> = Vec::deserialize(deserializer)?;
+            let vec_bits: Vec<u8> = Vec::deserialize(deserializer)?;
 
-            if bits.len() != 2500 {
+            if vec_bits.len() != 2500 {
                 return Err(D::Error::invalid_length(
-                    bits.len(),
+                    vec_bits.len(),
                     &"a vec of length 2500",
                 ));
             }
 
-            Ok(LocalCostMatrix { bits })
+            // SAFETY: If the length wasn't right, we would have hit the check above
+            Ok(LocalCostMatrix { bits: vec_bits.try_into().unwrap() })
         }
     }
 }
