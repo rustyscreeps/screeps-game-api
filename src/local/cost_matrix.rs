@@ -296,6 +296,7 @@ impl From<CostMatrix> for SparseCostMatrix {
 
         SparseCostMatrix {
             inner: vals.into_iter().enumerate().filter_map(|(idx, val)| {
+                    // 0 is the same as unset, so filtering it out
                     if val > 0 {
                         Some((idx_as_pos(idx), val))
                     } else {
