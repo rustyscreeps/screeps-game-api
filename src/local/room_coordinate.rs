@@ -1,4 +1,4 @@
-use std::convert::{TryFrom, TryInto};
+use std::convert::TryFrom;
 use std::fmt;
 
 pub const ROOM_SIZE: u8 = 50;
@@ -93,8 +93,8 @@ impl TryFrom<(u8, u8)> for RoomXY {
 
     fn try_from(xy: (u8, u8)) -> Result<RoomXY, OutOfBoundsError> {
         Ok(RoomXY {
-            x: xy.0.try_into()?,
-            y: xy.1.try_into()?
+            x: RoomCoordinate::try_from(xy.0)?,
+            y: RoomCoordinate::try_from(xy.1)?
         })
     }
 }
