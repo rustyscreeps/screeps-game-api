@@ -55,7 +55,7 @@ mod test {
             .map(|s| s.parse().unwrap())
     }
 
-    fn pos(room: RoomName, x: u32, y: u32) -> Position {
+    fn pos(room: RoomName, x: u8, y: u8) -> Position {
         Position::new(x, y, room)
     }
 

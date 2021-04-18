@@ -79,8 +79,8 @@ impl Position {
 
     pub fn find_path_to_xy<'a, F>(
         self,
-        x: u32,
-        y: u32,
+        x: u8,
+        y: u8,
         opts: FindOptions<'a, F, SingleRoomCostResult<'a>>,
     ) -> Path
     where
