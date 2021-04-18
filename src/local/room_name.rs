@@ -1,10 +1,4 @@
-use std::{
-    cmp::{Ord, Ordering, PartialOrd},
-    error,
-    fmt::{self, Write},
-    ops,
-    str::FromStr,
-};
+use std::{cmp::{Ord, Ordering, PartialOrd}, convert::TryFrom, error, fmt::{self, Write}, ops, str::FromStr};
 
 use arrayvec::ArrayString;
 use wasm_bindgen::{JsCast, JsValue};
@@ -187,20 +181,49 @@ impl Into<JsString> for &RoomName {
     }
 }
 
-impl From<JsValue> for RoomName {
-    fn from(val: JsValue) -> Self {
-        let val: JsString = val.unchecked_into();
-        let val: String = val.into();
+/// An error representing when a string can't be parsed into a
+/// [`RoomName`].
+///
+/// [`RoomName`]: struct.RoomName.html
+#[derive(Clone, Debug)]
+pub enum RoomNameConversionError {
+    InvalidType,
+    ParseError { err: RoomNameParseError },
+}
 
-        RoomName::from_str(&val).expect("expected room name to be parseable")
+impl error::Error for RoomNameConversionError {}
+
+impl fmt::Display for RoomNameConversionError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            RoomNameConversionError::InvalidType => write!(
+                f,
+                "got invalid input type to room name conversion"
+            ),
+            RoomNameConversionError::ParseError { err } => err.fmt(f)
+        }
     }
 }
 
-impl From<JsString> for RoomName {
-    fn from(val: JsString) -> Self {
+impl TryFrom<JsValue> for RoomName {
+    type Error = RoomNameConversionError;
+
+    fn try_from(val: JsValue) -> Result<RoomName, Self::Error> {
+        let val: String = val
+            .as_string()
+            .ok_or(RoomNameConversionError::InvalidType)?;
+
+        RoomName::from_str(&val).map_err(|err| RoomNameConversionError::ParseError { err })
+    }    
+}
+
+impl TryFrom<JsString> for RoomName {
+    type Error = <RoomName as FromStr>::Err;
+
+    fn try_from(val: JsString) -> Result<RoomName, Self::Error> {
         let val: String = val.into();
 
-        RoomName::from_str(&val).expect("expected room name to be parseable")
+        RoomName::from_str(&val)
     }
 }
 

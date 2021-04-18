@@ -2,7 +2,7 @@
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-map)
 
-use std::convert::{TryFrom};
+use std::convert::{TryFrom, TryInto};
 use serde::Deserialize;
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
@@ -176,7 +176,10 @@ impl<F> FindRouteOptions<F> where F: FnMut(RoomName, RoomName) -> f64,
         let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName, RoomName) -> f64) = unsafe { std::mem::transmute(callback_type_erased) };    
     
         let boxed_callback = Box::new(move |to_room: JsString, from_room: JsString| -> f64 {
-            callback_lifetime_erased(to_room.into(), from_room.into())
+            let to_room = to_room.try_into().expect("expected 'to' room name in route callback");
+            let from_room = from_room.try_into().expect("expected 'rom' room name in route callback");
+
+            callback_lifetime_erased(to_room, from_room)
         }) as Box<dyn FnMut(JsString, JsString) -> f64>;
     
         let closure = Closure::wrap(boxed_callback);

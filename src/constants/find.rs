@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 use crate::{RoomCostResult, RoomName, objects::*};
@@ -462,7 +464,9 @@ where
         let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) = unsafe { std::mem::transmute(callback_type_erased) };    
     
         let boxed_callback = Box::new(move |room: JsString, cost_matrix: CostMatrix| -> JsValue {
-            callback_lifetime_erased(room.into(), cost_matrix)
+            let room = room.try_into().expect("expected room name in cost callback");
+            
+            callback_lifetime_erased(room, cost_matrix)
         }) as Box<dyn FnMut(JsString, CostMatrix) -> JsValue>;
     
         let closure = Closure::wrap(boxed_callback);

@@ -13,6 +13,8 @@
 //!
 //! [`Room::find_path_to`]: crate::objects::Room::find_path_to
 
+use std::convert::TryInto;
+
 use crate::{CostMatrix, Position, RoomName, objects::RoomPosition};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
@@ -215,7 +217,9 @@ impl<F> SearchOptions<F> where F: FnMut(RoomName) -> MultiRoomCostResult,
         let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName) -> JsValue) = unsafe { std::mem::transmute(callback_type_erased) };    
     
         let boxed_callback = Box::new(move |room: JsString| -> JsValue {
-            callback_lifetime_erased(room.into())
+            let room = room.try_into().expect("expected room name in room callback");
+
+            callback_lifetime_erased(room)
         }) as Box<dyn FnMut(JsString) -> JsValue>;
     
         let closure = Closure::wrap(boxed_callback);
