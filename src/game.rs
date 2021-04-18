@@ -14,8 +14,6 @@ use wasm_bindgen::{
     prelude::*
 };
 
-//pub use crate::{game::rooms::Room, local::RoomName};
-
 use crate::{RoomName, local::{JsObjectId, ObjectId, RawObjectId}};
 
 pub mod cpu;
@@ -24,7 +22,7 @@ pub mod gpl;
 pub mod map;
 pub mod market;
 
-use self::{cpu::CpuInfo, gcl::GclInfo, gpl::GplInfo, map::MapInfo, market::MarketInfo};
+use self::{cpu::CpuInfo, gcl::GclInfo, gpl::GplInfo, market::MarketInfo};
 use crate::Room;
 use crate::objects::RoomObject;
 
@@ -168,13 +166,6 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.gpl)
     #[wasm_bindgen(static_method_of = Game, getter)]
     pub fn gpl() -> GplInfo;
-
-    /// Get a [`MapInfo`] object, which contains methods for getting information
-    /// about and finding your way between the rooms making up the game world.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map)
-    #[wasm_bindgen(static_method_of = Game, getter)]
-    pub fn map() -> MapInfo;
 
     /// Get a [`MarketInfo`] object, which contains methods for getting
     /// information about the market and trading with other players.

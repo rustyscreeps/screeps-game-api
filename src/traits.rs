@@ -1,8 +1,8 @@
 use enum_dispatch::enum_dispatch;
-use js_sys::{Array, JsString, Object};
+use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
-use crate::{constants::*, enums::*, objects::*};
+use crate::{Position, RoomName, SingleRoomCostResult, constants::*, enums::*, objects::*};
 
 #[enum_dispatch]
 pub trait HasHits {
@@ -49,14 +49,14 @@ impl<T> MaybeHasId for T where T: HasId {
 #[enum_dispatch]
 pub trait HasPosition {
     /// Position of the object.
-    fn pos(&self) -> RoomPosition;
+    fn pos(&self) -> Position;
 }
 
 #[enum_dispatch]
 pub trait MaybeHasPosition {
     /// Position of the object, or `None` if the object is a power creep not
     /// spawned on the current shard.
-    fn pos(&self) -> Option<RoomPosition>;
+    fn pos(&self) -> Option<Position>;
 }
 
 #[enum_dispatch]
@@ -140,7 +140,7 @@ pub trait SharedCreepProperties {
     /// `Memory.creeps[creep_name]` and enable the default serialization
     /// behavior of the `Memory` object, which may hamper attempts to directly
     /// use `RawMemory`.
-    fn move_to(&self, target: &JsValue, options: Option<Object>) -> ReturnCode;
+    fn move_to<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult;
 
     /// Whether to send an email notification when this creep is attacked.
     fn notify_when_attacked(&self, enabled: bool) -> ReturnCode;

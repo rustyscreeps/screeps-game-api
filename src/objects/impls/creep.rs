@@ -1,12 +1,8 @@
-use crate::{
-    constants::{Direction, Part, ResourceType, ReturnCode},
-    objects::{
+use crate::{CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult, constants::{Direction, Part, ResourceType, ReturnCode}, objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure,
         StructureController,
-    },
-    prelude::*,
-};
-use js_sys::{Array, JsString, Object};
+    }, prelude::*};
+use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -211,7 +207,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.moveByPath)
     #[wasm_bindgen(final, method, js_name = moveTo)]
-    pub fn move_to(this: &Creep, target: &JsValue, options: Option<Object>) -> ReturnCode;
+    pub fn move_to_internal(this: &Creep, target: &JsValue, options: &JsValue) -> ReturnCode;
 
     /// Whether to send an email notification when this creep is attacked.
     ///
@@ -383,8 +379,16 @@ impl SharedCreepProperties for Creep {
         Self::move_by_path(self, path)
     }
 
-    fn move_to(&self, target: &JsValue, options: Option<Object>) -> ReturnCode {
-        Self::move_to(self, target, options)
+    fn move_to<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
+        let target: RoomPosition = target.pos().into();
+        
+        if let Some(options) = options {
+            options.as_js_options(|js_options| {
+                Self::move_to_internal(self, &target, js_options)
+            })
+        } else {
+            Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
+        }        
     }
 
     fn notify_when_attacked(&self, enabled: bool) -> ReturnCode {

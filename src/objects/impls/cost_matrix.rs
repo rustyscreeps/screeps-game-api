@@ -38,11 +38,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.CostMatrix.set)
     #[wasm_bindgen(method)]
-    pub fn set(this: &CostMatrix, x: u8, y: u8, cost: u8);
-
-    //TODO: wiarchbe: Hack to disambiguate with the trait. Fix!
-    #[wasm_bindgen(method, js_name = "set")]
-    fn set_internal(this: &CostMatrix, x: u8, y: u8, cost: u8);    
+    pub fn set(this: &CostMatrix, x: u8, y: u8, cost: u8); 
 
     /// Get the value of a specific position in this [`CostMatrix`].
     ///
@@ -124,7 +120,7 @@ impl CostMatrixSet for CostMatrix {
         P: HasLocalPosition,
         V: Borrow<u8>,
     {
-        Self::set_internal(self, position.x(), position.y(), *cost.borrow());
+        CostMatrix::set(self, position.x(), position.y(), *cost.borrow());
     }
 
     fn set_multi<D, B, P, V>(&mut self, data: D)
@@ -136,7 +132,6 @@ impl CostMatrixSet for CostMatrix {
 
         let matrix_buffer = self.get_bits();
 
-        //TODO: wiarchbe: Optimize this to set in a larger batch...
         for entry in data.into_iter() {
             let (pos, cost) = entry.borrow();
 

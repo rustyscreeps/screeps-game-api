@@ -240,14 +240,21 @@ impl Clone for RoomPosition {
 }
 
 impl HasPosition for RoomPosition {
-    fn pos(&self) -> Self {
-        //TODO: Should this clone or just return self?
-        self.clone()
+    fn pos(&self) -> Position {
+        self.into()
     }
 }
 
 impl From<Position> for RoomPosition {
     fn from(pos: Position) -> Self {
+        let js_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
+        js_pos.set_packed(pos.packed_repr());
+        js_pos
+    }
+}
+
+impl From<&Position> for RoomPosition {
+    fn from(pos: &Position) -> Self {
         let js_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
         js_pos.set_packed(pos.packed_repr());
         js_pos

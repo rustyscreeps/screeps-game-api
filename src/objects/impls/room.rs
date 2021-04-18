@@ -222,7 +222,7 @@ impl Room {
         T: LookConstant,
         U: HasPosition,
     {
-        let pos = target.pos();
+        let pos = target.pos().into();
 
         self.look_for_at_internal(T::look_code(), &pos)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())

@@ -1,6 +1,8 @@
+use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
-use crate::objects::*;
+use crate::{RoomCostResult, RoomName, objects::*};
 use crate::enums::StructureObject;
+use wasm_bindgen::JsCast;
 
 /// Translates `FIND_*` constants.
 #[wasm_bindgen]
@@ -259,68 +261,113 @@ typesafe_find_constants! {
 }
 
 #[wasm_bindgen]
-pub struct FindOptions
-{
-    pub(crate) ignore_creeps: bool,
-    pub(crate) ignore_destructible_structures: bool,
-    //pub(crate) cost_callback: ...,
-    pub(crate) max_ops: u32,
-    pub(crate) heuristic_weight: f64,
-    pub(crate) serialize: bool,
-    pub(crate) max_rooms: u32,
-    pub(crate) range: u32,
-    pub(crate) plain_cost: u8,
-    pub(crate) swamp_cost: u8
+extern "C" {
+    #[wasm_bindgen]
+    pub type JsFindOptions;
+
+    #[wasm_bindgen(method, setter = ignoreCreeps)]
+    pub fn ignore_creeps(this: &JsFindOptions, ignore: bool);
+    
+    #[wasm_bindgen(method, setter = ignoreDestructibleStructures)]
+    pub fn ignore_destructible_structures(this: &JsFindOptions, ignore: bool);
+    
+    #[wasm_bindgen(method, setter = costCallback)]
+    pub fn cost_callback(this: &JsFindOptions, callback: &Closure<dyn FnMut(JsString, CostMatrix) -> JsValue>);
+    
+    #[wasm_bindgen(method, setter = maxOps)]
+    pub fn max_ops(this: &JsFindOptions, ops: u32);
+    
+    #[wasm_bindgen(method, setter = heuristicWeight)]
+    pub fn heuristic_weight(this: &JsFindOptions, weight: f64);
+    
+    #[wasm_bindgen(method, setter = serialize)]
+    pub fn serialize(this: &JsFindOptions, serialize: bool);
+    
+    #[wasm_bindgen(method, setter = maxRooms)]
+    pub fn max_rooms(this: &JsFindOptions, max: u8);
+    
+    #[wasm_bindgen(method, setter = range)]
+    pub fn range(this: &JsFindOptions, range: u32);
+    
+    #[wasm_bindgen(method, setter = plainCost)]
+    pub fn plain_cost(this: &JsFindOptions, cost: u8);
+    
+    #[wasm_bindgen(method, setter = swampCost)]
+    pub fn swamp_cost(this: &JsFindOptions, cost: u8);
 }
 
-impl Default for FindOptions
+impl JsFindOptions {
+    pub fn new() -> JsFindOptions {
+        Object::new().unchecked_into()
+    }
+}
+
+pub struct FindOptions<F, R>
+where
+    F: FnMut(RoomName, CostMatrix) -> R,
+    R: RoomCostResult,
+{
+    pub(crate) ignore_creeps: Option<bool>,
+    pub(crate) ignore_destructible_structures: Option<bool>,
+    pub(crate) cost_callback: F,
+    pub(crate) max_ops: Option<u32>,
+    pub(crate) heuristic_weight: Option<f64>,
+    pub(crate) serialize: Option<bool>,
+    pub(crate) max_rooms: Option<u8>,
+    pub(crate) range: Option<u32>,
+    pub(crate) plain_cost: Option<u8>,
+    pub(crate) swamp_cost: Option<u8>,
+}
+
+impl<R> Default for FindOptions<fn(RoomName, CostMatrix) -> R, R>
+where
+    R: RoomCostResult + Default,
 {
     fn default() -> Self {
         FindOptions {
-            ignore_creeps: false,
-            ignore_destructible_structures: false,
-            //TODO: wiarchbe: Re-enable.
-            //cost_callback: |_, _| R::default(),
-            max_ops: 2000,
-            heuristic_weight: 1.2,
-            serialize: false,
-            max_rooms: 16,
-            range: 0,
-            plain_cost: 1,
-            swamp_cost: 5
+            ignore_creeps: None,
+            ignore_destructible_structures: None,
+            cost_callback: |_, _| R::default(),
+            max_ops: None,
+            heuristic_weight: None,
+            serialize: None,
+            max_rooms: None,
+            range: None,
+            plain_cost: None,
+            swamp_cost: None,
         }
     }
 }
 
-impl FindOptions
+impl<R> FindOptions<fn(RoomName, CostMatrix) -> R, R> where R: RoomCostResult + Default,
 {
-    /// Creates default SearchOptions
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl FindOptions
+impl<F, R> FindOptions<F, R>
+where
+    F: FnMut(RoomName, CostMatrix) -> R,
+    R: RoomCostResult,
 {
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
-        self.ignore_creeps = ignore;
+        self.ignore_creeps = Some(ignore);
         self
     }
 
     /// Sets whether the algorithm considers destructible structure as
     /// walkable. Default: False.
     pub fn ignore_destructible_structures(mut self, ignore: bool) -> Self {
-        self.ignore_destructible_structures = ignore;
+        self.ignore_destructible_structures = Some(ignore);
         self
     }
 
-    //TODO: wiarchbe: Re-enable.
     /// Sets cost callback - default `|_, _| {}`.
-    /*
-    pub fn cost_callback<'b, F2, R2>(self, cost_callback: F2) -> FindOptions<'b, F2, R2>
+    pub fn cost_callback<F2, R2>(self, cost_callback: F2) -> FindOptions<F2, R2>
     where
-        F2: FnMut(RoomName, CostMatrix<'b>) -> R2,
+        F2: FnMut(RoomName, CostMatrix) -> R2,
         R2: RoomCostResult,
     {
         let FindOptions {
@@ -347,49 +394,123 @@ impl FindOptions
             range,
             plain_cost,
             swamp_cost,
-            phantom: PhantomData,
         }
     }
-    */
 
     /// Sets maximum ops - default `2000`.
     pub fn max_ops(mut self, ops: u32) -> Self {
-        self.max_ops = ops;
+        self.max_ops = Some(ops);
         self
     }
 
     /// Sets heuristic weight - default `1.2`.
     pub fn heuristic_weight(mut self, weight: f64) -> Self {
-        self.heuristic_weight = weight;
+        self.heuristic_weight = Some(weight);
         self
     }
 
     /// Sets whether the returned path should be passed to `Room.serializePath`.
     pub fn serialize(mut self, s: bool) -> Self {
-        self.serialize = s;
+        self.serialize = Some(s);
         self
     }
 
     /// Sets maximum rooms - default `16`, max `16`.
-    pub fn max_rooms(mut self, rooms: u32) -> Self {
-        self.max_rooms = rooms;
+    pub fn max_rooms(mut self, rooms: u8) -> Self {
+        self.max_rooms = Some(rooms);
         self
     }
 
     pub fn range(mut self, k: u32) -> Self {
-        self.range = k;
+        self.range = Some(k);
         self
     }
 
     /// Sets plain cost - default `1`.
     pub fn plain_cost(mut self, cost: u8) -> Self {
-        self.plain_cost = cost;
+        self.plain_cost = Some(cost);
         self
     }
 
     /// Sets swamp cost - default `5`.
     pub fn swamp_cost(mut self, cost: u8) -> Self {
-        self.swamp_cost = cost;
+        self.swamp_cost = Some(cost);
         self
+    }
+
+    pub(crate) fn as_js_options<CR>(self, callback: impl Fn(&JsFindOptions) -> CR) -> CR {
+        let mut raw_callback = self.cost_callback;
+
+        let mut owned_callback = move |room: RoomName, cost_matrix: CostMatrix| -> JsValue {
+            raw_callback(room, cost_matrix).into()
+        };
+    
+        //
+        // Type erased and boxed callback: no longer a type specific to the closure
+        // passed in, now unified as &Fn
+        //
+
+        let callback_type_erased: &mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) = &mut owned_callback;
+    
+        // Overwrite lifetime of reference so it can be passed to javascript.
+        // It's now pretending to be static data. This should be entirely safe
+        // because we control the only use of it and it remains valid during the
+        // pathfinder callback. This transmute is necessary because "some lifetime
+        // above the current scope but otherwise unknown" is not a valid lifetime.
+        //
+
+        let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) = unsafe { std::mem::transmute(callback_type_erased) };    
+    
+        let boxed_callback = Box::new(move |room: JsString, cost_matrix: CostMatrix| -> JsValue {
+            callback_lifetime_erased(room.into(), cost_matrix)
+        }) as Box<dyn FnMut(JsString, CostMatrix) -> JsValue>;
+    
+        let closure = Closure::wrap(boxed_callback);
+
+        //
+        // Create JS object and set properties.
+        //
+    
+        let js_options = JsFindOptions::new();
+
+        js_options.cost_callback(&closure);
+
+        if let Some(ignore_creeps) = self.ignore_creeps {
+            js_options.ignore_creeps(ignore_creeps);
+        }
+
+        if let Some(ignore_destructible_structures) = self.ignore_destructible_structures {
+            js_options.ignore_destructible_structures(ignore_destructible_structures);
+        }
+        
+        if let Some(max_ops) = self.max_ops {
+            js_options.max_ops(max_ops);
+        }
+        
+        if let Some(heuristic_weight) = self.heuristic_weight {
+            js_options.heuristic_weight(heuristic_weight);
+        }
+        
+        if let Some(serialize) = self.serialize {
+            js_options.serialize(serialize);
+        }
+        
+        if let Some(max_rooms) = self.max_rooms {
+            js_options.max_rooms(max_rooms);
+        }
+        
+        if let Some(range) = self.range {
+            js_options.range(range);
+        }
+
+        if let Some(plain_cost) = self.plain_cost {
+            js_options.plain_cost(plain_cost);
+        }
+        
+        if let Some(swamp_cost) = self.swamp_cost {
+            js_options.swamp_cost(swamp_cost);
+        }        
+
+        callback(&js_options)
     }
 }

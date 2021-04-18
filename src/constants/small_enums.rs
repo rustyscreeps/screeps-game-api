@@ -4,7 +4,7 @@ use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use std::{fmt};
+use std::{convert::TryFrom, fmt};
 use wasm_bindgen::prelude::*;
 // use parse_display::FromStr;
 use serde::{Deserialize, Serialize};
@@ -56,6 +56,14 @@ impl wasm_bindgen::convert::FromWasmAbi for ReturnCode {
 impl wasm_bindgen::describe::WasmDescribe for ReturnCode {
     fn describe() {
         wasm_bindgen::describe::inform(wasm_bindgen::describe::I32)
+    }
+}
+
+impl TryFrom<JsValue> for ReturnCode {
+    type Error = String;
+
+    fn try_from(value: JsValue) -> Result<Self, Self::Error> {
+        value.as_f64().and_then(|f| Self::from_i32(f as i32)).ok_or_else(|| "expected number for return code".to_owned())
     }
 }
 
