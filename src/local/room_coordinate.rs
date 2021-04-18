@@ -2,6 +2,7 @@ use std::convert::{TryFrom, TryInto};
 use std::fmt;
 
 pub const ROOM_SIZE: u8 = 50;
+pub const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
 
 #[derive(Debug, Clone, Copy)]
 pub struct OutOfBoundsError(u8);
@@ -41,14 +42,10 @@ impl fmt::Display for RoomXY {
 }
 
 impl RoomCoordinate {
+    // # Safety
+    // Calling this method with `coord >= 50` can result in undefined behaviour when used.
     #[inline]
-    pub fn new(coord: u8) -> Self {
-        assert!(coord < ROOM_SIZE, "Out of bounds coordinate: {}", coord);
-        RoomCoordinate(coord)
-    }
-
-    #[inline]
-    pub(crate) fn unchecked_new(coord: u8) -> Self {
+    pub unsafe fn unchecked_new(coord: u8) -> Self {
         debug_assert!(coord < ROOM_SIZE, "Out of bounds unchecked coordinate: {}", coord);
         RoomCoordinate(coord)
     }
