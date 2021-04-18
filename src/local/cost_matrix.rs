@@ -94,7 +94,7 @@ impl LocalCostMatrix {
     // value.
     pub fn merge_from_sparse(&mut self, src: &SparseCostMatrix) {
         for (pos, val) in src.iter() {
-            unsafe { *self.bits.get_unchecked_mut(pos_as_idx(pos.0, pos.1)) = val; }
+            unsafe { *self.bits.get_unchecked_mut(pos_as_idx(pos.0, pos.1)) = *val; }
         }
     }
 
@@ -348,7 +348,13 @@ impl SparseCostMatrix {
     // If an entry for that position exists already, overwrites it with the new
     // value.
     pub fn merge_from_dense(&mut self, src: &LocalCostMatrix) {
-        self.inner.extend(src.iter().filter(|(_, val)| { *val > 0 }));
+        self.inner.extend(src.iter().filter_map(|(xy, val)| {
+            if *val > 0 {
+                Some((xy, *val))
+            } else {
+                None
+            }
+        }))
     }
 
     // Takes all entries in `src` and merges them into `self`.
@@ -392,7 +398,15 @@ impl From<CostMatrix> for SparseCostMatrix {
 
 impl From<LocalCostMatrix> for SparseCostMatrix {
     fn from(lcm: LocalCostMatrix) -> Self {
-        SparseCostMatrix { inner: lcm.iter().filter(|(_, val)| { *val > 0 }).collect() }
+        SparseCostMatrix {
+            inner: lcm.iter().filter_map(|(xy, val)| { 
+                if *val > 0 { 
+                    Some((xy, *val)) 
+                } else { 
+                    None 
+                }
+            }).collect() 
+        }
     }
 }
 
