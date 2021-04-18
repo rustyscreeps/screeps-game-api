@@ -18,7 +18,7 @@ extern "C" {
     /// room names as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.describeExits)
-    #[wasm_bindgen(js_namespace = game.map, js_name = describeExits)]
+    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = describeExits)]
     pub fn describe_exits(room_name: &JsString) -> Object;
 
     /// Get the exit direction from a given room leading toward a destination
@@ -26,7 +26,7 @@ extern "C" {
     /// over the costs to enter rooms.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findExit)
-    #[wasm_bindgen(js_namespace = game.map, js_name = findExit)]
+    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = findExit)]
     fn find_exit_internal(
         from_room: &JsString,
         to_room: &JsString,
@@ -42,7 +42,7 @@ extern "C" {
     /// as a [`JsString`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findRoute)
-    #[wasm_bindgen(js_namespace = game.map, js_name = findRoute)]
+    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = findRoute)]
     fn find_route_internal(
         from_room: &JsString,
         to_room: &JsString,
@@ -54,7 +54,7 @@ extern "C" {
     /// wrap around, which is used for terminal calculations.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomLinearDistance)
-    #[wasm_bindgen(js_namespace = game.map, js_name = getRoomLinearDistance)]
+    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomLinearDistance)]
     pub fn get_room_linear_distance(
         room_1: &JsString,
         room_2: &JsString,
@@ -65,13 +65,13 @@ extern "C" {
     /// vision in.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomTerrain)
-    #[wasm_bindgen(js_namespace = game.map, js_name = getRoomTerrain)]
+    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomTerrain)]
     fn get_room_terrain_internal(room_name: &JsString) -> RoomTerrain;
 
     /// Get the size of the world map.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getWorldSize)
-    #[wasm_bindgen(js_namespace = game.map, js_name = getWorldSize)]
+    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getWorldSize)]
     pub fn get_world_size() -> u32;
 
     // todo MapRoomStatus return val
@@ -79,7 +79,7 @@ extern "C" {
     /// area or currently inaccessible.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomStatus)
-    #[wasm_bindgen(js_namespace = game.map, js_name = getRoomStatus)]
+    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomStatus)]
     fn get_room_status_internal(room_name: &JsString) -> RoomStatusResult;
 
     // todo

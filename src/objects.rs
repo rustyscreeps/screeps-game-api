@@ -35,7 +35,7 @@ pub use self::impls::{
     StructureKeeperLair, StructureLab, StructureLink, StructureNuker, StructureObserver,
     StructurePortal, StructurePowerBank, StructurePowerSpawn, StructureRampart, StructureRoad,
     StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
-    MoveToOptions
+    MoveToOptions, FindOptions
 };
 
 #[cfg(feature = "enable-score")]

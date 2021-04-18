@@ -68,6 +68,7 @@ pub use self::{
     power_creep::PowerCreep,
     resource::Resource,
     room::Room,
+    room::FindOptions,
     room_object::RoomObject,
     room_position::RoomPosition,
     room_terrain::RoomTerrain,

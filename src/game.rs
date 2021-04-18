@@ -5,7 +5,7 @@
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
 
-use std::marker::PhantomData;
+use std::{convert::{TryFrom, TryInto}, marker::PhantomData};
 
 use js_sys::{JsString, Object, Array};
 
@@ -32,24 +32,38 @@ pub struct JsHashMap<K, V> {
     _phantom: PhantomData<(K, V)>
 }
 
-impl<K, V> JsHashMap<K, V> where K: From<JsValue>, V: From<JsValue> {
+impl<K, V> JsHashMap<K, V> where K: From<JsValue> {
     pub fn keys(&self) -> impl Iterator<Item = K> {
         let array = Object::keys(self.map.unchecked_ref());
 
         OwnedArrayIter::new(array)
-    }
+    }  
+}
 
-    pub fn values(&self) -> impl Iterator<Item = K> {
+impl<K, V> JsHashMap<K, V> where V: From<JsValue> {
+    pub fn values(&self) -> impl Iterator<Item = V> {
         let array = Object::values(self.map.unchecked_ref());
 
         OwnedArrayIter::new(array)
-    }
+    }  
+}
 
+impl<K, V> JsHashMap<K, V> where K: Into<JsValue>, V: From<JsValue> {
     pub fn get<'a>(&self, key: &'a K) -> Option<V> where &'a K: Into<JsValue> {
         let key = key.into();
         let val = js_sys::Reflect::get(&self.map, &key).ok()?;
 
         Some(val.into())
+    }    
+}
+
+impl<K, V> JsHashMap<K, V> where K: Into<JsValue>, V: TryFrom<JsValue> {
+    pub fn try_get<'a>(&self, key: &'a K) -> Option<V> where &'a K: Into<JsValue> {
+        let key = key.into();
+        let val = js_sys::Reflect::get(&self.map, &key).ok()?;
+        let val = val.try_into().ok()?;
+
+        Some(val)
     }    
 }
 
@@ -306,6 +320,13 @@ impl Game {
         Game::get_object_by_id(&js_str)
     }
 
+    /// Get an [`JsHashMap<RoomName, Room>`] with the rooms visible for the current tick, which
+    /// contains room names in [`RoomName`] form as keys and [`Room`] objects as
+    /// values.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
+    ///
+    /// [`Room`]: crate::objects::Room
     pub fn rooms() -> JsHashMap<RoomName, Room> {
         Game::rooms_internal().into()
     }
