@@ -197,20 +197,19 @@ impl IndexMut<(u8, u8)> for LocalCostMatrix {
     }
 }
 
-// TODO: Remove the casts when #346 is merged.
 impl Index<Position> for LocalCostMatrix {
     type Output = u8;
 
     fn index(&self,  idx: Position) -> &Self::Output {
         // SAFETY: Position always gives a valid in-room coordinate.
-        unsafe { self.bits.get_unchecked(pos_as_idx(idx.x() as u8, idx.y() as u8)) }
+        unsafe { self.bits.get_unchecked(pos_as_idx(idx.x(), idx.y())) }
     }
 }
 
 impl IndexMut<Position> for LocalCostMatrix {
     fn index_mut(&mut self, idx: Position) -> &mut Self::Output {
         // SAFETY: Position always gives a valid in-room coordinate.
-        unsafe { self.bits.get_unchecked_mut(pos_as_idx(idx.x() as u8, idx.y() as u8)) }
+        unsafe { self.bits.get_unchecked_mut(pos_as_idx(idx.x(), idx.y())) }
     }
 }
 
