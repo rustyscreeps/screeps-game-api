@@ -1,4 +1,6 @@
+use std::collections::HashMap;
 use std::convert::TryInto;
+use std::iter::IntoIterator;
 use std::ops::{Index, IndexMut};
 
 use crate::objects::CostMatrix;
@@ -13,6 +15,11 @@ pub struct LocalCostMatrix {
 #[inline]
 fn pos_as_idx(x: u8, y: u8) -> usize {
     (x as usize) * 50 + (y as usize)
+}
+
+#[inline]
+fn idx_as_pos(idx: usize) -> (u8, u8) {
+    ((idx / 50) as u8, (idx % 50) as u8)
 }
 
 impl Default for LocalCostMatrix {
@@ -61,63 +68,36 @@ impl LocalCostMatrix {
         &self.bits
     }
 
-    // /// Copies all data into an JavaScript CostMatrix for use.
-    // ///
-    // /// This is slower than [`as_uploaded`], but much safer.
-    // ///
-    // /// [`as_uploaded`]: #method.as_uploaded
-    // pub fn upload(&self) -> CostMatrix<'static> {
-    //     let bits: TypedArray<u8> = self.bits[..].into();
+    pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), &u8)> {
+        self.bits.iter().enumerate().map(|(idx, val)| { (idx_as_pos(idx), val) })
+    }
 
-    //     CostMatrix {
-    //         inner: (js! {
-    //             var matrix = Object.create(PathFinder.CostMatrix.prototype);
-    //             matrix._bits = @{bits};
-    //             return matrix;
-    //         })
-    //         .try_into()
-    //         .expect("expected function returning CostMatrix to return a Reference"),
-    //         lifetime: PhantomData,
-    //     }
-    // }
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = ((u8, u8), &mut u8)> {
+        self.bits.iter_mut().enumerate().map(|(idx, val)| { (idx_as_pos(idx), val) })
+    }
 
-    // /// Temporarily exposes the bits of this matrix as a cost matrix.
-    // ///
-    // /// # Unsafety
-    // ///
-    // /// There are two main invariants you must uphold after using this function:
-    // ///
-    // /// 1. The `CostMatrix` can only be used in JS code as long as this
-    // /// `LocalCostMatrix` is alive.    Doing otherwise will result in
-    // /// undefined behavior, mainly JS being allowed to read/    manipulate
-    // /// uninitialized rust memory or rust memory that's been repurposed.
-    // ///
-    // /// 2. The `set` method of the cost matrix must not be used - it must be
-    // /// read only. This takes    &self, but technically allows mutation of
-    // /// the inner Vec via JavaScript access. You    should not use this
-    // /// method, or you will invoke Rust undefined behavior.
-    // ///
-    // /// The CostMatrix returned will _reference the internal data of this
-    // /// `LocalCostMatrix`_.
-    // pub unsafe fn as_uploaded<'a>(&'a self) -> CostMatrix<'a> {
-    //     let bits: UnsafeTypedArray<'_, u8> = UnsafeTypedArray::new(&self.bits);
+    // Takes all non-zero entries in `src`, and inserts them into `self`.
+    //
+    // If an entry for that position exists already, overwrites it with the new
+    // value.
+    pub fn merge_from_dense(&mut self, src: &LocalCostMatrix) {
+        for i in 0..2500 {
+            let val = unsafe { *src.bits.get_unchecked(i) };
+            if val > 0 {
+                unsafe { *self.bits.get_unchecked_mut(i) = val; }
+            }
+        }
+    }
 
-    //     CostMatrix {
-    //         inner: (js! {
-    //             // using this first is necessary in order to uphold the invariant of
-    //             // `UnsafeTypedArray`.
-    //             var bits = @{bits};
-
-    //             var matrix = Object.create(PathFinder.CostMatrix.prototype);
-    //             matrix._bits = bits;
-
-    //             return matrix;
-    //         })
-    //         .try_into()
-    //         .expect("expected function returning CostMatrix to return a Reference"),
-    //         lifetime: PhantomData,
-    //     }
-    // }
+    // Takes all entries in `src` and merges them into `self`.
+    //
+    // If an entry for that position exists already, overwrites it with the new
+    // value.
+    pub fn merge_from_sparse(&mut self, src: &SparseCostMatrix) {
+        for (pos, val) in src.iter() {
+            unsafe { *self.bits.get_unchecked_mut(pos_as_idx(pos.0, pos.1)) = *val; }
+        }
+    }
 }
 
 impl From<LocalCostMatrix> for Vec<u8> {
@@ -133,6 +113,7 @@ impl From<CostMatrix> for LocalCostMatrix {
     fn from(js_matrix: CostMatrix) -> Self {
         let array = js_matrix.get_bits();
 
+        // SAFETY: CostMatrix is always 2500 long.
         LocalCostMatrix {
             bits: array.to_vec().try_into().expect("JS CostMatrix was not length 2500."),
         }
@@ -159,118 +140,147 @@ impl IndexMut<(u8, u8)> for LocalCostMatrix {
     }
 }
 
-// TODO: Remove the casts when #346 is merged.
 impl Index<Position> for LocalCostMatrix {
     type Output = u8;
 
     fn index(&self,  idx: Position) -> &Self::Output {
         // SAFETY: Position always gives a valid in-room coordinate.
-        unsafe { self.bits.get_unchecked(pos_as_idx(idx.x() as u8, idx.y() as u8)) }
+        unsafe { self.bits.get_unchecked(pos_as_idx(idx.x(), idx.y())) }
     }
 }
 
 impl IndexMut<Position> for LocalCostMatrix {
     fn index_mut(&mut self, idx: Position) -> &mut Self::Output {
         // SAFETY: Position always gives a valid in-room coordinate.
-        unsafe { self.bits.get_unchecked_mut(pos_as_idx(idx.x() as u8, idx.y() as u8)) }
+        unsafe { self.bits.get_unchecked_mut(pos_as_idx(idx.x(), idx.y())) }
     }
 }
 
-// impl<'a> CostMatrixSet for LocalCostMatrix {
-//     fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
-//         let iter = data.into_iter();
+#[derive(Clone, Debug)]
+pub struct SparseCostMatrix {
+    inner: HashMap<(u8, u8), u8>
+}
 
-//         for entry in iter {
-//             let (pos, cost) = entry.borrow();
-            
-//             self.set(pos.x(), pos.y(), *cost.borrow());
-//         }
-//     }
-// }
+impl Default for SparseCostMatrix {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
-// /// A `CostMatrix` that's valid to pass as a result from a `PathFinder.search`
-// /// room callback.
-// ///
-// /// Lives as long as `'a` lifetime. It's unsound to leak to JS past this
-// /// lifetime if this matrix was created by [`LocalCostMatrix::as_uploaded`].
-// ///
-// /// [`LocalCostMatrix::as_uploaded`]:
-// /// struct.LocalCostMatrix.html#method.as_uploaded
-// pub struct CostMatrix<'a> {
-//     pub(crate) inner: Reference,
-//     pub(crate) lifetime: PhantomData<&'a ()>,
-// }
+impl SparseCostMatrix {
+    pub fn new() -> Self {
+        SparseCostMatrix { inner: HashMap::new() }
+    }
 
-// impl Default for CostMatrix<'static> {
-//     fn default() -> Self {
-//         CostMatrix {
-//             inner: js_unwrap!(new PathFinder.CostMatrix()),
-//             lifetime: PhantomData,
-//         }
-//     }
-// }
+    pub fn get(&self, x: u8, y: u8) -> u8 {
+        assert!(x < 50, "out of bounds x: {}", x);
+        assert!(y < 50, "out of bounds y: {}", y);
+        if let Some(ref_val) = self.inner.get(&(x, y)) {
+            *ref_val
+        } else {
+            0
+        }
+    }
 
-// impl<'a> Into<MultiRoomCostResult<'a>> for CostMatrix<'a> {
-//     fn into(self) -> MultiRoomCostResult<'a> {
-//         MultiRoomCostResult::CostMatrix(self)
-//     }
-// }
+    pub fn set(&mut self, x: u8, y: u8, val: u8) {
+        assert!(x < 50, "out of bounds x: {}", x);
+        assert!(y < 50, "out of bounds y: {}", y);
+        self.inner.insert((x, y), val);
+    }
 
-// impl<'a> Into<SingleRoomCostResult<'a>> for CostMatrix<'a> {
-//     fn into(self) -> SingleRoomCostResult<'a> {
-//         SingleRoomCostResult::CostMatrix(self)
-//     }
-// }
+    pub fn iter(&self) -> impl Iterator<Item = ((u8, u8), &u8)> {
+        self.inner.iter().map(|(pos, val)| { (*pos, val) })
+    }
 
-// pub trait HasLocalPosition {
-//     fn x(&self) -> u8;
-//     fn y(&self) -> u8;
-// }
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = ((u8, u8), &mut u8)> {
+        self.inner.iter_mut().map(|(pos, val)| { (*pos, val) })
+    }
 
-// pub trait CostMatrixSet {
-//     fn set<P, V>(&mut self, position: P, cost: V) where P: HasLocalPosition, V: Borrow<u8> {
-//         self.set_multi(&[(position, cost)])
-//     }
+    // Takes all non-zero entries in `src`, and inserts them into `self`.
+    //
+    // If an entry for that position exists already, overwrites it with the new
+    // value.
+    pub fn merge_from_dense(&mut self, src: &LocalCostMatrix) {
+        self.inner.extend(src.iter().filter_map(|(xy, val)| {
+            if *val > 0 {
+                Some((xy, *val))
+            } else {
+                None
+            }
+        }))
+    }
 
-//     fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8>;
-// }
+    // Takes all entries in `src` and merges them into `self`.
+    //
+    // If an entry for that position exists already, overwrites it with the new
+    // value.
+    pub fn merge_from_sparse(&mut self, src: &SparseCostMatrix) {
+        self.inner.extend(src.inner.iter());
+    }
+}
 
-// impl<'a> CostMatrixSet for CostMatrix<'a> {
-//     fn set_multi<D, B, P, V>(&mut self, data: D) where D: IntoIterator<Item = B>, B: Borrow<(P, V)>, P: HasLocalPosition, V: Borrow<u8> {
-//         let iter = data.into_iter();
-//         let (minimum_size, _maximum_size) = iter.size_hint();
-//         let mut storage: Vec<u8> = Vec::with_capacity(minimum_size * 3);
+impl From<HashMap<(u8, u8), u8>> for SparseCostMatrix {
+    fn from(mut map: HashMap<(u8, u8), u8>) -> Self {
+        map.retain(|pos, _| { pos.0 < 50 && pos.1 < 50 });
+        SparseCostMatrix { inner: map }
+    }
+}
 
-//         for entry in iter {
-//             let (pos, cost) = entry.borrow();
-//             storage.push(pos.x());
-//             storage.push(pos.y());
-//             storage.push(*cost.borrow());
-//         }
+impl From<HashMap<Position, u8>> for SparseCostMatrix {
+    fn from(mut map: HashMap<Position, u8>) -> Self {
+        SparseCostMatrix { inner: map.drain().map(|(pos, val)| { (pos.into(), val) }).collect() }
+    }
+}
 
-//         let bits: TypedArray<u8> = storage.as_slice().into();
+impl From<CostMatrix> for SparseCostMatrix {
+    fn from(js_matrix: CostMatrix) -> Self {
+        let vals: Vec<u8> = js_matrix.get_bits().to_vec();
+        assert!(vals.len() == 2500, "JS CostMatrix had length {} instead of 2500.", vals.len());
 
-//         js!(
-//             let matrix = @{&self.inner};
-//             let raw_data = @{bits};
+        SparseCostMatrix {
+            inner: vals.into_iter().enumerate().filter_map(|(idx, val)| {
+                    // 0 is the same as unset, so filtering it out
+                    if val > 0 {
+                        Some((idx_as_pos(idx), val))
+                    } else {
+                        None
+                    }
+                }).collect()
+        }
+    }
+}
 
-//             const element_count = raw_data.length / 3;
+impl From<LocalCostMatrix> for SparseCostMatrix {
+    fn from(lcm: LocalCostMatrix) -> Self {
+        SparseCostMatrix {
+            inner: lcm.iter().filter_map(|(xy, val)| { 
+                if *val > 0 { 
+                    Some((xy, *val)) 
+                } else { 
+                    None 
+                }
+            }).collect() 
+        }
+    }
+}
 
-//             for (let index = 0; index < element_count; ++index) {
-//                 const offset = index * 3;
-
-//                 matrix.set(raw_data[offset + 0], raw_data[offset + 1], raw_data[offset + 2]);
-//             }
-//         );
-//     }
-// }
+impl From<SparseCostMatrix> for LocalCostMatrix {
+    fn from(mut scm: SparseCostMatrix) -> Self {
+        let mut lcm = LocalCostMatrix::new();
+        for (pos, val) in scm.inner.drain() {
+            lcm[pos] = val;
+        }
+        lcm
+    }
+}
 
 // need custom implementation in order to ensure length of 'bits' is always 2500
 mod serde_impls {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+    use serde::{de::Error, de::Unexpected, Deserialize, Deserializer, Serialize, Serializer};
     use std::convert::TryInto;
+    use std::collections::HashMap;
 
-    use super::LocalCostMatrix;
+    use super::{LocalCostMatrix, SparseCostMatrix};
 
     impl Serialize for LocalCostMatrix {
         fn serialize<S>(&self, s: S) -> Result<S::Ok, S::Error>
@@ -297,6 +307,33 @@ mod serde_impls {
 
             // SAFETY: If the length wasn't right, we would have hit the check above
             Ok(LocalCostMatrix { bits: vec_bits.try_into().unwrap() })
+        }
+    }
+
+    impl Serialize for SparseCostMatrix {
+        fn serialize<S>(&self, s: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            self.inner.serialize(s)
+        }
+    }
+
+    impl<'de> Deserialize<'de> for SparseCostMatrix {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            let map: HashMap<(u8, u8), u8> = HashMap::deserialize(deserializer)?;
+
+            if map.keys().any(|pos| { pos.0 >= 50 || pos.1 >= 50 }) {
+                return Err(D::Error::invalid_value(
+                    Unexpected::Map,
+                    &"a map whose keys are (u8, u8) with both values in 0..50",
+                ));
+            }
+
+            Ok(SparseCostMatrix { inner: map })
         }
     }
 }
