@@ -7,7 +7,7 @@ impl Position {
     /// `room_x = -xx - 1` for `Wxx` rooms and as `room_x = xx` for `Exx` rooms.
     #[inline]
     pub fn world_x(self) -> i32 {
-        self.room_x() * 50 + (self.x() as i32)
+        self.room_x() * 50 + (self.x().val() as i32)
     }
 
     /// Returns this position's vertical "world coordinate".
@@ -16,7 +16,7 @@ impl Position {
     /// `room_y = -yy - 1` for `Nyy` rooms and as `room_y = yy` for `Syy` rooms.
     #[inline]
     pub fn world_y(self) -> i32 {
-        self.room_y() * 50 + (self.y() as i32)
+        self.room_y() * 50 + (self.y().val() as i32)
     }
 
     /// Returns this position's "world coordinates".
@@ -79,7 +79,10 @@ mod test {
         "E1N1", "E20N0", "W0N0", "E0N0", "W0S0", "E0S0", "W0N0", "E0N0", "W0S0", "E0S0", "W50S20",
         "W127S127", "W127N127", "E127S127", "E127N127",
     ];
-    const TEST_COORDS: &[u8] = &[0, 21, 44, 49];
+    const TEST_COORDS: &[RoomCoordinate] = unsafe {
+        &[RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(21),
+          RoomCoordinate::unchecked_new(44), RoomCoordinate::unchecked_new(49)]
+    };
 
     #[test]
     fn world_coords_round_trip() {
