@@ -1,12 +1,8 @@
-use std::{
-    cmp::{Ord, Ordering, PartialOrd},
-    error,
-    fmt::{self, Write},
-    ops,
-    str::FromStr,
-};
+use std::{cmp::{Ord, Ordering, PartialOrd}, convert::TryFrom, error, fmt::{self, Write}, ops, str::FromStr};
 
 use arrayvec::ArrayString;
+use wasm_bindgen::{JsCast, JsValue};
+use js_sys::JsString;
 
 use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 
@@ -150,6 +146,84 @@ impl RoomName {
         let mut res = ArrayString::new();
         write!(res, "{}", self).expect("expected ArrayString write to be infallible");
         res
+    }
+}
+
+impl Into<JsValue> for RoomName {
+    fn into(self) -> JsValue {
+        let name = self.to_array_string();
+
+        JsValue::from_str(name.as_str())
+    }
+}
+
+impl Into<JsValue> for &RoomName {
+    fn into(self) -> JsValue {
+        let name = self.to_array_string();
+
+        JsValue::from_str(name.as_str())
+    }
+}
+
+impl Into<JsString> for RoomName {
+    fn into(self) -> JsString {
+        let val: JsValue = self.into();
+
+        val.unchecked_into()
+    }
+}
+
+impl Into<JsString> for &RoomName {
+    fn into(self) -> JsString {
+        let val: JsValue = self.into();
+
+        val.unchecked_into()
+    }
+}
+
+/// An error representing when a string can't be parsed into a
+/// [`RoomName`].
+///
+/// [`RoomName`]: struct.RoomName.html
+#[derive(Clone, Debug)]
+pub enum RoomNameConversionError {
+    InvalidType,
+    ParseError { err: RoomNameParseError },
+}
+
+impl error::Error for RoomNameConversionError {}
+
+impl fmt::Display for RoomNameConversionError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            RoomNameConversionError::InvalidType => write!(
+                f,
+                "got invalid input type to room name conversion"
+            ),
+            RoomNameConversionError::ParseError { err } => err.fmt(f)
+        }
+    }
+}
+
+impl TryFrom<JsValue> for RoomName {
+    type Error = RoomNameConversionError;
+
+    fn try_from(val: JsValue) -> Result<RoomName, Self::Error> {
+        let val: String = val
+            .as_string()
+            .ok_or(RoomNameConversionError::InvalidType)?;
+
+        RoomName::from_str(&val).map_err(|err| RoomNameConversionError::ParseError { err })
+    }    
+}
+
+impl TryFrom<JsString> for RoomName {
+    type Error = <RoomName as FromStr>::Err;
+
+    fn try_from(val: JsString) -> Result<RoomName, Self::Error> {
+        let val: String = val.into();
+
+        RoomName::from_str(&val)
     }
 }
 

@@ -1,9 +1,8 @@
 use crate::{
     constants::Color,
-    objects::{Room, RoomObject, RoomPosition},
-    prelude::*,
+    objects::{RoomObject, RoomPosition}
 };
-use js_sys::{Array, JsString};
+use js_sys::{JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -59,19 +58,4 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Flag.setPosition)
     #[wasm_bindgen(method, js_name = setPosition)]
     pub fn set_position(this: &Flag, pos: RoomPosition);
-}
-
-impl HasPosition for Flag {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
-impl RoomObjectProperties for Flag {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
-    }
 }

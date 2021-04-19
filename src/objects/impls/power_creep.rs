@@ -1,12 +1,8 @@
-use crate::{
-    constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode},
-    objects::{
-        Owner, Resource, Room, RoomObject, RoomPosition, Store, StructureController,
+use crate::{CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult, constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode}, objects::{
+        Owner, Resource, RoomObject, Store, StructureController,
         StructurePowerSpawn,
-    },
-    prelude::*,
-};
-use js_sys::{Array, JsString, Object};
+    }, prelude::*};
+use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -16,6 +12,13 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep)
     #[wasm_bindgen(extends = RoomObject)]
     pub type PowerCreep;
+
+    //TODO: wiarchbe: Come back to this... need a good 'maybe has position' implementation that doesn't conflict with base pos().
+    /// Position of the object.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.pos)
+    //#[wasm_bindgen(method, getter)]
+    //pub fn pos(this: &RoomObject) -> Option<RoomPosition>;
 
     /// Create a new power creep in your account. Note that it will not
     /// initially be spawned.
@@ -184,7 +187,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveByPath)
     #[wasm_bindgen(method, js_name = moveTo)]
-    pub fn move_to(this: &PowerCreep, target: &JsValue, options: Option<Object>) -> ReturnCode;
+    pub fn move_to_internal(this: &PowerCreep, target: &JsValue, options: &JsValue) -> ReturnCode;
 
     /// Whether to send an email notification when this power creep is attacked.
     ///
@@ -272,7 +275,7 @@ extern "C" {
     ) -> ReturnCode;
 }
 
-impl Attackable for PowerCreep {
+impl HasHits for PowerCreep {
     fn hits(&self) -> u32 {
         Self::hits(self)
     }
@@ -281,30 +284,38 @@ impl Attackable for PowerCreep {
         Self::hits_max(self)
     }
 }
+
+//TODO: wiarchbe: Add maybe has ID?
+
+/*
 impl HasId for PowerCreep {
+    fn id(&self) -> JsString {
+        Self::id(self)
+    }
+}
+*/
+
+impl MaybeHasId for PowerCreep {
     fn id(&self) -> Option<JsString> {
         Self::id(self)
     }
 }
-impl HasPosition for PowerCreep {
+
+//TODO: wiarchbe: Implement!
+/*
+impl MaybeHasPosition for PowerCreep {
     fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
+        PowerCreep::pos(self.as_ref())
     }
 }
+*/
+
 impl HasStore for PowerCreep {
     fn store(&self) -> Store {
         Self::store(self)
     }
 }
-impl RoomObjectProperties for PowerCreep {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
 
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
-    }
-}
 impl SharedCreepProperties for PowerCreep {
     fn memory(&self) -> JsValue {
         Self::memory(self)
@@ -350,8 +361,16 @@ impl SharedCreepProperties for PowerCreep {
         Self::move_by_path(self, path)
     }
 
-    fn move_to(&self, target: &JsValue, options: Option<Object>) -> ReturnCode {
-        Self::move_to(self, target, options)
+    fn move_to<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
+        let target: RoomPosition = target.pos().into();
+        
+        if let Some(options) = options {
+            options.as_js_options(|js_options| {
+                Self::move_to_internal(self, &target, js_options)
+            })
+        } else {
+            Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
+        }
     }
 
     fn notify_when_attacked(&self, enabled: bool) -> ReturnCode {

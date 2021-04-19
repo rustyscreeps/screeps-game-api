@@ -1,9 +1,9 @@
 use crate::{
     constants::ResourceType,
-    objects::{Room, RoomObject, RoomPosition},
+    objects::{RoomObject},
     prelude::*,
 };
-use js_sys::{Array, JsString};
+use js_sys::{JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -52,27 +52,15 @@ impl CanDecay for Deposit {
         Self::ticks_to_decay(self)
     }
 }
+
 impl HasCooldown for Deposit {
     fn cooldown(&self) -> u32 {
         Self::cooldown(self)
     }
 }
-impl HasId for Deposit {
-    fn id(&self) -> Option<JsString> {
-        Some(Self::id(self))
-    }
-}
-impl HasPosition for Deposit {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
-impl RoomObjectProperties for Deposit {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
 
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
+impl HasId for Deposit {
+    fn id(&self) -> JsString {
+        Self::id(self)
     }
 }

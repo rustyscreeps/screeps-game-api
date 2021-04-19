@@ -231,16 +231,30 @@ extern "C" {
     pub fn look_for(this: &RoomPosition, ty: Look) -> Option<Array>;
 }
 
-impl HasPosition for RoomPosition {
-    fn pos(&self) -> Option<Self> {
+impl Clone for RoomPosition {
+    fn clone(&self) -> Self {
         let new_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
         new_pos.set_packed(self.packed());
-        Some(new_pos)
+        new_pos        
+    }
+}
+
+impl HasPosition for RoomPosition {
+    fn pos(&self) -> Position {
+        self.into()
     }
 }
 
 impl From<Position> for RoomPosition {
     fn from(pos: Position) -> Self {
+        let js_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
+        js_pos.set_packed(pos.packed_repr());
+        js_pos
+    }
+}
+
+impl From<&Position> for RoomPosition {
+    fn from(pos: &Position) -> Self {
         let js_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
         js_pos.set_packed(pos.packed_repr());
         js_pos

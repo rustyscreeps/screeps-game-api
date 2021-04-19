@@ -1,7 +1,6 @@
 use crate::local::RoomName;
 use serde::Serialize;
 use js_sys::JsString;
-use wasm_bindgen::prelude::*;
 
 #[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -391,7 +390,7 @@ impl RoomVisual {
 
     pub fn draw(&self, visual: &Visual) {
         let name: Option<JsString> = self.room_name.map(|name| name.to_string().into());
-        let val = JsValue::from_serde(visual).unwrap();
+        let val = serde_wasm_bindgen::to_value(visual).expect("expect convert visual to value");
 
         crate::console::add_visual(name.as_ref(), &val);
     }
@@ -400,7 +399,7 @@ impl RoomVisual {
         let name: Option<JsString> = self.room_name.map(|name| name.to_string().into());
 
         for visual in visuals {
-            let val = JsValue::from_serde(visual).unwrap();
+            let val = serde_wasm_bindgen::to_value(visual).expect("expect convert visual to value");
 
             crate::console::add_visual(name.as_ref(), &val);
         }
