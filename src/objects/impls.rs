@@ -1,6 +1,7 @@
 mod construction_site;
 mod cost_matrix;
 mod creep;
+mod creep_shared;
 mod deposit;
 mod flag;
 mod mineral;
@@ -56,8 +57,9 @@ mod symbol_decoder;
 
 pub use self::{
     construction_site::ConstructionSite,
-    cost_matrix::CostMatrix,
+    cost_matrix::{CostMatrix, CostMatrixSet, HasLocalPosition},
     creep::Creep,
+    creep_shared::MoveToOptions,
     deposit::Deposit,
     flag::Flag,
     mineral::Mineral,
@@ -66,6 +68,7 @@ pub use self::{
     power_creep::PowerCreep,
     resource::Resource,
     room::Room,
+    room::FindOptions,
     room_object::RoomObject,
     room_position::RoomPosition,
     room_terrain::RoomTerrain,

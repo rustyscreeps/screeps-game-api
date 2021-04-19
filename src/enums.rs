@@ -1,7 +1,8 @@
 use enum_dispatch::enum_dispatch;
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{JsCast, JsValue};
 
 use crate::objects::*;
+use crate::prelude::*;
 
 #[enum_dispatch(Attackable)]
 pub enum AttackableObject {
@@ -113,6 +114,44 @@ pub enum CooldownObject {
 
 #[enum_dispatch(HasId)]
 pub enum ObjectWithId {
+    Deposit,
+    Mineral,
+    Nuke,
+    Resource,
+    Ruin,
+    #[cfg(feature = "enable-score")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    ScoreCollector,
+    #[cfg(feature = "enable-score")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    ScoreContainer,
+    Source,
+    StructureContainer,
+    StructureController,
+    StructureExtension,
+    StructureExtractor,
+    StructureFactory,
+    StructureInvaderCore,
+    StructureKeeperLair,
+    StructureLab,
+    StructureLink,
+    StructureNuker,
+    StructureObserver,
+    StructurePortal,
+    StructurePowerBank,
+    StructurePowerSpawn,
+    StructureRampart,
+    StructureRoad,
+    StructureSpawn,
+    StructureStorage,
+    StructureTerminal,
+    StructureTower,
+    StructureWall,
+    Tombstone,
+}
+
+#[enum_dispatch(MaybeHasId)]
+pub enum ObjectWithMaybeId {
     ConstructionSite,
     Creep,
     Deposit,
@@ -295,7 +334,7 @@ pub enum MovableObject {
 
 /// Enum used for converting a [`Structure`] into a typed object of its specific
 /// structure type.
-#[enum_dispatch(StructureProperties)]
+#[enum_dispatch(StructureProperties, HasPosition)]
 pub enum StructureObject {
     StructureContainer,
     StructureController,
@@ -318,6 +357,14 @@ pub enum StructureObject {
     StructureTerminal,
     StructureTower,
     StructureWall,
+}
+
+impl From<JsValue> for StructureObject {
+    fn from(reference: JsValue) -> Self {
+        let structure: Structure = reference.unchecked_into();
+
+        structure.into()
+    }
 }
 
 impl From<Structure> for StructureObject {
@@ -347,6 +394,34 @@ impl From<Structure> for StructureObject {
             Tower => Self::StructureTower(structure.unchecked_into()),
             Wall => Self::StructureWall(structure.unchecked_into()),
             _ => panic!("unknown structure type for conversion into enum"),
+        }
+    }
+}
+
+impl StructureObject {
+    pub fn as_has_store(&self) -> Option<&dyn HasStore> {
+        match self {
+            Self::StructureSpawn(s) => Some(s),
+            Self::StructureExtension(s) => Some(s),
+            Self::StructureRoad(_) => None,
+            Self::StructureWall(_) => None,
+            Self::StructureRampart(_) => None,
+            Self::StructureKeeperLair(_) => None,
+            Self::StructurePortal(_) => None,
+            Self::StructureController(_) => None,
+            Self::StructureLink(s) => Some(s),
+            Self::StructureStorage(s) => Some(s),
+            Self::StructureTower(s) => Some(s),
+            Self::StructureObserver(_) => None,
+            Self::StructurePowerBank(_) => None,
+            Self::StructurePowerSpawn(s) => Some(s),
+            Self::StructureExtractor(_) => None,
+            Self::StructureLab(s) => Some(s),
+            Self::StructureTerminal(s) => Some(s),
+            Self::StructureContainer(s) => Some(s),
+            Self::StructureNuker(s) => Some(s),
+            Self::StructureFactory(s) => Some(s),
+            Self::StructureInvaderCore(_) => None,
         }
     }
 }

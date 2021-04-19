@@ -13,9 +13,12 @@
 //!
 //! [`Room::find_path_to`]: crate::objects::Room::find_path_to
 
-use crate::objects::RoomPosition;
-use js_sys::{Array, JsString};
+use std::convert::TryInto;
+
+use crate::{CostMatrix, Position, RoomName, objects::RoomPosition};
+use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
 
 #[wasm_bindgen]
 extern "C" {
@@ -30,11 +33,11 @@ extern "C" {
     /// distance other than 0 is needed.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.search)
-    #[wasm_bindgen(static_method_of = PathFinder)]
-    pub fn search(
+    #[wasm_bindgen(static_method_of = PathFinder, js_name = search)]
+    fn search_internal(
         origin: &RoomPosition,
         goal: &JsValue,
-        options: Option<&SearchOptions>,
+        options: &JsValue,
     ) -> SearchResults;
 }
 
@@ -43,46 +46,52 @@ extern "C" {
     /// Object that represents a set of options for a call to
     /// [`PathFinder::search`].
     #[wasm_bindgen]
-    pub type SearchOptions;
+    pub type JsSearchOptions;
 
     /// Room callback, which should return a [`CostMatrix`], or
     /// [`JsValue::FALSE`] to avoid pathing through a room.
     #[wasm_bindgen(method, setter = roomCallback)]
-    pub fn room_callback(this: &SearchOptions, callback: &Closure<dyn FnMut(JsString) -> JsValue>);
+    pub fn room_callback(this: &JsSearchOptions, callback: &Closure<dyn FnMut(JsString) -> JsValue>);
 
     /// Set the cost of moving on plains tiles during this pathfinder search.
     /// Defaults to 1.
     #[wasm_bindgen(method, setter = plainCost)]
-    pub fn plain_cost(this: &SearchOptions, cost: u8);
+    pub fn plain_cost(this: &JsSearchOptions, cost: u8);
 
     /// Set the cost of moving on swamp tiles during this pathfinder search.
     /// Defaults to 5.
     #[wasm_bindgen(method, setter = swampCost)]
-    pub fn swamp_cost(this: &SearchOptions, cost: u8);
+    pub fn swamp_cost(this: &JsSearchOptions, cost: u8);
 
     /// Set whether to flee to a certain distance away from the target instead
     /// of attempting to find a path to it. Defaults to false.
     #[wasm_bindgen(method, setter = flee)]
-    pub fn flee(this: &SearchOptions, val: bool);
+    pub fn flee(this: &JsSearchOptions, val: bool);
 
     /// Set the maximum number of operations to allow the pathfinder to complete
     /// before returning an incomplete path. Defaults to 2,000.
     #[wasm_bindgen(method, setter = maxOps)]
-    pub fn max_ops(this: &SearchOptions, ops: u32);
+    pub fn max_ops(this: &JsSearchOptions, ops: u32);
 
     /// Set the maximum number of rooms allowed to be pathed through. Defaults
     /// to 16, maximum of 64.
     #[wasm_bindgen(method, setter = maxRooms)]
-    pub fn max_rooms(this: &SearchOptions, rooms: u8);
+    pub fn max_rooms(this: &JsSearchOptions, rooms: u8);
 
     /// Set the maximum total path cost allowed. No limit by default.
     #[wasm_bindgen(method, setter = maxCost)]
-    pub fn max_cost(this: &SearchOptions, cost: u32);
+    pub fn max_cost(this: &JsSearchOptions, cost: f64);
 
     /// Heuristic weight to use for the A* algorithm to be guided toward the
     /// goal. Defaults to 1.2.
     #[wasm_bindgen(method, setter = heuristicWeight)]
-    pub fn heuristic_weight(this: &SearchOptions, weight: u32);
+    pub fn heuristic_weight(this: &JsSearchOptions, weight: f64);
+}
+
+impl JsSearchOptions {
+    pub fn new() -> JsSearchOptions {
+        Object::new().unchecked_into()
+    }
 }
 
 #[wasm_bindgen]
@@ -93,8 +102,8 @@ extern "C" {
 
     /// Get the path that was found, an [`Array`] of [`RoomPosition`]. May be
     /// incomplete.
-    #[wasm_bindgen(method, getter)]
-    pub fn path(this: &SearchResults) -> Array;
+    #[wasm_bindgen(method, getter, js_name = path)]
+    pub fn path_internal(this: &SearchResults) -> Array;
 
     /// The number of operations the pathfinding operation performed.
     #[wasm_bindgen(method, getter)]
@@ -109,291 +118,305 @@ extern "C" {
     pub fn incomplete(this: &SearchResults) -> bool;
 }
 
+impl SearchResults {
+    pub fn path (&self) -> Vec<Position> {
+        self
+            .path_internal()
+            .iter()
+            .map(|p| p.unchecked_into())
+            .map(|p: RoomPosition| p.into())
+            .collect()
+    }
+}
 
-// use std::{f64, marker::PhantomData, mem, borrow::{Borrow}};
+pub trait RoomCostResult: Into<JsValue> {}
 
-// use stdweb::{web::TypedArray, Array, Object, Reference, UnsafeTypedArray, Value};
+pub enum MultiRoomCostResult {
+    CostMatrix(CostMatrix),
+    Impassable,
+    Default
+}
 
-// use crate::{local::Position, objects::HasPosition, traits::TryInto, RoomName};
+impl RoomCostResult for MultiRoomCostResult {}
 
-// pub trait RoomCostResult: Into<Value> {}
+impl Default for MultiRoomCostResult {
+    fn default() -> Self {
+        MultiRoomCostResult::Default
+    }
+}
 
-// pub enum MultiRoomCostResult<'a> {
-//     CostMatrix(CostMatrix<'a>),
-//     Impassable,
-//     Default
-// }
+impl<'a> Into<JsValue> for MultiRoomCostResult {
+    fn into(self) -> JsValue {
+        match self {
+            MultiRoomCostResult::CostMatrix(m) => m.into(),
+            MultiRoomCostResult::Impassable => JsValue::from_bool(false),
+            MultiRoomCostResult::Default => JsValue::undefined()
+        }
+    }
+}
 
-// impl<'a> RoomCostResult for MultiRoomCostResult<'a> {}
+pub enum SingleRoomCostResult {
+    CostMatrix(CostMatrix),
+    Default
+}
 
-// impl<'a> Default for MultiRoomCostResult<'a> {
-//     fn default() -> Self {
-//         MultiRoomCostResult::Default
-//     }
-// }
+impl RoomCostResult for SingleRoomCostResult {}
 
-// impl<'a> Into<Value> for MultiRoomCostResult<'a> {
-//     fn into(self) -> Value {
-//         match self {
-//             MultiRoomCostResult::CostMatrix(m) => m.inner.into(),
-//             MultiRoomCostResult::Impassable => Value::Bool(false),
-//             MultiRoomCostResult::Default => Value::Undefined
-//         }
-//     }
-// }
+impl Default for SingleRoomCostResult {
+    fn default() -> Self {
+        SingleRoomCostResult::Default
+    }
+}
 
-// pub enum SingleRoomCostResult<'a> {
-//     CostMatrix(CostMatrix<'a>),
-//     Default
-// }
+impl<'a> Into<JsValue> for SingleRoomCostResult {
+    fn into(self) -> JsValue {
+        match self {
+            SingleRoomCostResult::CostMatrix(m) => m.into(),
+            SingleRoomCostResult::Default => JsValue::undefined()
+        }
+    }
+}
 
-// impl<'a> RoomCostResult for SingleRoomCostResult<'a> {}
+pub struct SearchOptions<F>
+where
+    F: FnMut(RoomName) -> MultiRoomCostResult,
+{
+    room_callback: F,
+    plain_cost: Option<u8>,
+    swamp_cost: Option<u8>,
+    flee: Option<bool>,
+    max_ops: Option<u32>,
+    max_rooms: Option<u8>,
+    max_cost: Option<f64>,
+    heuristic_weight: Option<f64>,
+}
 
-// impl<'a> Default for SingleRoomCostResult<'a> {
-//     fn default() -> Self {
-//         SingleRoomCostResult::Default
-//     }
-// }
+impl<F> SearchOptions<F> where F: FnMut(RoomName) -> MultiRoomCostResult,
+{
+    pub(crate) fn as_js_options<R>(self, callback: impl Fn(&JsSearchOptions) -> R) -> R {
+        let mut raw_callback = self.room_callback;
 
-// impl<'a> Into<Value> for SingleRoomCostResult<'a> {
-//     fn into(self) -> Value {
-//         match self {
-//             SingleRoomCostResult::CostMatrix(m) => m.inner.into(),
-//             SingleRoomCostResult::Default => Value::Undefined
-//         }
-//     }
-// }
+        let mut owned_callback = move |room: RoomName| -> JsValue {
+            raw_callback(room).into()
+        };
+    
+        //
+        // Type erased and boxed callback: no longer a type specific to the closure
+        // passed in, now unified as &Fn
+        //
 
-// pub struct SearchOptions<'a, F>
-// where
-//     F: FnMut(RoomName) -> MultiRoomCostResult<'a>,
-// {
-//     room_callback: F,
-//     plain_cost: u8,
-//     swamp_cost: u8,
-//     flee: bool,
-//     max_ops: u32,
-//     max_rooms: u32,
-//     max_cost: f64,
-//     heuristic_weight: f64,
-// }
+        let callback_type_erased: &mut (dyn FnMut(RoomName) -> JsValue) = &mut owned_callback;
+    
+        // Overwrite lifetime of reference so it can be passed to javascript.
+        // It's now pretending to be static data. This should be entirely safe
+        // because we control the only use of it and it remains valid during the
+        // pathfinder callback. This transmute is necessary because "some lifetime
+        // above the current scope but otherwise unknown" is not a valid lifetime.
+        //
 
-// impl SearchOptions<'static, fn(RoomName) -> MultiRoomCostResult<'static>> {
-//     /// Creates default SearchOptions
-//     #[inline]
-//     pub fn new() -> Self {
-//         Self::default()
-//     }
-// }
+        let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName) -> JsValue) = unsafe { std::mem::transmute(callback_type_erased) };    
+    
+        let boxed_callback = Box::new(move |room: JsString| -> JsValue {
+            let room = room.try_into().expect("expected room name in room callback");
 
-// impl<'a, F> SearchOptions<'a, F>
-// where
-//     F: FnMut(RoomName) -> MultiRoomCostResult<'a>,
-// {
-//     /// Sets room callback - default `|_| { CostMatrix::default() }`.
-//     pub fn room_callback<'b, F2>(self, room_callback: F2) -> SearchOptions<'b, F2>
-//     where
-//         F2: FnMut(RoomName) -> MultiRoomCostResult<'b>,
-//     {
-//         let SearchOptions {
-//             room_callback: _,
-//             plain_cost,
-//             swamp_cost,
-//             flee,
-//             max_ops,
-//             max_rooms,
-//             max_cost,
-//             heuristic_weight,
-//         } = self;
-//         SearchOptions {
-//             room_callback,
-//             plain_cost,
-//             swamp_cost,
-//             flee,
-//             max_ops,
-//             max_rooms,
-//             max_cost,
-//             heuristic_weight,
-//         }
-//     }
+            callback_lifetime_erased(room)
+        }) as Box<dyn FnMut(JsString) -> JsValue>;
+    
+        let closure = Closure::wrap(boxed_callback);
 
-//     /// Sets plain cost - default `1`.
-//     #[inline]
-//     pub fn plain_cost(mut self, cost: u8) -> Self {
-//         self.plain_cost = cost;
-//         self
-//     }
+        //
+        // Create JS object and set properties.
+        //
+    
+        let js_options = JsSearchOptions::new();
 
-//     /// Sets swamp cost - default `5`.
-//     #[inline]
-//     pub fn swamp_cost(mut self, cost: u8) -> Self {
-//         self.swamp_cost = cost;
-//         self
-//     }
+        js_options.room_callback(&closure);
 
-//     /// Sets whether this is a flee search - default `false`.
-//     #[inline]
-//     pub fn flee(mut self, flee: bool) -> Self {
-//         self.flee = flee;
-//         self
-//     }
+        if let Some(plain_cost) = self.plain_cost {
+            js_options.plain_cost(plain_cost);
+        }
 
-//     /// Sets maximum ops - default `2000`.
-//     #[inline]
-//     pub fn max_ops(mut self, ops: u32) -> Self {
-//         self.max_ops = ops;
-//         self
-//     }
+        if let Some(swamp_cost) = self.swamp_cost {
+            js_options.swamp_cost(swamp_cost);
+        }
+        
+        if let Some(flee) = self.flee {
+            js_options.flee(flee);
+        }
+        
+        if let Some(max_ops) = self.max_ops {
+            js_options.max_ops(max_ops);
+        }
+        
+        if let Some(max_rooms) = self.max_rooms {
+            js_options.max_rooms(max_rooms);
+        }
+        
+        if let Some(max_cost) = self.max_cost {
+            js_options.max_cost(max_cost);
+        }
+        
+        if let Some(heuristic_weight) = self.heuristic_weight {
+            js_options.heuristic_weight(heuristic_weight);
+        }
 
-//     /// Sets maximum rooms - default `16`, max `16`.
-//     #[inline]
-//     pub fn max_rooms(mut self, rooms: u32) -> Self {
-//         self.max_rooms = rooms;
-//         self
-//     }
+        callback(&js_options)
+    }
+}
 
-//     /// Sets maximum path cost - default `f64::Infinity`.
-//     #[inline]
-//     pub fn max_cost(mut self, cost: f64) -> Self {
-//         self.max_cost = cost;
-//         self
-//     }
+impl Default for SearchOptions<fn(RoomName) -> MultiRoomCostResult> {
+    fn default() -> Self {
+        fn cost_matrix(_: RoomName) -> MultiRoomCostResult {
+            MultiRoomCostResult::Default
+        }
 
-//     /// Sets heuristic weight - default `1.2`.
-//     #[inline]
-//     pub fn heuristic_weight(mut self, weight: f64) -> Self {
-//         self.heuristic_weight = weight;
-//         self
-//     }
-// }
+        SearchOptions {
+            room_callback: cost_matrix,
+            plain_cost: None,
+            swamp_cost: None,
+            flee: None,
+            max_ops: None,
+            max_rooms: None,
+            max_cost: None,
+            heuristic_weight: None,
+        }
+    }
+}
 
-// pub struct SearchResults {
-//     path: Array,
-//     pub ops: u32,
-//     pub cost: u32,
-//     pub incomplete: bool,
-// }
+impl SearchOptions<fn(RoomName) -> MultiRoomCostResult> {
+    #[inline]
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
 
-// impl SearchResults {
-//     #[inline]
-//     pub fn opaque_path(&self) -> &Array {
-//         &self.path
-//     }
-//     pub fn load_local_path(&self) -> Vec<Position> {
-//         self.path
-//             .clone()
-//             .try_into()
-//             .expect("expected PathFinder.search path result to be an array of RoomPositions")
-//     }
-// }
+impl<F> SearchOptions<F>
+where
+    F: FnMut(RoomName) -> MultiRoomCostResult,
+{
+    pub fn room_callback<F2>(self, room_callback: F2) -> SearchOptions<F2>
+    where
+        F2: FnMut(RoomName) -> MultiRoomCostResult,
+    {
+        let SearchOptions {
+            room_callback: _,
+            plain_cost,
+            swamp_cost,
+            flee,
+            max_ops,
+            max_rooms,
+            max_cost,
+            heuristic_weight,
+        } = self;
 
-// /// Searches between a single origin and single goal.
-// pub fn search<'a, O, G, F>(
-//     origin: &O,
-//     goal: &G,
-//     range: u32,
-//     opts: SearchOptions<'a, F>,
-// ) -> SearchResults
-// where
-//     O: ?Sized + HasPosition,
-//     G: ?Sized + HasPosition,
-//     F: FnMut(RoomName) -> MultiRoomCostResult<'a> + 'a,
-// {
-//     let pos = goal.pos();
-//     search_real(
-//         origin.pos(),
-//         &js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}}),
-//         opts,
-//     )
-// }
+        SearchOptions {
+            room_callback,
+            plain_cost,
+            swamp_cost,
+            flee,
+            max_ops,
+            max_rooms,
+            max_cost,
+            heuristic_weight,
+        }
+    }
 
-// /// Searches between a single origin and multiple goals.
-// pub fn search_many<'a, O, G, I, F>(origin: &O, goal: G, opts: SearchOptions<'a, F>) -> SearchResults
-// where
-//     O: HasPosition,
-//     G: IntoIterator<Item = (I, u32)>,
-//     I: HasPosition,
-//     F: FnMut(RoomName) -> MultiRoomCostResult<'a> + 'a,
-// {
-//     let goals: Vec<Object> = goal
-//         .into_iter()
-//         .map(|(target, range)| {
-//             let pos = target.pos();
-//             js_unwrap!({pos: pos_from_packed(@{pos.packed_repr()}), range: @{range}})
-//         })
-//         .collect();
-//     if goals.is_empty() {
-//         return SearchResults {
-//             cost: 0,
-//             incomplete: true,
-//             ops: 0,
-//             path: js_unwrap!([]),
-//         };
-//     }
-//     let goals_js: Reference = js_unwrap!(@{goals});
-//     search_real(origin.pos(), &goals_js, opts)
-// }
+    /// Sets plain cost - default `1`.
+    #[inline]
+    pub fn plain_cost(mut self, cost: u8) -> Self {
+        self.plain_cost = Some(cost);
+        self
+    }
 
-// fn search_real<'a, F>(
-//     origin: Position,
-//     goal: &Reference,
-//     opts: SearchOptions<'a, F>,
-// ) -> SearchResults
-// where
-//     F: FnMut(RoomName) -> MultiRoomCostResult<'a> + 'a,
-// {       
-//     let SearchOptions {
-//         plain_cost,
-//         swamp_cost,
-//         flee,
-//         max_ops,
-//         max_rooms,
-//         heuristic_weight,
-//         max_cost,
-//         ..
-//     } = opts;
+    /// Sets swamp cost - default `5`.
+    #[inline]
+    pub fn swamp_cost(mut self, cost: u8) -> Self {
+        self.swamp_cost = Some(cost);
+        self
+    }
 
-//     let mut raw_callback = opts.room_callback;
+    /// Sets whether this is a flee search - default `false`.
+    #[inline]
+    pub fn flee(mut self, flee: bool) -> Self {
+        self.flee = Some(flee);
+        self
+    }
 
-//     let mut callback_boxed = move |room_name: RoomName| -> Value {
-//         raw_callback(room_name).into()
-//     };
+    /// Sets maximum ops - default `2000`.
+    #[inline]
+    pub fn max_ops(mut self, ops: u32) -> Self {
+        self.max_ops = Some(ops);
+        self
+    }
 
-//     // Type erased and boxed callback: no longer a type specific to the closure
-//     // passed in, now unified as &Fn
-//     let callback_type_erased: &mut (dyn FnMut(RoomName) -> Value + 'a) =
-//         &mut callback_boxed;
+    /// Sets maximum rooms - default `16`, max `16`.
+    #[inline]
+    pub fn max_rooms(mut self, rooms: u8) -> Self {
+        self.max_rooms = Some(rooms);
+        self
+    }
 
-//     // Overwrite lifetime of reference so it can be passed to javascript. 
-//     // It's now pretending to be static data. This should be entirely safe
-//     // because we control the only use of it and it remains valid during the
-//     // pathfinder callback. This transmute is necessary because "some lifetime 
-//     // above the current scope but otherwise unknown" is not a valid lifetime.
-//     let callback_lifetime_erased: &'static mut dyn FnMut(RoomName) -> Value =
-//         unsafe { mem::transmute(callback_type_erased) };
+    /// Sets maximum path cost - default `f64::Infinity`.
+    #[inline]
+    pub fn max_cost(mut self, cost: f64) -> Self {
+        self.max_cost = Some(cost);
+        self
+    }
 
-//     let res: ::stdweb::Reference = js!(
-//         let cb = @{callback_lifetime_erased};
-//         let res = PathFinder.search(pos_from_packed(@{origin.packed_repr()}), @{goal}, {
-//             roomCallback: cb,
-//             plainCost: @{plain_cost},
-//             swampCost: @{swamp_cost},
-//             flee: @{flee},
-//             maxOps: @{max_ops},
-//             maxRooms: @{max_rooms},
-//             maxCost: @{max_cost},
-//             heuristicWeight: @{heuristic_weight}
-//         });
-//         cb.drop();
-//         return res;
-//     )
-//     .try_into()
-//     .expect("expected reference from search");
+    /// Sets heuristic weight - default `1.2`.
+    #[inline]
+    pub fn heuristic_weight(mut self, weight: f64) -> Self {
+        self.heuristic_weight = Some(weight);
+        self
+    }
+}
 
-//     SearchResults {
-//         path: js_unwrap!(@{&res}.path),
-//         ops: js_unwrap!(@{&res}.ops),
-//         cost: js_unwrap!(@{&res}.cost),
-//         incomplete: js_unwrap!(@{&res}.incomplete),
-//     }
-// }
+#[wasm_bindgen]
+pub struct SearchGoal {
+    pos: Position,
+    range: u32
+}
+
+#[wasm_bindgen(getter)]
+impl SearchGoal {
+    #[wasm_bindgen(getter)]
+    pub fn pos(&self) -> RoomPosition {
+        self.pos.into()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn range(&self) -> u32 {
+        self.range
+    }    
+}
+
+pub fn search<F>(from: Position, to: Position, range: u32, options: Option<SearchOptions<F>>) -> SearchResults where F: FnMut(RoomName) -> MultiRoomCostResult {
+    let goal = SearchGoal {
+        pos: to.into(),
+        range
+    };
+
+    let goal = JsValue::from(goal);
+
+    search_real(from, &goal, options)
+}
+
+pub fn search_many<F>(from: Position, to: impl Iterator<Item = SearchGoal>, options: Option<SearchOptions<F>>) -> SearchResults where F: FnMut(RoomName) -> MultiRoomCostResult {
+    let goals: Array = to
+        .map(|g| JsValue::from(g))
+        .collect();
+
+    search_real(from, goals.as_ref(), options)
+}
+
+fn search_real<F>(from: Position, goal: &JsValue, options: Option<SearchOptions<F>>) -> SearchResults where F: FnMut(RoomName) -> MultiRoomCostResult {
+    let from = from.into();
+
+    if let Some(options) = options {
+        options.as_js_options(|js_options| {
+            PathFinder::search_internal(&from, goal, &js_options)    
+        })        
+    } else {
+        PathFinder::search_internal(&from, goal, &JsValue::UNDEFINED)
+    }
+}

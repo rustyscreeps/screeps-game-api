@@ -38,22 +38,9 @@ impl HasId for ScoreCollector {
         Some(Self::id(self.as_ref()))
     }
 }
-impl HasPosition for ScoreCollector {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
+
 impl HasStore for ScoreCollector {
     fn store(&self) -> Store {
         Self::store(self)
-    }
-}
-impl RoomObjectProperties for ScoreCollector {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
     }
 }

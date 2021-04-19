@@ -1,9 +1,9 @@
 use crate::{
     constants::{ResourceType, ReturnCode},
-    objects::{OwnedStructure, Owner, Room, RoomObject, RoomPosition, Store, Structure},
+    objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
-use js_sys::{Array, JsString};
+use js_sys::{JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -42,51 +42,14 @@ extern "C" {
     ) -> ReturnCode;
 }
 
-impl Attackable for StructureTerminal {
-    fn hits(&self) -> u32 {
-        Structure::hits(self.as_ref())
-    }
-
-    fn hits_max(&self) -> u32 {
-        Structure::hits_max(self.as_ref())
-    }
-}
-impl HasId for StructureTerminal {
-    fn id(&self) -> Option<JsString> {
-        Some(Structure::id(self.as_ref()))
-    }
-}
 impl HasCooldown for StructureTerminal {
     fn cooldown(&self) -> u32 {
         Self::cooldown(self)
     }
 }
-impl HasPosition for StructureTerminal {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
+
 impl HasStore for StructureTerminal {
     fn store(&self) -> Store {
         Self::store(self)
     }
 }
-impl OwnedStructureProperties for StructureTerminal {
-    fn my(&self) -> bool {
-        OwnedStructure::my(self.as_ref())
-    }
-
-    fn owner(&self) -> Option<Owner> {
-        OwnedStructure::owner(self.as_ref())
-    }
-}
-impl RoomObjectProperties for StructureTerminal {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
-    }
-}
-impl StructureProperties for StructureTerminal {}

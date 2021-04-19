@@ -1,12 +1,8 @@
-use crate::{
-    constants::{Direction, Part, ResourceType, ReturnCode},
-    objects::{
-        ConstructionSite, Owner, Resource, Room, RoomObject, RoomPosition, Store, Structure,
+use crate::{CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult, constants::{Direction, Part, ResourceType, ReturnCode}, objects::{
+        ConstructionSite, Owner, Resource, RoomObject, Store, Structure,
         StructureController,
-    },
-    prelude::*,
-};
-use js_sys::{Array, JsString, Object};
+    }, prelude::*};
+use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -45,8 +41,7 @@ extern "C" {
     pub fn hits_max(this: &Creep) -> u32;
 
     /// Object ID of the creep, which can be used to efficiently fetch a fresh
-    /// reference to the object on subsequent ticks.  `None` if the creep began
-    /// spawning this tick.
+    /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
     #[wasm_bindgen(final, method, getter)]
@@ -212,7 +207,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.moveByPath)
     #[wasm_bindgen(final, method, js_name = moveTo)]
-    pub fn move_to(this: &Creep, target: &JsValue, options: Option<Object>) -> ReturnCode;
+    pub fn move_to_internal(this: &Creep, target: &JsValue, options: &JsValue) -> ReturnCode;
 
     /// Whether to send an email notification when this creep is attacked.
     ///
@@ -317,7 +312,7 @@ extern "C" {
     ) -> ReturnCode;
 }
 
-impl Attackable for Creep {
+impl HasHits for Creep {
     fn hits(&self) -> u32 {
         Self::hits(self)
     }
@@ -326,28 +321,16 @@ impl Attackable for Creep {
         Self::hits_max(self)
     }
 }
-impl HasId for Creep {
+
+impl MaybeHasId for Creep {
     fn id(&self) -> Option<JsString> {
         Self::id(self)
     }
 }
-impl HasPosition for Creep {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
+
 impl HasStore for Creep {
     fn store(&self) -> Store {
         Self::store(self)
-    }
-}
-impl RoomObjectProperties for Creep {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
     }
 }
 
@@ -396,8 +379,16 @@ impl SharedCreepProperties for Creep {
         Self::move_by_path(self, path)
     }
 
-    fn move_to(&self, target: &JsValue, options: Option<Object>) -> ReturnCode {
-        Self::move_to(self, target, options)
+    fn move_to<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
+        let target: RoomPosition = target.pos().into();
+        
+        if let Some(options) = options {
+            options.as_js_options(|js_options| {
+                Self::move_to_internal(self, &target, js_options)
+            })
+        } else {
+            Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
+        }        
     }
 
     fn notify_when_attacked(&self, enabled: bool) -> ReturnCode {

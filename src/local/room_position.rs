@@ -10,7 +10,7 @@ use std::{
 
 use super::{RoomName, HALF_WORLD_SIZE};
 
-use crate::objects::RoomPosition;
+use crate::{HasPosition, objects::RoomPosition};
 
 mod approximate_offsets;
 mod extra_math;
@@ -351,58 +351,23 @@ impl Ord for Position {
     }
 }
 
+impl HasPosition for Position {
+    fn pos(&self) -> Position {
+        self.clone()
+    }
+}
+
 impl From<RoomPosition> for Position {
     fn from(js_pos: RoomPosition) -> Self {
         Position::from_packed(js_pos.packed())
     }
 }
 
-// mod stdweb {
-//     use stdweb::{Reference, Value};
-
-//     use crate::traits::{TryFrom, TryInto};
-
-//     use super::Position;
-
-//     impl Position {
-//         pub fn remote(self) -> Reference {
-//             js_unwrap!(pos_from_packed(@{self.packed_repr()}))
-//         }
-//     }
-
-//     impl TryFrom<Value> for Position {
-//         type Error = <Value as TryInto<String>>::Error;
-
-//         fn try_from(v: Value) -> Result<Position, Self::Error> {
-//             if let Value::Number(v) = v {
-//                 let packed: i32 = v.try_into()?;
-//                 return Ok(Position::from_packed(packed));
-//             }
-
-//             let value = js! {
-//                 return @{v}.__packedPos;
-//             };
-
-//             match value {
-//                 Value::Undefined => {
-//                     let x = js! {v.x}.try_into()?;
-//                     let y = js! {v.y}.try_into()?;
-//                     let room_name = js! {v.roomName}.try_into()?;
-//                     Ok(Self::new(x, y, room_name))
-//                 }
-//                 other => Ok(Self::from_packed(other.try_into()?)),
-//             }
-//         }
-//     }
-
-//     impl crate::traits::FromExpectedType<Reference> for Position {
-//         fn from_expected_type(reference: Reference) -> Result<Self, crate::ConversionError> {
-//             Self::try_from(Value::Reference(reference))
-//         }
-//     }
-
-//     js_serializable!(Position);
-// }
+impl From<&RoomPosition> for Position {
+    fn from(js_pos: &RoomPosition) -> Self {
+        Position::from_packed(js_pos.packed())
+    }
+}
 
 mod serde {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
