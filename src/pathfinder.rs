@@ -103,7 +103,7 @@ extern "C" {
     /// Get the path that was found, an [`Array`] of [`RoomPosition`]. May be
     /// incomplete.
     #[wasm_bindgen(method, getter, js_name = path)]
-    pub fn path_internal(this: &SearchResults) -> Array;
+    fn path_internal(this: &SearchResults) -> Array;
 
     /// The number of operations the pathfinding operation performed.
     #[wasm_bindgen(method, getter)]

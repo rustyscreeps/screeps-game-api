@@ -25,22 +25,32 @@ extern "C" {
     /// dealing damage depending on range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.attack)
-    #[wasm_bindgen(method)]
-    pub fn attack(this: &StructureTower, target: &RoomObject) -> ReturnCode;
+    #[wasm_bindgen(method, js_name = attack)]
+    fn attack_internal(this: &StructureTower, target: &RoomObject) -> ReturnCode;
 
     /// Heal a [`Creep`] or [`PowerCreep`] in the room, adding hit points
     /// depending on range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.heal)
-    #[wasm_bindgen(method)]
-    pub fn heal(this: &StructureTower, target: &RoomObject) -> ReturnCode;
+    #[wasm_bindgen(method, js_name = heal)]
+    fn heal_internal(this: &StructureTower, target: &RoomObject) -> ReturnCode;
 
     /// Repair a [`Structure`] in the room, adding hit points depending on
     /// range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.repair)
-    #[wasm_bindgen(method)]
+    #[wasm_bindgen(method, js_name = repair)]
     pub fn repair(this: &StructureTower, target: &Structure) -> ReturnCode;
+}
+
+impl StructureTower {
+    pub fn attack<T>(&self, target: T) -> ReturnCode where T: Attackable {
+        Self::attack_internal(&self, target.as_ref())
+    }
+
+    pub fn heal<T>(&self, target: T) -> ReturnCode where T: Healable {
+        Self::heal_internal(&self, target.as_ref())
+    }
 }
 
 impl HasStore for StructureTower {

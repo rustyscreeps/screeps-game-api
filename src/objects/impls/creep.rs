@@ -105,8 +105,8 @@ extern "C" {
     /// Attack a target in melee range using a creep's attack parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.attack)
-    #[wasm_bindgen(final, method)]
-    pub fn attack(this: &Creep, target: &RoomObject) -> ReturnCode;
+    #[wasm_bindgen(final, method, js_name = attack)]
+    fn attack_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
     /// Attack a [`StructureController`] in melee range using a creep's claim
     /// parts.
@@ -171,14 +171,14 @@ extern "C" {
     /// Harvest from a [`Source`], [`Mineral`], or [`Deposit`] in melee range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.harvest)
-    #[wasm_bindgen(final, method)]
-    pub fn harvest(this: &Creep, target: &RoomObject) -> ReturnCode;
+    #[wasm_bindgen(final, method, js_name = harvest)]
+    fn harvest_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
     /// Heal a [`Creep`] or [`PowerCreep`] in melee range, including itself.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.heal)
     #[wasm_bindgen(final, method)]
-    pub fn heal(this: &Creep, target: &RoomObject) -> ReturnCode;
+    fn heal_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
     /// Move one square in the specified direction.
     ///
@@ -207,7 +207,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.moveByPath)
     #[wasm_bindgen(final, method, js_name = moveTo)]
-    pub fn move_to_internal(this: &Creep, target: &JsValue, options: &JsValue) -> ReturnCode;
+    fn move_to_internal(this: &Creep, target: &JsValue, options: &JsValue) -> ReturnCode;
 
     /// Whether to send an email notification when this creep is attacked.
     ///
@@ -232,13 +232,13 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedAttack)
     #[wasm_bindgen(final, method, js_name = rangedAttack)]
-    pub fn ranged_attack(this: &Creep, target: &RoomObject) -> ReturnCode;
+    fn ranged_attack_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
     /// Heal a target in range 3 using a creep's heal parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedHeal)
     #[wasm_bindgen(final, method, js_name = rangedHeal)]
-    pub fn ranged_heal(this: &Creep, target: &RoomObject) -> ReturnCode;
+    fn ranged_heal_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
     /// Attack all enemy targets in range using a creep's ranged attack parts,
     /// with lower damage depending on range.
@@ -285,8 +285,8 @@ extern "C" {
     /// [`PowerCreep`], or another [`Creep`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.transfer)
-    #[wasm_bindgen(final, method)]
-    pub fn transfer(
+    #[wasm_bindgen(final, method, js_name = transfer)]
+    fn transfer_internal(
         this: &Creep,
         target: &RoomObject,
         ty: ResourceType,
@@ -303,13 +303,35 @@ extern "C" {
     /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.withdraw)
-    #[wasm_bindgen(final, method)]
-    pub fn withdraw(
+    #[wasm_bindgen(final, method, js_name = withdraw)]
+    fn withdraw_internal(
         this: &Creep,
         target: &RoomObject,
         ty: ResourceType,
         amount: Option<u32>,
     ) -> ReturnCode;
+}
+
+impl Creep {
+    pub fn harvest<T>(&self, target: &T) -> ReturnCode where T: Harvestable {
+        Self::harvest_internal(self, target.as_ref())
+    }
+
+    pub fn attack<T>(&self, target: &T) -> ReturnCode where T: Attackable {
+        Self::attack_internal(self, target.as_ref())
+    }
+
+    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode where T: Attackable {
+        Self::ranged_attack_internal(self, target.as_ref())
+    }
+
+    pub fn heal<T>(&self, target: &T) -> ReturnCode where T: Healable {
+        Self::heal_internal(&self, target.as_ref())
+    }
+
+    pub fn ranged_heal<T>(&self, target: &T) -> ReturnCode where T: Healable {
+        Self::ranged_heal_internal(&self, target.as_ref())
+    }
 }
 
 impl HasHits for Creep {
@@ -407,11 +429,11 @@ impl SharedCreepProperties for Creep {
         Self::suicide(self)
     }
 
-    fn transfer(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
-        Self::transfer(self, target, ty, amount)
+    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Transferable {
+        Self::transfer_internal(self, target.as_ref(), ty, amount)
     }
 
-    fn withdraw(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
-        Self::withdraw(self, target, ty, amount)
+    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Withdrawable {
+        Self::withdraw_internal(self, target.as_ref(), ty, amount)
     }
 }

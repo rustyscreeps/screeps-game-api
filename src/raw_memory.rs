@@ -6,18 +6,19 @@ use js_sys::{Array, JsString, Object};
 
 use wasm_bindgen::prelude::*;
 
+use crate::JsHashMap;
+
 #[wasm_bindgen]
 extern "C" {
     pub type RawMemory;
 
-    // todo docs; Reflect::get_u32
     /// Get an [`Object`] with all of the segments requested on the previous
     /// tick, with segment numbers as keys and segment data in [`JsString`] form
     /// as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)
     #[wasm_bindgen(static_method_of = RawMemory, getter)]
-    pub fn segments() -> Object;
+    fn segments_internal() -> Object;
 
     // todo ForeignSegment struct
     /// Get the foreign memory segment belonging to another player requested
@@ -70,6 +71,17 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setPublicSegments)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setPublicSegments)]
     pub fn set_public_segments(segment_ids: &Array);
+}
+
+impl RawMemory {
+    /// Get a [`JsHashMap<u8, JsString>`] with all of the segments requested on the previous
+    /// tick, with segment numbers as keys and segment data in [`JsString`] form
+    /// as values.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)    
+    pub fn segments() -> JsHashMap<u8, JsString> {
+        RawMemory::segments_internal().into()
+    }
 }
 
 // use serde::Deserialize;
