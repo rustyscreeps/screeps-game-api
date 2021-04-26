@@ -9,7 +9,7 @@ use crate::objects::CostMatrix;
 
 use super::{Position, xy_to_linear_index, linear_index_to_xy, RoomCoordinate, RoomXY, ROOM_AREA};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LocalCostMatrix {
     #[serde(with = "serde_impls")]
     bits: [u8; ROOM_AREA],
@@ -146,7 +146,7 @@ impl IndexMut<Position> for LocalCostMatrix {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SparseCostMatrix {
     inner: HashMap<RoomXY, u8>
 }
