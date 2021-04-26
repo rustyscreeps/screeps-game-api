@@ -14,7 +14,7 @@ use wasm_bindgen::{
     prelude::*
 };
 
-use crate::{RoomName, local::{JsObjectId, ObjectId, RawObjectId}};
+use crate::{Creep, RoomName, local::{JsObjectId, ObjectId, RawObjectId}};
 
 pub mod cpu;
 pub mod gcl;
@@ -65,6 +65,14 @@ impl<K, V> JsHashMap<K, V> where K: Into<JsValue>, V: TryFrom<JsValue> {
 
         Some(val)
     }    
+}
+
+impl<K, V> JsHashMap<K, V> {
+    pub fn set<'a, 'b>(&self, key: &'a K, value: &'b V) where &'a K: Into<JsValue>, &'b V: Into<JsValue> {
+        let key = key.into();
+        let value = value.into();
+        js_sys::Reflect::set(&self.map, &key, &value).expect("expected to set js value");
+    }
 }
 
 impl<K, V> From<Object> for JsHashMap<K, V> {
@@ -156,7 +164,7 @@ extern "C" {
     ///
     /// [`Creep`]: crate::objects::Creep
     #[wasm_bindgen(static_method_of = Game, getter)]
-    pub fn creeps() -> Object;
+    fn creeps_internal() -> Object;
 
     /// Get an [`Object`] with all of your flags, which contains flag names in
     /// [`JsString`] form as keys and [`Flag`] objects as values.
@@ -329,6 +337,18 @@ impl Game {
     /// [`Room`]: crate::objects::Room
     pub fn rooms() -> JsHashMap<RoomName, Room> {
         Game::rooms_internal().into()
+    }
+
+    /// Get an [`JsHashMap<String, Creep>`] with all of your creeps, which contains 
+    //  creep names in [`JsString`] form as keys and [`Creep`] objects as values. Note that
+    /// newly spawned creeps are immediately added to the hash, but will not
+    /// have an id until the following tick.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
+    ///
+    /// [`Creep`]: crate::objects::Creep
+    pub fn creeps() -> JsHashMap<JsString, Creep> {
+        Game::creeps_internal().into()
     }
 }
 

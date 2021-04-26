@@ -158,10 +158,10 @@ pub trait SharedCreepProperties {
 
     /// Transfer a resource from the creep's store to [`Structure`],
     /// [`PowerCreep`], or another [`Creep`].
-    fn transfer(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
+    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Transferable;
 
     /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
-    fn withdraw(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
+    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Withdrawable;
 }
 
 #[enum_dispatch]
@@ -174,3 +174,125 @@ pub trait StructureProperties {
 
     fn notify_when_attacked(&self, val: bool) -> ReturnCode;
 }
+
+/// Used to specify which structures can use their stored energy for spawning
+/// creeps.
+///
+/// # Contract
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be able to be
+/// used by a spawner to create a new creep.
+pub trait HasEnergyForSpawn: HasStore + AsRef<RoomObject> {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.transfer`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.transfer`.
+pub trait Transferable: AsRef<RoomObject> {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.withdraw`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.withdraw`.
+pub trait Withdrawable: AsRef<RoomObject> {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.harvest`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.harvest`.
+pub trait Harvestable: AsRef<RoomObject> {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.attack`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.attack`.
+pub trait Attackable: HasHits + AsRef<RoomObject> {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.heal`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// target for `Creep.heal`.
+pub trait Healable: AsRef<RoomObject> {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
+
+impl Transferable for StructureExtension {}
+impl Transferable for Creep {}
+impl Transferable for StructureContainer {}
+impl Transferable for StructureFactory {}
+impl Transferable for StructureLab {}
+impl Transferable for StructureLink {}
+impl Transferable for StructureNuker {}
+impl Transferable for StructureSpawn {}
+impl Transferable for StructureStorage {}
+impl Transferable for StructureTower {}
+impl Transferable for StructurePowerSpawn {}
+impl Transferable for StructureTerminal {}
+impl Transferable for PowerCreep {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
+
+impl Withdrawable for Ruin {}
+impl Withdrawable for StructureExtension {}
+impl Withdrawable for StructureContainer {}
+impl Withdrawable for StructureFactory {}
+impl Withdrawable for StructureLab {}
+impl Withdrawable for StructureLink {}
+impl Withdrawable for StructureSpawn {}
+impl Withdrawable for StructureStorage {}
+impl Withdrawable for StructureTower {}
+impl Withdrawable for StructurePowerSpawn {}
+impl Withdrawable for StructureTerminal {}
+impl Withdrawable for Tombstone {}
+
+impl Harvestable for Deposit {}
+impl Harvestable for Mineral {}
+impl Harvestable for Source {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
+
+impl Attackable for Creep {}
+impl Attackable for OwnedStructure {}
+impl Attackable for StructureContainer {}
+impl Attackable for StructureExtension {}
+impl Attackable for StructureExtractor {}
+impl Attackable for StructureFactory {}
+impl Attackable for StructureInvaderCore {}
+impl Attackable for StructureKeeperLair {}
+impl Attackable for StructureLab {}
+impl Attackable for StructureLink {}
+impl Attackable for StructureNuker {}
+impl Attackable for StructureObserver {}
+impl Attackable for StructurePowerBank {}
+impl Attackable for StructurePowerSpawn {}
+impl Attackable for StructureRampart {}
+impl Attackable for StructureRoad {}
+impl Attackable for StructureSpawn {}
+impl Attackable for StructureStorage {}
+impl Attackable for StructureTerminal {}
+impl Attackable for StructureTower {}
+impl Attackable for StructureWall {}
+impl Attackable for PowerCreep {}
+
+impl Healable for Creep {}
+impl Healable for PowerCreep {}
+
+//TODO: wiarchbe: Add Repairable trait.

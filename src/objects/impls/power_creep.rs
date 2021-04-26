@@ -187,7 +187,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveByPath)
     #[wasm_bindgen(method, js_name = moveTo)]
-    pub fn move_to_internal(this: &PowerCreep, target: &JsValue, options: &JsValue) -> ReturnCode;
+    fn move_to_internal(this: &PowerCreep, target: &JsValue, options: &JsValue) -> ReturnCode;
 
     /// Whether to send an email notification when this power creep is attacked.
     ///
@@ -239,7 +239,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.transfer)
     #[wasm_bindgen(method)]
-    pub fn transfer(
+    fn transfer_internal(
         this: &PowerCreep,
         target: &RoomObject,
         ty: ResourceType,
@@ -267,7 +267,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.withdraw)
     #[wasm_bindgen(method)]
-    pub fn withdraw(
+    fn withdraw_internal(
         this: &PowerCreep,
         target: &RoomObject,
         ty: ResourceType,
@@ -389,11 +389,11 @@ impl SharedCreepProperties for PowerCreep {
         Self::suicide(self)
     }
 
-    fn transfer(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
-        Self::transfer(self, target, ty, amount)
+    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Transferable {
+        Self::transfer_internal(self, target.as_ref(), ty, amount)
     }
 
-    fn withdraw(&self, target: &RoomObject, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
-        Self::withdraw(self, target, ty, amount)
+    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Withdrawable {
+        Self::withdraw_internal(self, target.as_ref(), ty, amount)
     }
 }
