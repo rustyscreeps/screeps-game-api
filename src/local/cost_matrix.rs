@@ -7,7 +7,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::objects::CostMatrix;
 
-use super::{Position, xy_to_linear_index, linear_index_to_xy, RoomCoordinate, RoomXY, ROOM_AREA};
+use super::{Position, xy_to_linear_index, linear_index_to_xy, RoomXY, ROOM_AREA};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(transparent)]
@@ -30,36 +30,20 @@ impl LocalCostMatrix {
         }
     }
 
+    // # Notes
+    // This method does no bounds checking for the passed-in `RoomXY`, you may use
+    // `RoomXY::unchecked_new` to skip all bounds checking.
     #[inline]
     pub fn set(&mut self, xy: RoomXY, val: u8) {
         self[xy] = val;
     }
 
+    // # Notes
+    // This method does no bounds checking for the passed-in `RoomXY`, you may use
+    // `RoomXY::unchecked_new` to skip all bounds checking.
     #[inline]
     pub fn get(&self, xy: RoomXY) -> u8 {
         self[xy]
-    }
-
-    // # Safety
-    // Calling this method with x >= super::ROOM_SIZE or y >= super::ROOM_SIZE is undefined behaviour.
-    #[inline]
-    pub unsafe fn get_unchecked(&self, x: u8, y: u8) -> u8 {
-        let xy = RoomXY {
-            x: RoomCoordinate::unchecked_new(x),
-            y: RoomCoordinate::unchecked_new(y)
-        };
-        self[xy]
-    }
-
-    // # Safety
-    // Calling this method with x >= super::ROOM_SIZE or y >= super::ROOM_SIZE is undefined behaviour.
-    #[inline]
-    pub unsafe fn set_unchecked(&mut self, x: u8, y: u8, val: u8) {
-        let xy = RoomXY {
-            x: RoomCoordinate::unchecked_new(x),
-            y: RoomCoordinate::unchecked_new(y)
-        };
-        self[xy] = val;
     }
 
     pub fn get_bits(&self) -> &[u8; ROOM_AREA] {
@@ -248,7 +232,7 @@ impl From<&CostMatrix> for SparseCostMatrix {
 impl From<&LocalCostMatrix> for SparseCostMatrix {
     fn from(lcm: &LocalCostMatrix) -> Self {
         SparseCostMatrix {
-            inner: lcm.iter().filter_map(|(xy, val)| { 
+            inner: lcm.iter().filter_map(|(xy, val)| {
                 if val > 0 {
                     Some((xy, val))
                 } else {
