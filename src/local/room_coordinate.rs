@@ -30,7 +30,7 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
     }
 }
 
-#[derive(Debug, Hash, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Hash, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(try_from = "u8", into = "u8")]
 pub struct RoomCoordinate(u8);
 
