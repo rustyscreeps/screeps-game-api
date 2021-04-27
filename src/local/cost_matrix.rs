@@ -10,6 +10,7 @@ use crate::objects::CostMatrix;
 use super::{Position, xy_to_linear_index, linear_index_to_xy, RoomCoordinate, RoomXY, ROOM_AREA};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct LocalCostMatrix {
     #[serde(with = "serde_impls")]
     bits: [u8; ROOM_AREA],
