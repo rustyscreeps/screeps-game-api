@@ -33,7 +33,7 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
 #[derive(Debug, Hash, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct RoomCoordinate(u8);
 
-#[derive(Debug, Hash, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Hash, Clone, Copy, PartialEq, Eq)]
 pub struct RoomXY {
     pub x: RoomCoordinate,
     pub y: RoomCoordinate
@@ -52,11 +52,6 @@ impl RoomCoordinate {
     pub unsafe fn unchecked_new(coord: u8) -> Self {
         debug_assert!(coord < ROOM_SIZE, "Out of bounds unchecked coordinate: {}", coord);
         RoomCoordinate(coord)
-    }
-
-    #[inline]
-    pub fn val(self) -> u8 {
-        self.0
     }
 }
 
@@ -132,5 +127,56 @@ impl<'de> Deserialize<'de> for RoomCoordinate {
             de::Error::invalid_value(de::Unexpected::Unsigned(val as u64),
                                      &format!("a non-negative integer less-than {}", ROOM_SIZE).as_str())
         })
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+struct ReadableXY {
+    x: RoomCoordinate,
+    y: RoomCoordinate
+}
+
+impl From<ReadableXY> for RoomXY {
+    fn from(ReadableXY { x, y }: ReadableXY) -> RoomXY {
+        RoomXY { x, y }
+    }
+}
+
+impl From<RoomXY> for ReadableXY {
+    fn from(RoomXY { x, y }: RoomXY) -> ReadableXY {
+        ReadableXY { x, y }
+    }
+}
+
+impl Serialize for RoomXY {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        if serializer.is_human_readable() {
+            ReadableXY::from(*self).serialize(serializer)
+        } else {
+            let xy: (u8, u8) = (*self).into();
+            let packed: u16 = ((xy.0 as u16) << 8) | (xy.1 as u16);
+            packed.serialize(serializer)
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for RoomXY {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            ReadableXY::deserialize(deserializer).map(Into::into)
+        } else {
+            let packed = u16::deserialize(deserializer)?;
+            let xy = (((packed >> 8) & 0xFF) as u8, (packed & 0xFF) as u8);
+            RoomXY::try_from(xy).map_err(|err: OutOfBoundsError| {
+                de::Error::invalid_value(de::Unexpected::Unsigned(err.0 as u64),
+                                         &format!("a non-negative integer less-than {}", ROOM_SIZE).as_str())
+            })
+        }
     }
 }

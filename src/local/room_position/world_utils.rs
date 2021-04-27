@@ -7,7 +7,7 @@ impl Position {
     /// `room_x = -xx - 1` for `Wxx` rooms and as `room_x = xx` for `Exx` rooms.
     #[inline]
     pub fn world_x(self) -> i32 {
-        self.room_x() * 50 + (self.x().val() as i32)
+        self.room_x() * 50 + (u8::from(self.x()) as i32)
     }
 
     /// Returns this position's vertical "world coordinate".
@@ -16,7 +16,7 @@ impl Position {
     /// `room_y = -yy - 1` for `Nyy` rooms and as `room_y = yy` for `Syy` rooms.
     #[inline]
     pub fn world_y(self) -> i32 {
-        self.room_y() * 50 + (self.y().val() as i32)
+        self.room_y() * 50 + (u8::from(self.y()) as i32)
     }
 
     /// Returns this position's "world coordinates".

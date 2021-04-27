@@ -147,6 +147,7 @@ impl IndexMut<Position> for LocalCostMatrix {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct SparseCostMatrix {
     inner: HashMap<RoomXY, u8>
 }
@@ -163,11 +164,7 @@ impl SparseCostMatrix {
     }
 
     pub fn get(&self, xy: RoomXY) -> u8 {
-        if let Some(ref_val) = self.inner.get(&xy) {
-            *ref_val
-        } else {
-            0
-        }
+        *self.inner.get(&xy).as_deref().unwrap_or(&0)
     }
 
     pub fn set(&mut self, xy: RoomXY, val: u8) {
@@ -205,15 +202,15 @@ impl SparseCostMatrix {
     }
 }
 
-impl From<HashMap<RoomXY, u8>> for SparseCostMatrix {
-    fn from(inner: HashMap<RoomXY, u8>) -> Self {
-        SparseCostMatrix { inner }
+impl From<&HashMap<RoomXY, u8>> for SparseCostMatrix {
+    fn from(map: &HashMap<RoomXY, u8>) -> Self {
+        SparseCostMatrix { inner: map.clone() }
     }
 }
 
-impl From<HashMap<Position, u8>> for SparseCostMatrix {
-    fn from(mut map: HashMap<Position, u8>) -> Self {
-        SparseCostMatrix { inner: map.drain().map(|(pos, val)| { (pos.into(), val) }).collect() }
+impl From<&HashMap<Position, u8>> for SparseCostMatrix {
+    fn from(map: &HashMap<Position, u8>) -> Self {
+        SparseCostMatrix { inner: map.iter().map(|(&pos, &val)| { (pos.into(), val) }).collect() }
     }
 }
 
@@ -235,8 +232,8 @@ impl From<CostMatrix> for SparseCostMatrix {
     }
 }
 
-impl From<LocalCostMatrix> for SparseCostMatrix {
-    fn from(lcm: LocalCostMatrix) -> Self {
+impl From<&LocalCostMatrix> for SparseCostMatrix {
+    fn from(lcm: &LocalCostMatrix) -> Self {
         SparseCostMatrix {
             inner: lcm.iter().filter_map(|(xy, val)| { 
                 if val > 0 {
@@ -253,6 +250,16 @@ impl From<SparseCostMatrix> for LocalCostMatrix {
     fn from(mut scm: SparseCostMatrix) -> Self {
         let mut lcm = LocalCostMatrix::new();
         for (pos, val) in scm.inner.drain() {
+            lcm[pos] = val;
+        }
+        lcm
+    }
+}
+
+impl From<&SparseCostMatrix> for LocalCostMatrix {
+    fn from(scm: &SparseCostMatrix) -> Self {
+        let mut lcm = LocalCostMatrix::new();
+        for (&pos, &val) in scm.inner.iter() {
             lcm[pos] = val;
         }
         lcm

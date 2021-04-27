@@ -226,7 +226,7 @@ impl Position {
     /// outside of the range `E127N127 - W127S127`.
     #[inline]
     pub fn new(x: RoomCoordinate, y: RoomCoordinate, room_name: RoomName) -> Self {
-        Self::from_coords_adjusted_and_room_packed(x.val(), y.val(), room_name.packed_repr())
+        Self::from_coords_adjusted_and_room_packed(x.into(), y.into(), room_name.packed_repr())
     }
 
     /// Creates a `Position` from x,y coordinates and room coordinates
@@ -300,12 +300,12 @@ impl Position {
 
     #[inline]
     pub fn set_x(&mut self, x: RoomCoordinate) {
-        self.packed = (self.packed & !(0xFF << 8)) | ((x.val() as u32) << 8);
+        self.packed = (self.packed & !(0xFF << 8)) | ((u8::from(x) as u32) << 8);
     }
 
     #[inline]
     pub fn set_y(&mut self, y: RoomCoordinate) {
-        self.packed = (self.packed & !0xFF) | (y.val() as u32);
+        self.packed = (self.packed & !0xFF) | (u8::from(y) as u32);
     }
 
     #[inline]
