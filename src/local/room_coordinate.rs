@@ -130,7 +130,7 @@ impl<'de> Deserialize<'de> for RoomCoordinate {
         let val = u8::deserialize(deserializer)?;
         RoomCoordinate::try_from(val).map_err(|_| {
             de::Error::invalid_value(de::Unexpected::Unsigned(val as u64),
-                                     &"a non-negative integer less-than 50")
+                                     &format!("a non-negative integer less-than {}", ROOM_SIZE).as_str())
         })
     }
 }
