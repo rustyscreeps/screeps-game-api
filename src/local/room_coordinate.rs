@@ -31,6 +31,7 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
 }
 
 #[derive(Debug, Hash, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(try_from = "u8", into = "u8")]
 pub struct RoomCoordinate(u8);
 
 #[derive(Debug, Hash, Clone, Copy, PartialEq, Eq)]
@@ -105,28 +106,6 @@ impl From<(RoomCoordinate, RoomCoordinate)> for RoomXY {
 impl From<RoomXY> for (RoomCoordinate, RoomCoordinate) {
     fn from(xy: RoomXY) -> (RoomCoordinate, RoomCoordinate) {
         (xy.x, xy.y)
-    }
-}
-
-impl Serialize for RoomCoordinate {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_u8(self.0)
-    }
-}
-
-impl<'de> Deserialize<'de> for RoomCoordinate {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let val = u8::deserialize(deserializer)?;
-        RoomCoordinate::try_from(val).map_err(|_| {
-            de::Error::invalid_value(de::Unexpected::Unsigned(val as u64),
-                                     &format!("a non-negative integer less-than {}", ROOM_SIZE).as_str())
-        })
     }
 }
 
