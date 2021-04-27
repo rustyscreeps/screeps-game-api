@@ -41,7 +41,7 @@ impl LocalCostMatrix {
     }
 
     // # Safety
-    // Calling this method with x >= 50 or y >= 50 is undefined behaviour.
+    // Calling this method with x >= super::ROOM_SIZE or y >= super::ROOM_SIZE is undefined behaviour.
     #[inline]
     pub unsafe fn get_unchecked(&self, x: u8, y: u8) -> u8 {
         let xy = RoomXY {
@@ -52,7 +52,7 @@ impl LocalCostMatrix {
     }
 
     // # Safety
-    // Calling this method with x >= 50 or y >= 50 is undefined behaviour.
+    // Calling this method with x >= super::ROOM_SIZE or y >= super::ROOM_SIZE is undefined behaviour.
     #[inline]
     pub unsafe fn set_unchecked(&mut self, x: u8, y: u8, val: u8) {
         let xy = RoomXY {

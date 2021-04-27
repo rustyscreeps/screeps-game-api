@@ -34,21 +34,10 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
 #[serde(try_from = "u8", into = "u8")]
 pub struct RoomCoordinate(u8);
 
-#[derive(Debug, Hash, Clone, Copy, PartialEq, Eq)]
-pub struct RoomXY {
-    pub x: RoomCoordinate,
-    pub y: RoomCoordinate
-}
-
-impl fmt::Display for RoomXY {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "({}, {})", self.x, self.y)
-    }
-}
-
 impl RoomCoordinate {
     // # Safety
-    // Calling this method with `coord >= 50` can result in undefined behaviour when used.
+    // Calling this method with `coord >= ROOM_SIZE` can result in undefined behaviour when the
+    // resulting `RoomCoordinate` is used.
     #[inline]
     pub unsafe fn unchecked_new(coord: u8) -> Self {
         debug_assert!(coord < ROOM_SIZE, "Out of bounds unchecked coordinate: {}", coord);
@@ -59,6 +48,31 @@ impl RoomCoordinate {
 impl fmt::Display for RoomCoordinate {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.0)
+    }
+}
+
+#[derive(Debug, Hash, Clone, Copy, PartialEq, Eq)]
+pub struct RoomXY {
+    pub x: RoomCoordinate,
+    pub y: RoomCoordinate
+}
+
+impl RoomXY {
+    // # Safety
+    // Calling this method with `x >= ROOM_SIZE` or `y >= ROOM_SIZE` can result in undefined
+    // behaviour when the resulting `RoomXY` is used.
+    #[inline]
+    pub unsafe fn unchecked_new(x: u8, y: u8) -> Self {
+        RoomXY {
+            x: RoomCoordinate::unchecked_new(x),
+            y: RoomCoordinate::unchecked_new(y)
+        }
+    }
+}
+
+impl fmt::Display for RoomXY {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
     }
 }
 
