@@ -106,8 +106,14 @@ impl From<LocalCostMatrix> for Vec<u8> {
     }
 }
 
-impl From<CostMatrix> for LocalCostMatrix {
-    fn from(js_matrix: CostMatrix) -> Self {
+impl From<&LocalCostMatrix> for Vec<u8> {
+    fn from(lcm: &LocalCostMatrix) -> Vec<u8> {
+        lcm.bits.clone().into()
+    }
+}
+
+impl From<&CostMatrix> for LocalCostMatrix {
+    fn from(js_matrix: &CostMatrix) -> Self {
         let array = js_matrix.get_bits();
 
         LocalCostMatrix {
@@ -202,6 +208,12 @@ impl SparseCostMatrix {
     }
 }
 
+impl From<HashMap<RoomXY, u8>> for SparseCostMatrix {
+    fn from(inner: HashMap<RoomXY, u8>) -> Self {
+        SparseCostMatrix { inner }
+    }
+}
+
 impl From<&HashMap<RoomXY, u8>> for SparseCostMatrix {
     fn from(map: &HashMap<RoomXY, u8>) -> Self {
         SparseCostMatrix { inner: map.clone() }
@@ -214,8 +226,8 @@ impl From<&HashMap<Position, u8>> for SparseCostMatrix {
     }
 }
 
-impl From<CostMatrix> for SparseCostMatrix {
-    fn from(js_matrix: CostMatrix) -> Self {
+impl From<&CostMatrix> for SparseCostMatrix {
+    fn from(js_matrix: &CostMatrix) -> Self {
         let vals: Vec<u8> = js_matrix.get_bits().to_vec();
         assert!(vals.len() == ROOM_AREA, "JS CostMatrix had length {} instead of {}.", vals.len(), ROOM_AREA);
 
