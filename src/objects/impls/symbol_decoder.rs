@@ -1,9 +1,9 @@
 use crate::{
     constants::ResourceType,
-    objects::{Room, RoomObject, RoomPosition},
+    objects::RoomObject,
     prelude::*,
 };
-use js_sys::{Array, JsString};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -41,21 +41,7 @@ extern "C" {
 }
 
 impl HasId for SymbolDecoder {
-    fn id(&self) -> Option<JsString> {
-        Some(Self::id(self.as_ref()))
-    }
-}
-impl HasPosition for SymbolDecoder {
-    fn pos(&self) -> Option<RoomPosition> {
-        RoomObject::pos(self.as_ref())
-    }
-}
-impl RoomObjectProperties for SymbolDecoder {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
-    }
-
-    fn room(&self) -> Option<Room> {
-        RoomObject::room(self.as_ref())
+    fn id(&self) -> JsString {
+        Self::id(self.as_ref())
     }
 }

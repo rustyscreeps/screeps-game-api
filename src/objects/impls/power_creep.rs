@@ -361,7 +361,12 @@ impl SharedCreepProperties for PowerCreep {
         Self::move_by_path(self, path)
     }
 
-    fn move_to<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
+    fn move_to<T>(&self, target: T) -> ReturnCode where T: HasPosition {
+        let target: RoomPosition = target.pos().into();
+        Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
+    }
+
+    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
         let target: RoomPosition = target.pos().into();
         
         if let Some(options) = options {

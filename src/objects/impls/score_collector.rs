@@ -1,8 +1,8 @@
 use crate::{
-    objects::{Room, RoomObject, RoomPosition, Store},
+    objects::{RoomObject, Store},
     prelude::*,
 };
-use js_sys::{Array, JsString};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -34,8 +34,8 @@ extern "C" {
 }
 
 impl HasId for ScoreCollector {
-    fn id(&self) -> Option<JsString> {
-        Some(Self::id(self.as_ref()))
+    fn id(&self) -> JsString {
+        Self::id(self.as_ref())
     }
 }
 

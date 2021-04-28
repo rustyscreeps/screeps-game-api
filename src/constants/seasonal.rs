@@ -11,8 +11,8 @@
 #[cfg_attr(docsrs, doc(cfg(feature = "seasonal-season-1")))]
 pub mod season_1 {
     // RESOURCE_SCORE defined in `types.rs`
-    // FIND_SCORE_CONTAINERS / FIND_SCORE_COLLECTORS defined in `small_enums.rs`
-    // LOOK_SCORE_CONTAINERS / LOOK_SCORE_COLLECTORS defined in `small_enums.rs`
+    // FIND_SCORE_CONTAINERS / FIND_SCORE_COLLECTORS defined in `find.rs`
+    // LOOK_SCORE_CONTAINERS / LOOK_SCORE_COLLECTORS defined in `look.rs`
     /// Radius around each [`ScoreCollector`] that starts surrounded with
     /// [`StructureWall`]s with random hit points.
     ///
@@ -76,11 +76,11 @@ pub mod season_2 {
         ResourceType::SymbolTsade,
         ResourceType::SymbolQoph,
         ResourceType::SymbolRes,
-        ResourceType::SymbolSim,
+        ResourceType::SymbolSin,
         ResourceType::SymbolTaw,
     ];
-    // FIND_SYMBOL_CONTAINERS / FIND_SYMBOL_DECODERS defined in `small_enums.rs`
-    // LOOK_SYMBOL_CONTAINERS / LOOK_SYMBOL_DECODERS defined in `small_enums.rs`
+    // FIND_SYMBOL_CONTAINERS / FIND_SYMBOL_DECODERS defined in `find.rs`
+    // LOOK_SYMBOL_CONTAINERS / LOOK_SYMBOL_DECODERS defined in `look.rs`
     /// The percentage chance that a given room will have a [`SymbolContainer`]
     /// spawned in it every [`SYMBOL_CONTAINER_SPAWN_INTERVAL_TICKS`] ticks.
     ///

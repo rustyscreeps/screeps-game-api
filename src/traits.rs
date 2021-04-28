@@ -140,7 +140,14 @@ pub trait SharedCreepProperties {
     /// `Memory.creeps[creep_name]` and enable the default serialization
     /// behavior of the `Memory` object, which may hamper attempts to directly
     /// use `RawMemory`.
-    fn move_to<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult;
+    fn move_to<T>(&self, target: T) -> ReturnCode where T: HasPosition;
+
+    /// Move the creep toward the specified goal, either a [`RoomPosition`] or
+    /// [`RoomObject`]. Note that using this function will store data in
+    /// `Memory.creeps[creep_name]` and enable the default serialization
+    /// behavior of the `Memory` object, which may hamper attempts to directly
+    /// use `RawMemory`.
+    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult;
 
     /// Whether to send an email notification when this creep is attacked.
     fn notify_when_attacked(&self, enabled: bool) -> ReturnCode;

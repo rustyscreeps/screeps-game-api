@@ -52,7 +52,7 @@ pub use crate::inter_shard_memory::*;
 /// use js_sys::{JsString, Reflect};
 /// use screeps::{prelude::*, Creep, Game};
 ///
-/// let c = Creep::from(Reflect::get(&Game::creeps(), &JsString::from("Bob")).unwrap());
+/// let c = Game::creeps().get(&JsString::from("Bob")).unwrap();
 ///
 /// // `HasId` trait brought in from prelude
 /// let id = c.id();

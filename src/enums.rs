@@ -98,6 +98,9 @@ pub enum DecayingObject {
     StructurePowerBank,
     StructureRampart,
     StructureRoad,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolContainer,
     Tombstone,
 }
 
@@ -147,6 +150,12 @@ pub enum ObjectWithId {
     StructureTerminal,
     StructureTower,
     StructureWall,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolContainer,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolDecoder,
     Tombstone,
 }
 
@@ -188,6 +197,12 @@ pub enum ObjectWithMaybeId {
     StructureTerminal,
     StructureTower,
     StructureWall,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolContainer,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolDecoder,
     Tombstone,
 }
 
@@ -231,6 +246,12 @@ pub enum ObjectWithPosition {
     StructureTerminal,
     StructureTower,
     StructureWall,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolContainer,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolDecoder,
     Tombstone,
 }
 
@@ -256,6 +277,9 @@ pub enum StoreObject {
     StructureStorage,
     StructureTerminal,
     StructureTower,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolContainer,
     Tombstone,
 }
 
@@ -323,6 +347,12 @@ pub enum TypedRoomObject {
     StructureTerminal,
     StructureTower,
     StructureWall,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolContainer,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolDecoder,
     Tombstone,
 }
 

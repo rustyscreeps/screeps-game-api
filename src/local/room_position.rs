@@ -55,9 +55,10 @@ mod world_utils;
 /// convert the native [`Position`] to a [`RoomPosition`]:
 ///
 /// ```no_run
-/// use screeps::{objects::RoomPosition, Position};
+/// use std::convert::TryFrom;
+/// use screeps::{RoomCoordinate, RoomPosition, Position};
 ///
-/// let pos = Position::new(20, 21, "E5N6".parse().unwrap());
+/// let pos = Position::new(RoomCoordinate::try_from(20).unwrap(), RoomCoordinate::try_from(21).unwrap(), "E5N6".parse().unwrap());
 /// let js_pos = RoomPosition::from(pos);
 /// let result = js_pos.room_name();
 /// ```
@@ -132,9 +133,10 @@ mod world_utils;
 /// The `Add` implementation can be used to add an offset to a position:
 ///
 /// ```
-/// # use screeps::Position;
-/// let pos1 = Position::new(0, 0, "E1N1".parse().unwrap());
-/// let pos2 = Position::new(40, 20, "E1N1".parse().unwrap());
+/// # use std::convert::TryFrom;
+/// # use screeps::{Position, RoomCoordinate};
+/// let pos1 = Position::new(RoomCoordinate::try_from(0).unwrap(), RoomCoordinate::try_from(0).unwrap(), "E1N1".parse().unwrap());
+/// let pos2 = Position::new(RoomCoordinate::try_from(40).unwrap(), RoomCoordinate::try_from(20).unwrap(), "E1N1".parse().unwrap());
 /// assert_eq!(pos1 + (40, 20), pos2);
 /// ```
 ///
@@ -142,12 +144,13 @@ mod world_utils;
 /// positions:
 ///
 /// ```
-/// # use screeps::Position;
-/// let pos1 = Position::new(4, 20, "E20S21".parse().unwrap());
-/// let pos2 = Position::new(4, 30, "E20S22".parse().unwrap());
+/// # use std::convert::TryFrom;
+/// # use screeps::{Position, RoomCoordinate};
+/// let pos1 = Position::new(RoomCoordinate::try_from(4).unwrap(), RoomCoordinate::try_from(20).unwrap(), "E20S21".parse().unwrap());
+/// let pos2 = Position::new(RoomCoordinate::try_from(4).unwrap(), RoomCoordinate::try_from(30).unwrap(), "E20S22".parse().unwrap());
 /// assert_eq!(pos2 - pos1, (0, 60));
 ///
-/// let pos3 = Position::new(0, 0, "E20S21".parse().unwrap());
+/// let pos3 = Position::new(RoomCoordinate::try_from(0).unwrap(), RoomCoordinate::try_from(0).unwrap(), "E20S21".parse().unwrap());
 /// assert_eq!(pos3 - pos1, (-4, -20));
 /// ```
 ///

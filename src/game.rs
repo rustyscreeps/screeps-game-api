@@ -163,7 +163,7 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
     ///
     /// [`Creep`]: crate::objects::Creep
-    #[wasm_bindgen(static_method_of = Game, getter)]
+    #[wasm_bindgen(static_method_of = Game, getter = creeps)]
     fn creeps_internal() -> Object;
 
     /// Get an [`Object`] with all of your flags, which contains flag names in
@@ -221,7 +221,7 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
     ///
     /// [`Room`]: crate::objects::Room
-    #[wasm_bindgen(static_method_of = Game, getter)]
+    #[wasm_bindgen(static_method_of = Game, getter = rooms)]
     fn rooms_internal() -> Object;
 
     /// Get a [`JsString`] with the name of the shard being run on.
@@ -269,8 +269,8 @@ extern "C" {
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
     #[cfg(feature = "enable-symbols")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
-    #[wasm_bindgen(static_method_of = Game, getter)]
-    pub fn symbols() -> HashMap<ResourceType, u32>;
+    #[wasm_bindgen(static_method_of = Game, getter = symbols)]
+    fn symbols_internal() -> Object;
 
     /// Get the [`RoomObject`] represented by a given object ID, if it is still
     /// alive and visible.
@@ -349,6 +349,18 @@ impl Game {
     /// [`Creep`]: crate::objects::Creep
     pub fn creeps() -> JsHashMap<JsString, Creep> {
         Game::creeps_internal().into()
+    }
+
+
+
+    /// The symbols you've decoded after multiplier adjustments, used to
+    /// determine your score.
+    ///
+    /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    pub fn symbols() -> JsHashMap<crate::ResourceType, u32> {
+        Game::symbols_internal().into()
     }
 }
 

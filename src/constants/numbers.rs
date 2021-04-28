@@ -3,11 +3,11 @@ use super::types::{ResourceType, StructureType};
 
 // OK and ERR_* defined in ReturnCode in `small_enums.rs`
 
-// FIND_* defined in `small_enums.rs`
+// FIND_* defined in `find.rs`
 
 // directions and colors defined in `small_enums.rs`
 
-// LOOK_* defined in `small_enums.rs`
+// LOOK_* defined in `look.rs`
 
 // OBSTACLE_OBJECT_TYPES not yet implemented
 

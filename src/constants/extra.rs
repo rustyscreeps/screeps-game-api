@@ -74,6 +74,8 @@ pub const RANGED_MASS_ATTACK_POWER_RANGE_3: u32 = 1;
 
 /// The maximum size (500 KiB) of the serialized [`RoomVisual`] data for each
 /// room.
+///
+/// [`RoomVisual`]: crate::objects::RoomVisual
 pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
 
 /// Maximum length of strings that creeps and power creeps can say.

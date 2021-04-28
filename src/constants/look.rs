@@ -90,3 +90,16 @@ typesafe_look_constants! {
     pub struct POWER_CREEPS = (Look::PowerCreeps, PowerCreep, Into::into);
     pub struct RUINS = (Look::Ruins, Ruin, Into::into);
 }
+
+#[cfg(feature = "enable-score")]
+typesafe_look_constants! {
+    pub struct SCORE_CONTAINERS = (Look::ScoreContainers, ScoreContainer, Into::into);
+    pub struct SCORE_COLLECTORS = (Look::ScoreCollectors, ScoreCollector, Into::into);
+}
+
+#[cfg(feature = "enable-symbols")]
+typesafe_look_constants! {
+    pub struct SYMBOL_CONTAINERS = (Look::SymbolContainers, SymbolContainer, Into::into);
+    pub struct SYMBOL_DECODERS = (Look::SymbolDecoders, SymbolDecoder, Into::into);
+}
+
