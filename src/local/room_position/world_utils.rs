@@ -74,21 +74,25 @@ impl Position {
 #[cfg(test)]
 mod test {
     use super::Position;
+    use crate::local::RoomCoordinate;
 
     const TEST_ROOM_NAMES: &[&str] = &[
         "E1N1", "E20N0", "W0N0", "E0N0", "W0S0", "E0S0", "W0N0", "E0N0", "W0S0", "E0S0", "W50S20",
         "W127S127", "W127N127", "E127S127", "E127N127",
     ];
-    const TEST_COORDS: &[RoomCoordinate] = unsafe {
-        &[RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(21),
-          RoomCoordinate::unchecked_new(44), RoomCoordinate::unchecked_new(49)]
-    };
+
+    fn gen_test_coords() -> [RoomCoordinate; 4] {
+        unsafe {
+            [RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(21),
+             RoomCoordinate::unchecked_new(44), RoomCoordinate::unchecked_new(49)]
+        }
+    }
 
     #[test]
     fn world_coords_round_trip() {
         for room_name in TEST_ROOM_NAMES {
-            for x in TEST_COORDS.iter().cloned() {
-                for y in TEST_COORDS.iter().cloned() {
+            for x in gen_test_coords().iter().cloned() {
+                for y in gen_test_coords().iter().cloned() {
                     let original_pos = Position::new(x, y, room_name.parse().unwrap());
                     let (wx, wy) = original_pos.world_coords();
                     let new = Position::from_world_coords(wx, wy);

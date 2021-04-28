@@ -426,19 +426,21 @@ mod serde {
 mod test {
     use super::{Position, RoomCoordinate};
 
-    const TEST_POSITIONS: &[(i32, (RoomCoordinate, RoomCoordinate, &str))] = unsafe { &[
-        (-2122440404i32, (RoomCoordinate::unchecked_new(33), RoomCoordinate::unchecked_new(44), "E1N1")),
-        (-1803615720i32, (RoomCoordinate::unchecked_new(2), RoomCoordinate::unchecked_new(24), "E20N0")),
-        (2139029504i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0N0")),
-        (-2139160576i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0N0")),
-        (2139095040i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0S0")),
-        (-2139095040i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0S0")),
-        (1285i32, (RoomCoordinate::unchecked_new(5), RoomCoordinate::unchecked_new(5), "sim")),
-    ] };
+    fn gen_test_positions() -> Vec<(i32, (RoomCoordinate, RoomCoordinate, &'static str))> {
+        unsafe { vec![
+            (-2122440404i32, (RoomCoordinate::unchecked_new(33), RoomCoordinate::unchecked_new(44), "E1N1")),
+            (-1803615720i32, (RoomCoordinate::unchecked_new(2), RoomCoordinate::unchecked_new(24), "E20N0")),
+            (2139029504i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0N0")),
+            (-2139160576i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0N0")),
+            (2139095040i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0S0")),
+            (-2139095040i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0S0")),
+            (1285i32, (RoomCoordinate::unchecked_new(5), RoomCoordinate::unchecked_new(5), "sim")),
+        ] }
+    }
 
     #[test]
     fn from_i32_accurate() {
-        for (packed, (x, y, name)) in TEST_POSITIONS.iter().copied() {
+        for (packed, (x, y, name)) in gen_test_positions().iter().copied() {
             let pos = Position::from_packed(packed);
             assert_eq!(pos.x(), x);
             assert_eq!(pos.y(), y);
@@ -448,7 +450,7 @@ mod test {
 
     #[test]
     fn from_args_accurate() {
-        for (packed, (x, y, name)) in TEST_POSITIONS.iter().copied() {
+        for (packed, (x, y, name)) in gen_test_positions().iter().copied() {
             let pos = Position::new(x, y, name.parse().unwrap());
             assert_eq!(pos.packed_repr(), packed);
         }
