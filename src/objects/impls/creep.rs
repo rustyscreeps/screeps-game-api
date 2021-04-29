@@ -93,7 +93,7 @@ extern "C" {
     /// resources it is it carrying.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.store)
-    #[wasm_bindgen(method, getter)]
+    #[wasm_bindgen(final, method, getter)]
     pub fn store(this: &Creep) -> Store;
 
     /// The number of ticks the creep has left to live
