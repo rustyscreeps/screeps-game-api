@@ -195,7 +195,7 @@ extern "C" {
     /// Get an array of all objects in a certain area, in either object or array
     /// format depending on the `as_array` option.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAtArea)
     #[wasm_bindgen(final, method, js_name = lookForAtArea)]
     fn look_for_at_area_internal(
         this: &Room,

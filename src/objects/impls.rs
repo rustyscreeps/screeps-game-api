@@ -4,6 +4,7 @@ mod creep;
 mod creep_shared;
 mod deposit;
 mod flag;
+mod map_visual;
 mod mineral;
 mod nuke;
 mod owned_structure;
@@ -101,6 +102,8 @@ pub use self::{
 };
 
 pub use self::room_visual::{CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign, TextStyle, Visual};
+
+pub use self::map_visual::{MapVisual, MapVisualShape};
 
 #[cfg(feature = "enable-score")]
 pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer};
