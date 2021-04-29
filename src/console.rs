@@ -14,6 +14,12 @@ extern "C" {
     #[wasm_bindgen(js_namespace = console, js_name = addVisual)]
     pub fn add_visual(target: Option<&JsString>, visual: &JsValue);
 
+    /// Get the visuals applied to a given target so far in the current tick
+    /// separated by `\n`, with the taget being visuals applied to a given room,
+    /// `None` for visuals applied for all rooms, or "map" for map visuals.
+    #[wasm_bindgen(js_namespace = console, js_name = clearVisual)]
+    pub fn get_visual(target: Option<&JsString>) -> Option<JsString>;
+
     /// Get the size of the visuals applied for the current tick, either for a given room,
     /// `None` for visuals applied for all rooms, or "map" for map visuals.
     #[wasm_bindgen(js_namespace = console, js_name = getVisualSize)]
@@ -22,5 +28,5 @@ extern "C" {
     /// Clear all of tne set visuals for the current tick, either for a given room,
     /// `None` for visuals applied for all rooms, or "map" for map visuals.
     #[wasm_bindgen(js_namespace = console, js_name = clearVisual)]
-    pub fn clear_visual(target: Option<&JsString>) -> u32;
+    pub fn clear_visual(target: Option<&JsString>);
 }
