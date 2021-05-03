@@ -12,6 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Tombstone)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Tombstone;
 
     /// The dead [`Creep`] or [`PowerCreep`] that this tombstone represents.
@@ -32,8 +33,8 @@ extern "C" {
     /// fresh reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Tombstone.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Tombstone) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Tombstone) -> JsString;
 
     /// The [`Store`] of the tombstone, which contains any resources in the
     /// tombstone.
@@ -55,9 +56,9 @@ impl CanDecay for Tombstone {
     }
 }
 
-impl HasId for Tombstone {
-    fn id(&self) -> JsString {
-        Self::id(self)
+impl HasNativeId for Tombstone {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }
 

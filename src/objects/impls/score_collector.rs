@@ -16,14 +16,15 @@ extern "C" {
     /// [`ResourceType::Score`]: crate::constants::ResourceType::Score
     #[wasm_bindgen(extends = RoomObject)]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[derive(Clone)]
     pub type ScoreCollector;
 
     /// Object ID of the collector, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#ScoreCollector.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &ScoreCollector) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &ScoreCollector) -> JsString;
 
     /// The [`Store`] of the container, which contains information about what
     /// resources it is it holding.
@@ -33,9 +34,9 @@ extern "C" {
     pub fn store(this: &ScoreCollector) -> Store;
 }
 
-impl HasId for ScoreCollector {
-    fn id(&self) -> Option<JsString> {
-        Some(Self::id(self.as_ref()))
+impl HasNativeId for ScoreCollector {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }
 

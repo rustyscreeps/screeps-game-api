@@ -4,9 +4,8 @@ use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use std::{convert::TryFrom, fmt};
+use std::{convert::{Infallible, TryFrom}, fmt, str::FromStr};
 use wasm_bindgen::prelude::*;
-// use parse_display::FromStr;
 use serde::{Deserialize, Serialize};
 use crate::constants::find::Find;
 
@@ -294,6 +293,24 @@ impl Part {
     //         )
     //     })
     // }
+}
+
+impl FromStr for Part {
+    type Err = Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "move" => Ok(Part::Move),
+            "work" => Ok(Part::Work),
+            "carry" => Ok(Part::Carry),
+            "attack" => Ok(Part::Attack),
+            "ranged_attack" => Ok(Part::RangedAttack),
+            "tough" => Ok(Part::Tough),
+            "heal" => Ok(Part::Heal),
+            "claim" => Ok(Part::Claim),
+            _ => panic!("unknown part type")
+        }
+    }
 }
 
 /// Translates the `DENSITY_*` constants.

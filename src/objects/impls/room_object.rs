@@ -7,6 +7,7 @@ extern "C" {
     /// Parent class for all objects in rooms in the game world.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room)
+    #[derive(Clone)]
     pub type RoomObject;
 
     /// Effects applied to the object.

@@ -1,8 +1,4 @@
-use crate::{
-    constants::{ReturnCode, StructureType},
-    objects::{Owner, RoomObject},
-    prelude::*,
-};
+use crate::{constants::{ReturnCode, StructureType}, objects::{Owner, RoomObject}, prelude::*};
 use js_sys::{JsString};
 use wasm_bindgen::prelude::*;
 
@@ -13,14 +9,15 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type ConstructionSite;
 
     /// The Object ID of the [`ConstructionSite`], or `None` if it was created
     /// this tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &ConstructionSite) -> Option<JsString>;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &ConstructionSite) -> Option<JsString>;
 
     /// Whether you own the [`ConstructionSite`].
     ///
@@ -61,8 +58,8 @@ extern "C" {
     pub fn remove(this: &ConstructionSite) -> ReturnCode;
 }
 
-impl MaybeHasId for ConstructionSite {
-    fn id(&self) -> Option<JsString> {
-        Self::id(self)
+impl MaybeHasNativeId for ConstructionSite {
+    fn native_id(&self) -> Option<JsString> {
+        Self::id_internal(self)
     }
 }

@@ -7,9 +7,7 @@ use std::{
 };
 
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::prelude::*;
-
-use crate::game::Game;
+use crate::{Resolvable, game::*};
 
 // use crate::{
 //     objects::{HasId, SizedRoomObject},
@@ -277,9 +275,9 @@ impl<T> ObjectId<T> {
     /// don't have vision for.
     pub fn resolve(self) -> Option<T>
     where
-        T: From<JsValue>,
+        T: Resolvable,
     {
-        Game::get_object_by_id_typed(&self)
+        get_object_by_id_typed(&self)
     }
 
     // /// Resolves this ID into an object, panicking on type mismatch.

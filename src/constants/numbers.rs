@@ -284,7 +284,7 @@ pub fn controller_levels(current_rcl: u32) -> Option<u32> {
 /// [`StructureController::ticks_to_downgrade`]:
 /// crate::objects::StructureController::ticks_to_downgrade
 #[inline]
-pub fn controller_downgrade(rcl: u32) -> Option<u32> {
+pub fn controller_downgrade(rcl: u8) -> Option<u32> {
     match rcl {
         1 => Some(20_000),
         2 => Some(10_000),

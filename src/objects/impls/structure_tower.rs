@@ -12,6 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
+    #[derive(Clone)]
     pub type StructureTower;
 
     /// The [`Store`] of the tower, which contains energy which is consumed when
@@ -44,11 +45,11 @@ extern "C" {
 }
 
 impl StructureTower {
-    pub fn attack<T>(&self, target: T) -> ReturnCode where T: Attackable {
+    pub fn attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
         Self::attack_internal(&self, target.as_ref())
     }
 
-    pub fn heal<T>(&self, target: T) -> ReturnCode where T: Healable {
+    pub fn heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
         Self::heal_internal(&self, target.as_ref())
     }
 }

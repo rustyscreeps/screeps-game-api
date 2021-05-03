@@ -1,8 +1,4 @@
-use crate::{
-    constants::ReturnCode,
-    objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
-    prelude::*,
-};
+use crate::{Part, constants::ReturnCode, objects::{Creep, OwnedStructure, RoomObject, Store, Structure}, prelude::*};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
@@ -12,6 +8,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
+    #[derive(Clone)]
     pub type StructureSpawn;
 
     /// A shortcut to `Memory.spawns[spawn.name]`.
@@ -55,10 +52,10 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.spawnCreep)
     #[wasm_bindgen(method, js_name = spawnCreep)]
-    pub fn spawn_creep(
+    fn spawn_creep_internal(
         this: &StructureSpawn,
         body: &Array,
-        name: &JsString,
+        name: &str,
         options: Option<&Object>,
     ) -> ReturnCode;
 
@@ -76,6 +73,15 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.renewCreep)
     #[wasm_bindgen(method, js_name = renewCreep)]
     pub fn renew_creep(this: &StructureSpawn, creep: &Creep) -> ReturnCode;
+}
+
+impl StructureSpawn {
+    pub fn spawn_creep(&self, body: &[Part], name: &str) -> ReturnCode {
+        let body = body.iter().cloned().map(JsValue::from).collect();
+
+        //TODO: wiarchbe: Support options.        
+        Self::spawn_creep_internal(self, &body, name, None)
+    }
 }
 
 impl HasStore for StructureSpawn {

@@ -4,48 +4,36 @@
 
 use js_sys::{Array, JsString, Object};
 use serde::Deserialize;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, prelude::*};
 
-use crate::{
-    constants::{MarketResourceType, OrderType, ResourceType, ReturnCode},
-    local::RoomName,
-};
+use crate::{constants::{MarketResourceType, OrderType, ResourceType, ReturnCode}, containers::{JsContainerFromValue, JsHashMap}, local::RoomName};
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object with info about your credits and market orders and methods for
-    /// managing your participation in the market from [`Game::market`]
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game-market)
-    ///
-    /// [`Game::market`]: crate::game::Game::market
-    #[wasm_bindgen]
-    pub type MarketInfo;
-
     /// Your current credit balance.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.credits)
-    #[wasm_bindgen(method, getter)]
-    pub fn credits(this: &MarketInfo) -> f64;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], getter = credits)]
+    pub fn credits() -> f64;
 
     /// An [`Array`] of the last 100 [`Transaction`]s sent to your terminals.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.incomingTransactions)
-    #[wasm_bindgen(method, getter = incomingTransactions)]
-    pub fn incoming_transactions(this: &MarketInfo) -> Array;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], getter = incomingTransactions)]
+    pub fn incoming_transactions() -> Array;
 
     /// An [`Array`] of the last 100 [`Transaction`]s sent from your terminals.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.outgoingTransactions)
-    #[wasm_bindgen(method, getter = outgoingTransactions)]
-    pub fn outgoing_transactions(this: &MarketInfo) -> Array;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], getter = outgoingTransactions)]
+    pub fn outgoing_transactions() -> Array;
 
     /// An [`Object`] with your current buy and sell orders on the market, with
     /// order ID [`JsString`] keys and [`MyOrder`] values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.orders)
-    #[wasm_bindgen(method, getter)]
-    pub fn orders(this: &MarketInfo) -> Object;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], getter = orders)]
+    fn orders_internal() -> Object;
 
     // todo maybe just implement a native version of this instead?
     /// Get the amount of energy required to send a given amount of any resource
@@ -55,9 +43,8 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.calcTransactionCost)
     ///
     /// [`TERMINAL_SEND_COST_SCALE`]: crate::constants::TERMINAL_SEND_COST_SCALE
-    #[wasm_bindgen(method, js_name = calcTransactionCost)]
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = calcTransactionCost)]
     pub fn calc_transaction_cost(
-        this: &MarketInfo,
         amount: u32,
         room_1: &JsString,
         room_2: &JsString,
@@ -67,32 +54,31 @@ extern "C" {
     /// associated fees.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.cancelOrder)
-    #[wasm_bindgen(method, js_name = cancelOrder)]
-    pub fn cancel_order(this: &MarketInfo, order_id: &JsString) -> ReturnCode;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = cancelOrder)]
+    pub fn cancel_order(order_id: &JsString) -> ReturnCode;
 
     /// Cancel one of your existing orders on the market, without refunding
     /// associated fees.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.changeOrderPrice)
-    #[wasm_bindgen(method, js_name = changeOrderPrice)]
-    pub fn change_order_price(this: &MarketInfo, order_id: &JsString, new_price: f64)
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = changeOrderPrice)]
+    pub fn change_order_price(order_id: &JsString, new_price: f64)
         -> ReturnCode;
 
     // todo type to serialize call options into
     /// Create a new order on the market.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.createOrder)
-    #[wasm_bindgen(method, js_name = createOrder)]
-    pub fn create_order(this: &MarketInfo, order_parameters: &Object) -> ReturnCode;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = createOrder)]
+    pub fn create_order(order_parameters: &Object) -> ReturnCode;
 
     /// Execute a trade on an order on the market. Name of a room with a
     /// terminal from which to send or receive resources is required unless the
     /// order is for an account resource.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.deal)
-    #[wasm_bindgen(method)]
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = deal)]
     pub fn deal(
-        this: &MarketInfo,
         order_id: &JsString,
         amount: u32,
         room_name: Option<&JsString>,
@@ -102,8 +88,8 @@ extern "C" {
     /// requesting more of the resource and incurring additional fees.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.extendOrder)
-    #[wasm_bindgen(method, js_name = extendOrder)]
-    pub fn extend_order(this: &MarketInfo, order_id: &JsString, add_amount: u32) -> ReturnCode;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = extendOrder)]
+    pub fn extend_order(order_id: &JsString, add_amount: u32) -> ReturnCode;
 
     // todo type to serialize call options into - special efficient behavior when
     // passed a `{resourceType: type}` filter
@@ -115,8 +101,8 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getAllOrders)
     ///
     /// [source]: https://github.com/screeps/engine/blob/f7a09e637c20689084fcf4eb43eacdfd51d31476/src/game/market.js#L37
-    #[wasm_bindgen(method, js_name = getAllOrders)]
-    pub fn get_all_orders(this: &MarketInfo, filter: &Object) -> Array;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = getAllOrders)]
+    pub fn get_all_orders(filter: &Object) -> Array;
 
     // todo this is probably breaking in an interesting way on private servers due to the {} return https://github.com/screeps/engine/pull/131 - maybe catch?
     /// Get information about the price history on the market for the last 14
@@ -126,15 +112,19 @@ extern "C" {
     /// the type is recommended before use if the market might be empty.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getHistory)
-    #[wasm_bindgen(method, js_name = getHistory)]
-    pub fn get_history(this: &MarketInfo, resource: Option<ResourceType>) -> JsValue;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = getHistory)]
+    pub fn get_history(resource: Option<ResourceType>) -> JsValue;
 
     /// Get an object with information about a specific order, in the same
     /// format as returned by [`MarketInfo::get_all_orders`]
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getOrderById)
-    #[wasm_bindgen(method, js_name = getOrderById)]
-    pub fn get_order_by_id(this: &MarketInfo, order_id: &JsString) -> Option<Order>;
+    #[wasm_bindgen(js_namespace = ["Game", "market"], js_name = getOrderById)]
+    pub fn get_order_by_id(order_id: &JsString) -> Option<Order>;
+}
+
+pub fn orders() -> JsHashMap<String, MyOrder> {
+    orders_internal().into()
 }
 
 #[wasm_bindgen]
@@ -329,6 +319,12 @@ extern "C" {
     pub fn total_amount(this: &MyOrder) -> u32;
     #[wasm_bindgen(method, getter)]
     pub fn price(this: &MyOrder) -> f64;
+}
+
+impl JsContainerFromValue for MyOrder {
+    fn from_value(val: JsValue) -> Self {
+        val.unchecked_into()
+    }
 }
 
 #[derive(Deserialize, Debug)]

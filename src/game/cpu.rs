@@ -1,85 +1,76 @@
 //! Information about, and functions to manage, your code's resource utilization
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game.cpu)
-use js_sys::Object;
+use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
-use crate::constants::ReturnCode;
+use crate::{constants::ReturnCode, containers::JsHashMap};
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object with info about your CPU allocations and limits from
-    /// [`Game::cpu`].
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu)
-    ///
-    /// [`Game::cpu`]: crate::game::Game::cpu
-    #[wasm_bindgen]
-    pub type CpuInfo;
-
     /// Your assigned CPU for the current shard.
-    #[wasm_bindgen(method, getter)]
-    pub fn limit(this: &CpuInfo) -> u32;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], getter = limit)]
+    pub fn limit() -> u32;
 
     /// The amount of CPU available for execution this tick, which consists of
     /// your [`CpuInfo::limit`] and [`CpuInfo::bucket`] up to a maximum of 500
     /// ([`CPU_TICK_LIMIT_MAX`]), or [`f64::INFINITY`] on sim.
     ///
     /// [`CPU_TICK_LIMIT_MAX`]: crate::constants::extra::CPU_TICK_LIMIT_MAX
-    #[wasm_bindgen(method, getter = tickLimit)]
-    pub fn tick_limit(this: &CpuInfo) -> f64;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], getter = tickLimit)]
+    pub fn tick_limit() -> f64;
 
     /// The amount of CPU that has accumulated in your bucket.
-    #[wasm_bindgen(method, getter)]
-    pub fn bucket(this: &CpuInfo) -> i32;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], getter = bucket)]
+    pub fn bucket() -> i32;
 
     /// Your assigned CPU limits for each shard in an [`Object`], with shard
     /// names in [`JsString`] form as keys and numbers as values. This is the
     /// same format accepted by [`CpuInfo::set_shard_limits`].
-    #[wasm_bindgen(method, getter = shardLimits)]
-    pub fn shard_limits(this: &CpuInfo) -> Object;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], getter = shardLimits)]
+    pub fn shard_limits_internal() -> Object;
 
     /// Whether your account is unlocked to have full CPU.
-    #[wasm_bindgen(method, getter)]
-    pub fn unlocked(this: &CpuInfo) -> bool;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], getter = unlocked)]
+    pub fn unlocked() -> bool;
 
     /// If your account has been unlocked for a limited time, contains the time
     /// it's unlocked until in milliseconds since epoch.
-    #[wasm_bindgen(method, getter = unlockedTime)]
-    pub fn unlocked_time(this: &CpuInfo) -> Option<u64>;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], getter = unlockedTime)]
+    pub fn unlocked_time() -> Option<u64>;
 
     /// Get information about your script's memory heap usage.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
-    #[wasm_bindgen(method, js_name = getHeapStatistics)]
-    pub fn get_heap_statistics(this: &CpuInfo) -> HeapStatistics;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = getHeapStatistics)]
+    pub fn get_heap_statistics() -> HeapStatistics;
 
     /// Get the amount of CPU time used for execution so far this tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getUsed)
-    #[wasm_bindgen(method, js_name = getUsed)]
-    pub fn get_used(this: &CpuInfo) -> f64;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = getUsed)]
+    pub fn get_used() -> f64;
 
     /// Stop execution of your script, starting with a fresh environment next
     /// tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.halt)
-    #[wasm_bindgen(method)]
-    pub fn halt(this: &CpuInfo);
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = halt)]
+    pub fn halt();
 
     /// Sets new shard limits for your script in an [`Object`], with shard names
     /// in [`JsString`] form as keys and numbers as values. This is the same
     /// format accepted by [`CpuInfo::shard_limits`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
-    #[wasm_bindgen(method, js_name = setShardLimits)]
-    pub fn set_shard_limits(this: &CpuInfo, limits: &Object) -> ReturnCode;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = setShardLimits)]
+    pub fn set_shard_limits(limits: &Object) -> ReturnCode;
 
     /// Consume a [`CpuUnlock`] to unlock your full CPU for 24 hours.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.unlock)
-    #[wasm_bindgen(method)]
-    pub fn unlock(this: &CpuInfo) -> ReturnCode;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = unlock)]
+    pub fn unlock() -> ReturnCode;
 
     /// Generate a [`Pixel`], consuming [`PIXEL_COST`] CPU from your bucket.
     ///
@@ -89,8 +80,12 @@ extern "C" {
     /// [`PIXEL_COST`]: crate::constants::PIXEL_COST
     #[cfg(feature = "enable-generate-pixel")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-generate-pixel")))]
-    #[wasm_bindgen(method, js_name = generatePixel)]
-    pub fn generate_pixel(this: &CpuInfo) -> ReturnCode;
+    #[wasm_bindgen(js_namespace = ["Game", "cpu"], js_name = generatePixel)]
+    pub fn generate_pixel() -> ReturnCode;
+}
+
+pub fn shard_limits() -> JsHashMap<JsString, u32> {
+    shard_limits_internal().into()
 }
 
 #[wasm_bindgen]

@@ -11,6 +11,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Source)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Source;
 
     /// Amount of energy available to be harvested from the source.
@@ -42,8 +43,8 @@ extern "C" {
     /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Source.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Source) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Source) -> JsString;
 
     /// The number of ticks until this source regenerates to its
     /// [`Source::energy_capacity`], or 0 if the timer has not started yet.
@@ -53,8 +54,8 @@ extern "C" {
     pub fn ticks_to_regeneration(this: &Source) -> u32;
 }
 
-impl HasId for Source {
-    fn id(&self) -> JsString {
-        Self::id(self)
+impl HasNativeId for Source {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }

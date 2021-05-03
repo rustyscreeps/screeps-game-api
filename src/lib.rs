@@ -36,6 +36,7 @@ pub mod pathfinder;
 pub mod prototypes;
 pub mod raw_memory;
 pub mod traits;
+pub mod containers;
 
 pub use crate::{
     constants::*, enums::*, game::*, local::*, objects::*, pathfinder::*, raw_memory::*, traits::*,

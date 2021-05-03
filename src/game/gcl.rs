@@ -7,26 +7,18 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object with info about your Global Control Level from [`Game::gcl`].
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.gcl)
-    ///
-    /// [`Game::gcl`]: crate::game::Game::gcl
-    #[wasm_bindgen]
-    pub type GclInfo;
-
     /// Your current Global Control Level, which determines the number of rooms
     /// you are allowed to claim.
-    #[wasm_bindgen(method, getter)]
-    pub fn level(this: &GclInfo) -> u32;
+    #[wasm_bindgen(js_namespace = ["Game", "gcl"], getter)]
+    pub fn level() -> u32;
 
     /// Your progress toward the next Global Control Level.
-    #[wasm_bindgen(method, getter)]
-    pub fn progress(this: &GclInfo) -> f64;
+    #[wasm_bindgen(js_namespace = ["Game", "gcl"], getter)]
+    pub fn progress() -> f64;
 
     /// Total progress needed to reach the next Global Control Level.
-    #[wasm_bindgen(method, getter = progressTotal)]
-    pub fn progress_total(this: &GclInfo) -> f64;
+    #[wasm_bindgen(js_namespace = ["Game", "gcl"], getter = progressTotal)]
+    pub fn progress_total() -> f64;
 }
 
 /// Provides the total number of control points needed to achieve each level of

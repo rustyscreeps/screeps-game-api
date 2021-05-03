@@ -27,7 +27,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Store.getFreeCapacity)
     #[wasm_bindgen(method, js_name = getFreeCapacity)]
-    pub fn get_free_capacity(this: &Store, ty: Option<ResourceType>) -> u32;
+    pub fn get_free_capacity(this: &Store, ty: Option<ResourceType>) -> i32;
 
     /// Return the used capacity of the [`Store`] for the specified resource. If
     /// the [`Store`] can contain any resource, passing `None` as the type will

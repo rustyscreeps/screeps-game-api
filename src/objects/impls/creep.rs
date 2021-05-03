@@ -1,9 +1,9 @@
-use crate::{CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult, constants::{Direction, Part, ResourceType, ReturnCode}, objects::{
+use crate::{CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult, constants::{Direction, Part, ResourceType, ReturnCode}, containers::JsContainerFromValue, objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure,
         StructureController,
     }, prelude::*};
 use js_sys::{Array, JsString};
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, prelude::*};
 
 #[wasm_bindgen]
 extern "C" {
@@ -11,14 +11,15 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Creep;
 
     /// Retrieve an [`Array`] containing details about the creep's body parts
     /// and boosts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.body)
-    #[wasm_bindgen(final, method, getter)]
-    pub fn body(this: &Creep) -> Array;
+    #[wasm_bindgen(final, method, getter = body)]
+    fn body_internal(this: &Creep) -> Array;
 
     /// The amount of fatigue the creep has. If greater than 0, it cannot move
     /// this tick without being pulled.
@@ -44,8 +45,8 @@ extern "C" {
     /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
-    #[wasm_bindgen(final, method, getter)]
-    pub fn id(this: &Creep) -> Option<JsString>;
+    #[wasm_bindgen(final, method, getter = id)]
+    fn id_internal(this: &Creep) -> Option<JsString>;
 
     /// A shortcut to `Memory.creeps[creep.name]`.
     ///
@@ -69,7 +70,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.name)
     #[wasm_bindgen(final, method, getter)]
-    pub fn name(this: &Creep) -> JsString;
+    fn name_internal(this: &Creep) -> JsString;
 
     /// The [`Owner`] of this creep that contains the owner's username.
     ///
@@ -145,7 +146,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.dismantle)
     #[wasm_bindgen(final, method)]
-    pub fn dismantle(this: &Creep, target: &Structure) -> ReturnCode;
+    fn dismantle_internal(this: &Creep, target: &Structure) -> ReturnCode;
 
     /// Drop a resource on the ground from the creep's [`Store`].
     ///
@@ -266,14 +267,14 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.say)
     #[wasm_bindgen(final, method)]
-    pub fn say(this: &Creep, message: &JsString, public: bool) -> ReturnCode;
+    pub fn say(this: &Creep, message: &str, public: bool) -> ReturnCode;
 
     /// Add (or remove, using an empty string) a sign to a
     /// [`StructureController`] in melee range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.signController)
     #[wasm_bindgen(final, method, js_name = signController)]
-    pub fn sign_controller(this: &Creep, target: &StructureController) -> ReturnCode;
+    pub fn sign_controller(this: &Creep, target: &StructureController, text: &str) -> ReturnCode;
 
     /// Immediately kill the creep.
     ///
@@ -312,25 +313,61 @@ extern "C" {
     ) -> ReturnCode;
 }
 
+#[wasm_bindgen]
+extern "C" {
+    /// A [`BodyPart`] of a creep.
+    ///
+    /// [Screeps documentation](https://docs-ptr.screeps.com/api/#Creep.body)
+    #[wasm_bindgen]
+    pub type BodyPart;
+
+    #[wasm_bindgen(final, method, getter)]
+    pub fn boost(this: &BodyPart) -> ResourceType;
+
+    #[wasm_bindgen(final, method, getter = type)]   
+    pub fn part(this: &BodyPart) -> Part;
+
+    #[wasm_bindgen(final, method, getter)]
+    pub fn hits(this: &BodyPart) -> u32;
+}
+
 impl Creep {
-    pub fn harvest<T>(&self, target: &T) -> ReturnCode where T: Harvestable {
+    pub fn harvest<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Harvestable {
         Self::harvest_internal(self, target.as_ref())
     }
 
-    pub fn attack<T>(&self, target: &T) -> ReturnCode where T: Attackable {
+    pub fn attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
         Self::attack_internal(self, target.as_ref())
     }
 
-    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode where T: Attackable {
+    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
         Self::ranged_attack_internal(self, target.as_ref())
     }
 
-    pub fn heal<T>(&self, target: &T) -> ReturnCode where T: Healable {
+    pub fn dismantle<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Dismantleable {
+        Self::dismantle_internal(self, target.as_ref())
+    }    
+
+    pub fn heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
         Self::heal_internal(&self, target.as_ref())
     }
 
-    pub fn ranged_heal<T>(&self, target: &T) -> ReturnCode where T: Healable {
+    pub fn ranged_heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
         Self::ranged_heal_internal(&self, target.as_ref())
+    }
+
+    pub fn body(&self) -> Vec<BodyPart> {
+        self
+            .body_internal()
+            .iter()
+            .map(BodyPart::from)
+            .collect()
+    }
+}
+
+impl JsContainerFromValue for Creep {
+    fn from_value(val: JsValue) -> Self {
+        val.unchecked_into()
     }
 }
 
@@ -344,9 +381,9 @@ impl HasHits for Creep {
     }
 }
 
-impl MaybeHasId for Creep {
-    fn id(&self) -> Option<JsString> {
-        Self::id(self)
+impl MaybeHasNativeId for Creep {
+    fn native_id(&self) -> Option<JsString> {
+        Self::id_internal(self)
     }
 }
 
@@ -369,8 +406,8 @@ impl SharedCreepProperties for Creep {
         Self::my(self)
     }
 
-    fn name(&self) -> JsString {
-        Self::name(self)
+    fn name(&self) -> String {
+        Self::name_internal(self).into()
     }
 
     fn owner(&self) -> Owner {
@@ -421,7 +458,7 @@ impl SharedCreepProperties for Creep {
         Self::pickup(self, target)
     }
 
-    fn say(&self, message: &JsString, public: bool) -> ReturnCode {
+    fn say(&self, message: &str, public: bool) -> ReturnCode {
         Self::say(self, message, public)
     }
 

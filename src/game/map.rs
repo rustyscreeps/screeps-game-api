@@ -9,7 +9,7 @@ use num_traits::*;
 
 use wasm_bindgen::{prelude::*, JsCast};
 
-use crate::{ReturnCode, RoomName, constants::ExitDirection, objects::RoomTerrain};
+use crate::{Direction, ReturnCode, RoomName, constants::ExitDirection, containers::JsHashMap, objects::RoomTerrain};
 
 #[wasm_bindgen]
 extern "C" {
@@ -18,15 +18,15 @@ extern "C" {
     /// room names as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.describeExits)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = describeExits)]
-    pub fn describe_exits(room_name: &JsString) -> Object;
+    #[wasm_bindgen(js_namespace = ["Game", "map"], js_name = describeExits)]
+    fn describe_exits_internal(room_name: &JsString) -> Object;
 
     /// Get the exit direction from a given room leading toward a destination
     /// room, with an optional [`FindRouteOptions`] parameter allowing control
     /// over the costs to enter rooms.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findExit)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = findExit)]
+    #[wasm_bindgen(js_namespace = ["Game", "map"], js_name = findExit)]
     fn find_exit_internal(
         from_room: &JsString,
         to_room: &JsString,
@@ -42,7 +42,7 @@ extern "C" {
     /// as a [`JsString`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findRoute)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = findRoute)]
+    #[wasm_bindgen(js_namespace = ["Game", "map"], js_name = findRoute)]
     fn find_route_internal(
         from_room: &JsString,
         to_room: &JsString,
@@ -54,24 +54,24 @@ extern "C" {
     /// wrap around, which is used for terminal calculations.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomLinearDistance)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomLinearDistance)]
-    pub fn get_room_linear_distance(
+    #[wasm_bindgen(js_namespace = ["Game", "map"], js_name = getRoomLinearDistance)]
+    fn get_room_linear_distance_internal(
         room_1: &JsString,
         room_2: &JsString,
         continuous: bool,
-    ) -> Array;
+    ) -> u32;
 
     /// Get the [`RoomTerrain`] object for any room, even one you don't have
     /// vision in.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomTerrain)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomTerrain)]
+    #[wasm_bindgen(js_namespace = ["Game", "map"], js_name = getRoomTerrain)]
     fn get_room_terrain_internal(room_name: &JsString) -> RoomTerrain;
 
     /// Get the size of the world map.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getWorldSize)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getWorldSize)]
+    #[wasm_bindgen(js_namespace = ["Game", "map"], js_name = getWorldSize)]
     pub fn get_world_size() -> u32;
 
     // todo MapRoomStatus return val
@@ -79,7 +79,7 @@ extern "C" {
     /// area or currently inaccessible.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomStatus)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomStatus)]
+    #[wasm_bindgen(js_namespace = ["Game", "map"], js_name = getRoomStatus)]
     fn get_room_status_internal(room_name: &JsString) -> RoomStatusResult;
 
     // todo
@@ -88,6 +88,19 @@ extern "C" {
     // /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.visual)
     // #[wasm_bindgen(method, getter)]
     // pub fn visual(this: &MapInfo) -> MapVisual;
+}
+
+pub fn describe_exits(room_name: RoomName) -> JsHashMap<Direction, RoomName> {
+    let room_name = room_name.into();
+
+    describe_exits_internal(&room_name).into()
+}
+
+pub fn get_room_linear_distance(from_room: RoomName, to_room: RoomName, continuous: bool) -> u32 {
+    let from_room = from_room.into();
+    let to_room = to_room.into();
+
+    get_room_linear_distance_internal(&from_room, &to_room, continuous)
 }
 
 #[wasm_bindgen]

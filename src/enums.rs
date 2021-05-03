@@ -335,6 +335,7 @@ pub enum MovableObject {
 /// Enum used for converting a [`Structure`] into a typed object of its specific
 /// structure type.
 #[enum_dispatch(StructureProperties, HasPosition)]
+#[derive(Clone)]
 pub enum StructureObject {
     StructureContainer,
     StructureController,
@@ -399,6 +400,58 @@ impl From<Structure> for StructureObject {
 }
 
 impl StructureObject {
+    pub fn as_structure(&self) -> &Structure {
+        match self {
+            Self::StructureSpawn(s) => s.as_ref(),
+            Self::StructureExtension(s) => s.as_ref(),
+            Self::StructureRoad(s) => s.as_ref(),
+            Self::StructureWall(s) => s.as_ref(),
+            Self::StructureRampart(s) => s.as_ref(),
+            Self::StructureKeeperLair(s) => s.as_ref(),
+            Self::StructurePortal(s) => s.as_ref(),
+            Self::StructureController(s) => s.as_ref(),
+            Self::StructureLink(s) => s.as_ref(),
+            Self::StructureStorage(s) => s.as_ref(),
+            Self::StructureTower(s) => s.as_ref(),
+            Self::StructureObserver(s) => s.as_ref(),
+            Self::StructurePowerBank(s) => s.as_ref(),
+            Self::StructurePowerSpawn(s) => s.as_ref(),
+            Self::StructureExtractor(s) => s.as_ref(),
+            Self::StructureLab(s) => s.as_ref(),
+            Self::StructureTerminal(s) => s.as_ref(),
+            Self::StructureContainer(s) => s.as_ref(),
+            Self::StructureNuker(s) => s.as_ref(),
+            Self::StructureFactory(s) => s.as_ref(),
+            Self::StructureInvaderCore(s) => s.as_ref(),
+        }
+    }
+
+    pub fn as_owned(&self) -> Option<&dyn OwnedStructureProperties> {
+        match self {
+            Self::StructureSpawn(s) => Some(s),
+            Self::StructureExtension(s) => Some(s),
+            Self::StructureRoad(_) => None,
+            Self::StructureWall(_) => None,
+            Self::StructureRampart(s) => Some(s),
+            Self::StructureKeeperLair(s) => Some(s),
+            Self::StructurePortal(_) => None,
+            Self::StructureController(s) => Some(s),
+            Self::StructureLink(s) => Some(s),
+            Self::StructureStorage(s) => Some(s),
+            Self::StructureTower(s) => Some(s),
+            Self::StructureObserver(s) => Some(s),
+            Self::StructurePowerBank(_) => None,
+            Self::StructurePowerSpawn(s) => Some(s),
+            Self::StructureExtractor(s) => Some(s),
+            Self::StructureLab(s) => Some(s),
+            Self::StructureTerminal(s) => Some(s),
+            Self::StructureContainer(_) => None,
+            Self::StructureNuker(s) => Some(s),
+            Self::StructureFactory(s) => Some(s),
+            Self::StructureInvaderCore(s) => Some(s),
+        }
+    }
+
     pub fn as_has_store(&self) -> Option<&dyn HasStore> {
         match self {
             Self::StructureSpawn(s) => Some(s),
@@ -424,9 +477,7 @@ impl StructureObject {
             Self::StructureInvaderCore(_) => None,
         }
     }
-}
 
-impl StructureObject {
     pub fn as_transferable(&self) -> Option<&dyn Transferable> {
         match self {
             Self::StructureSpawn(s) => Some(s),
@@ -452,9 +503,7 @@ impl StructureObject {
             Self::StructureInvaderCore(_) => None,
         }
     }
-}
 
-impl StructureObject {
     pub fn as_withdrawable(&self) -> Option<&dyn Withdrawable> {
         match self {
             Self::StructureSpawn(s) => Some(s),
@@ -480,9 +529,7 @@ impl StructureObject {
             Self::StructureInvaderCore(_) => None,
         }
     }
-}
 
-impl StructureObject {
     pub fn as_attackable(&self) -> Option<&dyn Attackable> {
         match self {
             Self::StructureSpawn(s) => Some(s),
@@ -506,6 +553,32 @@ impl StructureObject {
             Self::StructureNuker(s) => Some(s),
             Self::StructureFactory(s) => Some(s),
             Self::StructureInvaderCore(s) => Some(s),
+        }
+    }
+
+    pub fn as_dismantleable(&self) -> Option<&dyn Dismantleable> {
+        match self {
+            Self::StructureSpawn(s) => Some(s),
+            Self::StructureExtension(s) => Some(s),
+            Self::StructureRoad(s) => Some(s),
+            Self::StructureWall(s) => Some(s),
+            Self::StructureRampart(s) => Some(s),
+            Self::StructureKeeperLair(_) => None,
+            Self::StructurePortal(_) => None,
+            Self::StructureController(_) => None,
+            Self::StructureLink(s) => Some(s),
+            Self::StructureStorage(s) => Some(s),
+            Self::StructureTower(s) => Some(s),
+            Self::StructureObserver(s) => Some(s),
+            Self::StructurePowerBank(s) => Some(s),
+            Self::StructurePowerSpawn(s) => Some(s),
+            Self::StructureExtractor(s) => Some(s),
+            Self::StructureLab(s) => Some(s),
+            Self::StructureTerminal(s) => Some(s),
+            Self::StructureContainer(s) => Some(s),
+            Self::StructureNuker(s) => Some(s),
+            Self::StructureFactory(s) => Some(s),
+            Self::StructureInvaderCore(_) => None,
         }
     }
 }

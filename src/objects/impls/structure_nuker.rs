@@ -14,6 +14,7 @@ extern "C" {
     ///
     /// [`Nuke`]: crate::objects::Nuke
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
+    #[derive(Clone)]
     pub type StructureNuker;
 
     /// The number of ticks until the [`StructureNuker`] can use

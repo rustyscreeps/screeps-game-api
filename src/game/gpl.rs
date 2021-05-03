@@ -7,26 +7,18 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object with info about your Global Power Level from [`Game::gpl`].
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.gpl)
-    ///
-    /// [`Game::gpl`]: crate::game::Game::gpl
-    #[wasm_bindgen]
-    pub type GplInfo;
-
     /// Your current Global Power Level, which determines the number of rooms
     /// you are allowed to claim.
-    #[wasm_bindgen(method, getter)]
-    pub fn level(this: &GplInfo) -> u32;
+    #[wasm_bindgen(js_namespace = ["Game", "gpl"], getter)]
+    pub fn level() -> u32;
 
     /// Your progress toward the next Global Power Level.
-    #[wasm_bindgen(method, getter)]
-    pub fn progress(this: &GplInfo) -> f64;
+    #[wasm_bindgen(js_namespace = ["Game", "gpl"], getter)]
+    pub fn progress() -> f64;
 
     /// Total progress needed to reach the next Global Power Level.
-    #[wasm_bindgen(method, getter = progressTotal)]
-    pub fn progress_total(this: &GplInfo) -> f64;
+    #[wasm_bindgen(js_namespace = ["Game", "gpl"], getter = progressTotal)]
+    pub fn progress_total() -> f64;
 }
 
 /// Provides the total number of processed power needed to achieve each level

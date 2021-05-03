@@ -12,6 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Mineral;
 
     /// The density of the mineral on the next refill after it's depleted.
@@ -19,6 +20,12 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral.density)
     #[wasm_bindgen(method, getter)]
     pub fn density(this: &Mineral) -> Density;
+
+    /// Type of resource contained in this mineral.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Mineral.mineralType)
+    #[wasm_bindgen(method, getter = mineralAmount)]
+    pub fn mineral_amount(this: &Mineral) -> u32;
 
     /// Type of resource contained in this mineral.
     ///
@@ -31,7 +38,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral.id)
     #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Mineral) -> JsString;
+    fn id_internal(this: &Mineral) -> JsString;
 
     /// The number of ticks until this mineral regenerates from depletion.
     ///
@@ -40,8 +47,8 @@ extern "C" {
     pub fn ticks_to_regeneration(this: &Mineral) -> u32;
 }
 
-impl HasId for Mineral {
-    fn id(&self) -> JsString {
-        Self::id(self)
+impl HasNativeId for Mineral {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }
