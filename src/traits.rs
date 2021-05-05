@@ -1,8 +1,10 @@
+use std::str::FromStr;
+
 use enum_dispatch::enum_dispatch;
 use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
-use crate::{Position, RoomName, SingleRoomCostResult, constants::*, enums::*, objects::*};
+use crate::{ObjectId, Position, RawObjectId, RoomName, SingleRoomCostResult, constants::*, enums::*, objects::*};
 
 #[enum_dispatch]
 pub trait HasHits {
@@ -25,11 +27,56 @@ pub trait HasCooldown {
     fn cooldown(&self) -> u32;
 }
 
+pub trait HasNativeId {
+    fn native_id(&self) -> JsString;
+}
+
+pub trait MaybeHasNativeId {
+    fn native_id(&self) -> Option<JsString>;
+}
+
+impl<T> MaybeHasNativeId for T where T: HasNativeId {
+    fn native_id(&self) -> Option<JsString> {
+        Some(<Self as HasNativeId>::native_id(&self))
+    }
+}
+
+pub trait Resolvable: From<JsValue> {}
+
+impl<T> Resolvable for T where T: MaybeHasTypedId<T> + From<JsValue> {}
+
 #[enum_dispatch]
 pub trait HasId {
     /// Object ID of the object, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks.
-    fn id(&self) -> JsString;
+    fn raw_id(&self) -> RawObjectId;
+}
+
+impl<T> HasId for T where T: HasNativeId {
+    fn raw_id(&self) -> RawObjectId {
+        let id: String = self.native_id().into();
+
+        RawObjectId::from_str(&id).expect("expected object ID to be parseable")
+    }
+}
+
+#[enum_dispatch]
+pub trait HasTypedId<T> {
+    /// Object ID of the object, which can be used to efficiently fetch a
+    /// fresh reference to the object on subsequent ticks.
+    fn id(&self) -> ObjectId<T>;
+}
+
+impl<T> HasTypedId<T> for T where T: HasId {
+    fn id(&self) -> ObjectId<T> {
+        self.raw_id().into()
+    }
+}
+
+impl<T> HasTypedId<T> for &T where T: HasId {
+    fn id(&self) -> ObjectId<T> {
+        self.raw_id().into()
+    }
 }
 
 #[enum_dispatch]
@@ -37,12 +84,40 @@ pub trait MaybeHasId {
     /// Object ID of the object, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks, or `None` if the
     /// object doesn't currently have an id.
-    fn id(&self) -> Option<JsString>;
+    fn try_raw_id(&self) -> Option<RawObjectId>;
 }
 
-impl<T> MaybeHasId for T where T: HasId {
-    fn id(&self) -> Option<JsString> {
-        Some(self.id())
+impl<T> MaybeHasId for T where T: MaybeHasNativeId {
+    fn try_raw_id(&self) -> Option<RawObjectId> {
+        self
+            .native_id()
+            .map(String::from)
+            .map(|id| RawObjectId::from_str(&id).expect("expected object ID to be parseable"))
+    }
+}
+
+#[enum_dispatch]
+pub trait MaybeHasTypedId<T> {
+    /// Object ID of the object, which can be used to efficiently fetch a
+    /// fresh reference to the object on subsequent ticks, or `None` if the
+    /// object doesn't currently have an id.
+    fn try_id(&self) -> Option<ObjectId<T>>;
+}
+
+
+impl<T> MaybeHasTypedId<T> for T where T: MaybeHasId {
+    fn try_id(&self) -> Option<ObjectId<T>> {
+        self
+            .try_raw_id()
+            .map(Into::into)
+    }
+}
+
+impl<T> MaybeHasTypedId<T> for &T where T: MaybeHasId {
+    fn try_id(&self) -> Option<ObjectId<T>> {
+        self
+            .try_raw_id()
+            .map(Into::into)
     }
 }
 
@@ -108,8 +183,8 @@ pub trait SharedCreepProperties {
     /// Whether this creep is owned by the player.
     fn my(&self) -> bool;
 
-    /// The creep's name as an owned reference to a [`JsString`].
-    fn name(&self) -> JsString;
+    /// The creep's name as an owned reference to a [`String`].
+    fn name(&self) -> String;
 
     /// The [`Owner`] of this creep that contains the owner's username.
     fn owner(&self) -> Owner;
@@ -158,7 +233,7 @@ pub trait SharedCreepProperties {
 
     /// Display a string in a bubble above the creep next tick. 10 character
     /// limit.
-    fn say(&self, message: &JsString, public: bool) -> ReturnCode;
+    fn say(&self, message: &str, public: bool) -> ReturnCode;
 
     /// Immediately kill the creep.
     fn suicide(&self) -> ReturnCode;
@@ -196,7 +271,7 @@ pub trait HasEnergyForSpawn: HasStore + AsRef<RoomObject> {}
 ///
 /// # Contracts
 ///
-/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// The reference returned from `AsRef<RoomObject>::as_ref` must be a valid
 /// target for `Creep.transfer`.
 pub trait Transferable: AsRef<RoomObject> {}
 
@@ -205,7 +280,7 @@ pub trait Transferable: AsRef<RoomObject> {}
 ///
 /// # Contracts
 ///
-/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// The reference returned from `AsRef<RoomObject>::as_ref` must be a valid
 /// target for `Creep.withdraw`.
 pub trait Withdrawable: AsRef<RoomObject> {}
 
@@ -214,7 +289,7 @@ pub trait Withdrawable: AsRef<RoomObject> {}
 ///
 /// # Contracts
 ///
-/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// The reference returned from `AsRef<RoomObject>::as_ref` must be a valid
 /// target for `Creep.harvest`.
 pub trait Harvestable: AsRef<RoomObject> {}
 
@@ -223,16 +298,25 @@ pub trait Harvestable: AsRef<RoomObject> {}
 ///
 /// # Contracts
 ///
-/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// The reference returned from `AsRef<RoomObject>::as_ref` must be a valid
 /// target for `Creep.attack`.
 pub trait Attackable: HasHits + AsRef<RoomObject> {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.dismantle`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Structure>::as_ref` must be a valid
+/// target for `Creep.dismantle`.
+pub trait Dismantleable: HasHits + AsRef<Structure> {}
 
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
 /// target of `Creep.heal`.
 ///
 /// # Contracts
 ///
-/// The reference returned from `AsRef<Reference>::as_ref` must be a valid
+/// The reference returned from `AsRef<RoomObject>::as_ref` must be a valid
 /// target for `Creep.heal`.
 pub trait Healable: AsRef<RoomObject> {}
 
@@ -298,6 +382,27 @@ impl Attackable for StructureTerminal {}
 impl Attackable for StructureTower {}
 impl Attackable for StructureWall {}
 impl Attackable for PowerCreep {}
+
+// NOTE: keep impls for Structure* in sync with accessor methods in
+// src/objects/structure.rs
+
+impl Dismantleable for StructureContainer {}
+impl Dismantleable for StructureExtension {}
+impl Dismantleable for StructureExtractor {}
+impl Dismantleable for StructureFactory {}
+impl Dismantleable for StructureLab {}
+impl Dismantleable for StructureLink {}
+impl Dismantleable for StructureNuker {}
+impl Dismantleable for StructureObserver {}
+impl Dismantleable for StructurePowerBank {}
+impl Dismantleable for StructurePowerSpawn {}
+impl Dismantleable for StructureRampart {}
+impl Dismantleable for StructureRoad {}
+impl Dismantleable for StructureSpawn {}
+impl Dismantleable for StructureStorage {}
+impl Dismantleable for StructureTerminal {}
+impl Dismantleable for StructureTower {}
+impl Dismantleable for StructureWall {}
 
 impl Healable for Creep {}
 impl Healable for PowerCreep {}

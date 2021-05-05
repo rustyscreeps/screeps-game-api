@@ -43,6 +43,10 @@ impl RoomCoordinate {
         debug_assert!(coord < ROOM_SIZE, "Out of bounds unchecked coordinate: {}", coord);
         RoomCoordinate(coord)
     }
+
+    pub fn u8(self) -> u8 {
+        self.0
+    }
 }
 
 impl fmt::Display for RoomCoordinate {

@@ -13,7 +13,7 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject)]
     pub type PowerCreep;
 
-    //TODO: wiarchbe: Come back to this... need a good 'maybe has position' implementation that doesn't conflict with base pos().
+    //TODO: wiarchbe: Come back to this... need a good 'maybe has position' implementation that doesn't conflict with base pos() on RoomObject.
     /// Position of the object.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.pos)
@@ -58,8 +58,8 @@ extern "C" {
     /// spawned on the current shard.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &PowerCreep) -> Option<JsString>;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &PowerCreep) -> Option<JsString>;
 
     /// Current level of the power creep, which can be increased with
     /// [`PowerCreep::upgrade`] if you have unspent GPL.
@@ -89,8 +89,8 @@ extern "C" {
     /// The power creep's name as an owned reference to a [`JsString`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.name)
-    #[wasm_bindgen(method, getter)]
-    pub fn name(this: &PowerCreep) -> JsString;
+    #[wasm_bindgen(method, getter = name)]
+    fn name_internal(this: &PowerCreep) -> JsString;
 
     /// The [`Owner`] of this power creep that contains the owner's username.
     ///
@@ -220,7 +220,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.say)
     #[wasm_bindgen(method)]
-    pub fn say(this: &PowerCreep, message: &JsString, public: bool) -> ReturnCode;
+    pub fn say(this: &PowerCreep, message: &str, public: bool) -> ReturnCode;
 
     /// Spawn the power creep at a [`StructurePowerSpawn`].
     ///
@@ -285,19 +285,9 @@ impl HasHits for PowerCreep {
     }
 }
 
-//TODO: wiarchbe: Add maybe has ID?
-
-/*
-impl HasId for PowerCreep {
-    fn id(&self) -> JsString {
-        Self::id(self)
-    }
-}
-*/
-
-impl MaybeHasId for PowerCreep {
-    fn id(&self) -> Option<JsString> {
-        Self::id(self)
+impl MaybeHasNativeId for PowerCreep {
+    fn native_id(&self) -> Option<JsString> {
+        Self::id_internal(self)
     }
 }
 
@@ -329,8 +319,8 @@ impl SharedCreepProperties for PowerCreep {
         Self::my(self)
     }
 
-    fn name(&self) -> JsString {
-        Self::name(self)
+    fn name(&self) -> String {
+        Self::name_internal(self).into()
     }
 
     fn owner(&self) -> Owner {
@@ -386,7 +376,7 @@ impl SharedCreepProperties for PowerCreep {
         Self::pickup(self, target)
     }
 
-    fn say(&self, message: &JsString, public: bool) -> ReturnCode {
+    fn say(&self, message: &str, public: bool) -> ReturnCode {
         Self::say(self, message, public)
     }
 

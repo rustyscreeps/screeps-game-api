@@ -5,9 +5,8 @@ use std::{
 };
 
 use js_sys::JsString;
-use wasm_bindgen::prelude::*;
 
-use crate::game::Game;
+use crate::{Resolvable, game::*};
 
 /// Represents a reference to an Object ID string held on the javascript heap
 /// and a type that the ID points to.
@@ -105,9 +104,9 @@ impl<T> JsObjectId<T> {
     /// don't have vision for.
     pub fn resolve(&self) -> Option<T>
     where
-        T: From<JsValue>,
+        T: Resolvable,
     {
-        Game::get_object_by_js_id_typed(self)
+        get_object_by_js_id_typed(self)
     }
 }
 

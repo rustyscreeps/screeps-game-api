@@ -1,8 +1,4 @@
-use crate::{
-    constants::{ResourceType, ReturnCode},
-    objects::{OwnedStructure, RoomObject, Store, Structure},
-    prelude::*,
-};
+use crate::{RoomName, constants::{ResourceType, ReturnCode}, objects::{OwnedStructure, RoomObject, Store, Structure}, prelude::*};
 use js_sys::{JsString};
 use wasm_bindgen::prelude::*;
 
@@ -13,6 +9,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTerminal)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
+    #[derive(Clone)]
     pub type StructureTerminal;
 
     /// The number of ticks until the [`StructureTerminal`] can use
@@ -32,14 +29,29 @@ extern "C" {
     /// Send resources to another room's terminal.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTerminal.send)
-    #[wasm_bindgen(method)]
-    pub fn send(
+    #[wasm_bindgen(method, js_name = send)]
+    pub fn send_internal(
         this: &StructureTerminal,
         resource_type: ResourceType,
         amount: u32,
         destination: &JsString,
         description: Option<&JsString>,
     ) -> ReturnCode;
+}
+
+impl StructureTerminal {
+    pub fn send(
+        &self,
+        resource_type: ResourceType,
+        amount: u32,
+        destination: RoomName,
+        description: Option<&str>,
+    ) -> ReturnCode {
+        let desination = destination.into();
+        let description = description.map(JsString::from);
+
+        Self::send_internal(self, resource_type, amount, &desination, description.as_ref())
+    }
 }
 
 impl HasCooldown for StructureTerminal {

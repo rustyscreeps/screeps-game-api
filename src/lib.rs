@@ -36,6 +36,7 @@ pub mod pathfinder;
 pub mod prototypes;
 pub mod raw_memory;
 pub mod traits;
+pub mod containers;
 
 pub use crate::{
     constants::*, enums::*, game::*, local::*, objects::*, pathfinder::*, raw_memory::*, traits::*,
@@ -50,12 +51,12 @@ pub use crate::inter_shard_memory::*;
 ///
 /// ```no_run
 /// use js_sys::{JsString, Reflect};
-/// use screeps::{prelude::*, Creep, Game};
+/// use screeps::{prelude::*, Creep, game};
 ///
-/// let c = Game::creeps().get(&JsString::from("Bob")).unwrap();
+/// let c = game::creeps().get(String::from("Bob")).unwrap();
 ///
 /// // `HasId` trait brought in from prelude
-/// let id = c.id();
+/// let id = c.try_id().unwrap();
 /// ```
 ///
 /// This module contains all base functionality traits, and no structures.

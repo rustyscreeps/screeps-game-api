@@ -1,6 +1,6 @@
 use std::convert::TryInto;
 
-use crate::{FindConstant, RoomCostResult, RoomName, constants::{ExitDirection, Find, Look, ReturnCode, StructureType}, constants::look::*, objects::*, prelude::*};
+use crate::{FindConstant, RoomCostResult, RoomName, constants::{ExitDirection, Find, Look, ReturnCode, StructureType}, constants::look::*, containers::JsContainerFromValue, objects::*, prelude::*};
 
 #[cfg(not(feature = "disable-terminal"))]
 use crate::objects::StructureTerminal;
@@ -51,8 +51,8 @@ extern "C" {
     /// The room's name as an owned reference to a [`JsString`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.name)
-    #[wasm_bindgen(method, getter)]
-    pub fn name(this: &Room) -> JsString;
+    #[wasm_bindgen(method, getter = name)]
+    fn name_internal(this: &Room) -> JsString;
 
     /// The [`StructureStorage`] built in the room, or `None` in rooms where
     /// there isn't one.
@@ -113,7 +113,7 @@ extern "C" {
     /// converted into the type of object you searched for.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
-    #[wasm_bindgen(final, method, js_name = find)]
+    #[wasm_bindgen(method, js_name = find)]
     //TODO: wiarchbe: Find options!    
     fn find_internal(this: &Room, ty: Find, options: Option<&Object>) -> Array;
 
@@ -182,21 +182,21 @@ extern "C" {
     /// Get an array of all objects of a given type at this position, if any.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
-    #[wasm_bindgen(final, method, js_name = lookForAt)]
+    #[wasm_bindgen(method, js_name = lookForAt)]
     fn look_for_at_internal(this: &Room, ty: Look, target: &RoomPosition) -> Option<Array>;
 
     /// Get an array of all objects of a given type at the given coordinates, if
     /// any.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
-    #[wasm_bindgen(final, method, js_name = lookForAt)]
+    #[wasm_bindgen(method, js_name = lookForAt)]
     fn look_for_at_xy_internal(this: &Room, ty: Look, x: u8, y: u8) -> Option<Array>;
 
     /// Get an array of all objects in a certain area, in either object or array
     /// format depending on the `as_array` option.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAtArea)
-    #[wasm_bindgen(final, method, js_name = lookForAtArea)]
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
+    #[wasm_bindgen(method, js_name = lookForAtArea)]
     fn look_for_at_area_internal(
         this: &Room,
         ty: Look,
@@ -209,6 +209,10 @@ extern "C" {
 }
 
 impl Room {
+    pub fn name(&self) -> RoomName {
+        self.name_internal().try_into().expect("expected parseable room name")
+    }
+
     //TODO: wiarchbe: Find options!
     pub fn find<T>(&self, ty: T) -> Vec<T::Item>
     where
@@ -239,6 +243,12 @@ impl Room {
         self.look_for_at_xy_internal(T::look_code(), x, y)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
             .unwrap_or_else(Vec::new)
+    }
+}
+
+impl JsContainerFromValue for Room {
+    fn from_value(val: JsValue) -> Self {
+        val.unchecked_into()
     }
 }
 

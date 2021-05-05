@@ -11,6 +11,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructurePortal)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
+    #[derive(Clone)]
     pub type StructurePortal;
 
     // todo: destination

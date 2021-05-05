@@ -377,7 +377,16 @@ pub struct SearchGoal {
     range: u32
 }
 
-#[wasm_bindgen(getter)]
+impl SearchGoal {
+    pub fn new(pos: Position, range: u32) -> Self {
+        SearchGoal {
+            pos,
+            range
+        }
+    }
+}
+
+#[wasm_bindgen]
 impl SearchGoal {
     #[wasm_bindgen(getter)]
     pub fn pos(&self) -> RoomPosition {

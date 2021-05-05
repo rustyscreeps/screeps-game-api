@@ -13,6 +13,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Structure;
 
     /// Retrieve the current hits of this structure, or `0` if this structure is
@@ -35,8 +36,8 @@ extern "C" {
     /// fresh reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Structure) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Structure) -> JsString;
 
     /// The type of structure this is.
     ///
@@ -64,9 +65,9 @@ extern "C" {
     pub fn notify_when_attacked(this: &Structure, val: bool) -> ReturnCode;
 }
 
-impl<T> HasId for T where T: AsRef<Structure> {
-    fn id(&self) -> JsString {
-        Structure::id(self.as_ref())
+impl<T> HasNativeId for T where T: AsRef<Structure> {
+    fn native_id(&self) -> JsString {
+        Structure::id_internal(self.as_ref())
     }
 }
 

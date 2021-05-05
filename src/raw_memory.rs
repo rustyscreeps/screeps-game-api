@@ -6,18 +6,19 @@ use js_sys::{Array, JsString, Object};
 
 use wasm_bindgen::prelude::*;
 
-use crate::JsHashMap;
+use crate::containers::JsHashMap;
 
 #[wasm_bindgen]
 extern "C" {
     pub type RawMemory;
 
+    //TODO: wiarchbe: This doesn't work :(
     /// Get an [`Object`] with all of the segments requested on the previous
     /// tick, with segment numbers as keys and segment data in [`JsString`] form
     /// as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)
-    #[wasm_bindgen(static_method_of = RawMemory, getter)]
+    #[wasm_bindgen(static_method_of = RawMemory, getter = segments)]
     fn segments_internal() -> Object;
 
     // todo ForeignSegment struct
@@ -25,7 +26,7 @@ extern "C" {
     /// last tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.foreignSegment)
-    #[wasm_bindgen(static_method_of = RawMemory, getter = ForeignSegment)]
+    #[wasm_bindgen(static_method_of = RawMemory, getter = foreignSegment)]
     pub fn foreign_segment() -> Option<Object>;
 
     /// Get the stored serialized memory as a [`JsString`].
@@ -48,7 +49,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setActiveSegments)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setActiveSegments)]
-    pub fn set_active_segments(segment_ids: &Array);
+    pub fn set_active_segments_internal(segment_ids: &Array);
 
     /// Sets available foreign memory segment for the next tick to a memory
     /// segment marked as public by another user. If no id is passed, the user's
@@ -70,17 +71,23 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setPublicSegments)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setPublicSegments)]
-    pub fn set_public_segments(segment_ids: &Array);
+    pub fn set_public_segments(segment_ids: &[u8]);
 }
 
 impl RawMemory {
-    /// Get a [`JsHashMap<u8, JsString>`] with all of the segments requested on the previous
+    /// Get a [`JsHashMap<u8, String>`] with all of the segments requested on the previous
     /// tick, with segment numbers as keys and segment data in [`JsString`] form
     /// as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)    
-    pub fn segments() -> JsHashMap<u8, JsString> {
+    pub fn segments() -> JsHashMap<u8, String> {
         RawMemory::segments_internal().into()
+    }
+
+    pub fn set_active_segments(segment_ids: &[u8]) {
+        let segment_ids: Array = segment_ids.iter().map(|s| *s as f64).map(JsValue::from_f64).collect();
+
+        RawMemory::set_active_segments_internal(&segment_ids)
     }
 }
 

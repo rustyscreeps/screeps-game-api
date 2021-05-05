@@ -12,14 +12,15 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Nuke)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Nuke;
 
     /// Object ID of the Nuke, which can be used to efficiently fetch a fresh
     /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Nuke.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Nuke) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Nuke) -> JsString;
 
     /// The name of the room the nuke was fired from.
     ///
@@ -34,8 +35,8 @@ extern "C" {
     pub fn time_to_land(this: &Nuke) -> u32;
 }
 
-impl HasId for Nuke {
-    fn id(&self) -> JsString {
-        Self::id(self)
+impl HasNativeId for Nuke {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }

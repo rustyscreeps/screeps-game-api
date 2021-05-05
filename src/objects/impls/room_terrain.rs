@@ -24,13 +24,15 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn get(this: &RoomTerrain, x: u8, y: u8) -> u8;
 
+    //TODO: wiarchbe: Need to handle return code?
     /// Get a copy of the underlying Uint8Array with the data about the room's
     /// terrain.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
-    #[wasm_bindgen(method)]
+    #[wasm_bindgen(method, js_name = getRawBuffer)]
     pub fn get_raw_buffer(this: &RoomTerrain) -> Uint8Array;
 
+    //TODO: wiarchbe: Need to handle return code?
     /// Copy the data about the room's terrain into an existing [`Uint8Array`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)

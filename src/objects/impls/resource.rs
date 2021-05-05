@@ -13,6 +13,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Resource)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Resource;
 
     /// Amount of resource this contains.
@@ -25,8 +26,8 @@ extern "C" {
     /// fresh reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Resource.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Resource) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Resource) -> JsString;
 
     /// The type of resource this contains.
     ///
@@ -35,8 +36,8 @@ extern "C" {
     pub fn resource_type(this: &Resource) -> ResourceType;
 }
 
-impl HasId for Resource {
-    fn id(&self) -> JsString {
-        Self::id(self)
+impl HasNativeId for Resource {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }

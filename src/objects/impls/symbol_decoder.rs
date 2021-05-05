@@ -16,14 +16,15 @@ extern "C" {
     /// [`ResourceType::Score`]: crate::constants::ResourceType::Score
     #[wasm_bindgen(extends = RoomObject)]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[derive(Clone)]
     pub type SymbolDecoder;
 
     /// Object ID of the collector, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#SymbolDecoder.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &SymbolDecoder) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &SymbolDecoder) -> JsString;
 
     /// The [`ResourceType`] allowed to be transferred to this [`SymbolDecoder`]
     /// to score points.
@@ -40,8 +41,24 @@ extern "C" {
     pub fn score_multiplier(this: &SymbolDecoder) -> u32;
 }
 
-impl HasId for SymbolDecoder {
-    fn id(&self) -> JsString {
-        Self::id(self.as_ref())
+impl HasNativeId for SymbolDecoder {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
+    }
+}
+
+impl HasPosition for SymbolDecoder {
+    fn pos(&self) -> Option<RoomPosition> {
+        RoomObject::pos(self.as_ref())
+    }
+}
+
+impl RoomObjectProperties for SymbolDecoder {
+    fn effects(&self) -> Array {
+        RoomObject::effects(self.as_ref())
+    }
+
+    fn room(&self) -> Option<Room> {
+        RoomObject::room(self.as_ref())
     }
 }

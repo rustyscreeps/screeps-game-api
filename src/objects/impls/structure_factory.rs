@@ -12,6 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureFactory)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
+    #[derive(Clone)]
     pub type StructureFactory;
 
     /// Ticks until [`StructureFactory::produce`] can be used again.

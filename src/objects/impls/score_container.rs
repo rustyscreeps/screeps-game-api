@@ -16,14 +16,15 @@ extern "C" {
     /// [`ResourceType::Score`]: crate::constants::ResourceType::Score
     #[wasm_bindgen(extends = RoomObject)]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[derive(Clone)]
     pub type ScoreContainer;
 
     /// Object ID of the collector, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#ScoreContainer.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &ScoreContainer) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &ScoreContainer) -> JsString;
 
     /// The [`Store`] of the container, which contains information about what
     /// resources it is it holding.
@@ -46,9 +47,9 @@ impl CanDecay for ScoreContainer {
     }
 }
 
-impl HasId for ScoreContainer {
-    fn id(&self) -> JsString {
-        Self::id(self.as_ref())
+impl HasNativeId for Nuke {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }
 

@@ -12,6 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#OwnedStructure)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
+    #[derive(Clone)]
     pub type OwnedStructure;
 
     /// Whether this structure is owned by the player.
@@ -46,6 +47,12 @@ extern "C" {
     pub type Owner;
 
     /// The name of the player that owns this structure as a [`JsString`].
-    #[wasm_bindgen(method, getter)]
-    pub fn username(this: &Owner) -> JsString;
+    #[wasm_bindgen(method, getter = username)]
+    pub fn username_internal(this: &Owner) -> JsString;
+}
+
+impl Owner {
+    pub fn username(&self) -> String {
+        Self::username_internal(self).into()
+    }
 }

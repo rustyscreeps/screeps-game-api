@@ -9,25 +9,28 @@ use num_traits::*;
 
 use wasm_bindgen::{prelude::*, JsCast};
 
-use crate::{ReturnCode, RoomName, constants::ExitDirection, objects::RoomTerrain};
+use crate::{Direction, ReturnCode, RoomName, constants::ExitDirection, containers::JsHashMap, objects::RoomTerrain};
 
 #[wasm_bindgen]
 extern "C" {
+    #[wasm_bindgen(js_name = "map")]
+    pub type Map;
+
     /// Get an object with information about the exits from a given room, with
     /// [`JsString`] versions of direction integers as keys and [`JsString`]
     /// room names as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.describeExits)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = describeExits)]
-    pub fn describe_exits(room_name: &JsString) -> Object;
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = describeExits)]
+    fn describe_exits(room_name: &JsString) -> Object;
 
     /// Get the exit direction from a given room leading toward a destination
     /// room, with an optional [`FindRouteOptions`] parameter allowing control
     /// over the costs to enter rooms.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findExit)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = findExit)]
-    fn find_exit_internal(
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = findExit)]
+    fn find_exit(
         from_room: &JsString,
         to_room: &JsString,
         options: &JsValue,
@@ -42,8 +45,8 @@ extern "C" {
     /// as a [`JsString`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findRoute)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = findRoute)]
-    fn find_route_internal(
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = findRoute)]
+    fn find_route(
         from_room: &JsString,
         to_room: &JsString,
         options: &JsValue,
@@ -54,33 +57,33 @@ extern "C" {
     /// wrap around, which is used for terminal calculations.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomLinearDistance)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomLinearDistance)]
-    pub fn get_room_linear_distance(
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomLinearDistance)]
+    fn get_room_linear_distance(
         room_1: &JsString,
         room_2: &JsString,
         continuous: bool,
-    ) -> Array;
+    ) -> u32;
 
     /// Get the [`RoomTerrain`] object for any room, even one you don't have
     /// vision in.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomTerrain)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomTerrain)]
-    fn get_room_terrain_internal(room_name: &JsString) -> RoomTerrain;
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomTerrain)]
+    fn get_room_terrain(room_name: &JsString) -> RoomTerrain;
 
     /// Get the size of the world map.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getWorldSize)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getWorldSize)]
-    pub fn get_world_size() -> u32;
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getWorldSize)]
+    fn get_world_size() -> u32;
 
     // todo MapRoomStatus return val
     /// Get the status of a given room, determining whether it's in a special
     /// area or currently inaccessible.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomStatus)
-    #[wasm_bindgen(js_namespace = ["game", "map"], js_name = getRoomStatus)]
-    fn get_room_status_internal(room_name: &JsString) -> RoomStatusResult;
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomStatus, catch)]
+    fn get_room_status(room_name: &JsString) -> Result<JsRoomStatusResult, JsValue>;
 
     // todo
     // /// Get a [`MapVisual`] object, allowing rendering visual indicators on the
@@ -90,16 +93,62 @@ extern "C" {
     // pub fn visual(this: &MapInfo) -> MapVisual;
 }
 
+pub fn describe_exits(room_name: RoomName) -> JsHashMap<Direction, RoomName> {
+    let room_name = room_name.into();
+
+    Map::describe_exits(&room_name).into()
+}
+
+pub fn get_room_linear_distance(from_room: RoomName, to_room: RoomName, continuous: bool) -> u32 {
+    let from_room = from_room.into();
+    let to_room = to_room.into();
+
+    Map::get_room_linear_distance(&from_room, &to_room, continuous)
+}
+
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
-    pub type RoomStatusResult;
+    pub type JsRoomStatusResult;
 
     #[wasm_bindgen(method, getter = status)]
-    pub fn status(this: &RoomStatusResult) -> RoomStatus;
+    pub fn status(this: &JsRoomStatusResult) -> RoomStatus;
 
     #[wasm_bindgen(method, getter = timestamp)]
-    pub fn timestamp(this: &RoomStatusResult) -> Option<u64>;
+    pub fn timestamp(this: &JsRoomStatusResult) -> Option<u64>;
+}
+
+pub struct RoomStatusResult {
+    status: RoomStatus,
+    timestamp: Option<u64>
+}
+
+impl RoomStatusResult {
+    pub fn status(&self) -> RoomStatus {
+        self.status
+    }
+
+    pub fn timestamp(&self) -> Option<u64> {
+        self.timestamp
+    }
+}
+
+impl Default for RoomStatusResult {
+    fn default() -> Self {
+        RoomStatusResult {
+            status: RoomStatus::Normal,
+            timestamp: None
+        }
+    }
+}
+
+impl From<JsRoomStatusResult> for RoomStatusResult {
+    fn from(val: JsRoomStatusResult) -> Self {
+        RoomStatusResult {
+            status: val.status(),
+            timestamp: val.timestamp(),
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -114,13 +163,17 @@ pub enum RoomStatus {
 pub fn get_room_terrain(room_name: RoomName) -> RoomTerrain {
     let name = room_name.into();
 
-    get_room_terrain_internal( &name)
+    Map::get_room_terrain(&name)
+}
+
+pub fn get_world_size() -> u32 {
+    Map::get_world_size()
 }
 
 pub fn get_room_status(room_name: RoomName) -> RoomStatusResult {
     let name = room_name.into();
 
-    get_room_status_internal( &name)
+    Map::get_room_status(&name).ok().map(RoomStatusResult::from).unwrap_or_default()
 }
 
 #[wasm_bindgen]
@@ -245,10 +298,10 @@ pub fn find_route<F>(from: RoomName, to: RoomName, options: Option<FindRouteOpti
 
     let result = if let Some(options) = options {
         options.as_js_options(|js_options| {
-            find_route_internal(&from, &to, js_options)
+            Map::find_route(&from, &to, js_options)
         })
     } else {
-        find_route_internal(&from, &to, &JsValue::UNDEFINED)
+        Map::find_route(&from, &to, &JsValue::UNDEFINED)
     };
 
     if result.is_object() {
@@ -273,10 +326,10 @@ pub fn find_exit<F>(from: RoomName, to: RoomName, options: Option<FindRouteOptio
 
     let result = if let Some(options) = options {
         options.as_js_options(|js_options| {
-            find_exit_internal(&from, &to, js_options)
+            Map::find_exit(&from, &to, js_options)
         })
     } else {
-        find_exit_internal(&from, &to, &JsValue::UNDEFINED)
+        Map::find_exit(&from, &to, &JsValue::UNDEFINED)
     };
 
     if result >= 0 {

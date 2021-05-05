@@ -11,6 +11,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
+    #[derive(Clone)]
     pub type StructureController;
 
     /// Whether power is enabled in the room, allowing power creeps to use
@@ -117,13 +118,20 @@ extern "C" {
 
     /// The name of the player that has reserved this controller as a
     /// [`JsString`].
-    #[wasm_bindgen(method, getter)]
-    pub fn username(this: &Reservation) -> JsString;
+    #[wasm_bindgen(method, getter = username)]
+    pub fn username_internal(this: &Reservation) -> JsString;
 
     /// The number of ticks until the reservation expires.
     #[wasm_bindgen(method, getter = ticksToEnd)]
     pub fn ticks_to_end(this: &Reservation) -> u32;
 }
+
+impl Reservation {
+    pub fn username(&self) -> String {
+        Self::username_internal(self).into()
+    } 
+}
+
 
 #[wasm_bindgen]
 extern "C" {
@@ -135,12 +143,12 @@ extern "C" {
 
     /// The name of the player that has reserved this controller as a
     /// [`JsString`].
-    #[wasm_bindgen(method, getter)]
-    pub fn username(this: &Sign) -> JsString;
+    #[wasm_bindgen(method, getter = username)]
+    pub fn username_internal(this: &Sign) -> JsString;
 
     /// The text of the sign on this controller as a [`JsString`].
-    #[wasm_bindgen(method, getter)]
-    pub fn text(this: &Sign) -> JsString;
+    #[wasm_bindgen(method, getter = text)]
+    pub fn text_internal(this: &Sign) -> JsString;
 
     /// The tick when this sign was written.
     #[wasm_bindgen(method, getter)]
@@ -149,4 +157,14 @@ extern "C" {
     /// The timestamp of when this sign was written.
     #[wasm_bindgen(method, getter)]
     pub fn datetime(this: &Sign) -> Date;
+}
+
+impl Sign {
+    pub fn username(&self) -> String {
+        Self::username_internal(self).into()
+    }
+
+    pub fn text(&self) -> String {
+        Self::text_internal(self).into()
+    }    
 }

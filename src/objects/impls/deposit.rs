@@ -1,8 +1,4 @@
-use crate::{
-    constants::ResourceType,
-    objects::{RoomObject},
-    prelude::*,
-};
+use crate::{constants::ResourceType, objects::{RoomObject}, prelude::*};
 use js_sys::{JsString};
 use wasm_bindgen::prelude::*;
 
@@ -12,6 +8,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Deposit)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Deposit;
 
     /// Ticks until the deposit can be harvested again.
@@ -30,8 +27,8 @@ extern "C" {
     /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Deposit.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Deposit) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Deposit) -> JsString;
 
     /// The cooldown caused by the most recent harvest action for this deposit.
     ///
@@ -59,8 +56,8 @@ impl HasCooldown for Deposit {
     }
 }
 
-impl HasId for Deposit {
-    fn id(&self) -> JsString {
-        Self::id(self)
+impl HasNativeId for Deposit {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }

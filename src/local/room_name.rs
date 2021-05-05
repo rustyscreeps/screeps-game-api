@@ -4,6 +4,8 @@ use arrayvec::ArrayString;
 use wasm_bindgen::{JsCast, JsValue};
 use js_sys::JsString;
 
+use crate::containers::{JsContainerFromValue, JsContainerIntoValue};
+
 use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 
 /// A structure representing a room name.
@@ -224,6 +226,21 @@ impl TryFrom<JsString> for RoomName {
         let val: String = val.into();
 
         RoomName::from_str(&val)
+    }
+}
+
+impl JsContainerIntoValue for RoomName {
+    fn into_value(self) -> JsValue {
+        self.into()
+    }
+}
+
+impl JsContainerFromValue for RoomName {
+    fn from_value(val: JsValue) -> Self {
+        let val: JsString = val.unchecked_into();
+        let val: String = val.into();
+
+        RoomName::from_str(&val).expect("expected parseable room name")
     }
 }
 

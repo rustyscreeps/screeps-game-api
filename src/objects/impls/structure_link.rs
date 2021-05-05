@@ -12,6 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLink)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
+    #[derive(Clone)]
     pub type StructureLink;
 
     /// The number of ticks until the [`StructureLink`] can use
@@ -34,7 +35,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLink.transferEnergy)
     #[wasm_bindgen(method, js_name = transferEnergy)]
-    pub fn transfer_energy(this: &StructureLink, target: &StructureLink) -> ReturnCode;
+    pub fn transfer_energy(this: &StructureLink, target: &StructureLink, amount: Option<u32>) -> ReturnCode;
 }
 
 impl HasCooldown for StructureLink {

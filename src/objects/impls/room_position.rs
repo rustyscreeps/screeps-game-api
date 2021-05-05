@@ -1,9 +1,6 @@
-use crate::{
-    constants::{Color, Direction, Look, ReturnCode, StructureType},
-    local::Position,
-    prelude::*,
-    prototypes::ROOM_POSITION_PROTOTYPE,
-};
+use std::convert::TryInto;
+
+use crate::{RoomName, constants::{Color, Direction, Look, ReturnCode, StructureType}, local::Position, prelude::*, prototypes::ROOM_POSITION_PROTOTYPE};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
@@ -19,14 +16,14 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.constructor)
     #[wasm_bindgen(constructor)]
-    pub fn new(x: u8, y: u8, room_name: &JsString) -> RoomPosition;
+    fn new_internal(x: u8, y: u8, room_name: &JsString) -> RoomPosition;
 
     /// Name of the room the position is in, as an owned [`JsString`] reference
     /// to a string in Javascript memory.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.roomName)
     #[wasm_bindgen(method, getter = roomName)]
-    pub fn room_name(this: &RoomPosition) -> JsString;
+    fn room_name_internal(this: &RoomPosition) -> JsString;
 
     /// Change the room the position refers to; must be a valid room name.
     ///
@@ -229,6 +226,18 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
     #[wasm_bindgen(method, js_name = lookFor)]
     pub fn look_for(this: &RoomPosition, ty: Look) -> Option<Array>;
+}
+
+impl RoomPosition {
+    pub fn new(x: u8, y: u8, room_name: RoomName) -> RoomPosition {
+        let room_name = room_name.into();
+
+        Self::new_internal(x, y, &room_name)
+    }
+
+    pub fn room_name(&self) -> RoomName {
+        Self::room_name_internal(self).try_into().expect("expected parseable room name")
+    }
 }
 
 impl Clone for RoomPosition {

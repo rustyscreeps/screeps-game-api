@@ -12,6 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Ruin)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone)]
     pub type Ruin;
 
     /// The tick that the structure was destroyed
@@ -24,8 +25,8 @@ extern "C" {
     /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Ruin.id)
-    #[wasm_bindgen(method, getter)]
-    pub fn id(this: &Ruin) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Ruin) -> JsString;
 
     /// The [`Store`] of the ruin, which contains any resources in the ruin.
     ///
@@ -56,9 +57,9 @@ impl CanDecay for Ruin {
     }
 }
 
-impl HasId for Ruin {
-    fn id(&self) -> JsString {
-        Self::id(self)
+impl HasNativeId for Ruin {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
     }
 }
 

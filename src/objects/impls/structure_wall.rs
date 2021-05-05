@@ -10,5 +10,6 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureWall)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
+    #[derive(Clone)]
     pub type StructureWall;
 }
