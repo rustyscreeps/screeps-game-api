@@ -6,6 +6,7 @@ mod js_object_id;
 mod object_id;
 mod room_name;
 mod room_position;
+mod room_coordinate;
 
 /// Represents two constants related to room names.
 ///
@@ -20,4 +21,4 @@ const HALF_WORLD_SIZE: i32 = 128;
 /// Valid room name coordinates.
 const VALID_ROOM_NAME_COORDINATES: Range<i32> = -HALF_WORLD_SIZE..HALF_WORLD_SIZE;
 
-pub use self::{cost_matrix::*, js_object_id::*, object_id::*, room_name::*, room_position::*};
+pub use self::{cost_matrix::*, js_object_id::*, object_id::*, room_name::*, room_position::*, room_coordinate::*};

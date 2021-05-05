@@ -103,6 +103,18 @@ pub enum RoomObject {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
+    #[cfg(feature = "enable-score")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    ScoreContainers = 10011,
+    #[cfg(feature = "enable-score")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    ScoreCollectors = 10012,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolContainers = 10021,
+    #[cfg(feature = "enable-symbols")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    SymbolDecoders = 10022,
 }
 
 impl Into<Find> for RoomObject {
@@ -131,6 +143,18 @@ impl Into<Find> for RoomObject {
             RoomObject::HostilePowerCreeps => Find::HostilePowerCreeps,
             RoomObject::Deposits => Find::Deposits,
             RoomObject::Ruins => Find::Ruins,
+            #[cfg(feature = "enable-score")]
+            #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+            RoomObject::ScoreContainers => Find::ScoreContainers,
+            #[cfg(feature = "enable-score")]
+            #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+            RoomObject::ScoreCollectors => Find::ScoreCollectors,
+            #[cfg(feature = "enable-symbols")]
+            #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+            RoomObject::SymbolContainers => Find::SymbolContainers,
+            #[cfg(feature = "enable-symbols")]
+            #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+            RoomObject::SymbolDecoders => Find::SymbolDecoders,
         }
     }
 }
@@ -256,4 +280,16 @@ typesafe_find_constants! {
     pub struct EXIT_BOTTOM = (Find::ExitBottom, RoomPosition);
     pub struct EXIT_LEFT = (Find::ExitLeft, RoomPosition);
     pub struct EXIT = (Find::Exit, RoomPosition);
+}
+
+#[cfg(feature = "enable-score")]
+typesafe_find_constants! {
+    pub struct SCORE_CONTAINERS = (Find::ScoreContainers, ScoreContainer);
+    pub struct SCORE_COLLECTORS = (Find::ScoreCollectors, ScoreCollector);
+}
+
+#[cfg(feature = "enable-symbols")]
+typesafe_find_constants! {
+    pub struct SYMBOL_CONTAINERS = (Find::SymbolContainers, SymbolContainer);
+    pub struct SYMBOL_DECODERS = (Find::SymbolDecoders, SymbolDecoder);
 }

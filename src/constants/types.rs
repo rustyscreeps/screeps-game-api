@@ -185,7 +185,7 @@ pub enum IntershardResourceType {
     // SubscriptionToken = "token",
     CpuUnlock = "cpuUnlock",
     Pixel = "pixel",
-    AccessKey = "AccessKey",
+    AccessKey = "accessKey",
 }
 
 /// Resource type constant for all possible types of resources.
@@ -341,7 +341,7 @@ pub enum ResourceType {
     SymbolRes = "symbol_res",
     #[cfg(feature = "enable-symbols")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
-    SymbolSim = "symbol_sim",
+    SymbolSin = "symbol_sin",
     #[cfg(feature = "enable-symbols")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
     SymbolTaw = "symbol_taw",
@@ -440,7 +440,7 @@ pub enum MarketResourceType {
     Essence = "essence",
     CpuUnlock = "cpuUnlock",
     Pixel = "pixel",
-    AccessKey = "AccessKey",
+    AccessKey = "accessKey",
 }
 
 #[derive(Copy, Clone, Debug)]

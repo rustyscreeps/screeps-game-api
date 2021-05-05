@@ -8,7 +8,7 @@ use std::{
     fmt,
 };
 
-use super::{RoomName, HALF_WORLD_SIZE};
+use super::{RoomName, RoomCoordinate, ROOM_SIZE, HALF_WORLD_SIZE};
 
 use crate::{HasPosition, objects::RoomPosition};
 
@@ -55,9 +55,10 @@ mod world_utils;
 /// convert the native [`Position`] to a [`RoomPosition`]:
 ///
 /// ```no_run
-/// use screeps::{objects::RoomPosition, Position};
+/// use std::convert::TryFrom;
+/// use screeps::{RoomCoordinate, RoomPosition, Position};
 ///
-/// let pos = Position::new(20, 21, "E5N6".parse().unwrap());
+/// let pos = Position::new(RoomCoordinate::try_from(20).unwrap(), RoomCoordinate::try_from(21).unwrap(), "E5N6".parse().unwrap());
 /// let js_pos = RoomPosition::from(pos);
 /// let result = js_pos.room_name();
 /// ```
@@ -132,9 +133,10 @@ mod world_utils;
 /// The `Add` implementation can be used to add an offset to a position:
 ///
 /// ```
-/// # use screeps::Position;
-/// let pos1 = Position::new(0, 0, "E1N1".parse().unwrap());
-/// let pos2 = Position::new(40, 20, "E1N1".parse().unwrap());
+/// # use std::convert::TryFrom;
+/// # use screeps::{Position, RoomCoordinate};
+/// let pos1 = Position::new(RoomCoordinate::try_from(0).unwrap(), RoomCoordinate::try_from(0).unwrap(), "E1N1".parse().unwrap());
+/// let pos2 = Position::new(RoomCoordinate::try_from(40).unwrap(), RoomCoordinate::try_from(20).unwrap(), "E1N1".parse().unwrap());
 /// assert_eq!(pos1 + (40, 20), pos2);
 /// ```
 ///
@@ -142,12 +144,13 @@ mod world_utils;
 /// positions:
 ///
 /// ```
-/// # use screeps::Position;
-/// let pos1 = Position::new(4, 20, "E20S21".parse().unwrap());
-/// let pos2 = Position::new(4, 30, "E20S22".parse().unwrap());
+/// # use std::convert::TryFrom;
+/// # use screeps::{Position, RoomCoordinate};
+/// let pos1 = Position::new(RoomCoordinate::try_from(4).unwrap(), RoomCoordinate::try_from(20).unwrap(), "E20S21".parse().unwrap());
+/// let pos2 = Position::new(RoomCoordinate::try_from(4).unwrap(), RoomCoordinate::try_from(30).unwrap(), "E20S22".parse().unwrap());
 /// assert_eq!(pos2 - pos1, (0, 60));
 ///
-/// let pos3 = Position::new(0, 0, "E20S21".parse().unwrap());
+/// let pos3 = Position::new(RoomCoordinate::try_from(0).unwrap(), RoomCoordinate::try_from(0).unwrap(), "E20S21".parse().unwrap());
 /// assert_eq!(pos3 - pos1, (-4, -20));
 /// ```
 ///
@@ -225,11 +228,8 @@ impl Position {
     /// Will panic if either `x` or `y` is larger than 49, or if `room_name` is
     /// outside of the range `E127N127 - W127S127`.
     #[inline]
-    pub fn new(x: u8, y: u8, room_name: RoomName) -> Self {
-        assert!(x < 50, "out of bounds x: {}", x);
-        assert!(y < 50, "out of bounds y: {}", y);
-
-        Self::from_coords_adjusted_and_room_packed(x, y, room_name.packed_repr())
+    pub fn new(x: RoomCoordinate, y: RoomCoordinate, room_name: RoomName) -> Self {
+        Self::from_coords_adjusted_and_room_packed(x.into(), y.into(), room_name.packed_repr())
     }
 
     /// Creates a `Position` from x,y coordinates and room coordinates
@@ -263,8 +263,8 @@ impl Position {
     pub fn from_packed(packed: i32) -> Self {
         let x = packed >> 8 & 0xFF;
         let y = packed & 0xFF;
-        assert!(x < 50, "out of bounds x: {}", x);
-        assert!(y < 50, "out of bounds y: {}", y);
+        assert!(x < ROOM_SIZE as i32, "out of bounds x: {}", x);
+        assert!(y < ROOM_SIZE as i32, "out of bounds y: {}", y);
         Position {
             packed: packed as u32,
         }
@@ -284,14 +284,16 @@ impl Position {
 
     /// Gets this position's in-room x coordinate.
     #[inline]
-    pub fn x(self) -> u8 {
-        (self.packed >> 8 & 0xFF) as u8
+    pub fn x(self) -> RoomCoordinate {
+        // SAFETY: packed always contains a valid x coordinate
+        unsafe { RoomCoordinate::unchecked_new((self.packed >> 8 & 0xFF) as u8) }
     }
 
     /// Gets this position's in-room y coordinate.
     #[inline]
-    pub fn y(self) -> u8 {
-        (self.packed & 0xFF) as u8
+    pub fn y(self) -> RoomCoordinate {
+        // SAFETY: packed always contains a valid y coordinate
+        unsafe { RoomCoordinate::unchecked_new((self.packed & 0xFF) as u8) }
     }
 
     #[inline]
@@ -300,15 +302,13 @@ impl Position {
     }
 
     #[inline]
-    pub fn set_x(&mut self, x: u8) {
-        assert!(x < 50, "out of bounds x: {}", x);
-        self.packed = (self.packed & !(0xFF << 8)) | ((x as u32) << 8);
+    pub fn set_x(&mut self, x: RoomCoordinate) {
+        self.packed = (self.packed & !(0xFF << 8)) | ((u8::from(x) as u32) << 8);
     }
 
     #[inline]
-    pub fn set_y(&mut self, y: u8) {
-        assert!(y < 50, "out of bounds y: {}", y);
-        self.packed = (self.packed & !0xFF) | (y as u32);
+    pub fn set_y(&mut self, y: RoomCoordinate) {
+        self.packed = (self.packed & !0xFF) | (u8::from(y) as u32);
     }
 
     #[inline]
@@ -318,13 +318,13 @@ impl Position {
     }
 
     #[inline]
-    pub fn with_x(mut self, x: u8) -> Self {
+    pub fn with_x(mut self, x: RoomCoordinate) -> Self {
         self.set_x(x);
         self
     }
 
     #[inline]
-    pub fn with_y(mut self, y: u8) -> Self {
+    pub fn with_y(mut self, y: RoomCoordinate) -> Self {
         self.set_y(y);
         self
     }
@@ -372,14 +372,14 @@ impl From<&RoomPosition> for Position {
 mod serde {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-    use super::{Position, RoomName};
+    use super::{Position, RoomName, RoomCoordinate};
 
     #[derive(Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     struct ReadableFormat {
         room_name: RoomName,
-        x: u8,
-        y: u8,
+        x: RoomCoordinate,
+        y: RoomCoordinate,
     }
 
     impl From<ReadableFormat> for Position {
@@ -427,21 +427,23 @@ mod serde {
 
 #[cfg(test)]
 mod test {
-    use super::Position;
+    use super::{Position, RoomCoordinate};
 
-    const TEST_POSITIONS: &[(i32, (u8, u8, &str))] = &[
-        (-2122440404i32, (33, 44, "E1N1")),
-        (-1803615720i32, (2, 24, "E20N0")),
-        (2139029504i32, (0, 0, "W0N0")),
-        (-2139160576i32, (0, 0, "E0N0")),
-        (2139095040i32, (0, 0, "W0S0")),
-        (-2139095040i32, (0, 0, "E0S0")),
-        (1285i32, (5, 5, "sim")),
-    ];
+    fn gen_test_positions() -> Vec<(i32, (RoomCoordinate, RoomCoordinate, &'static str))> {
+        unsafe { vec![
+            (-2122440404i32, (RoomCoordinate::unchecked_new(33), RoomCoordinate::unchecked_new(44), "E1N1")),
+            (-1803615720i32, (RoomCoordinate::unchecked_new(2), RoomCoordinate::unchecked_new(24), "E20N0")),
+            (2139029504i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0N0")),
+            (-2139160576i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0N0")),
+            (2139095040i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0S0")),
+            (-2139095040i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0S0")),
+            (1285i32, (RoomCoordinate::unchecked_new(5), RoomCoordinate::unchecked_new(5), "sim")),
+        ] }
+    }
 
     #[test]
     fn from_i32_accurate() {
-        for (packed, (x, y, name)) in TEST_POSITIONS.iter().copied() {
+        for (packed, (x, y, name)) in gen_test_positions().iter().copied() {
             let pos = Position::from_packed(packed);
             assert_eq!(pos.x(), x);
             assert_eq!(pos.y(), y);
@@ -451,7 +453,7 @@ mod test {
 
     #[test]
     fn from_args_accurate() {
-        for (packed, (x, y, name)) in TEST_POSITIONS.iter().copied() {
+        for (packed, (x, y, name)) in gen_test_positions().iter().copied() {
             let pos = Position::new(x, y, name.parse().unwrap());
             assert_eq!(pos.packed_repr(), packed);
         }

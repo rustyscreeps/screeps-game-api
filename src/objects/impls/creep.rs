@@ -94,7 +94,7 @@ extern "C" {
     /// resources it is it carrying.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.store)
-    #[wasm_bindgen(method, getter)]
+    #[wasm_bindgen(final, method, getter)]
     pub fn store(this: &Creep) -> Store;
 
     /// The number of ticks the creep has left to live
@@ -438,7 +438,12 @@ impl SharedCreepProperties for Creep {
         Self::move_by_path(self, path)
     }
 
-    fn move_to<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
+    fn move_to<T>(&self, target: T) -> ReturnCode where T: HasPosition {
+        let target: RoomPosition = target.pos().into();
+        Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
+    }
+
+    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
         let target: RoomPosition = target.pos().into();
         
         if let Some(options) = options {

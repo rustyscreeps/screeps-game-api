@@ -46,6 +46,8 @@ impl Position {
 
 #[cfg(test)]
 mod test {
+    use std::convert::TryInto;
+
     use super::Position;
     use crate::RoomName;
 
@@ -56,7 +58,7 @@ mod test {
     }
 
     fn pos(room: RoomName, x: u8, y: u8) -> Position {
-        Position::new(x, y, room)
+        Position::new(x.try_into().unwrap(), y.try_into().unwrap(), room)
     }
 
     #[test]
