@@ -18,76 +18,76 @@ extern "C" {
     /// and boosts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.body)
-    #[wasm_bindgen(final, method, getter = body)]
+    #[wasm_bindgen(method, getter = body)]
     fn body_internal(this: &Creep) -> Array;
 
     /// The amount of fatigue the creep has. If greater than 0, it cannot move
     /// this tick without being pulled.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.fatigue)
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn fatigue(this: &Creep) -> u32;
 
     /// Retrieve the current hits of this creep.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.hits)
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn hits(this: &Creep) -> u32;
 
     /// Retrieve the maximum hits of this creep, which generally equals 50 per
     /// body part.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.hitsMax)
-    #[wasm_bindgen(final, method, getter = hitsMax)]
+    #[wasm_bindgen(method, getter = hitsMax)]
     pub fn hits_max(this: &Creep) -> u32;
 
     /// Object ID of the creep, which can be used to efficiently fetch a fresh
     /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
-    #[wasm_bindgen(final, method, getter = id)]
-    fn id_internal(this: &Creep) -> Option<JsString>;
+    #[wasm_bindgen(method, getter = id)]
+    pub fn id_internal(this: &Creep) -> Option<JsString>;
 
     /// A shortcut to `Memory.creeps[creep.name]`.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.memory)
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn memory(this: &Creep) -> JsValue;
 
     /// Sets a new value to `Memory.creeps[creep.name]`.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.memory)
-    #[wasm_bindgen(final, method, setter)]
+    #[wasm_bindgen(method, setter)]
     pub fn set_memory(this: &Creep, val: &JsValue);
 
     /// Whether this creep is owned by the player.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.my)
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn my(this: &Creep) -> bool;
 
     /// The creep's name as an owned reference to a [`JsString`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.name)
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter = name)]
     fn name_internal(this: &Creep) -> JsString;
 
     /// The [`Owner`] of this creep that contains the owner's username.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.owner)
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn owner(this: &Creep) -> Owner;
 
     /// What the creep said last tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.saying)
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn saying(this: &Creep) -> Option<JsString>;
 
     /// Whether the creep is still spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.spawning)
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn spawning(this: &Creep) -> bool;
 
     /// The [`Store`] of the creep, which contains information about what
@@ -100,7 +100,7 @@ extern "C" {
     /// The number of ticks the creep has left to live
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.ticksToLive)
-    #[wasm_bindgen(final, method, getter = ticksToLive)]
+    #[wasm_bindgen(method, getter = ticksToLive)]
     pub fn ticks_to_live(this: &Creep) -> u32;
 
     /// Attack a target in melee range using a creep's attack parts.
@@ -145,7 +145,7 @@ extern "C" {
     /// of structure that can be constructed.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.dismantle)
-    #[wasm_bindgen(final, method)]
+    #[wasm_bindgen(final, method, js_name = dismantle)]
     fn dismantle_internal(this: &Creep, target: &Structure) -> ReturnCode;
 
     /// Drop a resource on the ground from the creep's [`Store`].
@@ -321,13 +321,13 @@ extern "C" {
     #[wasm_bindgen]
     pub type BodyPart;
 
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn boost(this: &BodyPart) -> ResourceType;
 
-    #[wasm_bindgen(final, method, getter = type)]   
+    #[wasm_bindgen(method, getter = type)]   
     pub fn part(this: &BodyPart) -> Part;
 
-    #[wasm_bindgen(final, method, getter)]
+    #[wasm_bindgen(method, getter)]
     pub fn hits(this: &BodyPart) -> u32;
 }
 

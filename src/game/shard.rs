@@ -7,24 +7,30 @@ use js_sys::JsString;
 
 #[wasm_bindgen]
 extern "C" {
-    /// Your current Global Control Level, which determines the number of rooms
-    /// you are allowed to claim.
-    #[wasm_bindgen(js_namespace = ["Game", "shard"], getter = name)]
-    fn name_internal() -> JsString;
+    #[wasm_bindgen(js_name = "shard")]
+    pub type Shard;
 
-    /// Your progress toward the next Global Control Level.
-    #[wasm_bindgen(js_namespace = ["Game", "shard"], getter = type)]
-    fn type_internal() -> JsString;
+    /// Current shard name.
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "shard", static_method_of = Shard, getter, js_name = name)]
+    fn name() -> JsString;
 
-    /// Total progress needed to reach the next Global Control Level.
-    #[wasm_bindgen(js_namespace = ["Game", "shard"], getter = ptr)]
+    /// Shard type.
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "shard", static_method_of = Shard, getter, js_name = type)]
+    fn shard_type() -> JsString;
+
+    /// Flag for if this is a public test server or not.
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "shard", static_method_of = Shard, getter, js_name = ptr)]
     pub fn ptr() -> bool;
 }
 
 pub fn name() -> String {
-    name_internal().into()
+    Shard::name().into()
 }
 
 pub fn shard_type() -> String {
-    type_internal().into()
+    Shard::shard_type().into()
+}
+
+pub fn ptr() -> bool {
+    Shard::ptr()
 }

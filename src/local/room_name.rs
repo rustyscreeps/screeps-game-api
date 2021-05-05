@@ -207,8 +207,6 @@ impl fmt::Display for RoomNameConversionError {
     }
 }
 
-//TODO: Infallible version 'From' is needed in many places for interop.
-/*
 impl TryFrom<JsValue> for RoomName {
     type Error = RoomNameConversionError;
 
@@ -220,7 +218,6 @@ impl TryFrom<JsValue> for RoomName {
         RoomName::from_str(&val).map_err(|err| RoomNameConversionError::ParseError { err })
     }    
 }
-*/
 
 impl TryFrom<JsString> for RoomName {
     type Error = <RoomName as FromStr>::Err;
@@ -232,15 +229,6 @@ impl TryFrom<JsString> for RoomName {
     }
 }
 
-impl From<JsValue> for RoomName {
-    fn from(val: JsValue) -> Self {
-        let val: JsString = val.unchecked_into();
-        let val: String = val.into();
-
-        RoomName::from_str(&val).expect("expected parseable room name")
-    }
-}
-
 impl JsContainerIntoValue for RoomName {
     fn into_value(self) -> JsValue {
         self.into()
@@ -249,7 +237,10 @@ impl JsContainerIntoValue for RoomName {
 
 impl JsContainerFromValue for RoomName {
     fn from_value(val: JsValue) -> Self {
-        val.into()
+        let val: JsString = val.unchecked_into();
+        let val: String = val.into();
+
+        RoomName::from_str(&val).expect("expected parseable room name")
     }
 }
 

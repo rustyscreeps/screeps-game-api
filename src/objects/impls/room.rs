@@ -113,7 +113,7 @@ extern "C" {
     /// converted into the type of object you searched for.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
-    #[wasm_bindgen(method)]
+    #[wasm_bindgen(method, js_name = find)]
     //TODO: wiarchbe: Find options!    
     fn find_internal(this: &Room, ty: Find, options: Option<&Object>) -> Array;
 
@@ -182,21 +182,21 @@ extern "C" {
     /// Get an array of all objects of a given type at this position, if any.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
-    #[wasm_bindgen(method, js_name = lookFor)]
+    #[wasm_bindgen(method, js_name = lookForAt)]
     fn look_for_at_internal(this: &Room, ty: Look, target: &RoomPosition) -> Option<Array>;
 
     /// Get an array of all objects of a given type at the given coordinates, if
     /// any.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
-    #[wasm_bindgen(method, js_name = lookFor)]
+    #[wasm_bindgen(method, js_name = lookForAt)]
     fn look_for_at_xy_internal(this: &Room, ty: Look, x: u8, y: u8) -> Option<Array>;
 
     /// Get an array of all objects in a certain area, in either object or array
     /// format depending on the `as_array` option.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
-    #[wasm_bindgen(method, js_name = lookAtArea)]
+    #[wasm_bindgen(method, js_name = lookForAtArea)]
     fn look_for_at_area_internal(
         this: &Room,
         ty: Look,

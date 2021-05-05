@@ -89,7 +89,7 @@ extern "C" {
     /// The power creep's name as an owned reference to a [`JsString`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.name)
-    #[wasm_bindgen(method, getter)]
+    #[wasm_bindgen(method, getter = name)]
     fn name_internal(this: &PowerCreep) -> JsString;
 
     /// The [`Owner`] of this power creep that contains the owner's username.

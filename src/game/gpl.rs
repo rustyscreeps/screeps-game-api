@@ -7,18 +7,32 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    /// Your current Global Power Level, which determines the number of rooms
-    /// you are allowed to claim.
-    #[wasm_bindgen(js_namespace = ["Game", "gpl"], getter)]
+    #[wasm_bindgen(js_name = "gpl")]
+    pub type Gpl;
+
+    /// Your current Global Power Level, which determines power creep development.
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "gpl", static_method_of = Gpl, getter, js_name = level)]
     pub fn level() -> u32;
 
     /// Your progress toward the next Global Power Level.
-    #[wasm_bindgen(js_namespace = ["Game", "gpl"], getter)]
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "gpl", static_method_of = Gpl, getter, js_name = progress)]
     pub fn progress() -> f64;
 
     /// Total progress needed to reach the next Global Power Level.
-    #[wasm_bindgen(js_namespace = ["Game", "gpl"], getter = progressTotal)]
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "gpl", static_method_of = Gpl, getter, js_name = progressTotal)]
     pub fn progress_total() -> f64;
+}
+
+pub fn level() -> u32 {
+    Gpl::level()
+}
+
+pub fn progress() -> f64 {
+    Gpl::progress()
+}
+
+pub fn progress_total() -> f64 {
+    Gpl::progress_total()
 }
 
 /// Provides the total number of processed power needed to achieve each level

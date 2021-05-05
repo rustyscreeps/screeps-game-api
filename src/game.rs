@@ -9,7 +9,7 @@ use js_sys::{JsString, Object};
 
 use wasm_bindgen::prelude::*;
 
-use crate::{Creep, RoomName, containers::JsHashMap, local::{JsObjectId, ObjectId, RawObjectId}};
+use crate::{ConstructionSite, Creep, Flag, PowerCreep, RoomName, StructureObject, StructureSpawn, containers::JsHashMap, local::{JsObjectId, ObjectId, RawObjectId}};
 
 pub mod cpu;
 pub mod gcl;
@@ -23,14 +23,16 @@ use crate::objects::RoomObject;
 
 #[wasm_bindgen]
 extern "C" {
+    pub type Game;
+
     /// Get an [`Object`] with all of your construction sites, which contains
     /// object ids in [`JsString`] form as keys and [`ConstructionSite`] values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.constructionSites)
     ///
     /// [`ConstructionSite`]: crate::objects::ConstructionSite
-    #[wasm_bindgen(js_namespace = Game, getter = constructionSites)]
-    pub fn construction_sites() -> Object;
+    #[wasm_bindgen(static_method_of = Game, getter = constructionSites)]
+    fn construction_sites() -> Object;
 
     /// Get an [`Object`] with all of your creeps, which contains creep names in
     /// [`JsString`] form as keys and [`Creep`] objects as values. Note that
@@ -40,8 +42,8 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
     ///
     /// [`Creep`]: crate::objects::Creep
-    #[wasm_bindgen(js_namespace = Game, getter)]
-    fn creeps_internal() -> Object;
+    #[wasm_bindgen(static_method_of = Game, getter = creeps)]
+    fn creeps() -> Object;
 
     /// Get an [`Object`] with all of your flags, which contains flag names in
     /// [`JsString`] form as keys and [`Flag`] objects as values.
@@ -49,8 +51,8 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.flags)
     ///
     /// [`Flag`]: crate::objects::Flag
-    #[wasm_bindgen(js_namespace = Game, getter)]
-    pub fn flags() -> Object;
+    #[wasm_bindgen(static_method_of = Game, getter = flags)]
+    fn flags() -> Object;
 
     /// Get an [`Object`] with all of your power creeps, which contains creep
     /// names in [`JsString`] form as keys and [`PowerCreep`] objects as values.
@@ -60,15 +62,15 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.powerCreeps)
     ///
     /// [`PowerCreep`]: crate::objects::PowerCreep
-    #[wasm_bindgen(js_namespace = Game, getter = powerCreeps)]
-    pub fn power_creeps() -> Object;
+    #[wasm_bindgen(static_method_of = Game, getter = powerCreeps)]
+    fn power_creeps() -> Object;
 
     /// Get an [`Object`] with all of your account resources, with
     /// [`IntershardResourceType`] keys and integer values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.resources)
-    #[wasm_bindgen(js_namespace = Game, getter)]
-    pub fn resources() -> Object;
+    #[wasm_bindgen(static_method_of = Game, getter = resources)]
+    fn resources() -> Object;
 
     /// Get an [`Object`] with the rooms visible for the current tick, which
     /// contains room names in [`JsString`] form as keys and [`Room`] objects as
@@ -77,8 +79,8 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
     ///
     /// [`Room`]: crate::objects::Room
-    #[wasm_bindgen(js_namespace = Game, getter)]
-    fn rooms_internal() -> Object;
+    #[wasm_bindgen(static_method_of = Game, getter = rooms)]
+    fn rooms() -> Object;
 
     /// Get an [`Object`] with all of your spawns, which contains spawn names in
     /// [`JsString`] form as keys and [`StructureSpawn`] objects as values.
@@ -86,8 +88,8 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
     ///
     /// [`StructureSpawn`]: crate::objects::StructureSpawn
-    #[wasm_bindgen(js_namespace = Game, getter)]
-    pub fn spawns() -> Object;
+    #[wasm_bindgen(static_method_of = Game, getter = spawns)]
+    fn spawns() -> Object;
 
     /// Get an [`Object`] with all of your owned structures, which contains
     /// object IDs in [`JsString`] form as keys and [`Structure`] objects as
@@ -96,23 +98,22 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
     ///
     /// [`Structure`]: crate::objects::Structure
-    #[wasm_bindgen(js_namespace = Game, getter)]
-    pub fn structures() -> Object;
+    #[wasm_bindgen(static_method_of = Game, getter = structures)]
+    fn structures() -> Object;
 
-    //TODO: wiarchbe: This doesn't work.
     /// Get the current time, the number of ticks the game has been running.
     ///
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.time)
-    #[wasm_bindgen(structural, js_namespace = Game, getter)]
-    pub fn time() -> u32;
+    #[wasm_bindgen(static_method_of = Game, getter = time)]
+    fn time() -> u32;
 
     /// Your current score, as determined by the symbols you have decoded.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.score)
     #[cfg(feature = "enable-symbols")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
-    #[wasm_bindgen(js_namespace = Game, getter)]
-    pub fn score() -> u32;
+    #[wasm_bindgen(static_method_of = Game, getter = score)]
+    fn score() -> u32;
 
     /// The symbols you've decoded after multiplier adjustments, used to
     /// determine your score.
@@ -120,22 +121,26 @@ extern "C" {
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
     #[cfg(feature = "enable-symbols")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
-    #[wasm_bindgen(js_namespace = Game, getter)]
-    pub fn symbols() -> HashMap<ResourceType, u32>;
+    #[wasm_bindgen(static_method_of = Game, getter = symbols)]
+    fn symbols() -> HashMap<ResourceType, u32>;
 
     /// Get the [`RoomObject`] represented by a given object ID, if it is still
     /// alive and visible.
     ///
     /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
-    #[wasm_bindgen(js_namespace = Game, js_name = getObjectById)]
-    pub fn get_object_by_id(id: &JsString) -> Option<RoomObject>;
+    #[wasm_bindgen(static_method_of = Game, js_name = getObjectById)]
+    fn get_object_by_id(id: &JsString) -> Option<RoomObject>;
 
     /// Send an email message to yourself with a given message. Set a group
     /// interval to only send messages every `group_interval` minutes.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.notify)
-    #[wasm_bindgen(js_namespace = Game)]
-    pub fn notify(message: &JsString, group_interval: Option<u32>);
+    #[wasm_bindgen(static_method_of = Game, js_name = notify)]
+    fn notify(message: &JsString, group_interval: Option<u32>);
+}
+
+pub fn time() -> u32 {
+    Game::time()
 }
 
 /// Get the typed object represented by a given [`JsObjectId`], if it's
@@ -146,7 +151,7 @@ pub fn get_object_by_js_id_typed<T>(id: &JsObjectId<T>) -> Option<T>
 where
     T: From<JsValue>,
 {
-    get_object_by_id(&id.raw)
+    Game::get_object_by_id(&id.raw)
         .map(JsValue::from)
         .map(Into::into)
 }
@@ -162,7 +167,7 @@ where
     // construct a reference to a javascript string using the id data
     let js_str = JsString::from(id.to_string());
 
-    get_object_by_id(&js_str)
+    Game::get_object_by_id(&js_str)
         .map(JsValue::from)
         .map(Into::into)
 }
@@ -175,8 +180,34 @@ pub fn get_object_by_id_erased(id: &RawObjectId) -> Option<RoomObject> {
     // construct a reference to a javascript string using the id data
     let js_str = JsString::from(id.to_string());
 
-    get_object_by_id(&js_str)
+    Game::get_object_by_id(&js_str)
 }
+
+pub fn construction_sites() -> JsHashMap<RawObjectId, ConstructionSite> {
+    Game::construction_sites().into()
+}
+
+/// Get an [`JsHashMap<String, Creep>`] with all of your creeps, which contains 
+//  creep names in [`String`] form as keys and [`Creep`] objects as values. Note that
+/// newly spawned creeps are immediately added to the hash, but will not
+/// have an id until the following tick.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
+///
+/// [`Creep`]: crate::objects::Creep
+pub fn creeps() -> JsHashMap<String, Creep> {
+    Game::creeps().into()
+}
+
+pub fn flags() -> JsHashMap<String, Flag> {
+    Game::flags().into()
+}
+
+pub fn power_creeps() -> JsHashMap<String, PowerCreep> {
+    Game::power_creeps().into()
+}
+
+//TODO: wiarchbe: Add resource map - needs intershard/market resource types.
 
 /// Get an [`JsHashMap<RoomName, Room>`] with the rooms visible for the current tick, which
 /// contains room names in [`RoomName`] form as keys and [`Room`] objects as
@@ -186,19 +217,21 @@ pub fn get_object_by_id_erased(id: &RawObjectId) -> Option<RoomObject> {
 ///
 /// [`Room`]: crate::objects::Room
 pub fn rooms() -> JsHashMap<RoomName, Room> {
-    rooms_internal().into()
+    Game::rooms().into()
 }
 
-/// Get an [`JsHashMap<String, Creep>`] with all of your creeps, which contains 
-//  creep names in [`JsString`] form as keys and [`Creep`] objects as values. Note that
-/// newly spawned creeps are immediately added to the hash, but will not
-/// have an id until the following tick.
-///
-/// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
-///
-/// [`Creep`]: crate::objects::Creep
-pub fn creeps() -> JsHashMap<String, Creep> {
-    creeps_internal().into()
+pub fn spawns() -> JsHashMap<String, StructureSpawn> {
+    Game::spawns().into()
+}
+
+pub fn structures() -> JsHashMap<RawObjectId, StructureObject> {
+    Game::structures().into()
+}
+
+pub fn notify(message: &str, group_interval: Option<u32>) {
+    let message: JsString = message.into();
+
+    Game::notify(&message, group_interval)
 }
 
 // pub fn get_object_typed<T>(id: ObjectId<T>) -> Result<Option<T>,

@@ -135,7 +135,7 @@ impl CostMatrixSet for CostMatrix {
         for entry in data.into_iter() {
             let (pos, cost) = entry.borrow();
 
-            let offset = pos_as_idx(pos.y(), pos.y());
+            let offset = pos_as_idx(pos.x(), pos.y());
 
             matrix_buffer.set_index(offset as u32, *cost.borrow());
         }

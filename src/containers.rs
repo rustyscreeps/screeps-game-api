@@ -47,6 +47,9 @@ impl<K, V> JsHashMap<K, V> where K: JsContainerIntoValue, V: JsContainerFromValu
     pub fn get(&self, key: K) -> Option<V> {
         let key = key.into_value();
         let val = js_sys::Reflect::get(&self.map, &key).ok()?;
+        if val.is_null() || val.is_undefined() {
+            return None;
+        }
         let val = V::from_value(val);
 
         Some(val)
@@ -102,7 +105,8 @@ impl<T> std::iter::Iterator for OwnedArrayIter<T> where T: JsContainerFromValue 
     fn next(&mut self) -> Option<Self::Item> {
         let index = self.range.next()?;
         let val = self.array.get(index);
-        Some(T::from_value(val))
+        let val = T::from_value(val);
+        Some(val)
     }
 
     #[inline]
@@ -150,6 +154,10 @@ impl JsContainerIntoValue for u8 {
 
 impl JsContainerFromValue for u8 {
     fn from_value(val: JsValue) -> u8 {
-        val.as_f64().expect("expected number value") as u8
+        if let Some(val) = val.as_string() {
+            u8::from_str_radix(&val, 10).expect("expected parseable u8 string")
+        } else {
+            val.as_f64().expect("expected number value") as u8
+        }
     }
 }

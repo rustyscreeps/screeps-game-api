@@ -7,18 +7,34 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
+    #[wasm_bindgen(js_name = "gcl")]
+    pub type Gcl;
+
     /// Your current Global Control Level, which determines the number of rooms
     /// you are allowed to claim.
-    #[wasm_bindgen(js_namespace = ["Game", "gcl"], getter)]
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = level)]
     pub fn level() -> u32;
 
     /// Your progress toward the next Global Control Level.
-    #[wasm_bindgen(js_namespace = ["Game", "gcl"], getter)]
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = progress)]
     pub fn progress() -> f64;
 
     /// Total progress needed to reach the next Global Control Level.
-    #[wasm_bindgen(js_namespace = ["Game", "gcl"], getter = progressTotal)]
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = progressTotal)]
     pub fn progress_total() -> f64;
+}
+
+pub fn level() -> u32 {
+    Gcl::level()
+}
+
+pub fn progress() -> f64 {
+    Gcl::progress()
+}
+
+
+pub fn progress_total() -> f64 {
+    Gcl::progress_total()
 }
 
 /// Provides the total number of control points needed to achieve each level of

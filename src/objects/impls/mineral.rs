@@ -37,8 +37,8 @@ extern "C" {
     /// reference to the object on subsequent ticks.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral.id)
-    #[wasm_bindgen(method, getter)]
-    fn id_internal(this: &Mineral) -> JsString;
+    #[wasm_bindgen(method, getter = id)]
+    fn id(this: &Mineral) -> JsString;
 
     /// The number of ticks until this mineral regenerates from depletion.
     ///
@@ -49,6 +49,6 @@ extern "C" {
 
 impl HasNativeId for Mineral {
     fn native_id(&self) -> JsString {
-        Self::id_internal(self)
+        Self::id(self)
     }
 }
