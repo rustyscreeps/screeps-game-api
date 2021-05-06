@@ -1,6 +1,6 @@
 use std::convert::TryInto;
 
-use crate::{RoomName, constants::{Color, Direction, Look, ReturnCode, StructureType}, local::Position, prelude::*, prototypes::ROOM_POSITION_PROTOTYPE};
+use crate::{RoomName, constants::{Color, Direction, Look, LookConstant, ReturnCode, StructureType}, local::Position, prelude::*, prototypes::ROOM_POSITION_PROTOTYPE};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
@@ -215,6 +215,7 @@ extern "C" {
     #[wasm_bindgen(method, js_name = isNearTo)]
     pub fn is_near_to_xy(this: &RoomPosition, x: u8, y: u8) -> bool;
 
+    // todo typed returns
     /// Get an array of all objects at this position.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.look)
@@ -225,7 +226,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
     #[wasm_bindgen(method, js_name = lookFor)]
-    pub fn look_for(this: &RoomPosition, ty: Look) -> Option<Array>;
+    pub fn look_for_internal(this: &RoomPosition, ty: Look) -> Option<Array>;
 }
 
 impl RoomPosition {
@@ -237,6 +238,12 @@ impl RoomPosition {
 
     pub fn room_name(&self) -> RoomName {
         Self::room_name_internal(self).try_into().expect("expected parseable room name")
+    }
+
+    pub fn look_for<T>(&self, _ty: T) -> Vec<T::Item> where T: LookConstant {
+        self.look_for_internal(T::look_code())
+            .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
+            .unwrap_or_else(Vec::new)
     }
 }
 

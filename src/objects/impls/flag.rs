@@ -1,9 +1,10 @@
 use crate::{
+    JsContainerFromValue,
     constants::Color,
     objects::{RoomObject, RoomPosition}
 };
 use js_sys::{JsString};
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, prelude::*};
 
 #[wasm_bindgen]
 extern "C" {
@@ -59,4 +60,10 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Flag.setPosition)
     #[wasm_bindgen(method, js_name = setPosition)]
     pub fn set_position(this: &Flag, pos: RoomPosition);
+}
+
+impl JsContainerFromValue for Flag {
+    fn from_value(val: JsValue) -> Self {
+        val.unchecked_into()
+    }
 }

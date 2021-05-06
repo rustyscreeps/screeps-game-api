@@ -122,7 +122,7 @@ extern "C" {
     #[cfg(feature = "enable-symbols")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
     #[wasm_bindgen(static_method_of = Game, getter = symbols)]
-    fn symbols() -> HashMap<ResourceType, u32>;
+    fn symbols() -> Object;
 
     /// Get the [`RoomObject`] represented by a given object ID, if it is still
     /// alive and visible.
@@ -226,6 +226,12 @@ pub fn spawns() -> JsHashMap<String, StructureSpawn> {
 
 pub fn structures() -> JsHashMap<RawObjectId, StructureObject> {
     Game::structures().into()
+}
+
+#[cfg(feature = "enable-symbols")]
+#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+pub fn symbols() -> JsHashMap<crate::ResourceType, u32> {
+    Game::symbols().into()
 }
 
 pub fn notify(message: &str, group_interval: Option<u32>) {

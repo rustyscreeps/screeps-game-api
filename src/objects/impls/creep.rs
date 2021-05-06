@@ -322,7 +322,7 @@ extern "C" {
     pub type BodyPart;
 
     #[wasm_bindgen(method, getter)]
-    pub fn boost(this: &BodyPart) -> ResourceType;
+    pub fn boost(this: &BodyPart) -> Option<ResourceType>;
 
     #[wasm_bindgen(method, getter = type)]   
     pub fn part(this: &BodyPart) -> Part;

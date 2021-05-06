@@ -47,7 +47,7 @@ impl CanDecay for ScoreContainer {
     }
 }
 
-impl HasNativeId for Nuke {
+impl HasNativeId for ScoreContainer {
     fn native_id(&self) -> JsString {
         Self::id_internal(self)
     }

@@ -8,7 +8,7 @@ use std::{
     fmt,
 };
 
-use super::{RoomName, RoomCoordinate, ROOM_SIZE, HALF_WORLD_SIZE};
+use super::{RoomName, RoomCoordinate, RoomXY, ROOM_SIZE, HALF_WORLD_SIZE};
 
 use crate::{HasPosition, objects::RoomPosition};
 
@@ -294,6 +294,13 @@ impl Position {
     pub fn y(self) -> RoomCoordinate {
         // SAFETY: packed always contains a valid y coordinate
         unsafe { RoomCoordinate::unchecked_new((self.packed & 0xFF) as u8) }
+    }
+
+    /// Gets this position's in-room [`RoomXY`] coordinate pair
+    #[inline]
+    pub fn xy(self) -> RoomXY {
+        // SAFETY: packed always contains a valid pair
+        unsafe { RoomXY::unchecked_new((self.packed >> 8 & 0xFF) as u8, (self.packed & 0xFF) as u8) }
     }
 
     #[inline]

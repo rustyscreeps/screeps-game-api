@@ -39,7 +39,7 @@ pub mod traits;
 pub mod containers;
 
 pub use crate::{
-    constants::*, enums::*, game::*, local::*, objects::*, pathfinder::*, raw_memory::*, traits::*,
+    constants::*, containers::*, enums::*, game::*, local::*, objects::*, pathfinder::*, raw_memory::*, traits::*,
 };
 
 #[cfg(feature = "enable-inter-shard-memory")]

@@ -15,6 +15,7 @@ extern "C" {
     /// world.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room)
+    #[derive(Clone)]
     pub type Room;
 
     /// The [`StructureController`] for the room, or `None` in rooms that cannot

@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::convert::TryInto;
 use std::iter::IntoIterator;
 use std::ops::{Index, IndexMut};
 
@@ -99,10 +98,11 @@ impl From<&LocalCostMatrix> for Vec<u8> {
 
 impl From<&CostMatrix> for LocalCostMatrix {
     fn from(js_matrix: &CostMatrix) -> Self {
-        let array = js_matrix.get_bits();
+        let mut bits = [0; ROOM_AREA];
+        js_matrix.get_bits().copy_to(&mut bits);
 
         LocalCostMatrix {
-            bits: array.to_vec().try_into().expect(format!("JS CostMatrix was not length {}.", ROOM_AREA).as_str()),
+            bits,
         }
     }
 }
