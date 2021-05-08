@@ -255,18 +255,18 @@ impl Position {
     }
 
     #[inline]
-    pub fn packed_repr(self) -> i32 {
-        self.packed as i32
+    pub fn packed_repr(self) -> u32 {
+        self.packed
     }
 
     #[inline]
-    pub fn from_packed(packed: i32) -> Self {
+    pub fn from_packed(packed: u32) -> Self {
         let x = packed >> 8 & 0xFF;
         let y = packed & 0xFF;
-        assert!(x < ROOM_SIZE as i32, "out of bounds x: {}", x);
-        assert!(y < ROOM_SIZE as i32, "out of bounds y: {}", y);
+        assert!(x < ROOM_SIZE as u32, "out of bounds x: {}", x);
+        assert!(y < ROOM_SIZE as u32, "out of bounds y: {}", y);
         Position {
-            packed: packed as u32,
+            packed: packed,
         }
     }
 
@@ -426,7 +426,7 @@ mod serde {
             if deserializer.is_human_readable() {
                 ReadableFormat::deserialize(deserializer).map(Into::into)
             } else {
-                i32::deserialize(deserializer).map(Position::from_packed)
+                u32::deserialize(deserializer).map(Position::from_packed)
             }
         }
     }
@@ -436,20 +436,21 @@ mod serde {
 mod test {
     use super::{Position, RoomCoordinate};
 
-    fn gen_test_positions() -> Vec<(i32, (RoomCoordinate, RoomCoordinate, &'static str))> {
+    fn gen_test_positions() -> Vec<(u32, (RoomCoordinate, RoomCoordinate, &'static str))> {
         unsafe { vec![
-            (-2122440404i32, (RoomCoordinate::unchecked_new(33), RoomCoordinate::unchecked_new(44), "E1N1")),
-            (-1803615720i32, (RoomCoordinate::unchecked_new(2), RoomCoordinate::unchecked_new(24), "E20N0")),
-            (2139029504i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0N0")),
-            (-2139160576i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0N0")),
-            (2139095040i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0S0")),
-            (-2139095040i32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0S0")),
-            (1285i32, (RoomCoordinate::unchecked_new(5), RoomCoordinate::unchecked_new(5), "sim")),
+            (2172526892u32, (RoomCoordinate::unchecked_new(33), RoomCoordinate::unchecked_new(44), "E1N1")),
+            (2491351576u32, (RoomCoordinate::unchecked_new(2), RoomCoordinate::unchecked_new(24), "E20N0")),
+            (2139029504u32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0N0")),
+            (2155806720u32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0N0")),
+            (2139095040u32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0S0")),
+            (2155872256u32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0S0")),
+            (1285u32, (RoomCoordinate::unchecked_new(5), RoomCoordinate::unchecked_new(5), "sim")),
+            (2021333800u32, (RoomCoordinate::unchecked_new(27), RoomCoordinate::unchecked_new(40), "W7N4")),
         ] }
     }
 
     #[test]
-    fn from_i32_accurate() {
+    fn from_u32_accurate() {
         for (packed, (x, y, name)) in gen_test_positions().iter().copied() {
             let pos = Position::from_packed(packed);
             assert_eq!(pos.x(), x);

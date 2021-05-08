@@ -1,8 +1,4 @@
-use crate::{
-    JsContainerFromValue,
-    constants::Color,
-    objects::{RoomObject, RoomPosition}
-};
+use crate::{constants::Color, containers::JsContainerFromValue, objects::{RoomObject, RoomPosition}};
 use js_sys::{JsString};
 use wasm_bindgen::{JsCast, prelude::*};
 
