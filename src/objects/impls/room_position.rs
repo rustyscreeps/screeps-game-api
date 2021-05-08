@@ -58,13 +58,13 @@ extern "C" {
     // todo, get this as native
     /// Gets the efficient internal i32 representation of the position.
     #[wasm_bindgen(method, getter = __packedPos)]
-    pub fn packed(this: &RoomPosition) -> i32;
+    pub fn packed(this: &RoomPosition) -> u32;
 
     // todo, as native
     /// Sets the position to a new one by passing an i32 that represents a
     /// packed position.
     #[wasm_bindgen(method, setter = __packedPos)]
-    pub fn set_packed(this: &RoomPosition, val: i32);
+    pub fn set_packed(this: &RoomPosition, val: u32);
 
     /// Creates a [`ConstructionSite`] at this position. If it's a
     /// [`StructureSpawn`], a name can optionally be assigned for the structure.
