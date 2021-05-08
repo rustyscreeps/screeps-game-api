@@ -1,6 +1,6 @@
-use crate::{constants::{ReturnCode, StructureType}, objects::{Owner, RoomObject}, prelude::*};
+use crate::{constants::{ReturnCode, StructureType}, containers::JsContainerFromValue, objects::{Owner, RoomObject}, prelude::*};
 use js_sys::{JsString};
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, prelude::*};
 
 #[wasm_bindgen]
 extern "C" {
@@ -61,5 +61,11 @@ extern "C" {
 impl MaybeHasNativeId for ConstructionSite {
     fn native_id(&self) -> Option<JsString> {
         Self::id_internal(self)
+    }
+}
+
+impl JsContainerFromValue for ConstructionSite {
+    fn from_value(val: JsValue) -> Self {
+        val.unchecked_into()
     }
 }

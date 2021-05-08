@@ -115,12 +115,12 @@ extern "C" {
     pub fn status(this: &JsRoomStatusResult) -> RoomStatus;
 
     #[wasm_bindgen(method, getter = timestamp)]
-    pub fn timestamp(this: &JsRoomStatusResult) -> Option<u64>;
+    pub fn timestamp(this: &JsRoomStatusResult) -> Option<f64>;
 }
 
 pub struct RoomStatusResult {
     status: RoomStatus,
-    timestamp: Option<u64>
+    timestamp: Option<f64>
 }
 
 impl RoomStatusResult {
@@ -128,7 +128,7 @@ impl RoomStatusResult {
         self.status
     }
 
-    pub fn timestamp(&self) -> Option<u64> {
+    pub fn timestamp(&self) -> Option<f64> {
         self.timestamp
     }
 }
