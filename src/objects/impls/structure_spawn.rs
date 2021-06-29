@@ -1,6 +1,6 @@
-use crate::{Part, constants::ReturnCode, objects::{Creep, OwnedStructure, RoomObject, Store, Structure}, prelude::*};
+use crate::{Part, constants::ReturnCode, objects::{Creep, OwnedStructure, RoomObject, Store, Structure}, prelude::*, containers::JsContainerFromValue};
 use js_sys::{Array, JsString, Object};
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, prelude::*};
 
 #[wasm_bindgen]
 extern "C" {
@@ -81,6 +81,12 @@ impl StructureSpawn {
 
         //TODO: wiarchbe: Support options.        
         Self::spawn_creep_internal(self, &body, name, None)
+    }
+}
+
+impl JsContainerFromValue for StructureSpawn {
+    fn from_value(val: JsValue) -> Self {
+        val.unchecked_into()
     }
 }
 
