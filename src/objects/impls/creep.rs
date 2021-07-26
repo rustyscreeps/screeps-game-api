@@ -178,7 +178,7 @@ extern "C" {
     /// Heal a [`Creep`] or [`PowerCreep`] in melee range, including itself.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.heal)
-    #[wasm_bindgen(final, method)]
+    #[wasm_bindgen(final, method, js_name = heal)]
     fn heal_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
     /// Move one square in the specified direction.
