@@ -19,6 +19,8 @@ use crate::{CostMatrix, Position, RoomName, objects::RoomPosition};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use serde::Serialize;
+use serde_wasm_bindgen;
 
 #[wasm_bindgen]
 extern "C" {
@@ -182,6 +184,11 @@ where
     F: FnMut(RoomName) -> MultiRoomCostResult,
 {
     room_callback: F,
+    inner: InnerSearchOptions,
+}
+
+#[derive(Default, Clone, Serialize)]
+struct InnerSearchOptions {
     plain_cost: Option<u8>,
     swamp_cost: Option<u8>,
     flee: Option<bool>,
@@ -194,6 +201,9 @@ where
 impl<F> SearchOptions<F> where F: FnMut(RoomName) -> MultiRoomCostResult,
 {
     pub(crate) fn as_js_options<R>(self, callback: impl Fn(&JsSearchOptions) -> R) -> R {
+        // Serialize the inner options into a JsValue, then cast.
+        let js_options: JsSearchOptions = serde_wasm_bindgen::to_value(&self.inner).expect("Unable to serialize search options.").unchecked_into();
+
         let mut raw_callback = self.room_callback;
 
         let mut owned_callback = move |room: RoomName| -> JsValue {
@@ -224,41 +234,7 @@ impl<F> SearchOptions<F> where F: FnMut(RoomName) -> MultiRoomCostResult,
     
         let closure = Closure::wrap(boxed_callback);
 
-        //
-        // Create JS object and set properties.
-        //
-    
-        let js_options = JsSearchOptions::new();
-
         js_options.room_callback(&closure);
-
-        if let Some(plain_cost) = self.plain_cost {
-            js_options.plain_cost(plain_cost);
-        }
-
-        if let Some(swamp_cost) = self.swamp_cost {
-            js_options.swamp_cost(swamp_cost);
-        }
-        
-        if let Some(flee) = self.flee {
-            js_options.flee(flee);
-        }
-        
-        if let Some(max_ops) = self.max_ops {
-            js_options.max_ops(max_ops);
-        }
-        
-        if let Some(max_rooms) = self.max_rooms {
-            js_options.max_rooms(max_rooms);
-        }
-        
-        if let Some(max_cost) = self.max_cost {
-            js_options.max_cost(max_cost);
-        }
-        
-        if let Some(heuristic_weight) = self.heuristic_weight {
-            js_options.heuristic_weight(heuristic_weight);
-        }
 
         callback(&js_options)
     }
@@ -272,21 +248,8 @@ impl Default for SearchOptions<fn(RoomName) -> MultiRoomCostResult> {
 
         SearchOptions {
             room_callback: cost_matrix,
-            plain_cost: None,
-            swamp_cost: None,
-            flee: None,
-            max_ops: None,
-            max_rooms: None,
-            max_cost: None,
-            heuristic_weight: None,
+            inner: Default::default(),
         }
-    }
-}
-
-impl SearchOptions<fn(RoomName) -> MultiRoomCostResult> {
-    #[inline]
-    pub fn new() -> Self {
-        Self::default()
     }
 }
 
@@ -294,79 +257,70 @@ impl<F> SearchOptions<F>
 where
     F: FnMut(RoomName) -> MultiRoomCostResult,
 {
+    #[inline]
+    pub fn new(room_callback: F) -> Self {
+        SearchOptions {
+            room_callback,
+            inner: Default::default(),
+        }
+    }
+
     pub fn room_callback<F2>(self, room_callback: F2) -> SearchOptions<F2>
     where
         F2: FnMut(RoomName) -> MultiRoomCostResult,
     {
-        let SearchOptions {
-            room_callback: _,
-            plain_cost,
-            swamp_cost,
-            flee,
-            max_ops,
-            max_rooms,
-            max_cost,
-            heuristic_weight,
-        } = self;
-
         SearchOptions {
             room_callback,
-            plain_cost,
-            swamp_cost,
-            flee,
-            max_ops,
-            max_rooms,
-            max_cost,
-            heuristic_weight,
+            inner: self.inner,
         }
     }
 
     /// Sets plain cost - default `1`.
     #[inline]
     pub fn plain_cost(mut self, cost: u8) -> Self {
-        self.plain_cost = Some(cost);
+        self.inner.plain_cost = Some(cost);
         self
     }
 
     /// Sets swamp cost - default `5`.
     #[inline]
     pub fn swamp_cost(mut self, cost: u8) -> Self {
-        self.swamp_cost = Some(cost);
+        self.inner.swamp_cost = Some(cost);
         self
     }
 
     /// Sets whether this is a flee search - default `false`.
     #[inline]
     pub fn flee(mut self, flee: bool) -> Self {
-        self.flee = Some(flee);
+        self.inner.flee = Some(flee);
         self
     }
 
     /// Sets maximum ops - default `2000`.
     #[inline]
     pub fn max_ops(mut self, ops: u32) -> Self {
-        self.max_ops = Some(ops);
+        self.inner.max_ops = Some(ops);
         self
     }
 
     /// Sets maximum rooms - default `16`, max `16`.
     #[inline]
     pub fn max_rooms(mut self, rooms: u8) -> Self {
-        self.max_rooms = Some(rooms);
+        self.inner.max_rooms = Some(rooms);
         self
     }
 
     /// Sets maximum path cost - default `f64::Infinity`.
     #[inline]
     pub fn max_cost(mut self, cost: f64) -> Self {
-        self.max_cost = Some(cost);
+        self.inner.max_cost = Some(cost);
         self
     }
 
     /// Sets heuristic weight - default `1.2`.
     #[inline]
     pub fn heuristic_weight(mut self, weight: f64) -> Self {
-        self.heuristic_weight = Some(weight);
+        self.inner.heuristic_weight = Some(weight);
         self
     }
 }
