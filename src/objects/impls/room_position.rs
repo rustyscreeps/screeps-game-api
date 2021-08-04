@@ -1,6 +1,12 @@
 use std::convert::TryInto;
 
-use crate::{LookConstant, RoomName, constants::{Color, Direction, Look, ReturnCode, StructureType}, local::Position, prelude::*, prototypes::ROOM_POSITION_PROTOTYPE};
+use crate::{
+    constants::{Color, Direction, Look, ReturnCode, StructureType},
+    local::Position,
+    prelude::*,
+    prototypes::ROOM_POSITION_PROTOTYPE,
+    Find, FindConstant, LookConstant, RoomName,
+};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
@@ -103,9 +109,9 @@ extern "C" {
     ///
     /// [`Flag`]: crate::objects::Flag
     #[wasm_bindgen(method, js_name = findClosestByPath)]
-    pub fn find_closest_by_path(
+    pub fn find_closest_by_path_internal(
         this: &RoomPosition,
-        goal: &JsValue,
+        goal: Find,
         options: Option<&Object>,
     ) -> Option<Object>;
 
@@ -116,9 +122,9 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByRange)
     #[wasm_bindgen(method, js_name = findClosestByRange)]
-    pub fn find_closest_by_range(
+    pub fn find_closest_by_range_internal(
         this: &RoomPosition,
-        goal: &JsValue,
+        goal: Find,
         options: Option<&Object>,
     ) -> Option<Object>;
 
@@ -129,12 +135,12 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findInRange)
     #[wasm_bindgen(method, js_name = findInRange)]
-    pub fn find_in_range(
+    pub fn find_in_range_internal(
         this: &RoomPosition,
-        goal: &JsValue,
+        goal: Find,
         range: u8,
         options: Option<&Object>,
-    ) -> Array;
+    ) -> Option<Array>;
 
     // todo FindPathOptions
     /// Find a path from this position to a position or room object, with an
@@ -237,11 +243,41 @@ impl RoomPosition {
     }
 
     pub fn room_name(&self) -> RoomName {
-        Self::room_name_internal(self).try_into().expect("expected parseable room name")
+        Self::room_name_internal(self)
+            .try_into()
+            .expect("expected parseable room name")
     }
 
-    pub fn look_for<T>(&self, _ty: T) -> Vec<T::Item> where T: LookConstant {
+    pub fn look_for<T>(&self, _ty: T) -> Vec<T::Item>
+    where
+        T: LookConstant,
+    {
         self.look_for_internal(T::look_code())
+            .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
+            .unwrap_or_else(Vec::new)
+    }
+
+    pub fn find_closest_by_path<T>(&self, find: T) -> Option<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_closest_by_path_internal(find.find_code(), None)
+            .map(|reference| T::convert_and_check_item(reference.into()))
+    }
+
+    pub fn find_closest_by_range<T>(&self, find: T) -> Option<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_closest_by_range_internal(find.find_code(), None)
+            .map(|reference| T::convert_and_check_item(reference.into()))
+    }
+
+    pub fn find_in_range<T>(&self, find: T, range: u8) -> Vec<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_in_range_internal(find.find_code(), range, None)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
             .unwrap_or_else(Vec::new)
     }
@@ -251,7 +287,7 @@ impl Clone for RoomPosition {
     fn clone(&self) -> Self {
         let new_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
         new_pos.set_packed(self.packed());
-        new_pos        
+        new_pos
     }
 }
 
