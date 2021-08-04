@@ -183,11 +183,11 @@ pub struct SearchOptions<F>
 where
     F: FnMut(RoomName) -> MultiRoomCostResult,
 {
-    room_callback: F,
+    callback: F,
     inner: InnerSearchOptions,
 }
 
-#[derive(Default, Clone, Serialize)]
+#[derive(Default, Serialize)]
 struct InnerSearchOptions {
     plain_cost: Option<u8>,
     swamp_cost: Option<u8>,
@@ -200,39 +200,22 @@ struct InnerSearchOptions {
 
 impl<F> SearchOptions<F> where F: FnMut(RoomName) -> MultiRoomCostResult,
 {
-    pub(crate) fn as_js_options<R>(self, callback: impl Fn(&JsSearchOptions) -> R) -> R {
+    pub(crate) fn as_js_options<R>(mut self, callback: impl Fn(&JsSearchOptions) -> R) -> R {
         // Serialize the inner options into a JsValue, then cast.
         let js_options: JsSearchOptions = serde_wasm_bindgen::to_value(&self.inner).expect("Unable to serialize search options.").unchecked_into();
 
-        let mut raw_callback = self.room_callback;
-
-        let mut owned_callback = move |room: RoomName| -> JsValue {
-            raw_callback(room).into()
-        };
-    
-        //
-        // Type erased and boxed callback: no longer a type specific to the closure
-        // passed in, now unified as &Fn
-        //
-
-        let callback_type_erased: &mut (dyn FnMut(RoomName) -> JsValue) = &mut owned_callback;
-    
-        // Overwrite lifetime of reference so it can be passed to javascript.
-        // It's now pretending to be static data. This should be entirely safe
-        // because we control the only use of it and it remains valid during the
-        // pathfinder callback. This transmute is necessary because "some lifetime
-        // above the current scope but otherwise unknown" is not a valid lifetime.
-        //
-
-        let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName) -> JsValue) = unsafe { std::mem::transmute(callback_type_erased) };    
-    
-        let boxed_callback = Box::new(move |room: JsString| -> JsValue {
+        let boxed_callback: Box<dyn FnMut(JsString) -> JsValue> = Box::new(move |room| {
             let room = room.try_into().expect("expected room name in room callback");
+            (self.callback)(room).into()
+        });
 
-            callback_lifetime_erased(room)
-        }) as Box<dyn FnMut(JsString) -> JsValue>;
+        // SAFETY
+        //
+        // self.callback is valid during the whole lifetime of the as_js_options call, and this Box
+        // is dropped before the call finishes without the contents being held on to by JS.
+        let boxed_callback_lifetime_erased: Box<dyn 'static + FnMut(JsString) -> JsValue> = unsafe { std::mem::transmute(boxed_callback) };
     
-        let closure = Closure::wrap(boxed_callback);
+        let closure = Closure::wrap(boxed_callback_lifetime_erased);
 
         js_options.room_callback(&closure);
 
@@ -247,7 +230,7 @@ impl Default for SearchOptions<fn(RoomName) -> MultiRoomCostResult> {
         }
 
         SearchOptions {
-            room_callback: cost_matrix,
+            callback: cost_matrix,
             inner: Default::default(),
         }
     }
@@ -258,19 +241,19 @@ where
     F: FnMut(RoomName) -> MultiRoomCostResult,
 {
     #[inline]
-    pub fn new(room_callback: F) -> Self {
+    pub fn new(callback: F) -> Self {
         SearchOptions {
-            room_callback,
+            callback,
             inner: Default::default(),
         }
     }
 
-    pub fn room_callback<F2>(self, room_callback: F2) -> SearchOptions<F2>
+    pub fn room_callback<F2>(self, callback: F2) -> SearchOptions<F2>
     where
         F2: FnMut(RoomName) -> MultiRoomCostResult,
     {
         SearchOptions {
-            room_callback,
+            callback,
             inner: self.inner,
         }
     }
