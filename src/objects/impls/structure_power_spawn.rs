@@ -28,7 +28,7 @@ extern "C" {
     ///
     /// [`POWER_SPAWN_ENERGY_RATIO`]:
     /// crate::constants::numbers::POWER_SPAWN_ENERGY_RATIO
-    #[wasm_bindgen(method)]
+    #[wasm_bindgen(method, js_name = processPower)]
     pub fn process_power(this: &StructurePowerSpawn) -> ReturnCode;
 }
 
