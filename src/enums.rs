@@ -3,6 +3,7 @@ use wasm_bindgen::{JsCast, JsValue};
 
 use crate::objects::*;
 use crate::prelude::*;
+use crate::JsContainerFromValue;
 
 #[enum_dispatch(Attackable)]
 pub enum AttackableObject {
@@ -395,6 +396,12 @@ impl From<JsValue> for StructureObject {
         let structure: Structure = reference.unchecked_into();
 
         structure.into()
+    }
+}
+
+impl JsContainerFromValue for StructureObject {
+    fn from_value(val: JsValue) -> Self {
+        Self::from(val)
     }
 }
 
