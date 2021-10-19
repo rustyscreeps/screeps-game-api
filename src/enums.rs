@@ -1,5 +1,6 @@
 use enum_dispatch::enum_dispatch;
 use wasm_bindgen::{JsCast, JsValue};
+use std::convert::TryFrom;
 
 use crate::objects::*;
 use crate::prelude::*;
@@ -402,6 +403,42 @@ impl From<JsValue> for StructureObject {
 impl JsContainerFromValue for StructureObject {
     fn from_value(val: JsValue) -> Self {
         Self::from(val)
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum StoreObjectConversionError {
+    DoesntHaveStore,
+}
+
+impl TryFrom<StructureObject> for StoreObject {
+    type Error = StoreObjectConversionError;
+
+    fn try_from(structure: StructureObject) -> Result<Self, Self::Error> {
+        match structure {
+            StructureObject::StructureContainer(val) => Ok(Self::StructureContainer(val)),
+            StructureObject::StructureExtension(val) => Ok(Self::StructureExtension(val)),
+            StructureObject::StructureFactory(val) => Ok(Self::StructureFactory(val)),
+            StructureObject::StructureLab(val) => Ok(Self::StructureLab(val)),
+            StructureObject::StructureLink(val) => Ok(Self::StructureLink(val)),
+            StructureObject::StructureNuker(val) => Ok(Self::StructureNuker(val)),
+            StructureObject::StructurePowerSpawn(val) => Ok(Self::StructurePowerSpawn(val)),
+            StructureObject::StructureSpawn(val) => Ok(Self::StructureSpawn(val)),
+            StructureObject::StructureStorage(val) => Ok(Self::StructureStorage(val)),
+            StructureObject::StructureTerminal(val) => Ok(Self::StructureTerminal(val)),
+            StructureObject::StructureTower(val) => Ok(Self::StructureTower(val)),
+
+            StructureObject::StructureController(_)
+            | StructureObject::StructureExtractor(_)
+            | StructureObject::StructureInvaderCore(_)
+            | StructureObject::StructureKeeperLair(_)
+            | StructureObject::StructureObserver(_)
+            | StructureObject::StructurePortal(_)
+            | StructureObject::StructurePowerBank(_)
+            | StructureObject::StructureRampart(_)
+            | StructureObject::StructureRoad(_)
+            | StructureObject::StructureWall(_) => Err(StoreObjectConversionError::DoesntHaveStore),
+        }
     }
 }
 
