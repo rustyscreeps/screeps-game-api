@@ -127,6 +127,10 @@ impl SearchResults {
             .map(|p: RoomPosition| p.into())
             .collect()
     }
+
+    pub fn opaque_path(&self) -> Array {
+       self.path_internal()
+    }
 }
 
 pub trait RoomCostResult: Into<JsValue> {}
