@@ -7,10 +7,11 @@ use std::{
     cmp::{Ord, Ordering, PartialOrd},
     fmt,
 };
+use wasm_bindgen::JsValue;
 
 use super::{RoomName, RoomCoordinate, RoomXY, ROOM_SIZE, HALF_WORLD_SIZE};
 
-use crate::{HasPosition, objects::RoomPosition};
+use crate::{HasPosition, FindConstant, objects::RoomPosition};
 
 mod approximate_offsets;
 mod extra_math;
@@ -340,6 +341,18 @@ impl Position {
     pub fn with_room_name(mut self, room_name: RoomName) -> Self {
         self.set_room_name(room_name);
         self
+    } 
+
+    #[inline]
+    pub fn find_closest_by_path<T>(self, ty: T) -> Option<T::Item>
+    where
+        T: FindConstant,
+        <T as FindConstant>::Item: From<JsValue>,
+    {
+        RoomPosition::from(self)
+            .find_closest_by_path(ty.find_code(), None)
+            .map(|obj| JsValue::from(obj).into())
+        
     }
 }
 
