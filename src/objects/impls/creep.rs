@@ -101,7 +101,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.ticksToLive)
     #[wasm_bindgen(method, getter = ticksToLive)]
-    pub fn ticks_to_live(this: &Creep) -> u32;
+    pub fn ticks_to_live(this: &Creep) -> Option<u32>;
 
     /// Attack a target in melee range using a creep's attack parts.
     ///
@@ -418,7 +418,7 @@ impl SharedCreepProperties for Creep {
         Self::saying(self)
     }
 
-    fn ticks_to_live(&self) -> u32 {
+    fn ticks_to_live(&self) -> Option<u32> {
         Self::ticks_to_live(self)
     }
 
