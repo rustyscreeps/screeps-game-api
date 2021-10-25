@@ -3,7 +3,7 @@ name = "screeps-game-api"
 version = "0.10.0"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://docs.rs/screeps-game-api/"
-edition = "2018"
+edition = "2021"
 include = [
     "Cargo.toml",
     "Web.toml",
