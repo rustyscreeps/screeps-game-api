@@ -286,7 +286,7 @@ pub enum StoreObject {
 
 /// Enum used for converting a [`Structure`] into a typed object of its specific
 /// structure type.
-#[enum_dispatch(OwnedStructureProperties)]
+#[enum_dispatch(OwnedStructureProperties, HasId)]
 pub enum OwnedStructureObject {
     StructureController,
     StructureExtension,
