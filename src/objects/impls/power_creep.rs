@@ -136,7 +136,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.ticksToLive)
     #[wasm_bindgen(method, getter = ticksToLive)]
-    pub fn ticks_to_live(this: &PowerCreep) -> u32;
+    pub fn ticks_to_live(this: &PowerCreep) -> Option<u32>;
 
     /// Cancel an a successfully called power creep function from earlier in the
     /// tick, with a [`JsString`] that must contain the JS version of the
@@ -331,7 +331,7 @@ impl SharedCreepProperties for PowerCreep {
         Self::saying(self)
     }
 
-    fn ticks_to_live(&self) -> u32 {
+    fn ticks_to_live(&self) -> Option<u32> {
         Self::ticks_to_live(self)
     }
 

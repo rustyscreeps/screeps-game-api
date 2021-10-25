@@ -1,4 +1,5 @@
 use enum_dispatch::enum_dispatch;
+use std::convert::TryFrom;
 use wasm_bindgen::{JsCast, JsValue};
 use std::convert::TryFrom;
 
@@ -287,7 +288,7 @@ pub enum StoreObject {
 
 /// Enum used for converting a [`Structure`] into a typed object of its specific
 /// structure type.
-#[enum_dispatch(OwnedStructureProperties)]
+#[enum_dispatch(OwnedStructureProperties, HasId)]
 pub enum OwnedStructureObject {
     StructureController,
     StructureExtension,
@@ -392,6 +393,45 @@ pub enum StructureObject {
     StructureWall,
 }
 
+#[enum_dispatch(Transferable)]
+pub enum TransferableObject {
+    StructureExtension,
+    Creep,
+    StructureContainer,
+    StructureFactory,
+    StructureLab,
+    StructureLink,
+    StructureNuker,
+    StructureSpawn,
+    StructureStorage,
+    StructureTower,
+    StructurePowerSpawn,
+    StructureTerminal,
+    PowerCreep,
+}
+
+impl AsRef<RoomObject> for TransferableObject {
+    fn as_ref(&self) -> &RoomObject {
+        use TransferableObject::*;
+
+        match self {
+            StructureExtension(o) => o.as_ref(),
+            Creep(o) => o.as_ref(),
+            StructureContainer(o) => o.as_ref(),
+            StructureFactory(o) => o.as_ref(),
+            StructureLab(o) => o.as_ref(),
+            StructureLink(o) => o.as_ref(),
+            StructureNuker(o) => o.as_ref(),
+            StructureSpawn(o) => o.as_ref(),
+            StructureStorage(o) => o.as_ref(),
+            StructureTower(o) => o.as_ref(),
+            StructurePowerSpawn(o) => o.as_ref(),
+            StructureTerminal(o) => o.as_ref(),
+            PowerCreep(o) => o.as_ref(),
+        }
+    }
+}
+
 impl From<JsValue> for StructureObject {
     fn from(reference: JsValue) -> Self {
         let structure: Structure = reference.unchecked_into();
@@ -403,6 +443,81 @@ impl From<JsValue> for StructureObject {
 impl JsContainerFromValue for StructureObject {
     fn from_value(val: JsValue) -> Self {
         Self::from(val)
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum OwnedStructureConversionError {
+    NotOwnable
+}
+
+impl TryFrom<StructureObject> for OwnedStructureObject {
+    type Error = OwnedStructureConversionError;
+
+    fn try_from(structure: StructureObject) -> Result<Self, Self::Error> {
+        match structure {
+            StructureObject::StructureController(val) => Ok(OwnedStructureObject::StructureController(val)),
+            StructureObject::StructureExtension(val) => Ok(OwnedStructureObject::StructureExtension(val)),
+            StructureObject::StructureExtractor(val) => Ok(OwnedStructureObject::StructureExtractor(val)),
+            StructureObject::StructureFactory(val) => Ok(OwnedStructureObject::StructureFactory(val)),
+            StructureObject::StructureInvaderCore(val) => Ok(OwnedStructureObject::StructureInvaderCore(val)),
+            StructureObject::StructureKeeperLair(val) => Ok(OwnedStructureObject::StructureKeeperLair(val)),
+            StructureObject::StructureLab(val) => Ok(OwnedStructureObject::StructureLab(val)),
+            StructureObject::StructureLink(val) => Ok(OwnedStructureObject::StructureLink(val)),
+            StructureObject::StructureNuker(val) => Ok(OwnedStructureObject::StructureNuker(val)),
+            StructureObject::StructureObserver(val) => Ok(OwnedStructureObject::StructureObserver(val)),
+            StructureObject::StructurePowerSpawn(val) => Ok(OwnedStructureObject::StructurePowerSpawn(val)),
+            StructureObject::StructureRampart(val) => Ok(OwnedStructureObject::StructureRampart(val)),
+            StructureObject::StructureSpawn(val) => Ok(OwnedStructureObject::StructureSpawn(val)),
+            StructureObject::StructureStorage(val) => Ok(OwnedStructureObject::StructureStorage(val)),
+            StructureObject::StructureTerminal(val) => Ok(OwnedStructureObject::StructureTerminal(val)),
+            StructureObject::StructureTower(val) => Ok(OwnedStructureObject::StructureTower(val)),
+            StructureObject::StructureContainer(_)
+            | StructureObject::StructureRoad(_)
+            | StructureObject::StructurePortal(_)
+            | StructureObject::StructurePowerBank(_)
+            | StructureObject::StructureWall(_) => {
+                Err(OwnedStructureConversionError::NotOwnable)
+            }
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum TransferableObjectConversionError {
+    NotTransferable,
+}
+
+impl TryFrom<StructureObject> for TransferableObject {
+    type Error = TransferableObjectConversionError;
+
+    fn try_from(structure: StructureObject) -> Result<Self, Self::Error> {
+        match structure {
+            StructureObject::StructureExtension(val) => Ok(Self::StructureExtension(val)),
+            StructureObject::StructureContainer(val) => Ok(Self::StructureContainer(val)),
+            StructureObject::StructureFactory(val) => Ok(Self::StructureFactory(val)),
+            StructureObject::StructureLab(val) => Ok(Self::StructureLab(val)),
+            StructureObject::StructureLink(val) => Ok(Self::StructureLink(val)),
+            StructureObject::StructureNuker(val) => Ok(Self::StructureNuker(val)),
+            StructureObject::StructureSpawn(val) => Ok(Self::StructureSpawn(val)),
+            StructureObject::StructureStorage(val) => Ok(Self::StructureStorage(val)),
+            StructureObject::StructureTower(val) => Ok(Self::StructureTower(val)),
+            StructureObject::StructurePowerSpawn(val) => Ok(Self::StructurePowerSpawn(val)),
+            StructureObject::StructureTerminal(val) => Ok(Self::StructureTerminal(val)),
+
+            StructureObject::StructureController(_)
+            | StructureObject::StructureExtractor(_)
+            | StructureObject::StructureInvaderCore(_)
+            | StructureObject::StructureKeeperLair(_)
+            | StructureObject::StructureObserver(_)
+            | StructureObject::StructurePortal(_)
+            | StructureObject::StructurePowerBank(_)
+            | StructureObject::StructureRampart(_)
+            | StructureObject::StructureRoad(_)
+            | StructureObject::StructureWall(_) => {
+                Err(TransferableObjectConversionError::NotTransferable)
+            }
+        }
     }
 }
 
@@ -441,6 +556,7 @@ impl TryFrom<StructureObject> for StoreObject {
         }
     }
 }
+
 
 impl From<Structure> for StructureObject {
     fn from(structure: Structure) -> Self {
