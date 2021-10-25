@@ -405,6 +405,43 @@ impl JsContainerFromValue for StructureObject {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
+pub enum OwnedStructureConversionError {
+    NotOwnable
+}
+
+impl TryFrom<StructureObject> for OwnedStructureObject {
+    type Error = OwnedStructureConversionError;
+
+    fn try_from(structure: StructureObject) -> Result<Self, Self::Error> {
+        match structure {
+            StructureObject::StructureController(val) => Ok(OwnedStructureObject::StructureController(val)),
+            StructureObject::StructureExtension(val) => Ok(OwnedStructureObject::StructureExtension(val)),
+            StructureObject::StructureExtractor(val) => Ok(OwnedStructureObject::StructureExtractor(val)),
+            StructureObject::StructureFactory(val) => Ok(OwnedStructureObject::StructureFactory(val)),
+            StructureObject::StructureInvaderCore(val) => Ok(OwnedStructureObject::StructureInvaderCore(val)),
+            StructureObject::StructureKeeperLair(val) => Ok(OwnedStructureObject::StructureKeeperLair(val)),
+            StructureObject::StructureLab(val) => Ok(OwnedStructureObject::StructureLab(val)),
+            StructureObject::StructureLink(val) => Ok(OwnedStructureObject::StructureLink(val)),
+            StructureObject::StructureNuker(val) => Ok(OwnedStructureObject::StructureNuker(val)),
+            StructureObject::StructureObserver(val) => Ok(OwnedStructureObject::StructureObserver(val)),
+            StructureObject::StructurePowerSpawn(val) => Ok(OwnedStructureObject::StructurePowerSpawn(val)),
+            StructureObject::StructureRampart(val) => Ok(OwnedStructureObject::StructureRampart(val)),
+            StructureObject::StructureSpawn(val) => Ok(OwnedStructureObject::StructureSpawn(val)),
+            StructureObject::StructureStorage(val) => Ok(OwnedStructureObject::StructureStorage(val)),
+            StructureObject::StructureTerminal(val) => Ok(OwnedStructureObject::StructureTerminal(val)),
+            StructureObject::StructureTower(val) => Ok(OwnedStructureObject::StructureTower(val)),
+            StructureObject::StructureContainer(_)
+            | StructureObject::StructureRoad(_)
+            | StructureObject::StructurePortal(_)
+            | StructureObject::StructurePowerBank(_)
+            | StructureObject::StructureWall(_) => {
+                Err(OwnedStructureConversionError::NotOwnable)
+            }
+        }
+    }
+}
+
 impl From<Structure> for StructureObject {
     fn from(structure: Structure) -> Self {
         use crate::constants::StructureType::*;
