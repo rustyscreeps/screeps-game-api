@@ -193,7 +193,7 @@ pub trait SharedCreepProperties {
     fn saying(&self) -> Option<JsString>;
 
     /// The number of ticks the creep has left to live.
-    fn ticks_to_live(&self) -> u32;
+    fn ticks_to_live(&self) -> Option<u32>;
 
     /// Cancel an a successfully called creep function from earlier in the tick,
     /// with a [`JsString`] that must contain the JS version of the function
