@@ -1,7 +1,6 @@
 use enum_dispatch::enum_dispatch;
 use std::convert::TryFrom;
 use wasm_bindgen::{JsCast, JsValue};
-use std::convert::TryFrom;
 
 use crate::objects::*;
 use crate::prelude::*;
