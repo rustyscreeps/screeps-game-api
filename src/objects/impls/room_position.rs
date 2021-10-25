@@ -1,6 +1,6 @@
 use std::convert::TryInto;
 
-use crate::{LookConstant, RoomName, constants::{Color, Direction, Look, ReturnCode, StructureType}, local::Position, prelude::*, prototypes::ROOM_POSITION_PROTOTYPE};
+use crate::{LookConstant, Find, RoomName, constants::{Color, Direction, Look, ReturnCode, StructureType}, local::Position, prelude::*, prototypes::ROOM_POSITION_PROTOTYPE};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
@@ -105,7 +105,7 @@ extern "C" {
     #[wasm_bindgen(method, js_name = findClosestByPath)]
     pub fn find_closest_by_path(
         this: &RoomPosition,
-        goal: &JsValue,
+        goal: Find,
         options: Option<&Object>,
     ) -> Option<Object>;
 
