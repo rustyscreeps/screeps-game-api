@@ -35,6 +35,15 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
 pub struct RoomCoordinate(u8);
 
 impl RoomCoordinate {
+    #[inline]
+    pub const fn new(coord: u8) -> Result<Self, OutOfBoundsError> {
+	if coord < ROOM_SIZE {
+            Ok(RoomCoordinate(coord))
+        } else {
+            Err(OutOfBoundsError(coord))
+        }
+    }
+
     // # Safety
     // Calling this method with `coord >= ROOM_SIZE` can result in undefined behaviour when the
     // resulting `RoomCoordinate` is used.
@@ -90,11 +99,7 @@ impl TryFrom<u8> for RoomCoordinate {
     type Error = OutOfBoundsError;
 
     fn try_from(coord: u8) -> Result<Self, Self::Error> {
-        if coord < ROOM_SIZE {
-            Ok(RoomCoordinate(coord))
-        } else {
-            Err(OutOfBoundsError(coord))
-        }
+        RoomCoordinate::new(coord)
     }
 }
 
