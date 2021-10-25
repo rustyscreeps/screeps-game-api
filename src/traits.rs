@@ -273,6 +273,7 @@ pub trait HasEnergyForSpawn: HasStore + AsRef<RoomObject> {}
 ///
 /// The reference returned from `AsRef<RoomObject>::as_ref` must be a valid
 /// target for `Creep.transfer`.
+#[enum_dispatch]
 pub trait Transferable: AsRef<RoomObject> {}
 
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
