@@ -1,6 +1,9 @@
 use std::{fmt, str::FromStr};
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{Error, Visitor},
+    Deserialize, Serialize,
+};
 
 use super::errors::RawObjectIdParseError;
 
@@ -28,8 +31,7 @@ const MAX_PACKED_VAL: u128 = (1 << (32 * 3)) - 1;
 /// [`Ord`]: std::cmp::Ord
 /// [`PartialOrd`]: std::cmp::PartialOrd
 /// [`ObjectId`]: super::ObjectId
-#[derive(Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
-#[serde(transparent)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct RawObjectId {
     packed: u128,
 }
@@ -51,6 +53,43 @@ impl fmt::Display for RawObjectId {
             self.packed >> 32,
             width = (self.packed as u32) as usize
         )
+    }
+}
+
+impl Serialize for RawObjectId {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.packed.to_string())
+    }
+}
+
+struct U128Visitor;
+
+impl<'de> Visitor<'de> for U128Visitor {
+    type Value = u128;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a string representing a u128")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: Error,
+    {
+        u128::from_str(v).map_err(|e| E::custom(format!("Could not parse u128: {}", e)))
+    }
+}
+
+impl<'de> Deserialize<'de> for RawObjectId {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        deserializer
+            .deserialize_str(U128Visitor)
+            .map(|packed| RawObjectId { packed })
     }
 }
 
