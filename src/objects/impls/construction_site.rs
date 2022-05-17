@@ -59,7 +59,7 @@ extern "C" {
 }
 
 impl MaybeHasNativeId for ConstructionSite {
-    fn native_id(&self) -> Option<JsString> {
+    fn try_native_id(&self) -> Option<JsString> {
         Self::id_internal(self)
     }
 }

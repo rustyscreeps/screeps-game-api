@@ -286,7 +286,7 @@ impl HasHits for PowerCreep {
 }
 
 impl MaybeHasNativeId for PowerCreep {
-    fn native_id(&self) -> Option<JsString> {
+    fn try_native_id(&self) -> Option<JsString> {
         Self::id_internal(self)
     }
 }

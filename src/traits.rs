@@ -4,7 +4,7 @@ use enum_dispatch::enum_dispatch;
 use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
-use crate::{ObjectId, Position, RawObjectId, RoomName, SingleRoomCostResult, constants::*, enums::*, objects::*};
+use crate::{JsObjectId, ObjectId, Position, RawObjectId, RoomName, SingleRoomCostResult, constants::*, enums::*, objects::*};
 
 #[enum_dispatch]
 pub trait HasHits {
@@ -32,11 +32,11 @@ pub trait HasNativeId {
 }
 
 pub trait MaybeHasNativeId {
-    fn native_id(&self) -> Option<JsString>;
+    fn try_native_id(&self) -> Option<JsString>;
 }
 
 impl<T> MaybeHasNativeId for T where T: HasNativeId {
-    fn native_id(&self) -> Option<JsString> {
+    fn try_native_id(&self) -> Option<JsString> {
         Some(<Self as HasNativeId>::native_id(&self))
     }
 }
@@ -65,17 +65,27 @@ pub trait HasTypedId<T> {
     /// Object ID of the object, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks.
     fn id(&self) -> ObjectId<T>;
+
+    fn js_id(&self) -> JsObjectId<T>;
 }
 
-impl<T> HasTypedId<T> for T where T: HasId {
+impl<T> HasTypedId<T> for T where T: HasId + HasNativeId {
     fn id(&self) -> ObjectId<T> {
         self.raw_id().into()
     }
+
+    fn js_id(&self) -> JsObjectId<T> {
+        self.native_id().into()
+    }
 }
 
-impl<T> HasTypedId<T> for &T where T: HasId {
+impl<T> HasTypedId<T> for &T where T: HasId + HasNativeId {
     fn id(&self) -> ObjectId<T> {
         self.raw_id().into()
+    }
+
+    fn js_id(&self) -> JsObjectId<T> {
+        self.native_id().into()
     }
 }
 
@@ -90,7 +100,7 @@ pub trait MaybeHasId {
 impl<T> MaybeHasId for T where T: MaybeHasNativeId {
     fn try_raw_id(&self) -> Option<RawObjectId> {
         self
-            .native_id()
+            .try_native_id()
             .map(String::from)
             .map(|id| RawObjectId::from_str(&id).expect("expected object ID to be parseable"))
     }
@@ -131,7 +141,7 @@ pub trait HasPosition {
 pub trait MaybeHasPosition {
     /// Position of the object, or `None` if the object is a power creep not
     /// spawned on the current shard.
-    fn pos(&self) -> Option<Position>;
+    fn try_pos(&self) -> Option<Position>;
 }
 
 #[enum_dispatch]

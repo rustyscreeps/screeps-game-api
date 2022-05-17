@@ -382,7 +382,7 @@ impl HasHits for Creep {
 }
 
 impl MaybeHasNativeId for Creep {
-    fn native_id(&self) -> Option<JsString> {
+    fn try_native_id(&self) -> Option<JsString> {
         Self::id_internal(self)
     }
 }
