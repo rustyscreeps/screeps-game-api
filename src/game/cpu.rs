@@ -9,11 +9,11 @@ use crate::{constants::ReturnCode, containers::JsHashMap};
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_name = "cpu")]
-    pub type Cpu;
+    type Cpu;
 
     /// Your assigned CPU for the current shard.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = limit)]
-    pub fn limit() -> u32;
+    fn limit() -> u32;
 
     /// The amount of CPU available for execution this tick, which consists of
     /// your [`CpuInfo::limit`] and [`CpuInfo::bucket`] up to a maximum of 500
@@ -21,45 +21,45 @@ extern "C" {
     ///
     /// [`CPU_TICK_LIMIT_MAX`]: crate::constants::extra::CPU_TICK_LIMIT_MAX
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = tickLimit)]
-    pub fn tick_limit() -> f64;
+    fn tick_limit() -> f64;
 
     /// The amount of CPU that has accumulated in your bucket.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = bucket)]
-    pub fn bucket() -> i32;
+    fn bucket() -> i32;
 
     /// Your assigned CPU limits for each shard in an [`Object`], with shard
     /// names in [`JsString`] form as keys and numbers as values. This is the
     /// same format accepted by [`CpuInfo::set_shard_limits`].
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = shardLimits)]
-    pub fn shard_limits() -> Object;
+    fn shard_limits() -> Object;
 
     /// Whether your account is unlocked to have full CPU.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = unlocked)]
-    pub fn unlocked() -> bool;
+    fn unlocked() -> bool;
 
     /// If your account has been unlocked for a limited time, contains the time
     /// it's unlocked until in milliseconds since epoch.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = unlockedTime)]
-    pub fn unlocked_time() -> Option<u64>;
+    fn unlocked_time() -> Option<u64>;
 
     /// Get information about your script's memory heap usage.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = getHeapStatistics)]
-    pub fn get_heap_statistics() -> HeapStatistics;
+    fn get_heap_statistics() -> HeapStatistics;
 
     /// Get the amount of CPU time used for execution so far this tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getUsed)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = getUsed)]
-    pub fn get_used() -> f64;
+    fn get_used() -> f64;
 
     /// Stop execution of your script, starting with a fresh environment next
     /// tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.halt)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = halt)]
-    pub fn halt();
+    fn halt();
 
     /// Sets new shard limits for your script in an [`Object`], with shard names
     /// in [`JsString`] form as keys and numbers as values. This is the same
@@ -67,13 +67,13 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = setShardLimits)]
-    pub fn set_shard_limits(limits: &Object) -> ReturnCode;
+    fn set_shard_limits(limits: &Object) -> ReturnCode;
 
     /// Consume a [`CpuUnlock`] to unlock your full CPU for 24 hours.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.unlock)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = unlock)]
-    pub fn unlock() -> ReturnCode;
+    fn unlock() -> ReturnCode;
 
     /// Generate a [`Pixel`], consuming [`PIXEL_COST`] CPU from your bucket.
     ///
@@ -84,7 +84,7 @@ extern "C" {
     #[cfg(feature = "enable-generate-pixel")]
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-generate-pixel")))]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = generatePixel)]
-    pub fn generate_pixel() -> ReturnCode;
+    fn generate_pixel() -> ReturnCode;
 }
 
 pub fn limit() -> u32 {

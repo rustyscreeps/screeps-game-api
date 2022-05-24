@@ -8,20 +8,20 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_name = "gcl")]
-    pub type Gcl;
+    type Gcl;
 
     /// Your current Global Control Level, which determines the number of rooms
     /// you are allowed to claim.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = level)]
-    pub fn level() -> u32;
+    fn level() -> u32;
 
     /// Your progress toward the next Global Control Level.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = progress)]
-    pub fn progress() -> f64;
+    fn progress() -> f64;
 
     /// Total progress needed to reach the next Global Control Level.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = progressTotal)]
-    pub fn progress_total() -> f64;
+    fn progress_total() -> f64;
 }
 
 pub fn level() -> u32 {
@@ -31,7 +31,6 @@ pub fn level() -> u32 {
 pub fn progress() -> f64 {
     Gcl::progress()
 }
-
 
 pub fn progress_total() -> f64 {
     Gcl::progress_total()

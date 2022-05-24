@@ -23,7 +23,7 @@ use crate::objects::RoomObject;
 
 #[wasm_bindgen]
 extern "C" {
-    pub type Game;
+    type Game;
 
     /// Get an [`Object`] with all of your construction sites, which contains
     /// object ids in [`JsString`] form as keys and [`ConstructionSite`] values.

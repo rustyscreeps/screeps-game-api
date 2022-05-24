@@ -4,6 +4,7 @@
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};
+use serde_json;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
@@ -347,101 +348,31 @@ pub enum ResourceType {
     SymbolTaw = "symbol_taw",
 }
 
-// todo, can we make this an enum wrapper around both normal and inter-shard types before instead of this?
-// or at least add fns to convert back and forth
-/// Translates all resource types that can be used on the market
-/// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
-#[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+/// Translates all resource types that can be used on the market.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum MarketResourceType {
-    Energy = "energy",
-    Power = "power",
-    Hydrogen = "H",
-    Oxygen = "O",
-    Utrium = "U",
-    Lemergium = "L",
-    Keanium = "K",
-    Zynthium = "Z",
-    Catalyst = "X",
-    Ghodium = "G",
-    Silicon = "silicon",
-    Metal = "metal",
-    Biomass = "biomass",
-    Mist = "mist",
-    Hydroxide = "OH",
-    ZynthiumKeanite = "ZK",
-    UtriumLemergite = "UL",
-    UtriumHydride = "UH",
-    UtriumOxide = "UO",
-    KeaniumHydride = "KH",
-    KeaniumOxide = "KO",
-    LemergiumHydride = "LH",
-    LemergiumOxide = "LO",
-    ZynthiumHydride = "ZH",
-    ZynthiumOxide = "ZO",
-    GhodiumHydride = "GH",
-    GhodiumOxide = "GO",
-    UtriumAcid = "UH2O",
-    UtriumAlkalide = "UHO2",
-    KeaniumAcid = "KH2O",
-    KeaniumAlkalide = "KHO2",
-    LemergiumAcid = "LH2O",
-    LemergiumAlkalide = "LHO2",
-    ZynthiumAcid = "ZH2O",
-    ZynthiumAlkalide = "ZHO2",
-    GhodiumAcid = "GH2O",
-    GhodiumAlkalide = "GHO2",
-    CatalyzedUtriumAcid = "XUH2O",
-    CatalyzedUtriumAlkalide = "XUHO2",
-    CatalyzedKeaniumAcid = "XKH2O",
-    CatalyzedKeaniumAlkalide = "XKHO2",
-    CatalyzedLemergiumAcid = "XLH2O",
-    CatalyzedLemergiumAlkalide = "XLHO2",
-    CatalyzedZynthiumAcid = "XZH2O",
-    CatalyzedZynthiumAlkalide = "XZHO2",
-    CatalyzedGhodiumAcid = "XGH2O",
-    CatalyzedGhodiumAlkalide = "XGHO2",
-    Ops = "ops",
-    UtriumBar = "utrium_bar",
-    LemergiumBar = "lemergium_bar",
-    ZynthiumBar = "zynthium_bar",
-    KeaniumBar = "keanium_bar",
-    GhodiumMelt = "ghodium_melt",
-    Oxidant = "oxidant",
-    Reductant = "reductant",
-    Purifier = "purifier",
-    Battery = "battery",
-    Composite = "composite",
-    Crystal = "crystal",
-    Liquid = "liquid",
-    Wire = "wire",
-    Switch = "switch",
-    Transistor = "transistor",
-    Microchip = "microchip",
-    Circuit = "circuit",
-    Device = "device",
-    Cell = "cell",
-    Phlegm = "phlegm",
-    Tissue = "tissue",
-    Muscle = "muscle",
-    Organoid = "organoid",
-    Organism = "organism",
-    Alloy = "alloy",
-    Tube = "tube",
-    Fixtures = "fixtures",
-    Frame = "frame",
-    Hydraulics = "hydraulics",
-    Machine = "machine",
-    Condensate = "condensate",
-    Concentrate = "concentrate",
-    Extract = "extract",
-    Spirit = "spirit",
-    Emanation = "emanation",
-    Essence = "essence",
-    CpuUnlock = "cpuUnlock",
-    Pixel = "pixel",
-    AccessKey = "accessKey",
+    Resource(ResourceType),
+    IntershardResource(IntershardResourceType),
 }
+
+impl wasm_bindgen::convert::FromWasmAbi for MarketResourceType {
+    type Abi = <Vec<u8> as wasm_bindgen::convert::FromWasmAbi>::Abi;
+
+    #[inline]
+    unsafe fn from_abi(js: Self::Abi) -> Self {
+        let resource = String::from_utf8_unchecked(<Vec<u8>>::from_abi(js));
+
+        serde_json::from_str(&resource).expect("Couldn't deserialize market resource, invalid resource type")
+    }
+}
+
+impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
+    fn describe() {
+        wasm_bindgen::describe::inform(wasm_bindgen::describe::STRING);
+    }
+}
+
 
 #[derive(Copy, Clone, Debug)]
 pub enum Boost {

@@ -14,7 +14,7 @@ use crate::{Direction, ReturnCode, RoomName, constants::ExitDirection, container
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_name = "map")]
-    pub type Map;
+    type Map;
 
     /// Get an object with information about the exits from a given room, with
     /// [`JsString`] versions of direction integers as keys and [`JsString`]

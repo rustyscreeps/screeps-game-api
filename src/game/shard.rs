@@ -8,7 +8,7 @@ use js_sys::JsString;
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_name = "shard")]
-    pub type Shard;
+    type Shard;
 
     /// Current shard name.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "shard", static_method_of = Shard, getter, js_name = name)]
@@ -20,7 +20,7 @@ extern "C" {
 
     /// Flag for if this is a public test server or not.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "shard", static_method_of = Shard, getter, js_name = ptr)]
-    pub fn ptr() -> bool;
+    fn ptr() -> bool;
 }
 
 pub fn name() -> String {
