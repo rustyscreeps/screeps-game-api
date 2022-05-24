@@ -1,6 +1,11 @@
-use crate::{constants::{ReturnCode, StructureType}, containers::JsContainerFromValue, objects::{Owner, RoomObject}, prelude::*};
-use js_sys::{JsString};
-use wasm_bindgen::{JsCast, prelude::*};
+use crate::{
+    constants::{ReturnCode, StructureType},
+    containers::JsContainerFromValue,
+    objects::{Owner, RoomObject},
+    prelude::*,
+};
+use js_sys::JsString;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {

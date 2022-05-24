@@ -1,5 +1,10 @@
-use crate::{RoomName, constants::{ResourceType, ReturnCode}, objects::{OwnedStructure, RoomObject, Store, Structure}, prelude::*};
-use js_sys::{JsString};
+use crate::{
+    constants::{ResourceType, ReturnCode},
+    objects::{OwnedStructure, RoomObject, Store, Structure},
+    prelude::*,
+    RoomName,
+};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -50,7 +55,13 @@ impl StructureTerminal {
         let desination = destination.into();
         let description = description.map(JsString::from);
 
-        Self::send_internal(self, resource_type, amount, &desination, description.as_ref())
+        Self::send_internal(
+            self,
+            resource_type,
+            amount,
+            &desination,
+            description.as_ref(),
+        )
     }
 }
 

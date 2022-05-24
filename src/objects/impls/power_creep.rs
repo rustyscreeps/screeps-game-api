@@ -1,7 +1,9 @@
-use crate::{CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult, constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode}, objects::{
-        Owner, Resource, RoomObject, Store, StructureController,
-        StructurePowerSpawn,
-    }, prelude::*};
+use crate::{
+    constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode},
+    objects::{Owner, Resource, RoomObject, Store, StructureController, StructurePowerSpawn},
+    prelude::*,
+    CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult,
+};
 use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
@@ -13,7 +15,8 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject)]
     pub type PowerCreep;
 
-    //TODO: wiarchbe: Come back to this... need a good 'maybe has position' implementation that doesn't conflict with base pos() on RoomObject.
+    //TODO: wiarchbe: Come back to this... need a good 'maybe has position'
+    // implementation that doesn't conflict with base pos() on RoomObject.
     /// Position of the object.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.pos)
@@ -351,18 +354,23 @@ impl SharedCreepProperties for PowerCreep {
         Self::move_by_path(self, path)
     }
 
-    fn move_to<T>(&self, target: T) -> ReturnCode where T: HasPosition {
+    fn move_to<T>(&self, target: T) -> ReturnCode
+    where
+        T: HasPosition,
+    {
         let target: RoomPosition = target.pos().into();
         Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
     }
 
-    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
+    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
+    {
         let target: RoomPosition = target.pos().into();
-        
+
         if let Some(options) = options {
-            options.as_js_options(|js_options| {
-                Self::move_to_internal(self, &target, js_options)
-            })
+            options.as_js_options(|js_options| Self::move_to_internal(self, &target, js_options))
         } else {
             Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
         }
@@ -384,11 +392,17 @@ impl SharedCreepProperties for PowerCreep {
         Self::suicide(self)
     }
 
-    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Transferable {
+    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    where
+        T: Transferable,
+    {
         Self::transfer_internal(self, target.as_ref(), ty, amount)
     }
 
-    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Withdrawable {
+    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    where
+        T: Withdrawable,
+    {
         Self::withdraw_internal(self, target.as_ref(), ty, amount)
     }
 }

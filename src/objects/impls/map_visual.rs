@@ -1,8 +1,8 @@
-use crate::local::{RoomCoordinate, RoomName, Position};
-use serde::Serialize;
+use crate::local::{Position, RoomCoordinate, RoomName};
 use js_sys::JsString;
+use serde::Serialize;
 
-use crate::objects::impls::room_visual::{CircleStyle, LineStyle, RectStyle, PolyStyle, TextStyle};
+use crate::objects::impls::room_visual::{CircleStyle, LineStyle, PolyStyle, RectStyle, TextStyle};
 
 #[derive(Clone, Serialize)]
 pub struct MapCircleData {
@@ -93,7 +93,7 @@ impl MapVisualShape {
             x: center.x(),
             y: center.y(),
             n: center.room_name(),
-            style
+            style,
         })
     }
 
@@ -109,7 +109,12 @@ impl MapVisualShape {
         })
     }
 
-    pub fn rect(top_left: Position, width: u32, height: u32, style: Option<RectStyle>) -> MapVisualShape {
+    pub fn rect(
+        top_left: Position,
+        width: u32,
+        height: u32,
+        style: Option<RectStyle>,
+    ) -> MapVisualShape {
         MapVisualShape::Rect(MapRectData {
             x: top_left.x(),
             y: top_left.y(),
@@ -130,7 +135,7 @@ impl MapVisualShape {
             y: pos.y(),
             n: pos.room_name(),
             text,
-            style
+            style,
         })
     }
 }

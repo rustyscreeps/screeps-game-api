@@ -75,9 +75,9 @@ extern "C" {
 }
 
 impl RawMemory {
-    /// Get a [`JsHashMap<u8, String>`] with all of the segments requested on the previous
-    /// tick, with segment numbers as keys and segment data in [`JsString`] form
-    /// as values.
+    /// Get a [`JsHashMap<u8, String>`] with all of the segments requested on
+    /// the previous tick, with segment numbers as keys and segment data in
+    /// [`JsString`] form as values.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)    
     pub fn segments() -> JsHashMap<u8, String> {
@@ -85,7 +85,11 @@ impl RawMemory {
     }
 
     pub fn set_active_segments(segment_ids: &[u8]) {
-        let segment_ids: Array = segment_ids.iter().map(|s| *s as f64).map(JsValue::from_f64).collect();
+        let segment_ids: Array = segment_ids
+            .iter()
+            .map(|s| *s as f64)
+            .map(JsValue::from_f64)
+            .collect();
 
         RawMemory::set_active_segments_internal(&segment_ids)
     }

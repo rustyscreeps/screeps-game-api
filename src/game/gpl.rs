@@ -10,7 +10,8 @@ extern "C" {
     #[wasm_bindgen(js_name = "gpl")]
     type Gpl;
 
-    /// Your current Global Power Level, which determines power creep development.
+    /// Your current Global Power Level, which determines power creep
+    /// development.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "gpl", static_method_of = Gpl, getter, js_name = level)]
     fn level() -> u32;
 

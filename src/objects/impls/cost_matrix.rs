@@ -1,5 +1,5 @@
-use wasm_bindgen::prelude::*;
 use std::borrow::Borrow;
+use wasm_bindgen::prelude::*;
 
 use crate::{local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
 
@@ -38,7 +38,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.CostMatrix.set)
     #[wasm_bindgen(method)]
-    pub fn set(this: &CostMatrix, x: u8, y: u8, cost: u8); 
+    pub fn set(this: &CostMatrix, x: u8, y: u8, cost: u8);
 
     /// Get the value of a specific position in this [`CostMatrix`].
     ///
@@ -128,8 +128,8 @@ impl CostMatrixSet for CostMatrix {
         D: IntoIterator<Item = B>,
         B: Borrow<(P, V)>,
         P: HasLocalPosition,
-        V: Borrow<u8> {
-
+        V: Borrow<u8>,
+    {
         let matrix_buffer = self.get_bits();
 
         for entry in data.into_iter() {

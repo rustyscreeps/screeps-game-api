@@ -9,7 +9,11 @@ use js_sys::{JsString, Object};
 
 use wasm_bindgen::prelude::*;
 
-use crate::{ConstructionSite, Creep, Flag, PowerCreep, RoomName, StructureObject, StructureSpawn, containers::JsHashMap, local::{JsObjectId, ObjectId, RawObjectId}};
+use crate::{
+    containers::JsHashMap,
+    local::{JsObjectId, ObjectId, RawObjectId},
+    ConstructionSite, Creep, Flag, PowerCreep, RoomName, StructureObject, StructureSpawn,
+};
 
 pub mod cpu;
 pub mod gcl;
@@ -18,8 +22,7 @@ pub mod map;
 pub mod market;
 pub mod shard;
 
-use crate::Room;
-use crate::objects::RoomObject;
+use crate::{objects::RoomObject, Room};
 
 #[wasm_bindgen]
 extern "C" {
@@ -187,7 +190,7 @@ pub fn construction_sites() -> JsHashMap<RawObjectId, ConstructionSite> {
     Game::construction_sites().into()
 }
 
-/// Get an [`JsHashMap<String, Creep>`] with all of your creeps, which contains 
+/// Get an [`JsHashMap<String, Creep>`] with all of your creeps, which contains
 //  creep names in [`String`] form as keys and [`Creep`] objects as values. Note that
 /// newly spawned creeps are immediately added to the hash, but will not
 /// have an id until the following tick.
@@ -209,9 +212,9 @@ pub fn power_creeps() -> JsHashMap<String, PowerCreep> {
 
 //TODO: wiarchbe: Add resource map - needs intershard/market resource types.
 
-/// Get an [`JsHashMap<RoomName, Room>`] with the rooms visible for the current tick, which
-/// contains room names in [`RoomName`] form as keys and [`Room`] objects as
-/// values.
+/// Get an [`JsHashMap<RoomName, Room>`] with the rooms visible for the current
+/// tick, which contains room names in [`RoomName`] form as keys and [`Room`]
+/// objects as values.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
 ///

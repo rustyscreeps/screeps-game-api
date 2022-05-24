@@ -1,8 +1,15 @@
-use std::{cmp::{Ord, Ordering, PartialOrd}, convert::TryFrom, error, fmt::{self, Write}, ops, str::FromStr};
+use std::{
+    cmp::{Ord, Ordering, PartialOrd},
+    convert::TryFrom,
+    error,
+    fmt::{self, Write},
+    ops,
+    str::FromStr,
+};
 
 use arrayvec::ArrayString;
-use wasm_bindgen::{JsCast, JsValue};
 use js_sys::JsString;
+use wasm_bindgen::{JsCast, JsValue};
 
 use crate::containers::{JsContainerFromValue, JsContainerIntoValue};
 
@@ -198,11 +205,10 @@ impl error::Error for RoomNameConversionError {}
 impl fmt::Display for RoomNameConversionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            RoomNameConversionError::InvalidType => write!(
-                f,
-                "got invalid input type to room name conversion"
-            ),
-            RoomNameConversionError::ParseError { err } => err.fmt(f)
+            RoomNameConversionError::InvalidType => {
+                write!(f, "got invalid input type to room name conversion")
+            }
+            RoomNameConversionError::ParseError { err } => err.fmt(f),
         }
     }
 }
@@ -216,7 +222,7 @@ impl TryFrom<JsValue> for RoomName {
             .ok_or(RoomNameConversionError::InvalidType)?;
 
         RoomName::from_str(&val).map_err(|err| RoomNameConversionError::ParseError { err })
-    }    
+    }
 }
 
 impl TryFrom<JsString> for RoomName {

@@ -1,9 +1,14 @@
-use crate::{CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult, constants::{Direction, Part, ResourceType, ReturnCode}, containers::JsContainerFromValue, objects::{
-        ConstructionSite, Owner, Resource, RoomObject, Store, Structure,
-        StructureController,
-    }, prelude::*};
+use crate::{
+    constants::{Direction, Part, ResourceType, ReturnCode},
+    containers::JsContainerFromValue,
+    objects::{
+        ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
+    },
+    prelude::*,
+    CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult,
+};
 use js_sys::{Array, JsString};
-use wasm_bindgen::{JsCast, prelude::*};
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -324,7 +329,7 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn boost(this: &BodyPart) -> Option<ResourceType>;
 
-    #[wasm_bindgen(method, getter = type)]   
+    #[wasm_bindgen(method, getter = type)]
     pub fn part(this: &BodyPart) -> Part;
 
     #[wasm_bindgen(method, getter)]
@@ -332,36 +337,50 @@ extern "C" {
 }
 
 impl Creep {
-    pub fn harvest<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Harvestable {
+    pub fn harvest<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Harvestable,
+    {
         Self::harvest_internal(self, target.as_ref())
     }
 
-    pub fn attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
+    pub fn attack<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Attackable,
+    {
         Self::attack_internal(self, target.as_ref())
     }
 
-    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
+    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Attackable,
+    {
         Self::ranged_attack_internal(self, target.as_ref())
     }
 
-    pub fn dismantle<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Dismantleable {
+    pub fn dismantle<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Dismantleable,
+    {
         Self::dismantle_internal(self, target.as_ref())
-    }    
+    }
 
-    pub fn heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
+    pub fn heal<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Healable,
+    {
         Self::heal_internal(&self, target.as_ref())
     }
 
-    pub fn ranged_heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
+    pub fn ranged_heal<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Healable,
+    {
         Self::ranged_heal_internal(&self, target.as_ref())
     }
 
     pub fn body(&self) -> Vec<BodyPart> {
-        self
-            .body_internal()
-            .iter()
-            .map(BodyPart::from)
-            .collect()
+        self.body_internal().iter().map(BodyPart::from).collect()
     }
 }
 
@@ -438,21 +457,26 @@ impl SharedCreepProperties for Creep {
         Self::move_by_path(self, path)
     }
 
-    fn move_to<T>(&self, target: T) -> ReturnCode where T: HasPosition {
+    fn move_to<T>(&self, target: T) -> ReturnCode
+    where
+        T: HasPosition,
+    {
         let target: RoomPosition = target.pos().into();
         Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
     }
 
-    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
+    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
+    {
         let target: RoomPosition = target.pos().into();
-        
+
         if let Some(options) = options {
-            options.as_js_options(|js_options| {
-                Self::move_to_internal(self, &target, js_options)
-            })
+            options.as_js_options(|js_options| Self::move_to_internal(self, &target, js_options))
         } else {
             Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
-        }        
+        }
     }
 
     fn notify_when_attacked(&self, enabled: bool) -> ReturnCode {
@@ -471,11 +495,17 @@ impl SharedCreepProperties for Creep {
         Self::suicide(self)
     }
 
-    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Transferable {
+    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    where
+        T: Transferable,
+    {
         Self::transfer_internal(self, target.as_ref(), ty, amount)
     }
 
-    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Withdrawable {
+    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    where
+        T: Withdrawable,
+    {
         Self::withdraw_internal(self, target.as_ref(), ty, amount)
     }
 }

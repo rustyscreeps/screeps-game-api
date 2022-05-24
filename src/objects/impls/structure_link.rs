@@ -35,7 +35,11 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLink.transferEnergy)
     #[wasm_bindgen(method, js_name = transferEnergy)]
-    pub fn transfer_energy(this: &StructureLink, target: &StructureLink, amount: Option<u32>) -> ReturnCode;
+    pub fn transfer_energy(
+        this: &StructureLink,
+        target: &StructureLink,
+        amount: Option<u32>,
+    ) -> ReturnCode;
 }
 
 impl HasCooldown for StructureLink {

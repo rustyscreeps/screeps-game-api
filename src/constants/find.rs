@@ -1,12 +1,9 @@
+use crate::{enums::StructureObject, objects::*};
 use wasm_bindgen::prelude::*;
-use crate::{objects::*};
-use crate::enums::StructureObject;
 
 /// Translates `FIND_*` constants.
 #[wasm_bindgen]
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash,
-)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 #[repr(u16)]
 pub enum Find {
     /// Find all exit positions at the top of the room
@@ -75,9 +72,7 @@ pub trait FindConstant {
 /// enum as `find::RoomObject` rather than importing it directly.
 ///
 /// [`RoomObject`]: crate::objects::RoomObject
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash,
-)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 #[repr(i16)]
 pub enum RoomObject {
     Creeps = 101,
@@ -168,9 +163,7 @@ impl FindConstant for RoomObject {
     }
 }
 
-#[derive(
-    Copy, Clone, Debug, PartialEq, Eq, Hash,
-)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 #[repr(i16)]
 pub enum Exit {
     Top = 1,
@@ -214,7 +207,7 @@ impl Into<Find> for Exit {
             Exit::Right => Find::ExitRight,
             Exit::Bottom => Find::ExitBottom,
             Exit::Left => Find::ExitLeft,
-            Exit::All => Find::Exit
+            Exit::All => Find::Exit,
         }
     }
 }
@@ -238,9 +231,9 @@ macro_rules! typesafe_find_constants {
     ) => (
         $(
             #[allow(bad_style)]
-            $vis struct $constant_name;            
+            $vis struct $constant_name;
             impl FindConstant for $constant_name {
-                type Item = $result;               
+                type Item = $result;
 
                 #[inline]
                 fn find_code(&self) -> Find {

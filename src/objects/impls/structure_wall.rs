@@ -1,6 +1,4 @@
-use crate::{
-    objects::{RoomObject, Structure}
-};
+use crate::objects::{RoomObject, Structure};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

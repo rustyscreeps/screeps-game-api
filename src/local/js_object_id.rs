@@ -6,7 +6,7 @@ use std::{
 
 use js_sys::JsString;
 
-use crate::{Resolvable, game::*};
+use crate::{game::*, Resolvable};
 
 /// Represents a reference to an Object ID string held on the javascript heap
 /// and a type that the ID points to.

@@ -40,7 +40,8 @@ pub const LAB_REACTION_RANGE: u32 = 2;
 /// The maximum size (1000 KiB) of the serialized [`MapVisual`] data.
 pub const MAP_VISUAL_SIZE_LIMIT: u32 = 1000 * 1024;
 
-/// The maximum number of times that you can deal on market orders in a single tick.
+/// The maximum number of times that you can deal on market orders in a single
+/// tick.
 pub const MARKET_MAX_DEALS_PER_TICK: u32 = 10;
 
 /// Maximum size in bytes (100 KiB) of the string contents allowed in memory
@@ -84,7 +85,8 @@ pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
 /// Maximum length of strings that creeps and power creeps can say.
 pub const SAY_MAX_LENGTH: u32 = 10;
 
-/// Owner username of hostile non-player structures and creeps which occupy sector center rooms.
+/// Owner username of hostile non-player structures and creeps which occupy
+/// sector center rooms.
 pub const SOURCE_KEEPER_USERNAME: &str = "Source Keeper";
 
 /// Maximum length of names of spawns.

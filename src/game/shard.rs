@@ -1,9 +1,7 @@
 //! Shard information.
-//!
-/// [Screeps documentation](https://docs.screeps.com/api/#Game.shard)
-
-use wasm_bindgen::prelude::*;
 use js_sys::JsString;
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.shard)
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {

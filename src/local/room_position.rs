@@ -9,9 +9,9 @@ use std::{
 };
 use wasm_bindgen::JsValue;
 
-use super::{RoomName, RoomCoordinate, RoomXY, ROOM_SIZE, HALF_WORLD_SIZE};
+use super::{RoomCoordinate, RoomName, RoomXY, HALF_WORLD_SIZE, ROOM_SIZE};
 
-use crate::{HasPosition, FindConstant, objects::RoomPosition};
+use crate::{objects::RoomPosition, FindConstant, HasPosition};
 
 mod approximate_offsets;
 mod extra_math;

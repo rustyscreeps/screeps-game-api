@@ -85,8 +85,7 @@ impl Position {
 
 #[cfg(test)]
 mod test {
-    use crate::{Direction, Position, RoomName};
-    use crate::local::RoomCoordinate;
+    use crate::{local::RoomCoordinate, Direction, Position, RoomName};
 
     #[test]
     fn test_direction_to() {

@@ -1,8 +1,7 @@
+use crate::{enums::StructureObject, objects::*};
 use enum_iterator::IntoEnumIterator;
-use wasm_bindgen::prelude::*;
 use serde::{Deserialize, Serialize};
-use crate::objects::*;
-use crate::enums::StructureObject;
+use wasm_bindgen::prelude::*;
 
 /// Translates `LOOK_*` constants.
 #[wasm_bindgen]
@@ -102,4 +101,3 @@ typesafe_look_constants! {
     pub struct SYMBOL_CONTAINERS = (Look::SymbolContainers, SymbolContainer, Into::into);
     pub struct SYMBOL_DECODERS = (Look::SymbolDecoders, SymbolDecoder, Into::into);
 }
-

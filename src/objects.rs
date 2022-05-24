@@ -28,14 +28,14 @@ mod impls;
 //mod structure;
 
 pub use self::impls::{
-    ConstructionSite, CostMatrix, CostMatrixSet, HasLocalPosition, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, Owner,
-    PowerCreep, Reservation, Resource, Room, RoomObject, RoomPosition, RoomTerrain, Ruin, Sign,
-    Source, Spawning, Store, Structure, StructureContainer, StructureController,
-    StructureExtension, StructureExtractor, StructureFactory, StructureInvaderCore,
-    StructureKeeperLair, StructureLab, StructureLink, StructureNuker, StructureObserver,
-    StructurePortal, StructurePowerBank, StructurePowerSpawn, StructureRampart, StructureRoad,
-    StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
-    MoveToOptions, FindOptions
+    ConstructionSite, CostMatrix, CostMatrixSet, Creep, Deposit, FindOptions, Flag,
+    HasLocalPosition, Mineral, MoveToOptions, Nuke, OwnedStructure, Owner, PowerCreep, Reservation,
+    Resource, Room, RoomObject, RoomPosition, RoomTerrain, Ruin, Sign, Source, Spawning, Store,
+    Structure, StructureContainer, StructureController, StructureExtension, StructureExtractor,
+    StructureFactory, StructureInvaderCore, StructureKeeperLair, StructureLab, StructureLink,
+    StructureNuker, StructureObserver, StructurePortal, StructurePowerBank, StructurePowerSpawn,
+    StructureRampart, StructureRoad, StructureSpawn, StructureStorage, StructureTerminal,
+    StructureTower, StructureWall, Tombstone,
 };
 
 #[cfg(feature = "enable-score")]
@@ -44,7 +44,10 @@ pub use self::impls::{ScoreCollector, ScoreContainer};
 #[cfg(feature = "enable-symbols")]
 pub use self::impls::{SymbolContainer, SymbolDecoder};
 
-pub use self::impls::{CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign, TextStyle, Visual};
+pub use self::impls::{
+    CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign,
+    TextStyle, Visual,
+};
 
 pub use self::impls::{MapVisual, MapVisualShape};
 
@@ -410,8 +413,6 @@ pub use self::impls::{MapVisual, MapVisualShape};
 // 0),         }
 //     }
 // }
-
-
 
 // unsafe impl RoomObjectProperties for ConstructionSite {}
 // unsafe impl RoomObjectProperties for Creep {}

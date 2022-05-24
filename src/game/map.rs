@@ -2,14 +2,17 @@
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-map)
 
-use std::convert::{TryFrom, TryInto};
-use serde::Deserialize;
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
+use serde::Deserialize;
+use std::convert::{TryFrom, TryInto};
 
 use wasm_bindgen::{prelude::*, JsCast};
 
-use crate::{Direction, ReturnCode, RoomName, constants::ExitDirection, containers::JsHashMap, objects::RoomTerrain};
+use crate::{
+    constants::ExitDirection, containers::JsHashMap, objects::RoomTerrain, Direction, ReturnCode,
+    RoomName,
+};
 
 #[wasm_bindgen]
 extern "C" {
@@ -30,11 +33,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findExit)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = findExit)]
-    fn find_exit(
-        from_room: &JsString,
-        to_room: &JsString,
-        options: &JsValue,
-    ) -> i32;
+    fn find_exit(from_room: &JsString, to_room: &JsString, options: &JsValue) -> i32;
 
     /// Get the route from a given room leading toward a destination room, with
     /// an optional [`FindRouteOptions`] parameter allowing control over the
@@ -46,11 +45,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findRoute)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = findRoute)]
-    fn find_route(
-        from_room: &JsString,
-        to_room: &JsString,
-        options: &JsValue,
-    ) -> JsValue;
+    fn find_route(from_room: &JsString, to_room: &JsString, options: &JsValue) -> JsValue;
 
     /// Get the distance used for range calculations between two rooms,
     /// optionally setting `continuous` to true to consider the world borders to
@@ -58,11 +53,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomLinearDistance)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomLinearDistance)]
-    fn get_room_linear_distance(
-        room_1: &JsString,
-        room_2: &JsString,
-        continuous: bool,
-    ) -> u32;
+    fn get_room_linear_distance(room_1: &JsString, room_2: &JsString, continuous: bool) -> u32;
 
     /// Get the [`RoomTerrain`] object for any room, even one you don't have
     /// vision in.
@@ -120,7 +111,7 @@ extern "C" {
 
 pub struct RoomStatusResult {
     status: RoomStatus,
-    timestamp: Option<f64>
+    timestamp: Option<f64>,
 }
 
 impl RoomStatusResult {
@@ -137,7 +128,7 @@ impl Default for RoomStatusResult {
     fn default() -> Self {
         RoomStatusResult {
             status: RoomStatus::Normal,
-            timestamp: None
+            timestamp: None,
         }
     }
 }
@@ -157,7 +148,7 @@ pub enum RoomStatus {
     Normal = "normal",
     Closed = "closed",
     Novice = "novice",
-    Respawn = "respawn"
+    Respawn = "respawn",
 }
 
 pub fn get_room_terrain(room_name: RoomName) -> RoomTerrain {
@@ -173,7 +164,10 @@ pub fn get_world_size() -> u32 {
 pub fn get_room_status(room_name: RoomName) -> RoomStatusResult {
     let name = room_name.into();
 
-    Map::get_room_status(&name).ok().map(RoomStatusResult::from).unwrap_or_default()
+    Map::get_room_status(&name)
+        .ok()
+        .map(RoomStatusResult::from)
+        .unwrap_or_default()
 }
 
 #[wasm_bindgen]
@@ -187,7 +181,10 @@ extern "C" {
     /// first parameter) from a given neighbor room (the second parameter), or
     /// [`f64::INFINITY`] to block entry into the room.
     #[wasm_bindgen(method, setter = routeCallback)]
-    pub fn route_callback(this: &JsFindRouteOptions, callback: &Closure<dyn FnMut(JsString, JsString) -> f64>);
+    pub fn route_callback(
+        this: &JsFindRouteOptions,
+        callback: &Closure<dyn FnMut(JsString, JsString) -> f64>,
+    );
 }
 
 impl JsFindRouteOptions {
@@ -203,7 +200,9 @@ where
     route_callback: F,
 }
 
-impl<F> FindRouteOptions<F> where F: FnMut(RoomName, RoomName) -> f64,
+impl<F> FindRouteOptions<F>
+where
+    F: FnMut(RoomName, RoomName) -> f64,
 {
     pub(crate) fn as_js_options<R>(self, callback: impl Fn(&JsFindRouteOptions) -> R) -> R {
         let mut raw_callback = self.route_callback;
@@ -211,14 +210,14 @@ impl<F> FindRouteOptions<F> where F: FnMut(RoomName, RoomName) -> f64,
         let mut owned_callback = move |to_room: RoomName, from_room: RoomName| -> f64 {
             raw_callback(to_room, from_room)
         };
-    
+
         //
         // Type erased and boxed callback: no longer a type specific to the closure
         // passed in, now unified as &Fn
         //
 
         let callback_type_erased: &mut (dyn FnMut(RoomName, RoomName) -> f64) = &mut owned_callback;
-    
+
         // Overwrite lifetime of reference so it can be passed to javascript.
         // It's now pretending to be static data. This should be entirely safe
         // because we control the only use of it and it remains valid during the
@@ -226,21 +225,26 @@ impl<F> FindRouteOptions<F> where F: FnMut(RoomName, RoomName) -> f64,
         // above the current scope but otherwise unknown" is not a valid lifetime.
         //
 
-        let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName, RoomName) -> f64) = unsafe { std::mem::transmute(callback_type_erased) };    
-    
+        let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName, RoomName) -> f64) =
+            unsafe { std::mem::transmute(callback_type_erased) };
+
         let boxed_callback = Box::new(move |to_room: JsString, from_room: JsString| -> f64 {
-            let to_room = to_room.try_into().expect("expected 'to' room name in route callback");
-            let from_room = from_room.try_into().expect("expected 'rom' room name in route callback");
+            let to_room = to_room
+                .try_into()
+                .expect("expected 'to' room name in route callback");
+            let from_room = from_room
+                .try_into()
+                .expect("expected 'rom' room name in route callback");
 
             callback_lifetime_erased(to_room, from_room)
         }) as Box<dyn FnMut(JsString, JsString) -> f64>;
-    
+
         let closure = Closure::wrap(boxed_callback);
 
         //
         // Create JS object and set properties.
         //
-    
+
         let js_options = JsFindRouteOptions::new();
 
         js_options.route_callback(&closure);
@@ -256,7 +260,7 @@ impl Default for FindRouteOptions<fn(RoomName, RoomName) -> f64> {
         }
 
         FindRouteOptions {
-            route_callback: room_cost
+            route_callback: room_cost,
         }
     }
 }
@@ -276,30 +280,31 @@ where
     where
         F2: FnMut(RoomName, RoomName) -> f64,
     {
-        let FindRouteOptions {
-            route_callback: _,
-        } = self;
+        let FindRouteOptions { route_callback: _ } = self;
 
-        FindRouteOptions {
-            route_callback,
-        }
+        FindRouteOptions { route_callback }
     }
 }
 
 #[derive(Deserialize)]
 pub struct RouteStep {
     pub exit: ExitDirection,
-    pub room: RoomName
+    pub room: RoomName,
 }
 
-pub fn find_route<F>(from: RoomName, to: RoomName, options: Option<FindRouteOptions<F>>) -> Result<Vec<RouteStep>, ReturnCode> where F: FnMut(RoomName, RoomName) -> f64 {
+pub fn find_route<F>(
+    from: RoomName,
+    to: RoomName,
+    options: Option<FindRouteOptions<F>>,
+) -> Result<Vec<RouteStep>, ReturnCode>
+where
+    F: FnMut(RoomName, RoomName) -> f64,
+{
     let from: JsString = from.into();
-    let to: JsString = to.into();    
+    let to: JsString = to.into();
 
     let result = if let Some(options) = options {
-        options.as_js_options(|js_options| {
-            Map::find_route(&from, &to, js_options)
-        })
+        options.as_js_options(|js_options| Map::find_route(&from, &to, js_options))
     } else {
         Map::find_route(&from, &to, &JsValue::UNDEFINED)
     };
@@ -314,20 +319,26 @@ pub fn find_route<F>(from: RoomName, to: RoomName, options: Option<FindRouteOpti
 
         Ok(steps)
     } else {
-        let return_code = ReturnCode::try_from(result).expect("expected return code for pathing failure");
+        let return_code =
+            ReturnCode::try_from(result).expect("expected return code for pathing failure");
 
         Err(return_code)
     }
 }
 
-pub fn find_exit<F>(from: RoomName, to: RoomName, options: Option<FindRouteOptions<F>>) -> Result<ExitDirection, ReturnCode> where F: FnMut(RoomName, RoomName) -> f64 {
+pub fn find_exit<F>(
+    from: RoomName,
+    to: RoomName,
+    options: Option<FindRouteOptions<F>>,
+) -> Result<ExitDirection, ReturnCode>
+where
+    F: FnMut(RoomName, RoomName) -> f64,
+{
     let from: JsString = from.into();
-    let to: JsString = to.into();    
+    let to: JsString = to.into();
 
     let result = if let Some(options) = options {
-        options.as_js_options(|js_options| {
-            Map::find_exit(&from, &to, js_options)
-        })
+        options.as_js_options(|js_options| Map::find_exit(&from, &to, js_options))
     } else {
         Map::find_exit(&from, &to, &JsValue::UNDEFINED)
     };

@@ -129,9 +129,8 @@ extern "C" {
 impl Reservation {
     pub fn username(&self) -> String {
         Self::username_internal(self).into()
-    } 
+    }
 }
-
 
 #[wasm_bindgen]
 extern "C" {
@@ -166,5 +165,5 @@ impl Sign {
 
     pub fn text(&self) -> String {
         Self::text_internal(self).into()
-    }    
+    }
 }

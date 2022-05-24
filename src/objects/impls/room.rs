@@ -1,13 +1,18 @@
 use std::convert::TryInto;
 
-use crate::{FindConstant, RoomCostResult, RoomName, constants::{ExitDirection, Find, Look, ReturnCode, StructureType}, constants::look::*, containers::JsContainerFromValue, objects::*, prelude::*};
+use crate::{
+    constants::{look::*, ExitDirection, Find, Look, ReturnCode, StructureType},
+    containers::JsContainerFromValue,
+    objects::*,
+    prelude::*,
+    FindConstant, RoomCostResult, RoomName,
+};
 
 #[cfg(not(feature = "disable-terminal"))]
 use crate::objects::StructureTerminal;
 
 use js_sys::{Array, JsString, Object};
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -115,7 +120,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
     #[wasm_bindgen(method, js_name = find)]
-    //TODO: wiarchbe: Find options!    
+    //TODO: wiarchbe: Find options!
     fn find_internal(this: &Room, ty: Find, options: Option<&Object>) -> Array;
 
     /// Find an exit from the current room which leads to a target room, either
@@ -211,13 +216,15 @@ extern "C" {
 
 impl Room {
     pub fn name(&self) -> RoomName {
-        self.name_internal().try_into().expect("expected parseable room name")
+        self.name_internal()
+            .try_into()
+            .expect("expected parseable room name")
     }
 
     //TODO: wiarchbe: Find options!
     pub fn find<T>(&self, ty: T) -> Vec<T::Item>
     where
-        T: FindConstant
+        T: FindConstant,
     {
         self.find_internal(ty.find_code(), None)
             .iter()
@@ -260,31 +267,34 @@ extern "C" {
 
     #[wasm_bindgen(method, setter = ignoreCreeps)]
     pub fn ignore_creeps(this: &JsFindOptions, ignore: bool);
-    
+
     #[wasm_bindgen(method, setter = ignoreDestructibleStructures)]
     pub fn ignore_destructible_structures(this: &JsFindOptions, ignore: bool);
-    
+
     #[wasm_bindgen(method, setter = costCallback)]
-    pub fn cost_callback(this: &JsFindOptions, callback: &Closure<dyn FnMut(JsString, CostMatrix) -> JsValue>);
-    
+    pub fn cost_callback(
+        this: &JsFindOptions,
+        callback: &Closure<dyn FnMut(JsString, CostMatrix) -> JsValue>,
+    );
+
     #[wasm_bindgen(method, setter = maxOps)]
     pub fn max_ops(this: &JsFindOptions, ops: u32);
-    
+
     #[wasm_bindgen(method, setter = heuristicWeight)]
     pub fn heuristic_weight(this: &JsFindOptions, weight: f64);
-    
+
     #[wasm_bindgen(method, setter = serialize)]
     pub fn serialize(this: &JsFindOptions, serialize: bool);
-    
+
     #[wasm_bindgen(method, setter = maxRooms)]
     pub fn max_rooms(this: &JsFindOptions, max: u8);
-    
+
     #[wasm_bindgen(method, setter = range)]
     pub fn range(this: &JsFindOptions, range: u32);
-    
+
     #[wasm_bindgen(method, setter = plainCost)]
     pub fn plain_cost(this: &JsFindOptions, cost: u8);
-    
+
     #[wasm_bindgen(method, setter = swampCost)]
     pub fn swamp_cost(this: &JsFindOptions, cost: u8);
 }
@@ -332,7 +342,9 @@ where
     }
 }
 
-impl<R> FindOptions<fn(RoomName, CostMatrix) -> R, R> where R: RoomCostResult + Default,
+impl<R> FindOptions<fn(RoomName, CostMatrix) -> R, R>
+where
+    R: RoomCostResult + Default,
 {
     pub fn new() -> Self {
         Self::default()
@@ -437,14 +449,15 @@ where
         let mut owned_callback = move |room: RoomName, cost_matrix: CostMatrix| -> JsValue {
             raw_callback(room, cost_matrix).into()
         };
-    
+
         //
         // Type erased and boxed callback: no longer a type specific to the closure
         // passed in, now unified as &Fn
         //
 
-        let callback_type_erased: &mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) = &mut owned_callback;
-    
+        let callback_type_erased: &mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) =
+            &mut owned_callback;
+
         // Overwrite lifetime of reference so it can be passed to javascript.
         // It's now pretending to be static data. This should be entirely safe
         // because we control the only use of it and it remains valid during the
@@ -452,20 +465,23 @@ where
         // above the current scope but otherwise unknown" is not a valid lifetime.
         //
 
-        let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) = unsafe { std::mem::transmute(callback_type_erased) };    
-    
+        let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) =
+            unsafe { std::mem::transmute(callback_type_erased) };
+
         let boxed_callback = Box::new(move |room: JsString, cost_matrix: CostMatrix| -> JsValue {
-            let room = room.try_into().expect("expected room name in cost callback");
-            
+            let room = room
+                .try_into()
+                .expect("expected room name in cost callback");
+
             callback_lifetime_erased(room, cost_matrix)
         }) as Box<dyn FnMut(JsString, CostMatrix) -> JsValue>;
-    
+
         let closure = Closure::wrap(boxed_callback);
 
         //
         // Create JS object and set properties.
         //
-    
+
         let js_options = JsFindOptions::new();
 
         js_options.cost_callback(&closure);
@@ -477,23 +493,23 @@ where
         if let Some(ignore_destructible_structures) = self.ignore_destructible_structures {
             js_options.ignore_destructible_structures(ignore_destructible_structures);
         }
-        
+
         if let Some(max_ops) = self.max_ops {
             js_options.max_ops(max_ops);
         }
-        
+
         if let Some(heuristic_weight) = self.heuristic_weight {
             js_options.heuristic_weight(heuristic_weight);
         }
-        
+
         if let Some(serialize) = self.serialize {
             js_options.serialize(serialize);
         }
-        
+
         if let Some(max_rooms) = self.max_rooms {
             js_options.max_rooms(max_rooms);
         }
-        
+
         if let Some(range) = self.range {
             js_options.range(range);
         }
@@ -501,10 +517,10 @@ where
         if let Some(plain_cost) = self.plain_cost {
             js_options.plain_cost(plain_cost);
         }
-        
+
         if let Some(swamp_cost) = self.swamp_cost {
             js_options.swamp_cost(swamp_cost);
-        }        
+        }
 
         callback(&js_options)
     }

@@ -1,8 +1,8 @@
 use crate::{
     objects::{RoomObject, Structure},
-    prelude::*
+    prelude::*,
 };
-use js_sys::{JsString};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -30,7 +30,10 @@ extern "C" {
     pub fn owner(this: &OwnedStructure) -> Option<Owner>;
 }
 
-impl<T> OwnedStructureProperties for T where T: AsRef<OwnedStructure> {
+impl<T> OwnedStructureProperties for T
+where
+    T: AsRef<OwnedStructure>,
+{
     fn my(&self) -> bool {
         OwnedStructure::my(self.as_ref())
     }

@@ -1,9 +1,5 @@
-use crate::{
-    constants::ResourceType,
-    objects::{RoomObject},
-    prelude::*,
-};
-use js_sys::{JsString};
+use crate::{constants::ResourceType, objects::RoomObject, prelude::*};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

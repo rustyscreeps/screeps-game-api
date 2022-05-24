@@ -1,9 +1,9 @@
 use crate::{
     constants::{Density, ResourceType},
-    objects::{RoomObject},
+    objects::RoomObject,
     prelude::*,
 };
-use js_sys::{JsString};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

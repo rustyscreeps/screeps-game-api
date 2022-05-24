@@ -68,8 +68,7 @@ pub use self::{
     owned_structure::{OwnedStructure, Owner},
     power_creep::PowerCreep,
     resource::Resource,
-    room::Room,
-    room::FindOptions,
+    room::{FindOptions, Room},
     room_object::RoomObject,
     room_position::RoomPosition,
     room_terrain::RoomTerrain,
@@ -101,7 +100,10 @@ pub use self::{
     tombstone::Tombstone,
 };
 
-pub use self::room_visual::{CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign, TextStyle, Visual};
+pub use self::room_visual::{
+    CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign,
+    TextStyle, Visual,
+};
 
 pub use self::map_visual::{MapVisual, MapVisualShape};
 

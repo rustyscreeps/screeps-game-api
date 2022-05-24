@@ -1,6 +1,12 @@
 use std::convert::TryInto;
 
-use crate::{LookConstant, Find, RoomName, constants::{Color, Direction, Look, ReturnCode, StructureType}, local::Position, prelude::*, prototypes::ROOM_POSITION_PROTOTYPE};
+use crate::{
+    constants::{Color, Direction, Look, ReturnCode, StructureType},
+    local::Position,
+    prelude::*,
+    prototypes::ROOM_POSITION_PROTOTYPE,
+    Find, LookConstant, RoomName,
+};
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
@@ -237,10 +243,15 @@ impl RoomPosition {
     }
 
     pub fn room_name(&self) -> RoomName {
-        Self::room_name_internal(self).try_into().expect("expected parseable room name")
+        Self::room_name_internal(self)
+            .try_into()
+            .expect("expected parseable room name")
     }
 
-    pub fn look_for<T>(&self, _ty: T) -> Vec<T::Item> where T: LookConstant {
+    pub fn look_for<T>(&self, _ty: T) -> Vec<T::Item>
+    where
+        T: LookConstant,
+    {
         self.look_for_internal(T::look_code())
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
             .unwrap_or_else(Vec::new)
@@ -251,7 +262,7 @@ impl Clone for RoomPosition {
     fn clone(&self) -> Self {
         let new_pos = RoomPosition::from(JsValue::from(Object::create(&ROOM_POSITION_PROTOTYPE)));
         new_pos.set_packed(self.packed());
-        new_pos        
+        new_pos
     }
 }
 

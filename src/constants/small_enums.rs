@@ -1,13 +1,17 @@
 //! Various constants translated as small enums.
 
+use crate::constants::find::Find;
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use serde_repr::{Deserialize_repr, Serialize_repr};
-use std::{convert::{Infallible, TryFrom}, fmt, str::FromStr};
-use wasm_bindgen::prelude::*;
 use serde::{Deserialize, Serialize};
-use crate::constants::find::Find;
+use serde_repr::{Deserialize_repr, Serialize_repr};
+use std::{
+    convert::{Infallible, TryFrom},
+    fmt,
+    str::FromStr,
+};
+use wasm_bindgen::prelude::*;
 
 // Bindgen does not correctly handle i8 negative return values. Use custom
 // return values.
@@ -62,7 +66,10 @@ impl TryFrom<JsValue> for ReturnCode {
     type Error = String;
 
     fn try_from(value: JsValue) -> Result<Self, Self::Error> {
-        value.as_f64().and_then(|f| Self::from_i32(f as i32)).ok_or_else(|| "expected number for return code".to_owned())
+        value
+            .as_f64()
+            .and_then(|f| Self::from_i32(f as i32))
+            .ok_or_else(|| "expected number for return code".to_owned())
     }
 }
 
@@ -235,7 +242,7 @@ pub enum Color {
     FromPrimitive,
     Serialize_repr,
     Deserialize_repr,
-    IntoEnumIterator
+    IntoEnumIterator,
 )]
 #[repr(u8)]
 pub enum Terrain {
@@ -308,7 +315,7 @@ impl FromStr for Part {
             "tough" => Ok(Part::Tough),
             "heal" => Ok(Part::Heal),
             "claim" => Ok(Part::Claim),
-            _ => panic!("unknown part type")
+            _ => panic!("unknown part type"),
         }
     }
 }

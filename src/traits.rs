@@ -4,7 +4,10 @@ use enum_dispatch::enum_dispatch;
 use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
-use crate::{JsObjectId, ObjectId, Position, RawObjectId, RoomName, SingleRoomCostResult, constants::*, enums::*, objects::*};
+use crate::{
+    constants::*, enums::*, objects::*, JsObjectId, ObjectId, Position, RawObjectId, RoomName,
+    SingleRoomCostResult,
+};
 
 #[enum_dispatch]
 pub trait HasHits {
@@ -35,7 +38,10 @@ pub trait MaybeHasNativeId {
     fn try_native_id(&self) -> Option<JsString>;
 }
 
-impl<T> MaybeHasNativeId for T where T: HasNativeId {
+impl<T> MaybeHasNativeId for T
+where
+    T: HasNativeId,
+{
     fn try_native_id(&self) -> Option<JsString> {
         Some(<Self as HasNativeId>::native_id(&self))
     }
@@ -52,7 +58,10 @@ pub trait HasId {
     fn raw_id(&self) -> RawObjectId;
 }
 
-impl<T> HasId for T where T: HasNativeId {
+impl<T> HasId for T
+where
+    T: HasNativeId,
+{
     fn raw_id(&self) -> RawObjectId {
         let id: String = self.native_id().into();
 
@@ -69,7 +78,10 @@ pub trait HasTypedId<T> {
     fn js_id(&self) -> JsObjectId<T>;
 }
 
-impl<T> HasTypedId<T> for T where T: HasId + HasNativeId {
+impl<T> HasTypedId<T> for T
+where
+    T: HasId + HasNativeId,
+{
     fn id(&self) -> ObjectId<T> {
         self.raw_id().into()
     }
@@ -79,7 +91,10 @@ impl<T> HasTypedId<T> for T where T: HasId + HasNativeId {
     }
 }
 
-impl<T> HasTypedId<T> for &T where T: HasId + HasNativeId {
+impl<T> HasTypedId<T> for &T
+where
+    T: HasId + HasNativeId,
+{
     fn id(&self) -> ObjectId<T> {
         self.raw_id().into()
     }
@@ -97,10 +112,12 @@ pub trait MaybeHasId {
     fn try_raw_id(&self) -> Option<RawObjectId>;
 }
 
-impl<T> MaybeHasId for T where T: MaybeHasNativeId {
+impl<T> MaybeHasId for T
+where
+    T: MaybeHasNativeId,
+{
     fn try_raw_id(&self) -> Option<RawObjectId> {
-        self
-            .try_native_id()
+        self.try_native_id()
             .map(String::from)
             .map(|id| RawObjectId::from_str(&id).expect("expected object ID to be parseable"))
     }
@@ -114,20 +131,21 @@ pub trait MaybeHasTypedId<T> {
     fn try_id(&self) -> Option<ObjectId<T>>;
 }
 
-
-impl<T> MaybeHasTypedId<T> for T where T: MaybeHasId {
+impl<T> MaybeHasTypedId<T> for T
+where
+    T: MaybeHasId,
+{
     fn try_id(&self) -> Option<ObjectId<T>> {
-        self
-            .try_raw_id()
-            .map(Into::into)
+        self.try_raw_id().map(Into::into)
     }
 }
 
-impl<T> MaybeHasTypedId<T> for &T where T: MaybeHasId {
+impl<T> MaybeHasTypedId<T> for &T
+where
+    T: MaybeHasId,
+{
     fn try_id(&self) -> Option<ObjectId<T>> {
-        self
-            .try_raw_id()
-            .map(Into::into)
+        self.try_raw_id().map(Into::into)
     }
 }
 
@@ -225,14 +243,23 @@ pub trait SharedCreepProperties {
     /// `Memory.creeps[creep_name]` and enable the default serialization
     /// behavior of the `Memory` object, which may hamper attempts to directly
     /// use `RawMemory`.
-    fn move_to<T>(&self, target: T) -> ReturnCode where T: HasPosition;
+    fn move_to<T>(&self, target: T) -> ReturnCode
+    where
+        T: HasPosition;
 
     /// Move the creep toward the specified goal, either a [`RoomPosition`] or
     /// [`RoomObject`]. Note that using this function will store data in
     /// `Memory.creeps[creep_name]` and enable the default serialization
     /// behavior of the `Memory` object, which may hamper attempts to directly
     /// use `RawMemory`.
-    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult;
+    fn move_to_with_options<T, F>(
+        &self,
+        target: T,
+        options: Option<MoveToOptions<F>>,
+    ) -> ReturnCode
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult;
 
     /// Whether to send an email notification when this creep is attacked.
     fn notify_when_attacked(&self, enabled: bool) -> ReturnCode;
@@ -250,10 +277,14 @@ pub trait SharedCreepProperties {
 
     /// Transfer a resource from the creep's store to [`Structure`],
     /// [`PowerCreep`], or another [`Creep`].
-    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Transferable;
+    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    where
+        T: Transferable;
 
     /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
-    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Withdrawable;
+    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    where
+        T: Withdrawable;
 }
 
 #[enum_dispatch]

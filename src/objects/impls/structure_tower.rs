@@ -45,11 +45,17 @@ extern "C" {
 }
 
 impl StructureTower {
-    pub fn attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
+    pub fn attack<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Attackable,
+    {
         Self::attack_internal(&self, target.as_ref())
     }
 
-    pub fn heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
+    pub fn heal<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Healable,
+    {
         Self::heal_internal(&self, target.as_ref())
     }
 }

@@ -15,12 +15,11 @@
 
 use std::convert::TryInto;
 
-use crate::{CostMatrix, Position, RoomName, objects::RoomPosition};
+use crate::{objects::RoomPosition, CostMatrix, Position, RoomName};
 use js_sys::{Array, JsString, Object};
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
 use serde::Serialize;
 use serde_wasm_bindgen;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -36,11 +35,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder.search)
     #[wasm_bindgen(static_method_of = PathFinder, js_name = search)]
-    fn search_internal(
-        origin: &RoomPosition,
-        goal: &JsValue,
-        options: &JsValue,
-    ) -> SearchResults;
+    fn search_internal(origin: &RoomPosition, goal: &JsValue, options: &JsValue) -> SearchResults;
 }
 
 #[wasm_bindgen]
@@ -53,7 +48,10 @@ extern "C" {
     /// Room callback, which should return a [`CostMatrix`], or
     /// [`JsValue::FALSE`] to avoid pathing through a room.
     #[wasm_bindgen(method, setter = roomCallback)]
-    pub fn room_callback(this: &JsSearchOptions, callback: &Closure<dyn FnMut(JsString) -> JsValue>);
+    pub fn room_callback(
+        this: &JsSearchOptions,
+        callback: &Closure<dyn FnMut(JsString) -> JsValue>,
+    );
 
     /// Set the cost of moving on plains tiles during this pathfinder search.
     /// Defaults to 1.
@@ -121,9 +119,8 @@ extern "C" {
 }
 
 impl SearchResults {
-    pub fn path (&self) -> Vec<Position> {
-        self
-            .path_internal()
+    pub fn path(&self) -> Vec<Position> {
+        self.path_internal()
             .iter()
             .map(|p| p.unchecked_into())
             .map(|p: RoomPosition| p.into())
@@ -131,7 +128,7 @@ impl SearchResults {
     }
 
     pub fn opaque_path(&self) -> Array {
-       self.path_internal()
+        self.path_internal()
     }
 }
 
@@ -140,7 +137,7 @@ pub trait RoomCostResult: Into<JsValue> {}
 pub enum MultiRoomCostResult {
     CostMatrix(CostMatrix),
     Impassable,
-    Default
+    Default,
 }
 
 impl RoomCostResult for MultiRoomCostResult {}
@@ -156,14 +153,14 @@ impl<'a> Into<JsValue> for MultiRoomCostResult {
         match self {
             MultiRoomCostResult::CostMatrix(m) => m.into(),
             MultiRoomCostResult::Impassable => JsValue::from_bool(false),
-            MultiRoomCostResult::Default => JsValue::undefined()
+            MultiRoomCostResult::Default => JsValue::undefined(),
         }
     }
 }
 
 pub enum SingleRoomCostResult {
     CostMatrix(CostMatrix),
-    Default
+    Default,
 }
 
 impl RoomCostResult for SingleRoomCostResult {}
@@ -178,7 +175,7 @@ impl<'a> Into<JsValue> for SingleRoomCostResult {
     fn into(self) -> JsValue {
         match self {
             SingleRoomCostResult::CostMatrix(m) => m.into(),
-            SingleRoomCostResult::Default => JsValue::undefined()
+            SingleRoomCostResult::Default => JsValue::undefined(),
         }
     }
 }
@@ -202,23 +199,31 @@ struct InnerSearchOptions {
     heuristic_weight: Option<f64>,
 }
 
-impl<F> SearchOptions<F> where F: FnMut(RoomName) -> MultiRoomCostResult,
+impl<F> SearchOptions<F>
+where
+    F: FnMut(RoomName) -> MultiRoomCostResult,
 {
     pub(crate) fn as_js_options<R>(mut self, callback: impl Fn(&JsSearchOptions) -> R) -> R {
         // Serialize the inner options into a JsValue, then cast.
-        let js_options: JsSearchOptions = serde_wasm_bindgen::to_value(&self.inner).expect("Unable to serialize search options.").unchecked_into();
+        let js_options: JsSearchOptions = serde_wasm_bindgen::to_value(&self.inner)
+            .expect("Unable to serialize search options.")
+            .unchecked_into();
 
         let boxed_callback: Box<dyn FnMut(JsString) -> JsValue> = Box::new(move |room| {
-            let room = room.try_into().expect("expected room name in room callback");
+            let room = room
+                .try_into()
+                .expect("expected room name in room callback");
             (self.callback)(room).into()
         });
 
         // SAFETY
         //
-        // self.callback is valid during the whole lifetime of the as_js_options call, and this Box
-        // is dropped before the call finishes without the contents being held on to by JS.
-        let boxed_callback_lifetime_erased: Box<dyn 'static + FnMut(JsString) -> JsValue> = unsafe { std::mem::transmute(boxed_callback) };
-    
+        // self.callback is valid during the whole lifetime of the as_js_options call,
+        // and this Box is dropped before the call finishes without the contents
+        // being held on to by JS.
+        let boxed_callback_lifetime_erased: Box<dyn 'static + FnMut(JsString) -> JsValue> =
+            unsafe { std::mem::transmute(boxed_callback) };
+
         let closure = Closure::wrap(boxed_callback_lifetime_erased);
 
         js_options.room_callback(&closure);
@@ -315,15 +320,12 @@ where
 #[wasm_bindgen]
 pub struct SearchGoal {
     pos: Position,
-    range: u32
+    range: u32,
 }
 
 impl SearchGoal {
     pub fn new(pos: Position, range: u32) -> Self {
-        SearchGoal {
-            pos,
-            range
-        }
+        SearchGoal { pos, range }
     }
 }
 
@@ -337,13 +339,21 @@ impl SearchGoal {
     #[wasm_bindgen(getter)]
     pub fn range(&self) -> u32 {
         self.range
-    }    
+    }
 }
 
-pub fn search<F>(from: Position, to: Position, range: u32, options: Option<SearchOptions<F>>) -> SearchResults where F: FnMut(RoomName) -> MultiRoomCostResult {
+pub fn search<F>(
+    from: Position,
+    to: Position,
+    range: u32,
+    options: Option<SearchOptions<F>>,
+) -> SearchResults
+where
+    F: FnMut(RoomName) -> MultiRoomCostResult,
+{
     let goal = SearchGoal {
         pos: to.into(),
-        range
+        range,
     };
 
     let goal = JsValue::from(goal);
@@ -351,21 +361,31 @@ pub fn search<F>(from: Position, to: Position, range: u32, options: Option<Searc
     search_real(from, &goal, options)
 }
 
-pub fn search_many<F>(from: Position, to: impl Iterator<Item = SearchGoal>, options: Option<SearchOptions<F>>) -> SearchResults where F: FnMut(RoomName) -> MultiRoomCostResult {
-    let goals: Array = to
-        .map(|g| JsValue::from(g))
-        .collect();
+pub fn search_many<F>(
+    from: Position,
+    to: impl Iterator<Item = SearchGoal>,
+    options: Option<SearchOptions<F>>,
+) -> SearchResults
+where
+    F: FnMut(RoomName) -> MultiRoomCostResult,
+{
+    let goals: Array = to.map(|g| JsValue::from(g)).collect();
 
     search_real(from, goals.as_ref(), options)
 }
 
-fn search_real<F>(from: Position, goal: &JsValue, options: Option<SearchOptions<F>>) -> SearchResults where F: FnMut(RoomName) -> MultiRoomCostResult {
+fn search_real<F>(
+    from: Position,
+    goal: &JsValue,
+    options: Option<SearchOptions<F>>,
+) -> SearchResults
+where
+    F: FnMut(RoomName) -> MultiRoomCostResult,
+{
     let from = from.into();
 
     if let Some(options) = options {
-        options.as_js_options(|js_options| {
-            PathFinder::search_internal(&from, goal, &js_options)    
-        })        
+        options.as_js_options(|js_options| PathFinder::search_internal(&from, goal, &js_options))
     } else {
         PathFinder::search_internal(&from, goal, &JsValue::UNDEFINED)
     }

@@ -1,6 +1,12 @@
-use crate::{Part, constants::ReturnCode, objects::{Creep, OwnedStructure, RoomObject, Store, Structure}, prelude::*, containers::JsContainerFromValue};
+use crate::{
+    constants::ReturnCode,
+    containers::JsContainerFromValue,
+    objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
+    prelude::*,
+    Part,
+};
 use js_sys::{Array, JsString, Object};
-use wasm_bindgen::{JsCast, prelude::*};
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -79,7 +85,7 @@ impl StructureSpawn {
     pub fn spawn_creep(&self, body: &[Part], name: &str) -> ReturnCode {
         let body = body.iter().cloned().map(JsValue::from).collect();
 
-        //TODO: wiarchbe: Support options.        
+        //TODO: wiarchbe: Support options.
         Self::spawn_creep_internal(self, &body, name, None)
     }
 }

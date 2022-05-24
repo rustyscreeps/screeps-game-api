@@ -363,7 +363,8 @@ impl wasm_bindgen::convert::FromWasmAbi for MarketResourceType {
     unsafe fn from_abi(js: Self::Abi) -> Self {
         let resource = String::from_utf8_unchecked(<Vec<u8>>::from_abi(js));
 
-        serde_json::from_str(&resource).expect("Couldn't deserialize market resource, invalid resource type")
+        serde_json::from_str(&resource)
+            .expect("Couldn't deserialize market resource, invalid resource type")
     }
 }
 
@@ -372,7 +373,6 @@ impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
         wasm_bindgen::describe::inform(wasm_bindgen::describe::STRING);
     }
 }
-
 
 #[derive(Copy, Clone, Debug)]
 pub enum Boost {

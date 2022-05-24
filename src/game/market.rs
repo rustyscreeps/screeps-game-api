@@ -4,9 +4,13 @@
 
 use js_sys::{Array, JsString, Object};
 use serde::Deserialize;
-use wasm_bindgen::{JsCast, prelude::*};
+use wasm_bindgen::{prelude::*, JsCast};
 
-use crate::{constants::{MarketResourceType, OrderType, ResourceType, ReturnCode}, containers::{JsContainerFromValue, JsHashMap}, local::RoomName};
+use crate::{
+    constants::{MarketResourceType, OrderType, ResourceType, ReturnCode},
+    containers::{JsContainerFromValue, JsHashMap},
+    local::RoomName,
+};
 
 #[wasm_bindgen]
 extern "C" {
@@ -47,11 +51,7 @@ extern "C" {
     ///
     /// [`TERMINAL_SEND_COST_SCALE`]: crate::constants::TERMINAL_SEND_COST_SCALE
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = calcTransactionCost)]
-    fn calc_transaction_cost(
-        amount: u32,
-        room_1: &JsString,
-        room_2: &JsString,
-    ) -> u32;
+    fn calc_transaction_cost(amount: u32, room_1: &JsString, room_2: &JsString) -> u32;
 
     /// Cancel one of your existing orders on the market, without refunding
     /// associated fees.
@@ -65,8 +65,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.changeOrderPrice)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = changeOrderPrice)]
-    fn change_order_price(order_id: &JsString, new_price: f64)
-        -> ReturnCode;
+    fn change_order_price(order_id: &JsString, new_price: f64) -> ReturnCode;
 
     // todo type to serialize call options into
     /// Create a new order on the market.
@@ -81,11 +80,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.deal)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = deal)]
-    fn deal(
-        order_id: &JsString,
-        amount: u32,
-        room_name: Option<&JsString>,
-    ) -> ReturnCode;
+    fn deal(order_id: &JsString, amount: u32, room_name: Option<&JsString>) -> ReturnCode;
 
     /// Adds more capacity to one of your existing orders, offering or
     /// requesting more of the resource and incurring additional fees.

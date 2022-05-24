@@ -9,10 +9,7 @@ use std::marker::PhantomData;
 
 use js_sys::{Array, JsString, Object};
 
-use wasm_bindgen::{
-    JsCast,
-    prelude::*
-};
+use wasm_bindgen::{prelude::*, JsCast};
 
 pub trait JsContainerIntoValue {
     fn into_value(self) -> JsValue;
@@ -24,26 +21,36 @@ pub trait JsContainerFromValue {
 
 pub struct JsHashMap<K, V> {
     map: Object,
-    _phantom: PhantomData<(K, V)>
+    _phantom: PhantomData<(K, V)>,
 }
 
-impl<K, V> JsHashMap<K, V> where K: JsContainerFromValue {
+impl<K, V> JsHashMap<K, V>
+where
+    K: JsContainerFromValue,
+{
     pub fn keys(&self) -> impl Iterator<Item = K> {
         let array = Object::keys(self.map.unchecked_ref());
 
         OwnedArrayIter::new(array)
-    }  
+    }
 }
 
-impl<K, V> JsHashMap<K, V> where V: JsContainerFromValue {
+impl<K, V> JsHashMap<K, V>
+where
+    V: JsContainerFromValue,
+{
     pub fn values(&self) -> impl Iterator<Item = V> {
         let array = Object::values(self.map.unchecked_ref());
 
         OwnedArrayIter::new(array)
-    }  
+    }
 }
 
-impl<K, V> JsHashMap<K, V> where K: JsContainerIntoValue, V: JsContainerFromValue {
+impl<K, V> JsHashMap<K, V>
+where
+    K: JsContainerIntoValue,
+    V: JsContainerFromValue,
+{
     pub fn get(&self, key: K) -> Option<V> {
         let key = key.into_value();
         let val = js_sys::Reflect::get(&self.map, &key).ok()?;
@@ -53,10 +60,14 @@ impl<K, V> JsHashMap<K, V> where K: JsContainerIntoValue, V: JsContainerFromValu
         let val = V::from_value(val);
 
         Some(val)
-    }    
+    }
 }
 
-impl<K, V> JsHashMap<K, V> where K: JsContainerIntoValue, V: JsContainerIntoValue {
+impl<K, V> JsHashMap<K, V>
+where
+    K: JsContainerIntoValue,
+    V: JsContainerIntoValue,
+{
     pub fn set(&self, key: K, value: V) {
         let key = key.into_value();
         let value = value.into_value();
@@ -68,7 +79,7 @@ impl<K, V> From<Object> for JsHashMap<K, V> {
     fn from(map: Object) -> Self {
         Self {
             map,
-            _phantom: Default::default()
+            _phantom: Default::default(),
         }
     }
 }
@@ -77,7 +88,7 @@ impl<K, V> From<JsValue> for JsHashMap<K, V> {
     fn from(val: JsValue) -> Self {
         Self {
             map: val.into(),
-            _phantom: Default::default()
+            _phantom: Default::default(),
         }
     }
 }
@@ -86,7 +97,7 @@ impl<K, V> From<JsValue> for JsHashMap<K, V> {
 pub struct OwnedArrayIter<T> {
     range: std::ops::Range<u32>,
     array: Array,
-    _phantom: PhantomData<T>
+    _phantom: PhantomData<T>,
 }
 
 impl<T> OwnedArrayIter<T> {
@@ -94,12 +105,15 @@ impl<T> OwnedArrayIter<T> {
         OwnedArrayIter {
             range: 0..array.length(),
             array: array,
-            _phantom: Default::default()
+            _phantom: Default::default(),
         }
     }
 }
 
-impl<T> std::iter::Iterator for OwnedArrayIter<T> where T: JsContainerFromValue {
+impl<T> std::iter::Iterator for OwnedArrayIter<T>
+where
+    T: JsContainerFromValue,
+{
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -115,7 +129,10 @@ impl<T> std::iter::Iterator for OwnedArrayIter<T> where T: JsContainerFromValue 
     }
 }
 
-impl<T> std::iter::DoubleEndedIterator for OwnedArrayIter<T> where T: JsContainerFromValue {
+impl<T> std::iter::DoubleEndedIterator for OwnedArrayIter<T>
+where
+    T: JsContainerFromValue,
+{
     fn next_back(&mut self) -> Option<Self::Item> {
         let index = self.range.next_back()?;
         let val = self.array.get(index);
@@ -152,7 +169,7 @@ impl JsContainerIntoValue for String {
 impl JsContainerFromValue for String {
     fn from_value(val: JsValue) -> String {
         let val: JsString = val.unchecked_into();
-        
+
         val.into()
     }
 }
