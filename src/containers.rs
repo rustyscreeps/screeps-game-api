@@ -131,6 +131,17 @@ impl<T> std::iter::ExactSizeIterator for OwnedArrayIter<T> where T: JsContainerF
 //
 // Utility conversions for containers.
 //
+impl JsContainerIntoValue for JsString {
+    fn into_value(self) -> JsValue {
+        self.unchecked_into()
+    }
+}
+
+impl JsContainerFromValue for JsString {
+    fn from_value(val: JsValue) -> JsString {
+        val.unchecked_into()
+    }
+}
 
 impl JsContainerIntoValue for String {
     fn into_value(self) -> JsValue {

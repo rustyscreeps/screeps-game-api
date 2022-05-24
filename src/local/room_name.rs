@@ -144,7 +144,7 @@ impl RoomName {
     ///
     /// This is equivalent to [`ToString::to_string`], but involves no
     /// allocation.
-    pub fn to_array_string(&self) -> ArrayString<[u8; 8]> {
+    pub fn to_array_string(&self) -> ArrayString<8> {
         let mut res = ArrayString::new();
         write!(res, "{}", self).expect("expected ArrayString write to be infallible");
         res
@@ -371,7 +371,7 @@ fn parse_to_coords(s: &str) -> Result<(i32, i32), ()> {
 #[derive(Clone, Debug)]
 pub enum RoomNameParseError {
     TooLarge { length: usize },
-    InvalidString { string: ArrayString<[u8; 8]> },
+    InvalidString { string: ArrayString<8> },
     PositionOutOfBounds { x_coord: i32, y_coord: i32 },
 }
 
