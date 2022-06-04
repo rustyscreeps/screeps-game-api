@@ -92,7 +92,7 @@ pub use self::{
     structure_power_spawn::StructurePowerSpawn,
     structure_rampart::StructureRampart,
     structure_road::StructureRoad,
-    structure_spawn::{Spawning, StructureSpawn},
+    structure_spawn::{Spawning, StructureSpawn, SpawnOptions},
     structure_storage::StructureStorage,
     structure_terminal::StructureTerminal,
     structure_tower::StructureTower,

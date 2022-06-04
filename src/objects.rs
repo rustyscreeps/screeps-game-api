@@ -34,7 +34,7 @@ pub use self::impls::{
     Structure, StructureContainer, StructureController, StructureExtension, StructureExtractor,
     StructureFactory, StructureInvaderCore, StructureKeeperLair, StructureLab, StructureLink,
     StructureNuker, StructureObserver, StructurePortal, StructurePowerBank, StructurePowerSpawn,
-    StructureRampart, StructureRoad, StructureSpawn, StructureStorage, StructureTerminal,
+    StructureRampart, StructureRoad, StructureSpawn, SpawnOptions, StructureStorage, StructureTerminal,
     StructureTower, StructureWall, Tombstone,
 };
 
@@ -497,9 +497,6 @@ pub use self::impls::{MapVisual, MapVisualShape};
 
 // // NOTE: keep impls for Structure* in sync with accessor methods in
 // // src/objects/structure.rs
-
-// unsafe impl HasEnergyForSpawn for StructureExtension {}
-// unsafe impl HasEnergyForSpawn for StructureSpawn {}
 
 // // NOTE: keep impls for Structure* in sync with accessor methods in
 // // src/objects/structure.rs

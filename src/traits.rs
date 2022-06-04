@@ -298,15 +298,6 @@ pub trait StructureProperties {
     fn notify_when_attacked(&self, val: bool) -> ReturnCode;
 }
 
-/// Used to specify which structures can use their stored energy for spawning
-/// creeps.
-///
-/// # Contract
-///
-/// The reference returned from `AsRef<Reference>::as_ref` must be able to be
-/// used by a spawner to create a new creep.
-pub trait HasEnergyForSpawn: HasStore + AsRef<RoomObject> {}
-
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
 /// target of `Creep.transfer`.
 ///
