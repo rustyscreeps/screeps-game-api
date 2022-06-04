@@ -144,7 +144,7 @@ impl SpawnOptions {
         self
     }*/
 
-    /// Structures other than `StructureSpawn` and `StructureExtension` will be ignored.
+    /// Structures other than [`StructureSpawn`] and [`StructureExtension`] will be ignored.
     pub fn energy_structures<T: IntoIterator<Item=V>, V: AsRef<Structure>>(mut self, structures: T) -> Self {
         self.energy_structures = Some(structures.into_iter().map(|structure| JsValue::from(structure.as_ref())).collect());
         self
