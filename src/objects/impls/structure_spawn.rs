@@ -5,7 +5,7 @@ use crate::{
     prelude::*,
     Direction,Part,
 };
-use js_sys::{Array, JsString, Object, Reflect};
+use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
@@ -91,22 +91,22 @@ impl StructureSpawn {
     pub fn spawn_creep_with_options(&self, body: &[Part], name: &str, opts: &SpawnOptions) -> ReturnCode {
         let body = body.iter().cloned().map(JsValue::from).collect();
 
-        let js_opts = Object::new();
+        let js_opts = ObjectExt::unchecked_from_js(JsValue::from(Object::new()));
 
         /*if let Some(mem) = &opts.memory {
             //TODO
         }*/
 
         if let Some(array) = &opts.energy_structures {
-            Reflect::set(&js_opts, &"energyStructures".into(), &array).unwrap();
+            ObjectExt::set(&js_opts, "energyStructures", &array);
         }
 
         if opts.dry_run {
-            Reflect::set(&js_opts, &"dryRun".into(), &true.into()).unwrap();
+            ObjectExt::set(&js_opts, "dryRun", &true.into());
         }
 
         if let Some(array) = &opts.directions {
-            Reflect::set(&js_opts, &"directions".into(), &array).unwrap();
+            ObjectExt::set(&js_opts, "directions", &array);
         }
 
         Self::spawn_creep_internal(self, &body, name, Some(&js_opts))
@@ -123,6 +123,16 @@ impl HasStore for StructureSpawn {
     fn store(&self) -> Store {
         Self::store(self)
     }
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[derive(Clone)]
+    #[wasm_bindgen(extends = Object)]
+    type ObjectExt;
+
+    #[wasm_bindgen(method, structural, indexing_setter)]
+    fn set(this: &ObjectExt, prop: &str, val: &JsValue);
 }
 
 #[derive(Default)]
