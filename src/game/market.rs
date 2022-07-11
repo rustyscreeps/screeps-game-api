@@ -9,7 +9,7 @@ use wasm_bindgen::{prelude::*, JsCast};
 use crate::{
     constants::{MarketResourceType, OrderType, ResourceType, ReturnCode},
     containers::{JsContainerFromValue, JsHashMap},
-    local::RoomName,
+    local::{RoomName, LodashFilter},
 };
 
 #[wasm_bindgen]
@@ -100,7 +100,7 @@ extern "C" {
     ///
     /// [source]: https://github.com/screeps/engine/blob/f7a09e637c20689084fcf4eb43eacdfd51d31476/src/game/market.js#L37
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = getAllOrders)]
-    fn get_all_orders(filter: &Object) -> Array;
+    fn get_all_orders(filter: Option<&LodashFilter>) -> Array;
 
     // todo this is probably breaking in an interesting way on private servers due to the {} return https://github.com/screeps/engine/pull/131 - maybe catch?
     /// Get information about the price history on the market for the last 14
@@ -153,16 +153,22 @@ pub fn create_order(order_parameters: &Object) -> ReturnCode {
     Market::create_order(order_parameters)
 }
 
-pub fn deal(order_id: &JsString, amount: u32, room_name: Option<&JsString>) -> ReturnCode {
-    Market::deal(order_id, amount, room_name)
+pub fn deal(order_id: &JsString, amount: u32, room_name: Option<RoomName>) -> ReturnCode {
+    match room_name {
+        Some(r) => Market::deal(order_id, amount, Some(&r.into())),
+        None => Market::deal(order_id, amount, None),
+    }
 }
 
 pub fn extend_order(order_id: &JsString, add_amount: u32) -> ReturnCode {
     Market::extend_order(order_id, add_amount)
 }
 
-pub fn get_all_orders(filter: &Object) -> Array {
+pub fn get_all_orders(filter: Option<&LodashFilter>) -> Vec<Order> {
     Market::get_all_orders(filter)
+        .iter()
+        .map(|o| o.unchecked_into())
+        .collect()
 }
 
 pub fn get_history(resource: Option<ResourceType>) -> JsValue {

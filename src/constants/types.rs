@@ -368,6 +368,18 @@ impl wasm_bindgen::convert::FromWasmAbi for MarketResourceType {
     }
 }
 
+impl wasm_bindgen::convert::IntoWasmAbi for MarketResourceType {
+    type Abi = <Vec<u8> as wasm_bindgen::convert::IntoWasmAbi>::Abi;
+
+    #[inline]
+    fn into_abi(self) -> Self::Abi {
+        match self {
+            MarketResourceType::Resource(r) => serde_json::to_string(&r).unwrap().into_bytes().into_abi(),
+            MarketResourceType::IntershardResource(r) => serde_json::to_string(&r).unwrap().into_bytes().into_abi(),
+        }
+    }
+}
+
 impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
     fn describe() {
         wasm_bindgen::describe::inform(wasm_bindgen::describe::STRING);
