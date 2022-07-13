@@ -4,7 +4,6 @@
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};
-use serde_json;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
@@ -357,32 +356,40 @@ pub enum MarketResourceType {
 }
 
 impl wasm_bindgen::convert::FromWasmAbi for MarketResourceType {
-    type Abi = <Vec<u8> as wasm_bindgen::convert::FromWasmAbi>::Abi;
+    type Abi = <wasm_bindgen::JsValue as wasm_bindgen::convert::FromWasmAbi>::Abi;
 
     #[inline]
     unsafe fn from_abi(js: Self::Abi) -> Self {
-        let resource = String::from_utf8_unchecked(<Vec<u8>>::from_abi(js));
-
-        serde_json::from_str(&resource)
-            .expect("Couldn't deserialize market resource, invalid resource type")
+        let s = <wasm_bindgen::JsValue as wasm_bindgen::convert::FromWasmAbi>::from_abi(js);
+        // first try deserialize as ResourceType
+        match ResourceType::from_js_value(&s) {
+            Some(r) => Self::Resource(r),
+            None => {
+                // try with IntershardResourceType
+                match IntershardResourceType::from_js_value(&s) {
+                    Some(r) => Self::IntershardResource(r),
+                    None => Self::Resource(ResourceType::__Nonexhaustive),
+                }
+            }
+        }
     }
 }
 
 impl wasm_bindgen::convert::IntoWasmAbi for MarketResourceType {
-    type Abi = <Vec<u8> as wasm_bindgen::convert::IntoWasmAbi>::Abi;
+    type Abi = <wasm_bindgen::JsValue as wasm_bindgen::convert::IntoWasmAbi>::Abi;
 
     #[inline]
     fn into_abi(self) -> Self::Abi {
         match self {
-            MarketResourceType::Resource(r) => serde_json::to_string(&r).unwrap().into_bytes().into_abi(),
-            MarketResourceType::IntershardResource(r) => serde_json::to_string(&r).unwrap().into_bytes().into_abi(),
+            MarketResourceType::Resource(r) => <wasm_bindgen::JsValue as wasm_bindgen::convert::IntoWasmAbi>::into_abi(r.into()),
+            MarketResourceType::IntershardResource(r) => <wasm_bindgen::JsValue as wasm_bindgen::convert::IntoWasmAbi>::into_abi(r.into()),
         }
     }
 }
 
 impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
     fn describe() {
-        wasm_bindgen::describe::inform(wasm_bindgen::describe::STRING);
+        <wasm_bindgen::JsValue as wasm_bindgen::describe::WasmDescribe>::describe()
     }
 }
 
