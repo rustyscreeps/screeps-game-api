@@ -8,71 +8,24 @@
 //! - WORLD_WIDTH / WORLD_HEIGHT (deprecated in Screeps)
 //! - BODYPARTS_ALL, RESOURCES_ALL, COLORS_ALL
 //! - POWER_INFO
-//!
-// //! # Notes on Deserialization
-// //!
-// //! There are two general types of enum constants in this file. Some are
-// //! represented by integers in the game - and those are represented by integers
-// //! in screeps. Their [`serde::Deserialize`], `TryFrom<Value>` and
-// //! [`num_traits::FromPrimitive`] implementations will convert from these
-// //! integers.
-// //!
-// //! The other type is enums represented by strings in the game, but integers in
-// //! this repository. This change in representation is done for efficiency, as
-// //! transferring strings from JavaScript to Rust is much slower than a single
-// //! integer.
-// //!
-// //! This second type of enum will also implement [`serde::Deserialize`],
-// //! `TryFrom<Value>`, but these will not convert from the made-up integer
-// //! values, and will fail converting from the constant strings from the game.
-// //!
-// //! To convert from constant strings, you have two options, depending on the
-// //! context.
-// //!
-// //! If you need to manually consume from a value in JavaScript, there are two
-// //! utility JavaScript functions per enum. They generally take the form
-// //! `__TYPE_num_to_str` and `__TYPE_str_to_num`. For example,
-// //! `__structure_type_num_to_str` and `__structure_type_str_to_num` convert
-// //! between [`StructureType`] integer representations and string
-// //! representations. See documentation on enums for more conversion functions.
-// //!
-// //! To use these, call the functions in JavaScript, like so:
-// //!
-// //! ```no_run
-// //! use screeps::{game, traits::TryInto, StructureType};
-// //! use stdweb::js;
-// //!
-// //! let spawns = game::spawns::values();
-// //! let r: StructureType = (js! {
-// //!     return __structure_type_str_to_num(@{spawns[0].as_ref()}.structureType);
-// //! })
-// //! .try_into()
-// //! .expect("expected structure type to convert successfully");
-// //! ```
-// //!
-// //! If you need to consume strings already in Rust, use either the [`FromStr`]
-// //! trait, or one of the `deserialize_from_str` functions on each of these
-// //! constants. To get back to these values from Rust native enums (instead of
-// //! the integer representation we serialize to), use the [`Display`] trait or
-// //! the `to_string` fuctions on the native enums.
-// //!
-// //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
-// //! [`FromStr`]: std::str::FromStr
-// //! [`Display`]: std::fmt::Display
 
 pub mod extra;
+pub mod find;
+pub mod look;
 pub mod numbers;
 mod recipes;
 pub mod seasonal;
 mod small_enums;
 mod types;
-pub mod look;
-pub mod find;
 
-pub use self::{extra::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*, look::*};
+pub use self::{extra::*, look::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*};
 
-pub use self::find::{FindConstant, Find, CREEPS, MY_CREEPS, HOSTILE_CREEPS, SOURCES_ACTIVE, SOURCES, DROPPED_RESOURCES, STRUCTURES, MY_STRUCTURES, HOSTILE_STRUCTURES, FLAGS, CONSTRUCTION_SITES, MY_SPAWNS, HOSTILE_SPAWNS, MY_CONSTRUCTION_SITES, HOSTILE_CONSTRUCTION_SITES,
-    MINERALS, NUKES, TOMBSTONES, POWER_CREEPS, MY_POWER_CREEPS, HOSTILE_POWER_CREEPS, DEPOSITS, RUINS, EXIT_TOP, EXIT_RIGHT, EXIT_BOTTOM, EXIT_LEFT, EXIT
+pub use self::find::{
+    Find, FindConstant, CONSTRUCTION_SITES, CREEPS, DEPOSITS, DROPPED_RESOURCES, EXIT, EXIT_BOTTOM,
+    EXIT_LEFT, EXIT_RIGHT, EXIT_TOP, FLAGS, HOSTILE_CONSTRUCTION_SITES, HOSTILE_CREEPS,
+    HOSTILE_POWER_CREEPS, HOSTILE_SPAWNS, HOSTILE_STRUCTURES, MINERALS, MY_CONSTRUCTION_SITES,
+    MY_CREEPS, MY_POWER_CREEPS, MY_SPAWNS, MY_STRUCTURES, NUKES, POWER_CREEPS, RUINS, SOURCES,
+    SOURCES_ACTIVE, STRUCTURES, TOMBSTONES,
 };
 
 /// Re-export of all constants related to [`Creep`] behavior and operations.

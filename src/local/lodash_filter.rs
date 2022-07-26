@@ -9,8 +9,8 @@ extern "C" {
     /// that accept such filters
     #[wasm_bindgen]
     pub type LodashFilter;
-    /// Set the `resourceType` to be returned. Pre-filters return results to increase performance
-    /// when used with [`get_all_orders`].
+    /// Set the `resourceType` to be returned. Pre-filters return results to
+    /// increase performance when used with [`get_all_orders`].
     #[wasm_bindgen(method, setter = resourceType)]
     pub fn resource_type(this: &LodashFilter, resource: MarketResourceType);
 }
