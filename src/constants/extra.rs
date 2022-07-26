@@ -11,10 +11,10 @@ pub const CONTROLLER_SIGN_MAX_LENGTH: u32 = 100;
 /// Maximum amount of CPU that can be accumulated in your bucket per shard.
 pub const CPU_BUCKET_MAX: u32 = 10_000;
 
-/// Maximum value of [`CpuInfo::tick_limit`] if more bucket is available than
+/// Maximum value of [`cpu::tick_limit`] if more bucket is available than
 /// can be used this tick.
 ///
-/// [`CpuInfo::tick_limit`]: crate::game::cpu::CpuInfo::tick_limit
+/// [`cpu::tick_limit`]: crate::game::cpu::tick_limit
 pub const CPU_TICK_LIMIT_MAX: u32 = 500;
 
 /// Hits per creep body part.
@@ -38,6 +38,8 @@ pub const INVADER_USERNAME: &str = "Invader";
 pub const LAB_REACTION_RANGE: u32 = 2;
 
 /// The maximum size (1000 KiB) of the serialized [`MapVisual`] data.
+///
+/// [`MapVisual`]: crate::objects::MapVisual
 pub const MAP_VISUAL_SIZE_LIMIT: u32 = 1000 * 1024;
 
 /// The maximum number of times that you can deal on market orders in a single

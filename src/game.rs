@@ -1,6 +1,6 @@
 //! The main interface to objects in the Screeps game world.
 //!
-//! This contains all functionality from the [`Game`] object in Screeps. That
+//! This contains all functionality from the `Game` object in Screeps. That
 //! generally means all state which is true this tick throughout the world.
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)

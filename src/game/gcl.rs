@@ -41,7 +41,7 @@ pub fn progress_total() -> f64 {
 ///
 /// Calculates the total number of control points needed to achieve a given
 /// Global Control Level. The resulting value for your current level, added to
-/// your [`GclInfo::progress`], would calculate your total lifetime control
+/// your [`progress`], would calculate your total lifetime control
 /// points.
 pub fn total_for_level(level: u32) -> f64 {
     // formula from

@@ -225,7 +225,7 @@ extern "C" {
 #[serde(rename_all = "camelCase")]
 pub struct LocalOrder {
     /// The order ID, which can be used to retrieve the order, or execute a
-    /// trade using [`MarketInfo::deal`].
+    /// trade using [`deal`].
     pub id: String,
     /// Tick of order creation, `None` for intershard orders.
     pub created: Option<u32>,
