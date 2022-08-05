@@ -30,10 +30,13 @@ extern "C" {
     pub fn store(this: &StructureLink) -> Store;
 
     /// Transfer energy from this [`StructureLink`] to another, losing
-    /// [`LINK_LOSS_RATIO`] and incurring a cooldown of [`LINK_COOLDOWN`] per
-    /// range to the target.
+    /// [`LINK_LOSS_RATIO`] percent of the energt and incurring a cooldown of
+    /// [`LINK_COOLDOWN`] tick per range to the target.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLink.transferEnergy)
+    ///
+    /// [`LINK_LOSS_RATIO`]: crate::constants::LINK_LOSS_RATIO
+    /// [`LINK_COOLDOWN`]: crate::constants::LINK_COOLDOWN
     #[wasm_bindgen(method, js_name = transferEnergy)]
     pub fn transfer_energy(
         this: &StructureLink,

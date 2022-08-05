@@ -11,6 +11,12 @@ pub const CONTROLLER_SIGN_MAX_LENGTH: u32 = 100;
 /// Maximum amount of CPU that can be accumulated in your bucket per shard.
 pub const CPU_BUCKET_MAX: u32 = 10_000;
 
+/// Time, in milliseconds, that the [`cpu::set_shard_limits`] function needs to
+/// cool down between calls.
+///
+/// [`cpu::set_shard_limits`]: crate::game::cpu::set_shard_limits
+pub const CPU_SET_SHARD_LIMITS_COOLDOWN: u32 = 12 * 3600 * 1000;
+
 /// Maximum value of [`cpu::tick_limit`] if more bucket is available than
 /// can be used this tick.
 ///

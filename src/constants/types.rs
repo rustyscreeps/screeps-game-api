@@ -1,6 +1,5 @@
 //! `*Type` constants.
 
-// use std::{borrow::Cow, str::FromStr};
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};

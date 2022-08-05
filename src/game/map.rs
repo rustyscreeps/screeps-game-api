@@ -19,82 +19,66 @@ extern "C" {
     #[wasm_bindgen(js_name = "map")]
     type Map;
 
-    /// Get an object with information about the exits from a given room, with
-    /// [`JsString`] versions of direction integers as keys and [`JsString`]
-    /// room names as values.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.describeExits)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = describeExits)]
     fn describe_exits(room_name: &JsString) -> Object;
 
-    /// Get the exit direction from a given room leading toward a destination
-    /// room, with an optional [`FindRouteOptions`] parameter allowing control
-    /// over the costs to enter rooms.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findExit)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = findExit)]
     fn find_exit(from_room: &JsString, to_room: &JsString, options: &JsValue) -> i32;
 
-    /// Get the route from a given room leading toward a destination room, with
-    /// an optional [`FindRouteOptions`] parameter allowing control over the
-    /// costs to enter rooms.
-    ///
-    /// Returns an [`Array`] with an object per room in the route, with keys
-    /// `exit` containing an [`ExitDirection`] and `room` containing room name
-    /// as a [`JsString`].
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findRoute)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = findRoute)]
     fn find_route(from_room: &JsString, to_room: &JsString, options: &JsValue) -> JsValue;
 
-    /// Get the distance used for range calculations between two rooms,
-    /// optionally setting `continuous` to true to consider the world borders to
-    /// wrap around, which is used for terminal calculations.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomLinearDistance)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomLinearDistance)]
     fn get_room_linear_distance(room_1: &JsString, room_2: &JsString, continuous: bool) -> u32;
 
-    /// Get the [`RoomTerrain`] object for any room, even one you don't have
-    /// vision in.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomTerrain)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomTerrain)]
     fn get_room_terrain(room_name: &JsString) -> RoomTerrain;
 
-    /// Get the size of the world map.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getWorldSize)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getWorldSize)]
     fn get_world_size() -> u32;
 
-    // todo MapRoomStatus return val
-    /// Get the status of a given room, determining whether it's in a special
-    /// area or currently inaccessible.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomStatus)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomStatus, catch)]
     fn get_room_status(room_name: &JsString) -> Result<JsRoomStatusResult, JsValue>;
-
-    // todo
-    // /// Get a [`MapVisual`] object, allowing rendering visual indicators on the
-    // game map. ///
-    // /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.visual)
-    // #[wasm_bindgen(method, getter)]
-    // pub fn visual(this: &MapInfo) -> MapVisual;
 }
 
+/// Get an object with information about the exits from a given room, with
+/// [`JsString`] versions of direction integers as keys and [`JsString`]
+/// room names as values.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.map.describeExits)
 pub fn describe_exits(room_name: RoomName) -> JsHashMap<Direction, RoomName> {
     let room_name = room_name.into();
 
     Map::describe_exits(&room_name).into()
 }
 
+/// Get the distance used for range calculations between two rooms,
+/// optionally setting `continuous` to true to consider the world borders to
+/// wrap around, which is used for terminal calculations.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomLinearDistance)
 pub fn get_room_linear_distance(from_room: RoomName, to_room: RoomName, continuous: bool) -> u32 {
     let from_room = from_room.into();
     let to_room = to_room.into();
 
     Map::get_room_linear_distance(&from_room, &to_room, continuous)
+}
+
+/// Get the [`RoomTerrain`] object for any room, even one you don't have
+/// vision in.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomTerrain)
+pub fn get_room_terrain(room_name: RoomName) -> RoomTerrain {
+    let name = room_name.into();
+
+    Map::get_room_terrain(&name)
+}
+
+/// Get the size of the world map.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getWorldSize)
+pub fn get_world_size() -> u32 {
+    Map::get_world_size()
 }
 
 #[wasm_bindgen]
@@ -151,16 +135,10 @@ pub enum RoomStatus {
     Respawn = "respawn",
 }
 
-pub fn get_room_terrain(room_name: RoomName) -> RoomTerrain {
-    let name = room_name.into();
-
-    Map::get_room_terrain(&name)
-}
-
-pub fn get_world_size() -> u32 {
-    Map::get_world_size()
-}
-
+/// Get the status of a given room, determining whether it's in a special
+/// area or currently inaccessible.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomStatus)
 pub fn get_room_status(room_name: RoomName) -> RoomStatusResult {
     let name = room_name.into();
 
@@ -172,8 +150,7 @@ pub fn get_room_status(room_name: RoomName) -> RoomStatusResult {
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object that represents a set of options for a call to
-    /// [`game::map::find_route`].
+    /// Object that represents a set of options for a call to [`find_route`].
     #[wasm_bindgen]
     pub type JsFindRouteOptions;
 
@@ -292,6 +269,15 @@ pub struct RouteStep {
     pub room: RoomName,
 }
 
+/// Get the route from a given room leading toward a destination room, with
+/// an optional [`FindRouteOptions`] parameter allowing control over the
+/// costs to enter rooms.
+///
+/// Returns an [`Array`] with an object per room in the route, with keys
+/// `exit` containing an [`ExitDirection`] and `room` containing room name
+/// as a [`JsString`].
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findRoute)
 pub fn find_route<F>(
     from: RoomName,
     to: RoomName,
@@ -326,6 +312,11 @@ where
     }
 }
 
+/// Get the exit direction from a given room leading toward a destination
+/// room, with an optional [`FindRouteOptions`] parameter allowing control
+/// over the costs to enter rooms.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.map.findExit)
 pub fn find_exit<F>(
     from: RoomName,
     to: RoomName,

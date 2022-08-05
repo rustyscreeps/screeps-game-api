@@ -116,10 +116,8 @@ extern "C" {
     #[wasm_bindgen]
     pub type Reservation;
 
-    /// The name of the player that has reserved this controller as a
-    /// [`JsString`].
     #[wasm_bindgen(method, getter = username)]
-    pub fn username_internal(this: &Reservation) -> JsString;
+    fn username_internal(this: &Reservation) -> JsString;
 
     /// The number of ticks until the reservation expires.
     #[wasm_bindgen(method, getter = ticksToEnd)]
@@ -127,6 +125,7 @@ extern "C" {
 }
 
 impl Reservation {
+    /// The name of the player that has reserved this controller.
     pub fn username(&self) -> String {
         Self::username_internal(self).into()
     }
@@ -140,14 +139,11 @@ extern "C" {
     #[wasm_bindgen]
     pub type Sign;
 
-    /// The name of the player that has reserved this controller as a
-    /// [`JsString`].
     #[wasm_bindgen(method, getter = username)]
-    pub fn username_internal(this: &Sign) -> JsString;
+    fn username_internal(this: &Sign) -> JsString;
 
-    /// The text of the sign on this controller as a [`JsString`].
     #[wasm_bindgen(method, getter = text)]
-    pub fn text_internal(this: &Sign) -> JsString;
+    fn text_internal(this: &Sign) -> JsString;
 
     /// The tick when this sign was written.
     #[wasm_bindgen(method, getter)]
@@ -159,10 +155,12 @@ extern "C" {
 }
 
 impl Sign {
+    /// The name of the player that has reserved this controller.
     pub fn username(&self) -> String {
         Self::username_internal(self).into()
     }
 
+    /// The text of the sign on this controller.
     pub fn text(&self) -> String {
         Self::text_internal(self).into()
     }

@@ -108,6 +108,8 @@ extern "C" {
     /// [`StructureInvaderCore`] is currently spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn-Spawning)
+    ///
+    /// [`StructureInvaderCore`]: crate::objects::StructureInvaderCore
     #[wasm_bindgen(js_namespace = StructureSpawn)]
     pub type Spawning;
 

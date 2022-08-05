@@ -49,12 +49,12 @@ extern "C" {
     #[wasm_bindgen]
     pub type Owner;
 
-    /// The name of the player that owns this structure as a [`JsString`].
     #[wasm_bindgen(method, getter = username)]
-    pub fn username_internal(this: &Owner) -> JsString;
+    fn username_internal(this: &Owner) -> JsString;
 }
 
 impl Owner {
+    /// The name of the player that owns this object.
     pub fn username(&self) -> String {
         Self::username_internal(self).into()
     }

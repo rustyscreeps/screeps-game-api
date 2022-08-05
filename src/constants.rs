@@ -1,13 +1,14 @@
-//! Constants, most copied from [the game constants].
+//! Constants, most copied from [the game constants][1].
 //!
-//! Last updated on 2020-12-13, `e4589666113334bb1f967b9a5540b642141b6dab` from
-//! <https://github.com/screeps/common/commits/master/lib/constants.js>.
+//! Last updated on 2020-12-13, `e4589666113334bb1f967b9a5540b642141b6dab`
 //!
 //! Currently missing:
 //! - OBSTACLE_OBJECT_TYPES
 //! - WORLD_WIDTH / WORLD_HEIGHT (deprecated in Screeps)
 //! - BODYPARTS_ALL, RESOURCES_ALL, COLORS_ALL
 //! - POWER_INFO
+//!
+//! [1]: https://github.com/screeps/common/commits/master/lib/constants.js
 
 pub mod extra;
 pub mod find;
