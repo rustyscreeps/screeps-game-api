@@ -6,14 +6,10 @@ use std::{
     str::FromStr,
 };
 
-use crate::{game::*, Resolvable};
+use crate::{game, Resolvable, RoomObject};
+use arrayvec::ArrayString;
 use serde::{Deserialize, Serialize};
-
-// use crate::{
-//     objects::{HasId, SizedRoomObject},
-//     traits::{TryFrom, TryInto},
-//     ConversionError,
-// };
+use wasm_bindgen::JsCast;
 
 mod errors;
 mod raw;
@@ -117,16 +113,6 @@ impl<T> FromStr for ObjectId<T> {
     }
 }
 
-// impl<T> TryFrom<u128> for ObjectId<T> {
-//     type Error = RawObjectIdParseError;
-
-//     fn try_from(val: u128) -> Result<Self, RawObjectIdParseError> {
-//         let raw: RawObjectId = val.try_into()?;
-
-//         Ok(raw.into())
-//     }
-// }
-
 impl<T> fmt::Display for ObjectId<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.raw.fmt(f)
@@ -153,36 +139,6 @@ impl<T> ObjectId<T> {
         RawObjectId::from_packed(packed).into()
     }
 
-    // /// Creates an object ID from a packed representation stored in JavaScript.
-    // ///
-    // /// The input must be a reference to a length-3 array of integers.
-    // ///
-    // /// Recommended to be used with the `object_id_to_packed` JavaScript utility
-    // /// function, which takes in a string and returns the array of three
-    // /// integers that this function expects.
-    // ///
-    // /// # Example
-    // ///
-    // /// ```no_run
-    // /// use screeps::{prelude::*, traits::TryInto, Creep, ObjectId};
-    // /// use stdweb::js;
-    // ///
-    // /// let packed_obj_id = (js! {
-    // ///     let creep = _.sample(Game.creeps);
-    // ///     return object_id_to_packed(creep.id);
-    // /// })
-    // /// .try_into()
-    // /// .unwrap();
-    // ///
-    // /// let parsed: ObjectId<Creep> = ObjectId::from_packed_js_val(packed_obj_id).unwrap();
-    // /// println!("found creep with id {}", parsed);
-    // /// ```
-    // ///
-    // /// See also [`RawObjectId::from_packed_js_val`].
-    // pub fn from_packed_js_val(packed_val: Reference) -> Result<Self, ConversionError> {
-    //     RawObjectId::from_packed_js_val(packed_val).map(Into::into)
-    // }
-
     /// Converts this object ID to a `u128` number.
     ///
     /// The returned number, when formatted as hex, will produce a string
@@ -194,77 +150,38 @@ impl<T> ObjectId<T> {
         self.raw.into()
     }
 
-    // /// Formats this object ID as a string on the stack.
-    // ///
-    // /// This is equivalent to [`ToString::to_string`], but involves no
-    // /// allocation.
-    // ///
-    // /// To use the produced string in stdweb, use `&*` to convert it to a string
-    // /// slice.
-    // ///
-    // /// This is less efficient than [`ObjectId::unsafe_as_uploaded`], but
-    // /// easier to get right.
-    // ///
-    // /// # Example
-    // ///
-    // /// ```no_run
-    // /// use screeps::{prelude::*, Creep, ObjectId};
-    // /// use stdweb::js;
-    // ///
-    // /// let object_id = screeps::game::creeps::values()[0].id();
-    // ///
-    // /// let str_repr = object_id.to_array_string();
-    // ///
-    // /// js! {
-    // ///     let id = @{&*str_repr};
-    // ///     console.log("we have a creep with the id " + id);
-    // /// }
-    // /// ```
-    // ///
-    // /// See also [`RawObjectId::to_array_string`].
-    // pub fn to_array_string(&self) -> ArrayString<[u8; 24]> {
-    //     self.raw.to_array_string()
-    // }
+    /// Formats this object ID as a string on the stack.
+    ///
+    /// This is equivalent to [`ToString::to_string`], but involves no
+    /// allocation.
+    ///
+    /// See also [`RawObjectId::to_array_string`].
+    pub fn to_array_string(&self) -> ArrayString<24> {
+        self.raw.to_array_string()
+    }
 
-    // /// Creates an array accessible from JavaScript which represents part of
-    // /// this object id's packed representation.
-    // ///
-    // /// Specifically, the resulting array will contain the first non-zero number
-    // /// in this object id, and all following numbers. This allows for a more
-    // /// efficient `object_id_from_packed` implementation.
-    // ///
-    // /// # Safety
-    // ///
-    // /// This is highly unsafe.
-    // ///
-    // /// This creates an `UnsafeTypedArray` and does not use it in JS, so the
-    // /// restrictions from [`UnsafeTypedArray`] apply. When you call into
-    // /// JavaScript using it, you must "use" it immediately before calling into
-    // /// any Rust code whatsoever.
-    // ///
-    // /// There are other safety concerns as well, but all deriving from
-    // /// [`UnsafeTypedArray`]. See [`UnsafeTypedArray`].
-    // ///
-    // /// # Example
-    // ///
-    // /// ```no_run
-    // /// use screeps::{prelude::*, Creep, ObjectId};
-    // /// use stdweb::js;
-    // ///
-    // /// let object_id = screeps::game::creeps::values()[0].id();
-    // ///
-    // /// let array_view = unsafe { object_id.unsafe_as_uploaded() };
-    // ///
-    // /// js! {
-    // ///     let id = object_id_from_packed(@{array_view});
-    // ///     console.log("we have a creep with the id " + id);
-    // /// }
-    // /// ```
-    // ///
-    // /// See also [`RawObjectId::unsafe_as_uploaded`].
-    // pub unsafe fn unsafe_as_uploaded(&self) -> UnsafeTypedArray<'_, u32> {
-    //     self.raw.unsafe_as_uploaded()
-    // }
+    /// Resolves this object ID into an object.
+    ///
+    /// This is a shortcut for [`game::get_object_by_id_typed(id)`][1]
+    ///
+    /// # Errors
+    ///
+    /// Will return an error if this ID's type does not match the object it
+    /// points to with the resolved [`RoomObject`] with an unknown type.
+    ///
+    /// Will return `Ok(None)` if the object no longer exists, or is in a room
+    /// we don't have vision for.
+    ///
+    /// [1]: crate::game::get_object_by_id_typed
+    pub fn try_resolve(self) -> Result<Option<T>, RoomObject>
+    where
+        T: Resolvable + JsCast,
+    {
+        match game::get_object_by_id_erased(&self.raw) {
+            Some(v) => v.dyn_into().map(|v| Some(v)),
+            None => Ok(None),
+        }
+    }
 
     /// Resolves this ID into an object, assuming the type `T` is the correct
     /// type of object that this ID refers to. If the ID has been converted to
@@ -277,30 +194,8 @@ impl<T> ObjectId<T> {
     where
         T: Resolvable,
     {
-        get_object_by_id_typed(&self)
+        game::get_object_by_id_typed(&self)
     }
-
-    // /// Resolves this ID into an object, panicking on type mismatch.
-    // ///
-    // /// This is a shortcut for [`id.try_resolve().expect(...)`][1]
-    // ///
-    // /// # Panics
-    // ///
-    // /// Will panic if this ID points to an object which is not of type `T`.
-    // ///
-    // /// Will return `None` if this object no longer exists, or is in a room we
-    // /// don't have vision for.
-    // ///
-    // /// [1]: ObjectId::try_resolve
-    // pub fn resolve(self) -> Option<T>
-    // where
-    //     T: HasId + SizedRoomObject,
-    // {
-    //     match self.try_resolve() {
-    //         Ok(v) => v,
-    //         Err(e) => panic!("error resolving id {}: {}", self, e),
-    //     }
-    // }
 }
 
 impl<T> PartialEq<RawObjectId> for ObjectId<T> {
@@ -346,11 +241,11 @@ impl<T> From<ObjectId<T>> for RawObjectId {
     }
 }
 
-// impl<T> From<ObjectId<T>> for ArrayString<[u8; 24]> {
-//     fn from(id: ObjectId<T>) -> Self {
-//         id.to_array_string()
-//     }
-// }
+impl<T> From<ObjectId<T>> for ArrayString<24> {
+    fn from(id: ObjectId<T>) -> Self {
+        id.to_array_string()
+    }
+}
 
 impl<T> From<ObjectId<T>> for String {
     fn from(id: ObjectId<T>) -> Self {
@@ -369,15 +264,3 @@ impl<T> From<u128> for ObjectId<T> {
         Self::from_packed(packed)
     }
 }
-
-// impl<T> From<[u32; 3]> for ObjectId<T> {
-//     fn from(packed: [u32; 3]) -> Self {
-//         Self::from_packed(packed)
-//     }
-// }
-
-// impl<T> From<ObjectId<T>> for [u32; 3] {
-//     fn from(id: ObjectId<T>) -> Self {
-//         id.raw.into()
-//     }
-// }
