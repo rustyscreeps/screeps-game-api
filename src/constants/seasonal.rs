@@ -1,4 +1,5 @@
-//! Constants that apply only to Screeps seasonal servers.
+//! Constants that are unique to object types or mechanics found in Screeps
+//! seasonal.
 //!
 //! [Screeps seasonal documentation](https://docs-season.screeps.com/api/#Season-constants)
 

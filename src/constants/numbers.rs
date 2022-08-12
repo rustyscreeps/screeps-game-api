@@ -666,8 +666,8 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 /// Cost, paid from [`CpuInfo::bucket`], to generate a pixel using
 /// [`CpuInfo::generate_pixel`]
 ///
-/// [`CpuInfo::bucket`]: crate::game::cpu::CpuInfo::bucket
-/// [`CpuInfo::generate_pixel`]: crate::game::cpu::CpuInfo::generate_pixel
+/// [`CpuInfo::bucket`]: crate::game::cpu::bucket
+/// [`CpuInfo::generate_pixel`]: crate::game::cpu::generate_pixel
 pub const PIXEL_CPU_COST: u32 = 10_000;
 
 // Resources defined in `types.rs`

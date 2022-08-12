@@ -104,7 +104,7 @@ impl From<LocalCostMatrix> for Vec<u8> {
 
 impl From<&LocalCostMatrix> for Vec<u8> {
     fn from(lcm: &LocalCostMatrix) -> Vec<u8> {
-        lcm.bits.clone().into()
+        lcm.bits.into()
     }
 }
 
@@ -167,7 +167,7 @@ impl SparseCostMatrix {
     }
 
     pub fn get(&self, xy: RoomXY) -> u8 {
-        *self.inner.get(&xy).as_deref().unwrap_or(&0)
+        *self.inner.get(&xy).unwrap_or(&0)
     }
 
     pub fn set(&mut self, xy: RoomXY, val: u8) {
@@ -297,7 +297,7 @@ mod serde_impls {
     where
         S: Serializer,
     {
-        (&bits[..]).serialize(serializer)
+        bits[..].serialize(serializer)
     }
 
     pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<[u8; ROOM_AREA], D::Error>

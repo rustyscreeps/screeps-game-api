@@ -6,7 +6,7 @@ use std::{
 
 use js_sys::JsString;
 
-use crate::{game::*, Resolvable};
+use crate::{game, Resolvable};
 
 /// Represents a reference to an Object ID string held on the javascript heap
 /// and a type that the ID points to.
@@ -75,26 +75,6 @@ impl<T> JsObjectId<T> {
         }
     }
 
-    // /// Resolves this object ID into an object.
-    // ///
-    // /// This is a shortcut for [`game::get_object_typed(id)`][1]
-    // ///
-    // /// # Errors
-    // ///
-    // /// Will return an error if this ID's type does not match the object it
-    // /// points to.
-    // ///
-    // /// Will return `Ok(None)` if the object no longer exists, or is in a room
-    // /// we don't have vision for.
-    // ///
-    // /// [1]: crate::game::get_object_typed
-    // pub fn try_resolve(self) -> Result<Option<T>, ConversionError>
-    // where
-    //     T: HasId + SizedRoomObject,
-    // {
-    //     crate::game::get_object_typed(self)
-    // }
-
     /// Resolves this ID into an object, assuming the type `T` is the correct
     /// type of object that this ID refers to. If the ID has been converted to
     /// an invalid type, using the returned object in a way not valid for its
@@ -106,7 +86,7 @@ impl<T> JsObjectId<T> {
     where
         T: Resolvable,
     {
-        get_object_by_js_id_typed(self)
+        game::get_object_by_js_id_typed(self)
     }
 }
 

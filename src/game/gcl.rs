@@ -10,28 +10,28 @@ extern "C" {
     #[wasm_bindgen(js_name = "gcl")]
     type Gcl;
 
-    /// Your current Global Control Level, which determines the number of rooms
-    /// you are allowed to claim.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = level)]
     fn level() -> u32;
 
-    /// Your progress toward the next Global Control Level.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = progress)]
     fn progress() -> f64;
 
-    /// Total progress needed to reach the next Global Control Level.
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "gcl", static_method_of = Gcl, getter, js_name = progressTotal)]
     fn progress_total() -> f64;
 }
 
+/// Your current Global Control Level, which determines the number of rooms
+/// you are allowed to claim.
 pub fn level() -> u32 {
     Gcl::level()
 }
 
+/// Your progress toward the next Global Control Level.
 pub fn progress() -> f64 {
     Gcl::progress()
 }
 
+/// Total progress needed to reach the next Global Control Level.
 pub fn progress_total() -> f64 {
     Gcl::progress_total()
 }
@@ -41,7 +41,7 @@ pub fn progress_total() -> f64 {
 ///
 /// Calculates the total number of control points needed to achieve a given
 /// Global Control Level. The resulting value for your current level, added to
-/// your [`GclInfo::progress`], would calculate your total lifetime control
+/// your [`progress`], would calculate your total lifetime control
 /// points.
 pub fn total_for_level(level: u32) -> f64 {
     // formula from

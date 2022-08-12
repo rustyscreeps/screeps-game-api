@@ -11,10 +11,16 @@ pub const CONTROLLER_SIGN_MAX_LENGTH: u32 = 100;
 /// Maximum amount of CPU that can be accumulated in your bucket per shard.
 pub const CPU_BUCKET_MAX: u32 = 10_000;
 
-/// Maximum value of [`CpuInfo::tick_limit`] if more bucket is available than
+/// Time, in milliseconds, that the [`cpu::set_shard_limits`] function needs to
+/// cool down between calls.
+///
+/// [`cpu::set_shard_limits`]: crate::game::cpu::set_shard_limits
+pub const CPU_SET_SHARD_LIMITS_COOLDOWN: u32 = 12 * 3600 * 1000;
+
+/// Maximum value of [`cpu::tick_limit`] if more bucket is available than
 /// can be used this tick.
 ///
-/// [`CpuInfo::tick_limit`]: crate::game::cpu::CpuInfo::tick_limit
+/// [`cpu::tick_limit`]: crate::game::cpu::tick_limit
 pub const CPU_TICK_LIMIT_MAX: u32 = 500;
 
 /// Hits per creep body part.
@@ -23,11 +29,16 @@ pub const CREEP_HITS_PER_PART: u32 = 100;
 /// Maximum length of names of creeps.
 pub const CREEP_NAME_MAX_LENGTH: u32 = 100;
 
+/// Maximum length of strings that creeps and power creeps can say.
+pub const CREEP_SAY_MAX_LENGTH: u32 = 10;
+
 /// Maximum length of names of flag objects.
 pub const FLAG_NAME_MAX_LENGTH: u32 = 60;
 
-/// Maximum size in bytes (100 KiB) of the string contents allowed for inter
-/// shard memory.
+/// Maximum size in bytes (100 KiB) of data set in [`InterShardMemory`] for each
+/// shard
+///
+/// [`InterShardMemory`]: crate::InterShardMemory
 pub const INTER_SHARD_MEMORY_SIZE_LIMIT: u32 = 100 * 1024;
 
 /// Owner username of hostile non-player structures and creeps which create
@@ -38,6 +49,8 @@ pub const INVADER_USERNAME: &str = "Invader";
 pub const LAB_REACTION_RANGE: u32 = 2;
 
 /// The maximum size (1000 KiB) of the serialized [`MapVisual`] data.
+///
+/// [`MapVisual`]: crate::objects::MapVisual
 pub const MAP_VISUAL_SIZE_LIMIT: u32 = 1000 * 1024;
 
 /// The maximum number of times that you can deal on market orders in a single
@@ -81,9 +94,6 @@ pub const RANGED_MASS_ATTACK_POWER_RANGE_3: u32 = 1;
 ///
 /// [`RoomVisual`]: crate::objects::RoomVisual
 pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
-
-/// Maximum length of strings that creeps and power creeps can say.
-pub const SAY_MAX_LENGTH: u32 = 10;
 
 /// Owner username of hostile non-player structures and creeps which occupy
 /// sector center rooms.

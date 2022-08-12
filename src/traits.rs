@@ -212,6 +212,8 @@ pub trait SharedCreepProperties {
     fn my(&self) -> bool;
 
     /// The creep's name as an owned reference to a [`String`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.name)
     fn name(&self) -> String;
 
     /// The [`Owner`] of this creep that contains the owner's username.

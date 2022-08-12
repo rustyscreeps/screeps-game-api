@@ -9,7 +9,7 @@ use wasm_bindgen::{prelude::*, JsCast};
 use crate::{
     constants::{MarketResourceType, OrderType, ResourceType, ReturnCode},
     containers::{JsContainerFromValue, JsHashMap},
-    local::RoomName,
+    local::{LodashFilter, RoomName},
 };
 
 #[wasm_bindgen]
@@ -17,158 +17,164 @@ extern "C" {
     #[wasm_bindgen(js_name = "market")]
     type Market;
 
-    /// Your current credit balance.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.credits)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, getter, js_name = credits)]
     fn credits() -> f64;
 
-    /// An [`Array`] of the last 100 [`Transaction`]s sent to your terminals.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.incomingTransactions)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, getter, js_name = incomingTransactions)]
     fn incoming_transactions() -> Array;
 
-    /// An [`Array`] of the last 100 [`Transaction`]s sent from your terminals.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.outgoingTransactions)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, getter, js_name = outgoingTransactions)]
     fn outgoing_transactions() -> Array;
 
-    /// An [`Object`] with your current buy and sell orders on the market, with
-    /// order ID [`JsString`] keys and [`MyOrder`] values.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.orders)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, getter, js_name = orders)]
     fn orders() -> Object;
 
-    // todo maybe just implement a native version of this instead?
-    /// Get the amount of energy required to send a given amount of any resource
-    /// from one room to another.  See [`TERMINAL_SEND_COST_SCALE`] for
-    /// information about the calculation.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.calcTransactionCost)
-    ///
-    /// [`TERMINAL_SEND_COST_SCALE`]: crate::constants::TERMINAL_SEND_COST_SCALE
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = calcTransactionCost)]
     fn calc_transaction_cost(amount: u32, room_1: &JsString, room_2: &JsString) -> u32;
 
-    /// Cancel one of your existing orders on the market, without refunding
-    /// associated fees.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.cancelOrder)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = cancelOrder)]
     fn cancel_order(order_id: &JsString) -> ReturnCode;
 
-    /// Cancel one of your existing orders on the market, without refunding
-    /// associated fees.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.changeOrderPrice)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = changeOrderPrice)]
     fn change_order_price(order_id: &JsString, new_price: f64) -> ReturnCode;
 
-    // todo type to serialize call options into
-    /// Create a new order on the market.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.createOrder)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = createOrder)]
     fn create_order(order_parameters: &Object) -> ReturnCode;
 
-    /// Execute a trade on an order on the market. Name of a room with a
-    /// terminal from which to send or receive resources is required unless the
-    /// order is for an account resource.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.deal)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = deal)]
     fn deal(order_id: &JsString, amount: u32, room_name: Option<&JsString>) -> ReturnCode;
 
-    /// Adds more capacity to one of your existing orders, offering or
-    /// requesting more of the resource and incurring additional fees.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.extendOrder)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = extendOrder)]
     fn extend_order(order_id: &JsString, add_amount: u32) -> ReturnCode;
 
-    // todo type to serialize call options into - special efficient behavior when
-    // passed a `{resourceType: type}` filter
-    /// Get an [`Array`[] of all [`Order`]s on the market, with an optional
-    /// filter object. Note that a filter key of `resourceType` with a type
-    /// restriction has special handling in the engine to be more efficient
-    /// ([source]).
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getAllOrders)
-    ///
-    /// [source]: https://github.com/screeps/engine/blob/f7a09e637c20689084fcf4eb43eacdfd51d31476/src/game/market.js#L37
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = getAllOrders)]
-    fn get_all_orders(filter: &Object) -> Array;
+    fn get_all_orders(filter: Option<&LodashFilter>) -> Array;
 
-    // todo this is probably breaking in an interesting way on private servers due to the {} return https://github.com/screeps/engine/pull/131 - maybe catch?
-    /// Get information about the price history on the market for the last 14
-    /// days for a given resource as an [`Array`] of [`OrderHistoryRecord`]s, or
-    /// for all resources if `None`. Warning: returns an empty [`Object`]
-    /// instead of an array if there is no history for the resource, verifying
-    /// the type is recommended before use if the market might be empty.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getHistory)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = getHistory)]
     fn get_history(resource: Option<ResourceType>) -> JsValue;
 
-    /// Get an object with information about a specific order, in the same
-    /// format as returned by [`MarketInfo::get_all_orders`]
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getOrderById)
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = getOrderById)]
     fn get_order_by_id(order_id: &JsString) -> Option<Order>;
 }
 
+/// Your current credit balance.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.credits)
 pub fn credits() -> f64 {
     Market::credits()
 }
 
+/// An [`Array`] of the last 100 [`Transaction`]s sent to your terminals.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.incomingTransactions)
 pub fn incoming_transactions() -> Array {
     Market::incoming_transactions()
 }
 
+/// An [`Array`] of the last 100 [`Transaction`]s sent from your terminals.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.outgoingTransactions)
 pub fn outgoing_transactions() -> Array {
     Market::outgoing_transactions()
 }
 
+/// An [`Object`] with your current buy and sell orders on the market, with
+/// order ID [`JsString`] keys and [`MyOrder`] values.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.orders)
 pub fn orders() -> JsHashMap<String, MyOrder> {
     Market::orders().into()
 }
 
+// todo maybe just implement a native version of this instead?
+/// Get the amount of energy required to send a given amount of any resource
+/// from one room to another.  See [`TERMINAL_SEND_COST_SCALE`] for
+/// information about the calculation.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.calcTransactionCost)
+///
+/// [`TERMINAL_SEND_COST_SCALE`]: crate::constants::TERMINAL_SEND_COST_SCALE
 pub fn calc_transaction_cost(amount: u32, room_1: &JsString, room_2: &JsString) -> u32 {
     Market::calc_transaction_cost(amount, room_1, room_2)
 }
 
+/// Cancel one of your existing orders on the market, without refunding
+/// associated fees.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.cancelOrder)
 pub fn cancel_order(order_id: &JsString) -> ReturnCode {
     Market::cancel_order(order_id)
 }
 
+/// Change the price of an existing order. If new_price is greater than old
+/// price, you will be charged
+/// (newPrice-oldPrice)*remainingAmount*[`MARKET_FEE`] credits.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.changeOrderPrice)
+///
+/// [`MARKET_FEE`]: crate::constants::MARKET_FEE
 pub fn change_order_price(order_id: &JsString, new_price: f64) -> ReturnCode {
     Market::change_order_price(order_id, new_price)
 }
 
+// todo type to serialize call options into
+/// Create a new order on the market.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.createOrder)
 pub fn create_order(order_parameters: &Object) -> ReturnCode {
     Market::create_order(order_parameters)
 }
 
-pub fn deal(order_id: &JsString, amount: u32, room_name: Option<&JsString>) -> ReturnCode {
-    Market::deal(order_id, amount, room_name)
+/// Execute a trade on an order on the market. Name of a room with a
+/// terminal from which to send or receive resources is required unless the
+/// order is for an account resource.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.deal)
+pub fn deal(order_id: &JsString, amount: u32, room_name: Option<RoomName>) -> ReturnCode {
+    match room_name {
+        Some(r) => Market::deal(order_id, amount, Some(&r.into())),
+        None => Market::deal(order_id, amount, None),
+    }
 }
 
+/// Adds more capacity to one of your existing orders, offering or
+/// requesting more of the resource and incurring additional fees.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.extendOrder)
 pub fn extend_order(order_id: &JsString, add_amount: u32) -> ReturnCode {
     Market::extend_order(order_id, add_amount)
 }
 
-pub fn get_all_orders(filter: &Object) -> Array {
+/// Get all [`Order`]s on the market, with an optional
+/// filter. Note that a `resourceType` filter has special handling in the engine
+/// to be more efficient ([source]).
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getAllOrders)
+///
+/// [source]: https://github.com/screeps/engine/blob/f7a09e637c20689084fcf4eb43eacdfd51d31476/src/game/market.js#L37
+pub fn get_all_orders(filter: Option<&LodashFilter>) -> Vec<Order> {
     Market::get_all_orders(filter)
+        .iter()
+        .map(|o| o.unchecked_into())
+        .collect()
 }
 
+// todo this is probably breaking in an interesting way on private servers due to the {} return https://github.com/screeps/engine/pull/131 - maybe catch?
+/// Get information about the price history on the market for the last 14
+/// days for a given resource as an [`Array`] of [`OrderHistoryRecord`]s, or
+/// for all resources if `None`. Warning: returns an empty [`Object`]
+/// instead of an array if there is no history for the resource, verifying
+/// the type is recommended before use if the market might be empty.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getHistory)
 pub fn get_history(resource: Option<ResourceType>) -> JsValue {
     Market::get_history(resource)
 }
 
+/// Get an object with information about a specific order, in the same
+/// format as returned by [`get_all_orders`]
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getOrderById)
 pub fn get_order_by_id(order_id: &str) -> Option<Order> {
     let order_id: JsString = order_id.into();
 
@@ -219,7 +225,7 @@ extern "C" {
 #[serde(rename_all = "camelCase")]
 pub struct LocalOrder {
     /// The order ID, which can be used to retrieve the order, or execute a
-    /// trade using [`MarketInfo::deal`].
+    /// trade using [`deal`].
     pub id: String,
     /// Tick of order creation, `None` for intershard orders.
     pub created: Option<u32>,
@@ -429,304 +435,3 @@ pub struct LocalOrderHistoryRecord {
     pub avg_price: f64,
     pub stddev_price: f64,
 }
-
-// use std::{borrow::Cow, collections::HashMap, str::FromStr};
-
-// use parse_display::FromStr;
-// use serde::{
-//     de::{Deserializer, Error as _, Unexpected},
-//     Deserialize,
-// };
-// use serde_repr::{Deserialize_repr ,Serialize_repr};
-
-// use crate::{
-//     constants::{MarketResourceType, ResourceType, ReturnCode},
-//     local::RoomName,
-//     traits::TryInto,
-// };
-
-// /// Translates the `ORDER_SELL` and `ORDER_BUY` constants.
-// ///
-// /// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
-// /// implementations only operate on made-up integer constants. If you're ever
-// /// using these impls manually, use the `__order_type_num_to_str` and
-// /// `__order_type_str_to_num` JavaScript functions,
-// /// [`FromStr`][std::str::FromStr] or [`OrderType::deserialize_from_str`].
-// ///
-// /// `OrderType`'s `FromStr`, `Display` and `ToString` representations accurately
-// /// represent the strings the game constant uses.
-// ///
-// /// See the [constants module's documentation][crate::constants] for more
-// /// details.
-// #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-// #[repr(u8)]
-// pub enum OrderType {
-//     #[display("sell")]
-//     Sell = 0,
-//     #[display("buy")]
-//     Buy = 1,
-// }
-
-// impl OrderType {
-//     /// Helper function for deserializing from a string rather than from an
-//     /// integer.
-//     pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-//         let s: Cow<'de, str> = Cow::deserialize(d)?;
-//         Self::from_str(&s)
-//             .map_err(|_| D::Error::invalid_value(Unexpected::Str(&s), &r#""buy" or "sell""#))
-//     }
-// }
-
-// // impl OrderType {
-// //     fn as_string(&self) -> String {
-// //         match self {
-// //             OrderType::Sell => String::from("sell"),
-// //             OrderType::Buy => String::from("buy")
-// //         }
-// //     }
-// // }
-
-// #[derive(Deserialize, Debug)]
-// pub struct Player {
-//     pub username: String,
-// }
-// js_deserializable!(Player);
-
-// #[derive(Deserialize, Debug)]
-// pub struct TransactionOrder {
-//     pub id: String,
-//     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
-//     pub order_type: OrderType,
-//     pub price: f64,
-// }
-// js_deserializable!(TransactionOrder);
-
-// #[derive(Deserialize, Debug)]
-// #[serde(rename_all = "camelCase")]
-// pub struct Transaction {
-//     pub transaction_id: String,
-//     pub time: u32,
-//     /// The player who sent resources for this transaction, or `None` if it was
-//     /// an NPC terminal
-//     pub sender: Option<Player>,
-//     /// The recipient of the resources for this transaction, or `None` if it was
-//     /// an NPC terminal
-//     pub recipient: Option<Player>,
-//     #[serde(deserialize_with = "ResourceType::deserialize_from_str")]
-//     pub resource_type: ResourceType,
-//     pub amount: u32,
-//     /// The room that sent resources for this transaction
-//     pub from: RoomName,
-//     /// The room that received resources in this transaction
-//     pub to: RoomName,
-//     /// The description set in the sender's `StructureTerminal::send()` call, if
-//     /// any
-//     pub description: Option<String>,
-//     /// Information about the market order that this transaction was fulfilling,
-//     /// if any
-//     pub order: Option<TransactionOrder>,
-// }
-// js_deserializable!(Transaction);
-
-// #[derive(Deserialize, Debug)]
-// #[serde(rename_all = "camelCase")]
-// pub struct Order {
-//     pub id: String,
-//     /// Tick of order creation, `None` for intershard orders
-//     pub created: Option<u32>,
-//     /// Timestamp of order creation in milliseconds since epoch
-//     pub created_timestamp: u64,
-//     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
-//     pub order_type: OrderType,
-//     #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
-//     pub resource_type: MarketResourceType,
-//     /// Room that owns the order, `None` for intershard orders
-//     pub room_name: Option<RoomName>,
-//     pub amount: u32,
-//     pub remaining_amount: u32,
-//     pub price: f64,
-// }
-// js_deserializable!(Order);
-
-// #[derive(Deserialize, Debug)]
-// #[serde(rename_all = "camelCase")]
-// pub struct MyOrder {
-//     pub id: String,
-//     /// Tick of order creation, `None` for intershard orders
-//     pub created: Option<u32>,
-//     /// Timestamp of order creation in milliseconds since epoch
-//     pub created_timestamp: u64,
-//     pub active: bool,
-//     #[serde(rename = "type", deserialize_with = "OrderType::deserialize_from_str")]
-//     pub order_type: OrderType,
-//     #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
-//     pub resource_type: MarketResourceType,
-//     /// Room that owns the order, `None` for intershard orders
-//     pub room_name: Option<RoomName>,
-//     pub amount: u32,
-//     pub remaining_amount: u32,
-//     pub total_amount: u32,
-//     pub price: f64,
-// }
-// js_deserializable!(MyOrder);
-
-// #[derive(Deserialize, Debug)]
-// #[serde(rename_all = "camelCase")]
-// pub struct OrderHistoryRecord {
-//     #[serde(deserialize_with = "MarketResourceType::deserialize_from_str")]
-//     pub resource_type: MarketResourceType,
-//     /// Calendar date in string format, eg "2018-12-31"
-//     pub date: String,
-//     /// Total number of transactions for this resource on this day
-//     pub transactions: u32,
-//     /// Total volume of this resource bought and sold on this day
-//     pub volume: u32,
-//     pub avg_price: f64,
-//     pub stddev_price: f64,
-// }
-// js_deserializable!(OrderHistoryRecord);
-
-// pub fn credits() -> f64 {
-//     js_unwrap!(Game.market.credits)
-// }
-
-// pub fn incoming_transactions() -> Vec<Transaction> {
-//     js_unwrap!(Game.market.incomingTransactions)
-// }
-
-// pub fn outgoing_transactions() -> Vec<Transaction> {
-//     js_unwrap!(Game.market.outgoingTransactions)
-// }
-
-// /// Get a `HashMap` of the player's currently-listed market orders
-// pub fn orders() -> HashMap<String, MyOrder> {
-//     js_unwrap!(Game.market.orders)
-// }
-
-// pub fn calc_transaction_cost(amount: u32, room1: RoomName, room2: RoomName) -> f64 {
-//     js_unwrap!(Game.market.calcTransactionCost(@{amount}, @{room1.to_string()}, @{room2.to_string()}))
-// }
-
-// pub fn cancel_order(order_id: &str) -> ReturnCode {
-//     js_unwrap!(Game.market.cancelOrder(@{order_id}))
-// }
-
-// pub fn change_order_price(order_id: &str, new_price: f64) -> ReturnCode {
-//     js_unwrap!(Game.market.changeOrderPrice(@{order_id}, @{new_price}))
-// }
-
-// pub fn create_order(
-//     order_type: OrderType,
-//     resource_type: MarketResourceType,
-//     price: f64,
-//     total_amount: u32,
-//     room: Option<RoomName>,
-// ) -> ReturnCode {
-//     let resource_num = match resource_type {
-//         MarketResourceType::Resource(ty) => ty as u32,
-//         MarketResourceType::IntershardResource(ty) => ty as u32,
-//     };
-//     match room {
-//         Some(room_name) => {
-//             js_unwrap! {
-//                 Game.market.createOrder({
-//                     type: __order_type_num_to_str(@{order_type as u32}),
-//                     resourceType: __resource_type_num_to_str(@{resource_num}),
-//                     price: @{price},
-//                     totalAmount: @{total_amount},
-//                     roomName: @{room_name.to_string()}
-//                 })
-//             }
-//         }
-//         None => {
-//             js_unwrap! {
-//                 Game.market.createOrder({
-//                     type: __order_type_num_to_str(@{order_type as u32}),
-//                     resourceType: __resource_type_num_to_str(@{resource_num}),
-//                     price: @{price},
-//                     totalAmount: @{total_amount}
-//                 })
-//             }
-//         }
-//     }
-// }
-
-// /// Execute a market trade
-// ///
-// /// `target_room` is your owned room whose terminal will send or receive
-// /// resources in this transaction, or `None` if this is an order for an
-// /// intershard resource type
-// pub fn deal(order_id: &str, amount: u32, target_room: Option<RoomName>) -> ReturnCode {
-//     match target_room {
-//         Some(target_room_name) => {
-//             js_unwrap!(Game.market.deal(@{order_id}, @{amount}, @{target_room_name.to_string()}))
-//         }
-//         None => js_unwrap!(Game.market.deal(@{order_id}, @{amount})),
-//     }
-// }
-
-// pub fn extend_order(order_id: &str, add_amount: u32) -> ReturnCode {
-//     js_unwrap!(Game.market.extendOrder(@{order_id}, @{add_amount}))
-// }
-
-// /// Get all orders from the market
-// ///
-// /// Full filtering support is not available, but filtering by resource type
-// /// is available and will reduce the CPU cost compared to getting all orders
-// pub fn get_all_orders(resource: Option<MarketResourceType>) -> Vec<Order> {
-//     match resource {
-//         Some(resource_type) => {
-//             let resource_num = match resource_type {
-//                 MarketResourceType::Resource(ty) => ty as u32,
-//                 MarketResourceType::IntershardResource(ty) => ty as u32,
-//             };
-//             js_unwrap! {
-//                 Game.market.getAllOrders({
-//                     resourceType: __resource_type_num_to_str(@{resource_num})
-//                 })
-//             }
-//         }
-//         None => js_unwrap!(Game.market.getAllOrders()),
-//     }
-// }
-
-// /// Provides historical information on the price of each resource over the last
-// /// 14 days
-// ///
-// /// Provide a resource type to get history for using `Some(ResourceType)`, or
-// /// get data for all resources by passing `None`
-// pub fn get_history(resource: Option<MarketResourceType>) -> Vec<OrderHistoryRecord> {
-//     match resource {
-//         Some(resource_type) => {
-//             match resource_type {
-//                 // workaround: Game.market.getHistory returns `{}` instead of `[]` when querying a resource type
-//                 // that has no history records
-//                 // Verify records are present otherwise return an empty array to prevent panics
-//                 MarketResourceType::Resource(ty) => js!(
-//                     const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
-//                     if (history && history.length > 0) {
-//                         return history;
-//                     } else {
-//                         return [];
-//                     }
-//                 ).try_into().unwrap(),
-//                 MarketResourceType::IntershardResource(ty) => js!(
-//                     const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
-//                     if (history && history.length > 0) {
-//                         return history;
-//                     } else {
-//                         return [];
-//                     }
-//                 ).try_into().unwrap(),
-//             }
-//         }
-//         None => js_unwrap!(Game.market.getHistory()),
-//     }
-// }
-
-// pub fn get_order(id: &str) -> Option<Order> {
-//     let order = js! {
-//         return Game.market.getOrderById(@{id});
-//     };
-//     order.try_into().ok()
-// }

@@ -1,8 +1,10 @@
 use crate::{
-    objects::{RoomObject, Structure},
+    local::{Position, RoomName},
+    objects::{RoomObject, RoomPosition, Structure},
     prelude::*,
 };
-use wasm_bindgen::prelude::*;
+use js_sys::JsString;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -14,7 +16,8 @@ extern "C" {
     #[derive(Clone)]
     pub type StructurePortal;
 
-    // todo: destination
+    #[wasm_bindgen(method, getter)]
+    fn destination_internal(this: &StructurePortal) -> JsValue;
 
     /// The number of ticks until the portal will decay, if it's unstable, or 0
     /// if it's stable.
@@ -24,53 +27,47 @@ extern "C" {
     pub fn ticks_to_decay(this: &StructurePortal) -> u32;
 }
 
+impl StructurePortal {
+    pub fn destination(&self) -> PortalDestination {
+        let dest = Self::destination_internal(self);
+        match dest.dyn_ref::<RoomPosition>() {
+            Some(room_pos) => PortalDestination::InterRoom(room_pos.into()),
+            None => PortalDestination::InterShard(dest.unchecked_into()),
+        }
+    }
+}
+
 impl CanDecay for StructurePortal {
     fn ticks_to_decay(&self) -> u32 {
         Self::ticks_to_decay(self)
     }
 }
 
-// use serde::Deserialize;
-// use stdweb::Value;
+pub enum PortalDestination {
+    InterRoom(Position),
+    InterShard(InterShardPortalDestination),
+}
 
-// use crate::{
-//     local::{Position, RoomName},
-//     objects::StructurePortal,
-//     traits::TryInto,
-// };
+#[wasm_bindgen]
+extern "C" {
+    /// An object which contains the destination shard and room of an
+    /// inter-shard portal.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructurePortal.destination)
+    #[wasm_bindgen]
+    pub type InterShardPortalDestination;
 
-// #[derive(Deserialize, Debug)]
-// pub struct InterShardPortalDestination {
-//     shard: String,
-//     room: RoomName,
-// }
-// js_deserializable!(InterShardPortalDestination);
+    #[wasm_bindgen(method, getter = room)]
+    fn room_internal(this: &InterShardPortalDestination) -> JsString;
 
-// pub enum PortalDestination {
-//     InterRoom(Position),
-//     InterShard(InterShardPortalDestination),
-// }
+    #[wasm_bindgen(method, getter)]
+    pub fn shard(this: &InterShardPortalDestination) -> String;
+}
 
-// impl StructurePortal {
-//     pub fn destination(&self) -> PortalDestination {
-//         let v = js! {
-//             let destination = @{self.as_ref()}.destination;
-//             if (destination instanceof Position) {
-//                 return destination.__packedPos;
-//             } else {
-//                 return destination;
-//             }
-//         };
-
-//         match v {
-//             Value::Number(_) => PortalDestination::InterRoom(
-//                 v.try_into()
-//                     .expect("expected Position::try_from(pos.__packedPos) to
-// succeed"),             ),
-//             _ => PortalDestination::InterShard(
-//                 v.try_into()
-//                     .expect("Value couldn't be converted into an
-// InterShardPortalDestination"),             ),
-//         }
-//     }
-// }
+impl InterShardPortalDestination {
+    pub fn room(&self) -> RoomName {
+        Self::room_internal(&self)
+            .try_into()
+            .expect("expected parseable room name")
+    }
+}

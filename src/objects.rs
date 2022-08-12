@@ -29,13 +29,14 @@ mod impls;
 
 pub use self::impls::{
     ConstructionSite, CostMatrix, CostMatrixSet, Creep, Deposit, FindOptions, Flag,
-    HasLocalPosition, Mineral, MoveToOptions, Nuke, OwnedStructure, Owner, PowerCreep, Reservation,
-    Resource, Room, RoomObject, RoomPosition, RoomTerrain, Ruin, Sign, Source, Spawning, Store,
-    Structure, StructureContainer, StructureController, StructureExtension, StructureExtractor,
-    StructureFactory, StructureInvaderCore, StructureKeeperLair, StructureLab, StructureLink,
-    StructureNuker, StructureObserver, StructurePortal, StructurePowerBank, StructurePowerSpawn,
-    StructureRampart, StructureRoad, StructureSpawn, SpawnOptions, StructureStorage, StructureTerminal,
-    StructureTower, StructureWall, Tombstone,
+    HasLocalPosition, InterShardPortalDestination, Mineral, MoveToOptions, Nuke, OwnedStructure,
+    Owner, PortalDestination, PowerCreep, Reservation, Resource, Room, RoomObject, RoomPosition,
+    RoomTerrain, Ruin, Sign, Source, Spawning, Store, Structure, StructureContainer,
+    StructureController, StructureExtension, StructureExtractor, StructureFactory,
+    StructureInvaderCore, StructureKeeperLair, StructureLab, StructureLink, StructureNuker,
+    StructureObserver, StructurePortal, StructurePowerBank, StructurePowerSpawn, StructureRampart,
+    StructureRoad, StructureSpawn, SpawnOptions, StructureStorage, StructureTerminal, StructureTower,
+    StructureWall, Tombstone,
 };
 
 #[cfg(feature = "enable-score")]

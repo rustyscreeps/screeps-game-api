@@ -87,7 +87,7 @@ pub use self::{
     structure_link::StructureLink,
     structure_nuker::StructureNuker,
     structure_observer::StructureObserver,
-    structure_portal::StructurePortal,
+    structure_portal::{InterShardPortalDestination, PortalDestination, StructurePortal},
     structure_power_bank::StructurePowerBank,
     structure_power_spawn::StructurePowerSpawn,
     structure_rampart::StructureRampart,
