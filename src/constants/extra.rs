@@ -29,11 +29,16 @@ pub const CREEP_HITS_PER_PART: u32 = 100;
 /// Maximum length of names of creeps.
 pub const CREEP_NAME_MAX_LENGTH: u32 = 100;
 
+/// Maximum length of strings that creeps and power creeps can say.
+pub const CREEP_SAY_MAX_LENGTH: u32 = 10;
+
 /// Maximum length of names of flag objects.
 pub const FLAG_NAME_MAX_LENGTH: u32 = 60;
 
-/// Maximum size in bytes (100 KiB) of the string contents allowed for inter
-/// shard memory.
+/// Maximum size in bytes (100 KiB) of data set in [`InterShardMemory`] for each
+/// shard
+///
+/// [`InterShardMemory`]: crate::InterShardMemory
 pub const INTER_SHARD_MEMORY_SIZE_LIMIT: u32 = 100 * 1024;
 
 /// Owner username of hostile non-player structures and creeps which create
@@ -89,9 +94,6 @@ pub const RANGED_MASS_ATTACK_POWER_RANGE_3: u32 = 1;
 ///
 /// [`RoomVisual`]: crate::objects::RoomVisual
 pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
-
-/// Maximum length of strings that creeps and power creeps can say.
-pub const SAY_MAX_LENGTH: u32 = 10;
 
 /// Owner username of hostile non-player structures and creeps which occupy
 /// sector center rooms.

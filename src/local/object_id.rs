@@ -69,7 +69,7 @@ impl<T> Copy for ObjectId<T> {}
 impl<T> Clone for ObjectId<T> {
     fn clone(&self) -> ObjectId<T> {
         ObjectId {
-            raw: self.raw.clone(),
+            raw: self.raw,
             phantom: PhantomData,
         }
     }
