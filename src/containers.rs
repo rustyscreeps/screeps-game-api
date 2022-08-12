@@ -4,6 +4,22 @@ use js_sys::{Array, JsString, Object};
 
 use wasm_bindgen::{prelude::*, JsCast};
 
+#[wasm_bindgen]
+extern "C" {
+    #[derive(Clone)]
+    #[wasm_bindgen(extends = Object)]
+    pub(crate) type ObjectExt;
+
+    #[wasm_bindgen(method, structural, indexing_setter)]
+    pub(crate) fn set(this: &ObjectExt, prop: &str, val: &JsValue);
+
+    #[wasm_bindgen(method, structural, indexing_setter)]
+    pub(crate) fn set_value(this: &ObjectExt, prop: &JsValue, val: &JsValue);
+
+    #[wasm_bindgen(method, structural, indexing_getter)]
+    pub(crate) fn get_value(this: &ObjectExt, prop: &JsValue) -> JsValue;
+}
+
 pub trait JsContainerIntoValue {
     fn into_value(self) -> JsValue;
 }
@@ -46,7 +62,7 @@ where
 {
     pub fn get(&self, key: K) -> Option<V> {
         let key = key.into_value();
-        let val = js_sys::Reflect::get(&self.map, &key).ok()?;
+        let val = JsCast::unchecked_ref::<ObjectExt>(&self.map).get_value(&key);
         if val.is_null() || val.is_undefined() {
             return None;
         }
@@ -64,7 +80,7 @@ where
     pub fn set(&self, key: K, value: V) {
         let key = key.into_value();
         let value = value.into_value();
-        js_sys::Reflect::set(&self.map, &key, &value).expect("expected to set js value");
+        JsCast::unchecked_ref::<ObjectExt>(&self.map).set_value(&key, &value);
     }
 }
 

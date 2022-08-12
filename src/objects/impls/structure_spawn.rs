@@ -1,9 +1,9 @@
 use crate::{
     constants::ReturnCode,
-    containers::JsContainerFromValue,
+    containers::{JsContainerFromValue, ObjectExt},
     objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
-    Direction,Part,
+    Direction, Part,
 };
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
@@ -88,7 +88,12 @@ impl StructureSpawn {
         Self::spawn_creep_internal(self, &body, name, None)
     }
 
-    pub fn spawn_creep_with_options(&self, body: &[Part], name: &str, opts: &SpawnOptions) -> ReturnCode {
+    pub fn spawn_creep_with_options(
+        &self,
+        body: &[Part],
+        name: &str,
+        opts: &SpawnOptions,
+    ) -> ReturnCode {
         let body = body.iter().cloned().map(JsValue::from).collect();
 
         let js_opts = ObjectExt::unchecked_from_js(JsValue::from(Object::new()));
@@ -125,16 +130,6 @@ impl HasStore for StructureSpawn {
     }
 }
 
-#[wasm_bindgen]
-extern "C" {
-    #[derive(Clone)]
-    #[wasm_bindgen(extends = Object)]
-    type ObjectExt;
-
-    #[wasm_bindgen(method, structural, indexing_setter)]
-    fn set(this: &ObjectExt, prop: &str, val: &JsValue);
-}
-
 #[derive(Default)]
 pub struct SpawnOptions {
     //memory: Option<MemoryReference>,
@@ -154,9 +149,20 @@ impl SpawnOptions {
         self
     }*/
 
-    /// Structures other than [`StructureSpawn`] and [`StructureExtension`] will be ignored.
-    pub fn energy_structures<T: IntoIterator<Item=V>, V: AsRef<Structure>>(mut self, structures: T) -> Self {
-        self.energy_structures = Some(structures.into_iter().map(|structure| JsValue::from(structure.as_ref())).collect());
+    /// Structures other than [`StructureSpawn`] and [`StructureExtension`] will
+    /// be ignored.
+    ///
+    /// [`StructureExtension`]: crate::objects::StructureExtension
+    pub fn energy_structures<T: IntoIterator<Item = V>, V: AsRef<Structure>>(
+        mut self,
+        structures: T,
+    ) -> Self {
+        self.energy_structures = Some(
+            structures
+                .into_iter()
+                .map(|structure| JsValue::from(structure.as_ref()))
+                .collect(),
+        );
         self
     }
 
@@ -166,7 +172,12 @@ impl SpawnOptions {
     }
 
     pub fn directions(mut self, directions: &[Direction]) -> Self {
-        self.directions = Some(directions.iter().map(|&d| JsValue::from(d as u32)).collect());
+        self.directions = Some(
+            directions
+                .iter()
+                .map(|&d| JsValue::from(d as u32))
+                .collect(),
+        );
         self
     }
 }
