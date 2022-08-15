@@ -23,9 +23,6 @@ description = "WASM bindings to the in-game Screeps API"
 [lib]
 name = "screeps"
 
-[badges]
-travis-ci = { repository = "rustyscreeps/screeps-game-api" }
-
 [dependencies]
 arrayvec = "0.5"
 enum-iterator = "0.6"
