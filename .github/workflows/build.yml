@@ -26,10 +26,10 @@ jobs:
       - name: cargo web build
         uses: actions-rs/cargo@v1
         with:
-          command: web build
-          args: --target=wasm32-unknown-unknown --verbose
+          command: web
+          args: build --target=wasm32-unknown-unknown --verbose
       - name: cargo web build --all-features
         uses: actions-rs/cargo@v1
         with:
-          command: web build
-          args: --target=wasm32-unknown-unknown --all-features --verbose
+          command: web
+          args: build --target=wasm32-unknown-unknown --all-features --verbose
