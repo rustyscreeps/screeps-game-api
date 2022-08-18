@@ -45,12 +45,12 @@ pub struct MapPolyPoint {
     n: RoomName,
 }
 
-impl Into<MapPolyPoint> for &Position {
-    fn into(self) -> MapPolyPoint {
+impl From<&Position> for MapPolyPoint {
+    fn from(pos: &Position) -> MapPolyPoint {
         MapPolyPoint {
-            x: self.x(),
-            y: self.y(),
-            n: self.room_name(),
+            x: pos.x(),
+            y: pos.y(),
+            n: pos.room_name(),
         }
     }
 }

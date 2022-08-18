@@ -112,9 +112,9 @@ pub enum RoomObject {
     SymbolDecoders = 10022,
 }
 
-impl Into<Find> for RoomObject {
-    fn into(self) -> Find {
-        match self {
+impl From<RoomObject> for Find {
+    fn from(obj: RoomObject) -> Find {
+        match obj {
             RoomObject::Creeps => Find::Creeps,
             RoomObject::MyCreeps => Find::MyCreeps,
             RoomObject::HostileCreeps => Find::HostileCreeps,
@@ -200,9 +200,9 @@ impl Exit {
     }
 }
 
-impl Into<Find> for Exit {
-    fn into(self) -> Find {
-        match self {
+impl From<Exit> for Find {
+    fn from(exit: Exit) -> Find {
+        match exit {
             Exit::Top => Find::ExitTop,
             Exit::Right => Find::ExitRight,
             Exit::Bottom => Find::ExitBottom,

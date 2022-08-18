@@ -158,33 +158,33 @@ impl RoomName {
     }
 }
 
-impl Into<JsValue> for RoomName {
-    fn into(self) -> JsValue {
-        let name = self.to_array_string();
+impl From<RoomName> for JsValue {
+    fn from(name: RoomName) -> JsValue {
+        let array = name.to_array_string();
 
-        JsValue::from_str(name.as_str())
+        JsValue::from_str(array.as_str())
     }
 }
 
-impl Into<JsValue> for &RoomName {
-    fn into(self) -> JsValue {
-        let name = self.to_array_string();
+impl From<&RoomName> for JsValue {
+    fn from(name: &RoomName) -> JsValue {
+        let array = name.to_array_string();
 
-        JsValue::from_str(name.as_str())
+        JsValue::from_str(array.as_str())
     }
 }
 
-impl Into<JsString> for RoomName {
-    fn into(self) -> JsString {
-        let val: JsValue = self.into();
+impl From<RoomName> for JsString {
+    fn from(name: RoomName) -> JsString {
+        let val: JsValue = name.into();
 
         val.unchecked_into()
     }
 }
 
-impl Into<JsString> for &RoomName {
-    fn into(self) -> JsString {
-        let val: JsValue = self.into();
+impl From<&RoomName> for JsString {
+    fn from(name: &RoomName) -> JsString {
+        let val: JsValue = name.into();
 
         val.unchecked_into()
     }

@@ -148,9 +148,9 @@ impl Default for MultiRoomCostResult {
     }
 }
 
-impl Into<JsValue> for MultiRoomCostResult {
-    fn into(self) -> JsValue {
-        match self {
+impl From<MultiRoomCostResult> for JsValue {
+    fn from(v: MultiRoomCostResult) -> JsValue {
+        match v {
             MultiRoomCostResult::CostMatrix(m) => m.into(),
             MultiRoomCostResult::Impassable => JsValue::from_bool(false),
             MultiRoomCostResult::Default => JsValue::undefined(),
@@ -171,9 +171,9 @@ impl Default for SingleRoomCostResult {
     }
 }
 
-impl Into<JsValue> for SingleRoomCostResult {
-    fn into(self) -> JsValue {
-        match self {
+impl From<SingleRoomCostResult> for JsValue {
+    fn from(v: SingleRoomCostResult) -> JsValue {
+        match v {
             SingleRoomCostResult::CostMatrix(m) => m.into(),
             SingleRoomCostResult::Default => JsValue::undefined(),
         }
