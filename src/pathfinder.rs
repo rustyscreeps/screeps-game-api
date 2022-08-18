@@ -148,7 +148,7 @@ impl Default for MultiRoomCostResult {
     }
 }
 
-impl<'a> Into<JsValue> for MultiRoomCostResult {
+impl Into<JsValue> for MultiRoomCostResult {
     fn into(self) -> JsValue {
         match self {
             MultiRoomCostResult::CostMatrix(m) => m.into(),
@@ -171,7 +171,7 @@ impl Default for SingleRoomCostResult {
     }
 }
 
-impl<'a> Into<JsValue> for SingleRoomCostResult {
+impl Into<JsValue> for SingleRoomCostResult {
     fn into(self) -> JsValue {
         match self {
             SingleRoomCostResult::CostMatrix(m) => m.into(),
@@ -203,7 +203,7 @@ impl<F> SearchOptions<F>
 where
     F: FnMut(RoomName) -> MultiRoomCostResult,
 {
-    pub(crate) fn as_js_options<R>(mut self, callback: impl Fn(&JsSearchOptions) -> R) -> R {
+    pub(crate) fn as_js_options<R>(&mut self, callback: impl Fn(&JsSearchOptions) -> R) -> R {
         // Serialize the inner options into a JsValue, then cast.
         let js_options: JsSearchOptions = serde_wasm_bindgen::to_value(&self.inner)
             .expect("Unable to serialize search options.")
@@ -351,10 +351,7 @@ pub fn search<F>(
 where
     F: FnMut(RoomName) -> MultiRoomCostResult,
 {
-    let goal = SearchGoal {
-        pos: to.into(),
-        range,
-    };
+    let goal = SearchGoal { pos: to, range };
 
     let goal = JsValue::from(goal);
 
@@ -369,7 +366,7 @@ pub fn search_many<F>(
 where
     F: FnMut(RoomName) -> MultiRoomCostResult,
 {
-    let goals: Array = to.map(|g| JsValue::from(g)).collect();
+    let goals: Array = to.map(JsValue::from).collect();
 
     search_real(from, goals.as_ref(), options)
 }
@@ -384,8 +381,8 @@ where
 {
     let from = from.into();
 
-    if let Some(options) = options {
-        options.as_js_options(|js_options| PathFinder::search_internal(&from, goal, &js_options))
+    if let Some(mut options) = options {
+        options.as_js_options(|js_options| PathFinder::search_internal(&from, goal, js_options))
     } else {
         PathFinder::search_internal(&from, goal, &JsValue::UNDEFINED)
     }

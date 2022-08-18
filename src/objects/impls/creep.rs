@@ -365,7 +365,7 @@ impl Creep {
     where
         T: ?Sized + Healable,
     {
-        Self::heal_internal(&self, target.as_ref())
+        Self::heal_internal(self, target.as_ref())
     }
 
     /// Heal a target in range 3 using a creep's heal parts.
@@ -375,7 +375,7 @@ impl Creep {
     where
         T: ?Sized + Healable,
     {
-        Self::ranged_heal_internal(&self, target.as_ref())
+        Self::ranged_heal_internal(self, target.as_ref())
     }
 
     /// Retrieve a [`Vec<BodyPart>`] containing details about the creep's body

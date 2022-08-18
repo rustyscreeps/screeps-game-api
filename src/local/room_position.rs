@@ -290,7 +290,7 @@ impl Position {
         let y = packed & 0xFF;
         assert!(x < ROOM_SIZE as u32, "out of bounds x: {}", x);
         assert!(y < ROOM_SIZE as u32, "out of bounds y: {}", y);
-        Position { packed: packed }
+        Position { packed }
     }
 
     /// Gets the horizontal coordinate of this position's room name.
@@ -396,7 +396,7 @@ impl Ord for Position {
 
 impl HasPosition for Position {
     fn pos(&self) -> Position {
-        self.clone()
+        *self
     }
 }
 

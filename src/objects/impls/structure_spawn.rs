@@ -103,7 +103,7 @@ impl StructureSpawn {
         }*/
 
         if let Some(array) = &opts.energy_structures {
-            ObjectExt::set(&js_opts, "energyStructures", &array);
+            ObjectExt::set(&js_opts, "energyStructures", array);
         }
 
         if opts.dry_run {
@@ -111,7 +111,7 @@ impl StructureSpawn {
         }
 
         if let Some(array) = &opts.directions {
-            ObjectExt::set(&js_opts, "directions", &array);
+            ObjectExt::set(&js_opts, "directions", array);
         }
 
         Self::spawn_creep_internal(self, &body, name, Some(&js_opts))

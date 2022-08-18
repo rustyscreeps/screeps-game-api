@@ -455,7 +455,7 @@ impl PartialEq<RoomName> for &str {
 impl PartialEq<String> for RoomName {
     #[inline]
     fn eq(&self, other: &String) -> bool {
-        <RoomName as PartialEq<str>>::eq(self, &other)
+        <RoomName as PartialEq<str>>::eq(self, other)
     }
 }
 

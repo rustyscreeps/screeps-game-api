@@ -66,7 +66,7 @@ extern "C" {
 
 impl InterShardPortalDestination {
     pub fn room(&self) -> RoomName {
-        Self::room_internal(&self)
+        Self::room_internal(self)
             .try_into()
             .expect("expected parseable room name")
     }

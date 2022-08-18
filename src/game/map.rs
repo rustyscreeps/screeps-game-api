@@ -170,6 +170,12 @@ impl JsFindRouteOptions {
     }
 }
 
+impl Default for JsFindRouteOptions {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct FindRouteOptions<F>
 where
     F: FnMut(RoomName, RoomName) -> f64,

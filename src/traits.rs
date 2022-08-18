@@ -43,7 +43,7 @@ where
     T: HasNativeId,
 {
     fn try_native_id(&self) -> Option<JsString> {
-        Some(<Self as HasNativeId>::native_id(&self))
+        Some(<Self as HasNativeId>::native_id(self))
     }
 }
 

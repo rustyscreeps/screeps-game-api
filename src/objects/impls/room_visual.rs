@@ -68,10 +68,7 @@ impl Default for LineDrawStyle {
 
 impl LineDrawStyle {
     pub fn is_solid(&self) -> bool {
-        match self {
-            LineDrawStyle::Solid => true,
-            _ => false,
-        }
+        matches!(self, LineDrawStyle::Solid)
     }
 }
 
@@ -246,10 +243,7 @@ impl Default for TextAlign {
 
 impl TextAlign {
     pub fn is_center(&self) -> bool {
-        match self {
-            TextAlign::Center => true,
-            _ => false,
-        }
+        matches!(self, TextAlign::Center)
     }
 }
 

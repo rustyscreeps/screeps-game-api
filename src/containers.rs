@@ -113,7 +113,7 @@ impl<T> OwnedArrayIter<T> {
     pub fn new(array: Array) -> Self {
         OwnedArrayIter {
             range: 0..array.length(),
-            array: array,
+            array,
             _phantom: Default::default(),
         }
     }
@@ -192,7 +192,7 @@ impl JsContainerIntoValue for u8 {
 impl JsContainerFromValue for u8 {
     fn from_value(val: JsValue) -> u8 {
         if let Some(val) = val.as_string() {
-            u8::from_str_radix(&val, 10).expect("expected parseable u8 string")
+            val.parse::<u8>().expect("expected parseable u8 string")
         } else {
             val.as_f64().expect("expected number value") as u8
         }
