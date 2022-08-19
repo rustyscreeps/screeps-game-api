@@ -1,7 +1,7 @@
 screeps-game-api
 ================
 
-[![Linux Build Status][travis-image]][travis-builds]
+[![Linux Build Status][actions-image]][actions-builds]
 [![crates.io version badge][cratesio-badge]][crate]
 [![docs.rs version badge][docsrs-badge]][docs]
 
@@ -60,8 +60,8 @@ cargo screeps --help
 
 [screeps]: https://screeps.com/
 [`stdweb`]: https://github.com/koute/stdweb
-[travis-image]: https://travis-ci.org/rustyscreeps/screeps-game-api.svg?branch=master
-[travis-builds]: https://travis-ci.org/rustyscreeps/screeps-game-api
+[actions-image]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml/badge.svg
+[actions-builds]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml
 [docsrs-badge]: https://docs.rs/screeps-game-api/badge.svg
 [cratesio-badge]: http://meritbadge.herokuapp.com/screeps-game-api
 [docs]: https://docs.rs/screeps-game-api/
