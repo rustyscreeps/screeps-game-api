@@ -52,283 +52,288 @@
 //!
 //! [`root`]: crate::memory::root
 
-use std::fmt;
+// use std::fmt;
 
-use stdweb::{JsSerialize, Reference, Value};
+// use stdweb::{JsSerialize, Reference, Value};
+use js_sys::Object;
+use wasm_bindgen::prelude::*;
 
-use crate::{
-    traits::{TryFrom, TryInto},
-    ConversionError,
-};
+// use crate::{
+//     traits::{TryFrom, TryInto},
+//     ConversionError,
+// };
 
-#[derive(Clone, Debug)]
-pub struct UnexpectedTypeError;
+// #[derive(Clone, Debug)]
+// pub struct UnexpectedTypeError;
 
-impl fmt::Display for UnexpectedTypeError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // TODO: include &'static str references to the type names in this error...
-        write!(f, "expected one memory type, found another")
-    }
-}
+// impl fmt::Display for UnexpectedTypeError {
+//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+//         // TODO: include &'static str references to the type names in this error...
+//         write!(f, "expected one memory type, found another")
+//     }
+// }
 
-// TODO: do we even need this over just a raw 'Reference'?
-/// A [`Reference`] to a screeps memory object
-///
-/// [`Reference`]: stdweb::Reference
-pub struct MemoryReference(Reference);
+// // TODO: do we even need this over just a raw 'Reference'?
+// /// A [`Reference`] to a screeps memory object
+// ///
+// /// [`Reference`]: stdweb::Reference
+// pub struct MemoryReference(Reference);
 
-impl AsRef<Reference> for MemoryReference {
-    fn as_ref(&self) -> &Reference {
-        &self.0
-    }
-}
+// impl AsRef<Reference> for MemoryReference {
+//     fn as_ref(&self) -> &Reference {
+//         &self.0
+//     }
+// }
 
-impl Default for MemoryReference {
-    fn default() -> Self {
-        Self::new()
-    }
-}
+// impl Default for MemoryReference {
+//     fn default() -> Self {
+//         Self::new()
+//     }
+// }
 
-impl MemoryReference {
-    pub fn new() -> Self {
-        js_unwrap!({})
-    }
+// impl MemoryReference {
+//     pub fn new() -> Self {
+//         js_unwrap!({})
+//     }
 
-    /// Creates a MemoryReference from some JavaScript reference.
-    ///
-    /// Warning: `MemoryReference` is only designed to work with "plain"
-    /// JavaScript objects, and passing an array or a non-plain object
-    /// into this method probably won't be what you want. `MemoryReference`
-    /// also gives access to all properties, so if this is indeed a plain
-    /// object, all of its values should also be plain objects.
-    ///
-    /// Passing a non-plain-object reference into this function won't
-    /// invoke undefined behavior in and of itself, but other functions
-    /// can rely on `MemoryReference` being "plain".
-    pub unsafe fn from_reference_unchecked(reference: Reference) -> Self {
-        MemoryReference(reference)
-    }
+//     /// Creates a MemoryReference from some JavaScript reference.
+//     ///
+//     /// Warning: `MemoryReference` is only designed to work with "plain"
+//     /// JavaScript objects, and passing an array or a non-plain object
+//     /// into this method probably won't be what you want. `MemoryReference`
+//     /// also gives access to all properties, so if this is indeed a plain
+//     /// object, all of its values should also be plain objects.
+//     ///
+//     /// Passing a non-plain-object reference into this function won't
+//     /// invoke undefined behavior in and of itself, but other functions
+//     /// can rely on `MemoryReference` being "plain".
+//     pub unsafe fn from_reference_unchecked(reference: Reference) -> Self {
+//         MemoryReference(reference)
+//     }
 
-    pub fn bool(&self, key: &str) -> bool {
-        js_unwrap!(Boolean(@{self.as_ref()}[@{key}]))
-    }
+//     pub fn bool(&self, key: &str) -> bool {
+//         js_unwrap!(Boolean(@{self.as_ref()}[@{key}]))
+//     }
 
-    pub fn path_bool(&self, path: &str) -> bool {
-        js_unwrap!(Boolean(_.get(@{self.as_ref()}, @{path})))
-    }
+//     pub fn path_bool(&self, path: &str) -> bool {
+//         js_unwrap!(Boolean(_.get(@{self.as_ref()}, @{path})))
+//     }
 
-    pub fn f64(&self, key: &str) -> Result<Option<f64>, ConversionError> {
-        (js! {
-            return (@{self.as_ref()})[@{key}];
-        })
-        .try_into()
-    }
+//     pub fn f64(&self, key: &str) -> Result<Option<f64>, ConversionError> {
+//         (js! {
+//             return (@{self.as_ref()})[@{key}];
+//         })
+//         .try_into()
+//     }
 
-    pub fn path_f64(&self, path: &str) -> Result<Option<f64>, ConversionError> {
-        (js! {
-            return _.get(@{self.as_ref()}, @{path});
-        })
-        .try_into()
-    }
+//     pub fn path_f64(&self, path: &str) -> Result<Option<f64>, ConversionError> {
+//         (js! {
+//             return _.get(@{self.as_ref()}, @{path});
+//         })
+//         .try_into()
+//     }
 
-    pub fn i32(&self, key: &str) -> Result<Option<i32>, ConversionError> {
-        (js! {
-            return (@{self.as_ref()})[@{key}];
-        })
-        .try_into()
-    }
+//     pub fn i32(&self, key: &str) -> Result<Option<i32>, ConversionError> {
+//         (js! {
+//             return (@{self.as_ref()})[@{key}];
+//         })
+//         .try_into()
+//     }
 
-    pub fn path_i32(&self, path: &str) -> Result<Option<i32>, ConversionError> {
-        (js! {
-            return _.get(@{self.as_ref()}, @{path});
-        })
-        .try_into()
-    }
+//     pub fn path_i32(&self, path: &str) -> Result<Option<i32>, ConversionError> {
+//         (js! {
+//             return _.get(@{self.as_ref()}, @{path});
+//         })
+//         .try_into()
+//     }
 
-    pub fn string(&self, key: &str) -> Result<Option<String>, ConversionError> {
-        (js! {
-            return (@{self.as_ref()})[@{key}];
-        })
-        .try_into()
-    }
+//     pub fn string(&self, key: &str) -> Result<Option<String>, ConversionError> {
+//         (js! {
+//             return (@{self.as_ref()})[@{key}];
+//         })
+//         .try_into()
+//     }
 
-    pub fn path_string(&self, path: &str) -> Result<Option<String>, ConversionError> {
-        (js! {
-            return _.get(@{self.as_ref()}, @{path});
-        })
-        .try_into()
-    }
+//     pub fn path_string(&self, path: &str) -> Result<Option<String>, ConversionError> {
+//         (js! {
+//             return _.get(@{self.as_ref()}, @{path});
+//         })
+//         .try_into()
+//     }
 
-    pub fn dict(&self, key: &str) -> Result<Option<MemoryReference>, ConversionError> {
-        (js! {
-            return (@{self.as_ref()})[@{key}];
-        })
-        .try_into()
-    }
+//     pub fn dict(&self, key: &str) -> Result<Option<MemoryReference>, ConversionError> {
+//         (js! {
+//             return (@{self.as_ref()})[@{key}];
+//         })
+//         .try_into()
+//     }
 
-    pub fn path_dict(&self, path: &str) -> Result<Option<MemoryReference>, ConversionError> {
-        (js! {
-            return _.get(@{self.as_ref()}, @{path});
-        })
-        .try_into()
-    }
+//     pub fn path_dict(&self, path: &str) -> Result<Option<MemoryReference>, ConversionError> {
+//         (js! {
+//             return _.get(@{self.as_ref()}, @{path});
+//         })
+//         .try_into()
+//     }
 
-    /// Get a dictionary value or create it if it does not exist.
-    ///
-    /// If the value exists but is a different type, this will return `None`.
-    pub fn dict_or_create(&self, key: &str) -> Result<MemoryReference, UnexpectedTypeError> {
-        (js! {
-            var map = (@{self.as_ref()});
-            var key = (@{key});
-            var value = map[key];
-            if (value === null || value === undefined) {
-                map[key] = value = {};
-            }
-            if ((typeof value) == "object" && !_.isArray(value)) {
-                return value;
-            } else {
-                return null;
-            }
-        })
-        .try_into()
-        .map_err(|_| UnexpectedTypeError)
-        .map(MemoryReference)
-    }
+//     /// Get a dictionary value or create it if it does not exist.
+//     ///
+//     /// If the value exists but is a different type, this will return `None`.
+//     pub fn dict_or_create(&self, key: &str) -> Result<MemoryReference, UnexpectedTypeError> {
+//         (js! {
+//             var map = (@{self.as_ref()});
+//             var key = (@{key});
+//             var value = map[key];
+//             if (value === null || value === undefined) {
+//                 map[key] = value = {};
+//             }
+//             if ((typeof value) == "object" && !_.isArray(value)) {
+//                 return value;
+//             } else {
+//                 return null;
+//             }
+//         })
+//         .try_into()
+//         .map_err(|_| UnexpectedTypeError)
+//         .map(MemoryReference)
+//     }
 
-    pub fn keys(&self) -> Vec<String> {
-        js_unwrap!(Object.keys(@{self.as_ref()}))
-    }
+//     pub fn keys(&self) -> Vec<String> {
+//         js_unwrap!(Object.keys(@{self.as_ref()}))
+//     }
 
-    pub fn del(&self, key: &str) {
-        js! { @(no_return)
-            (@{self.as_ref()})[@{key}] = undefined;
-        }
-    }
+//     pub fn del(&self, key: &str) {
+//         js! { @(no_return)
+//             (@{self.as_ref()})[@{key}] = undefined;
+//         }
+//     }
 
-    pub fn path_del(&self, path: &str) {
-        js! {
-            _.set(@{self.as_ref()}, @{path}, undefined);
-        }
-    }
+//     pub fn path_del(&self, path: &str) {
+//         js! {
+//             _.set(@{self.as_ref()}, @{path}, undefined);
+//         }
+//     }
 
-    /// Gets a custom type. Will return `None` if `null` or `undefined`, and
-    /// `Err` if incorrect type.
-    ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// use log::info;
-    /// use screeps::{prelude::*, Position};
-    ///
-    /// let creep = screeps::game::creeps::get("mycreepname").unwrap();
-    /// let mem = creep.memory();
-    /// let pos = mem.get::<Position>("saved_pos").unwrap();
-    /// let pos = match pos {
-    ///     Some(pos) => {
-    ///         info!("found position: {}", pos);
-    ///         pos
-    ///     }
-    ///     None => {
-    ///         info!("no position. saving new one!");
-    ///         let pos = creep.pos();
-    ///         mem.set("saved_pos", pos);
-    ///         pos
-    ///     }
-    /// };
-    /// info!("final position: {}", pos);
-    /// creep.move_to(&pos);
-    /// ```
-    pub fn get<T>(&self, key: &str) -> Result<Option<T>, <T as TryFrom<Value>>::Error>
-    where
-        T: TryFrom<Value>,
-    {
-        let val = js! {
-            return (@{self.as_ref()})[@{key}];
-        };
-        if val == Value::Null || val == Value::Undefined {
-            Ok(None)
-        } else {
-            Some(val.try_into()).transpose()
-        }
-    }
+//     /// Gets a custom type. Will return `None` if `null` or `undefined`, and
+//     /// `Err` if incorrect type.
+//     ///
+//     /// # Example
+//     ///
+//     /// ```no_run
+//     /// use log::info;
+//     /// use screeps::{prelude::*, Position};
+//     ///
+//     /// let creep = screeps::game::creeps::get("mycreepname").unwrap();
+//     /// let mem = creep.memory();
+//     /// let pos = mem.get::<Position>("saved_pos").unwrap();
+//     /// let pos = match pos {
+//     ///     Some(pos) => {
+//     ///         info!("found position: {}", pos);
+//     ///         pos
+//     ///     }
+//     ///     None => {
+//     ///         info!("no position. saving new one!");
+//     ///         let pos = creep.pos();
+//     ///         mem.set("saved_pos", pos);
+//     ///         pos
+//     ///     }
+//     /// };
+//     /// info!("final position: {}", pos);
+//     /// creep.move_to(&pos);
+//     /// ```
+//     pub fn get<T>(&self, key: &str) -> Result<Option<T>, <T as TryFrom<Value>>::Error>
+//     where
+//         T: TryFrom<Value>,
+//     {
+//         let val = js! {
+//             return (@{self.as_ref()})[@{key}];
+//         };
+//         if val == Value::Null || val == Value::Undefined {
+//             Ok(None)
+//         } else {
+//             Some(val.try_into()).transpose()
+//         }
+//     }
 
-    /// Gets a custom type at a memory path. Will return `None` if `null` or
-    /// `undefined`, and `Err` if incorrect type.
-    ///
-    /// Uses lodash in JavaScript to evaluate the path. See https://lodash.com/docs/#get.
-    pub fn get_path<T>(&self, path: &str) -> Result<Option<T>, <T as TryFrom<Value>>::Error>
-    where
-        T: TryFrom<Value>,
-    {
-        let val = js! {
-            return _.get(@{self.as_ref()}, @{path});
-        };
-        if val == Value::Null || val == Value::Undefined {
-            Ok(None)
-        } else {
-            Some(val.try_into()).transpose()
-        }
-    }
+//     /// Gets a custom type at a memory path. Will return `None` if `null` or
+//     /// `undefined`, and `Err` if incorrect type.
+//     ///
+//     /// Uses lodash in JavaScript to evaluate the path. See https://lodash.com/docs/#get.
+//     pub fn get_path<T>(&self, path: &str) -> Result<Option<T>, <T as TryFrom<Value>>::Error>
+//     where
+//         T: TryFrom<Value>,
+//     {
+//         let val = js! {
+//             return _.get(@{self.as_ref()}, @{path});
+//         };
+//         if val == Value::Null || val == Value::Undefined {
+//             Ok(None)
+//         } else {
+//             Some(val.try_into()).transpose()
+//         }
+//     }
 
-    pub fn set<T>(&self, key: &str, value: T)
-    where
-        T: JsSerialize,
-    {
-        js! { @(no_return)
-            (@{self.as_ref()})[@{key}] = @{value};
-        }
-    }
+//     pub fn set<T>(&self, key: &str, value: T)
+//     where
+//         T: JsSerialize,
+//     {
+//         js! { @(no_return)
+//             (@{self.as_ref()})[@{key}] = @{value};
+//         }
+//     }
 
-    pub fn path_set<T>(&self, path: &str, value: T)
-    where
-        T: JsSerialize,
-    {
-        js! { @(no_return)
-            _.set(@{self.as_ref()}, @{path}, @{value});
-        }
-    }
+//     pub fn path_set<T>(&self, path: &str, value: T)
+//     where
+//         T: JsSerialize,
+//     {
+//         js! { @(no_return)
+//             _.set(@{self.as_ref()}, @{path}, @{value});
+//         }
+//     }
 
-    pub fn arr<T>(&self, key: &str) -> Result<Option<Vec<T>>, ConversionError>
-    where
-        T: TryFrom<Value, Error = ConversionError>,
-    {
-        (js! {
-            return (@{self.as_ref()})[@{key}];
-        })
-        .try_into()
-    }
+//     pub fn arr<T>(&self, key: &str) -> Result<Option<Vec<T>>, ConversionError>
+//     where
+//         T: TryFrom<Value, Error = ConversionError>,
+//     {
+//         (js! {
+//             return (@{self.as_ref()})[@{key}];
+//         })
+//         .try_into()
+//     }
 
-    pub fn path_arr<T>(&self, path: &str) -> Result<Option<Vec<T>>, ConversionError>
-    where
-        T: TryFrom<Value, Error = ConversionError>,
-    {
-        (js! {
-            return _.get(@{self.as_ref()}, @{path});
-        })
-        .try_into()
-    }
-}
+//     pub fn path_arr<T>(&self, path: &str) -> Result<Option<Vec<T>>, ConversionError>
+//     where
+//         T: TryFrom<Value, Error = ConversionError>,
+//     {
+//         (js! {
+//             return _.get(@{self.as_ref()}, @{path});
+//         })
+//         .try_into()
+//     }
+// }
 
-impl TryFrom<Value> for MemoryReference {
-    type Error = ConversionError;
+// impl TryFrom<Value> for MemoryReference {
+//     type Error = ConversionError;
 
-    fn try_from(v: Value) -> Result<Self, Self::Error> {
-        let r: Reference = v.try_into()?; // fail early.
-        Ok(MemoryReference(
-            (js! {
-                var v = (@{r});
-                if (_.isArray(v)) {
-                    return null;
-                } else {
-                    return v;
-                }
-            })
-            .try_into()?,
-        ))
-    }
-}
+//     fn try_from(v: Value) -> Result<Self, Self::Error> {
+//         let r: Reference = v.try_into()?; // fail early.
+//         Ok(MemoryReference(
+//             (js! {
+//                 var v = (@{r});
+//                 if (_.isArray(v)) {
+//                     return null;
+//                 } else {
+//                     return v;
+//                 }
+//             })
+//             .try_into()?,
+//         ))
+//     }
+// }
 
-/// Get a reference to the `Memory` global object
-pub fn root() -> MemoryReference {
-    js_unwrap!(Memory)
+#[wasm_bindgen]
+extern "C" {
+    /// Get a reference to the `Memory` global object. Note that this object gets recreated each tick by the Screeps engine, so references from it should not be held beyond the current tick.
+    #[wasm_bindgen(js_name = Memory)]
+    pub static ROOT: Object;
+
 }

@@ -30,7 +30,7 @@ pub mod game;
 #[cfg_attr(docsrs, doc(cfg(feature = "enable-inter-shard-memory")))]
 pub mod inter_shard_memory;
 pub mod local;
-// pub mod memory;
+pub mod memory;
 pub mod containers;
 pub mod objects;
 pub mod pathfinder;
