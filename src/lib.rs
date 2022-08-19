@@ -24,6 +24,7 @@
 
 pub mod console;
 pub mod constants;
+pub mod containers;
 pub mod enums;
 pub mod game;
 #[cfg(feature = "enable-inter-shard-memory")]
@@ -31,7 +32,6 @@ pub mod game;
 pub mod inter_shard_memory;
 pub mod local;
 pub mod memory;
-pub mod containers;
 pub mod objects;
 pub mod pathfinder;
 pub mod prototypes;
