@@ -6,7 +6,7 @@ name: Test
 
 jobs:
   check:
-    name: Check
+    name: Check (${{ matrix.rust }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,6 +20,7 @@ jobs:
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
+          profile: minimal
           toolchain: ${{ matrix.rust }}
           override: true
 
@@ -30,7 +31,7 @@ jobs:
           command: check
 
   test:
-    name: Test Suite
+    name: Test (${{ matrix.rust }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -44,6 +45,7 @@ jobs:
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
+          profile: minimal
           toolchain: ${{ matrix.rust }}
           override: true
 
@@ -52,9 +54,10 @@ jobs:
         continue-on-error: false
         with:
           command: test
+          args: --all-features
 
   fmt:
-    name: Rustfmt
+    name: Rustfmt (${{ matrix.rust }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -68,11 +71,10 @@ jobs:
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
+          profile: minimal
           toolchain: ${{ matrix.rust }}
+          components: rustfmt
           override: true
-
-      - name: Install rustfmt
-        run: rustup component add rustfmt
 
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
@@ -96,11 +98,10 @@ jobs:
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
+          profile: minimal
           toolchain: ${{ matrix.rust }}
+          components: clippy
           override: true
-
-      - name: Install clippy
-        run: rustup component add clippy
 
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1

@@ -4,16 +4,18 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    name: Build (${{ matrix.toolchain }})
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        toolchain: [stable] # For now disable nightly toolchain
+        toolchain: [stable, nightly]
     steps:
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: ${{ matrix.toolchain }}
+          target: wasm32-unknown-unknown
           override: true
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,11 +27,13 @@ jobs:
           use-tool-cache: true
       - name: cargo web build
         uses: actions-rs/cargo@v1
+        continue-on-error: false
         with:
           command: web
-          args: build --target=wasm32-unknown-unknown --verbose
+          args: build --target=wasm32-unknown-unknown
       - name: cargo web build --all-features
         uses: actions-rs/cargo@v1
+        continue-on-error: false
         with:
           command: web
-          args: build --target=wasm32-unknown-unknown --all-features --verbose
+          args: build --target=wasm32-unknown-unknown --all-features
