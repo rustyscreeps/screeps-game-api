@@ -67,8 +67,8 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ env.rustc-hash }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run cargo clippy
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/clippy-check@v1
         continue-on-error: false
         with:
-          command: clippy
-          args: -- -D warnings
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features -- -D warnings
