@@ -1,7 +1,16 @@
-use std::convert::TryInto;
+use serde::{
+    de,
+    de::{MapAccess, Visitor},
+    Deserialize, Deserializer,
+};
+use serde_repr::{Deserialize_repr, Serialize_repr};
+use std::{convert::TryInto, fmt};
 
 use crate::{
-    constants::{look::*, Color, ExitDirection, Find, Look, ReturnCode, StructureType},
+    constants::{
+        look::*, Color, ExitDirection, Find, Look, PowerType, ResourceType, ReturnCode,
+        StructureType,
+    },
     containers::JsContainerFromValue,
     objects::*,
     prelude::*,
@@ -581,268 +590,262 @@ where
 
 // js_deserializable! {Path}
 
-// #[derive(Clone, Debug, PartialEq, Eq)]
-// pub struct Event {
-//     pub event: EventType,
-//     pub object_id: String,
-// }
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Event {
+    pub event: EventType,
+    pub object_id: String,
+}
 
-// impl<'de> Deserialize<'de> for Event {
-//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-//     where
-//         D: Deserializer<'de>,
-//     {
-//         #[derive(Deserialize)]
-//         #[serde(field_identifier, rename_all = "camelCase")]
-//         enum Field {
-//             Event,
-//             ObjectId,
-//             Data,
-//         };
+impl<'de> Deserialize<'de> for Event {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(field_identifier, rename_all = "camelCase")]
+        enum Field {
+            Event,
+            ObjectId,
+            Data,
+        }
 
-//         struct EventVisitor;
+        struct EventVisitor;
 
-//         impl<'de> Visitor<'de> for EventVisitor {
-//             type Value = Event;
+        impl<'de> Visitor<'de> for EventVisitor {
+            type Value = Event;
 
-//             fn expecting(&self, formatter: &mut fmt::Formatter<'_>) ->
-// fmt::Result {                 formatter.write_str("struct Event")
-//             }
+            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+                formatter.write_str("struct Event")
+            }
 
-//             fn visit_map<V>(self, mut map: V) -> Result<Event, V::Error>
-//             where
-//                 V: MapAccess<'de>,
-//             {
-//                 let mut event_type = None;
-//                 let mut obj_id = None;
-//                 let mut data = None;
-//                 let mut data_buffer: Option<serde_json::Value> = None;
+            fn visit_map<V>(self, mut map: V) -> Result<Event, V::Error>
+            where
+                V: MapAccess<'de>,
+            {
+                let mut event_type = None;
+                let mut obj_id = None;
+                let mut data = None;
+                let mut data_buffer: Option<serde_json::Value> = None;
 
-//                 while let Some(key) = map.next_key()? {
-//                     match key {
-//                         Field::Event => {
-//                             if event_type.is_some() {
-//                                 return
-// Err(de::Error::duplicate_field("event"));                             }
-//                             event_type = Some(map.next_value()?);
-//                         }
-//                         Field::ObjectId => {
-//                             if obj_id.is_some() {
-//                                 return
-// Err(de::Error::duplicate_field("objectId"));                             }
-//                             obj_id = Some(map.next_value()?);
-//                         }
-//                         Field::Data => {
-//                             if data.is_some() {
-//                                 return
-// Err(de::Error::duplicate_field("data"));                             }
+                while let Some(key) = map.next_key()? {
+                    match key {
+                        Field::Event => {
+                            if event_type.is_some() {
+                                return Err(de::Error::duplicate_field("event"));
+                            }
+                            event_type = Some(map.next_value()?);
+                        }
+                        Field::ObjectId => {
+                            if obj_id.is_some() {
+                                return Err(de::Error::duplicate_field("objectId"));
+                            }
+                            obj_id = Some(map.next_value()?);
+                        }
+                        Field::Data => {
+                            if data.is_some() {
+                                return Err(de::Error::duplicate_field("data"));
+                            }
 
-//                             match event_type {
-//                                 None => data_buffer = map.next_value()?,
-//                                 Some(event_id) => {
-//                                     data = match event_id {
-//                                         1 =>
-// Some(EventType::Attack(map.next_value()?)),
-// 2 => Some(EventType::ObjectDestroyed(map.next_value()?)),
-// 3 => Some(EventType::AttackController),
-// 4 => Some(EventType::Build(map.next_value()?)),
-// 5 => Some(EventType::Harvest(map.next_value()?)),
-// 6 => Some(EventType::Heal(map.next_value()?)),
-// 7 => Some(EventType::Repair(map.next_value()?)),
-// 8 => Some(EventType::ReserveController(map.next_value()?)),
-// 9 => Some(EventType::UpgradeController(map.next_value()?)),
-// 10 => Some(EventType::Exit(map.next_value()?)),
-// 11 => Some(EventType::Power(map.next_value()?)),
-// 12 => Some(EventType::Transfer(map.next_value()?)),
-// _ => {                                             return
-// Err(de::Error::custom(format!(
-// "Event Type Unrecognized: {}",
-// event_id                                             )));
-//                                         }
-//                                     };
-//                                 }
-//                             };
-//                         }
-//                     }
-//                 }
+                            match event_type {
+                                None => data_buffer = map.next_value()?,
+                                Some(event_id) => {
+                                    data = match event_id {
+                                        1 => Some(EventType::Attack(map.next_value()?)),
+                                        2 => Some(EventType::ObjectDestroyed(map.next_value()?)),
+                                        3 => Some(EventType::AttackController),
+                                        4 => Some(EventType::Build(map.next_value()?)),
+                                        5 => Some(EventType::Harvest(map.next_value()?)),
+                                        6 => Some(EventType::Heal(map.next_value()?)),
+                                        7 => Some(EventType::Repair(map.next_value()?)),
+                                        8 => Some(EventType::ReserveController(map.next_value()?)),
+                                        9 => Some(EventType::UpgradeController(map.next_value()?)),
+                                        10 => Some(EventType::Exit(map.next_value()?)),
+                                        11 => Some(EventType::Power(map.next_value()?)),
+                                        12 => Some(EventType::Transfer(map.next_value()?)),
+                                        _ => {
+                                            return Err(de::Error::custom(format!(
+                                                "Event Type Unrecognized: {}",
+                                                event_id
+                                            )));
+                                        }
+                                    };
+                                }
+                            };
+                        }
+                    }
+                }
 
-//                 if data.is_none() {
-//                     let err = |e| {
-//                         de::Error::custom(format_args!(
-//                             "can't parse event data due to inner error {}",
-//                             e
-//                         ))
-//                     };
+                if data.is_none() {
+                    let err = |e| {
+                        de::Error::custom(format_args!(
+                            "can't parse event data due to inner error {}",
+                            e
+                        ))
+                    };
 
-//                     if let (Some(val), Some(event_id)) = (data_buffer,
-// event_type) {                         data = match event_id {
-//                             1 =>
-// Some(EventType::Attack(serde_json::from_value(val).map_err(err)?)),
-//                             2 => Some(EventType::ObjectDestroyed(
-//                                 serde_json::from_value(val).map_err(err)?,
-//                             )),
-//                             3 => Some(EventType::AttackController),
-//                             4 =>
-// Some(EventType::Build(serde_json::from_value(val).map_err(err)?)),
-//                             5 => Some(EventType::Harvest(
-//                                 serde_json::from_value(val).map_err(err)?,
-//                             )),
-//                             6 =>
-// Some(EventType::Heal(serde_json::from_value(val).map_err(err)?)),
-// 7 => Some(EventType::Repair(serde_json::from_value(val).map_err(err)?)),
-//                             8 => Some(EventType::ReserveController(
-//                                 serde_json::from_value(val).map_err(err)?,
-//                             )),
-//                             9 => Some(EventType::UpgradeController(
-//                                 serde_json::from_value(val).map_err(err)?,
-//                             )),
-//                             10 =>
-// Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
-// 11 => Some(EventType::Power(serde_json::from_value(val).map_err(err)?)),
-//                             12 => Some(EventType::Transfer(
-//                                 serde_json::from_value(val).map_err(err)?,
-//                             )),
-//                             _ => {
-//                                 return Err(de::Error::custom(format!(
-//                                     "Event Type Unrecognized: {}",
-//                                     event_id
-//                                 )));
-//                             }
-//                         };
-//                     }
-//                 }
+                    if let (Some(val), Some(event_id)) = (data_buffer, event_type) {
+                        data = match event_id {
+                            1 => Some(EventType::Attack(serde_json::from_value(val).map_err(err)?)),
+                            2 => Some(EventType::ObjectDestroyed(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            3 => Some(EventType::AttackController),
+                            4 => Some(EventType::Build(serde_json::from_value(val).map_err(err)?)),
+                            5 => Some(EventType::Harvest(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            6 => Some(EventType::Heal(serde_json::from_value(val).map_err(err)?)),
+                            7 => Some(EventType::Repair(serde_json::from_value(val).map_err(err)?)),
+                            8 => Some(EventType::ReserveController(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            9 => Some(EventType::UpgradeController(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            10 => Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
+                            11 => Some(EventType::Power(serde_json::from_value(val).map_err(err)?)),
+                            12 => Some(EventType::Transfer(
+                                serde_json::from_value(val).map_err(err)?,
+                            )),
+                            _ => {
+                                return Err(de::Error::custom(format!(
+                                    "Event Type Unrecognized: {}",
+                                    event_id
+                                )));
+                            }
+                        };
+                    }
+                }
 
-//                 let data = data.ok_or_else(||
-// de::Error::missing_field("data"))?;                 let obj_id =
-// obj_id.ok_or_else(|| de::Error::missing_field("objectId"))?;
+                let data = data.ok_or_else(|| de::Error::missing_field("data"))?;
+                let obj_id = obj_id.ok_or_else(|| de::Error::missing_field("objectId"))?;
 
-//                 Ok(Event {
-//                     event: data,
-//                     object_id: obj_id,
-//                 })
-//             }
-//         }
+                Ok(Event {
+                    event: data,
+                    object_id: obj_id,
+                })
+            }
+        }
 
-//         const FIELDS: &[&str] = &["event", "objectId", "data"];
-//         deserializer.deserialize_struct("Event", FIELDS, EventVisitor)
-//     }
-// }
+        const FIELDS: &[&str] = &["event", "objectId", "data"];
+        deserializer.deserialize_struct("Event", FIELDS, EventVisitor)
+    }
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq)]
-// pub enum EventType {
-//     Attack(AttackEvent),
-//     ObjectDestroyed(ObjectDestroyedEvent),
-//     AttackController,
-//     Build(BuildEvent),
-//     Harvest(HarvestEvent),
-//     Heal(HealEvent),
-//     Repair(RepairEvent),
-//     ReserveController(ReserveControllerEvent),
-//     UpgradeController(UpgradeControllerEvent),
-//     Exit(ExitEvent),
-//     Power(PowerEvent),
-//     Transfer(TransferEvent),
-// }
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum EventType {
+    Attack(AttackEvent),
+    ObjectDestroyed(ObjectDestroyedEvent),
+    AttackController,
+    Build(BuildEvent),
+    Harvest(HarvestEvent),
+    Heal(HealEvent),
+    Repair(RepairEvent),
+    ReserveController(ReserveControllerEvent),
+    UpgradeController(UpgradeControllerEvent),
+    Exit(ExitEvent),
+    Power(PowerEvent),
+    Transfer(TransferEvent),
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct AttackEvent {
-//     pub target_id: String,
-//     pub damage: u32,
-//     pub attack_type: AttackType,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AttackEvent {
+    pub target_id: String,
+    pub damage: u32,
+    pub attack_type: AttackType,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
-// #[repr(u8)]
-// pub enum AttackType {
-//     Melee = 1,
-//     Ranged = 2,
-//     RangedMass = 3,
-//     Dismantle = 4,
-//     HitBack = 5,
-//     Nuke = 6,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
+#[repr(u8)]
+pub enum AttackType {
+    Melee = 1,
+    Ranged = 2,
+    RangedMass = 3,
+    Dismantle = 4,
+    HitBack = 5,
+    Nuke = 6,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// pub struct ObjectDestroyedEvent {
-//     #[serde(rename = "type")]
-//     pub object_type: String,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+pub struct ObjectDestroyedEvent {
+    #[serde(rename = "type")]
+    pub object_type: String,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct BuildEvent {
-//     pub target_id: String,
-//     pub amount: u32,
-//     pub energy_spent: u32,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BuildEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub energy_spent: u32,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct HarvestEvent {
-//     pub target_id: String,
-//     pub amount: u32,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HarvestEvent {
+    pub target_id: String,
+    pub amount: u32,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct HealEvent {
-//     pub target_id: String,
-//     pub amount: u32,
-//     pub heal_type: HealType,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HealEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub heal_type: HealType,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
-// #[repr(u8)]
-// pub enum HealType {
-//     Melee = 1,
-//     Ranged = 2,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize_repr, Serialize_repr)]
+#[repr(u8)]
+pub enum HealType {
+    Melee = 1,
+    Ranged = 2,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct RepairEvent {
-//     pub target_id: String,
-//     pub amount: u32,
-//     pub energy_spent: u32,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RepairEvent {
+    pub target_id: String,
+    pub amount: u32,
+    pub energy_spent: u32,
+}
 
-// #[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct ReserveControllerEvent {
-//     pub amount: u32,
-// }
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ReserveControllerEvent {
+    pub amount: u32,
+}
 
-// #[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct UpgradeControllerEvent {
-//     pub amount: u32,
-//     pub energy_spent: u32,
-// }
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpgradeControllerEvent {
+    pub amount: u32,
+    pub energy_spent: u32,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct ExitEvent {
-//     pub room: String,
-//     pub x: u32,
-//     pub y: u32,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ExitEvent {
+    pub room: String,
+    pub x: u32,
+    pub y: u32,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct TransferEvent {
-//     pub target_id: String,
-//     #[serde(deserialize_with = "crate::ResourceType::deserialize_from_str")]
-//     pub resource_type: ResourceType,
-//     pub amount: u32,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TransferEvent {
+    pub target_id: String,
+    pub resource_type: ResourceType,
+    pub amount: u32,
+}
 
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct PowerEvent {
-//     pub target_id: String,
-//     pub power: PowerType,
-// }
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PowerEvent {
+    pub target_id: String,
+    pub power: PowerType,
+}
 
 // pub enum LookResult {
 //     Creep(Creep),
