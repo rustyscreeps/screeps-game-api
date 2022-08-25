@@ -2,6 +2,7 @@
 
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
@@ -561,6 +562,7 @@ pub enum PowerCreepClass {
 }
 
 /// Translates the `PWR_*` constants, which are types of powers used by power
+/// creeps
 #[wasm_bindgen]
 #[derive(
     Debug,
@@ -574,7 +576,7 @@ pub enum PowerCreepClass {
     Serialize_repr,
     IntoEnumIterator,
 )]
-#[repr(u8)]
+#[repr(u32)]
 pub enum PowerType {
     GenerateOps = 1,
     OperateSpawn = 2,
@@ -596,63 +598,53 @@ pub enum PowerType {
     OperateFactory = 19,
 }
 
-// js_deserializable!(PowerType);
+/// Translates the `EFFECT_*` constants, which are natural effect types
+#[wasm_bindgen]
+#[derive(
+    Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
+)]
+#[repr(u32)]
+pub enum NaturalEffectType {
+    Invulnerability = 1001,
+    CollapseTimer = 1002,
+}
 
-// /// Translates the `EFFECT_*` constants, which are natural effect types
-// #[derive(
-//     Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
-// )]
-// #[repr(u16)]
-// pub enum NaturalEffectType {
-//     Invulnerability = 1001,
-//     CollapseTimer = 1002,
-// }
+/// Translates effect types on room objects, which can include both `PWR_*` and
+/// `EFFECT_*` constants.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum EffectType {
+    PowerEffect(PowerType),
+    NaturalEffect(NaturalEffectType),
+}
 
-// js_deserializable!(NaturalEffectType);
+impl wasm_bindgen::convert::IntoWasmAbi for EffectType {
+    type Abi = u32;
 
-// /// Translates effect types which can include both `PWR_*` and `EFFECT_*`
-// /// constants.
-// #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-// pub enum EffectType {
-//     PowerEffect(PowerType),
-//     NaturalEffect(NaturalEffectType),
-// }
+    #[inline]
+    fn into_abi(self) -> Self::Abi {
+        match self {
+            EffectType::PowerEffect(e) => (e as u32).into_abi(),
+            EffectType::NaturalEffect(e) => (e as u32).into_abi(),
+        }
+    }
+}
 
-// impl<'de> Deserialize<'de> for EffectType {
-//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-//     where
-//         D: Deserializer<'de>,
-//     {
-//         let effect = u16::deserialize(deserializer)?;
-//         let effect_type = match effect {
-//             1 => EffectType::PowerEffect(PowerType::GenerateOps),
-//             2 => EffectType::PowerEffect(PowerType::OperateSpawn),
-//             3 => EffectType::PowerEffect(PowerType::OperateTower),
-//             4 => EffectType::PowerEffect(PowerType::OperateStorage),
-//             5 => EffectType::PowerEffect(PowerType::OperateLab),
-//             6 => EffectType::PowerEffect(PowerType::OperateExtension),
-//             7 => EffectType::PowerEffect(PowerType::OperateObserver),
-//             8 => EffectType::PowerEffect(PowerType::OperateTerminal),
-//             9 => EffectType::PowerEffect(PowerType::DisruptSpawn),
-//             10 => EffectType::PowerEffect(PowerType::DisruptTower),
-//             12 => EffectType::PowerEffect(PowerType::Shield),
-//             13 => EffectType::PowerEffect(PowerType::RegenSource),
-//             14 => EffectType::PowerEffect(PowerType::RegenMineral),
-//             15 => EffectType::PowerEffect(PowerType::DisruptTerminal),
-//             16 => EffectType::PowerEffect(PowerType::OperatePower),
-//             17 => EffectType::PowerEffect(PowerType::Fortify),
-//             18 => EffectType::PowerEffect(PowerType::OperateController),
-//             19 => EffectType::PowerEffect(PowerType::OperateFactory),
-//             1001 => EffectType::NaturalEffect(NaturalEffectType::Invulnerability),
-//             1002 => EffectType::NaturalEffect(NaturalEffectType::CollapseTimer),
-//             _ => {
-//                 return Err(D::Error::invalid_value(
-//                     Unexpected::Unsigned(effect as u64),
-//                     &"a valid PWR_* or EFFECT_* type integer",
-//                 ))
-//             }
-//         };
+impl wasm_bindgen::convert::FromWasmAbi for EffectType {
+    type Abi = u32;
 
-//         Ok(effect_type)
-//     }
-// }
+    #[inline]
+    unsafe fn from_abi(js: u32) -> Self {
+        match PowerType::from_u32(js) {
+            Some(pt) => Self::PowerEffect(pt),
+            None => {
+                Self::NaturalEffect(NaturalEffectType::from_u32(js).expect("unknown effect id!"))
+            }
+        }
+    }
+}
+
+impl wasm_bindgen::describe::WasmDescribe for EffectType {
+    fn describe() {
+        wasm_bindgen::describe::inform(wasm_bindgen::describe::U32)
+    }
+}

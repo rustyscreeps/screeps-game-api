@@ -5,13 +5,13 @@
 //! optimized for Screeps.
 //!
 //! This is both more fine-grained and less automatic than other pathing
-//! methods, such as [`Room::find_path_to`]. [`PathFinder`] knows about terrain
+//! methods, such as [`Room::find_path`]. [`PathFinder`] knows about terrain
 //! by default, but you must configure any other obstacles you want it to
 //! consider.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#PathFinder)
 //!
-//! [`Room::find_path_to`]: crate::objects::Room::find_path_to
+//! [`Room::find_path`]: crate::objects::Room::find_path
 
 use std::convert::TryInto;
 

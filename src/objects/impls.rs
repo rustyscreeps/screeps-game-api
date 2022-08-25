@@ -69,7 +69,7 @@ pub use self::{
     power_creep::PowerCreep,
     resource::Resource,
     room::{FindOptions, Room},
-    room_object::RoomObject,
+    room_object::{Effect, RoomObject},
     room_position::RoomPosition,
     room_terrain::RoomTerrain,
     ruin::Ruin,

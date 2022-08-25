@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 
 use crate::{
-    constants::{look::*, ExitDirection, Find, Look, ReturnCode, StructureType},
+    constants::{look::*, Color, ExitDirection, Find, Look, ReturnCode, StructureType},
     containers::JsContainerFromValue,
     objects::*,
     prelude::*,
@@ -75,8 +75,6 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn terminal(this: &Room) -> Option<StructureTerminal>;
 
-    // todo https://docs.screeps.com/api/#Room.visual
-
     /// Serialize a path array from [`Room::find_path`] into a string
     /// representation safe to store in memory.
     ///
@@ -91,14 +89,14 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Room, js_name = deserializePath)]
     pub fn deserialize_path(path: &JsString) -> Array;
 
-    /// Creates a construction site at given corrdinates within this room. If
+    /// Creates a construction site at given coordinates within this room. If
     /// it's a [`StructureSpawn`], a name can optionally be assigned for the
     /// structure.
     ///
     /// See [`RoomPosition::create_construction_site`] to create at a specified
     /// position.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.createConstructionSite)
     ///
     /// [`StructureSpawn`]: crate::objects::StructureSpawn
     /// [`RoomPosition::create_construction_site`]:
@@ -110,6 +108,19 @@ extern "C" {
         y: u8,
         ty: StructureType,
         name: Option<&JsString>,
+    ) -> ReturnCode;
+
+    /// Creates a [`Flag`] at given coordinates within this room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.createFlag)
+    #[wasm_bindgen(final, method, js_name = createFlag)]
+    pub fn create_flag(
+        this: &Room,
+        x: u8,
+        y: u8,
+        name: Option<&JsString>,
+        color: Option<Color>,
+        secondary_color: Option<Color>,
     ) -> ReturnCode;
 
     /// Find all objects of the specified type in the room, without passing
@@ -136,9 +147,9 @@ extern "C" {
     // todo FindPathOptions
     /// Find a path within the room from one position to another.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
-    #[wasm_bindgen(final, method, js_name = findPathTo)]
-    pub fn find_path_to(
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.findPath)
+    #[wasm_bindgen(final, method, js_name = findPath)]
+    pub fn find_path(
         this: &Room,
         origin: &RoomPosition,
         goal: &RoomPosition,
@@ -219,6 +230,10 @@ impl Room {
         self.name_internal()
             .try_into()
             .expect("expected parseable room name")
+    }
+
+    pub fn visual(&self) -> RoomVisual {
+        RoomVisual::new(Some(self.name()))
     }
 
     //TODO: wiarchbe: Find options!
@@ -534,131 +549,7 @@ where
     }
 }
 
-// use std::{fmt, marker::PhantomData, mem, ops::Range};
-
-// use num_traits::FromPrimitive;
-// use scoped_tls::scoped_thread_local;
-// use serde::{
-//     self,
-//     de::{self, Deserializer, MapAccess, Visitor},
-//     Deserialize, Serialize,
-// };
-// use serde_json;
-// use serde_repr::{Deserialize_repr, Serialize_repr};
-// use stdweb::{Reference, Value};
-
-// use crate::{
-//     constants::{
-//         Color, Direction, EffectType, ExitDirection, FindConstant, Look,
-// LookConstant, PowerType,         ResourceType, ReturnCode, StructureType,
-// Terrain,     },
-//     local::{Position, RoomName},
-//     memory::MemoryReference,
-//     objects::{
-//         ConstructionSite, Creep, Deposit, Flag, HasPosition, Mineral, Nuke,
-// PowerCreep, Resource,         Room, RoomTerrain, RoomVisual, Ruin, Source,
-// Structure, StructureController,         StructureStorage, StructureTerminal,
-// Tombstone,     },
-//     pathfinder::CostMatrix,
-//     traits::{TryFrom, TryInto},
-//     ConversionError,
-// };
-
-// simple_accessors! {
-//     impl Room {
-//         pub fn controller() -> Option<StructureController> = controller;
-//         pub fn energy_available() -> u32 = energyAvailable;
-//         pub fn energy_capacity_available() -> u32 = energyCapacityAvailable;
-//         pub fn name() -> RoomName = name;
-//         pub fn storage() -> Option<StructureStorage> = storage;
-//         pub fn terminal() -> Option<StructureTerminal> = terminal;
-//     }
-// }
-
 // impl Room {
-//     pub fn serialize_path(&self, path: &[Step]) -> String {
-//         js_unwrap! {@{self.as_ref()}.serializePath(@{path})}
-//     }
-
-//     pub fn deserialize_path(&self, path: &str) -> Vec<Step> {
-//         js_unwrap! {@{self.as_ref()}.deserializePath(@{path})}
-//     }
-
-//     pub fn create_construction_site<T>(&self, at: &T, ty: StructureType) ->
-// ReturnCode     where
-//         T: ?Sized + HasPosition,
-//     {
-//         let pos = at.pos();
-//         js_unwrap!(@{self.as_ref()}.createConstructionSite(
-//             pos_from_packed(@{pos.packed_repr()}),
-//             __structure_type_num_to_str(@{ty as u32})
-//         ))
-//     }
-
-//     pub fn create_named_construction_site<T>(
-//         &self,
-//         at: &T,
-//         ty: StructureType,
-//         name: &str,
-//     ) -> ReturnCode
-//     where
-//         T: ?Sized + HasPosition,
-//     {
-//         let pos = at.pos();
-//         js_unwrap!(@{self.as_ref()}.createConstructionSite(
-//             // pos_from_packed(@{pos.packed_repr()}),
-//             // workaround - passing with a position and a name
-//             // currently broken, use x,y instead
-//             @{pos.x()},
-//             @{pos.y()},
-//             __structure_type_num_to_str(@{ty as u32}),
-//             @{name}
-//         ))
-//     }
-
-//     pub fn create_flag<T>(
-//         &self,
-//         at: &T,
-//         name: &str,
-//         main_color: Color,
-//         secondary_color: Color,
-//     ) -> Result<String, ReturnCode>
-//     where
-//         T: ?Sized + HasPosition,
-//     {
-//         let pos = at.pos();
-//         Flag::interpret_creation_ret_value(js! {
-//             return @{self.as_ref()}.createFlag(
-//                 pos_from_packed(@{pos.packed_repr()}),
-//                 @{name},
-//                 @{main_color as u32},
-//                 @{secondary_color as u32}
-//             );
-//         })
-//         .expect("expected Room.createFlag to return ReturnCode or String
-// name")     }
-
-//     pub fn find<T>(&self, ty: T) -> Vec<T::Item>
-//     where
-//         T: FindConstant,
-//     {
-//         js_unwrap_ref!(@{self.as_ref()}.find(@{ty.find_code()}))
-//     }
-
-//     pub fn find_exit_to(&self, room: &Room) -> Result<ExitDirection,
-// ReturnCode> {         let code_val = js! {return
-// @{self.as_ref()}.findExitTo(@{room.as_ref()});};         let code_int: i32 =
-// code_val.try_into().unwrap();
-
-//         if code_int < 0 {
-//             Err(ReturnCode::from_i32(code_int)
-//                 .expect("expected find_exit_to return value < 0 to be a valid
-// ReturnCode"))         } else {
-//             Ok(ExitDirection::from_i32(code_int)
-//                 .expect("expected find_exit_to return value >= 0 to be a
-// valid Exit"))         }
-//     }
-
 //     pub fn get_event_log(&self) -> Vec<Event> {
 //         serde_json::from_str(&self.get_event_log_raw()).expect("Malformed
 // Event Log")     }
@@ -667,219 +558,6 @@ where
 //         js_unwrap! {@{self.as_ref()}.getEventLog(true)}
 //     }
 
-//     pub fn get_position_at(&self, x: u32, y: u32) -> Option<Position> {
-//         let v = js! {
-//             let value = @{self.as_ref()}.getPositionAt(@{x}, @{y});
-//             if (value == null) {
-//                 return null;
-//             } else {
-//                 return value.__packedPos;
-//             }
-//         };
-//         match v {
-//             Value::Number(_) => Some(
-//                 v.try_into()
-//                     .expect("expected Position::try_from(pos.__packedPos) to
-// succeed"),             ),
-//             Value::Null => None,
-//             _ => panic!(
-//                 "unexpected return value for JS binding to
-// Room.getPositionAt. \                  expected null or number, found {:?}",
-//                 v
-//             ),
-//         }
-//     }
-
-//     pub fn get_terrain(&self) -> RoomTerrain {
-//         js_unwrap!(@{self.as_ref()}.getTerrain())
-//     }
-
-//     pub fn look_at<T: ?Sized + HasPosition>(&self, target: &T) ->
-// Vec<LookResult> {         let pos = target.pos();
-//         js_unwrap!(@{self.as_ref()}.lookAt(pos_from_packed(@{pos.
-// packed_repr()})))     }
-
-//     pub fn look_at_xy(&self, x: u32, y: u32) -> Vec<LookResult> {
-//         js_unwrap!(@{self.as_ref()}.lookAt(@{x}, @{y}))
-//     }
-
-//     pub fn look_at_area(
-//         &self,
-//         top: u32,
-//         left: u32,
-//         bottom: u32,
-//         right: u32,
-//     ) -> Vec<PositionedLookResult> {
-//         js_unwrap!(@{self.as_ref()}.lookAtArea(@{top}, @{left}, @{bottom},
-// @{right}, true))     }
-
-//     pub fn find_path<'a, O, T, F>(&self, from_pos: &O, to_pos: &T, opts:
-// FindOptions<'a, F>) -> Path     where
-//         O: ?Sized + HasPosition,
-//         T: ?Sized + HasPosition,
-//         F: Fn(RoomName, CostMatrix<'_>) -> Option<CostMatrix<'a>> + 'a,
-//     {
-//         let from = from_pos.pos();
-//         let to = to_pos.pos();
-
-//         // This callback is the one actually passed to JavaScript.
-//         fn callback(room_name: String, cost_matrix: Reference) ->
-// Option<Reference> {             let room_name = room_name.parse().expect(
-//                 "expected room name passed into Room.findPath \
-//                  callback to be a valid room name",
-//             );
-//             COST_CALLBACK.with(|callback| callback(room_name, cost_matrix))
-//         }
-
-//         // User provided callback: rust String, CostMatrix ->
-// Option<CostMatrix>         let raw_callback = opts.cost_callback;
-
-//         // Wrapped user callback: rust String, Reference -> Option<Reference>
-//         let callback_boxed = move |room_name, cost_matrix_ref| {
-//             let cmatrix = CostMatrix {
-//                 inner: cost_matrix_ref,
-//                 lifetime: PhantomData,
-//             };
-//             raw_callback(room_name, cmatrix).map(|cm| cm.inner)
-//         };
-
-//         // Type erased and boxed callback: no longer a type specific to the
-// closure         // passed in, now unified as &Fn
-//         let callback_type_erased: &(dyn Fn(RoomName, Reference) ->
-// Option<Reference> + 'a) =             &callback_boxed;
-
-//         // Overwrite lifetime of reference so it can be stuck in
-// scoped_thread_local         // storage: it's now pretending to be static
-// data. This should be entirely safe         // because we're only sticking it
-// in scoped storage and we control the         // only use of it, but it's
-// still necessary because "some lifetime above         // the  current scope
-// but otherwise unknown" is not a valid lifetime to         // have PF_CALLBACK
-// have.         let callback_lifetime_erased: &'static dyn Fn(RoomName,
-// Reference) -> Option<Reference> =             unsafe {
-// mem::transmute(callback_type_erased) };
-
-//         let FindOptions {
-//             ignore_creeps,
-//             ignore_destructible_structures,
-//             max_ops,
-//             heuristic_weight,
-//             serialize,
-//             max_rooms,
-//             range,
-//             plain_cost,
-//             swamp_cost,
-//             ..
-//         } = opts;
-
-//         // Store callback_lifetime_erased in COST_CALLBACK for the duration
-// of the         // PathFinder call and make the call to PathFinder.
-//         //
-//         // See https://docs.rs/scoped-tls/0.1/scoped_tls/
-//         COST_CALLBACK.set(&callback_lifetime_erased, || {
-//             let v = js! {
-//                 return @{&self.as_ref()}.findPath(
-//                     pos_from_packed(@{from.packed_repr()}),
-//                     pos_from_packed(@{to.packed_repr()}),
-//                     {
-//                         ignoreCreeps: @{ignore_creeps},
-//                         ignoreDestructibleStructures:
-// @{ignore_destructible_structures},                         costCallback:
-// @{callback},                         maxOps: @{max_ops},
-//                         heuristicWeight: @{heuristic_weight},
-//                         serialize: @{serialize},
-//                         maxRooms: @{max_rooms},
-//                         range: @{range},
-//                         plainCost: @{plain_cost},
-//                         swampCost: @{swamp_cost}
-//                     }
-//                 );
-//             };
-//             if serialize {
-//                 Path::Serialized(v.try_into().unwrap())
-//             } else {
-//                 Path::Vectorized(v.try_into().unwrap())
-//             }
-//         })
-//     }
-
-//     pub fn look_for_at<T, U>(&self, ty: T, target: &U) -> Vec<T::Item>
-//     where
-//         T: LookConstant,
-//         U: HasPosition,
-//     {
-//         let pos = target.pos();
-//         T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
-//             __look_num_to_str(@{ty.look_code() as u32}),
-//             pos_from_packed(@{pos.packed_repr()}),
-//         )))
-//     }
-
-//     pub fn look_for_at_xy<T>(&self, ty: T, x: u32, y: u32) -> Vec<T::Item>
-//     where
-//         T: LookConstant,
-//     {
-//         T::convert_and_check_items(js_unwrap!(@{self.as_ref()}.lookForAt(
-//             __look_num_to_str(@{ty.look_code() as u32}),
-//             @{x},
-//             @{y},
-//         )))
-//     }
-
-//     /// Looks for a given thing over a given area of bounds.
-//     ///
-//     /// To keep with `Range` convention, the start is inclusive, and the end
-//     /// is _exclusive_.
-//     ///
-//     /// Note: to ease the implementation and efficiency of the rust
-// interface,     /// this is limited to returning an array of values without
-// their     /// positions. If position data is needed, all room objects
-// *should*     /// contain positions alongside them. (for terrain data, I would
-// recommend     /// using a different method?)
-//     ///
-//     /// If you really do need more information here, I would recommend making
-// a     /// PR to add it!
-//     ///
-//     /// # Panics
-//     ///
-//     /// Panics if start>end for either range, or if end>50 for either range.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```no_run
-//     /// # let room: ::screeps::Room = unimplemented!();
-//     /// use screeps::constants::look;
-//     /// room.look_for_at_area(look::ENERGY, 20..26, 20..26);
-//     /// ```
-//     pub fn look_for_at_area<T>(&self, ty: T, horiz: Range<u8>, vert:
-// Range<u8>) -> Vec<T::Item>     where
-//         T: LookConstant,
-//     {
-//         assert!(horiz.start <= horiz.end);
-//         assert!(vert.start <= vert.end);
-//         assert!(horiz.end <= 50);
-//         assert!(vert.end <= 50);
-
-//         T::convert_and_check_items(js_unwrap!
-// {@{self.as_ref()}.lookForAtArea(
-// __look_num_to_str(@{ty.look_code() as u32}),             @{vert.start},
-//             @{horiz.start},
-//             @{vert.end},
-//             @{horiz.end},
-//             true
-//         ).map((obj) => obj[__look_num_to_str(@{ty.look_code() as u32})])})
-//     }
-
-//     pub fn memory(&self) -> MemoryReference {
-//         js_unwrap!(@{self.as_ref()}.memory)
-//     }
-
-//     pub fn name_local(&self) -> RoomName {
-//         js_unwrap!(@{self.as_ref()}.name)
-//     }
-
-//     pub fn visual(&self) -> RoomVisual {
-//         RoomVisual::new(Some(self.name()))
-//     }
 // }
 
 // #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -1165,15 +843,6 @@ where
 //     pub target_id: String,
 //     pub power: PowerType,
 // }
-
-// #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct Effect {
-//     pub effect: EffectType,
-//     pub level: Option<u8>,
-//     pub ticks_remaining: u32,
-// }
-// js_deserializable! {Effect}
 
 // pub enum LookResult {
 //     Creep(Creep),
