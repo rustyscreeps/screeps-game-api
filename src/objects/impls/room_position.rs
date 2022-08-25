@@ -5,7 +5,7 @@ use crate::{
     local::Position,
     prelude::*,
     prototypes::ROOM_POSITION_PROTOTYPE,
-    Find, LookConstant, RoomName,
+    Find, FindConstant, LookConstant, RoomName,
 };
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
@@ -109,7 +109,7 @@ extern "C" {
     ///
     /// [`Flag`]: crate::objects::Flag
     #[wasm_bindgen(method, js_name = findClosestByPath)]
-    pub fn find_closest_by_path(
+    pub fn find_closest_by_path_internal(
         this: &RoomPosition,
         goal: Find,
         options: Option<&Object>,
@@ -122,9 +122,9 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByRange)
     #[wasm_bindgen(method, js_name = findClosestByRange)]
-    pub fn find_closest_by_range(
+    pub fn find_closest_by_range_internal(
         this: &RoomPosition,
-        goal: &JsValue,
+        goal: Find,
         options: Option<&Object>,
     ) -> Option<Object>;
 
@@ -135,12 +135,12 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findInRange)
     #[wasm_bindgen(method, js_name = findInRange)]
-    pub fn find_in_range(
+    pub fn find_in_range_internal(
         this: &RoomPosition,
-        goal: &JsValue,
+        goal: Find,
         range: u8,
         options: Option<&Object>,
-    ) -> Array;
+    ) -> Option<Array>;
 
     // todo FindPathOptions
     /// Find a path from this position to a position or room object, with an
@@ -253,6 +253,31 @@ impl RoomPosition {
         T: LookConstant,
     {
         self.look_for_internal(T::look_code())
+            .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
+            .unwrap_or_else(Vec::new)
+    }
+
+    pub fn find_closest_by_path<T>(&self, find: T, options: Option<&Object>) -> Option<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_closest_by_path_internal(find.find_code(), options)
+            .map(|reference| T::convert_and_check_item(reference.into()))
+    }
+
+    pub fn find_closest_by_range<T>(&self, find: T) -> Option<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_closest_by_range_internal(find.find_code(), None)
+            .map(|reference| T::convert_and_check_item(reference.into()))
+    }
+
+    pub fn find_in_range<T>(&self, find: T, range: u8) -> Vec<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_in_range_internal(find.find_code(), range, None)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
             .unwrap_or_else(Vec::new)
     }

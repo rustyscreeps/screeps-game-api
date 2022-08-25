@@ -3,6 +3,7 @@
 //! This is a reimplementation/translation of the `RoomPosition` code originally
 //! written in JavaScript. All RoomPosition to RoomPosition operations in this
 //! file stay within Rust.
+use js_sys::Object;
 use std::{
     cmp::{Ord, Ordering, PartialOrd},
     fmt,
@@ -368,14 +369,14 @@ impl Position {
     }
 
     #[inline]
-    pub fn find_closest_by_path<T>(self, ty: T) -> Option<T::Item>
+    pub fn find_closest_by_path<T>(self, ty: T, options: Option<&Object>) -> Option<T::Item>
     where
         T: FindConstant,
         <T as FindConstant>::Item: From<JsValue>,
     {
         RoomPosition::from(self)
-            .find_closest_by_path(ty.find_code(), None)
-            .map(|obj| JsValue::from(obj).into())
+            .find_closest_by_path_internal(ty.find_code(), options)
+            .map(|obj| T::convert_and_check_item(obj.into()))
     }
 }
 

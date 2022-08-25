@@ -228,7 +228,7 @@ impl Room {
     {
         self.find_internal(ty.find_code(), None)
             .iter()
-            .map(Into::into)
+            .map(T::convert_and_check_item)
             .collect()
     }
 
