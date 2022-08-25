@@ -3,14 +3,16 @@
 //! This is a reimplementation/translation of the `RoomPosition` code originally
 //! written in JavaScript. All RoomPosition to RoomPosition operations in this
 //! file stay within Rust.
+use js_sys::Object;
 use std::{
     cmp::{Ord, Ordering, PartialOrd},
     fmt,
 };
+use wasm_bindgen::JsValue;
 
-use super::{RoomName, RoomCoordinate, RoomXY, ROOM_SIZE, HALF_WORLD_SIZE};
+use super::{RoomCoordinate, RoomName, RoomXY, HALF_WORLD_SIZE, ROOM_SIZE};
 
-use crate::{HasPosition, objects::RoomPosition};
+use crate::{objects::RoomPosition, FindConstant, HasPosition};
 
 mod approximate_offsets;
 mod extra_math;
@@ -55,10 +57,14 @@ mod world_utils;
 /// convert the native [`Position`] to a [`RoomPosition`]:
 ///
 /// ```no_run
+/// use screeps::{Position, RoomCoordinate, RoomPosition};
 /// use std::convert::TryFrom;
-/// use screeps::{RoomCoordinate, RoomPosition, Position};
 ///
-/// let pos = Position::new(RoomCoordinate::try_from(20).unwrap(), RoomCoordinate::try_from(21).unwrap(), "E5N6".parse().unwrap());
+/// let pos = Position::new(
+///     RoomCoordinate::try_from(20).unwrap(),
+///     RoomCoordinate::try_from(21).unwrap(),
+///     "E5N6".parse().unwrap(),
+/// );
 /// let js_pos = RoomPosition::from(pos);
 /// let result = js_pos.room_name();
 /// ```
@@ -135,8 +141,16 @@ mod world_utils;
 /// ```
 /// # use std::convert::TryFrom;
 /// # use screeps::{Position, RoomCoordinate};
-/// let pos1 = Position::new(RoomCoordinate::try_from(0).unwrap(), RoomCoordinate::try_from(0).unwrap(), "E1N1".parse().unwrap());
-/// let pos2 = Position::new(RoomCoordinate::try_from(40).unwrap(), RoomCoordinate::try_from(20).unwrap(), "E1N1".parse().unwrap());
+/// let pos1 = Position::new(
+///     RoomCoordinate::try_from(0).unwrap(),
+///     RoomCoordinate::try_from(0).unwrap(),
+///     "E1N1".parse().unwrap(),
+/// );
+/// let pos2 = Position::new(
+///     RoomCoordinate::try_from(40).unwrap(),
+///     RoomCoordinate::try_from(20).unwrap(),
+///     "E1N1".parse().unwrap(),
+/// );
 /// assert_eq!(pos1 + (40, 20), pos2);
 /// ```
 ///
@@ -146,11 +160,23 @@ mod world_utils;
 /// ```
 /// # use std::convert::TryFrom;
 /// # use screeps::{Position, RoomCoordinate};
-/// let pos1 = Position::new(RoomCoordinate::try_from(4).unwrap(), RoomCoordinate::try_from(20).unwrap(), "E20S21".parse().unwrap());
-/// let pos2 = Position::new(RoomCoordinate::try_from(4).unwrap(), RoomCoordinate::try_from(30).unwrap(), "E20S22".parse().unwrap());
+/// let pos1 = Position::new(
+///     RoomCoordinate::try_from(4).unwrap(),
+///     RoomCoordinate::try_from(20).unwrap(),
+///     "E20S21".parse().unwrap(),
+/// );
+/// let pos2 = Position::new(
+///     RoomCoordinate::try_from(4).unwrap(),
+///     RoomCoordinate::try_from(30).unwrap(),
+///     "E20S22".parse().unwrap(),
+/// );
 /// assert_eq!(pos2 - pos1, (0, 60));
 ///
-/// let pos3 = Position::new(RoomCoordinate::try_from(0).unwrap(), RoomCoordinate::try_from(0).unwrap(), "E20S21".parse().unwrap());
+/// let pos3 = Position::new(
+///     RoomCoordinate::try_from(0).unwrap(),
+///     RoomCoordinate::try_from(0).unwrap(),
+///     "E20S21".parse().unwrap(),
+/// );
 /// assert_eq!(pos3 - pos1, (-4, -20));
 /// ```
 ///
@@ -265,9 +291,7 @@ impl Position {
         let y = packed & 0xFF;
         assert!(x < ROOM_SIZE as u32, "out of bounds x: {}", x);
         assert!(y < ROOM_SIZE as u32, "out of bounds y: {}", y);
-        Position {
-            packed: packed,
-        }
+        Position { packed }
     }
 
     /// Gets the horizontal coordinate of this position's room name.
@@ -300,7 +324,9 @@ impl Position {
     #[inline]
     pub fn xy(self) -> RoomXY {
         // SAFETY: packed always contains a valid pair
-        unsafe { RoomXY::unchecked_new((self.packed >> 8 & 0xFF) as u8, (self.packed & 0xFF) as u8) }
+        unsafe {
+            RoomXY::unchecked_new((self.packed >> 8 & 0xFF) as u8, (self.packed & 0xFF) as u8)
+        }
     }
 
     #[inline]
@@ -341,6 +367,17 @@ impl Position {
         self.set_room_name(room_name);
         self
     }
+
+    #[inline]
+    pub fn find_closest_by_path<T>(self, ty: T, options: Option<&Object>) -> Option<T::Item>
+    where
+        T: FindConstant,
+        <T as FindConstant>::Item: From<JsValue>,
+    {
+        RoomPosition::from(self)
+            .find_closest_by_path_internal(ty.find_code(), options)
+            .map(|obj| T::convert_and_check_item(obj.into()))
+    }
 }
 
 impl PartialOrd for Position {
@@ -360,7 +397,7 @@ impl Ord for Position {
 
 impl HasPosition for Position {
     fn pos(&self) -> Position {
-        self.clone()
+        *self
     }
 }
 
@@ -379,7 +416,7 @@ impl From<&RoomPosition> for Position {
 mod serde {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-    use super::{Position, RoomName, RoomCoordinate};
+    use super::{Position, RoomCoordinate, RoomName};
 
     #[derive(Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
@@ -437,16 +474,74 @@ mod test {
     use super::{Position, RoomCoordinate};
 
     fn gen_test_positions() -> Vec<(u32, (RoomCoordinate, RoomCoordinate, &'static str))> {
-        unsafe { vec![
-            (2172526892u32, (RoomCoordinate::unchecked_new(33), RoomCoordinate::unchecked_new(44), "E1N1")),
-            (2491351576u32, (RoomCoordinate::unchecked_new(2), RoomCoordinate::unchecked_new(24), "E20N0")),
-            (2139029504u32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0N0")),
-            (2155806720u32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0N0")),
-            (2139095040u32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "W0S0")),
-            (2155872256u32, (RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(0), "E0S0")),
-            (1285u32, (RoomCoordinate::unchecked_new(5), RoomCoordinate::unchecked_new(5), "sim")),
-            (2021333800u32, (RoomCoordinate::unchecked_new(27), RoomCoordinate::unchecked_new(40), "W7N4")),
-        ] }
+        unsafe {
+            vec![
+                (
+                    2172526892u32,
+                    (
+                        RoomCoordinate::unchecked_new(33),
+                        RoomCoordinate::unchecked_new(44),
+                        "E1N1",
+                    ),
+                ),
+                (
+                    2491351576u32,
+                    (
+                        RoomCoordinate::unchecked_new(2),
+                        RoomCoordinate::unchecked_new(24),
+                        "E20N0",
+                    ),
+                ),
+                (
+                    2139029504u32,
+                    (
+                        RoomCoordinate::unchecked_new(0),
+                        RoomCoordinate::unchecked_new(0),
+                        "W0N0",
+                    ),
+                ),
+                (
+                    2155806720u32,
+                    (
+                        RoomCoordinate::unchecked_new(0),
+                        RoomCoordinate::unchecked_new(0),
+                        "E0N0",
+                    ),
+                ),
+                (
+                    2139095040u32,
+                    (
+                        RoomCoordinate::unchecked_new(0),
+                        RoomCoordinate::unchecked_new(0),
+                        "W0S0",
+                    ),
+                ),
+                (
+                    2155872256u32,
+                    (
+                        RoomCoordinate::unchecked_new(0),
+                        RoomCoordinate::unchecked_new(0),
+                        "E0S0",
+                    ),
+                ),
+                (
+                    1285u32,
+                    (
+                        RoomCoordinate::unchecked_new(5),
+                        RoomCoordinate::unchecked_new(5),
+                        "sim",
+                    ),
+                ),
+                (
+                    2021333800u32,
+                    (
+                        RoomCoordinate::unchecked_new(27),
+                        RoomCoordinate::unchecked_new(40),
+                        "W7N4",
+                    ),
+                ),
+            ]
+        }
     }
 
     #[test]

@@ -1,6 +1,6 @@
 use crate::{
     constants::ResourceType,
-    objects::{Room, RoomPosition, RoomObject, Store},
+    objects::{Room, RoomObject, RoomPosition, Store},
     prelude::*,
 };
 use js_sys::{Array, JsString};

@@ -12,8 +12,7 @@ impl Position {
     /// directions. For instance, [`Direction::Top`] can be returned even
     /// if the target has a slightly different `x` coordinate.
     pub fn get_direction_to(self, target: Position) -> Option<Direction> {
-        // Logic copied from https://github.com/screeps/engine/blob/
-        // 020ba168a1fde9a8072f9f1c329d5c0be8b440d7/src/utils.js#L73-L107
+        // Logic copied from https://github.com/screeps/engine/blob/020ba168a1fde9a8072f9f1c329d5c0be8b440d7/src/utils.js#L73-L107
         let (dx, dy) = target - self;
         if dx.abs() > dy.abs() * 2 {
             if dx > 0 {
@@ -27,18 +26,16 @@ impl Position {
             } else {
                 Some(Direction::Top)
             }
+        } else if dx > 0 && dy > 0 {
+            Some(Direction::BottomRight)
+        } else if dx > 0 && dy < 0 {
+            Some(Direction::TopRight)
+        } else if dx < 0 && dy > 0 {
+            Some(Direction::BottomLeft)
+        } else if dx < 0 && dy < 0 {
+            Some(Direction::TopLeft)
         } else {
-            if dx > 0 && dy > 0 {
-                Some(Direction::BottomRight)
-            } else if dx > 0 && dy < 0 {
-                Some(Direction::TopRight)
-            } else if dx < 0 && dy > 0 {
-                Some(Direction::BottomLeft)
-            } else if dx < 0 && dy < 0 {
-                Some(Direction::TopLeft)
-            } else {
-                None
-            }
+            None
         }
     }
 
@@ -85,8 +82,7 @@ impl Position {
 
 #[cfg(test)]
 mod test {
-    use crate::{Direction, Position, RoomName};
-    use crate::local::RoomCoordinate;
+    use crate::{local::RoomCoordinate, Direction, Position, RoomName};
 
     #[test]
     fn test_direction_to() {

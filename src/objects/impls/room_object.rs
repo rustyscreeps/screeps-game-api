@@ -1,4 +1,8 @@
-use crate::{Position, objects::{Room, RoomPosition}, prelude::*};
+use crate::{
+    objects::{Room, RoomPosition},
+    prelude::*,
+    Position,
+};
 use js_sys::Array;
 use wasm_bindgen::prelude::*;
 
@@ -31,13 +35,19 @@ extern "C" {
     pub fn room(this: &RoomObject) -> Option<Room>;
 }
 
-impl<T> HasPosition for T where T: AsRef<RoomObject> {
+impl<T> HasPosition for T
+where
+    T: AsRef<RoomObject>,
+{
     fn pos(&self) -> Position {
         RoomObject::pos(self.as_ref()).into()
     }
 }
 
-impl<T> RoomObjectProperties for T where T: AsRef<RoomObject> {
+impl<T> RoomObjectProperties for T
+where
+    T: AsRef<RoomObject>,
+{
     fn effects(&self) -> Array {
         RoomObject::effects(self.as_ref())
     }

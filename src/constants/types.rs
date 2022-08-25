@@ -1,6 +1,5 @@
 //! `*Type` constants.
 
-// use std::{borrow::Cow, str::FromStr};
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};
@@ -347,116 +346,6 @@ pub enum ResourceType {
     SymbolTaw = "symbol_taw",
 }
 
-// todo, can we make this an enum wrapper around both normal and inter-shard types before instead of this?
-// or at least add fns to convert back and forth
-/// Translates all resource types that can be used on the market
-/// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
-#[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
-pub enum MarketResourceType {
-    Energy = "energy",
-    Power = "power",
-    Hydrogen = "H",
-    Oxygen = "O",
-    Utrium = "U",
-    Lemergium = "L",
-    Keanium = "K",
-    Zynthium = "Z",
-    Catalyst = "X",
-    Ghodium = "G",
-    Silicon = "silicon",
-    Metal = "metal",
-    Biomass = "biomass",
-    Mist = "mist",
-    Hydroxide = "OH",
-    ZynthiumKeanite = "ZK",
-    UtriumLemergite = "UL",
-    UtriumHydride = "UH",
-    UtriumOxide = "UO",
-    KeaniumHydride = "KH",
-    KeaniumOxide = "KO",
-    LemergiumHydride = "LH",
-    LemergiumOxide = "LO",
-    ZynthiumHydride = "ZH",
-    ZynthiumOxide = "ZO",
-    GhodiumHydride = "GH",
-    GhodiumOxide = "GO",
-    UtriumAcid = "UH2O",
-    UtriumAlkalide = "UHO2",
-    KeaniumAcid = "KH2O",
-    KeaniumAlkalide = "KHO2",
-    LemergiumAcid = "LH2O",
-    LemergiumAlkalide = "LHO2",
-    ZynthiumAcid = "ZH2O",
-    ZynthiumAlkalide = "ZHO2",
-    GhodiumAcid = "GH2O",
-    GhodiumAlkalide = "GHO2",
-    CatalyzedUtriumAcid = "XUH2O",
-    CatalyzedUtriumAlkalide = "XUHO2",
-    CatalyzedKeaniumAcid = "XKH2O",
-    CatalyzedKeaniumAlkalide = "XKHO2",
-    CatalyzedLemergiumAcid = "XLH2O",
-    CatalyzedLemergiumAlkalide = "XLHO2",
-    CatalyzedZynthiumAcid = "XZH2O",
-    CatalyzedZynthiumAlkalide = "XZHO2",
-    CatalyzedGhodiumAcid = "XGH2O",
-    CatalyzedGhodiumAlkalide = "XGHO2",
-    Ops = "ops",
-    UtriumBar = "utrium_bar",
-    LemergiumBar = "lemergium_bar",
-    ZynthiumBar = "zynthium_bar",
-    KeaniumBar = "keanium_bar",
-    GhodiumMelt = "ghodium_melt",
-    Oxidant = "oxidant",
-    Reductant = "reductant",
-    Purifier = "purifier",
-    Battery = "battery",
-    Composite = "composite",
-    Crystal = "crystal",
-    Liquid = "liquid",
-    Wire = "wire",
-    Switch = "switch",
-    Transistor = "transistor",
-    Microchip = "microchip",
-    Circuit = "circuit",
-    Device = "device",
-    Cell = "cell",
-    Phlegm = "phlegm",
-    Tissue = "tissue",
-    Muscle = "muscle",
-    Organoid = "organoid",
-    Organism = "organism",
-    Alloy = "alloy",
-    Tube = "tube",
-    Fixtures = "fixtures",
-    Frame = "frame",
-    Hydraulics = "hydraulics",
-    Machine = "machine",
-    Condensate = "condensate",
-    Concentrate = "concentrate",
-    Extract = "extract",
-    Spirit = "spirit",
-    Emanation = "emanation",
-    Essence = "essence",
-    CpuUnlock = "cpuUnlock",
-    Pixel = "pixel",
-    AccessKey = "accessKey",
-}
-
-#[derive(Copy, Clone, Debug)]
-pub enum Boost {
-    Harvest(u32),
-    BuildAndRepair(f32),
-    Dismantle(u32),
-    UpgradeController(f32),
-    Attack(u32),
-    RangedAttack(u32),
-    Heal(u32),
-    Carry(u32),
-    Move(u32),
-    Tough(f32),
-}
-
 impl ResourceType {
     /// Translates the `BOOSTS` constant.
     #[inline]
@@ -600,154 +489,69 @@ impl ResourceType {
     }
 }
 
-// /// Translates market resource types which can include both `RESOURCE_*`
-// /// and `INTERSHARD_RESOURCES` constants.
-// #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-// pub enum MarketResourceType {
-//     Resource(ResourceType),
-//     IntershardResource(IntershardResourceType),
-// }
-//
-// impl MarketResourceType {
-//     /// Helper function for deserializing from a string rather than a fake
-//     /// integer value.
-//     pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-//         let s: Cow<'de, str> = Cow::deserialize(d)?;
+#[derive(Copy, Clone, Debug)]
+pub enum Boost {
+    Harvest(u32),
+    BuildAndRepair(f32),
+    Dismantle(u32),
+    UpgradeController(f32),
+    Attack(u32),
+    RangedAttack(u32),
+    Heal(u32),
+    Carry(u32),
+    Move(u32),
+    Tough(f32),
+}
 
-//         ResourceType::from_str(&s)
-//             .map(|ty| MarketResourceType::Resource(ty))
-//             .or(IntershardResourceType::from_str(&s)
-//                 .map(|ty| MarketResourceType::IntershardResource(ty)))
-//             .map_err(|_| {
-//                 D::Error::invalid_value(
-//                     Unexpected::Str(&s),
-//                     &"a known constant string in RESOURCES_ALL or INTERSHARD_RESOURCES",
-//                 )
-//             })
-//     }
-// }
+/// Translates all resource types that can be used on the market.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum MarketResourceType {
+    Resource(ResourceType),
+    IntershardResource(IntershardResourceType),
+}
 
-// impl<'de> Deserialize<'de> for MarketResourceType {
-//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-//     where
-//         D: Deserializer<'de>,
-//     {
-//         use IntershardResourceType::*;
-//         use MarketResourceType::*;
-//         use ResourceType::*;
+impl wasm_bindgen::convert::FromWasmAbi for MarketResourceType {
+    type Abi = <wasm_bindgen::JsValue as wasm_bindgen::convert::FromWasmAbi>::Abi;
 
-//         let resource = u16::deserialize(deserializer)?;
-//         let resource_type = match resource {
-//             1 => Resource(Energy),
-//             2 => Resource(Power),
-//             3 => Resource(Hydrogen),
-//             4 => Resource(Oxygen),
-//             5 => Resource(Utrium),
-//             6 => Resource(Lemergium),
-//             7 => Resource(Keanium),
-//             8 => Resource(Zynthium),
-//             9 => Resource(Catalyst),
-//             10 => Resource(Ghodium),
-//             11 => Resource(Hydroxide),
-//             12 => Resource(ZynthiumKeanite),
-//             13 => Resource(UtriumLemergite),
-//             14 => Resource(UtriumHydride),
-//             15 => Resource(UtriumOxide),
-//             16 => Resource(KeaniumHydride),
-//             17 => Resource(KeaniumOxide),
-//             18 => Resource(LemergiumHydride),
-//             19 => Resource(LemergiumOxide),
-//             20 => Resource(ZynthiumHydride),
-//             21 => Resource(ZynthiumOxide),
-//             22 => Resource(GhodiumHydride),
-//             23 => Resource(GhodiumOxide),
-//             24 => Resource(UtriumAcid),
-//             25 => Resource(UtriumAlkalide),
-//             26 => Resource(KeaniumAcid),
-//             27 => Resource(KeaniumAlkalide),
-//             28 => Resource(LemergiumAcid),
-//             29 => Resource(LemergiumAlkalide),
-//             30 => Resource(ZynthiumAcid),
-//             31 => Resource(ZynthiumAlkalide),
-//             32 => Resource(GhodiumAcid),
-//             33 => Resource(GhodiumAlkalide),
-//             34 => Resource(CatalyzedUtriumAcid),
-//             35 => Resource(CatalyzedUtriumAlkalide),
-//             36 => Resource(CatalyzedKeaniumAcid),
-//             37 => Resource(CatalyzedKeaniumAlkalide),
-//             38 => Resource(CatalyzedLemergiumAcid),
-//             39 => Resource(CatalyzedLemergiumAlkalide),
-//             40 => Resource(CatalyzedZynthiumAcid),
-//             41 => Resource(CatalyzedZynthiumAlkalide),
-//             42 => Resource(CatalyzedGhodiumAcid),
-//             43 => Resource(CatalyzedGhodiumAlkalide),
-//             44 => Resource(Ops),
-//             45 => Resource(Silicon),
-//             46 => Resource(Metal),
-//             47 => Resource(Biomass),
-//             48 => Resource(Mist),
-//             49 => Resource(UtriumBar),
-//             50 => Resource(LemergiumBar),
-//             51 => Resource(ZynthiumBar),
-//             52 => Resource(KeaniumBar),
-//             53 => Resource(GhodiumMelt),
-//             54 => Resource(Oxidant),
-//             55 => Resource(Reductant),
-//             56 => Resource(Purifier),
-//             57 => Resource(Battery),
-//             58 => Resource(Composite),
-//             59 => Resource(Crystal),
-//             60 => Resource(Liquid),
-//             61 => Resource(Wire),
-//             62 => Resource(Switch),
-//             63 => Resource(Transistor),
-//             64 => Resource(Microchip),
-//             65 => Resource(Circuit),
-//             66 => Resource(Device),
-//             67 => Resource(Cell),
-//             68 => Resource(Phlegm),
-//             69 => Resource(Tissue),
-//             70 => Resource(Muscle),
-//             71 => Resource(Organoid),
-//             72 => Resource(Organism),
-//             73 => Resource(Alloy),
-//             74 => Resource(Tube),
-//             75 => Resource(Fixtures),
-//             76 => Resource(Frame),
-//             77 => Resource(Hydraulics),
-//             78 => Resource(Machine),
-//             79 => Resource(Condensate),
-//             80 => Resource(Concentrate),
-//             81 => Resource(Extract),
-//             82 => Resource(Spirit),
-//             83 => Resource(Emanation),
-//             84 => Resource(Essence),
-//             1001 => IntershardResource(SubscriptionToken),
-//             1002 => IntershardResource(CPUUnlock),
-//             1003 => IntershardResource(Pixel),
-//             1004 => IntershardResource(AccessKey),
-//             _ => {
-//                 return Err(D::Error::invalid_value(
-//                     Unexpected::Unsigned(resource as u64),
-//                     &"a valid RESOURCES_ALL or INTERSHARD_RESOURCES type integer",
-//                 ))
-//             }
-//         };
-//         Ok(resource_type)
-//     }
-// }
+    #[inline]
+    unsafe fn from_abi(js: Self::Abi) -> Self {
+        let s = <wasm_bindgen::JsValue as wasm_bindgen::convert::FromWasmAbi>::from_abi(js);
+        // first try deserialize as ResourceType
+        match ResourceType::from_js_value(&s) {
+            Some(r) => Self::Resource(r),
+            None => {
+                // try with IntershardResourceType
+                match IntershardResourceType::from_js_value(&s) {
+                    Some(r) => Self::IntershardResource(r),
+                    None => Self::Resource(ResourceType::__Nonexhaustive),
+                }
+            }
+        }
+    }
+}
 
-// impl Serialize for MarketResourceType {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//     where
-//         S: Serializer,
-//     {
-//         match self {
-//             MarketResourceType::Resource(ty) => ty.serialize(serializer),
-//             MarketResourceType::IntershardResource(ty) => ty.serialize(serializer),
-//         }
-//     }
-// }
+impl wasm_bindgen::convert::IntoWasmAbi for MarketResourceType {
+    type Abi = <wasm_bindgen::JsValue as wasm_bindgen::convert::IntoWasmAbi>::Abi;
+
+    #[inline]
+    fn into_abi(self) -> Self::Abi {
+        match self {
+            MarketResourceType::Resource(r) => {
+                <wasm_bindgen::JsValue as wasm_bindgen::convert::IntoWasmAbi>::into_abi(r.into())
+            }
+            MarketResourceType::IntershardResource(r) => {
+                <wasm_bindgen::JsValue as wasm_bindgen::convert::IntoWasmAbi>::into_abi(r.into())
+            }
+        }
+    }
+}
+
+impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
+    fn describe() {
+        <wasm_bindgen::JsValue as wasm_bindgen::describe::WasmDescribe>::describe()
+    }
+}
 
 /// Translates the `POWER_CLASS` constants, which are classes of power creeps
 #[wasm_bindgen]

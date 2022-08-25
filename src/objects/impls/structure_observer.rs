@@ -1,5 +1,9 @@
-use crate::{RoomName, constants::ReturnCode, objects::{OwnedStructure, RoomObject, Structure}};
-use js_sys::{JsString};
+use crate::{
+    constants::ReturnCode,
+    objects::{OwnedStructure, RoomObject, Structure},
+    RoomName,
+};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

@@ -83,8 +83,12 @@ mod test {
 
     fn gen_test_coords() -> [RoomCoordinate; 4] {
         unsafe {
-            [RoomCoordinate::unchecked_new(0), RoomCoordinate::unchecked_new(21),
-             RoomCoordinate::unchecked_new(44), RoomCoordinate::unchecked_new(49)]
+            [
+                RoomCoordinate::unchecked_new(0),
+                RoomCoordinate::unchecked_new(21),
+                RoomCoordinate::unchecked_new(44),
+                RoomCoordinate::unchecked_new(49),
+            ]
         }
     }
 

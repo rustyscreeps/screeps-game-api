@@ -257,11 +257,11 @@ impl RoomPosition {
             .unwrap_or_else(Vec::new)
     }
 
-    pub fn find_closest_by_path<T>(&self, find: T) -> Option<T::Item>
+    pub fn find_closest_by_path<T>(&self, find: T, options: Option<&Object>) -> Option<T::Item>
     where
         T: FindConstant,
     {
-        self.find_closest_by_path_internal(find.find_code(), None)
+        self.find_closest_by_path_internal(find.find_code(), options)
             .map(|reference| T::convert_and_check_item(reference.into()))
     }
 

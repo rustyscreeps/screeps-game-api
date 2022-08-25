@@ -22,17 +22,9 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureTower) -> Store;
 
-    /// Attack a [`Creep`], [`PowerCreep`], or [`Structure`] in the room,
-    /// dealing damage depending on range.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.attack)
     #[wasm_bindgen(method, js_name = attack)]
     fn attack_internal(this: &StructureTower, target: &RoomObject) -> ReturnCode;
 
-    /// Heal a [`Creep`] or [`PowerCreep`] in the room, adding hit points
-    /// depending on range.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.heal)
     #[wasm_bindgen(method, js_name = heal)]
     fn heal_internal(this: &StructureTower, target: &RoomObject) -> ReturnCode;
 
@@ -45,12 +37,32 @@ extern "C" {
 }
 
 impl StructureTower {
-    pub fn attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
-        Self::attack_internal(&self, target.as_ref())
+    /// Attack a [`Creep`], [`PowerCreep`], or [`Structure`] in the room,
+    /// dealing damage depending on range.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.attack)
+    ///
+    /// [`Creep`]: crate::objects::Creep
+    /// [`PowerCreep`]: crate::objects::PowerCreep
+    pub fn attack<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Attackable,
+    {
+        Self::attack_internal(self, target.as_ref())
     }
 
-    pub fn heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
-        Self::heal_internal(&self, target.as_ref())
+    /// Heal a [`Creep`] or [`PowerCreep`] in the room, adding hit points
+    /// depending on range.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.heal)
+    ///
+    /// [`Creep`]: crate::objects::Creep
+    /// [`PowerCreep`]: crate::objects::PowerCreep
+    pub fn heal<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Healable,
+    {
+        Self::heal_internal(self, target.as_ref())
     }
 }
 

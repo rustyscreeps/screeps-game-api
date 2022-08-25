@@ -1,7 +1,6 @@
-use std::convert::TryFrom;
-use std::fmt;
+use std::{convert::TryFrom, fmt};
 
-use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
+use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 pub const ROOM_SIZE: u8 = 50;
 pub const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
@@ -26,7 +25,7 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
     // SAFETY: bounds checking above ensures both are within range.
     RoomXY {
         x: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_SIZE as usize)) as u8) },
-        y: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_SIZE as usize)) as u8) }
+        y: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_SIZE as usize)) as u8) },
     }
 }
 
@@ -35,12 +34,25 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
 pub struct RoomCoordinate(u8);
 
 impl RoomCoordinate {
+    #[inline]
+    pub const fn new(coord: u8) -> Result<Self, OutOfBoundsError> {
+        if coord < ROOM_SIZE {
+            Ok(RoomCoordinate(coord))
+        } else {
+            Err(OutOfBoundsError(coord))
+        }
+    }
+
     // # Safety
-    // Calling this method with `coord >= ROOM_SIZE` can result in undefined behaviour when the
-    // resulting `RoomCoordinate` is used.
+    // Calling this method with `coord >= ROOM_SIZE` can result in undefined
+    // behaviour when the resulting `RoomCoordinate` is used.
     #[inline]
     pub unsafe fn unchecked_new(coord: u8) -> Self {
-        debug_assert!(coord < ROOM_SIZE, "Out of bounds unchecked coordinate: {}", coord);
+        debug_assert!(
+            coord < ROOM_SIZE,
+            "Out of bounds unchecked coordinate: {}",
+            coord
+        );
         RoomCoordinate(coord)
     }
 
@@ -58,18 +70,18 @@ impl fmt::Display for RoomCoordinate {
 #[derive(Debug, Hash, Clone, Copy, PartialEq, Eq)]
 pub struct RoomXY {
     pub x: RoomCoordinate,
-    pub y: RoomCoordinate
+    pub y: RoomCoordinate,
 }
 
 impl RoomXY {
     // # Safety
-    // Calling this method with `x >= ROOM_SIZE` or `y >= ROOM_SIZE` can result in undefined
-    // behaviour when the resulting `RoomXY` is used.
+    // Calling this method with `x >= ROOM_SIZE` or `y >= ROOM_SIZE` can result in
+    // undefined behaviour when the resulting `RoomXY` is used.
     #[inline]
     pub unsafe fn unchecked_new(x: u8, y: u8) -> Self {
         RoomXY {
             x: RoomCoordinate::unchecked_new(x),
-            y: RoomCoordinate::unchecked_new(y)
+            y: RoomCoordinate::unchecked_new(y),
         }
     }
 }
@@ -90,11 +102,7 @@ impl TryFrom<u8> for RoomCoordinate {
     type Error = OutOfBoundsError;
 
     fn try_from(coord: u8) -> Result<Self, Self::Error> {
-        if coord < ROOM_SIZE {
-            Ok(RoomCoordinate(coord))
-        } else {
-            Err(OutOfBoundsError(coord))
-        }
+        RoomCoordinate::new(coord)
     }
 }
 
@@ -110,7 +118,7 @@ impl TryFrom<(u8, u8)> for RoomXY {
     fn try_from(xy: (u8, u8)) -> Result<RoomXY, OutOfBoundsError> {
         Ok(RoomXY {
             x: RoomCoordinate::try_from(xy.0)?,
-            y: RoomCoordinate::try_from(xy.1)?
+            y: RoomCoordinate::try_from(xy.1)?,
         })
     }
 }
@@ -130,7 +138,7 @@ impl From<RoomXY> for (RoomCoordinate, RoomCoordinate) {
 #[derive(Serialize, Deserialize)]
 struct ReadableXY {
     x: RoomCoordinate,
-    y: RoomCoordinate
+    y: RoomCoordinate,
 }
 
 impl From<ReadableXY> for RoomXY {
@@ -171,8 +179,10 @@ impl<'de> Deserialize<'de> for RoomXY {
             let packed = u16::deserialize(deserializer)?;
             let xy = (((packed >> 8) & 0xFF) as u8, (packed & 0xFF) as u8);
             RoomXY::try_from(xy).map_err(|err: OutOfBoundsError| {
-                de::Error::invalid_value(de::Unexpected::Unsigned(err.0 as u64),
-                                         &format!("a non-negative integer less-than {}", ROOM_SIZE).as_str())
+                de::Error::invalid_value(
+                    de::Unexpected::Unsigned(err.0 as u64),
+                    &format!("a non-negative integer less-than {}", ROOM_SIZE).as_str(),
+                )
             })
         }
     }

@@ -254,6 +254,14 @@ impl Room {
     }
 }
 
+impl PartialEq for Room {
+    fn eq(&self, other: &Room) -> bool {
+        self.name() == other.name()
+    }
+}
+
+impl Eq for Room {}
+
 impl JsContainerFromValue for Room {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
@@ -873,14 +881,6 @@ where
 //         RoomVisual::new(Some(self.name()))
 //     }
 // }
-
-// impl PartialEq for Room {
-//     fn eq(&self, other: &Room) -> bool {
-//         self.name() == other.name()
-//     }
-// }
-
-// impl Eq for Room {}
 
 // #[derive(Clone, Debug, Deserialize, Serialize)]
 // pub struct Step {

@@ -68,8 +68,7 @@ pub use self::{
     owned_structure::{OwnedStructure, Owner},
     power_creep::PowerCreep,
     resource::Resource,
-    room::Room,
-    room::FindOptions,
+    room::{FindOptions, Room},
     room_object::RoomObject,
     room_position::RoomPosition,
     room_terrain::RoomTerrain,
@@ -88,12 +87,12 @@ pub use self::{
     structure_link::StructureLink,
     structure_nuker::StructureNuker,
     structure_observer::StructureObserver,
-    structure_portal::StructurePortal,
+    structure_portal::{InterShardPortalDestination, PortalDestination, StructurePortal},
     structure_power_bank::StructurePowerBank,
     structure_power_spawn::StructurePowerSpawn,
     structure_rampart::StructureRampart,
     structure_road::StructureRoad,
-    structure_spawn::{Spawning, StructureSpawn},
+    structure_spawn::{SpawnOptions, Spawning, StructureSpawn},
     structure_storage::StructureStorage,
     structure_terminal::StructureTerminal,
     structure_tower::StructureTower,
@@ -101,7 +100,10 @@ pub use self::{
     tombstone::Tombstone,
 };
 
-pub use self::room_visual::{CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign, TextStyle, Visual};
+pub use self::room_visual::{
+    CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign,
+    TextStyle, Visual,
+};
 
 pub use self::map_visual::{MapVisual, MapVisualShape};
 
