@@ -372,7 +372,7 @@ impl Density {
     ///
     /// [source]: https://github.com/screeps/engine/blob/c0cfac8f746f26c660501686f16a1fcdb0396d8d/src/processor/intents/minerals/tick.js#L19
     /// [`MINERAL_DENSITY_CHANGE`]:
-    /// crate::constants::numbers::MINERAL_DENSITY_CHANGE
+    /// crate::constants::MINERAL_DENSITY_CHANGE
     #[inline]
     pub fn probability(self) -> f32 {
         match self {

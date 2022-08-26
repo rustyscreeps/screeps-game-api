@@ -13,7 +13,7 @@
 pub mod extra;
 pub mod find;
 pub mod look;
-pub mod numbers;
+mod numbers;
 mod recipes;
 pub mod seasonal;
 mod small_enums;
