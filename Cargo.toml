@@ -42,6 +42,7 @@ serde-wasm-bindgen = "0.4"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
+bincode = "1.3"
 
 [features]
 ## Specific features to enable conditional API endpoints

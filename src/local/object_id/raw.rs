@@ -127,6 +127,9 @@ mod test {
         "06aebab343040c9baaa22322",
         "000000000000000000000001",
         "100000000000000000000000",
+        // potential bad u128 from float?
+        "5bbcab1d9099fc012e632dbc",
+        "5bbcab1d9099fc012e632dbd",
         "10000000000000000",
         "1000000000000000",
         "bc03381d32f6790",
@@ -170,6 +173,17 @@ mod test {
             let parsed: RawObjectId = id.parse().unwrap();
             let serialized = serde_json::to_string(&parsed).unwrap();
             let reparsed: RawObjectId = serde_json::from_str(&serialized).unwrap();
+            assert_eq!(parsed, reparsed);
+            assert_eq!(reparsed.to_string(), *id);
+        }
+    }
+
+    #[test]
+    fn rust_to_serde_bincode_from_serde_bincode_roundtrip() {
+        for id in TEST_IDS {
+            let parsed: RawObjectId = id.parse().unwrap();
+            let serialized = bincode::serialize(&parsed).unwrap();
+            let reparsed: RawObjectId = bincode::deserialize(&serialized).unwrap();
             assert_eq!(parsed, reparsed);
             assert_eq!(reparsed.to_string(), *id);
         }
