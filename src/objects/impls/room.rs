@@ -1,6 +1,5 @@
 use serde::{
-    de,
-    de::{MapAccess, Visitor},
+    de::{self, MapAccess, Visitor},
     Deserialize, Deserializer,
 };
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -165,7 +164,8 @@ extern "C" {
         options: Option<&Object>,
     ) -> Array;
 
-    // todo event log
+    #[wasm_bindgen(final, method, js_name = getEventLog)]
+    fn get_event_log_internal(this: &Room, raw: bool) -> JsValue;
 
     /// Gets the [`RoomPosition`] for the given coordinates.
     ///
@@ -254,6 +254,15 @@ impl Room {
             .iter()
             .map(T::convert_and_check_item)
             .collect()
+    }
+
+    pub fn get_event_log(&self) -> Vec<Event> {
+        serde_json::from_str(&self.get_event_log_raw()).expect("Malformed Event Log")
+    }
+
+    pub fn get_event_log_raw(&self) -> String {
+        let js_log: JsString = Room::get_event_log_internal(&self, true).into();
+        js_log.into()
     }
 
     pub fn look_for_at<T, U>(&self, _ty: T, target: &U) -> Vec<T::Item>
@@ -557,17 +566,6 @@ where
         callback(&js_options)
     }
 }
-
-// impl Room {
-//     pub fn get_event_log(&self) -> Vec<Event> {
-//         serde_json::from_str(&self.get_event_log_raw()).expect("Malformed
-// Event Log")     }
-
-//     pub fn get_event_log_raw(&self) -> String {
-//         js_unwrap! {@{self.as_ref()}.getEventLog(true)}
-//     }
-
-// }
 
 // #[derive(Clone, Debug, Deserialize, Serialize)]
 // pub struct Step {
