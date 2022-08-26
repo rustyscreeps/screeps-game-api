@@ -476,7 +476,7 @@ impl SharedCreepProperties for Creep {
         let target: RoomPosition = target.pos().into();
 
         if let Some(options) = options {
-            options.as_js_options(|js_options| Self::move_to_internal(self, &target, js_options))
+            options.into_js_options(|js_options| Self::move_to_internal(self, &target, js_options))
         } else {
             Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
         }

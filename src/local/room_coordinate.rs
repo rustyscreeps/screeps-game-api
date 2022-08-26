@@ -43,9 +43,9 @@ impl RoomCoordinate {
         }
     }
 
-    // # Safety
-    // Calling this method with `coord >= ROOM_SIZE` can result in undefined
-    // behaviour when the resulting `RoomCoordinate` is used.
+    /// # Safety
+    /// Calling this method with `coord >= ROOM_SIZE` can result in undefined
+    /// behaviour when the resulting `RoomCoordinate` is used.
     #[inline]
     pub unsafe fn unchecked_new(coord: u8) -> Self {
         debug_assert!(
@@ -74,9 +74,9 @@ pub struct RoomXY {
 }
 
 impl RoomXY {
-    // # Safety
-    // Calling this method with `x >= ROOM_SIZE` or `y >= ROOM_SIZE` can result in
-    // undefined behaviour when the resulting `RoomXY` is used.
+    /// # Safety
+    /// Calling this method with `x >= ROOM_SIZE` or `y >= ROOM_SIZE` can result
+    /// in undefined behaviour when the resulting `RoomXY` is used.
     #[inline]
     pub unsafe fn unchecked_new(x: u8, y: u8) -> Self {
         RoomXY {

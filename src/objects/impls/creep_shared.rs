@@ -29,6 +29,12 @@ impl JsMoveToOptions {
     }
 }
 
+impl Default for JsMoveToOptions {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct MoveToOptions<F>
 where
     F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
@@ -175,7 +181,7 @@ where
         }
     }
 
-    pub(crate) fn as_js_options<CR>(self, callback: impl Fn(&JsMoveToOptions) -> CR) -> CR {
+    pub(crate) fn into_js_options<CR>(self, callback: impl Fn(&JsMoveToOptions) -> CR) -> CR {
         //
         // Create JS object and set properties.
         //
@@ -201,7 +207,7 @@ where
             js_options.visualize_path_style(&style);
         }
 
-        self.find_options.as_js_options(|find_options| {
+        self.find_options.into_js_options(|find_options| {
             js_options.find_options(find_options);
 
             callback(&js_options)

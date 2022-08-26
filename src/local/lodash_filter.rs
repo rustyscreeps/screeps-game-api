@@ -20,3 +20,9 @@ impl LodashFilter {
         Object::new().unchecked_into()
     }
 }
+
+impl Default for LodashFilter {
+    fn default() -> Self {
+        Self::new()
+    }
+}

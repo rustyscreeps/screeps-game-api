@@ -261,7 +261,7 @@ impl Room {
     }
 
     pub fn get_event_log_raw(&self) -> String {
-        let js_log: JsString = Room::get_event_log_internal(&self, true).into();
+        let js_log: JsString = Room::get_event_log_internal(self, true).into();
         js_log.into()
     }
 
@@ -343,6 +343,12 @@ extern "C" {
 impl JsFindOptions {
     pub fn new() -> JsFindOptions {
         Object::new().unchecked_into()
+    }
+}
+
+impl Default for JsFindOptions {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -484,7 +490,7 @@ where
         self
     }
 
-    pub(crate) fn as_js_options<CR>(self, callback: impl Fn(&JsFindOptions) -> CR) -> CR {
+    pub(crate) fn into_js_options<CR>(self, callback: impl Fn(&JsFindOptions) -> CR) -> CR {
         let mut raw_callback = self.cost_callback;
 
         let mut owned_callback = move |room: RoomName, cost_matrix: CostMatrix| -> JsValue {

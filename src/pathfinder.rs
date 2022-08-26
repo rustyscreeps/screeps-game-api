@@ -94,6 +94,12 @@ impl JsSearchOptions {
     }
 }
 
+impl Default for JsSearchOptions {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[wasm_bindgen]
 extern "C" {
     /// An object representing the results of a [`PathFinder::search`].

@@ -187,7 +187,7 @@ impl<F> FindRouteOptions<F>
 where
     F: FnMut(RoomName, RoomName) -> f64,
 {
-    pub(crate) fn as_js_options<R>(self, callback: impl Fn(&JsFindRouteOptions) -> R) -> R {
+    pub(crate) fn into_js_options<R>(self, callback: impl Fn(&JsFindRouteOptions) -> R) -> R {
         let mut raw_callback = self.route_callback;
 
         let mut owned_callback = move |to_room: RoomName, from_room: RoomName| -> f64 {
@@ -296,7 +296,7 @@ where
     let to: JsString = to.into();
 
     let result = if let Some(options) = options {
-        options.as_js_options(|js_options| Map::find_route(&from, &to, js_options))
+        options.into_js_options(|js_options| Map::find_route(&from, &to, js_options))
     } else {
         Map::find_route(&from, &to, &JsValue::UNDEFINED)
     };
@@ -335,7 +335,7 @@ where
     let to: JsString = to.into();
 
     let result = if let Some(options) = options {
-        options.as_js_options(|js_options| Map::find_exit(&from, &to, js_options))
+        options.into_js_options(|js_options| Map::find_exit(&from, &to, js_options))
     } else {
         Map::find_exit(&from, &to, &JsValue::UNDEFINED)
     };
