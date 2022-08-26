@@ -784,7 +784,6 @@ pub struct BuildEvent {
     pub amount: u32,
     // energySpent is documented as being present, but isn't in my testing
     //pub energy_spent: u32,
-    #[serde(deserialize_with = "crate::StructureType::deserialize_from_str")]
     pub structure_type: StructureType,
     pub x: u8,
     pub y: u8,
