@@ -98,9 +98,9 @@ impl StructureSpawn {
 
         let js_opts = ObjectExt::unchecked_from_js(JsValue::from(Object::new()));
 
-        /*if let Some(mem) = &opts.memory {
-            //TODO
-        }*/
+        if let Some(mem) = &opts.memory {
+            ObjectExt::set(&js_opts, "memory", mem);
+        }
 
         if let Some(array) = &opts.energy_structures {
             ObjectExt::set(&js_opts, "energyStructures", array);
@@ -132,7 +132,7 @@ impl HasStore for StructureSpawn {
 
 #[derive(Default)]
 pub struct SpawnOptions {
-    //memory: Option<MemoryReference>,
+    memory: Option<JsValue>,
     energy_structures: Option<Array>,
     dry_run: bool,
     directions: Option<Array>,
@@ -143,11 +143,10 @@ impl SpawnOptions {
         Self::default()
     }
 
-    //TODO
-    /*pub fn memory<T: Into<Option<MemoryReference>>>(mut self, mem: T) -> Self {
-        self.memory = mem.into();
+    pub fn memory(mut self, mem: JsValue) -> Self {
+        self.memory = Some(mem);
         self
-    }*/
+    }
 
     /// Structures other than [`StructureSpawn`] and [`StructureExtension`] will
     /// be ignored.
