@@ -16,9 +16,6 @@ use crate::{
     FindConstant, RoomCostResult, RoomName,
 };
 
-#[cfg(not(feature = "disable-terminal"))]
-use crate::objects::StructureTerminal;
-
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
 
@@ -79,7 +76,6 @@ extern "C" {
     /// there isn't one.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.terminal)
-    #[cfg(not(feature = "disable-terminal"))]
     #[wasm_bindgen(method, getter)]
     pub fn terminal(this: &Room) -> Option<StructureTerminal>;
 

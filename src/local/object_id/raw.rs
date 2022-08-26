@@ -164,6 +164,17 @@ mod test {
         }
     }
 
+    #[test]
+    fn rust_to_serde_json_from_serde_json_roundtrip() {
+        for id in TEST_IDS {
+            let parsed: RawObjectId = id.parse().unwrap();
+            let serialized = serde_json::to_string(&parsed).unwrap();
+            let reparsed: RawObjectId = serde_json::from_str(&serialized).unwrap();
+            assert_eq!(parsed, reparsed);
+            assert_eq!(reparsed.to_string(), *id);
+        }
+    }
+
     const INVALID_IDS: &[&str] = &[
         // empty string
         "",
