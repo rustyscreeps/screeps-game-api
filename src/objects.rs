@@ -28,15 +28,17 @@ mod impls;
 //mod structure;
 
 pub use self::impls::{
-    ConstructionSite, CostMatrix, CostMatrixSet, Creep, Deposit, Effect, FindOptions, Flag,
-    HasLocalPosition, InterShardPortalDestination, Mineral, MoveToOptions, Nuke, OwnedStructure,
-    Owner, PortalDestination, PowerCreep, Reservation, Resource, Room, RoomObject, RoomPosition,
-    RoomTerrain, Ruin, Sign, Source, SpawnOptions, Spawning, Store, Structure, StructureContainer,
-    StructureController, StructureExtension, StructureExtractor, StructureFactory,
-    StructureInvaderCore, StructureKeeperLair, StructureLab, StructureLink, StructureNuker,
-    StructureObserver, StructurePortal, StructurePowerBank, StructurePowerSpawn, StructureRampart,
-    StructureRoad, StructureSpawn, StructureStorage, StructureTerminal, StructureTower,
-    StructureWall, Tombstone,
+    AttackEvent, AttackType, BodyPart, BuildEvent, ConstructionSite, CostMatrix, CostMatrixSet,
+    Creep, Deposit, Effect, Event, EventType, ExitEvent, FindOptions, Flag, HarvestEvent,
+    HasLocalPosition, HealEvent, HealType, InterShardPortalDestination, JsFindOptions, Mineral,
+    MoveToOptions, Nuke, ObjectDestroyedEvent, OwnedStructure, Owner, PortalDestination,
+    PowerCreep, PowerEvent, RepairEvent, Reservation, ReserveControllerEvent, Resource, Room,
+    RoomObject, RoomPosition, RoomTerrain, Ruin, Sign, Source, SpawnOptions, Spawning, Store,
+    Structure, StructureContainer, StructureController, StructureExtension, StructureExtractor,
+    StructureFactory, StructureInvaderCore, StructureKeeperLair, StructureLab, StructureLink,
+    StructureNuker, StructureObserver, StructurePortal, StructurePowerBank, StructurePowerSpawn,
+    StructureRampart, StructureRoad, StructureSpawn, StructureStorage, StructureTerminal,
+    StructureTower, StructureWall, Tombstone, TransferEvent, UpgradeControllerEvent,
 };
 
 #[cfg(feature = "enable-score")]

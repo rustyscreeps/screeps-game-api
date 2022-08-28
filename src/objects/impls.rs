@@ -59,7 +59,7 @@ mod symbol_decoder;
 pub use self::{
     construction_site::ConstructionSite,
     cost_matrix::{CostMatrix, CostMatrixSet, HasLocalPosition},
-    creep::Creep,
+    creep::{BodyPart, Creep},
     creep_shared::MoveToOptions,
     deposit::Deposit,
     flag::Flag,
@@ -68,7 +68,11 @@ pub use self::{
     owned_structure::{OwnedStructure, Owner},
     power_creep::PowerCreep,
     resource::Resource,
-    room::{FindOptions, Room},
+    room::{
+        AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
+        HarvestEvent, HealEvent, HealType, JsFindOptions, ObjectDestroyedEvent, PowerEvent,
+        RepairEvent, ReserveControllerEvent, Room, TransferEvent, UpgradeControllerEvent,
+    },
     room_object::{Effect, RoomObject},
     room_position::RoomPosition,
     room_terrain::RoomTerrain,

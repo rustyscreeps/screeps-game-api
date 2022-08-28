@@ -15,7 +15,7 @@ extern "C" {
     /// of the room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.constructor)
-    #[wasm_bindgen(constructor, js_namespace = Room)]
+    #[wasm_bindgen(constructor, js_namespace = Room, js_class = Terrain)]
     pub fn new(room_name: &JsString) -> RoomTerrain;
 
     /// Get the type of terrain at given coordinates.
@@ -32,10 +32,9 @@ extern "C" {
     #[wasm_bindgen(method, js_name = getRawBuffer)]
     pub fn get_raw_buffer(this: &RoomTerrain) -> Uint8Array;
 
-    //TODO: wiarchbe: Need to handle return code?
     /// Copy the data about the room's terrain into an existing [`Uint8Array`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
-    #[wasm_bindgen(method)]
+    #[wasm_bindgen(method, js_name = getRawBuffer)]
     pub fn get_raw_buffer_to_array(this: &RoomTerrain, destination: &Uint8Array) -> ReturnCode;
 }
