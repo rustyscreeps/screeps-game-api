@@ -7,9 +7,31 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
+macro_rules! named_enum_serialize_deserialize {
+    ($ty:ty) => {
+        impl<'de> serde::Deserialize<'de> for $ty {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                let str = <&'de str>::deserialize(deserializer)?;
+                Ok(<$ty>::from_str(str).unwrap_or(<$ty>::__Nonexhaustive))
+            }
+        }
+        impl serde::Serialize for $ty {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer,
+            {
+                serializer.serialize_str(self.to_str())
+            }
+        }
+    };
+}
+
 /// Translates `STRUCTURE_*` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, IntoEnumIterator)]
 pub enum StructureType {
     Spawn = "spawn",
     Extension = "extension",
@@ -33,6 +55,8 @@ pub enum StructureType {
     Factory = "factory",
     InvaderCore = "invaderCore",
 }
+
+named_enum_serialize_deserialize!(StructureType);
 
 impl StructureType {
     /// Translates the `CONSTRUCTION_COST` constant.
@@ -190,7 +214,7 @@ pub enum IntershardResourceType {
 
 /// Resource type constant for all possible types of resources.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, IntoEnumIterator)]
 pub enum ResourceType {
     Energy = "energy",
     Power = "power",
@@ -346,6 +370,8 @@ pub enum ResourceType {
     #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
     SymbolTaw = "symbol_taw",
 }
+
+named_enum_serialize_deserialize!(ResourceType);
 
 impl ResourceType {
     /// Translates the `BOOSTS` constant.
