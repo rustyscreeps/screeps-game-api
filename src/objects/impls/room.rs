@@ -697,8 +697,10 @@ pub struct ObjectDestroyedEvent {
 pub struct BuildEvent {
     pub target_id: String,
     pub amount: u32,
-    // energySpent is documented as being present, but isn't in my testing
+    // energySpent is in documentation but is not present
     //pub energy_spent: u32,
+    // undocumented fields; reference:
+    // https://github.com/screeps/engine/blob/78631905d975700d02786d9b666b9f97b1f6f8f9/src/processor/intents/creeps/build.js#L94
     #[serde(deserialize_with = "crate::StructureType::deserialize_from_str")]
     pub structure_type: StructureType,
     pub x: u8,
