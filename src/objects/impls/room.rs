@@ -39,12 +39,12 @@ simple_accessors! {
 }
 
 impl Room {
-    pub fn serialize_path(&self, path: &[Step]) -> String {
-        js_unwrap! {@{self.as_ref()}.serializePath(@{path})}
+    pub fn serialize_path(path: &[Step]) -> String {
+        js_unwrap! {Room.serializePath(@{path})}
     }
 
-    pub fn deserialize_path(&self, path: &str) -> Vec<Step> {
-        js_unwrap! {@{self.as_ref()}.deserializePath(@{path})}
+    pub fn deserialize_path(path: &str) -> Vec<Step> {
+        js_unwrap! {Room.deserializePath(@{path})}
     }
 
     pub fn create_construction_site<T>(&self, at: &T, ty: StructureType) -> ReturnCode
