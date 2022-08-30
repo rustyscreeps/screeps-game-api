@@ -48,24 +48,24 @@ bincode = "1.3"
 ## Specific features to enable conditional API endpoints
 
 # Enable the function call for pixel generation - only present on official MMO servers
-enable-generate-pixel = []
+generate-pixel = []
 
 # Enable the interface for inter-shard memory - only present on official MMO servers
-enable-inter-shard-memory = []
+inter-shard-memory = []
 
 # Enable score container, collector, and resource - used in season 1
-enable-score = []
+score = []
 
 # Enable symbol container, decoder, and resources - used in season 2
-enable-symbols = []
+symbols = []
 
 ## Sets of the above features for different server environments
 
 # Official MMO server features, not present on other environments
-mmo = ["enable-generate-pixel", "enable-inter-shard-memory"]
+mmo = ["generate-pixel", "inter-shard-memory"]
 
 # Seasonal server, season 1
-seasonal-season-1 = ["enable-score"]
+seasonal-season-1 = ["score"]
 
 # Seasonal server, season 2
-seasonal-season-2 = ["enable-symbols"]
+seasonal-season-2 = ["symbols"]

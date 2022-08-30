@@ -39,17 +39,13 @@ pub enum Find {
     Ruins = 123,
     // todo these seem to not work when conditionally compiled out - they're not hurting to leave
     // in but need to figure that out
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    //#[cfg(feature = "score")]
     ScoreContainers = 10011,
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    //#[cfg(feature = "score")]
     ScoreCollectors = 10012,
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    //#[cfg(feature = "symbols")]
     SymbolContainers = 10021,
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    //#[cfg(feature = "symbols")]
     SymbolDecoders = 10022,
 }
 
@@ -102,17 +98,13 @@ pub enum RoomObject {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreContainers = 10011,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreCollectors = 10012,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolContainers = 10021,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolDecoders = 10022,
 }
 
@@ -142,17 +134,13 @@ impl From<RoomObject> for Find {
             RoomObject::HostilePowerCreeps => Find::HostilePowerCreeps,
             RoomObject::Deposits => Find::Deposits,
             RoomObject::Ruins => Find::Ruins,
-            #[cfg(feature = "enable-score")]
-            #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+            #[cfg(feature = "score")]
             RoomObject::ScoreContainers => Find::ScoreContainers,
-            #[cfg(feature = "enable-score")]
-            #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+            #[cfg(feature = "score")]
             RoomObject::ScoreCollectors => Find::ScoreCollectors,
-            #[cfg(feature = "enable-symbols")]
-            #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+            #[cfg(feature = "symbols")]
             RoomObject::SymbolContainers => Find::SymbolContainers,
-            #[cfg(feature = "enable-symbols")]
-            #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+            #[cfg(feature = "symbols")]
             RoomObject::SymbolDecoders => Find::SymbolDecoders,
         }
     }
@@ -291,13 +279,13 @@ typesafe_find_constants! {
     pub struct EXIT = (Find::Exit, RoomPosition, Into::into);
 }
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 typesafe_find_constants! {
     pub struct SCORE_CONTAINERS = (Find::ScoreContainers, ScoreContainer, Into::into);
     pub struct SCORE_COLLECTORS = (Find::ScoreCollectors, ScoreCollector, Into::into);
 }
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 typesafe_find_constants! {
     pub struct SYMBOL_CONTAINERS = (Find::SymbolContainers, SymbolContainer, Into::into);
     pub struct SYMBOL_DECODERS = (Find::SymbolDecoders, SymbolDecoder, Into::into);

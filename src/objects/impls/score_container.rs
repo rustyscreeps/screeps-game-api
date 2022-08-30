@@ -15,7 +15,6 @@ extern "C" {
     ///
     /// [`ResourceType::Score`]: crate::constants::ResourceType::Score
     #[wasm_bindgen(extends = RoomObject)]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
     #[derive(Clone)]
     pub type ScoreContainer;
 

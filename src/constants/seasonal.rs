@@ -9,7 +9,6 @@
 /// [This mod](https://github.com/screeps/mod_season1) can be used to enable these mechanics
 /// on a private server.
 #[cfg(feature = "seasonal-season-1")]
-#[cfg_attr(docsrs, doc(cfg(feature = "seasonal-season-1")))]
 pub mod season_1 {
     // RESOURCE_SCORE defined in `types.rs`
     // FIND_SCORE_CONTAINERS / FIND_SCORE_COLLECTORS defined in `find.rs`
@@ -48,7 +47,6 @@ pub mod season_1 {
 /// [This mod](https://github.com/screeps/mod_season2) can be used to enable these mechanics
 /// on a private server.
 #[cfg(feature = "seasonal-season-2")]
-#[cfg_attr(docsrs, doc(cfg(feature = "seasonal-season-2")))]
 pub mod season_2 {
     // RESOURCE_SYMBOL_* defined in `types.rs`
     use crate::constants::ResourceType;

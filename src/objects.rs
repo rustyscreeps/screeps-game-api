@@ -41,10 +41,10 @@ pub use self::impls::{
     StructureTower, StructureWall, Tombstone, TransferEvent, UpgradeControllerEvent,
 };
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 pub use self::impls::{ScoreCollector, ScoreContainer};
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 pub use self::impls::{SymbolContainer, SymbolDecoder};
 
 pub use self::impls::{

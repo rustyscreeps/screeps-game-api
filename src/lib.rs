@@ -20,15 +20,14 @@
 #![recursion_limit = "128"]
 // to build locally with doc_cfg enabled, run:
 // `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
-#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 pub mod console;
 pub mod constants;
 pub mod containers;
 pub mod enums;
 pub mod game;
-#[cfg(feature = "enable-inter-shard-memory")]
-#[cfg_attr(docsrs, doc(cfg(feature = "enable-inter-shard-memory")))]
+#[cfg(feature = "inter-shard-memory")]
 pub mod inter_shard_memory;
 pub mod local;
 pub mod memory;
@@ -43,7 +42,7 @@ pub use crate::{
     raw_memory::*, traits::*,
 };
 
-#[cfg(feature = "enable-inter-shard-memory")]
+#[cfg(feature = "inter-shard-memory")]
 pub use crate::inter_shard_memory::*;
 
 /// Traits which implement base functionalities for Screeps types.

@@ -23,17 +23,13 @@ pub enum Look {
     Ruins = "ruin",
     // todo these seem to not work when conditionally compiled out - they're not hurting to leave
     // in but need to figure that out
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    //#[cfg(feature = "score")]
     ScoreContainers = "scoreContainer",
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    //#[cfg(feature = "score")]
     ScoreCollectors = "scoreCollector",
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    //#[cfg(feature = "symbols")]
     SymbolContainers = "symbolContainer",
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    //#[cfg(feature = "symbols")]
     SymbolDecoders = "symbolDecoder",
 }
 
@@ -90,13 +86,13 @@ typesafe_look_constants! {
     pub struct RUINS = (Look::Ruins, Ruin, Into::into);
 }
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 typesafe_look_constants! {
     pub struct SCORE_CONTAINERS = (Look::ScoreContainers, ScoreContainer, Into::into);
     pub struct SCORE_COLLECTORS = (Look::ScoreCollectors, ScoreCollector, Into::into);
 }
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 typesafe_look_constants! {
     pub struct SYMBOL_CONTAINERS = (Look::SymbolContainers, SymbolContainer, Into::into);
     pub struct SYMBOL_DECODERS = (Look::SymbolDecoders, SymbolDecoder, Into::into);

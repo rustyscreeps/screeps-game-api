@@ -44,8 +44,7 @@ extern "C" {
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = unlock)]
     fn unlock() -> ReturnCode;
 
-    #[cfg(feature = "enable-generate-pixel")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-generate-pixel")))]
+    #[cfg(feature = "generate-pixel")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = generatePixel)]
     fn generate_pixel() -> ReturnCode;
 }
@@ -137,8 +136,7 @@ pub fn unlock() -> ReturnCode {
 ///
 /// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
-#[cfg(feature = "enable-generate-pixel")]
-#[cfg_attr(docsrs, doc(cfg(feature = "enable-generate-pixel")))]
+#[cfg(feature = "generate-pixel")]
 pub fn generate_pixel() -> ReturnCode {
     Cpu::generate_pixel()
 }

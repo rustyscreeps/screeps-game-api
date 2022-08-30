@@ -42,18 +42,14 @@ mod structure_tower;
 mod structure_wall;
 mod tombstone;
 
-#[cfg(feature = "enable-score")]
-#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+#[cfg(feature = "score")]
 mod score_collector;
-#[cfg(feature = "enable-score")]
-#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+#[cfg(feature = "score")]
 mod score_container;
 
-#[cfg(feature = "enable-symbols")]
-#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+#[cfg(feature = "symbols")]
 mod symbol_container;
-#[cfg(feature = "enable-symbols")]
-#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+#[cfg(feature = "symbols")]
 mod symbol_decoder;
 
 pub use self::{
@@ -111,8 +107,8 @@ pub use self::room_visual::{
 
 pub use self::map_visual::{MapVisual, MapVisualShape};
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer};
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 pub use self::{symbol_container::SymbolContainer, symbol_decoder::SymbolDecoder};

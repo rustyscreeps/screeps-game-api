@@ -90,16 +90,14 @@ impl AsRef<RoomObject> for AttackableObject {
 pub enum DecayingObject {
     Deposit,
     Ruin,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreContainer,
     StructureContainer,
     StructurePortal,
     StructurePowerBank,
     StructureRampart,
     StructureRoad,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolContainer,
     Tombstone,
 }
@@ -122,11 +120,9 @@ pub enum ObjectWithId {
     Nuke,
     Resource,
     Ruin,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreCollector,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreContainer,
     Source,
     StructureContainer,
@@ -150,11 +146,9 @@ pub enum ObjectWithId {
     StructureTerminal,
     StructureTower,
     StructureWall,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolContainer,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolDecoder,
     Tombstone,
 }
@@ -169,11 +163,9 @@ pub enum ObjectWithMaybeId {
     PowerCreep,
     Resource,
     Ruin,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreCollector,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreContainer,
     Source,
     StructureContainer,
@@ -197,11 +189,9 @@ pub enum ObjectWithMaybeId {
     StructureTerminal,
     StructureTower,
     StructureWall,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolContainer,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolDecoder,
     Tombstone,
 }
@@ -218,11 +208,9 @@ pub enum ObjectWithPosition {
     Resource,
     RoomPosition,
     Ruin,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreCollector,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreContainer,
     Source,
     StructureContainer,
@@ -246,11 +234,9 @@ pub enum ObjectWithPosition {
     StructureTerminal,
     StructureTower,
     StructureWall,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolContainer,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolDecoder,
     Tombstone,
 }
@@ -260,11 +246,9 @@ pub enum StoreObject {
     Creep,
     PowerCreep,
     Ruin,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreCollector,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreContainer,
     StructureContainer,
     StructureExtension,
@@ -277,8 +261,7 @@ pub enum StoreObject {
     StructureStorage,
     StructureTerminal,
     StructureTower,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolContainer,
     Tombstone,
 }
@@ -319,11 +302,9 @@ pub enum TypedRoomObject {
     PowerCreep,
     Resource,
     Ruin,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreCollector,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreContainer,
     Source,
     StructureContainer,
@@ -347,11 +328,9 @@ pub enum TypedRoomObject {
     StructureTerminal,
     StructureTower,
     StructureWall,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolContainer,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolDecoder,
     Tombstone,
 }
