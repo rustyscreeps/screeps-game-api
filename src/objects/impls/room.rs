@@ -782,7 +782,6 @@ pub struct BuildEvent {
     //pub energy_spent: u32,
     // undocumented fields; reference:
     // https://github.com/screeps/engine/blob/78631905d975700d02786d9b666b9f97b1f6f8f9/src/processor/intents/creeps/build.js#L94
-    #[serde(deserialize_with = "crate::StructureType::deserialize_from_str")]
     pub structure_type: StructureType,
     pub x: u8,
     pub y: u8,
