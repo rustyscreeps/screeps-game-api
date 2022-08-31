@@ -1,6 +1,11 @@
-use crate::{Position, objects::{Room, RoomPosition}, prelude::*};
+use crate::{
+    constants::EffectType,
+    objects::{Room, RoomPosition},
+    prelude::*,
+    Position,
+};
 use js_sys::Array;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -13,8 +18,8 @@ extern "C" {
     /// Effects applied to the object.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.effects)
-    #[wasm_bindgen(method, getter)]
-    pub fn effects(this: &RoomObject) -> Array;
+    #[wasm_bindgen(method, getter = effects)]
+    fn effects_internal(this: &RoomObject) -> Array;
 
     /// Position of the object.
     ///
@@ -31,15 +36,43 @@ extern "C" {
     pub fn room(this: &RoomObject) -> Option<Room>;
 }
 
-impl<T> HasPosition for T where T: AsRef<RoomObject> {
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen]
+    pub type Effect;
+
+    #[wasm_bindgen(method, getter)]
+    pub fn effect(this: &Effect) -> EffectType;
+
+    #[wasm_bindgen(method, getter)]
+    pub fn level(this: &Effect) -> Option<u8>;
+
+    #[wasm_bindgen(method, getter = ticksRemaining)]
+    pub fn ticks_remaining(this: &Effect) -> EffectType;
+}
+
+impl<T> HasPosition for T
+where
+    T: AsRef<RoomObject>,
+{
     fn pos(&self) -> Position {
         RoomObject::pos(self.as_ref()).into()
     }
 }
 
-impl<T> RoomObjectProperties for T where T: AsRef<RoomObject> {
-    fn effects(&self) -> Array {
-        RoomObject::effects(self.as_ref())
+impl<T> RoomObjectProperties for T
+where
+    T: AsRef<RoomObject>,
+{
+    fn effects(&self) -> Vec<Effect> {
+        RoomObject::effects_internal(self.as_ref())
+            .iter()
+            .map(|e| e.unchecked_into())
+            .collect()
+    }
+
+    fn effects_raw(&self) -> Array {
+        RoomObject::effects_internal(self.as_ref())
     }
 
     fn room(&self) -> Option<Room> {

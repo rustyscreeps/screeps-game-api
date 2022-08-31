@@ -1,7 +1,6 @@
-use crate::{CostMatrix, RoomName, SingleRoomCostResult, objects::PolyStyle, FindOptions};
+use crate::{objects::PolyStyle, CostMatrix, FindOptions, RoomName, SingleRoomCostResult};
 use js_sys::Object;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -10,16 +9,16 @@ extern "C" {
 
     #[wasm_bindgen(method, setter = reusePath)]
     pub fn reuse_path(this: &JsMoveToOptions, ticks: u32);
-    
+
     #[wasm_bindgen(method, setter = serializeMemory)]
     pub fn serialize_memory(this: &JsMoveToOptions, serialize: bool);
-    
+
     #[wasm_bindgen(method, setter = noPathFinding)]
     pub fn no_path_finding(this: &JsMoveToOptions, require: bool);
-    
+
     #[wasm_bindgen(method, setter = maxOps)]
     pub fn visualize_path_style(this: &JsMoveToOptions, style: &JsValue);
-    
+
     #[wasm_bindgen(method, setter = heuristicWeight)]
     pub fn find_options(this: &JsMoveToOptions, options: &JsValue);
 }
@@ -30,7 +29,15 @@ impl JsMoveToOptions {
     }
 }
 
-pub struct MoveToOptions<F> where F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
+impl Default for JsMoveToOptions {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+pub struct MoveToOptions<F>
+where
+    F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
 {
     pub(crate) reuse_path: Option<u32>,
     pub(crate) serialize_memory: Option<bool>,
@@ -39,8 +46,7 @@ pub struct MoveToOptions<F> where F: FnMut(RoomName, CostMatrix) -> SingleRoomCo
     pub(crate) find_options: FindOptions<F, SingleRoomCostResult>,
 }
 
-impl Default for MoveToOptions<fn(RoomName, CostMatrix) -> SingleRoomCostResult>
-{
+impl Default for MoveToOptions<fn(RoomName, CostMatrix) -> SingleRoomCostResult> {
     fn default() -> Self {
         MoveToOptions {
             reuse_path: None,
@@ -175,11 +181,11 @@ where
         }
     }
 
-    pub(crate) fn as_js_options<CR>(self, callback: impl Fn(&JsMoveToOptions) -> CR) -> CR {
+    pub(crate) fn into_js_options<CR>(self, callback: impl Fn(&JsMoveToOptions) -> CR) -> CR {
         //
         // Create JS object and set properties.
         //
-    
+
         let js_options = JsMoveToOptions::new();
 
         if let Some(reuse_path) = self.reuse_path {
@@ -189,21 +195,22 @@ where
         if let Some(serialize_memory) = self.serialize_memory {
             js_options.serialize_memory(serialize_memory);
         }
-        
+
         if let Some(no_path_finding) = self.no_path_finding {
             js_options.no_path_finding(no_path_finding);
         }
-        
+
         if let Some(visualize_path_style) = self.visualize_path_style {
-            let style = serde_wasm_bindgen::to_value(&visualize_path_style).expect("expected to serialize visualize path style");
+            let style = serde_wasm_bindgen::to_value(&visualize_path_style)
+                .expect("expected to serialize visualize path style");
 
             js_options.visualize_path_style(&style);
         }
 
-        self.find_options.as_js_options(|find_options| {
+        self.find_options.into_js_options(|find_options| {
             js_options.find_options(find_options);
 
-            callback(&js_options)            
+            callback(&js_options)
         })
     }
 }

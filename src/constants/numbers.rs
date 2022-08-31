@@ -122,7 +122,7 @@ pub fn rampart_hits_max(rcl: u32) -> u32 {
         5 => RAMPART_HITS_MAX_RCL5,
         6 => RAMPART_HITS_MAX_RCL6,
         7 => RAMPART_HITS_MAX_RCL7,
-        8 | _ => RAMPART_HITS_MAX_RCL8,
+        _ => RAMPART_HITS_MAX_RCL8,
     }
 }
 
@@ -194,7 +194,7 @@ pub fn extension_energy_capacity(rcl: u32) -> u32 {
     match rcl {
         r if r < 7 => 50,
         7 => 100,
-        8 | _ => 200,
+        _ => 200,
     }
 }
 
@@ -666,8 +666,8 @@ pub const FLAGS_LIMIT: u32 = 10_000;
 /// Cost, paid from [`CpuInfo::bucket`], to generate a pixel using
 /// [`CpuInfo::generate_pixel`]
 ///
-/// [`CpuInfo::bucket`]: crate::game::cpu::CpuInfo::bucket
-/// [`CpuInfo::generate_pixel`]: crate::game::cpu::CpuInfo::generate_pixel
+/// [`CpuInfo::bucket`]: crate::game::cpu::bucket
+/// [`CpuInfo::generate_pixel`]: crate::game::cpu::generate_pixel
 pub const PIXEL_CPU_COST: u32 = 10_000;
 
 // Resources defined in `types.rs`

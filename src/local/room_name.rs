@@ -1,8 +1,15 @@
-use std::{cmp::{Ord, Ordering, PartialOrd}, convert::TryFrom, error, fmt::{self, Write}, ops, str::FromStr};
+use std::{
+    cmp::{Ord, Ordering, PartialOrd},
+    convert::TryFrom,
+    error,
+    fmt::{self, Write},
+    ops,
+    str::FromStr,
+};
 
 use arrayvec::ArrayString;
-use wasm_bindgen::{JsCast, JsValue};
 use js_sys::JsString;
+use wasm_bindgen::{JsCast, JsValue};
 
 use crate::containers::{JsContainerFromValue, JsContainerIntoValue};
 
@@ -144,40 +151,40 @@ impl RoomName {
     ///
     /// This is equivalent to [`ToString::to_string`], but involves no
     /// allocation.
-    pub fn to_array_string(&self) -> ArrayString<[u8; 8]> {
+    pub fn to_array_string(&self) -> ArrayString<8> {
         let mut res = ArrayString::new();
         write!(res, "{}", self).expect("expected ArrayString write to be infallible");
         res
     }
 }
 
-impl Into<JsValue> for RoomName {
-    fn into(self) -> JsValue {
-        let name = self.to_array_string();
+impl From<RoomName> for JsValue {
+    fn from(name: RoomName) -> JsValue {
+        let array = name.to_array_string();
 
-        JsValue::from_str(name.as_str())
+        JsValue::from_str(array.as_str())
     }
 }
 
-impl Into<JsValue> for &RoomName {
-    fn into(self) -> JsValue {
-        let name = self.to_array_string();
+impl From<&RoomName> for JsValue {
+    fn from(name: &RoomName) -> JsValue {
+        let array = name.to_array_string();
 
-        JsValue::from_str(name.as_str())
+        JsValue::from_str(array.as_str())
     }
 }
 
-impl Into<JsString> for RoomName {
-    fn into(self) -> JsString {
-        let val: JsValue = self.into();
+impl From<RoomName> for JsString {
+    fn from(name: RoomName) -> JsString {
+        let val: JsValue = name.into();
 
         val.unchecked_into()
     }
 }
 
-impl Into<JsString> for &RoomName {
-    fn into(self) -> JsString {
-        let val: JsValue = self.into();
+impl From<&RoomName> for JsString {
+    fn from(name: &RoomName) -> JsString {
+        let val: JsValue = name.into();
 
         val.unchecked_into()
     }
@@ -198,11 +205,10 @@ impl error::Error for RoomNameConversionError {}
 impl fmt::Display for RoomNameConversionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            RoomNameConversionError::InvalidType => write!(
-                f,
-                "got invalid input type to room name conversion"
-            ),
-            RoomNameConversionError::ParseError { err } => err.fmt(f)
+            RoomNameConversionError::InvalidType => {
+                write!(f, "got invalid input type to room name conversion")
+            }
+            RoomNameConversionError::ParseError { err } => err.fmt(f),
         }
     }
 }
@@ -216,7 +222,7 @@ impl TryFrom<JsValue> for RoomName {
             .ok_or(RoomNameConversionError::InvalidType)?;
 
         RoomName::from_str(&val).map_err(|err| RoomNameConversionError::ParseError { err })
-    }    
+    }
 }
 
 impl TryFrom<JsString> for RoomName {
@@ -371,7 +377,7 @@ fn parse_to_coords(s: &str) -> Result<(i32, i32), ()> {
 #[derive(Clone, Debug)]
 pub enum RoomNameParseError {
     TooLarge { length: usize },
-    InvalidString { string: ArrayString<[u8; 8]> },
+    InvalidString { string: ArrayString<8> },
     PositionOutOfBounds { x_coord: i32, y_coord: i32 },
 }
 
@@ -449,7 +455,7 @@ impl PartialEq<RoomName> for &str {
 impl PartialEq<String> for RoomName {
     #[inline]
     fn eq(&self, other: &String) -> bool {
-        <RoomName as PartialEq<str>>::eq(self, &other)
+        <RoomName as PartialEq<str>>::eq(self, other)
     }
 }
 

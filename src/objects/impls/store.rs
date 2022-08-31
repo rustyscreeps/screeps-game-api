@@ -1,9 +1,9 @@
 use crate::constants::ResourceType;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-use js_sys::{Object};
+use js_sys::Object;
+use wasm_bindgen::{prelude::*, JsCast};
 
-//TODO: wiarchbe: Need types for general purpose store and specific store. (Specific store can return undefined for missing types.)
+//TODO: wiarchbe: Need types for general purpose store and specific store.
+// (Specific store can return undefined for missing types.)
 #[wasm_bindgen]
 extern "C" {
     /// An object that represents the cargo within an entity in the game world.

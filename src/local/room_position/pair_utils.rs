@@ -34,6 +34,9 @@ impl Position {
 impl From<Position> for RoomXY {
     #[inline]
     fn from(pos: Position) -> RoomXY {
-        RoomXY { x: pos.x(), y: pos.y() }
+        RoomXY {
+            x: pos.x(),
+            y: pos.y(),
+        }
     }
 }

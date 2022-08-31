@@ -1,12 +1,11 @@
+use crate::{enums::StructureObject, objects::*};
+use enum_iterator::IntoEnumIterator;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
-use crate::{objects::*};
-use crate::enums::StructureObject;
 
 /// Translates `FIND_*` constants.
 #[wasm_bindgen]
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash,
-)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
 #[repr(u16)]
 pub enum Find {
     /// Find all exit positions at the top of the room
@@ -40,17 +39,13 @@ pub enum Find {
     Ruins = 123,
     // todo these seem to not work when conditionally compiled out - they're not hurting to leave
     // in but need to figure that out
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    //#[cfg(feature = "score")]
     ScoreContainers = 10011,
-    //#[cfg(feature = "enable-score")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    //#[cfg(feature = "score")]
     ScoreCollectors = 10012,
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    //#[cfg(feature = "symbols")]
     SymbolContainers = 10021,
-    //#[cfg(feature = "enable-symbols")]
-    //#[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    //#[cfg(feature = "symbols")]
     SymbolDecoders = 10022,
 }
 
@@ -60,6 +55,8 @@ pub enum Find {
 /// [`find`][crate::constants::find] module.
 pub trait FindConstant {
     type Item: From<JsValue>;
+
+    fn convert_and_check_item(reference: JsValue) -> Self::Item;
 
     fn find_code(&self) -> Find;
 }
@@ -75,9 +72,7 @@ pub trait FindConstant {
 /// enum as `find::RoomObject` rather than importing it directly.
 ///
 /// [`RoomObject`]: crate::objects::RoomObject
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash,
-)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 #[repr(i16)]
 pub enum RoomObject {
     Creeps = 101,
@@ -103,23 +98,19 @@ pub enum RoomObject {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreContainers = 10011,
-    #[cfg(feature = "enable-score")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+    #[cfg(feature = "score")]
     ScoreCollectors = 10012,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolContainers = 10021,
-    #[cfg(feature = "enable-symbols")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+    #[cfg(feature = "symbols")]
     SymbolDecoders = 10022,
 }
 
-impl Into<Find> for RoomObject {
-    fn into(self) -> Find {
-        match self {
+impl From<RoomObject> for Find {
+    fn from(obj: RoomObject) -> Find {
+        match obj {
             RoomObject::Creeps => Find::Creeps,
             RoomObject::MyCreeps => Find::MyCreeps,
             RoomObject::HostileCreeps => Find::HostileCreeps,
@@ -143,17 +134,13 @@ impl Into<Find> for RoomObject {
             RoomObject::HostilePowerCreeps => Find::HostilePowerCreeps,
             RoomObject::Deposits => Find::Deposits,
             RoomObject::Ruins => Find::Ruins,
-            #[cfg(feature = "enable-score")]
-            #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+            #[cfg(feature = "score")]
             RoomObject::ScoreContainers => Find::ScoreContainers,
-            #[cfg(feature = "enable-score")]
-            #[cfg_attr(docsrs, doc(cfg(feature = "enable-score")))]
+            #[cfg(feature = "score")]
             RoomObject::ScoreCollectors => Find::ScoreCollectors,
-            #[cfg(feature = "enable-symbols")]
-            #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+            #[cfg(feature = "symbols")]
             RoomObject::SymbolContainers => Find::SymbolContainers,
-            #[cfg(feature = "enable-symbols")]
-            #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
+            #[cfg(feature = "symbols")]
             RoomObject::SymbolDecoders => Find::SymbolDecoders,
         }
     }
@@ -162,15 +149,17 @@ impl Into<Find> for RoomObject {
 impl FindConstant for RoomObject {
     type Item = crate::objects::RoomObject;
 
+    fn convert_and_check_item(reference: JsValue) -> Self::Item {
+        Into::into(reference)
+    }
+
     #[inline]
     fn find_code(&self) -> Find {
         (*self).into()
     }
 }
 
-#[derive(
-    Copy, Clone, Debug, PartialEq, Eq, Hash,
-)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 #[repr(i16)]
 pub enum Exit {
     Top = 1,
@@ -207,14 +196,14 @@ impl Exit {
     }
 }
 
-impl Into<Find> for Exit {
-    fn into(self) -> Find {
-        match self {
+impl From<Exit> for Find {
+    fn from(exit: Exit) -> Find {
+        match exit {
             Exit::Top => Find::ExitTop,
             Exit::Right => Find::ExitRight,
             Exit::Bottom => Find::ExitBottom,
             Exit::Left => Find::ExitLeft,
-            Exit::All => Find::Exit
+            Exit::All => Find::Exit,
         }
     }
 }
@@ -222,6 +211,10 @@ impl Into<Find> for Exit {
 impl FindConstant for Exit {
     //TODO: wiarchbe: Check this is correct?
     type Item = RoomPosition;
+
+    fn convert_and_check_item(reference: JsValue) -> Self::Item {
+        Into::into(reference)
+    }
 
     #[inline]
     fn find_code(&self) -> Find {
@@ -233,14 +226,18 @@ impl FindConstant for Exit {
 macro_rules! typesafe_find_constants {
     (
         $(
-            $vis:vis struct $constant_name:ident = ($value:expr, $result:path);
+            $vis:vis struct $constant_name:ident = ($value:expr, $result:path, $conversion_method:expr);
         )*
     ) => (
         $(
             #[allow(bad_style)]
-            $vis struct $constant_name;            
+            $vis struct $constant_name;
             impl FindConstant for $constant_name {
-                type Item = $result;               
+                type Item = $result;
+
+                fn convert_and_check_item(reference: JsValue) -> Self::Item {
+                    $conversion_method(reference)
+                }
 
                 #[inline]
                 fn find_code(&self) -> Find {
@@ -252,44 +249,44 @@ macro_rules! typesafe_find_constants {
 }
 
 typesafe_find_constants! {
-    pub struct CREEPS = (Find::Creeps, Creep);
-    pub struct MY_CREEPS = (Find::MyCreeps, Creep);
-    pub struct HOSTILE_CREEPS = (Find::HostileCreeps, Creep);
-    pub struct SOURCES_ACTIVE = (Find::SourcesActive, Source);
-    pub struct SOURCES = (Find::Sources, Source);
-    pub struct DROPPED_RESOURCES = (Find::DroppedResources, Resource);
-    pub struct STRUCTURES = (Find::Structures, StructureObject);
-    pub struct MY_STRUCTURES = (Find::MyStructures, StructureObject);
-    pub struct HOSTILE_STRUCTURES = (Find::HostileStructures, StructureObject);
-    pub struct FLAGS = (Find::Flags, Flag);
-    pub struct CONSTRUCTION_SITES = (Find::ConstructionSites, ConstructionSite);
-    pub struct MY_SPAWNS = (Find::MySpawns, StructureSpawn);
-    pub struct HOSTILE_SPAWNS = (Find::HostileSpawns, StructureSpawn);
-    pub struct MY_CONSTRUCTION_SITES = (Find::MyConstructionSites, ConstructionSite);
-    pub struct HOSTILE_CONSTRUCTION_SITES = (Find::HostileConstructionSites, ConstructionSite);
-    pub struct MINERALS = (Find::Minerals, Mineral);
-    pub struct NUKES = (Find::Nukes, Nuke);
-    pub struct TOMBSTONES = (Find::Tombstones, Tombstone);
-    pub struct POWER_CREEPS = (Find::PowerCreeps, PowerCreep);
-    pub struct MY_POWER_CREEPS = (Find::MyPowerCreeps, PowerCreep);
-    pub struct HOSTILE_POWER_CREEPS = (Find::HostilePowerCreeps, PowerCreep);
-    pub struct DEPOSITS = (Find::Deposits, Deposit);
-    pub struct RUINS = (Find::Ruins, Ruin);
-    pub struct EXIT_TOP = (Find::ExitTop, RoomPosition);
-    pub struct EXIT_RIGHT = (Find::ExitRight, RoomPosition);
-    pub struct EXIT_BOTTOM = (Find::ExitBottom, RoomPosition);
-    pub struct EXIT_LEFT = (Find::ExitLeft, RoomPosition);
-    pub struct EXIT = (Find::Exit, RoomPosition);
+    pub struct CREEPS = (Find::Creeps, Creep, Into::into);
+    pub struct MY_CREEPS = (Find::MyCreeps, Creep, Into::into);
+    pub struct HOSTILE_CREEPS = (Find::HostileCreeps, Creep, Into::into);
+    pub struct SOURCES_ACTIVE = (Find::SourcesActive, Source, Into::into);
+    pub struct SOURCES = (Find::Sources, Source, Into::into);
+    pub struct DROPPED_RESOURCES = (Find::DroppedResources, Resource, Into::into);
+    pub struct STRUCTURES = (Find::Structures, StructureObject, Into::into);
+    pub struct MY_STRUCTURES = (Find::MyStructures, StructureObject, Into::into);
+    pub struct HOSTILE_STRUCTURES = (Find::HostileStructures, StructureObject, Into::into);
+    pub struct FLAGS = (Find::Flags, Flag, Into::into);
+    pub struct CONSTRUCTION_SITES = (Find::ConstructionSites, ConstructionSite, Into::into);
+    pub struct MY_SPAWNS = (Find::MySpawns, StructureSpawn, Into::into);
+    pub struct HOSTILE_SPAWNS = (Find::HostileSpawns, StructureSpawn, Into::into);
+    pub struct MY_CONSTRUCTION_SITES = (Find::MyConstructionSites, ConstructionSite, Into::into);
+    pub struct HOSTILE_CONSTRUCTION_SITES = (Find::HostileConstructionSites, ConstructionSite, Into::into);
+    pub struct MINERALS = (Find::Minerals, Mineral, Into::into);
+    pub struct NUKES = (Find::Nukes, Nuke, Into::into);
+    pub struct TOMBSTONES = (Find::Tombstones, Tombstone, Into::into);
+    pub struct POWER_CREEPS = (Find::PowerCreeps, PowerCreep, Into::into);
+    pub struct MY_POWER_CREEPS = (Find::MyPowerCreeps, PowerCreep, Into::into);
+    pub struct HOSTILE_POWER_CREEPS = (Find::HostilePowerCreeps, PowerCreep, Into::into);
+    pub struct DEPOSITS = (Find::Deposits, Deposit, Into::into);
+    pub struct RUINS = (Find::Ruins, Ruin, Into::into);
+    pub struct EXIT_TOP = (Find::ExitTop, RoomPosition, Into::into);
+    pub struct EXIT_RIGHT = (Find::ExitRight, RoomPosition, Into::into);
+    pub struct EXIT_BOTTOM = (Find::ExitBottom, RoomPosition, Into::into);
+    pub struct EXIT_LEFT = (Find::ExitLeft, RoomPosition, Into::into);
+    pub struct EXIT = (Find::Exit, RoomPosition, Into::into);
 }
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 typesafe_find_constants! {
-    pub struct SCORE_CONTAINERS = (Find::ScoreContainers, ScoreContainer);
-    pub struct SCORE_COLLECTORS = (Find::ScoreCollectors, ScoreCollector);
+    pub struct SCORE_CONTAINERS = (Find::ScoreContainers, ScoreContainer, Into::into);
+    pub struct SCORE_COLLECTORS = (Find::ScoreCollectors, ScoreCollector, Into::into);
 }
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 typesafe_find_constants! {
-    pub struct SYMBOL_CONTAINERS = (Find::SymbolContainers, SymbolContainer);
-    pub struct SYMBOL_DECODERS = (Find::SymbolDecoders, SymbolDecoder);
+    pub struct SYMBOL_CONTAINERS = (Find::SymbolContainers, SymbolContainer, Into::into);
+    pub struct SYMBOL_DECODERS = (Find::SymbolDecoders, SymbolDecoder, Into::into);
 }

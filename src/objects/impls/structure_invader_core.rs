@@ -1,6 +1,4 @@
-use crate::{
-    objects::{OwnedStructure, RoomObject, Spawning, Structure}
-};
+use crate::objects::{OwnedStructure, RoomObject, Spawning, Structure};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

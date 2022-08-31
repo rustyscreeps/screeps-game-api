@@ -28,23 +28,29 @@ mod impls;
 //mod structure;
 
 pub use self::impls::{
-    ConstructionSite, CostMatrix, CostMatrixSet, HasLocalPosition, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, Owner,
-    PowerCreep, Reservation, Resource, Room, RoomObject, RoomPosition, RoomTerrain, Ruin, Sign,
-    Source, Spawning, Store, Structure, StructureContainer, StructureController,
-    StructureExtension, StructureExtractor, StructureFactory, StructureInvaderCore,
-    StructureKeeperLair, StructureLab, StructureLink, StructureNuker, StructureObserver,
-    StructurePortal, StructurePowerBank, StructurePowerSpawn, StructureRampart, StructureRoad,
-    StructureSpawn, StructureStorage, StructureTerminal, StructureTower, StructureWall, Tombstone,
-    MoveToOptions, FindOptions
+    AttackEvent, AttackType, BodyPart, BuildEvent, ConstructionSite, CostMatrix, CostMatrixSet,
+    Creep, Deposit, Effect, Event, EventType, ExitEvent, FindOptions, Flag, HarvestEvent,
+    HasLocalPosition, HealEvent, HealType, InterShardPortalDestination, JsFindOptions, Mineral,
+    MoveToOptions, Nuke, ObjectDestroyedEvent, OwnedStructure, Owner, PortalDestination,
+    PowerCreep, PowerEvent, RepairEvent, Reservation, ReserveControllerEvent, Resource, Room,
+    RoomObject, RoomPosition, RoomTerrain, Ruin, Sign, Source, SpawnOptions, Spawning, Store,
+    Structure, StructureContainer, StructureController, StructureExtension, StructureExtractor,
+    StructureFactory, StructureInvaderCore, StructureKeeperLair, StructureLab, StructureLink,
+    StructureNuker, StructureObserver, StructurePortal, StructurePowerBank, StructurePowerSpawn,
+    StructureRampart, StructureRoad, StructureSpawn, StructureStorage, StructureTerminal,
+    StructureTower, StructureWall, Tombstone, TransferEvent, UpgradeControllerEvent,
 };
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 pub use self::impls::{ScoreCollector, ScoreContainer};
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 pub use self::impls::{SymbolContainer, SymbolDecoder};
 
-pub use self::impls::{CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign, TextStyle, Visual};
+pub use self::impls::{
+    CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign,
+    TextStyle, Visual,
+};
 
 pub use self::impls::{MapVisual, MapVisualShape};
 
@@ -411,8 +417,6 @@ pub use self::impls::{MapVisual, MapVisualShape};
 //     }
 // }
 
-
-
 // unsafe impl RoomObjectProperties for ConstructionSite {}
 // unsafe impl RoomObjectProperties for Creep {}
 // unsafe impl RoomObjectProperties for Deposit {}
@@ -496,9 +500,6 @@ pub use self::impls::{MapVisual, MapVisualShape};
 
 // // NOTE: keep impls for Structure* in sync with accessor methods in
 // // src/objects/structure.rs
-
-// unsafe impl HasEnergyForSpawn for StructureExtension {}
-// unsafe impl HasEnergyForSpawn for StructureSpawn {}
 
 // // NOTE: keep impls for Structure* in sync with accessor methods in
 // // src/objects/structure.rs

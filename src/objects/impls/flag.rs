@@ -1,6 +1,10 @@
-use crate::{constants::Color, containers::JsContainerFromValue, objects::{RoomObject, RoomPosition}};
-use js_sys::{JsString};
-use wasm_bindgen::{JsCast, prelude::*};
+use crate::{
+    constants::Color,
+    containers::JsContainerFromValue,
+    objects::{RoomObject, RoomPosition},
+};
+use js_sys::JsString;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {

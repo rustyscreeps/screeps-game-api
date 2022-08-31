@@ -1,9 +1,14 @@
-use crate::{CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult, constants::{Direction, Part, ResourceType, ReturnCode}, containers::JsContainerFromValue, objects::{
-        ConstructionSite, Owner, Resource, RoomObject, Store, Structure,
-        StructureController,
-    }, prelude::*};
+use crate::{
+    constants::{Direction, Part, ResourceType, ReturnCode},
+    containers::JsContainerFromValue,
+    objects::{
+        ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
+    },
+    prelude::*,
+    CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult,
+};
 use js_sys::{Array, JsString};
-use wasm_bindgen::{JsCast, prelude::*};
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -14,10 +19,6 @@ extern "C" {
     #[derive(Clone)]
     pub type Creep;
 
-    /// Retrieve an [`Array`] containing details about the creep's body parts
-    /// and boosts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.body)
     #[wasm_bindgen(method, getter = body)]
     fn body_internal(this: &Creep) -> Array;
 
@@ -46,7 +47,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
     #[wasm_bindgen(method, getter = id)]
-    pub fn id_internal(this: &Creep) -> Option<JsString>;
+    fn id_internal(this: &Creep) -> Option<JsString>;
 
     /// A shortcut to `Memory.creeps[creep.name]`.
     ///
@@ -66,9 +67,6 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn my(this: &Creep) -> bool;
 
-    /// The creep's name as an owned reference to a [`JsString`].
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.name)
     #[wasm_bindgen(method, getter = name)]
     fn name_internal(this: &Creep) -> JsString;
 
@@ -103,9 +101,6 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToLive)]
     pub fn ticks_to_live(this: &Creep) -> Option<u32>;
 
-    /// Attack a target in melee range using a creep's attack parts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.attack)
     #[wasm_bindgen(final, method, js_name = attack)]
     fn attack_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
@@ -138,13 +133,6 @@ extern "C" {
     #[wasm_bindgen(final, method, js_name = claimController)]
     pub fn claim_controller(this: &Creep, target: &StructureController) -> ReturnCode;
 
-    // todo constant links - REPAIR_POWER, DISMANTLE_POWER, and buildable types
-    // which I think we have
-    /// Dismantle a [`Structure`] in melee range, giving the creep energy
-    /// equivalent to half of the cost to repair the same hits. Must be a type
-    /// of structure that can be constructed.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.dismantle)
     #[wasm_bindgen(final, method, js_name = dismantle)]
     fn dismantle_internal(this: &Creep, target: &Structure) -> ReturnCode;
 
@@ -169,15 +157,9 @@ extern "C" {
     #[wasm_bindgen(final, method, js_name = getActiveBodyparts)]
     pub fn get_active_bodyparts(this: &Creep, ty: Part) -> u8;
 
-    /// Harvest from a [`Source`], [`Mineral`], or [`Deposit`] in melee range.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.harvest)
     #[wasm_bindgen(final, method, js_name = harvest)]
     fn harvest_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
-    /// Heal a [`Creep`] or [`PowerCreep`] in melee range, including itself.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.heal)
     #[wasm_bindgen(final, method, js_name = heal)]
     fn heal_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
@@ -229,15 +211,9 @@ extern "C" {
     #[wasm_bindgen(final, method)]
     pub fn pull(this: &Creep, target: &Creep) -> ReturnCode;
 
-    /// Attack a target in range 3 using a creep's ranged attack parts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedAttack)
     #[wasm_bindgen(final, method, js_name = rangedAttack)]
     fn ranged_attack_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
-    /// Heal a target in range 3 using a creep's heal parts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedHeal)
     #[wasm_bindgen(final, method, js_name = rangedHeal)]
     fn ranged_heal_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
 
@@ -324,7 +300,7 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn boost(this: &BodyPart) -> Option<ResourceType>;
 
-    #[wasm_bindgen(method, getter = type)]   
+    #[wasm_bindgen(method, getter = type)]
     pub fn part(this: &BodyPart) -> Part;
 
     #[wasm_bindgen(method, getter)]
@@ -332,36 +308,82 @@ extern "C" {
 }
 
 impl Creep {
-    pub fn harvest<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Harvestable {
+    /// Harvest from a [`Source`], [`Mineral`], or [`Deposit`] in melee range.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.harvest)
+    ///
+    /// [`Source`]: crate::objects::Source
+    /// [`Mineral`]: crate::objects::Mineral
+    /// [`Deposit`]: crate::objects::Deposit
+    pub fn harvest<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Harvestable,
+    {
         Self::harvest_internal(self, target.as_ref())
     }
 
-    pub fn attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
+    /// Attack a target in melee range using a creep's attack parts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.attack)
+    pub fn attack<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Attackable,
+    {
         Self::attack_internal(self, target.as_ref())
     }
 
-    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Attackable {
+    /// Attack a target in range 3 using a creep's ranged attack parts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedAttack)
+    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Attackable,
+    {
         Self::ranged_attack_internal(self, target.as_ref())
     }
 
-    pub fn dismantle<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Dismantleable {
+    // todo constant links - REPAIR_POWER, DISMANTLE_POWER, and buildable types
+    // which I think we have
+    /// Dismantle a [`Structure`] in melee range, giving the creep energy
+    /// equivalent to half of the cost to repair the same hits. Must be a type
+    /// of structure that can be constructed.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.dismantle)
+    pub fn dismantle<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Dismantleable,
+    {
         Self::dismantle_internal(self, target.as_ref())
-    }    
-
-    pub fn heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
-        Self::heal_internal(&self, target.as_ref())
     }
 
-    pub fn ranged_heal<T>(&self, target: &T) -> ReturnCode where T: ?Sized + Healable {
-        Self::ranged_heal_internal(&self, target.as_ref())
+    /// Heal a [`Creep`] or [`PowerCreep`] in melee range, including itself.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.heal)
+    ///
+    /// [`PowerCreep`]: crate::objects::PowerCreep
+    pub fn heal<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Healable,
+    {
+        Self::heal_internal(self, target.as_ref())
     }
 
+    /// Heal a target in range 3 using a creep's heal parts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedHeal)
+    pub fn ranged_heal<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Healable,
+    {
+        Self::ranged_heal_internal(self, target.as_ref())
+    }
+
+    /// Retrieve a [`Vec<BodyPart>`] containing details about the creep's body
+    /// parts and boosts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.body)
     pub fn body(&self) -> Vec<BodyPart> {
-        self
-            .body_internal()
-            .iter()
-            .map(BodyPart::from)
-            .collect()
+        self.body_internal().iter().map(BodyPart::from).collect()
     }
 }
 
@@ -382,7 +404,7 @@ impl HasHits for Creep {
 }
 
 impl MaybeHasNativeId for Creep {
-    fn native_id(&self) -> Option<JsString> {
+    fn try_native_id(&self) -> Option<JsString> {
         Self::id_internal(self)
     }
 }
@@ -438,21 +460,26 @@ impl SharedCreepProperties for Creep {
         Self::move_by_path(self, path)
     }
 
-    fn move_to<T>(&self, target: T) -> ReturnCode where T: HasPosition {
+    fn move_to<T>(&self, target: T) -> ReturnCode
+    where
+        T: HasPosition,
+    {
         let target: RoomPosition = target.pos().into();
         Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
     }
 
-    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode where T: HasPosition, F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult {
+    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
+    {
         let target: RoomPosition = target.pos().into();
-        
+
         if let Some(options) = options {
-            options.as_js_options(|js_options| {
-                Self::move_to_internal(self, &target, js_options)
-            })
+            options.into_js_options(|js_options| Self::move_to_internal(self, &target, js_options))
         } else {
             Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
-        }        
+        }
     }
 
     fn notify_when_attacked(&self, enabled: bool) -> ReturnCode {
@@ -471,11 +498,17 @@ impl SharedCreepProperties for Creep {
         Self::suicide(self)
     }
 
-    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Transferable {
+    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    where
+        T: Transferable,
+    {
         Self::transfer_internal(self, target.as_ref(), ty, amount)
     }
 
-    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode where T: Withdrawable {
+    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    where
+        T: Withdrawable,
+    {
         Self::withdraw_internal(self, target.as_ref(), ty, amount)
     }
 }

@@ -1,9 +1,9 @@
 use crate::{
     constants::{ReturnCode, StructureType},
-    objects::{RoomObject},
+    objects::RoomObject,
     prelude::*,
 };
-use js_sys::{JsString};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -65,13 +65,19 @@ extern "C" {
     pub fn notify_when_attacked(this: &Structure, val: bool) -> ReturnCode;
 }
 
-impl<T> HasNativeId for T where T: AsRef<Structure> {
+impl<T> HasNativeId for T
+where
+    T: AsRef<Structure>,
+{
     fn native_id(&self) -> JsString {
         Structure::id_internal(self.as_ref())
     }
 }
 
-impl<T> HasHits for T where T: AsRef<Structure> {
+impl<T> HasHits for T
+where
+    T: AsRef<Structure>,
+{
     fn hits(&self) -> u32 {
         Structure::hits(self.as_ref())
     }
@@ -81,7 +87,10 @@ impl<T> HasHits for T where T: AsRef<Structure> {
     }
 }
 
-impl<T> StructureProperties for T where T: AsRef<Structure> {
+impl<T> StructureProperties for T
+where
+    T: AsRef<Structure>,
+{
     fn structure_type(&self) -> StructureType {
         Structure::structure_type(self.as_ref())
     }

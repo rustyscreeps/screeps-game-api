@@ -1,6 +1,6 @@
 use crate::{
     constants::ResourceType,
-    objects::{Room, RoomPosition, RoomObject, Store},
+    objects::{Room, RoomObject, RoomPosition, Store},
     prelude::*,
 };
 use js_sys::{Array, JsString};
@@ -16,7 +16,6 @@ extern "C" {
     ///
     /// [`ResourceType::Score`]: crate::constants::ResourceType::Score
     #[wasm_bindgen(extends = RoomObject)]
-    #[cfg_attr(docsrs, doc(cfg(feature = "enable-symbols")))]
     #[derive(Clone)]
     pub type SymbolContainer;
 

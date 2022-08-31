@@ -1,5 +1,10 @@
-use crate::{RoomName, constants::{ResourceType, ReturnCode}, objects::{OwnedStructure, RoomObject, Store, Structure}, prelude::*};
-use js_sys::{JsString};
+use crate::{
+    constants::{ResourceType, ReturnCode},
+    objects::{OwnedStructure, RoomObject, Store, Structure},
+    prelude::*,
+    RoomName,
+};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -26,11 +31,8 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureTerminal) -> Store;
 
-    /// Send resources to another room's terminal.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTerminal.send)
     #[wasm_bindgen(method, js_name = send)]
-    pub fn send_internal(
+    fn send_internal(
         this: &StructureTerminal,
         resource_type: ResourceType,
         amount: u32,
@@ -40,6 +42,9 @@ extern "C" {
 }
 
 impl StructureTerminal {
+    /// Send resources to another room's terminal.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTerminal.send)
     pub fn send(
         &self,
         resource_type: ResourceType,
@@ -50,7 +55,13 @@ impl StructureTerminal {
         let desination = destination.into();
         let description = description.map(JsString::from);
 
-        Self::send_internal(self, resource_type, amount, &desination, description.as_ref())
+        Self::send_internal(
+            self,
+            resource_type,
+            amount,
+            &desination,
+            description.as_ref(),
+        )
     }
 }
 

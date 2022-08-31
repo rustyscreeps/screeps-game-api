@@ -20,29 +20,29 @@
 #![recursion_limit = "128"]
 // to build locally with doc_cfg enabled, run:
 // `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
-#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
-pub mod constants;
-pub mod enums;
 pub mod console;
+pub mod constants;
+pub mod containers;
+pub mod enums;
 pub mod game;
-#[cfg(feature = "enable-inter-shard-memory")]
-#[cfg_attr(docsrs, doc(cfg(feature = "enable-inter-shard-memory")))]
+#[cfg(feature = "inter-shard-memory")]
 pub mod inter_shard_memory;
 pub mod local;
-// pub mod memory;
+pub mod memory;
 pub mod objects;
 pub mod pathfinder;
 pub mod prototypes;
 pub mod raw_memory;
 pub mod traits;
-pub mod containers;
 
 pub use crate::{
-    constants::*, containers::*, enums::*, game::*, local::*, objects::*, pathfinder::*, raw_memory::*, traits::*,
+    constants::*, containers::*, enums::*, game::*, local::*, objects::*, pathfinder::*,
+    raw_memory::*, traits::*,
 };
 
-#[cfg(feature = "enable-inter-shard-memory")]
+#[cfg(feature = "inter-shard-memory")]
 pub use crate::inter_shard_memory::*;
 
 /// Traits which implement base functionalities for Screeps types.
@@ -51,7 +51,7 @@ pub use crate::inter_shard_memory::*;
 ///
 /// ```no_run
 /// use js_sys::{JsString, Reflect};
-/// use screeps::{prelude::*, Creep, game};
+/// use screeps::{game, prelude::*, Creep};
 ///
 /// let c = game::creeps().get(String::from("Bob")).unwrap();
 ///

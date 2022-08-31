@@ -1,8 +1,8 @@
 use crate::{
     objects::{RoomObject, Structure},
-    prelude::*
+    prelude::*,
 };
-use js_sys::{JsString};
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -30,7 +30,10 @@ extern "C" {
     pub fn owner(this: &OwnedStructure) -> Option<Owner>;
 }
 
-impl<T> OwnedStructureProperties for T where T: AsRef<OwnedStructure> {
+impl<T> OwnedStructureProperties for T
+where
+    T: AsRef<OwnedStructure>,
+{
     fn my(&self) -> bool {
         OwnedStructure::my(self.as_ref())
     }
@@ -46,12 +49,12 @@ extern "C" {
     #[wasm_bindgen]
     pub type Owner;
 
-    /// The name of the player that owns this structure as a [`JsString`].
     #[wasm_bindgen(method, getter = username)]
-    pub fn username_internal(this: &Owner) -> JsString;
+    fn username_internal(this: &Owner) -> JsString;
 }
 
 impl Owner {
+    /// The name of the player that owns this object.
     pub fn username(&self) -> String {
         Self::username_internal(self).into()
     }
