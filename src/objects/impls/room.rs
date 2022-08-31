@@ -27,6 +27,12 @@ use crate::{
     ConversionError,
 };
 
+#[cfg(feature = "score")]
+use crate::objects::{ScoreCollector, ScoreContainer};
+
+#[cfg(feature = "symbols")]
+use crate::objects::{SymbolContainer, SymbolDecoder};
+
 simple_accessors! {
     impl Room {
         pub fn controller() -> Option<StructureController> = controller;
@@ -526,7 +532,7 @@ impl<'de> Deserialize<'de> for Event {
             Event,
             ObjectId,
             Data,
-        };
+        }
 
         struct EventVisitor;
 
@@ -799,6 +805,14 @@ pub enum LookResult {
     Tombstone(Tombstone),
     PowerCreep(PowerCreep),
     Ruin(Ruin),
+    #[cfg(feature = "score")]
+    ScoreContainer(ScoreContainer),
+    #[cfg(feature = "score")]
+    ScoreCollector(ScoreCollector),
+    #[cfg(feature = "symbols")]
+    SymbolContainer(SymbolContainer),
+    #[cfg(feature = "symbols")]
+    SymbolDecoder(SymbolDecoder),
 }
 
 impl TryFrom<Value> for LookResult {
@@ -827,6 +841,20 @@ impl TryFrom<Value> for LookResult {
             Look::Tombstones => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
             Look::PowerCreeps => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
             Look::Ruins => LookResult::Ruin(js_unwrap_ref!(@{v}.ruin)),
+            #[cfg(feature = "score")]
+            Look::ScoreContainers => {
+                LookResult::ScoreContainer(js_unwrap_ref!(@{v}.scoreContainer))
+            }
+            #[cfg(feature = "score")]
+            Look::ScoreCollectors => {
+                LookResult::ScoreCollector(js_unwrap_ref!(@{v}.scoreCollector))
+            }
+            #[cfg(feature = "symbols")]
+            Look::SymbolContainers => {
+                LookResult::SymbolContainer(js_unwrap_ref!(@{v}.symbolContainer))
+            }
+            #[cfg(feature = "symbols")]
+            Look::SymbolDecoders => LookResult::SymbolDecoder(js_unwrap_ref!(@{v}.symbolDecoder)),
         };
         Ok(lr)
     }

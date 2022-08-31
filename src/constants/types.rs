@@ -179,7 +179,7 @@ impl StructureType {
             PowerSpawn => POWER_SPAWN_HITS,
             Extractor => EXTENSION_HITS,
             Lab => LAB_HITS,
-            Terminal => TOWER_HITS,
+            Terminal => TERMINAL_HITS,
             Container => CONTAINER_HITS,
             Nuker => NUKER_HITS,
             Factory => FACTORY_HITS,
@@ -516,6 +516,98 @@ pub enum ResourceType {
     /// `"essence"`
     #[display("essence")]
     Essence = 84,
+    /// `"score"`
+    #[cfg(feature = "score")]
+    #[display("score")]
+    Score = 10001,
+    /// `"symbol_aleph"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_aleph")]
+    SymbolAleph = 10201,
+    /// `"symbol_beth"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_beth")]
+    SymbolBeth = 10202,
+    /// `"symbol_gimmel"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_gimmel")]
+    SymbolGimmel = 10203,
+    /// `"symbol_daleth"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_daleth")]
+    SymbolDaleth = 10204,
+    /// `"symbol_he"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_he")]
+    SymbolHe = 10205,
+    /// `"symbol_waw"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_waw")]
+    SymbolWaw = 10206,
+    /// `"symbol_zayin"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_zayin")]
+    SymbolZayin = 10207,
+    /// `"symbol_heth"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_heth")]
+    SymbolHeth = 10208,
+    /// `"symbol_teth"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_teth")]
+    SymbolTeth = 10209,
+    /// `"symbol_yodh"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_yodh")]
+    SymbolYodh = 10210,
+    /// `"symbol_kaph"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_kaph")]
+    SymbolKaph = 10211,
+    /// `"symbol_lamedh"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_lamedh")]
+    SymbolLamedh = 10212,
+    /// `"symbol_mem"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_mem")]
+    SymbolMem = 10213,
+    /// `"symbol_nun"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_nun")]
+    SymbolNun = 10214,
+    /// `"symbol_samekh"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_samekh")]
+    SymbolSamekh = 10215,
+    /// `"symbol_ayin"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_ayin")]
+    SymbolAyin = 10216,
+    /// `"symbol_pe"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_pe")]
+    SymbolPe = 10217,
+    /// `"symbol_tsade"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_tsade")]
+    SymbolTsade = 10218,
+    /// `"symbol_qoph"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_qoph")]
+    SymbolQoph = 10219,
+    /// `"symbol_res"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_res")]
+    SymbolRes = 10220,
+    /// `"symbol_sim"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_sim")]
+    SymbolSim = 10221,
+    /// `"symbol_taw"`
+    #[cfg(feature = "symbols")]
+    #[display("symbol_taw")]
+    SymbolTaw = 10222,
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -815,6 +907,52 @@ impl<'de> Deserialize<'de> for MarketResourceType {
             1002 => IntershardResource(CPUUnlock),
             1003 => IntershardResource(Pixel),
             1004 => IntershardResource(AccessKey),
+            #[cfg(feature = "score")]
+            10001 => Resource(Score),
+            #[cfg(feature = "symbols")]
+            10201 => Resource(SymbolAleph),
+            #[cfg(feature = "symbols")]
+            10202 => Resource(SymbolBeth),
+            #[cfg(feature = "symbols")]
+            10203 => Resource(SymbolGimmel),
+            #[cfg(feature = "symbols")]
+            10204 => Resource(SymbolDaleth),
+            #[cfg(feature = "symbols")]
+            10205 => Resource(SymbolHe),
+            #[cfg(feature = "symbols")]
+            10206 => Resource(SymbolWaw),
+            #[cfg(feature = "symbols")]
+            10207 => Resource(SymbolZayin),
+            #[cfg(feature = "symbols")]
+            10208 => Resource(SymbolHeth),
+            #[cfg(feature = "symbols")]
+            10209 => Resource(SymbolTeth),
+            #[cfg(feature = "symbols")]
+            10210 => Resource(SymbolYodh),
+            #[cfg(feature = "symbols")]
+            10211 => Resource(SymbolKaph),
+            #[cfg(feature = "symbols")]
+            10212 => Resource(SymbolLamedh),
+            #[cfg(feature = "symbols")]
+            10213 => Resource(SymbolMem),
+            #[cfg(feature = "symbols")]
+            10214 => Resource(SymbolNun),
+            #[cfg(feature = "symbols")]
+            10215 => Resource(SymbolSamekh),
+            #[cfg(feature = "symbols")]
+            10216 => Resource(SymbolAyin),
+            #[cfg(feature = "symbols")]
+            10217 => Resource(SymbolPe),
+            #[cfg(feature = "symbols")]
+            10218 => Resource(SymbolTsade),
+            #[cfg(feature = "symbols")]
+            10219 => Resource(SymbolQoph),
+            #[cfg(feature = "symbols")]
+            10220 => Resource(SymbolRes),
+            #[cfg(feature = "symbols")]
+            10221 => Resource(SymbolSim),
+            #[cfg(feature = "symbols")]
+            10222 => Resource(SymbolTaw),
             _ => {
                 return Err(D::Error::invalid_value(
                     Unexpected::Unsigned(resource as u64),

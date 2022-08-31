@@ -18,6 +18,9 @@
 //! screeps-game-api = { version = "0.3", features = ["check-all-casts"] }
 //! ```
 #![recursion_limit = "128"]
+// to build locally with doc_cfg enabled, run:
+// `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 #[macro_use]
 extern crate stdweb;
@@ -27,6 +30,7 @@ pub mod macros;
 
 pub mod constants;
 pub mod game;
+#[cfg(feature = "inter-shard-memory")]
 pub mod inter_shard_memory;
 pub mod js_collections;
 pub mod local;
