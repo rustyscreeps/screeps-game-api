@@ -32,7 +32,7 @@ use crate::{
     traits::FromExpectedType,
 };
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 use crate::objects::{ScoreCollector, ScoreContainer};
 
 #[cfg(feature = "enable-symbols")]
@@ -87,9 +87,9 @@ pub enum RoomObject {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
-    #[cfg(feature = "enable-score")]
+    #[cfg(feature = "score")]
     ScoreContainers = 10011,
-    #[cfg(feature = "enable-score")]
+    #[cfg(feature = "score")]
     ScoreCollectors = 10012,
     #[cfg(feature = "enable-symbols")]
     SymbolContainers = 10021,
@@ -185,7 +185,7 @@ typesafe_find_constants! {
     pub struct EXIT = (Exit::All as i16, Position);
 }
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 typesafe_find_constants! {
     pub struct SCORE_CONTAINERS = (10011, ScoreContainer);
     pub struct SCORE_COLLECTORS = (10012, ScoreCollector);

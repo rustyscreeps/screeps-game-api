@@ -517,7 +517,7 @@ pub enum ResourceType {
     #[display("essence")]
     Essence = 84,
     /// `"score"`
-    #[cfg(feature = "enable-score")]
+    #[cfg(feature = "score")]
     #[display("score")]
     Score = 10001,
     /// `"symbol_aleph"`
@@ -907,7 +907,7 @@ impl<'de> Deserialize<'de> for MarketResourceType {
             1002 => IntershardResource(CPUUnlock),
             1003 => IntershardResource(Pixel),
             1004 => IntershardResource(AccessKey),
-            #[cfg(feature = "enable-score")]
+            #[cfg(feature = "score")]
             10001 => Resource(Score),
             #[cfg(feature = "enable-symbols")]
             10201 => Resource(SymbolAleph),

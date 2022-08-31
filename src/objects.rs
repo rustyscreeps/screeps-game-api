@@ -122,7 +122,7 @@ reference_wrappers! {
     pub struct AccountPowerCreep(...);
 }
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 reference_wrappers! {
     #[reference(instance_of = "ScoreContainer")]
     pub struct ScoreContainer(...);
@@ -229,7 +229,7 @@ impl_has_id! {
     PowerCreep,
 }
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 impl_has_id! {
     ScoreContainer,
     ScoreCollector,
@@ -668,6 +668,7 @@ unsafe impl OwnedStructureProperties for StructureTower {}
 
 unsafe impl HasStore for Creep {}
 unsafe impl HasStore for Ruin {}
+
 unsafe impl HasStore for StructureContainer {}
 unsafe impl HasStore for StructureExtension {}
 unsafe impl HasStore for StructureFactory {}
