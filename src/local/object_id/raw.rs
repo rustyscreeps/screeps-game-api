@@ -58,24 +58,38 @@ impl Serialize for RawObjectId {
     where
         S: serde::Serializer,
     {
-        serializer.serialize_str(&self.packed.to_string())
+        if serializer.is_human_readable() {
+            serializer.collect_str(&self.to_array_string())
+        } else {
+            serializer.serialize_bytes(&self.packed.to_be_bytes())
+        }
     }
 }
 
-struct U128Visitor;
+struct RawObjectIdVisitor;
 
-impl<'de> Visitor<'de> for U128Visitor {
-    type Value = u128;
+impl<'de> Visitor<'de> for RawObjectIdVisitor {
+    type Value = RawObjectId;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("a string representing a u128")
+        formatter.write_str("a string or bytes representing an object id")
     }
 
     fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
     where
         E: Error,
     {
-        u128::from_str(v).map_err(|e| E::custom(format!("Could not parse u128: {}", e)))
+        RawObjectId::from_str(v).map_err(|e| E::custom(format!("Could not parse object id: {}", e)))
+    }
+
+    fn visit_bytes<E>(self, v: &[u8]) -> Result<Self::Value, E>
+    where
+        E: Error,
+    {
+        v.try_into()
+            .map(u128::from_be_bytes)
+            .map(RawObjectId::from_packed)
+            .map_err(|e| E::custom(format!("Could not parse object id: {}", e)))
     }
 }
 
@@ -84,9 +98,11 @@ impl<'de> Deserialize<'de> for RawObjectId {
     where
         D: serde::Deserializer<'de>,
     {
-        deserializer
-            .deserialize_str(U128Visitor)
-            .map(|packed| RawObjectId { packed })
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_str(RawObjectIdVisitor)
+        } else {
+            deserializer.deserialize_bytes(RawObjectIdVisitor)
+        }
     }
 }
 
