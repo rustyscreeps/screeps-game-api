@@ -27,7 +27,7 @@ use crate::{
     ConversionError,
 };
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 use crate::objects::{ScoreCollector, ScoreContainer};
 
 simple_accessors! {
@@ -802,9 +802,9 @@ pub enum LookResult {
     Tombstone(Tombstone),
     PowerCreep(PowerCreep),
     Ruin(Ruin),
-    #[cfg(feature = "enable-score")]
+    #[cfg(feature = "score")]
     ScoreContainer(ScoreContainer),
-    #[cfg(feature = "enable-score")]
+    #[cfg(feature = "score")]
     ScoreCollector(ScoreCollector),
 }
 
@@ -834,11 +834,11 @@ impl TryFrom<Value> for LookResult {
             Look::Tombstones => LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
             Look::PowerCreeps => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
             Look::Ruins => LookResult::Ruin(js_unwrap_ref!(@{v}.ruin)),
-            #[cfg(feature = "enable-score")]
+            #[cfg(feature = "score")]
             Look::ScoreContainers => {
                 LookResult::ScoreContainer(js_unwrap_ref!(@{v}.scoreContainer))
             }
-            #[cfg(feature = "enable-score")]
+            #[cfg(feature = "score")]
             Look::ScoreCollectors => {
                 LookResult::ScoreCollector(js_unwrap_ref!(@{v}.scoreCollector))
             }

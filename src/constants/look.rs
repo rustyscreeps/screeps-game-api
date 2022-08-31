@@ -26,7 +26,7 @@ use crate::{
     traits::{IntoExpectedType, TryInto},
 };
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 use crate::objects::{ScoreCollector, ScoreContainer};
 
 /// Internal enum representing each LOOK_* constant.
@@ -75,10 +75,10 @@ pub enum Look {
     Deposits = 12,
     #[display("ruin")]
     Ruins = 13,
-    #[cfg(feature = "enable-score")]
+    #[cfg(feature = "score")]
     #[display("scoreContainer")]
     ScoreContainers = 10011,
-    #[cfg(feature = "enable-score")]
+    #[cfg(feature = "score")]
     #[display("scoreCollector")]
     ScoreCollectors = 10012,
 }
@@ -122,7 +122,7 @@ typesafe_look_constants! {
     pub struct RUINS = (Look::Ruins, Ruin, IntoExpectedType::into_expected_type);
 }
 
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 typesafe_look_constants! {
     pub struct SCORE_CONTAINERS = (Look::ScoreContainers, ScoreContainer, IntoExpectedType::into_expected_type);
     pub struct SCORE_COLLECTORS = (Look::ScoreCollectors, ScoreCollector, IntoExpectedType::into_expected_type);
