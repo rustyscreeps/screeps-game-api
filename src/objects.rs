@@ -130,7 +130,7 @@ reference_wrappers! {
     pub struct ScoreCollector(...);
 }
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 reference_wrappers! {
     #[reference(instance_of = "SymbolContainer")]
     pub struct SymbolContainer(...);
@@ -235,7 +235,7 @@ impl_has_id! {
     ScoreCollector,
 }
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 impl_has_id! {
     SymbolContainer,
     SymbolDecoder,
@@ -519,9 +519,9 @@ unsafe impl Transferable for StructureTower {}
 unsafe impl Transferable for StructurePowerSpawn {}
 unsafe impl Transferable for StructureTerminal {}
 unsafe impl Transferable for PowerCreep {}
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 unsafe impl Transferable for ScoreCollector {}
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 unsafe impl Transferable for SymbolDecoder {}
 
 // NOTE: keep impls for Structure* in sync with accessor methods in
@@ -539,9 +539,9 @@ unsafe impl Withdrawable for StructureTower {}
 unsafe impl Withdrawable for StructurePowerSpawn {}
 unsafe impl Withdrawable for StructureTerminal {}
 unsafe impl Withdrawable for Tombstone {}
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 unsafe impl Withdrawable for ScoreContainer {}
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 unsafe impl Withdrawable for SymbolContainer {}
 
 unsafe impl Harvestable for Deposit {}
@@ -609,13 +609,13 @@ unsafe impl RoomObjectProperties for StructureWall {}
 unsafe impl RoomObjectProperties for Structure {}
 unsafe impl RoomObjectProperties for Tombstone {}
 unsafe impl RoomObjectProperties for PowerCreep {}
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 unsafe impl RoomObjectProperties for ScoreContainer {}
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 unsafe impl RoomObjectProperties for ScoreCollector {}
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 unsafe impl RoomObjectProperties for SymbolContainer {}
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 unsafe impl RoomObjectProperties for SymbolDecoder {}
 
 impl_structure_properties! {
@@ -682,11 +682,11 @@ unsafe impl HasStore for StructureTerminal {}
 unsafe impl HasStore for StructureTower {}
 unsafe impl HasStore for Tombstone {}
 unsafe impl HasStore for PowerCreep {}
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 unsafe impl HasStore for ScoreContainer {}
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 unsafe impl HasStore for ScoreCollector {}
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 unsafe impl HasStore for SymbolContainer {}
 
 // NOTE: keep impls for Structure* in sync with accessor methods in
@@ -717,7 +717,7 @@ unsafe impl CanDecay for StructurePortal {}
 unsafe impl CanDecay for StructureRampart {}
 unsafe impl CanDecay for StructureRoad {}
 unsafe impl CanDecay for Tombstone {}
-#[cfg(feature = "enable-score")]
+#[cfg(feature = "score")]
 unsafe impl CanDecay for ScoreContainer {}
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 unsafe impl CanDecay for SymbolContainer {}

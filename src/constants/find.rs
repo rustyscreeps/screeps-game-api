@@ -35,7 +35,7 @@ use crate::{
 #[cfg(feature = "score")]
 use crate::objects::{ScoreCollector, ScoreContainer};
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 use crate::objects::{SymbolContainer, SymbolDecoder};
 
 /// Trait representing things which can be used in the 'find' function.
@@ -91,9 +91,9 @@ pub enum RoomObject {
     ScoreContainers = 10011,
     #[cfg(feature = "score")]
     ScoreCollectors = 10012,
-    #[cfg(feature = "enable-symbols")]
+    #[cfg(feature = "symbols")]
     SymbolContainers = 10021,
-    #[cfg(feature = "enable-symbols")]
+    #[cfg(feature = "symbols")]
     SymbolDecoders = 10022,
 }
 
@@ -191,7 +191,7 @@ typesafe_find_constants! {
     pub struct SCORE_COLLECTORS = (10012, ScoreCollector);
 }
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 typesafe_find_constants! {
     pub struct SYMBOL_CONTAINERS = (10021, SymbolContainer);
     pub struct SYMBOL_DECODERS = (10022, SymbolDecoder);

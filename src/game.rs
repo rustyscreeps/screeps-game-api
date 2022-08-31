@@ -151,7 +151,7 @@ pub fn time() -> u32 {
 /// See [https://docs-season.screeps.com/api/#Game.score]
 ///
 /// [https://docs-season.screeps.com/api/#Game.score]: https://docs-season.screeps.com/api/#Game.score
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 pub fn score() -> u32 {
     js_unwrap!(Game.score)
 }
@@ -162,7 +162,7 @@ pub fn score() -> u32 {
 /// See [https://docs-season.screeps.com/api/#Game.symbols]
 ///
 /// [https://docs-season.screeps.com/api/#Game.symbols]: https://docs-season.screeps.com/api/#Game.symbols
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 pub fn symbols() -> HashMap<ResourceType, u32> {
     // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
     //

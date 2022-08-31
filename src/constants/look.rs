@@ -29,7 +29,7 @@ use crate::{
 #[cfg(feature = "score")]
 use crate::objects::{ScoreCollector, ScoreContainer};
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 use crate::objects::{SymbolContainer, SymbolDecoder};
 
 /// Internal enum representing each LOOK_* constant.
@@ -84,10 +84,10 @@ pub enum Look {
     #[cfg(feature = "score")]
     #[display("scoreCollector")]
     ScoreCollectors = 10012,
-    #[cfg(feature = "enable-symbols")]
+    #[cfg(feature = "symbols")]
     #[display("symbolContainer")]
     SymbolContainers = 10021,
-    #[cfg(feature = "enable-symbols")]
+    #[cfg(feature = "symbols")]
     #[display("symbolDecoder")]
     SymbolDecoders = 10022,
 }
@@ -137,7 +137,7 @@ typesafe_look_constants! {
     pub struct SCORE_COLLECTORS = (Look::ScoreCollectors, ScoreCollector, IntoExpectedType::into_expected_type);
 }
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 typesafe_look_constants! {
     pub struct SYMBOL_CONTAINERS = (Look::SymbolContainers, SymbolContainer, IntoExpectedType::into_expected_type);
     pub struct SYMBOL_DECODERS = (Look::SymbolDecoders, SymbolDecoder, IntoExpectedType::into_expected_type);

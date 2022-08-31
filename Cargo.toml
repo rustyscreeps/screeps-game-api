@@ -54,7 +54,7 @@ inter-shard-memory = []
 score = []
 
 # Enable symbol containers, decoders, and resources - used in season 2
-enable-symbols = []
+symbols = []
 
 ## Sets of the above features for different server environments
 
@@ -65,4 +65,4 @@ mmo = ["generate-pixel", "inter-shard-memory"]
 seasonal-season-1 = ["score"]
 
 # Seasonal server, season 2
-seasonal-season-2 = ["disable-generate-pixel", "disable-inter-shard-memory", "enable-symbols"]
+seasonal-season-2 = ["symbols"]

@@ -9,9 +9,8 @@ Unreleased
 - Add the `mmo` feature which activates the `generate-pixel` and `inter-shard-memory` because
   these interfaces don't exist on private servers.
 - Add the `seasonal-season-1` feature for season 1, which activates the `score` feature.
-- Add the `enable-symbols` feature to support season 2.
-- Add the `seasonal-season-2` feature for season 2, which activates the `disable-generate-pixel`,
-  `disable-inter-shard-memory`, and `enable-symbols` features.
+- Add the `symbols` feature to support season 2.
+- Add the `seasonal-season-2` feature for season 2, which activates the `symbols` feature.
 
 0.9.0 (2021-01-23)
 ==================

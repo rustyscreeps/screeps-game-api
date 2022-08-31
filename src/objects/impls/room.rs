@@ -30,7 +30,7 @@ use crate::{
 #[cfg(feature = "score")]
 use crate::objects::{ScoreCollector, ScoreContainer};
 
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 use crate::objects::{SymbolContainer, SymbolDecoder};
 
 simple_accessors! {
@@ -809,9 +809,9 @@ pub enum LookResult {
     ScoreContainer(ScoreContainer),
     #[cfg(feature = "score")]
     ScoreCollector(ScoreCollector),
-    #[cfg(feature = "enable-symbols")]
+    #[cfg(feature = "symbols")]
     SymbolContainer(SymbolContainer),
-    #[cfg(feature = "enable-symbols")]
+    #[cfg(feature = "symbols")]
     SymbolDecoder(SymbolDecoder),
 }
 
@@ -849,11 +849,11 @@ impl TryFrom<Value> for LookResult {
             Look::ScoreCollectors => {
                 LookResult::ScoreCollector(js_unwrap_ref!(@{v}.scoreCollector))
             }
-            #[cfg(feature = "enable-symbols")]
+            #[cfg(feature = "symbols")]
             Look::SymbolContainers => {
                 LookResult::SymbolContainer(js_unwrap_ref!(@{v}.symbolContainer))
             }
-            #[cfg(feature = "enable-symbols")]
+            #[cfg(feature = "symbols")]
             Look::SymbolDecoders => LookResult::SymbolDecoder(js_unwrap_ref!(@{v}.symbolDecoder)),
         };
         Ok(lr)

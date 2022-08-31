@@ -26,9 +26,9 @@ mod structure_rampart;
 mod structure_spawn;
 mod structure_terminal;
 mod structure_tower;
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 mod symbol_container;
-#[cfg(feature = "enable-symbols")]
+#[cfg(feature = "symbols")]
 mod symbol_decoder;
 mod tombstone;
 
