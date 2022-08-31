@@ -234,6 +234,18 @@ mod test {
     }
 
     #[test]
+    fn rust_vec_to_serde_json_from_serde_json_roundtrip() {
+        let mut ids_parsed = vec![];
+        for id in TEST_IDS {
+            let parsed: RawObjectId = id.parse().unwrap();
+            ids_parsed.push(parsed);
+        }
+        let serialized = serde_json::to_string(&ids_parsed).unwrap();
+        let ids_reparsed: Vec<RawObjectId> = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(ids_parsed, ids_reparsed);
+    }
+
+    #[test]
     fn rust_to_serde_bincode_from_serde_bincode_roundtrip() {
         for id in TEST_IDS {
             let parsed: RawObjectId = id.parse().unwrap();
@@ -242,6 +254,18 @@ mod test {
             assert_eq!(parsed, reparsed);
             assert_eq!(reparsed.to_string(), *id);
         }
+    }
+
+    #[test]
+    fn rust_vec_to_serde_bincode_from_serde_bincode_roundtrip() {
+        let mut ids_parsed = vec![];
+        for id in TEST_IDS {
+            let parsed: RawObjectId = id.parse().unwrap();
+            ids_parsed.push(parsed);
+        }
+        let serialized = bincode::serialize(&ids_parsed).unwrap();
+        let ids_reparsed: Vec<RawObjectId> = bincode::deserialize(&serialized).unwrap();
+        assert_eq!(ids_parsed, ids_reparsed);
     }
 
     const INVALID_IDS: &[&str] = &[
