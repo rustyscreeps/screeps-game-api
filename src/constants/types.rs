@@ -342,8 +342,10 @@ pub enum ResourceType {
     SymbolQoph = "symbol_qoph",
     #[cfg(feature = "symbols")]
     SymbolRes = "symbol_res",
+    // sin/sim mismatch is intended and present in the mod:
+    // https://github.com/screeps/mod-season2/blob/master/src/resources.js#L23
     #[cfg(feature = "symbols")]
-    SymbolSin = "symbol_sin",
+    SymbolSin = "symbol_sim",
     #[cfg(feature = "symbols")]
     SymbolTaw = "symbol_taw",
 }
