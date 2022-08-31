@@ -42,12 +42,12 @@ simple_accessors! {
 }
 
 impl Room {
-    pub fn serialize_path(&self, path: &[Step]) -> String {
-        js_unwrap! {@{self.as_ref()}.serializePath(@{path})}
+    pub fn serialize_path(path: &[Step]) -> String {
+        js_unwrap! {Room.serializePath(@{path})}
     }
 
-    pub fn deserialize_path(&self, path: &str) -> Vec<Step> {
-        js_unwrap! {@{self.as_ref()}.deserializePath(@{path})}
+    pub fn deserialize_path(path: &str) -> Vec<Step> {
+        js_unwrap! {Room.deserializePath(@{path})}
     }
 
     pub fn create_construction_site<T>(&self, at: &T, ty: StructureType) -> ReturnCode
@@ -700,7 +700,15 @@ pub struct ObjectDestroyedEvent {
 pub struct BuildEvent {
     pub target_id: String,
     pub amount: u32,
-    pub energy_spent: u32,
+    // energySpent is in documentation but is not present
+    //pub energy_spent: u32,
+    // undocumented fields; reference:
+    // https://github.com/screeps/engine/blob/78631905d975700d02786d9b666b9f97b1f6f8f9/src/processor/intents/creeps/build.js#L94
+    #[serde(deserialize_with = "crate::StructureType::deserialize_from_str")]
+    pub structure_type: StructureType,
+    pub x: u8,
+    pub y: u8,
+    pub incomplete: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]

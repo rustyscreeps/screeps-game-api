@@ -23,16 +23,13 @@ description = "WASM bindings to the in-game Screeps API"
 [lib]
 name = "screeps"
 
-[badges]
-travis-ci = { repository = "rustyscreeps/screeps-game-api" }
-
 [dependencies]
-arrayvec = "0.4"
-enum-iterator = "0.3"
+arrayvec = "0.5"
+enum-iterator = "0.6"
 log = "0.4"
-num-derive = "0.2"
+num-derive = "0.3"
 num-traits = "0.2"
-parse-display = "0.1"
+parse-display = { version = "0.4", default-features = false, features = [ 'std', 'once_cell' ] }
 serde = {version = "1", features = ["derive"]}
 serde_json = "1"
 serde_repr = "0.1"

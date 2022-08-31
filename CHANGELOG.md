@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+- Fixed `Room::serialize_path` and `Room::deserialize_path`, which are static methods and don't
+  exist on instances of `Room` objects themselves.
+- Changed `BuildEvent` to match what's returned by the game, which doesn't match the documentation.
 - Add the `disable-generate-pixel`, `disable-inter-shard-memory`, and `enable-score` features
   which enable or disable features that are not all present on all server environments.
 - Add the `private-server` feature which activates the `disable-generate-pixel` and

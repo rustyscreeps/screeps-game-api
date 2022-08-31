@@ -1,0 +1,35 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        toolchain: [stable] # For now disable nightly toolchain
+    steps:
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install cargo-web
+        uses: actions-rs/install@v0.1
+        with:
+          crate: cargo-web
+          version: latest
+          use-tool-cache: true
+      - name: cargo web build
+        uses: actions-rs/cargo@v1
+        with:
+          command: web
+          args: build --target=wasm32-unknown-unknown --verbose
+      - name: cargo web build --all-features
+        uses: actions-rs/cargo@v1
+        with:
+          command: web
+          args: build --target=wasm32-unknown-unknown --all-features --verbose
