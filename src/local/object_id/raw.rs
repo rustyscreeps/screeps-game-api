@@ -1,7 +1,10 @@
 use std::{fmt, fmt::Write, str::FromStr};
 
 use arrayvec::ArrayString;
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{Error, Visitor},
+    Deserialize, Serialize,
+};
 
 use super::errors::RawObjectIdParseError;
 
@@ -25,8 +28,7 @@ const MAX_PACKED_VAL: u128 = (1 << (32 * 3)) - 1;
 /// [`Ord`]: std::cmp::Ord
 /// [`PartialOrd`]: std::cmp::PartialOrd
 /// [`ObjectId`]: super::ObjectId
-#[derive(Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
-#[serde(transparent)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct RawObjectId {
     packed: u128,
 }
@@ -48,6 +50,59 @@ impl fmt::Display for RawObjectId {
             self.packed >> 32,
             width = (self.packed as u32) as usize
         )
+    }
+}
+
+impl Serialize for RawObjectId {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            serializer.collect_str(&self.to_array_string())
+        } else {
+            serializer.serialize_bytes(&self.packed.to_be_bytes())
+        }
+    }
+}
+
+struct RawObjectIdVisitor;
+
+impl<'de> Visitor<'de> for RawObjectIdVisitor {
+    type Value = RawObjectId;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a string or bytes representing an object id")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: Error,
+    {
+        RawObjectId::from_str(v).map_err(|e| E::custom(format!("Could not parse object id: {}", e)))
+    }
+
+    fn visit_bytes<E>(self, v: &[u8]) -> Result<Self::Value, E>
+    where
+        E: Error,
+    {
+        v.try_into()
+            .map(u128::from_be_bytes)
+            .map(RawObjectId::from_packed)
+            .map_err(|e| E::custom(format!("Could not parse object id: {}", e)))
+    }
+}
+
+impl<'de> Deserialize<'de> for RawObjectId {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_str(RawObjectIdVisitor)
+        } else {
+            deserializer.deserialize_bytes(RawObjectIdVisitor)
+        }
     }
 }
 
