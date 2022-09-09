@@ -1,12 +1,10 @@
-# Based on https://github.com/actions-rs/meta/blob/master/recipes/msrv.md
-
 on: [push, pull_request]
 
-name: Test
+name: test
 
 jobs:
   check:
-    name: Check (${{ matrix.rust }})
+    name: check (${{ matrix.rust }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -48,7 +46,7 @@ jobs:
           command: check
 
   test:
-    name: Test (${{ matrix.rust }})
+    name: test (${{ matrix.rust }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
