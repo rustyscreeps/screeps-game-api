@@ -1,0 +1,74 @@
+on: [push, pull_request]
+
+name: lint
+
+jobs:
+  fmt:
+    name: fmt (${{ matrix.rust }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - nightly
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt
+          override: true
+
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        continue-on-error: false
+        with:
+          command: fmt
+          args: --all -- --check
+
+  clippy:
+    name: clippy (${{ matrix.rust }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - nightly
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          components: clippy
+          override: true
+
+      - name: Update Dependencies
+        uses: actions-rs/cargo@v1
+        with:
+          command: update
+
+      - name: Cache dependencies
+        env:
+          rustc-hash: ${{ steps.toolchain.outputs.rustc_hash }}
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ env.rustc-hash }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run cargo clippy
+        uses: actions-rs/clippy-check@v1
+        continue-on-error: false
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features -- -D warnings
