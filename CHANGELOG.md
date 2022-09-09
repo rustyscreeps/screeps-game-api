@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.9.1 (2022-09-08)
+==================
+
 - Fixed `Room::serialize_path` and `Room::deserialize_path`, which are static methods and don't
   exist on instances of `Room` objects themselves.
 - Changed `BuildEvent` to match what's returned by the game, which doesn't match the documentation.
