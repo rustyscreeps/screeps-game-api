@@ -1,10 +1,10 @@
-name: build
-
 on: [push, pull_request]
+
+name: build
 
 jobs:
   build:
-    name: Build (${{ matrix.toolchain }})
+    name: build (${{ matrix.toolchain }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
