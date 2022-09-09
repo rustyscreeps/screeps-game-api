@@ -153,7 +153,7 @@ pub fn time() -> u32 {
 /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.score)
 #[cfg(feature = "symbols")]
 pub fn score() -> u32 {
-    Game::score().into()
+    Game::score()
 }
 
 /// The symbols you've decoded after multiplier adjustments, used to
