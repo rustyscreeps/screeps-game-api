@@ -1,6 +1,13 @@
 Unreleased
 ==========
 
+### Notably breaking:
+
+- Convert from stdweb to wasm-bindgen as underlying framework. While extensive effort was put into
+  keeping the API as similar as possible to prior versions, breaking changes are present
+  throughout the API as well as associated representations, such as resource types' serialized
+  values; bots still using stdweb APIs should target version 0.9.
+
 0.9.1 (2022-09-08)
 ==================
 
