@@ -1,6 +1,6 @@
 use crate::{
     constants::Color,
-    containers::JsContainerFromValue,
+    js_collections::JsContainerFromValue,
     objects::{RoomObject, RoomPosition},
 };
 use js_sys::JsString;

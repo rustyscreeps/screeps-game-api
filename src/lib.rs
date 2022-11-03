@@ -24,11 +24,11 @@
 
 pub mod console;
 pub mod constants;
-pub mod containers;
 pub mod enums;
 pub mod game;
 #[cfg(feature = "inter-shard-memory")]
 pub mod inter_shard_memory;
+pub mod js_collections;
 pub mod local;
 pub mod memory;
 pub mod objects;
@@ -38,7 +38,7 @@ pub mod raw_memory;
 pub mod traits;
 
 pub use crate::{
-    constants::*, containers::*, enums::*, game::*, local::*, objects::*, pathfinder::*,
+    constants::*, enums::*, game::*, js_collections::*, local::*, objects::*, pathfinder::*,
     raw_memory::*, traits::*,
 };
 

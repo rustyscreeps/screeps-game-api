@@ -4,7 +4,7 @@
 use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
-use crate::{constants::ReturnCode, containers::JsHashMap};
+use crate::{constants::ReturnCode, js_collections::JsHashMap};
 
 #[wasm_bindgen]
 extern "C" {

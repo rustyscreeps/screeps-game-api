@@ -1,6 +1,6 @@
 use crate::{
     constants::{ReturnCode, StructureType},
-    containers::JsContainerFromValue,
+    js_collections::JsContainerFromValue,
     objects::{Owner, RoomObject},
     prelude::*,
 };

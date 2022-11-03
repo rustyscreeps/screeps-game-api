@@ -10,7 +10,7 @@ use crate::{
         look::*, Color, ExitDirection, Find, Look, PowerType, ResourceType, ReturnCode,
         StructureType,
     },
-    containers::JsContainerFromValue,
+    js_collections::JsContainerFromValue,
     objects::*,
     prelude::*,
     FindConstant, RoomCostResult, RoomName,

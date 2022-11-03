@@ -10,8 +10,8 @@ use std::convert::{TryFrom, TryInto};
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    constants::ExitDirection, containers::JsHashMap, objects::RoomTerrain, Direction, ReturnCode,
-    RoomName,
+    constants::ExitDirection, js_collections::JsHashMap, objects::RoomTerrain, Direction,
+    ReturnCode, RoomName,
 };
 
 #[wasm_bindgen]

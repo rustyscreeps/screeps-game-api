@@ -11,7 +11,7 @@ use arrayvec::ArrayString;
 use js_sys::JsString;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::containers::{JsContainerFromValue, JsContainerIntoValue};
+use crate::js_collections::{JsContainerFromValue, JsContainerIntoValue};
 
 use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 

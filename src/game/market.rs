@@ -8,7 +8,7 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::{MarketResourceType, OrderType, ResourceType, ReturnCode},
-    containers::{JsContainerFromValue, JsHashMap},
+    js_collections::{JsContainerFromValue, JsHashMap},
     local::{LodashFilter, RoomName},
 };
 

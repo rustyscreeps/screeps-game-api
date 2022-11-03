@@ -1,6 +1,6 @@
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
-    containers::JsContainerFromValue,
+    js_collections::JsContainerFromValue,
     objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
     },

@@ -6,7 +6,7 @@ use js_sys::{Array, JsString, Object};
 
 use wasm_bindgen::prelude::*;
 
-use crate::containers::JsHashMap;
+use crate::js_collections::JsHashMap;
 
 #[wasm_bindgen]
 extern "C" {
