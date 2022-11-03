@@ -1,6 +1,6 @@
 use crate::{
     constants::{ReturnCode, StructureType},
-    js_collections::JsContainerFromValue,
+    js_collections::JsCollectionFromValue,
     objects::{Owner, RoomObject},
     prelude::*,
 };
@@ -69,7 +69,7 @@ impl MaybeHasNativeId for ConstructionSite {
     }
 }
 
-impl JsContainerFromValue for ConstructionSite {
+impl JsCollectionFromValue for ConstructionSite {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
     }

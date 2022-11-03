@@ -10,7 +10,7 @@ use crate::{
         look::*, Color, ExitDirection, Find, Look, PowerType, ResourceType, ReturnCode,
         StructureType,
     },
-    js_collections::JsContainerFromValue,
+    js_collections::JsCollectionFromValue,
     objects::*,
     prelude::*,
     FindConstant, RoomCostResult, RoomName,
@@ -291,7 +291,7 @@ impl PartialEq for Room {
 
 impl Eq for Room {}
 
-impl JsContainerFromValue for Room {
+impl JsCollectionFromValue for Room {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
     }

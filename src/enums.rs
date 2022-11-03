@@ -2,7 +2,7 @@ use enum_dispatch::enum_dispatch;
 use std::convert::TryFrom;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::{objects::*, prelude::*, JsContainerFromValue};
+use crate::{objects::*, prelude::*, JsCollectionFromValue};
 
 #[enum_dispatch(Attackable)]
 pub enum AttackableObject {
@@ -416,7 +416,7 @@ impl From<JsValue> for StructureObject {
     }
 }
 
-impl JsContainerFromValue for StructureObject {
+impl JsCollectionFromValue for StructureObject {
     fn from_value(val: JsValue) -> Self {
         Self::from(val)
     }

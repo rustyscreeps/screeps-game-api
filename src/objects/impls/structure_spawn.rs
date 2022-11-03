@@ -1,6 +1,6 @@
 use crate::{
     constants::ReturnCode,
-    js_collections::{JsContainerFromValue, ObjectExt},
+    js_collections::{JsCollectionFromValue, ObjectExt},
     objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
     Direction, Part,
@@ -118,7 +118,7 @@ impl StructureSpawn {
     }
 }
 
-impl JsContainerFromValue for StructureSpawn {
+impl JsCollectionFromValue for StructureSpawn {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
     }

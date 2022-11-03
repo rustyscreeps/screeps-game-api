@@ -8,7 +8,7 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::{MarketResourceType, OrderType, ResourceType, ReturnCode},
-    js_collections::{JsContainerFromValue, JsHashMap},
+    js_collections::{JsCollectionFromValue, JsHashMap},
     local::{LodashFilter, RoomName},
 };
 
@@ -375,7 +375,7 @@ extern "C" {
     pub fn price(this: &MyOrder) -> f64;
 }
 
-impl JsContainerFromValue for MyOrder {
+impl JsCollectionFromValue for MyOrder {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
     }

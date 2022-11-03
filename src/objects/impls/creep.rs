@@ -1,6 +1,6 @@
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
-    js_collections::JsContainerFromValue,
+    js_collections::JsCollectionFromValue,
     objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
     },
@@ -387,7 +387,7 @@ impl Creep {
     }
 }
 
-impl JsContainerFromValue for Creep {
+impl JsCollectionFromValue for Creep {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
     }

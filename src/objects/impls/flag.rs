@@ -1,6 +1,6 @@
 use crate::{
     constants::Color,
-    js_collections::JsContainerFromValue,
+    js_collections::JsCollectionFromValue,
     objects::{RoomObject, RoomPosition},
 };
 use js_sys::JsString;
@@ -62,7 +62,7 @@ extern "C" {
     pub fn set_position(this: &Flag, pos: RoomPosition);
 }
 
-impl JsContainerFromValue for Flag {
+impl JsCollectionFromValue for Flag {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
     }

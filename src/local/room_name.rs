@@ -11,7 +11,7 @@ use arrayvec::ArrayString;
 use js_sys::JsString;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::js_collections::{JsContainerFromValue, JsContainerIntoValue};
+use crate::js_collections::{JsCollectionFromValue, JsCollectionIntoValue};
 
 use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 
@@ -235,13 +235,13 @@ impl TryFrom<JsString> for RoomName {
     }
 }
 
-impl JsContainerIntoValue for RoomName {
+impl JsCollectionIntoValue for RoomName {
     fn into_value(self) -> JsValue {
         self.into()
     }
 }
 
-impl JsContainerFromValue for RoomName {
+impl JsCollectionFromValue for RoomName {
     fn from_value(val: JsValue) -> Self {
         let val: JsString = val.unchecked_into();
         let val: String = val.into();

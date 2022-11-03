@@ -20,11 +20,11 @@ extern "C" {
     pub(crate) fn get_value(this: &ObjectExt, prop: &JsValue) -> JsValue;
 }
 
-pub trait JsContainerIntoValue {
+pub trait JsCollectionIntoValue {
     fn into_value(self) -> JsValue;
 }
 
-pub trait JsContainerFromValue {
+pub trait JsCollectionFromValue {
     fn from_value(val: JsValue) -> Self;
 }
 
@@ -35,7 +35,7 @@ pub struct JsHashMap<K, V> {
 
 impl<K, V> JsHashMap<K, V>
 where
-    K: JsContainerFromValue,
+    K: JsCollectionFromValue,
 {
     pub fn keys(&self) -> impl Iterator<Item = K> {
         let array = Object::keys(self.map.unchecked_ref());
@@ -46,7 +46,7 @@ where
 
 impl<K, V> JsHashMap<K, V>
 where
-    V: JsContainerFromValue,
+    V: JsCollectionFromValue,
 {
     pub fn values(&self) -> impl Iterator<Item = V> {
         let array = Object::values(self.map.unchecked_ref());
@@ -57,8 +57,8 @@ where
 
 impl<K, V> JsHashMap<K, V>
 where
-    K: JsContainerIntoValue,
-    V: JsContainerFromValue,
+    K: JsCollectionIntoValue,
+    V: JsCollectionFromValue,
 {
     pub fn get(&self, key: K) -> Option<V> {
         let key = key.into_value();
@@ -74,8 +74,8 @@ where
 
 impl<K, V> JsHashMap<K, V>
 where
-    K: JsContainerIntoValue,
-    V: JsContainerIntoValue,
+    K: JsCollectionIntoValue,
+    V: JsCollectionIntoValue,
 {
     pub fn set(&self, key: K, value: V) {
         let key = key.into_value();
@@ -121,7 +121,7 @@ impl<T> OwnedArrayIter<T> {
 
 impl<T> std::iter::Iterator for OwnedArrayIter<T>
 where
-    T: JsContainerFromValue,
+    T: JsCollectionFromValue,
 {
     type Item = T;
 
@@ -140,7 +140,7 @@ where
 
 impl<T> std::iter::DoubleEndedIterator for OwnedArrayIter<T>
 where
-    T: JsContainerFromValue,
+    T: JsCollectionFromValue,
 {
     fn next_back(&mut self) -> Option<Self::Item> {
         let index = self.range.next_back()?;
@@ -150,32 +150,32 @@ where
     }
 }
 
-impl<T> std::iter::FusedIterator for OwnedArrayIter<T> where T: JsContainerFromValue {}
+impl<T> std::iter::FusedIterator for OwnedArrayIter<T> where T: JsCollectionFromValue {}
 
-impl<T> std::iter::ExactSizeIterator for OwnedArrayIter<T> where T: JsContainerFromValue {}
+impl<T> std::iter::ExactSizeIterator for OwnedArrayIter<T> where T: JsCollectionFromValue {}
 
 //
-// Utility conversions for containers.
+// Utility conversions for collections.
 //
-impl JsContainerIntoValue for JsString {
+impl JsCollectionIntoValue for JsString {
     fn into_value(self) -> JsValue {
         self.unchecked_into()
     }
 }
 
-impl JsContainerFromValue for JsString {
+impl JsCollectionFromValue for JsString {
     fn from_value(val: JsValue) -> JsString {
         val.unchecked_into()
     }
 }
 
-impl JsContainerIntoValue for String {
+impl JsCollectionIntoValue for String {
     fn into_value(self) -> JsValue {
         self.into()
     }
 }
 
-impl JsContainerFromValue for String {
+impl JsCollectionFromValue for String {
     fn from_value(val: JsValue) -> String {
         let val: JsString = val.unchecked_into();
 
@@ -183,13 +183,13 @@ impl JsContainerFromValue for String {
     }
 }
 
-impl JsContainerIntoValue for u8 {
+impl JsCollectionIntoValue for u8 {
     fn into_value(self) -> JsValue {
         JsValue::from_f64(self as f64)
     }
 }
 
-impl JsContainerFromValue for u8 {
+impl JsCollectionFromValue for u8 {
     fn from_value(val: JsValue) -> u8 {
         if let Some(val) = val.as_string() {
             val.parse::<u8>().expect("expected parseable u8 string")
