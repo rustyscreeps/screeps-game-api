@@ -12,12 +12,6 @@ use crate::js_collections::JsHashMap;
 extern "C" {
     pub type RawMemory;
 
-    //TODO: wiarchbe: This doesn't work :(
-    /// Get an [`Object`] with all of the segments requested on the previous
-    /// tick, with segment numbers as keys and segment data in [`JsString`] form
-    /// as values.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)
     #[wasm_bindgen(static_method_of = RawMemory, getter = segments)]
     fn segments_internal() -> Object;
 
@@ -44,12 +38,8 @@ extern "C" {
     #[wasm_bindgen(static_method_of = RawMemory)]
     pub fn set(val: &JsString);
 
-    /// Sets available memory segments for the next tick, as an array of numbers
-    /// from 0 to 99.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setActiveSegments)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setActiveSegments)]
-    pub fn set_active_segments_internal(segment_ids: &Array);
+    fn set_active_segments_internal(segment_ids: &Array);
 
     /// Sets available foreign memory segment for the next tick to a memory
     /// segment marked as public by another user. If no id is passed, the user's
@@ -66,8 +56,8 @@ extern "C" {
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setDefaultPublicSegment)]
     pub fn set_default_public_segment(segment_id: Option<u8>);
 
-    /// Sets available memory segments for the next tick, as an array of numbers
-    /// from 0 to 99.
+    /// Sets which of your memory segments are readable to other players as
+    /// foreign segments, overriding previous settings.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setPublicSegments)
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setPublicSegments)]
@@ -79,11 +69,15 @@ impl RawMemory {
     /// the previous tick, with segment numbers as keys and segment data in
     /// [`JsString`] form as values.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)    
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)
     pub fn segments() -> JsHashMap<u8, String> {
         RawMemory::segments_internal().into()
     }
 
+    /// Sets available memory segments for the next tick, as an array of numbers
+    /// from 0 to 99 (max of 10 segments allowed).
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setActiveSegments)
     pub fn set_active_segments(segment_ids: &[u8]) {
         let segment_ids: Array = segment_ids
             .iter()
