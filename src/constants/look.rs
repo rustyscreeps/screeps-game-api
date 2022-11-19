@@ -1,5 +1,6 @@
-use crate::{enums::StructureObject, objects::*};
+use crate::{constants::Terrain, enums::StructureObject, objects::*};
 use enum_iterator::IntoEnumIterator;
+use js_sys::JsString;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -31,6 +32,19 @@ pub enum Look {
     SymbolContainers = "symbolContainer",
     //#[cfg(feature = "symbols")]
     SymbolDecoders = "symbolDecoder",
+}
+
+// the strings here do not match the terrain mask constants, appearing nowhere
+// but look results. assuming it's a plain if it's anything invalid is probably
+// not the best approach but for now it's something
+fn terrain_look_string_to_enum(terrain_jsvalue: JsValue) -> Terrain {
+    let terrain_string: String = JsString::from(terrain_jsvalue).into();
+    match terrain_string.as_str() {
+        "wall" => Terrain::Wall,
+        "swamp" => Terrain::Swamp,
+        "plain" => Terrain::Plain,
+        _ => Terrain::Plain,
+    }
 }
 
 //TODO: wiarchbe: Add back in calculated doc.
@@ -79,8 +93,7 @@ typesafe_look_constants! {
     pub struct CONSTRUCTION_SITES = (Look::ConstructionSites, ConstructionSite,
         Into::into);
     pub struct NUKES = (Look::Nukes, Nuke, Into::into);
-    //TODO: wiarchbe: Add back in terrain type.
-    //pub struct TERRAIN = (Look::Terrain, Terrain, TryInto::try_into);
+    pub struct TERRAIN = (Look::Terrain, Terrain, terrain_look_string_to_enum);
     pub struct TOMBSTONES = (Look::Tombstones, Tombstone, Into::into);
     pub struct POWER_CREEPS = (Look::PowerCreeps, PowerCreep, Into::into);
     pub struct RUINS = (Look::Ruins, Ruin, Into::into);
