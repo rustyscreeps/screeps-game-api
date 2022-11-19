@@ -113,7 +113,7 @@ impl From<Result<(), ErrorCode>> for ReturnCode {
         match value {
             Ok(_) => ReturnCode::Ok,
             // SAFETY: all ErrorCodes are valid ReturnCodes.
-            Err(code) => unsafe { ReturnCode::from_i8(code as i8).unwrap_unchecked() }
+            Err(code) => unsafe { ReturnCode::from_i8(code as i8).unwrap_unchecked() },
         }
     }
 }
