@@ -13,7 +13,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureObserver)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructureObserver;
 
     /// Set the [`StructureObserver`] to provide vision of a target room next

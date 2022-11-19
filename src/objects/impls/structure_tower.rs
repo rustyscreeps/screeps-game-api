@@ -12,7 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructureTower;
 
     /// The [`Store`] of the tower, which contains energy which is consumed when

@@ -14,7 +14,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructureSpawn;
 
     /// A shortcut to `Memory.spawns[spawn.name]`.

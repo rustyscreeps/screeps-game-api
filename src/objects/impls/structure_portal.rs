@@ -13,7 +13,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructurePortal)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructurePortal;
 
     #[wasm_bindgen(method, getter)]

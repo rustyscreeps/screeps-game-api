@@ -8,7 +8,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureInvaderCore)
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructureInvaderCore;
 
     /// The level of the [`StructureInvaderCore`]; 0 is a lesser invader core

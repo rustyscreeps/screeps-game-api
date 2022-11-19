@@ -12,7 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureRoad)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructureRoad;
 
     /// The number of ticks until the road will decay, losing

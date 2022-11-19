@@ -13,7 +13,7 @@ extern "C" {
     ///
     /// [`Mineral`]: crate::objects::Mineral
     #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructureExtractor;
 
     /// Ticks until this extractor can be used to [`Creep::harvest`] its

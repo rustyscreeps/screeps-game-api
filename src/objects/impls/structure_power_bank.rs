@@ -11,7 +11,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructurePowerBank)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructurePowerBank;
 
     /// The amount of power contained within the [`StructurePowerBank`].

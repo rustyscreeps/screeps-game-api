@@ -12,7 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#OwnedStructure)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type OwnedStructure;
 
     /// Whether this structure is owned by the player.

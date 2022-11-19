@@ -12,7 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureContainer)
     #[wasm_bindgen(extends = RoomObject, extends = Structure)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type StructureContainer;
 
     /// The [`Store`] of the container, which contains information about what
