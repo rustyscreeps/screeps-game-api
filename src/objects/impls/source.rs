@@ -8,7 +8,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Source)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Source;
 
     /// Amount of energy available to be harvested from the source.

@@ -12,7 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Tombstone)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Tombstone;
 
     /// The dead [`Creep`] or [`PowerCreep`] that this tombstone represents.

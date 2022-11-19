@@ -9,7 +9,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Nuke)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Nuke;
 
     /// Object ID of the Nuke, which can be used to efficiently fetch a fresh

@@ -175,50 +175,33 @@ extern "C" {
     #[wasm_bindgen(final, method, js_name = getTerrain)]
     pub fn get_terrain(this: &Room) -> RoomTerrain;
 
-    /// Get an array of all objects at a position.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAt)
     #[wasm_bindgen(final, method, js_name = lookAt)]
-    pub fn look_at(this: &Room, target: &RoomPosition) -> Array;
+    fn look_at_internal(this: &Room, target: &RoomPosition) -> Array;
 
-    /// Get an array of all objects at the given coordinates.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAt)
     #[wasm_bindgen(final, method, js_name = lookAt)]
-    pub fn look_at_xy(this: &Room, x: u8, y: u8) -> Array;
+    fn look_at_xy_internal(this: &Room, x: u8, y: u8) -> Array;
 
-    /// Get an array of all objects in a certain area, in either object or array
-    /// format depending on the `as_array` option.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
+    // only calling this in array mode currently due to more complex return type
+    // without
     #[wasm_bindgen(final, method, js_name = lookAtArea)]
-    pub fn look_at_area(
+    fn look_at_area_internal(
         this: &Room,
         top_y: u8,
         left_x: u8,
         bottom_y: u8,
         right_x: u8,
         as_array: bool,
-    ) -> JsValue;
+    ) -> Option<Array>;
 
-    /// Get an array of all objects of a given type at this position, if any.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
-    #[wasm_bindgen(method, js_name = lookForAt)]
+    #[wasm_bindgen(final, method, js_name = lookForAt)]
     fn look_for_at_internal(this: &Room, ty: Look, target: &RoomPosition) -> Option<Array>;
 
-    /// Get an array of all objects of a given type at the given coordinates, if
-    /// any.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
-    #[wasm_bindgen(method, js_name = lookForAt)]
+    #[wasm_bindgen(final, method, js_name = lookForAt)]
     fn look_for_at_xy_internal(this: &Room, ty: Look, x: u8, y: u8) -> Option<Array>;
 
-    /// Get an array of all objects in a certain area, in either object or array
-    /// format depending on the `as_array` option.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
-    #[wasm_bindgen(method, js_name = lookForAtArea)]
+    // only calling this in array mode currently due to more complex return type
+    // without
+    #[wasm_bindgen(final, method, js_name = lookForAtArea)]
     fn look_for_at_area_internal(
         this: &Room,
         ty: Look,
@@ -227,7 +210,7 @@ extern "C" {
         bottom_y: u8,
         right_x: u8,
         as_array: bool,
-    ) -> JsValue;
+    ) -> Option<Array>;
 }
 
 impl Room {
@@ -261,6 +244,48 @@ impl Room {
         js_log.into()
     }
 
+    /// Get all objects at a position.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAt)
+    pub fn look_at(&self, target: &RoomPosition) -> Vec<LookResult> {
+        self.look_at_internal(target)
+            .iter()
+            .map(LookResult::from_jsvalue_unknown_type)
+            .collect()
+    }
+
+    /// Get all objects at the given room coordinates.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAt)
+    pub fn look_at_xy(&self, x: u8, y: u8) -> Vec<LookResult> {
+        self.look_at_xy_internal(x, y)
+            .iter()
+            .map(LookResult::from_jsvalue_unknown_type)
+            .collect()
+    }
+
+    /// Get all objects in a certain area.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookAtArea)
+    pub fn look_at_area(
+        &self,
+        top_y: u8,
+        left_x: u8,
+        bottom_y: u8,
+        right_x: u8,
+    ) -> Vec<PositionedLookResult> {
+        self.look_at_area_internal(top_y, left_x, bottom_y, right_x, true)
+            .map(|arr| {
+                arr.iter()
+                    .map(PositionedLookResult::from_jsvalue_unknown_type)
+                    .collect()
+            })
+            .unwrap_or_else(Vec::new)
+    }
+
+    /// Get all objects of a given type at this position, if any.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
     pub fn look_for_at<T, U>(&self, _ty: T, target: &U) -> Vec<T::Item>
     where
         T: LookConstant,
@@ -273,12 +298,39 @@ impl Room {
             .unwrap_or_else(Vec::new)
     }
 
+    /// Get all objects of a given type at the given coordinates, if
+    /// any.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAt)
     pub fn look_for_at_xy<T>(&self, _ty: T, x: u8, y: u8) -> Vec<T::Item>
     where
         T: LookConstant,
     {
         self.look_for_at_xy_internal(T::look_code(), x, y)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
+            .unwrap_or_else(Vec::new)
+    }
+
+    /// Get all objects of a certain type in a certain area.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.lookForAtArea)
+    pub fn look_for_at_area<T>(
+        &self,
+        _ty: T,
+        top_y: u8,
+        left_x: u8,
+        bottom_y: u8,
+        right_x: u8,
+    ) -> Vec<PositionedLookResult>
+    where
+        T: LookConstant,
+    {
+        self.look_for_at_area_internal(T::look_code(), top_y, left_x, bottom_y, right_x, true)
+            .map(|arr| {
+                arr.iter()
+                    .map(|lr| PositionedLookResult::from_jsvalue_with_type(lr, T::look_code()))
+                    .collect()
+            })
             .unwrap_or_else(Vec::new)
     }
 }
@@ -853,74 +905,3 @@ pub struct PowerEvent {
     pub target_id: String,
     pub power: PowerType,
 }
-
-// pub enum LookResult {
-//     Creep(Creep),
-//     Energy(Resource),
-//     Resource(Resource),
-//     Source(Source),
-//     Mineral(Mineral),
-//     Deposit(Deposit),
-//     Structure(Structure),
-//     Flag(Flag),
-//     ConstructionSite(ConstructionSite),
-//     Nuke(Nuke),
-//     Terrain(Terrain),
-//     Tombstone(Tombstone),
-//     PowerCreep(PowerCreep),
-//     Ruin(Ruin),
-// }
-
-// impl TryFrom<Value> for LookResult {
-//     type Error = ConversionError;
-
-//     fn try_from(v: Value) -> Result<LookResult, Self::Error> {
-//         let look_type = js! (
-//             return __look_str_to_num(@{&v}.type);
-//         )
-//         .try_into()?;
-
-//         let lr = match look_type {
-//             Look::Creeps => LookResult::Creep(js_unwrap_ref!(@{v}.creep)),
-//             Look::Energy => LookResult::Energy(js_unwrap_ref!(@{v}.energy)),
-//             Look::Resources =>
-// LookResult::Resource(js_unwrap_ref!(@{v}.resource)),
-// Look::Sources => LookResult::Source(js_unwrap_ref!(@{v}.source)),
-// Look::Minerals => LookResult::Mineral(js_unwrap_ref!(@{v}.mineral)),
-//             Look::Deposits =>
-// LookResult::Deposit(js_unwrap_ref!(@{v}.deposit)),
-// Look::Structures => LookResult::Structure(js_unwrap_ref!(@{v}.structure)),
-//             Look::Flags => LookResult::Flag(js_unwrap_ref!(@{v}.flag)),
-//             Look::ConstructionSites => {
-//
-// LookResult::ConstructionSite(js_unwrap_ref!(@{v}.constructionSite))
-//             }
-//             Look::Nukes => LookResult::Nuke(js_unwrap_ref!(@{v}.nuke)),
-//             Look::Terrain =>
-// LookResult::Terrain(js_unwrap!(__terrain_str_to_num(@{v}.terrain))),
-//             Look::Tombstones =>
-// LookResult::Tombstone(js_unwrap_ref!(@{v}.tombstone)),
-// Look::PowerCreeps => LookResult::PowerCreep(js_unwrap_ref!(@{v}.powerCreep)),
-//             Look::Ruins => LookResult::Ruin(js_unwrap_ref!(@{v}.ruin)),
-//         };
-//         Ok(lr)
-//     }
-// }
-
-// pub struct PositionedLookResult {
-//     pub x: u32,
-//     pub y: u32,
-//     pub look_result: LookResult,
-// }
-
-// impl TryFrom<Value> for PositionedLookResult {
-//     type Error = ConversionError;
-
-//     fn try_from(v: Value) -> Result<PositionedLookResult, Self::Error> {
-//         let x: u32 = js!(return @{&v}.x;).try_into()?;
-//         let y: u32 = js!(return @{&v}.y;).try_into()?;
-//         let look_result: LookResult = v.try_into()?;
-
-//         Ok(PositionedLookResult { x, y, look_result })
-//     }
-// }

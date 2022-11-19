@@ -13,6 +13,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep)
     #[wasm_bindgen(extends = RoomObject)]
+    #[derive(Clone, Debug)]
     pub type PowerCreep;
 
     //TODO: wiarchbe: Come back to this... need a good 'maybe has position'

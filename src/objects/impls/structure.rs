@@ -13,7 +13,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Structure;
 
     /// Retrieve the current hits of this structure, or `0` if this structure is

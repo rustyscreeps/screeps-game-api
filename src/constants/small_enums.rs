@@ -2,6 +2,7 @@
 
 use crate::constants::find::Find;
 use enum_iterator::IntoEnumIterator;
+use js_sys::JsString;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
@@ -299,6 +300,25 @@ pub enum Terrain {
     Swamp = 2,
     /* TERRAIN_MASK_LAVA, unimplemented in game
      * Lava = 4, */
+}
+
+impl Terrain {
+    // the strings here do not match the terrain mask constants, appearing nowhere
+    // but look results. assuming it's a plain if it's anything invalid is probably
+    // not the best approach but for now it's something
+    pub fn from_look_constant_str(terrain_look_str: &str) -> Self {
+        match terrain_look_str {
+            "wall" => Terrain::Wall,
+            "swamp" => Terrain::Swamp,
+            "plain" => Terrain::Plain,
+            _ => Terrain::Plain,
+        }
+    }
+
+    pub fn from_look_constant_jsvalue(terrain_look_jsvalue: JsValue) -> Self {
+        let terrain_look_string: String = JsString::from(terrain_look_jsvalue).into();
+        Self::from_look_constant_str(&terrain_look_string)
+    }
 }
 
 /// Translates body part constants.

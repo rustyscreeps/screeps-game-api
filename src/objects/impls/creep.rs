@@ -16,7 +16,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Creep;
 
     #[wasm_bindgen(method, getter = body)]

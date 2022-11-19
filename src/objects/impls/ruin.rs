@@ -12,7 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Ruin)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Ruin;
 
     /// The tick that the structure was destroyed

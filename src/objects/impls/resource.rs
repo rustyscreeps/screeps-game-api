@@ -9,7 +9,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Resource)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Resource;
 
     /// Amount of resource this contains.

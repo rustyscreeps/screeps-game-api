@@ -14,7 +14,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type ConstructionSite;
 
     /// The Object ID of the [`ConstructionSite`], or `None` if it was created

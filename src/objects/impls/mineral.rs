@@ -12,7 +12,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Mineral;
 
     /// The density of the mineral on the next refill after it's depleted.

@@ -8,7 +8,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Deposit)
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Deposit;
 
     /// Ticks until the deposit can be harvested again.

@@ -16,7 +16,7 @@ extern "C" {
     ///
     /// [`FLAGS_LIMIT`]: crate::constants::FLAGS_LIMIT
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type Flag;
 
     /// Primary color of the flag.
