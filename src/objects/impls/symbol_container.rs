@@ -16,7 +16,7 @@ extern "C" {
     ///
     /// [`ResourceType::Score`]: crate::constants::ResourceType::Score
     #[wasm_bindgen(extends = RoomObject)]
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub type SymbolContainer;
 
     /// Object ID of the collector, which can be used to efficiently fetch a
