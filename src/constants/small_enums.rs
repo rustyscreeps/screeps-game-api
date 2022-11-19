@@ -73,6 +73,51 @@ impl TryFrom<JsValue> for ReturnCode {
     }
 }
 
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
+)]
+#[repr(i8)]
+pub enum ErrorCode {
+    NotOwner = -1,
+    NoPath = -2,
+    NameExists = -3,
+    Busy = -4,
+    NotFound = -5,
+    NotEnough = -6,
+    InvalidTarget = -7,
+    Full = -8,
+    NotInRange = -9,
+    InvalidArgs = -10,
+    Tired = -11,
+    NoBodypart = -12,
+    RclNotEnough = -14,
+    GclNotEnough = -15,
+}
+
+impl From<ReturnCode> for Result<(), ErrorCode> {
+    fn from(value: ReturnCode) -> Self {
+        match value {
+            ReturnCode::Ok => Ok(()),
+            code => {
+                // SAFETY: ErrorCode is a duplicate of ReturnCode, minus the Ok variant that
+                // was covered above.
+                let err_code = unsafe { ErrorCode::from_i8(code as i8).unwrap_unchecked() };
+                Err(err_code)
+            }
+        }
+    }
+}
+
+impl From<Result<(), ErrorCode>> for ReturnCode {
+    fn from(value: Result<(), ErrorCode>) -> Self {
+        match value {
+            Ok(_) => ReturnCode::Ok,
+            // SAFETY: all ErrorCodes are valid ReturnCodes.
+            Err(code) => unsafe { ReturnCode::from_i8(code as i8).unwrap_unchecked() }
+        }
+    }
+}
+
 /// Translates direction constants.
 #[wasm_bindgen]
 #[derive(
