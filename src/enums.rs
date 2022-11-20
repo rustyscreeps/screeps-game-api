@@ -344,7 +344,7 @@ pub enum MovableObject {
 /// Enum used for converting a [`Structure`] into a typed object of its specific
 /// structure type.
 #[enum_dispatch(StructureProperties, HasPosition)]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum StructureObject {
     StructureContainer,
     StructureController,

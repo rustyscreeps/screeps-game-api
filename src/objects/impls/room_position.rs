@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 
 use crate::{
-    constants::{Color, Direction, Look, ReturnCode, StructureType},
+    constants::{look::*, Color, Direction, Look, ReturnCode, StructureType},
     local::Position,
     prelude::*,
     prototypes::ROOM_POSITION_PROTOTYPE,
@@ -221,18 +221,11 @@ extern "C" {
     #[wasm_bindgen(method, js_name = isNearTo)]
     pub fn is_near_to_xy(this: &RoomPosition, x: u8, y: u8) -> bool;
 
-    // todo typed returns
-    /// Get an array of all objects at this position.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.look)
-    #[wasm_bindgen(method)]
-    pub fn look(this: &RoomPosition) -> Array;
+    #[wasm_bindgen(method, js_name = look)]
+    fn look_internal(this: &RoomPosition) -> Array;
 
-    /// Get an array of all objects of a given type at this position, if any.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
     #[wasm_bindgen(method, js_name = lookFor)]
-    pub fn look_for_internal(this: &RoomPosition, ty: Look) -> Option<Array>;
+    fn look_for_internal(this: &RoomPosition, ty: Look) -> Option<Array>;
 }
 
 impl RoomPosition {
@@ -248,6 +241,19 @@ impl RoomPosition {
             .expect("expected parseable room name")
     }
 
+    /// Get all objects at this position.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.look)
+    pub fn look(&self) -> Vec<LookResult> {
+        self.look_internal()
+            .iter()
+            .map(LookResult::from_jsvalue_unknown_type)
+            .collect()
+    }
+
+    /// Get all objects of a given type at this position, if any.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
     pub fn look_for<T>(&self, _ty: T) -> Vec<T::Item>
     where
         T: LookConstant,
