@@ -6,7 +6,7 @@ mod lodash_filter;
 mod object_id;
 mod room_coordinate;
 mod room_name;
-mod room_position;
+mod position;
 
 /// Represents two constants related to room names.
 ///
@@ -23,5 +23,5 @@ const VALID_ROOM_NAME_COORDINATES: Range<i32> = -HALF_WORLD_SIZE..HALF_WORLD_SIZ
 
 pub use self::{
     cost_matrix::*, lodash_filter::*, object_id::*, room_coordinate::*, room_name::*,
-    room_position::*,
+    position::*,
 };
