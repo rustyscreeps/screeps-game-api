@@ -1,5 +1,5 @@
 //! `*Type` constants.
-
+use crate::{JsCollectionFromValue, JsCollectionIntoValue};
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -601,6 +601,24 @@ pub enum PowerType {
     Fortify = 17,
     OperateController = 18,
     OperateFactory = 19,
+}
+
+impl JsCollectionFromValue for PowerType {
+    fn from_value(val: JsValue) -> Self {
+        let power_type_id = if let Some(val) = val.as_string() {
+            val.parse::<u32>().expect("expected parseable u32 string")
+        } else {
+            val.as_f64().expect("expected number value") as u32
+        };
+
+        Self::from_u32(power_type_id).expect("unknown power type")
+    }
+}
+
+impl JsCollectionIntoValue for PowerType {
+    fn into_value(self) -> JsValue {
+        JsValue::from_f64(self as u32 as f64)
+    }
 }
 
 /// Translates the `EFFECT_*` constants, which are natural effect types
