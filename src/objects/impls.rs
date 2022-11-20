@@ -66,8 +66,8 @@ pub use self::{
     resource::Resource,
     room::{
         AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
-        HarvestEvent, HealEvent, HealType, JsFindOptions, ObjectDestroyedEvent, PowerEvent,
-        RepairEvent, ReserveControllerEvent, Room, TransferEvent, UpgradeControllerEvent,
+        HarvestEvent, HealEvent, HealType, JsFindOptions, ObjectDestroyedEvent, Path, PowerEvent,
+        RepairEvent, ReserveControllerEvent, Room, Step, TransferEvent, UpgradeControllerEvent,
     },
     room_object::{Effect, RoomObject},
     room_position::RoomPosition,

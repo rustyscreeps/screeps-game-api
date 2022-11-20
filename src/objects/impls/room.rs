@@ -1,13 +1,13 @@
 use serde::{
     de::{self, MapAccess, Visitor},
-    Deserialize, Deserializer,
+    Deserialize, Deserializer, Serialize,
 };
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use std::{convert::TryInto, fmt};
 
 use crate::{
     constants::{
-        look::*, Color, ExitDirection, Find, Look, PowerType, ResourceType, ReturnCode,
+        look::*, Color, Direction, ExitDirection, Find, Look, PowerType, ResourceType, ReturnCode,
         StructureType,
     },
     js_collections::JsCollectionFromValue,
@@ -84,14 +84,14 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.serializePath)
     #[wasm_bindgen(static_method_of = Room, js_name = serializePath)]
-    pub fn serialize_path(path: &Array) -> JsString;
+    fn serialize_path_internal(path: &Array) -> JsString;
 
     /// Deserialize a string representation from [`Room::serialize_path`] back
     /// to a path array.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.deserializePath)
     #[wasm_bindgen(static_method_of = Room, js_name = deserializePath)]
-    pub fn deserialize_path(path: &JsString) -> Array;
+    fn deserialize_path_internal(path: &JsString) -> Array;
 
     /// Creates a construction site at given coordinates within this room. If
     /// it's a [`StructureSpawn`], a name can optionally be assigned for the
@@ -149,16 +149,13 @@ extern "C" {
     pub fn find_exit_to(this: &Room, room: &JsValue) -> ExitDirection;
 
     // todo FindPathOptions
-    /// Find a path within the room from one position to another.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.findPath)
     #[wasm_bindgen(final, method, js_name = findPath)]
-    pub fn find_path(
+    fn find_path_internal(
         this: &Room,
         origin: &RoomPosition,
         goal: &RoomPosition,
         options: Option<&Object>,
-    ) -> Array;
+    ) -> JsValue;
 
     #[wasm_bindgen(final, method, js_name = getEventLog)]
     fn get_event_log_internal(this: &Room, raw: bool) -> JsValue;
@@ -220,6 +217,22 @@ impl Room {
             .expect("expected parseable room name")
     }
 
+    pub fn serialize_path(path: &[Step]) -> String {
+        Self::serialize_path_internal(
+            serde_wasm_bindgen::to_value(path)
+                .expect("invalid path passed to serialize")
+                .unchecked_ref(),
+        )
+        .into()
+    }
+
+    pub fn deserialize_path(path: &str) -> Vec<Step> {
+        serde_wasm_bindgen::from_value(
+            Self::deserialize_path_internal(&JsString::from(path)).unchecked_into(),
+        )
+        .expect("invalid deserialized path")
+    }
+
     pub fn visual(&self) -> RoomVisual {
         RoomVisual::new(Some(self.name()))
     }
@@ -233,6 +246,19 @@ impl Room {
             .iter()
             .map(T::convert_and_check_item)
             .collect()
+    }
+
+    /// Find a path within the room from one position to another.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.findPath)
+    pub fn find_path(
+        &self,
+        origin: &RoomPosition,
+        goal: &RoomPosition,
+        options: Option<&Object>,
+    ) -> Path {
+        serde_wasm_bindgen::from_value(self.find_path_internal(origin, goal, options))
+            .expect("invalid path from Room.findPath")
     }
 
     pub fn get_event_log(&self) -> Vec<Event> {
@@ -621,26 +647,21 @@ where
     }
 }
 
-// #[derive(Clone, Debug, Deserialize, Serialize)]
-// pub struct Step {
-//     pub x: u32,
-//     pub y: u32,
-//     pub dx: i32,
-//     pub dy: i32,
-//     pub direction: Direction,
-// }
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Step {
+    pub x: u32,
+    pub y: u32,
+    pub dx: i32,
+    pub dy: i32,
+    pub direction: Direction,
+}
 
-// js_deserializable! {Step}
-// js_serializable! {Step}
-
-// #[derive(Debug, Deserialize)]
-// #[serde(untagged)]
-// pub enum Path {
-//     Vectorized(Vec<Step>),
-//     Serialized(String),
-// }
-
-// js_deserializable! {Path}
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+pub enum Path {
+    Vectorized(Vec<Step>),
+    Serialized(String),
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Event {
