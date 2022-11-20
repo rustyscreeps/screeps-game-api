@@ -2,10 +2,10 @@ use crate::{
     constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode},
     objects::{Owner, Resource, RoomObject, Store, StructureController, StructurePowerSpawn},
     prelude::*,
-    CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult,
+    CostMatrix, JsCollectionFromValue, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult,
 };
 use js_sys::{JsString, Object};
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -15,14 +15,6 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject)]
     #[derive(Clone, Debug)]
     pub type PowerCreep;
-
-    //TODO: wiarchbe: Come back to this... need a good 'maybe has position'
-    // implementation that doesn't conflict with base pos() on RoomObject.
-    /// Position of the object.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.pos)
-    //#[wasm_bindgen(method, getter)]
-    //pub fn pos(this: &RoomObject) -> Option<RoomPosition>;
 
     /// Create a new power creep in your account. Note that it will not
     /// initially be spawned.
@@ -36,14 +28,6 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.className)
     #[wasm_bindgen(method, getter = className)]
     pub fn class(this: &PowerCreep) -> PowerCreepClass;
-
-    /// The timestamp, in milliseconds since epoch, when the [`PowerCreep`] will
-    /// be permanently deleted due to [`PowerCreep::delete`]. Can be cancelled
-    /// with the same function until then.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.deleteTime)
-    #[wasm_bindgen(method, getter = deleteTime)]
-    pub fn delete_time(this: &PowerCreep) -> Option<u64>;
 
     /// Retrieve the current hits of this power creep.
     ///
@@ -63,7 +47,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.id)
     #[wasm_bindgen(method, getter = id)]
-    fn id_internal(this: &PowerCreep) -> Option<JsString>;
+    fn id_internal(this: &PowerCreep) -> JsString;
 
     /// Current level of the power creep, which can be increased with
     /// [`PowerCreep::upgrade`] if you have unspent GPL.
@@ -128,13 +112,6 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn shard(this: &PowerCreep) -> Option<JsString>;
 
-    /// The timestamp, in milliseconds since epoch, when the power creep will be
-    /// allowed to spawn again after dying.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.spawnCooldownTime)
-    #[wasm_bindgen(method, getter = spawnCooldownTime)]
-    pub fn spawn_cooldown_time(this: &PowerCreep) -> Option<u64>;
-
     /// The number of ticks the power creep has left to live, which can be
     /// renewed at a [`StructurePowerSpawn`] or [`StructurePowerBank`]
     ///
@@ -149,13 +126,6 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.cancelOrder)
     #[wasm_bindgen(method, js_name = cancelOrder)]
     pub fn cancel_order(this: &PowerCreep, target: &JsString) -> ReturnCode;
-
-    /// Set a power creep that is not currently spawned to be deleted. Can be
-    /// cancelled with `true` for the cancel paramater.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.delete)
-    #[wasm_bindgen(method)]
-    pub fn delete(this: &PowerCreep, cancel: bool) -> ReturnCode;
 
     /// Drop a resource on the ground from the power creep's [`Store`].
     ///
@@ -206,12 +176,6 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn pickup(this: &PowerCreep, target: &Resource) -> ReturnCode;
 
-    /// Change the name of the power creep. Must not be spawned.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.rename)
-    #[wasm_bindgen(method)]
-    pub fn rename(this: &PowerCreep, name: &JsString) -> ReturnCode;
-
     /// Renew the power creep's TTL using a [`StructurePowerSpawn`] or
     /// [`StructurePowerBank`] in melee range.
     ///
@@ -225,12 +189,6 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.say)
     #[wasm_bindgen(method)]
     pub fn say(this: &PowerCreep, message: &str, public: bool) -> ReturnCode;
-
-    /// Spawn the power creep at a [`StructurePowerSpawn`].
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.spawn)
-    #[wasm_bindgen(method)]
-    pub fn spawn(this: &PowerCreep, target: &StructurePowerSpawn) -> ReturnCode;
 
     /// Immediately kill the power creep.
     ///
@@ -249,13 +207,6 @@ extern "C" {
         ty: ResourceType,
         amount: Option<u32>,
     ) -> ReturnCode;
-
-    /// Upgrade this power creep, consuming one available GPL and adding a new
-    /// level to one of its powers.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.upgrade)
-    #[wasm_bindgen(method)]
-    pub fn upgrade(this: &PowerCreep, power: PowerType) -> ReturnCode;
 
     /// Use one of the power creep's powers.
     ///
@@ -279,6 +230,98 @@ extern "C" {
     ) -> ReturnCode;
 }
 
+#[wasm_bindgen]
+extern "C" {
+    /// A [`PowerCreep`] unit that may or may not be spawned in the current
+    /// shard of the game world.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep)
+    #[derive(Clone, Debug)]
+    pub type AccountPowerCreep;
+
+    /// Retrieve this power creep's [`PowerCreepClass`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.className)
+    #[wasm_bindgen(method, getter = className)]
+    pub fn class(this: &AccountPowerCreep) -> PowerCreepClass;
+
+    /// The timestamp, in milliseconds since epoch, when the [`PowerCreep`] will
+    /// be permanently deleted due to [`PowerCreep::delete`]. Can be cancelled
+    /// with the same function until then.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.deleteTime)
+    #[wasm_bindgen(method, getter = deleteTime)]
+    pub fn delete_time(this: &AccountPowerCreep) -> Option<u64>;
+
+    /// Current level of the power creep, which can be increased with
+    /// [`PowerCreep::upgrade`] if you have unspent GPL.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.level)
+    #[wasm_bindgen(method, getter)]
+    pub fn level(this: &AccountPowerCreep) -> u32;
+
+    /// The power creep's name as an owned reference to a [`JsString`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.name)
+    #[wasm_bindgen(method, getter = name)]
+    fn name_internal(this: &AccountPowerCreep) -> JsString;
+
+    /// The levels of this power creep's abilities, with [`PowerType`] keys and
+    /// values containing power level and cooldown.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.powers)
+    #[wasm_bindgen(method, getter)]
+    pub fn powers(this: &AccountPowerCreep) -> Object;
+
+    /// The shard the power creep is currently spawned on, if spawned.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.shard)
+    #[wasm_bindgen(method, getter)]
+    pub fn shard(this: &AccountPowerCreep) -> Option<JsString>;
+
+    /// The timestamp, in milliseconds since epoch, when the power creep will be
+    /// allowed to spawn again after dying.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.spawnCooldownTime)
+    #[wasm_bindgen(method, getter = spawnCooldownTime)]
+    pub fn spawn_cooldown_time(this: &AccountPowerCreep) -> Option<u64>;
+
+    /// Set a power creep that is not currently spawned to be deleted. Can be
+    /// cancelled with `true` for the cancel paramater.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.delete)
+    #[wasm_bindgen(method)]
+    pub fn delete(this: &AccountPowerCreep, cancel: bool) -> ReturnCode;
+
+    /// Change the name of the power creep. Must not be spawned.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.rename)
+    #[wasm_bindgen(method)]
+    pub fn rename(this: &AccountPowerCreep, name: &JsString) -> ReturnCode;
+
+    /// Spawn the power creep at a [`StructurePowerSpawn`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.spawn)
+    #[wasm_bindgen(method)]
+    pub fn spawn(this: &AccountPowerCreep, target: &StructurePowerSpawn) -> ReturnCode;
+
+    /// Upgrade this power creep, consuming one available GPL and adding a new
+    /// level to one of its powers.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.upgrade)
+    #[wasm_bindgen(method)]
+    pub fn upgrade(this: &AccountPowerCreep, power: PowerType) -> ReturnCode;
+}
+
+// todo
+// impl TryFrom<AccountPowerCreep> for PowerCreep
+
+impl JsCollectionFromValue for AccountPowerCreep {
+    fn from_value(val: JsValue) -> Self {
+        val.unchecked_into()
+    }
+}
+
 impl HasHits for PowerCreep {
     fn hits(&self) -> u32 {
         Self::hits(self)
@@ -289,20 +332,11 @@ impl HasHits for PowerCreep {
     }
 }
 
-impl MaybeHasNativeId for PowerCreep {
-    fn try_native_id(&self) -> Option<JsString> {
+impl HasNativeId for PowerCreep {
+    fn native_id(&self) -> JsString {
         Self::id_internal(self)
     }
 }
-
-//TODO: wiarchbe: Implement!
-/*
-impl MaybeHasPosition for PowerCreep {
-    fn pos(&self) -> Option<RoomPosition> {
-        PowerCreep::pos(self.as_ref())
-    }
-}
-*/
 
 impl HasStore for PowerCreep {
     fn store(&self) -> Store {

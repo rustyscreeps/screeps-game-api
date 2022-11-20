@@ -13,7 +13,7 @@ use crate::{
     constants::IntershardResourceType,
     js_collections::JsHashMap,
     local::{JsObjectId, ObjectId, RawObjectId},
-    ConstructionSite, Creep, Flag, PowerCreep, RoomName, StructureObject, StructureSpawn,
+    AccountPowerCreep, ConstructionSite, Creep, Flag, RoomName, StructureObject, StructureSpawn,
 };
 
 pub mod cpu;
@@ -98,14 +98,11 @@ pub fn flags() -> JsHashMap<String, Flag> {
     Game::flags().into()
 }
 
-/// Get a [`JsHashMap<String, PowerCreep>`] with all of your power creeps, which
-/// has power creep names as keys.
-///
-/// Note that these power creeps may not be spawned on the current shard,
-/// and will not have a position or id if they are not.
+/// Get a [`JsHashMap<String, AccountPowerCreep>`] with all of your power
+/// creeps, which has power creep names as keys.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.powerCreeps)
-pub fn power_creeps() -> JsHashMap<String, PowerCreep> {
+pub fn power_creeps() -> JsHashMap<String, AccountPowerCreep> {
     Game::power_creeps().into()
 }
 

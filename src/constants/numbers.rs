@@ -746,9 +746,9 @@ pub const POWER_LEVEL_POW: u32 = 2;
 /// Time, in milliseconds, that a power creep must wait to respawn after dying.
 pub const POWER_CREEP_SPAWN_COOLDOWN: u32 = 8 * 3600 * 1000;
 /// Time, in milliseconds, after a deletion is started via
-/// [`PowerCreep::delete`] that it can no longer be canceled.
+/// [`AccountPowerCreep::delete`] that it can no longer be canceled.
 ///
-/// [`PowerCreep::delete`]: crate::objects::PowerCreep::delete
+/// [`AccountPowerCreep::delete`]: crate::objects::AccountPowerCreep::delete
 pub const POWER_CREEP_DELETE_COOLDOWN: u32 = 24 * 3600 * 1000;
 /// Maximum level for power creeps.
 pub const POWER_CREEP_MAX_LEVEL: u32 = 25;

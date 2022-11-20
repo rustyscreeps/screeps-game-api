@@ -62,7 +62,7 @@ pub use self::{
     mineral::Mineral,
     nuke::Nuke,
     owned_structure::{OwnedStructure, Owner},
-    power_creep::PowerCreep,
+    power_creep::{AccountPowerCreep, PowerCreep},
     resource::Resource,
     room::{
         AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
