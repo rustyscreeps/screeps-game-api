@@ -19,7 +19,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.effects)
     #[wasm_bindgen(method, getter = effects)]
-    fn effects_internal(this: &RoomObject) -> Array;
+    fn effects_internal(this: &RoomObject) -> Option<Array>;
 
     /// Position of the object.
     ///
@@ -39,6 +39,7 @@ extern "C" {
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
+    #[derive(Debug)]
     pub type Effect;
 
     #[wasm_bindgen(method, getter)]
@@ -66,12 +67,11 @@ where
 {
     fn effects(&self) -> Vec<Effect> {
         RoomObject::effects_internal(self.as_ref())
-            .iter()
-            .map(|e| e.unchecked_into())
-            .collect()
+            .map(|arr| arr.iter().map(JsCast::unchecked_into).collect())
+            .unwrap_or_else(Vec::new)
     }
 
-    fn effects_raw(&self) -> Array {
+    fn effects_raw(&self) -> Option<Array> {
         RoomObject::effects_internal(self.as_ref())
     }
 

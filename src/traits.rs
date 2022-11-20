@@ -194,7 +194,7 @@ pub trait RoomObjectProperties {
     /// Effects applied to the object.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.effects)
-    fn effects_raw(&self) -> Array;
+    fn effects_raw(&self) -> Option<Array>;
 
     /// A link to the room that the object is currently in, or `None` if the
     /// object is a power creep not spawned on the current shard, or a flag or
