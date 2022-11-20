@@ -1,3 +1,24 @@
+//! Constants for use with the [`Room::find`] function.
+//!
+//! *Note:* Types in this module have purposefully ambiguous names, and are
+//! intended to be used as, for example, `find::CREEPS`, not `CREEPS`.
+//!
+//! You can do this my importing the module itself, rather than any individual
+//! constant, and then just referring to the constants relative to the module.
+//!
+//! # Example
+//!
+//! ```no_run
+//! use screeps::{find, game, Room};
+//!
+//! let room: Room = game::rooms().get("E23S55".parse().unwrap()).unwrap();
+//!
+//! let creeps = room.find(find::CREEPS);
+//! # let _ = creeps;
+//! ```
+//!
+//! [`Room::find`]: crate::Room::find
+//! [`objects::RoomObject`]: crate::RoomObject
 use crate::{enums::StructureObject, objects::*};
 use enum_iterator::IntoEnumIterator;
 use serde::{Deserialize, Serialize};

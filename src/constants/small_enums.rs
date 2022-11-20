@@ -353,18 +353,6 @@ impl Part {
             _ => 0,
         }
     }
-
-    // /// Helper function for deserializing from a string rather than a fake
-    // /// integer value.
-    // pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self,
-    // D::Error> {     let s: Cow<'de, str> = Cow::deserialize(d)?;
-    //     Self::from_str(&s).map_err(|_| {
-    //         D::Error::invalid_value(
-    //             Unexpected::Str(&s),
-    //             &"a known constant string in BODYPARTS_ALL",
-    //         )
-    //     })
-    // }
 }
 
 impl FromStr for Part {

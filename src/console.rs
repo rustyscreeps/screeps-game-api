@@ -29,7 +29,7 @@ extern "C" {
     #[wasm_bindgen(js_namespace = console, js_name = getVisualSize)]
     pub fn get_visual_size(target: Option<&JsString>) -> u32;
 
-    /// Clear all of tne set visuals for the current tick, either for a given
+    /// Clear all of the set visuals for the current tick, either for a given
     /// room, `None` for visuals applied for all rooms, or "map" for map
     /// visuals.
     #[wasm_bindgen(js_namespace = console, js_name = clearVisual)]

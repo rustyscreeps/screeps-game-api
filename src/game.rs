@@ -3,6 +3,12 @@
 //! This contains all functionality from the `Game` object in Screeps. That
 //! generally means all state which is true this tick throughout the world.
 //!
+//! # Safety
+//!
+//! All returned game objects must be used only during the tick they are
+//! retreived or resolved. They are considered "stale" on subsequent ticks, and
+//! the behavior of stale game objects is undefined.
+//!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
 
 use js_sys::{JsString, Object};
