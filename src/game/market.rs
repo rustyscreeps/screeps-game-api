@@ -3,7 +3,6 @@
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-market)
 
 use js_sys::{Array, JsString, Object};
-use serde::Deserialize;
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
@@ -51,7 +50,7 @@ extern "C" {
     fn get_all_orders(filter: Option<&LodashFilter>) -> Array;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = getHistory)]
-    fn get_history(resource: Option<ResourceType>) -> JsValue;
+    fn get_history(resource: Option<ResourceType>) -> Option<Array>;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = getOrderById)]
     fn get_order_by_id(order_id: &JsString) -> Option<Order>;
@@ -67,15 +66,21 @@ pub fn credits() -> f64 {
 /// An [`Array`] of the last 100 [`Transaction`]s sent to your terminals.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.incomingTransactions)
-pub fn incoming_transactions() -> Array {
+pub fn incoming_transactions() -> Vec<Transaction> {
     Market::incoming_transactions()
+        .iter()
+        .map(Into::into)
+        .collect()
 }
 
 /// An [`Array`] of the last 100 [`Transaction`]s sent from your terminals.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.outgoingTransactions)
-pub fn outgoing_transactions() -> Array {
+pub fn outgoing_transactions() -> Vec<Transaction> {
     Market::outgoing_transactions()
+        .iter()
+        .map(Into::into)
+        .collect()
 }
 
 /// An [`Object`] with your current buy and sell orders on the market, with
@@ -155,11 +160,10 @@ pub fn extend_order(order_id: &JsString, add_amount: u32) -> ReturnCode {
 pub fn get_all_orders(filter: Option<&LodashFilter>) -> Vec<Order> {
     Market::get_all_orders(filter)
         .iter()
-        .map(|o| o.unchecked_into())
+        .map(Into::into)
         .collect()
 }
 
-// todo this is probably breaking in an interesting way on private servers due to the {} return https://github.com/screeps/engine/pull/131 - maybe catch?
 /// Get information about the price history on the market for the last 14
 /// days for a given resource as an [`Array`] of [`OrderHistoryRecord`]s, or
 /// for all resources if `None`. Warning: returns an empty [`Object`]
@@ -167,8 +171,10 @@ pub fn get_all_orders(filter: Option<&LodashFilter>) -> Vec<Order> {
 /// the type is recommended before use if the market might be empty.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getHistory)
-pub fn get_history(resource: Option<ResourceType>) -> JsValue {
+pub fn get_history(resource: Option<ResourceType>) -> Vec<OrderHistoryRecord> {
     Market::get_history(resource)
+        .map(|arr| arr.iter().map(Into::into).collect())
+        .unwrap_or_else(Vec::new)
 }
 
 /// Get an object with information about a specific order, in the same
@@ -185,6 +191,7 @@ pub fn get_order_by_id(order_id: &str) -> Option<Order> {
 extern "C" {
     /// An object that represents an order on the market.
     #[wasm_bindgen]
+    #[derive(Debug)]
     pub type Order;
     /// The order ID, which can be used to retrieve the order, or execute a
     /// trade using [`MarketInfo::deal`].
@@ -193,9 +200,10 @@ extern "C" {
     /// Tick of order creation, `None` for intershard orders.
     #[wasm_bindgen(method, getter)]
     pub fn created(this: &Order) -> Option<u32>;
+    // todo should be u64 but seems to panic at the moment, follow up
     /// Timestamp of order creation in milliseconds since epoch.
     #[wasm_bindgen(method, getter = createdTimestamp)]
-    pub fn created_timestamp(this: &Order) -> u64;
+    pub fn created_timestamp(this: &Order) -> f64;
     /// The [`OrderType`] of the order (whether the owner is looking to buy or
     /// sell the given resource).
     #[wasm_bindgen(method, getter = type)]
@@ -219,40 +227,11 @@ extern "C" {
     pub fn price(this: &Order) -> f64;
 }
 
-/// A rust-native local representation of an order, which can be deserialized
-/// across the memory boundary in one operation
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct LocalOrder {
-    /// The order ID, which can be used to retrieve the order, or execute a
-    /// trade using [`deal`].
-    pub id: String,
-    /// Tick of order creation, `None` for intershard orders.
-    pub created: Option<u32>,
-    /// Timestamp of order creation in milliseconds since epoch.
-    pub created_timestamp: u64,
-    /// The [`OrderType`] of the order (whether the owner is looking to buy or
-    /// sell the given resource).
-    #[serde(rename = "type")]
-    pub order_type: OrderType,
-    /// The resource type this order is for.
-    pub resource_type: MarketResourceType,
-    /// Room that owns the order, `None` for intershard orders.
-    pub room_name: Option<RoomName>,
-    /// The amount of resource currently ready to be traded (loaded in the
-    /// terminal).
-    pub amount: u32,
-    /// The total remaining amount of the resource to be traded before this
-    /// order has been completely filled and removed.
-    pub remaining_amount: u32,
-    /// Price of the order per unit of the resource the order is for.
-    pub price: f64,
-}
-
 // todo docs
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
+    #[derive(Debug)]
     pub type Transaction;
     #[wasm_bindgen(method, getter = transactionId)]
     pub fn transaction_id(this: &Transaction) -> JsString;
@@ -286,47 +265,19 @@ extern "C" {
     pub fn order(this: &Transaction) -> Option<TransactionOrder>;
 }
 
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct LocalTransaction {
-    pub transaction_id: String,
-    pub time: u32,
-    /// The player who sent resources for this transaction, or `None` if it was
-    /// an NPC terminal
-    pub sender: Option<LocalPlayer>,
-    /// The recipient of the resources for this transaction, or `None` if it was
-    /// an NPC terminal
-    pub recipient: Option<LocalPlayer>,
-    pub resource_type: ResourceType,
-    pub amount: u32,
-    /// The room that sent resources for this transaction
-    pub from: RoomName,
-    /// The room that received resources in this transaction
-    pub to: RoomName,
-    /// The description set in the sender's `StructureTerminal::send()` call, if
-    /// any
-    pub description: Option<String>,
-    /// Information about the market order that this transaction was fulfilling,
-    /// if any
-    pub order: Option<LocalTransactionOrder>,
-}
-
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
+    #[derive(Debug)]
     pub type Player;
     #[wasm_bindgen(method, getter)]
     pub fn username(this: &Player) -> JsString;
 }
 
-#[derive(Deserialize, Debug)]
-pub struct LocalPlayer {
-    pub username: String,
-}
-
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
+    #[derive(Debug)]
     pub type TransactionOrder;
     #[wasm_bindgen(method, getter)]
     pub fn id(this: &TransactionOrder) -> JsString;
@@ -336,17 +287,10 @@ extern "C" {
     pub fn price(this: &TransactionOrder) -> f64;
 }
 
-#[derive(Deserialize, Debug)]
-pub struct LocalTransactionOrder {
-    pub id: String,
-    #[serde(rename = "type")]
-    pub order_type: OrderType,
-    pub price: f64,
-}
-
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
+    #[derive(Debug)]
     pub type MyOrder;
     #[wasm_bindgen(method, getter)]
     pub fn id(this: &MyOrder) -> JsString;
@@ -381,29 +325,10 @@ impl JsCollectionFromValue for MyOrder {
     }
 }
 
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct LocalMyOrder {
-    pub id: String,
-    /// Tick of order creation, `None` for intershard orders
-    pub created: Option<u32>,
-    /// Timestamp of order creation in milliseconds since epoch
-    pub created_timestamp: u64,
-    pub active: bool,
-    #[serde(rename = "type")]
-    pub order_type: OrderType,
-    pub resource_type: MarketResourceType,
-    /// Room that owns the order, `None` for intershard orders
-    pub room_name: Option<RoomName>,
-    pub amount: u32,
-    pub remaining_amount: u32,
-    pub total_amount: u32,
-    pub price: f64,
-}
-
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
+    #[derive(Debug)]
     pub type OrderHistoryRecord;
     #[wasm_bindgen(method, getter = resourceType)]
     pub fn resource_type(this: &OrderHistoryRecord) -> MarketResourceType;
@@ -420,18 +345,4 @@ extern "C" {
     pub fn avg_price(this: &OrderHistoryRecord) -> f64;
     #[wasm_bindgen(method, getter = stddevPrice)]
     pub fn stddev_price(this: &OrderHistoryRecord) -> f64;
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct LocalOrderHistoryRecord {
-    pub resource_type: MarketResourceType,
-    /// Calendar date in string format, eg "2018-12-31"
-    pub date: String,
-    /// Total number of transactions for this resource on this day
-    pub transactions: u32,
-    /// Total volume of this resource bought and sold on this day
-    pub volume: u32,
-    pub avg_price: f64,
-    pub stddev_price: f64,
 }

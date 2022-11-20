@@ -375,13 +375,14 @@ extern "C" {
     #[wasm_bindgen(method, getter = className)]
     pub fn class(this: &AccountPowerCreep) -> PowerCreepClass;
 
+    // todo should be u64 but seems to panic at the moment, follow up
     /// The timestamp, in milliseconds since epoch, when the [`PowerCreep`] will
     /// be permanently deleted due to [`PowerCreep::delete`]. Can be cancelled
     /// with the same function until then.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.deleteTime)
     #[wasm_bindgen(method, getter = deleteTime)]
-    pub fn delete_time(this: &AccountPowerCreep) -> Option<u64>;
+    pub fn delete_time(this: &AccountPowerCreep) -> Option<f64>;
 
     /// Current level of the power creep, which can be increased with
     /// [`PowerCreep::upgrade`] if you have unspent GPL.
@@ -405,12 +406,13 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn shard(this: &AccountPowerCreep) -> Option<JsString>;
 
+    // todo should be u64 but seems to panic at the moment, follow up
     /// The timestamp, in milliseconds since epoch, when the power creep will be
     /// allowed to spawn again after dying.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.spawnCooldownTime)
     #[wasm_bindgen(method, getter = spawnCooldownTime)]
-    pub fn spawn_cooldown_time(this: &AccountPowerCreep) -> Option<u64>;
+    pub fn spawn_cooldown_time(this: &AccountPowerCreep) -> Option<f64>;
 
     /// Set a power creep that is not currently spawned to be deleted. Can be
     /// cancelled with `true` for the cancel paramater.
