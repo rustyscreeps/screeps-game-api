@@ -1,106 +1,117 @@
 //! Game method implementations on `Position`
 use crate::{
-    constants::{Color, FindConstant, LookConstant, ReturnCode, StructureType},
-    game,
-    local::RoomName,
-    objects::{FindOptions, Flag, HasPosition, LookResult, Path},
-    pathfinder::{CostMatrix, SingleRoomCostResult},
+    constants::{Color, FindConstant, LookConstant, LookResult, ReturnCode, StructureType},
+    objects::RoomPosition,
 };
+use js_sys::{Array, JsString, Object};
+use wasm_bindgen::prelude::*;
 
 use super::Position;
 
 impl Position {
-    pub fn create_construction_site(self, ty: StructureType) -> ReturnCode {
-        js_unwrap!(
-            pos_from_packed(@{self.packed_repr()})
-                .createConstructionSite(__structure_type_num_to_str(@{ty as u32}))
-        )
+    /// Creates a [`ConstructionSite`] at this position. If it's a
+    /// [`StructureSpawn`], a name can optionally be assigned for the structure.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
+    ///
+    /// [`ConstructionSite`]: crate::objects::ConstructionSite
+    #[inline]
+    pub fn create_construction_site(
+        self,
+        ty: StructureType,
+        name: Option<&JsString>,
+    ) -> ReturnCode {
+        RoomPosition::from(self).create_construction_site(ty, name)
     }
 
-    pub fn create_named_construction_site(self, ty: StructureType, name: &str) -> ReturnCode {
-        js_unwrap!(
-            pos_from_packed(@{self.packed_repr()})
-                .createConstructionSite(__structure_type_num_to_str(@{ty as u32}), @{name})
-        )
-    }
-
+    /// Creates a [`Flag`] at this position.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createFlag)
+    ///
+    /// [`Flag`]: crate::objects::Flag
+    #[inline]
     pub fn create_flag(
         self,
-        name: &str,
-        main_color: Color,
-        secondary_color: Color,
-    ) -> Result<String, ReturnCode> {
-        // TODO: determine if ERR_NOT_IN_RANGE is the best choice here
-        //
-        // JavaScript code simply throws an error on unknown rooms, which isn't ideal.
-        Flag::interpret_creation_ret_value(js! {
-            let pos = pos_from_packed(@{self.packed_repr()});
-            if (pos.roomName in Game.rooms) {
-                return pos.createFlag(@{name}, @{main_color as u32}, @{secondary_color as u32});
-            } else {
-                return ERR_NOT_IN_RANGE;
-            }
-        })
-        .expect("expected RoomPosition.createFlag to return ReturnCode or String name")
+        name: Option<&JsString>,
+        color: Option<Color>,
+        secondary_color: Option<Color>,
+    ) -> ReturnCode {
+        RoomPosition::from(self).create_flag(name, color, secondary_color)
     }
 
+    /// Find the closest object by path among an [`Array`] of objects, or among
+    /// a [`FindType`] to search for all objects of that type in the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByPath)
+    #[inline]
+    pub fn find_closest_by_path<T>(self, ty: T, options: Option<&Object>) -> Option<T::Item>
+    where
+        T: FindConstant,
+        <T as FindConstant>::Item: From<JsValue>,
+    {
+        RoomPosition::from(self).find_closest_by_path(ty, options)
+    }
+
+    /// Find the closest object by range among an [`Array`] of objects, or among
+    /// a [`FindType`] to search for all objects of that type in the room. Will
+    /// not work for objects in other rooms.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByRange)
+    #[inline]
     pub fn find_closest_by_range<T>(self, ty: T) -> Option<T::Item>
     where
         T: FindConstant,
     {
-        js_unwrap_ref!(
-            pos_from_packed(@{self.packed_repr()})
-                .findClosestByRange(@{ty.find_code()})
-        )
+        RoomPosition::from(self).find_closest_by_range(ty)
     }
 
-    pub fn find_in_range<T>(self, ty: T, range: u32) -> Vec<T::Item>
+    /// Find all relevant objects within a certain range among an [`Array`] of
+    /// objects, or among a [`FindType`] to search all objects of that type in
+    /// the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findInRange)
+    #[inline]
+    pub fn find_in_range<T>(self, ty: T, range: u8) -> Vec<T::Item>
     where
         T: FindConstant,
     {
-        js_unwrap_ref!(
-            pos_from_packed(@{self.packed_repr()})
-                .findInRange(@{ty.find_code()}, @{range})
-        )
+        RoomPosition::from(self).find_in_range(ty, range)
     }
 
-    pub fn find_path_to<'a, F, T>(
-        self,
-        target: &T,
-        opts: FindOptions<'a, F, SingleRoomCostResult<'a>>,
-    ) -> Path
-    where
-        F: Fn(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a> + 'a,
-        T: ?Sized + HasPosition,
-    {
-        let self_room = game::rooms::get(self.room_name()).unwrap();
-        self_room.find_path(&self, target, opts)
+    /// Find a path from this position to a position or room object, with an
+    /// optional options object
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
+    #[inline]
+    pub fn find_path_to(self, goal: &JsValue, options: Option<&Object>) -> Array {
+        RoomPosition::from(self).find_path_to(goal, options)
     }
 
-    pub fn find_path_to_xy<'a, F>(
-        self,
-        x: u8,
-        y: u8,
-        opts: FindOptions<'a, F, SingleRoomCostResult<'a>>,
-    ) -> Path
-    where
-        F: Fn(RoomName, CostMatrix<'a>) -> SingleRoomCostResult<'a> + 'a,
-    {
-        let target = Position::new(x, y, self.room_name());
-        self.find_path_to(&target, opts)
+    /// Find a path from this position to the given coordinates in the same
+    /// room, with an optional options object.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
+    #[inline]
+    pub fn find_path_to_xy(self, x: u8, y: u8, options: Option<&Object>) -> Array {
+        RoomPosition::from(self).find_path_to_xy(x, y, options)
     }
 
+    /// Get all objects at this position.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.look)
+    #[inline]
     pub fn look(self) -> Vec<LookResult> {
-        js_unwrap!(pos_from_packed(@{self.packed_repr()}).look())
+        RoomPosition::from(self).look()
     }
 
+    /// Get all objects of a given type at this position, if any.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
+    #[inline]
     pub fn look_for<T>(self, ty: T) -> Vec<T::Item>
     where
         T: LookConstant,
     {
-        T::convert_and_check_items(js_unwrap! {
-            pos_from_packed(@{self.packed_repr()})
-            .lookFor(__look_num_to_str(@{ty.look_code() as u32}))
-        })
+        RoomPosition::from(self).look_for(ty)
     }
 }

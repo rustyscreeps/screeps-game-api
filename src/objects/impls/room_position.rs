@@ -17,17 +17,9 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition)
     pub type RoomPosition;
 
-    /// Create a new RoomPosition using the normal constructor, taking
-    /// coordinates and the room name.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.constructor)
     #[wasm_bindgen(constructor)]
     fn new_internal(x: u8, y: u8, room_name: &JsString) -> RoomPosition;
 
-    /// Name of the room the position is in, as an owned [`JsString`] reference
-    /// to a string in Javascript memory.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.roomName)
     #[wasm_bindgen(method, getter = roomName)]
     fn room_name_internal(this: &RoomPosition) -> JsString;
 
@@ -102,40 +94,24 @@ extern "C" {
     ) -> ReturnCode;
 
     // todo FindOptions
-    /// Find the closest object by path among an [`Array`] of objects, or among
-    /// a [`FindType`] to search for all objects of that type in the room.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByPath)
-    ///
-    /// [`Flag`]: crate::objects::Flag
     #[wasm_bindgen(method, js_name = findClosestByPath)]
-    pub fn find_closest_by_path_internal(
+    fn find_closest_by_path_internal(
         this: &RoomPosition,
         goal: Find,
         options: Option<&Object>,
     ) -> Option<Object>;
 
     // todo FindOptions
-    /// Find the closest object by range among an [`Array`] of objects, or among
-    /// a [`FindType`] to search for all objects of that type in the room. Will
-    /// not work for objects in other rooms.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByRange)
     #[wasm_bindgen(method, js_name = findClosestByRange)]
-    pub fn find_closest_by_range_internal(
+    fn find_closest_by_range_internal(
         this: &RoomPosition,
         goal: Find,
         options: Option<&Object>,
     ) -> Option<Object>;
 
     // todo FindOptions
-    /// Find all relevant objects within a certain range among an [`Array`] of
-    /// objects, or among a [`FindType`] to search all objects of that type in
-    /// the room.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findInRange)
     #[wasm_bindgen(method, js_name = findInRange)]
-    pub fn find_in_range_internal(
+    fn find_in_range_internal(
         this: &RoomPosition,
         goal: Find,
         range: u8,
@@ -229,16 +205,63 @@ extern "C" {
 }
 
 impl RoomPosition {
+    /// Create a new RoomPosition using the normal constructor, taking
+    /// coordinates and the room name.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.constructor)
     pub fn new(x: u8, y: u8, room_name: RoomName) -> RoomPosition {
         let room_name = room_name.into();
 
         Self::new_internal(x, y, &room_name)
     }
 
+    /// Name of the room the position is in, as an owned [`JsString`] reference
+    /// to a string in Javascript memory.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.roomName)
     pub fn room_name(&self) -> RoomName {
         Self::room_name_internal(self)
             .try_into()
             .expect("expected parseable room name")
+    }
+
+    /// Find the closest object by path among an [`Array`] of objects, or among
+    /// a [`FindType`] to search for all objects of that type in the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByPath)
+    pub fn find_closest_by_path<T>(&self, find: T, options: Option<&Object>) -> Option<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_closest_by_path_internal(find.find_code(), options)
+            .map(|reference| T::convert_and_check_item(reference.into()))
+    }
+
+    /// Find the closest object by range among an [`Array`] of objects, or among
+    /// a [`FindType`] to search for all objects of that type in the room. Will
+    /// not work for objects in other rooms.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByRange)
+    pub fn find_closest_by_range<T>(&self, find: T) -> Option<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_closest_by_range_internal(find.find_code(), None)
+            .map(|reference| T::convert_and_check_item(reference.into()))
+    }
+
+    /// Find all relevant objects within a certain range among an [`Array`] of
+    /// objects, or among a [`FindType`] to search all objects of that type in
+    /// the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findInRange)
+    pub fn find_in_range<T>(&self, find: T, range: u8) -> Vec<T::Item>
+    where
+        T: FindConstant,
+    {
+        self.find_in_range_internal(find.find_code(), range, None)
+            .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
+            .unwrap_or_else(Vec::new)
     }
 
     /// Get all objects at this position.
@@ -259,31 +282,6 @@ impl RoomPosition {
         T: LookConstant,
     {
         self.look_for_internal(T::look_code())
-            .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
-            .unwrap_or_else(Vec::new)
-    }
-
-    pub fn find_closest_by_path<T>(&self, find: T, options: Option<&Object>) -> Option<T::Item>
-    where
-        T: FindConstant,
-    {
-        self.find_closest_by_path_internal(find.find_code(), options)
-            .map(|reference| T::convert_and_check_item(reference.into()))
-    }
-
-    pub fn find_closest_by_range<T>(&self, find: T) -> Option<T::Item>
-    where
-        T: FindConstant,
-    {
-        self.find_closest_by_range_internal(find.find_code(), None)
-            .map(|reference| T::convert_and_check_item(reference.into()))
-    }
-
-    pub fn find_in_range<T>(&self, find: T, range: u8) -> Vec<T::Item>
-    where
-        T: FindConstant,
-    {
-        self.find_in_range_internal(find.find_code(), range, None)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
             .unwrap_or_else(Vec::new)
     }

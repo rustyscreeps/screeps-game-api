@@ -343,7 +343,7 @@ pub enum ResourceType {
     #[cfg(feature = "symbols")]
     SymbolRes = "symbol_res",
     // sin/sim mismatch is intended and present in the mod:
-    // https://github.com/screeps/mod-season2/blob/master/src/resources.js#L23
+    // https://github.com/screeps/mod-season2/blob/3dfaa8f6214b2610dbe2a700c6287a10e7960ae8/src/resources.js#L23
     #[cfg(feature = "symbols")]
     SymbolSin = "symbol_sim",
     #[cfg(feature = "symbols")]

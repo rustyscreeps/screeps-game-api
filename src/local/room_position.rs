@@ -3,20 +3,19 @@
 //! This is a reimplementation/translation of the `RoomPosition` code originally
 //! written in JavaScript. All RoomPosition to RoomPosition operations in this
 //! file stay within Rust.
-use js_sys::Object;
 use std::{
     cmp::{Ord, Ordering, PartialOrd},
     fmt,
 };
-use wasm_bindgen::JsValue;
 
 use super::{RoomCoordinate, RoomName, RoomXY, HALF_WORLD_SIZE, ROOM_SIZE};
 
-use crate::{objects::RoomPosition, FindConstant, HasPosition};
+use crate::{objects::RoomPosition, HasPosition};
 
 mod approximate_offsets;
 mod extra_math;
 mod game_math;
+mod game_methods;
 mod pair_utils;
 mod world_utils;
 
@@ -365,17 +364,6 @@ impl Position {
     pub fn with_room_name(mut self, room_name: RoomName) -> Self {
         self.set_room_name(room_name);
         self
-    }
-
-    #[inline]
-    pub fn find_closest_by_path<T>(self, ty: T, options: Option<&Object>) -> Option<T::Item>
-    where
-        T: FindConstant,
-        <T as FindConstant>::Item: From<JsValue>,
-    {
-        RoomPosition::from(self)
-            .find_closest_by_path_internal(ty.find_code(), options)
-            .map(|obj| T::convert_and_check_item(obj.into()))
     }
 }
 
