@@ -2,7 +2,6 @@
 use std::ops::Range;
 
 mod cost_matrix;
-mod js_object_id;
 mod lodash_filter;
 mod object_id;
 mod room_coordinate;
@@ -23,6 +22,6 @@ const HALF_WORLD_SIZE: i32 = 128;
 const VALID_ROOM_NAME_COORDINATES: Range<i32> = -HALF_WORLD_SIZE..HALF_WORLD_SIZE;
 
 pub use self::{
-    cost_matrix::*, js_object_id::*, lodash_filter::*, object_id::*, room_coordinate::*,
-    room_name::*, room_position::*,
+    cost_matrix::*, lodash_filter::*, object_id::*, room_coordinate::*, room_name::*,
+    room_position::*,
 };

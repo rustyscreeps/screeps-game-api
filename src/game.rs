@@ -17,8 +17,8 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::IntershardResourceType,
-    js_collections::JsHashMap,
-    local::{JsObjectId, ObjectId, RawObjectId},
+    js_collections::{JsHashMap, JsObjectId},
+    local::{ObjectId, RawObjectId},
     AccountPowerCreep, ConstructionSite, Creep, Flag, RoomName, StructureObject, StructureSpawn,
 };
 
