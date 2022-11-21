@@ -1,6 +1,8 @@
 //! Game method implementations on `Position`
 use crate::{
-    constants::{Color, FindConstant, LookConstant, LookResult, ReturnCode, StructureType},
+    constants::{
+        Color, ErrorCode, FindConstant, LookConstant, LookResult, ReturnCode, StructureType,
+    },
     objects::RoomPosition,
 };
 use js_sys::{Array, JsString, Object};
@@ -24,7 +26,8 @@ impl Position {
         RoomPosition::from(self).create_construction_site(ty, name)
     }
 
-    /// Creates a [`Flag`] at this position.
+    /// Creates a [`Flag`] at this position. If successful, returns the name of
+    /// the created flag.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createFlag)
     ///
@@ -35,7 +38,7 @@ impl Position {
         name: Option<&JsString>,
         color: Option<Color>,
         secondary_color: Option<Color>,
-    ) -> ReturnCode {
+    ) -> Result<JsString, ErrorCode> {
         RoomPosition::from(self).create_flag(name, color, secondary_color)
     }
 

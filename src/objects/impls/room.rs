@@ -1,3 +1,4 @@
+use num_traits::*;
 use serde::{
     de::{self, MapAccess, Visitor},
     Deserialize, Deserializer, Serialize,
@@ -7,8 +8,8 @@ use std::{convert::TryInto, fmt};
 
 use crate::{
     constants::{
-        look::*, Color, Direction, ExitDirection, Find, Look, PowerType, ResourceType, ReturnCode,
-        StructureType,
+        look::*, Color, Direction, ErrorCode, ExitDirection, Find, Look, PowerType, ResourceType,
+        ReturnCode, StructureType,
     },
     js_collections::JsCollectionFromValue,
     objects::*,
@@ -114,18 +115,15 @@ extern "C" {
         name: Option<&JsString>,
     ) -> ReturnCode;
 
-    /// Creates a [`Flag`] at given coordinates within this room.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.createFlag)
     #[wasm_bindgen(final, method, js_name = createFlag)]
-    pub fn create_flag(
+    fn create_flag_internal(
         this: &Room,
         x: u8,
         y: u8,
         name: Option<&JsString>,
         color: Option<Color>,
         secondary_color: Option<Color>,
-    ) -> ReturnCode;
+    ) -> JsValue;
 
     /// Find all objects of the specified type in the room, without passing
     /// additional options.
@@ -235,6 +233,31 @@ impl Room {
 
     pub fn visual(&self) -> RoomVisual {
         RoomVisual::new(Some(self.name()))
+    }
+
+    /// Creates a [`Flag`] at given coordinates within this room. The name of
+    /// the flag is returned if the creation is successful.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.createFlag)
+    pub fn create_flag(
+        &self,
+        x: u8,
+        y: u8,
+        name: Option<&JsString>,
+        color: Option<Color>,
+        secondary_color: Option<Color>,
+    ) -> Result<JsString, ErrorCode> {
+        let result = self.create_flag_internal(x, y, name, color, secondary_color);
+        if result.is_string() {
+            Ok(result.unchecked_into())
+        } else {
+            Err(ErrorCode::from_f64(
+                result
+                    .as_f64()
+                    .expect("expected non-string flag return to be a number"),
+            )
+            .expect("expected valid error code"))
+        }
     }
 
     //TODO: wiarchbe: Find options!

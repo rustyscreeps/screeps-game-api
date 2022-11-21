@@ -1,14 +1,15 @@
 use std::convert::TryInto;
 
 use crate::{
-    constants::{look::*, Color, Direction, Look, ReturnCode, StructureType},
+    constants::{look::*, Color, Direction, ErrorCode, Look, ReturnCode, StructureType},
     local::Position,
     prelude::*,
     prototypes::ROOM_POSITION_PROTOTYPE,
     Find, FindConstant, LookConstant, RoomName,
 };
 use js_sys::{Array, JsString, Object};
-use wasm_bindgen::prelude::*;
+use num_traits::*;
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -77,21 +78,13 @@ extern "C" {
         name: Option<&JsString>,
     ) -> ReturnCode;
 
-    // todo we need to handle the fact that if this succeeds the name of the flag is
-    // returned, and maybe also the fact that it'll throw a js exception when
-    // created in a non visible room.. hmm
-    /// Creates a [`Flag`] at this position.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createFlag)
-    ///
-    /// [`Flag`]: crate::objects::Flag
-    #[wasm_bindgen(method, js_name = createFlag)]
-    pub fn create_flag(
+    #[wasm_bindgen(method, catch, js_name = createFlag)]
+    fn create_flag_internal(
         this: &RoomPosition,
         name: Option<&JsString>,
         color: Option<Color>,
         secondary_color: Option<Color>,
-    ) -> ReturnCode;
+    ) -> Result<JsValue, JsValue>;
 
     // todo FindOptions
     #[wasm_bindgen(method, js_name = findClosestByPath)]
@@ -223,6 +216,38 @@ impl RoomPosition {
         Self::room_name_internal(self)
             .try_into()
             .expect("expected parseable room name")
+    }
+
+    /// Creates a [`Flag`] at this position. If successful, returns the name of
+    /// the created flag.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createFlag)
+    ///
+    /// [`Flag`]: crate::objects::Flag
+    pub fn create_flag(
+        &self,
+        name: Option<&JsString>,
+        color: Option<Color>,
+        secondary_color: Option<Color>,
+    ) -> Result<JsString, ErrorCode> {
+        match self.create_flag_internal(name, color, secondary_color) {
+            Ok(result) => {
+                if result.is_string() {
+                    Ok(result.unchecked_into())
+                } else {
+                    Err(ErrorCode::from_f64(
+                        result
+                            .as_f64()
+                            .expect("expected non-string flag return to be a number"),
+                    )
+                    .expect("expected valid error code"))
+                }
+            }
+            Err(_) => {
+                // js code threw an exception; we're going to assume it's a non-visible room.
+                Err(ErrorCode::NotInRange)
+            }
+        }
     }
 
     /// Find the closest object by path among an [`Array`] of objects, or among
