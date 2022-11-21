@@ -308,18 +308,12 @@ extern "C" {
 }
 
 impl Creep {
-    /// Harvest from a [`Source`], [`Mineral`], or [`Deposit`] in melee range.
+    /// Retrieve a [`Vec<BodyPart>`] containing details about the creep's body
+    /// parts and boosts.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.harvest)
-    ///
-    /// [`Source`]: crate::objects::Source
-    /// [`Mineral`]: crate::objects::Mineral
-    /// [`Deposit`]: crate::objects::Deposit
-    pub fn harvest<T>(&self, target: &T) -> ReturnCode
-    where
-        T: ?Sized + Harvestable,
-    {
-        Self::harvest_internal(self, target.as_ref())
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.body)
+    pub fn body(&self) -> Vec<BodyPart> {
+        self.body_internal().iter().map(BodyPart::from).collect()
     }
 
     /// Attack a target in melee range using a creep's attack parts.
@@ -330,16 +324,6 @@ impl Creep {
         T: ?Sized + Attackable,
     {
         Self::attack_internal(self, target.as_ref())
-    }
-
-    /// Attack a target in range 3 using a creep's ranged attack parts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedAttack)
-    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode
-    where
-        T: ?Sized + Attackable,
-    {
-        Self::ranged_attack_internal(self, target.as_ref())
     }
 
     // todo constant links - REPAIR_POWER, DISMANTLE_POWER, and buildable types
@@ -355,6 +339,20 @@ impl Creep {
     {
         Self::dismantle_internal(self, target.as_ref())
     }
+    
+    /// Harvest from a [`Source`], [`Mineral`], or [`Deposit`] in melee range.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.harvest)
+    ///
+    /// [`Source`]: crate::objects::Source
+    /// [`Mineral`]: crate::objects::Mineral
+    /// [`Deposit`]: crate::objects::Deposit
+    pub fn harvest<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Harvestable,
+    {
+        Self::harvest_internal(self, target.as_ref())
+    }
 
     /// Heal a [`Creep`] or [`PowerCreep`] in melee range, including itself.
     ///
@@ -368,6 +366,16 @@ impl Creep {
         Self::heal_internal(self, target.as_ref())
     }
 
+    /// Attack a target in range 3 using a creep's ranged attack parts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedAttack)
+    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode
+    where
+        T: ?Sized + Attackable,
+    {
+        Self::ranged_attack_internal(self, target.as_ref())
+    }
+
     /// Heal a target in range 3 using a creep's heal parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedHeal)
@@ -376,14 +384,6 @@ impl Creep {
         T: ?Sized + Healable,
     {
         Self::ranged_heal_internal(self, target.as_ref())
-    }
-
-    /// Retrieve a [`Vec<BodyPart>`] containing details about the creep's body
-    /// parts and boosts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.body)
-    pub fn body(&self) -> Vec<BodyPart> {
-        self.body_internal().iter().map(BodyPart::from).collect()
     }
 }
 

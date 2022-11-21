@@ -1,22 +1,41 @@
 //! Typed bindings to the Screeps in-game API for WASM Rust AIs.
-// //!
-// //! # Cargo Features
-// //!
-// //! ## `check-all-casts`
-// //!
-// //! By default, `screeps-game-api` assumes that the Screeps JavaScript API calls
-// //! return the types that they are documented to return and bypasses
-// //! `instanceof` checks when constructing rust wrappers for those return values.
-// //!
-// //! To enable checking all types on all API calls, even ones when the screeps
-// //! server reliably returns the expected type, depend on `screeps-game-api` with
-// //! the `"check-all-casts"` feature flag:
-// //!
-// //! ```toml
-// //! [dependencies]
-// //! # ...
-// //! screeps-game-api = { version = "0.9", features = ["check-all-casts"] }
-// //! ```
+//!
+//! # Cargo Features
+//!
+//! ## `generate-pixel`
+//!
+//! Enables the function to generate pixels, which is only present on the
+//! Screeps: World official servers.
+//!
+//! ## `inter-shard-memory`
+//!
+//! Enables interacting with `IntershardMemory`, which is not present in most
+//! private server environments.
+//!
+//! ## `score`
+//!
+//! Enables the score resource and entities, introduced for Screeps Seasonal's
+//! first season.
+//!
+//! ## `symbols`
+//!
+//! Enables the symbol resources and entities, introduced for Screeps Seasonal's
+//! second season.
+//!
+//! ## `mmo`
+//!
+//! Enables the `generate-pixel` and `inter-shard-memory` features, which are
+//! present on the Screeps: World official servers but not on private servers.
+//!
+//! ## `seasonal-season-1`
+//!
+//! Enables the `score` feature, a mechanic introduced for Screeps Seasonal's
+//! first season, as well as enabling constants relevant to season 1.
+//!
+//! ## `seasonal-season-2`
+//!
+//! Enables the `symbols` feature, a mechanic introduced for Screeps Seasonal's
+//! second season, as well as enabling constants relevant to season 2.
 #![recursion_limit = "128"]
 // to build locally with doc_cfg enabled, run:
 // `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
