@@ -65,9 +65,10 @@ pub use self::{
     power_creep::{AccountPowerCreep, PowerCreep, PowerInfo},
     resource::Resource,
     room::{
-        AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindOptions,
-        HarvestEvent, HealEvent, HealType, JsFindOptions, ObjectDestroyedEvent, Path, PowerEvent,
-        RepairEvent, ReserveControllerEvent, Room, Step, TransferEvent, UpgradeControllerEvent,
+        AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, FindPathOptions,
+        HarvestEvent, HealEvent, HealType, JsFindPathOptions, ObjectDestroyedEvent, Path,
+        PowerEvent, RepairEvent, ReserveControllerEvent, Room, Step, TransferEvent,
+        UpgradeControllerEvent,
     },
     room_object::{Effect, RoomObject},
     room_position::RoomPosition,

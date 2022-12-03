@@ -3,10 +3,10 @@ mod impls;
 
 pub use self::impls::{
     AccountPowerCreep, AttackEvent, AttackType, BodyPart, BuildEvent, ConstructionSite, CostMatrix,
-    CostMatrixSet, Creep, Deposit, Effect, Event, EventType, ExitEvent, FindOptions, Flag,
+    CostMatrixSet, Creep, Deposit, Effect, Event, EventType, ExitEvent, FindPathOptions, Flag,
     HarvestEvent, HasLocalPosition, HealEvent, HealType, InterShardPortalDestination,
-    JsFindOptions, Mineral, MoveToOptions, Nuke, ObjectDestroyedEvent, OwnedStructure, Owner, Path,
-    PortalDestination, PowerCreep, PowerEvent, PowerInfo, RepairEvent, Reservation,
+    JsFindPathOptions, Mineral, MoveToOptions, Nuke, ObjectDestroyedEvent, OwnedStructure, Owner,
+    Path, PortalDestination, PowerCreep, PowerEvent, PowerInfo, RepairEvent, Reservation,
     ReserveControllerEvent, Resource, Room, RoomObject, RoomPosition, RoomTerrain, Ruin, Sign,
     Source, SpawnOptions, Spawning, Step, Store, Structure, StructureContainer,
     StructureController, StructureExtension, StructureExtractor, StructureFactory,

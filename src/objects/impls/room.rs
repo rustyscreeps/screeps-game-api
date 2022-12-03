@@ -401,55 +401,55 @@ impl JsCollectionFromValue for Room {
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
-    pub type JsFindOptions;
+    pub type JsFindPathOptions;
 
     #[wasm_bindgen(method, setter = ignoreCreeps)]
-    pub fn ignore_creeps(this: &JsFindOptions, ignore: bool);
+    pub fn ignore_creeps(this: &JsFindPathOptions, ignore: bool);
 
     #[wasm_bindgen(method, setter = ignoreDestructibleStructures)]
-    pub fn ignore_destructible_structures(this: &JsFindOptions, ignore: bool);
+    pub fn ignore_destructible_structures(this: &JsFindPathOptions, ignore: bool);
 
     #[wasm_bindgen(method, setter = costCallback)]
     pub fn cost_callback(
-        this: &JsFindOptions,
+        this: &JsFindPathOptions,
         callback: &Closure<dyn FnMut(JsString, CostMatrix) -> JsValue>,
     );
 
     #[wasm_bindgen(method, setter = maxOps)]
-    pub fn max_ops(this: &JsFindOptions, ops: u32);
+    pub fn max_ops(this: &JsFindPathOptions, ops: u32);
 
     #[wasm_bindgen(method, setter = heuristicWeight)]
-    pub fn heuristic_weight(this: &JsFindOptions, weight: f64);
+    pub fn heuristic_weight(this: &JsFindPathOptions, weight: f64);
 
     #[wasm_bindgen(method, setter = serialize)]
-    pub fn serialize(this: &JsFindOptions, serialize: bool);
+    pub fn serialize(this: &JsFindPathOptions, serialize: bool);
 
     #[wasm_bindgen(method, setter = maxRooms)]
-    pub fn max_rooms(this: &JsFindOptions, max: u8);
+    pub fn max_rooms(this: &JsFindPathOptions, max: u8);
 
     #[wasm_bindgen(method, setter = range)]
-    pub fn range(this: &JsFindOptions, range: u32);
+    pub fn range(this: &JsFindPathOptions, range: u32);
 
     #[wasm_bindgen(method, setter = plainCost)]
-    pub fn plain_cost(this: &JsFindOptions, cost: u8);
+    pub fn plain_cost(this: &JsFindPathOptions, cost: u8);
 
     #[wasm_bindgen(method, setter = swampCost)]
-    pub fn swamp_cost(this: &JsFindOptions, cost: u8);
+    pub fn swamp_cost(this: &JsFindPathOptions, cost: u8);
 }
 
-impl JsFindOptions {
-    pub fn new() -> JsFindOptions {
+impl JsFindPathOptions {
+    pub fn new() -> JsFindPathOptions {
         Object::new().unchecked_into()
     }
 }
 
-impl Default for JsFindOptions {
+impl Default for JsFindPathOptions {
     fn default() -> Self {
         Self::new()
     }
 }
 
-pub struct FindOptions<F, R>
+pub struct FindPathOptions<F, R>
 where
     F: FnMut(RoomName, CostMatrix) -> R,
     R: RoomCostResult,
@@ -466,12 +466,12 @@ where
     pub(crate) swamp_cost: Option<u8>,
 }
 
-impl<R> Default for FindOptions<fn(RoomName, CostMatrix) -> R, R>
+impl<R> Default for FindPathOptions<fn(RoomName, CostMatrix) -> R, R>
 where
     R: RoomCostResult + Default,
 {
     fn default() -> Self {
-        FindOptions {
+        FindPathOptions {
             ignore_creeps: None,
             ignore_destructible_structures: None,
             cost_callback: |_, _| R::default(),
@@ -486,7 +486,7 @@ where
     }
 }
 
-impl<R> FindOptions<fn(RoomName, CostMatrix) -> R, R>
+impl<R> FindPathOptions<fn(RoomName, CostMatrix) -> R, R>
 where
     R: RoomCostResult + Default,
 {
@@ -495,7 +495,7 @@ where
     }
 }
 
-impl<F, R> FindOptions<F, R>
+impl<F, R> FindPathOptions<F, R>
 where
     F: FnMut(RoomName, CostMatrix) -> R,
     R: RoomCostResult,
@@ -514,12 +514,12 @@ where
     }
 
     /// Sets cost callback - default `|_, _| {}`.
-    pub fn cost_callback<F2, R2>(self, cost_callback: F2) -> FindOptions<F2, R2>
+    pub fn cost_callback<F2, R2>(self, cost_callback: F2) -> FindPathOptions<F2, R2>
     where
         F2: FnMut(RoomName, CostMatrix) -> R2,
         R2: RoomCostResult,
     {
-        let FindOptions {
+        let FindPathOptions {
             ignore_creeps,
             ignore_destructible_structures,
             max_ops,
@@ -532,7 +532,7 @@ where
             ..
         } = self;
 
-        FindOptions {
+        FindPathOptions {
             ignore_creeps,
             ignore_destructible_structures,
             cost_callback,
@@ -587,7 +587,7 @@ where
         self
     }
 
-    pub(crate) fn into_js_options<CR>(self, callback: impl Fn(&JsFindOptions) -> CR) -> CR {
+    pub(crate) fn into_js_options<CR>(self, callback: impl Fn(&JsFindPathOptions) -> CR) -> CR {
         let mut raw_callback = self.cost_callback;
 
         let mut owned_callback = move |room: RoomName, cost_matrix: CostMatrix| -> JsValue {
@@ -626,7 +626,7 @@ where
         // Create JS object and set properties.
         //
 
-        let js_options = JsFindOptions::new();
+        let js_options = JsFindPathOptions::new();
 
         js_options.cost_callback(&closure);
 

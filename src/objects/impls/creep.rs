@@ -339,7 +339,7 @@ impl Creep {
     {
         Self::dismantle_internal(self, target.as_ref())
     }
-    
+
     /// Harvest from a [`Source`], [`Mineral`], or [`Deposit`] in melee range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.harvest)

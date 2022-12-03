@@ -1,4 +1,4 @@
-use crate::{objects::PolyStyle, CostMatrix, FindOptions, RoomName, SingleRoomCostResult};
+use crate::{objects::PolyStyle, CostMatrix, FindPathOptions, RoomName, SingleRoomCostResult};
 use js_sys::Object;
 use wasm_bindgen::{prelude::*, JsCast};
 
@@ -20,7 +20,7 @@ extern "C" {
     pub fn visualize_path_style(this: &JsMoveToOptions, style: &JsValue);
 
     #[wasm_bindgen(method, setter = heuristicWeight)]
-    pub fn find_options(this: &JsMoveToOptions, options: &JsValue);
+    pub fn find_path_options(this: &JsMoveToOptions, options: &JsValue);
 }
 
 impl JsMoveToOptions {
@@ -43,7 +43,7 @@ where
     pub(crate) serialize_memory: Option<bool>,
     pub(crate) no_path_finding: Option<bool>,
     pub(crate) visualize_path_style: Option<PolyStyle>,
-    pub(crate) find_options: FindOptions<F, SingleRoomCostResult>,
+    pub(crate) find_path_options: FindPathOptions<F, SingleRoomCostResult>,
 }
 
 impl Default for MoveToOptions<fn(RoomName, CostMatrix) -> SingleRoomCostResult> {
@@ -53,7 +53,7 @@ impl Default for MoveToOptions<fn(RoomName, CostMatrix) -> SingleRoomCostResult>
             serialize_memory: None,
             no_path_finding: None,
             visualize_path_style: None,
-            find_options: FindOptions::default(),
+            find_path_options: FindPathOptions::default(),
         }
     }
 }
@@ -96,14 +96,14 @@ where
 
     /// Sets whether the algorithm considers creeps as walkable. Default: False.
     pub fn ignore_creeps(mut self, ignore: bool) -> Self {
-        self.find_options.ignore_creeps = Some(ignore);
+        self.find_path_options.ignore_creeps = Some(ignore);
         self
     }
 
     /// Sets whether the algorithm considers destructible structure as
     /// walkable. Default: False.
     pub fn ignore_destructible_structures(mut self, ignore: bool) -> Self {
-        self.find_options.ignore_destructible_structures = Some(ignore);
+        self.find_path_options.ignore_destructible_structures = Some(ignore);
         self
     }
 
@@ -117,7 +117,7 @@ where
             serialize_memory: self.serialize_memory,
             no_path_finding: self.no_path_finding,
             visualize_path_style: self.visualize_path_style,
-            find_options: self.find_options.cost_callback(cost_callback),
+            find_path_options: self.find_path_options.cost_callback(cost_callback),
         };
 
         new_options
@@ -125,49 +125,50 @@ where
 
     /// Sets maximum ops - default `2000`.
     pub fn max_ops(mut self, ops: u32) -> Self {
-        self.find_options.max_ops = Some(ops);
+        self.find_path_options.max_ops = Some(ops);
         self
     }
 
     /// Sets heuristic weight - default `1.2`.
     pub fn heuristic_weight(mut self, weight: f64) -> Self {
-        self.find_options.heuristic_weight = Some(weight);
+        self.find_path_options.heuristic_weight = Some(weight);
         self
     }
 
     /// Sets whether the returned path should be passed to `Room.serializePath`.
     pub fn serialize(mut self, s: bool) -> Self {
-        self.find_options.serialize = Some(s);
+        self.find_path_options.serialize = Some(s);
         self
     }
 
     /// Sets maximum rooms - default `16`, max `16`.
     pub fn max_rooms(mut self, rooms: u8) -> Self {
-        self.find_options.max_rooms = Some(rooms);
+        self.find_path_options.max_rooms = Some(rooms);
         self
     }
 
     pub fn range(mut self, k: u32) -> Self {
-        self.find_options.range = Some(k);
+        self.find_path_options.range = Some(k);
         self
     }
 
     /// Sets plain cost - default `1`.
     pub fn plain_cost(mut self, cost: u8) -> Self {
-        self.find_options.plain_cost = Some(cost);
+        self.find_path_options.plain_cost = Some(cost);
         self
     }
 
     /// Sets swamp cost - default `5`.
     pub fn swamp_cost(mut self, cost: u8) -> Self {
-        self.find_options.swamp_cost = Some(cost);
+        self.find_path_options.swamp_cost = Some(cost);
         self
     }
 
-    /// Sets options related to FindOptions. Defaults to FindOptions default.
-    pub fn find_options<F2>(
+    /// Sets options related to FindPathOptions. Defaults to FindPathOptions
+    /// default.
+    pub fn find_path_options<F2>(
         self,
-        find_options: FindOptions<F2, SingleRoomCostResult>,
+        find_path_options: FindPathOptions<F2, SingleRoomCostResult>,
     ) -> MoveToOptions<F2>
     where
         F2: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
@@ -177,7 +178,7 @@ where
             serialize_memory: self.serialize_memory,
             no_path_finding: self.no_path_finding,
             visualize_path_style: self.visualize_path_style,
-            find_options,
+            find_path_options,
         }
     }
 
@@ -207,8 +208,8 @@ where
             js_options.visualize_path_style(&style);
         }
 
-        self.find_options.into_js_options(|find_options| {
-            js_options.find_options(find_options);
+        self.find_path_options.into_js_options(|find_path_options| {
+            js_options.find_path_options(find_path_options);
 
             callback(&js_options)
         })
