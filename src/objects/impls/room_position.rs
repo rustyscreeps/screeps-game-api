@@ -1,11 +1,12 @@
 use std::convert::TryInto;
 
 use crate::{
-    constants::{look::*, Color, Direction, ErrorCode, Look, ReturnCode, StructureType},
-    local::Position,
+    constants::{find::*, look::*, Color, Direction, ErrorCode, Look, ReturnCode, StructureType},
+    local::{Position, RoomCoordinate, RoomName},
+    objects::{CostMatrix, FindPathOptions, Path},
+    pathfinder::RoomCostResult,
     prelude::*,
     prototypes::ROOM_POSITION_PROTOTYPE,
-    Find, FindConstant, LookConstant, RoomName,
 };
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
@@ -111,21 +112,20 @@ extern "C" {
         options: Option<&Object>,
     ) -> Option<Array>;
 
-    // todo FindPathOptions
-    /// Find a path from this position to a position or room object, with an
-    /// optional options object
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
     #[wasm_bindgen(method, js_name = findPathTo)]
-    pub fn find_path_to(this: &RoomPosition, goal: &JsValue, options: Option<&Object>) -> Array;
+    fn find_path_to_internal(
+        this: &RoomPosition,
+        target: &JsValue,
+        options: Option<&Object>,
+    ) -> JsValue;
 
-    // todo FindPathOptions
-    /// Find a path from this position to the given coordinates in the same
-    /// room, with an optional options object.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
     #[wasm_bindgen(method, js_name = findPathTo)]
-    pub fn find_path_to_xy(this: &RoomPosition, x: u8, y: u8, options: Option<&Object>) -> Array;
+    fn find_path_to_xy_internal(
+        this: &RoomPosition,
+        x: u8,
+        y: u8,
+        options: Option<&Object>,
+    ) -> JsValue;
 
     /// Get the [`Direction`] toward a position or room object.
     ///
@@ -250,6 +250,7 @@ impl RoomPosition {
         }
     }
 
+    // todo options
     /// Find the closest object by path among an [`Array`] of objects, or among
     /// a [`FindType`] to search for all objects of that type in the room.
     ///
@@ -287,6 +288,60 @@ impl RoomPosition {
         self.find_in_range_internal(find.find_code(), range, None)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
             .unwrap_or_else(Vec::new)
+    }
+
+    /// Find a path from this position to a position or room object, with an
+    /// optional options object
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
+    pub fn find_path_to<T, F, R>(&self, target: &T, options: Option<FindPathOptions<F, R>>) -> Path
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> R,
+        R: RoomCostResult,
+    {
+        let target: RoomPosition = target.pos().into();
+
+        if let Some(options) = options {
+            options.into_js_options(|js_options| {
+                serde_wasm_bindgen::from_value(
+                    self.find_path_to_internal(&target, Some(js_options.unchecked_ref())),
+                )
+                .expect("invalid path from RoomPosition.findPathTo")
+            })
+        } else {
+            serde_wasm_bindgen::from_value(self.find_path_to_internal(&target, None))
+                .expect("invalid path from RoomPosition.findPathTo")
+        }
+    }
+
+    /// Find a path from this position to the given coordinates in the same
+    /// room, with an optional options object.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
+    pub fn find_path_to_xy<F, R>(
+        &self,
+        x: RoomCoordinate,
+        y: RoomCoordinate,
+        options: Option<FindPathOptions<F, R>>,
+    ) -> Path
+    where
+        F: FnMut(RoomName, CostMatrix) -> R,
+        R: RoomCostResult,
+    {
+        if let Some(options) = options {
+            options.into_js_options(|js_options| {
+                serde_wasm_bindgen::from_value(self.find_path_to_xy_internal(
+                    x.into(),
+                    y.into(),
+                    Some(js_options.unchecked_ref()),
+                ))
+                .expect("invalid path from RoomPosition.findPathTo")
+            })
+        } else {
+            serde_wasm_bindgen::from_value(self.find_path_to_xy_internal(x.into(), y.into(), None))
+                .expect("invalid path from RoomPosition.findPathTo")
+        }
     }
 
     /// Get all objects at this position.

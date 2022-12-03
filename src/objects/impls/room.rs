@@ -274,14 +274,29 @@ impl Room {
     /// Find a path within the room from one position to another.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.findPath)
-    pub fn find_path(
+    pub fn find_path<F, R>(
         &self,
         origin: &RoomPosition,
         goal: &RoomPosition,
-        options: Option<&Object>,
-    ) -> Path {
-        serde_wasm_bindgen::from_value(self.find_path_internal(origin, goal, options))
-            .expect("invalid path from Room.findPath")
+        options: Option<FindPathOptions<F, R>>,
+    ) -> Path
+    where
+        F: FnMut(RoomName, CostMatrix) -> R,
+        R: RoomCostResult,
+    {
+        if let Some(options) = options {
+            options.into_js_options(|js_options| {
+                serde_wasm_bindgen::from_value(self.find_path_internal(
+                    origin,
+                    goal,
+                    Some(js_options.unchecked_ref()),
+                ))
+                .expect("invalid path from Room.findPath")
+            })
+        } else {
+            serde_wasm_bindgen::from_value(self.find_path_internal(origin, goal, None))
+                .expect("invalid path from Room.findPath")
+        }
     }
 
     pub fn get_event_log(&self) -> Vec<Event> {

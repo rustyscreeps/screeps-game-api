@@ -3,9 +3,12 @@ use crate::{
     constants::{
         Color, ErrorCode, FindConstant, LookConstant, LookResult, ReturnCode, StructureType,
     },
-    objects::RoomPosition,
+    local::{RoomCoordinate, RoomName},
+    objects::{CostMatrix, FindPathOptions, Path, RoomPosition},
+    pathfinder::RoomCostResult,
+    prelude::*,
 };
-use js_sys::{Array, JsString, Object};
+use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
 use super::Position;
@@ -86,8 +89,13 @@ impl Position {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
     #[inline]
-    pub fn find_path_to(self, goal: &JsValue, options: Option<&Object>) -> Array {
-        RoomPosition::from(self).find_path_to(goal, options)
+    pub fn find_path_to<T, F, R>(&self, target: &T, options: Option<FindPathOptions<F, R>>) -> Path
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> R,
+        R: RoomCostResult,
+    {
+        RoomPosition::from(self).find_path_to(target, options)
     }
 
     /// Find a path from this position to the given coordinates in the same
@@ -95,7 +103,16 @@ impl Position {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findPathTo)
     #[inline]
-    pub fn find_path_to_xy(self, x: u8, y: u8, options: Option<&Object>) -> Array {
+    pub fn find_path_to_xy<F, R>(
+        self,
+        x: RoomCoordinate,
+        y: RoomCoordinate,
+        options: Option<FindPathOptions<F, R>>,
+    ) -> Path
+    where
+        F: FnMut(RoomName, CostMatrix) -> R,
+        R: RoomCostResult,
+    {
         RoomPosition::from(self).find_path_to_xy(x, y, options)
     }
 
