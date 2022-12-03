@@ -760,8 +760,7 @@ impl<'de> Deserialize<'de> for Event {
                                         12 => Some(EventType::Transfer(map.next_value()?)),
                                         _ => {
                                             return Err(de::Error::custom(format!(
-                                                "Event Type Unrecognized: {}",
-                                                event_id
+                                                "Event Type Unrecognized: {event_id}"
                                             )));
                                         }
                                     };
@@ -774,8 +773,7 @@ impl<'de> Deserialize<'de> for Event {
                 if data.is_none() {
                     let err = |e| {
                         de::Error::custom(format_args!(
-                            "can't parse event data due to inner error {}",
-                            e
+                            "can't parse event data due to inner error {e}"
                         ))
                     };
 
@@ -805,8 +803,7 @@ impl<'de> Deserialize<'de> for Event {
                             )),
                             _ => {
                                 return Err(de::Error::custom(format!(
-                                    "Event Type Unrecognized: {}",
-                                    event_id
+                                    "Event Type Unrecognized: {event_id}"
                                 )));
                             }
                         };

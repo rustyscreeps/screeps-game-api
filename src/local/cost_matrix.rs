@@ -309,7 +309,7 @@ mod serde_impls {
         if bits_slice.len() != ROOM_AREA {
             return Err(D::Error::invalid_length(
                 bits_slice.len(),
-                &format!("a vec of length {}", ROOM_AREA).as_str(),
+                &format!("a vec of length {ROOM_AREA}").as_str(),
             ));
         }
 

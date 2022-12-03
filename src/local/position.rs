@@ -287,8 +287,8 @@ impl Position {
     pub fn from_packed(packed: u32) -> Self {
         let x = packed >> 8 & 0xFF;
         let y = packed & 0xFF;
-        assert!(x < ROOM_SIZE as u32, "out of bounds x: {}", x);
-        assert!(y < ROOM_SIZE as u32, "out of bounds y: {}", y);
+        assert!(x < ROOM_SIZE as u32, "out of bounds x: {x}");
+        assert!(y < ROOM_SIZE as u32, "out of bounds y: {y}");
         Position { packed }
     }
 

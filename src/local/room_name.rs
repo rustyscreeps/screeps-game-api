@@ -65,13 +65,13 @@ impl fmt::Display for RoomName {
             write!(f, "sim")?;
         } else {
             if x_coord >= 0 {
-                write!(f, "E{}", x_coord)?;
+                write!(f, "E{x_coord}")?;
             } else {
                 write!(f, "W{}", -x_coord - 1)?;
             }
 
             if y_coord >= 0 {
-                write!(f, "S{}", y_coord)?;
+                write!(f, "S{y_coord}")?;
             } else {
                 write!(f, "N{}", -y_coord - 1)?;
             }
@@ -153,7 +153,7 @@ impl RoomName {
     /// allocation.
     pub fn to_array_string(&self) -> ArrayString<8> {
         let mut res = ArrayString::new();
-        write!(res, "{}", self).expect("expected ArrayString write to be infallible");
+        write!(res, "{self}").expect("expected ArrayString write to be infallible");
         res
     }
 }
@@ -401,18 +401,15 @@ impl fmt::Display for RoomNameParseError {
             RoomNameParseError::TooLarge { length } => write!(
                 f,
                 "got invalid room name, too large to stick in error. \
-                 expected length 8 or less, got length {}",
-                length
+                 expected length 8 or less, got length {length}"
             ),
             RoomNameParseError::InvalidString { string } => write!(
                 f,
-                "expected room name formatted `[ewEW][0-9]+[nsNS][0-9]+`, found `{}`",
-                string
+                "expected room name formatted `[ewEW][0-9]+[nsNS][0-9]+`, found `{string}`"
             ),
             RoomNameParseError::PositionOutOfBounds { x_coord, y_coord } => write!(
                 f,
-                "expected room name with coords within -128..+128, found {}, {}",
-                x_coord, y_coord,
+                "expected room name with coords within -128..+128, found {x_coord}, {y_coord}"
             ),
         }
     }

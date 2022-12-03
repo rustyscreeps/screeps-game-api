@@ -79,7 +79,7 @@ impl<'de> Visitor<'de> for RawObjectIdVisitor {
     where
         E: Error,
     {
-        RawObjectId::from_str(v).map_err(|e| E::custom(format!("Could not parse object id: {}", e)))
+        RawObjectId::from_str(v).map_err(|e| E::custom(format!("Could not parse object id: {e}")))
     }
 
     fn visit_bytes<E>(self, v: &[u8]) -> Result<Self::Value, E>
@@ -89,7 +89,7 @@ impl<'de> Visitor<'de> for RawObjectIdVisitor {
         v.try_into()
             .map(u128::from_be_bytes)
             .map(RawObjectId::from_packed)
-            .map_err(|e| E::custom(format!("Could not parse object id: {}", e)))
+            .map_err(|e| E::custom(format!("Could not parse object id: {e}")))
     }
 }
 
@@ -140,7 +140,7 @@ impl RawObjectId {
     /// allocation.
     pub fn to_array_string(&self) -> ArrayString<24> {
         let mut res = ArrayString::new();
-        write!(res, "{}", self).expect("expected formatting into a fixed-sized buffer to succeed");
+        write!(res, "{self}").expect("expected formatting into a fixed-sized buffer to succeed");
         res
     }
 }

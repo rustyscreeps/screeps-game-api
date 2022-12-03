@@ -49,13 +49,11 @@ impl Position {
         // for room coords is `0..=49`.
         assert!(
             (-HALF_WORLD_SIZE * 50..HALF_WORLD_SIZE * 50).contains(&x),
-            "out of bounds world x: {}",
-            x
+            "out of bounds world x: {x}"
         );
         assert!(
             (-HALF_WORLD_SIZE * 50..HALF_WORLD_SIZE * 50).contains(&y),
-            "out of bounds world y: {}",
-            y
+            "out of bounds world y: {y}"
         );
 
         // We do the `HALF_WORLD_SIZE` transition here first so that the division and

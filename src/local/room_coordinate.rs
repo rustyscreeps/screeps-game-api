@@ -21,7 +21,7 @@ pub fn xy_to_linear_index(xy: RoomXY) -> usize {
 
 #[inline]
 pub fn linear_index_to_xy(idx: usize) -> RoomXY {
-    assert!(idx < ROOM_AREA, "Out of bounds index: {}", idx);
+    assert!(idx < ROOM_AREA, "Out of bounds index: {idx}");
     // SAFETY: bounds checking above ensures both are within range.
     RoomXY {
         x: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_SIZE as usize)) as u8) },
@@ -50,8 +50,7 @@ impl RoomCoordinate {
     pub unsafe fn unchecked_new(coord: u8) -> Self {
         debug_assert!(
             coord < ROOM_SIZE,
-            "Out of bounds unchecked coordinate: {}",
-            coord
+            "Out of bounds unchecked coordinate: {coord}"
         );
         RoomCoordinate(coord)
     }
@@ -181,7 +180,7 @@ impl<'de> Deserialize<'de> for RoomXY {
             RoomXY::try_from(xy).map_err(|err: OutOfBoundsError| {
                 de::Error::invalid_value(
                     de::Unexpected::Unsigned(err.0 as u64),
-                    &format!("a non-negative integer less-than {}", ROOM_SIZE).as_str(),
+                    &format!("a non-negative integer less-than {ROOM_SIZE}").as_str(),
                 )
             })
         }
