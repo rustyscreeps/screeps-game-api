@@ -1,9 +1,9 @@
 use std::{convert::TryFrom, fmt};
 
+use crate::constants::ROOM_SIZE;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
-pub const ROOM_SIZE: u8 = 50;
-pub const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
+pub(crate) const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
 
 #[derive(Debug, Clone, Copy)]
 pub struct OutOfBoundsError(u8);

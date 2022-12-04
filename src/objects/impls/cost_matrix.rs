@@ -1,7 +1,7 @@
 use std::borrow::Borrow;
 use wasm_bindgen::prelude::*;
 
-use crate::{local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
+use crate::{constants::ROOM_SIZE, local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
 
 use js_sys::{Array, Object, Uint8Array};
 
@@ -110,8 +110,7 @@ pub trait CostMatrixSet {
 
 #[inline]
 fn pos_as_idx(x: u8, y: u8) -> usize {
-    //TODO: wiarchbe: Factor out constant!
-    (x as usize) * 50 + (y as usize)
+    (x as usize) * ROOM_SIZE as usize + (y as usize)
 }
 
 impl CostMatrixSet for CostMatrix {

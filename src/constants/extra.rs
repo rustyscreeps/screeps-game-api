@@ -98,6 +98,9 @@ pub const RANGED_MASS_ATTACK_POWER_RANGE_3: u32 = 1;
 /// [`RoomVisual`]: crate::objects::RoomVisual
 pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
 
+/// The maximum height/width of a room in the game
+pub const ROOM_SIZE: u8 = 50;
+
 /// Owner username of hostile non-player structures and creeps which occupy
 /// sector center rooms.
 pub const SOURCE_KEEPER_USERNAME: &str = "Source Keeper";
