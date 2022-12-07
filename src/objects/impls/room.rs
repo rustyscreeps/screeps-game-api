@@ -12,6 +12,7 @@ use crate::{
         ReturnCode, StructureType,
     },
     js_collections::JsCollectionFromValue,
+    local::LodashFilter,
     objects::*,
     prelude::*,
     FindConstant, RoomCostResult, RoomName,
@@ -133,8 +134,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
     #[wasm_bindgen(method, js_name = find)]
-    //TODO: wiarchbe: Find options!
-    fn find_internal(this: &Room, ty: Find, options: Option<&Object>) -> Array;
+    fn find_internal(this: &Room, ty: Find, options: Option<&FindOptions>) -> Array;
 
     /// Find an exit from the current room which leads to a target room, either
     /// a [`Room`] object or [`JsString`] representation of the room name.
@@ -146,7 +146,6 @@ extern "C" {
     #[wasm_bindgen(final, method, js_name = findExitTo)]
     pub fn find_exit_to(this: &Room, room: &JsValue) -> ExitDirection;
 
-    // todo FindPathOptions
     #[wasm_bindgen(final, method, js_name = findPath)]
     fn find_path_internal(
         this: &Room,
@@ -260,12 +259,11 @@ impl Room {
         }
     }
 
-    //TODO: wiarchbe: Find options!
-    pub fn find<T>(&self, ty: T) -> Vec<T::Item>
+    pub fn find<T>(&self, ty: T, options: Option<&FindOptions>) -> Vec<T::Item>
     where
         T: FindConstant,
     {
-        self.find_internal(ty.find_code(), None)
+        self.find_internal(ty.find_code(), options)
             .iter()
             .map(T::convert_and_check_item)
             .collect()
@@ -411,6 +409,15 @@ impl JsCollectionFromValue for Room {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
     }
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen]
+    pub type FindOptions;
+
+    #[wasm_bindgen(method, setter = filter)]
+    pub fn filter(this: &FindOptions, filter: LodashFilter);
 }
 
 #[wasm_bindgen]

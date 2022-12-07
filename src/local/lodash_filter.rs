@@ -13,6 +13,8 @@ extern "C" {
     /// increase performance when used with [`get_all_orders`].
     #[wasm_bindgen(method, setter = resourceType)]
     pub fn resource_type(this: &LodashFilter, resource: MarketResourceType);
+
+    // todo add more setters for use with Room.find()
 }
 
 impl LodashFilter {

@@ -13,7 +13,7 @@
 //!
 //! let room: Room = game::rooms().get("E23S55".parse().unwrap()).unwrap();
 //!
-//! let creeps = room.find(find::CREEPS);
+//! let creeps = room.find(find::CREEPS, None);
 //! # let _ = creeps;
 //! ```
 //!

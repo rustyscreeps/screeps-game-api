@@ -20,11 +20,6 @@ extern "C" {
     #[wasm_bindgen(constructor, js_namespace = PathFinder)]
     pub fn new() -> CostMatrix;
 
-    // TODO make a new_with_bits
-    // https://github.com/rustwasm/wasm-bindgen/blob/master/crates/js-sys/tests/wasm/Object.rs#L36
-    //     #[wasm_bindgen(js_name = prototype, js_namespace = Foo)]
-    //     static FOO_PROTOTYPE: Object;
-
     /// Gets a reference to the [`Uint8Array`] underlying this [`CostMatrix`].
     #[wasm_bindgen(method, getter = _bits)]
     pub fn get_bits(this: &CostMatrix) -> Uint8Array;
