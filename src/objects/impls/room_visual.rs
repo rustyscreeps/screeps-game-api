@@ -54,17 +54,15 @@ pub struct CircleData {
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum LineDrawStyle {
+    #[default]
     Solid,
     Dashed,
     Dotted,
 }
 
-impl Default for LineDrawStyle {
-    fn default() -> LineDrawStyle {
-        LineDrawStyle::Solid
-    }
-}
+
 
 impl LineDrawStyle {
     pub fn is_solid(&self) -> bool {
@@ -229,17 +227,15 @@ pub enum FontStyle {
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum TextAlign {
+    #[default]
     Center,
     Left,
     Right,
 }
 
-impl Default for TextAlign {
-    fn default() -> TextAlign {
-        TextAlign::Center
-    }
-}
+
 
 impl TextAlign {
     pub fn is_center(&self) -> bool {
