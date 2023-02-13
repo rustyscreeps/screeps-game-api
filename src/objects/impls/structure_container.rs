@@ -22,10 +22,17 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureContainer) -> Store;
 
-    /// The number of ticks until the container will decay, losing TODO CONSTANT
-    /// hits.
+    /// The number of ticks until the container will decay, losing
+    /// [`CONTAINER_DECAY`] hits. The time between each decay interval
+    /// depends whether the container is in an owned room;
+    /// [`CONTAINER_DECAY_TIME_OWNED`] in owned rooms and
+    /// [`CONTAINER_DECAY_TIME`] in all other rooms.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureContainer.ticksToDecay)
+    ///
+    /// [`CONTAINER_DECAY`]: crate::constants::CONTAINER_DECAY
+    /// [`CONTAINER_DECAY_TIME_OWNED`]: crate::constants::CONTAINER_DECAY_TIME_OWNED
+    /// [`CONTAINER_DECAY_TIME`]: crate::constants::CONTAINER_DECAY_TIME
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &StructureContainer) -> u32;
 }

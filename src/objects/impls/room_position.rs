@@ -250,11 +250,13 @@ impl RoomPosition {
         }
     }
 
-    // todo options
-    /// Find the closest object by path among an [`Array`] of objects, or among
-    /// a [`FindType`] to search for all objects of that type in the room.
+    // todo typed options and version that allows passing target roomobjects
+    /// Find the closest object by path among a list of objects, or use
+    /// a [`find` constant] to search for all objects of that type in the room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByPath)
+    ///
+    /// [`find` constant]: crate::constants::find
     pub fn find_closest_by_path<T>(&self, find: T, options: Option<&Object>) -> Option<T::Item>
     where
         T: FindConstant,
@@ -263,11 +265,14 @@ impl RoomPosition {
             .map(|reference| T::convert_and_check_item(reference.into()))
     }
 
-    /// Find the closest object by range among an [`Array`] of objects, or among
-    /// a [`FindType`] to search for all objects of that type in the room. Will
-    /// not work for objects in other rooms.
+    // todo version for passing target roomobjects
+    /// Find the closest object by range among a list of objects, or use
+    /// a [`find` constant] to search for all objects of that type in the room.
+    /// Will not work for objects in other rooms.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findClosestByRange)
+    ///
+    /// [`find` constant]: crate::constants::find
     pub fn find_closest_by_range<T>(&self, find: T) -> Option<T::Item>
     where
         T: FindConstant,
@@ -276,11 +281,14 @@ impl RoomPosition {
             .map(|reference| T::convert_and_check_item(reference.into()))
     }
 
-    /// Find all relevant objects within a certain range among an [`Array`] of
-    /// objects, or among a [`FindType`] to search all objects of that type in
-    /// the room.
+    // todo version for passing target roomobjects
+    /// Find all relevant objects within a certain range among a list of
+    /// objects, or use a [`find` constant] to search all objects of that type
+    /// in the room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.findInRange)
+    ///
+    /// [`find` constant]: crate::constants::find
     pub fn find_in_range<T>(&self, find: T, range: u8) -> Vec<T::Item>
     where
         T: FindConstant,

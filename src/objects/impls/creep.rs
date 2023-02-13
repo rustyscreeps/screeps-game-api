@@ -142,11 +142,13 @@ extern "C" {
     #[wasm_bindgen(final, method)]
     pub fn drop(this: &Creep, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
 
-    // todo constant link SAFE_MODE_COST
-    /// Consume [`ResourceType::Ghodium`] from the creep's [`Store`] to add a
-    /// safe mode activation to a [`StructureController`] in melee range.
+    /// Consume [`ResourceType::Ghodium`] (in the amount of [`SAFE_MODE_COST`])
+    /// from the creep's [`Store`] to add a safe mode activation to a
+    /// [`StructureController`] in melee range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.generateSafeMode)
+    ///
+    /// [`SAFE_MODE_COST`]: crate::constants::SAFE_MODE_COST
     #[wasm_bindgen(final, method, js_name = generateSafeMode)]
     pub fn generate_safe_mode(this: &Creep, target: &StructureController) -> ReturnCode;
 
@@ -326,13 +328,17 @@ impl Creep {
         Self::attack_internal(self, target.as_ref())
     }
 
-    // todo constant links - REPAIR_POWER, DISMANTLE_POWER, and buildable types
-    // which I think we have
-    /// Dismantle a [`Structure`] in melee range, giving the creep energy
-    /// equivalent to half of the cost to repair the same hits. Must be a type
-    /// of structure that can be constructed.
+    /// Dismantle a [`Structure`] in melee range, removing [`DISMANTLE_POWER`]
+    /// hits per effective work part, giving the creep energy equivalent to half
+    /// of the cost to repair the same hits. Can only be used against types
+    /// of structures that can be constructed; if
+    /// [`StructureType::construction_cost`] is `None`, dismantling is
+    /// impossible.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.dismantle)
+    ///
+    /// [`DISMANTLE_POWER`]: crate::constants::DISMANTLE_POWER
+    /// [`StructureType::construction_cost`]: crate::constants::StructureType::construction_cost
     pub fn dismantle<T>(&self, target: &T) -> ReturnCode
     where
         T: ?Sized + Dismantleable,
