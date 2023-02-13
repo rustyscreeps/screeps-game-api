@@ -150,8 +150,6 @@ pub enum MultiRoomCostResult {
 
 impl RoomCostResult for MultiRoomCostResult {}
 
-
-
 impl From<MultiRoomCostResult> for JsValue {
     fn from(v: MultiRoomCostResult) -> JsValue {
         match v {
@@ -170,8 +168,6 @@ pub enum SingleRoomCostResult {
 }
 
 impl RoomCostResult for SingleRoomCostResult {}
-
-
 
 impl From<SingleRoomCostResult> for JsValue {
     fn from(v: SingleRoomCostResult) -> JsValue {

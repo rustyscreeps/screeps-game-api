@@ -62,8 +62,6 @@ pub enum LineDrawStyle {
     Dotted,
 }
 
-
-
 impl LineDrawStyle {
     pub fn is_solid(&self) -> bool {
         matches!(self, LineDrawStyle::Solid)
@@ -234,8 +232,6 @@ pub enum TextAlign {
     Left,
     Right,
 }
-
-
 
 impl TextAlign {
     pub fn is_center(&self) -> bool {
