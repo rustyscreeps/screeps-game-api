@@ -1,7 +1,8 @@
 //! Game method implementations on `Position`
 use crate::{
     constants::{
-        Color, ErrorCode, FindConstant, LookConstant, LookResult, ReturnCode, StructureType,
+        look::{LookConstant, LookResult},
+        Color, ErrorCode, FindConstant, ReturnCode, StructureType,
     },
     local::{RoomCoordinate, RoomName},
     objects::{CostMatrix, FindPathOptions, Path, RoomPosition},

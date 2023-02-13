@@ -19,7 +19,7 @@ pub mod seasonal;
 mod small_enums;
 mod types;
 
-pub use self::{extra::*, look::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*};
+pub use self::{extra::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*};
 
 pub use self::find::{
     Find, FindConstant, CONSTRUCTION_SITES, CREEPS, DEPOSITS, DROPPED_RESOURCES, EXIT, EXIT_BOTTOM,

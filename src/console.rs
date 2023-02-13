@@ -1,3 +1,6 @@
+//! Utility functions for visuals that the game API exposes on the `console`
+//! object.
+
 use js_sys::JsString;
 
 use wasm_bindgen::prelude::*;

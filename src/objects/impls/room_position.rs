@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 
 use crate::{
-    constants::{find::*, look::*, Color, Direction, ErrorCode, Look, ReturnCode, StructureType},
+    constants::{find::*, look::*, Color, Direction, ErrorCode, ReturnCode, StructureType},
     local::{Position, RoomCoordinate, RoomName},
     objects::{CostMatrix, FindPathOptions, Path},
     pathfinder::RoomCostResult,

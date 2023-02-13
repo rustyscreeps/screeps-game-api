@@ -8,7 +8,7 @@ use std::{convert::TryInto, fmt};
 
 use crate::{
     constants::{
-        look::*, Color, Direction, ErrorCode, ExitDirection, Find, Look, PowerType, ResourceType,
+        look::*, Color, Direction, ErrorCode, ExitDirection, Find, PowerType, ResourceType,
         ReturnCode, StructureType,
     },
     js_collections::JsCollectionFromValue,
