@@ -1,3 +1,6 @@
+//! Traits associated with how specific [game objects] can be used.
+//!
+//! [game objects]: crate::objects
 use std::str::FromStr;
 
 use enum_dispatch::enum_dispatch;

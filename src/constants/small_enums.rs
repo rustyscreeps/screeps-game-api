@@ -74,6 +74,7 @@ impl TryFrom<JsValue> for ReturnCode {
     }
 }
 
+/// Translates non-OK return codes.
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
 )]

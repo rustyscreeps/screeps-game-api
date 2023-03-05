@@ -1,5 +1,15 @@
 //! Interface for Screeps [`RawMemory`] global object.
 //!
+//! This is available as an alternative to the `Memory` object in the js heap,
+//! which itself is just a light wrapper around serializing into and
+//! deserializing JSON into [`RawMemory`]. String data stored can be retrieved
+//! after the running bot code is restarted (either by the server or by a new
+//! version of the code being uploaded) and decoded using serde or another
+//! option.
+//!
+//! Also contains functions for accessing memory segments and other
+//! players' active foreign segments.
+//!
 //! [`RawMemory`]: https://docs.screeps.com/api/#RawMemory
 
 use js_sys::{Array, JsString, Object};
@@ -28,8 +38,8 @@ extern "C" {
     #[wasm_bindgen(static_method_of = RawMemory)]
     pub fn get() -> JsString;
 
-    /// Overwrite the stored memory with a new [`JsString`].  Maximum size
-    /// [`MEMORY_SIZE_LIMIT`].
+    /// Overwrite the stored memory with a new [`JsString`]. Maximum allowed
+    /// size [`MEMORY_SIZE_LIMIT`] UTF-16 units.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.set)
     ///

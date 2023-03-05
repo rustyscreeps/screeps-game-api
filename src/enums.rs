@@ -1,3 +1,8 @@
+//! Enums using [`enum_dispatch`] for generic wrappers around object types with
+//! shared traits.
+//!
+//! [`enum_dispatch`]: enum_dispatch::enum_dispatch
+
 use enum_dispatch::enum_dispatch;
 use std::convert::TryFrom;
 use wasm_bindgen::{JsCast, JsValue};

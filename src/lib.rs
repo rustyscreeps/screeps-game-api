@@ -52,7 +52,7 @@ pub mod local;
 pub mod memory;
 pub mod objects;
 pub mod pathfinder;
-pub mod prototypes;
+pub(crate) mod prototypes;
 pub mod raw_memory;
 pub mod traits;
 

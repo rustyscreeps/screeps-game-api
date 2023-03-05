@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use crate::constants::ResourceType;
 
+/// Returned values from [`ResourceType::commodity_recipe`] representing a
+/// commodity that can be produced in factories.
 #[derive(Clone, Debug)]
 pub struct FactoryRecipe {
     /// Amount of the component that this recipe creates

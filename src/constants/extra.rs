@@ -35,8 +35,8 @@ pub const CREEP_SAY_MAX_LENGTH: u32 = 10;
 /// Maximum length of names of flag objects.
 pub const FLAG_NAME_MAX_LENGTH: u32 = 60;
 
-/// Maximum size in bytes (100 KiB) of data set in [`InterShardMemory`] for each
-/// shard
+/// Maximum size in UTF-16 units of data set in [`InterShardMemory`] for each
+/// shard.
 ///
 /// [`InterShardMemory`]: crate::InterShardMemory
 pub const INTER_SHARD_MEMORY_SIZE_LIMIT: u32 = 100 * 1024;
@@ -57,14 +57,14 @@ pub const MAP_VISUAL_SIZE_LIMIT: u32 = 1000 * 1024;
 /// tick.
 pub const MARKET_MAX_DEALS_PER_TICK: u32 = 10;
 
-/// Maximum size in bytes (100 KiB) of the string contents allowed in memory
+/// Maximum size in UTF-16 units of the string contents allowed in memory
 /// segments.
 pub const MEMORY_SEGMENT_SIZE_LIMIT: u32 = 100 * 1024;
 
 /// Maximum active (readable) memory segments for each tick.
 pub const MEMORY_SEGMENT_ACTIVE_LIMIT: u32 = 10;
 
-/// Maximum size in bytes (2 MiB) of the string contents allowed in memory.
+/// Maximum size in UTF-16 units of the string contents allowed in memory.
 pub const MEMORY_SIZE_LIMIT: u32 = 2 * 1024 * 1024;
 
 /// Fatigue points removed per effective move part per tick.

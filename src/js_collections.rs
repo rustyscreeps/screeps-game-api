@@ -1,3 +1,4 @@
+//! Typed JavaScript collection wrappers.
 use crate::{game, traits::Resolvable};
 use js_sys::{Array, JsString, Object};
 use std::{

@@ -495,6 +495,8 @@ impl ResourceType {
     }
 }
 
+/// Returned values from [`ResourceType::boost`] representing the effect of
+/// boosting a creep with the given resource.
 #[derive(Copy, Clone, Debug)]
 pub enum Boost {
     Harvest(u32),
