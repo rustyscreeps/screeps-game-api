@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.10.0 (2023-03-13)
+===================
+
 ### Notably breaking:
 
 - Convert from stdweb to wasm-bindgen as underlying framework. While extensive effort was put into
