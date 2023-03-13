@@ -1,5 +1,6 @@
 use std::{
     cmp::{Ord, Ordering, PartialOrd},
+    convert::TryFrom,
     error,
     fmt::{self, Write},
     ops,
@@ -7,6 +8,10 @@ use std::{
 };
 
 use arrayvec::ArrayString;
+use js_sys::JsString;
+use wasm_bindgen::{JsCast, JsValue};
+
+use crate::js_collections::{JsCollectionFromValue, JsCollectionIntoValue};
 
 use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 
@@ -60,13 +65,13 @@ impl fmt::Display for RoomName {
             write!(f, "sim")?;
         } else {
             if x_coord >= 0 {
-                write!(f, "E{}", x_coord)?;
+                write!(f, "E{x_coord}")?;
             } else {
                 write!(f, "W{}", -x_coord - 1)?;
             }
 
             if y_coord >= 0 {
-                write!(f, "S{}", y_coord)?;
+                write!(f, "S{y_coord}")?;
             } else {
                 write!(f, "N{}", -y_coord - 1)?;
             }
@@ -146,10 +151,102 @@ impl RoomName {
     ///
     /// This is equivalent to [`ToString::to_string`], but involves no
     /// allocation.
-    pub fn to_array_string(&self) -> ArrayString<[u8; 8]> {
+    pub fn to_array_string(&self) -> ArrayString<8> {
         let mut res = ArrayString::new();
-        write!(res, "{}", self).expect("expected ArrayString write to be infallible");
+        write!(res, "{self}").expect("expected ArrayString write to be infallible");
         res
+    }
+}
+
+impl From<RoomName> for JsValue {
+    fn from(name: RoomName) -> JsValue {
+        let array = name.to_array_string();
+
+        JsValue::from_str(array.as_str())
+    }
+}
+
+impl From<&RoomName> for JsValue {
+    fn from(name: &RoomName) -> JsValue {
+        let array = name.to_array_string();
+
+        JsValue::from_str(array.as_str())
+    }
+}
+
+impl From<RoomName> for JsString {
+    fn from(name: RoomName) -> JsString {
+        let val: JsValue = name.into();
+
+        val.unchecked_into()
+    }
+}
+
+impl From<&RoomName> for JsString {
+    fn from(name: &RoomName) -> JsString {
+        let val: JsValue = name.into();
+
+        val.unchecked_into()
+    }
+}
+
+/// An error representing when a string can't be parsed into a
+/// [`RoomName`].
+///
+/// [`RoomName`]: struct.RoomName.html
+#[derive(Clone, Debug)]
+pub enum RoomNameConversionError {
+    InvalidType,
+    ParseError { err: RoomNameParseError },
+}
+
+impl error::Error for RoomNameConversionError {}
+
+impl fmt::Display for RoomNameConversionError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            RoomNameConversionError::InvalidType => {
+                write!(f, "got invalid input type to room name conversion")
+            }
+            RoomNameConversionError::ParseError { err } => err.fmt(f),
+        }
+    }
+}
+
+impl TryFrom<JsValue> for RoomName {
+    type Error = RoomNameConversionError;
+
+    fn try_from(val: JsValue) -> Result<RoomName, Self::Error> {
+        let val: String = val
+            .as_string()
+            .ok_or(RoomNameConversionError::InvalidType)?;
+
+        RoomName::from_str(&val).map_err(|err| RoomNameConversionError::ParseError { err })
+    }
+}
+
+impl TryFrom<JsString> for RoomName {
+    type Error = <RoomName as FromStr>::Err;
+
+    fn try_from(val: JsString) -> Result<RoomName, Self::Error> {
+        let val: String = val.into();
+
+        RoomName::from_str(&val)
+    }
+}
+
+impl JsCollectionIntoValue for RoomName {
+    fn into_value(self) -> JsValue {
+        self.into()
+    }
+}
+
+impl JsCollectionFromValue for RoomName {
+    fn from_value(val: JsValue) -> Self {
+        let val: JsString = val.unchecked_into();
+        let val: String = val.into();
+
+        RoomName::from_str(&val).expect("expected parseable room name")
     }
 }
 
@@ -280,7 +377,7 @@ fn parse_to_coords(s: &str) -> Result<(i32, i32), ()> {
 #[derive(Clone, Debug)]
 pub enum RoomNameParseError {
     TooLarge { length: usize },
-    InvalidString { string: ArrayString<[u8; 8]> },
+    InvalidString { string: ArrayString<8> },
     PositionOutOfBounds { x_coord: i32, y_coord: i32 },
 }
 
@@ -304,18 +401,15 @@ impl fmt::Display for RoomNameParseError {
             RoomNameParseError::TooLarge { length } => write!(
                 f,
                 "got invalid room name, too large to stick in error. \
-                 expected length 8 or less, got length {}",
-                length
+                 expected length 8 or less, got length {length}"
             ),
             RoomNameParseError::InvalidString { string } => write!(
                 f,
-                "expected room name formatted `[ewEW][0-9]+[nsNS][0-9]+`, found `{}`",
-                string
+                "expected room name formatted `[ewEW][0-9]+[nsNS][0-9]+`, found `{string}`"
             ),
             RoomNameParseError::PositionOutOfBounds { x_coord, y_coord } => write!(
                 f,
-                "expected room name with coords within -128..+128, found {}, {}",
-                x_coord, y_coord,
+                "expected room name with coords within -128..+128, found {x_coord}, {y_coord}"
             ),
         }
     }
@@ -358,7 +452,7 @@ impl PartialEq<RoomName> for &str {
 impl PartialEq<String> for RoomName {
     #[inline]
     fn eq(&self, other: &String) -> bool {
-        <RoomName as PartialEq<str>>::eq(self, &other)
+        <RoomName as PartialEq<str>>::eq(self, other)
     }
 }
 
@@ -445,9 +539,6 @@ mod serde {
             deserializer.deserialize_str(RoomNameVisitor)
         }
     }
-
-    js_deserializable!(RoomName);
-    js_serializable!(RoomName);
 }
 
 #[cfg(test)]

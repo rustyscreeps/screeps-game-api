@@ -1,101 +1,111 @@
 //! Interface for Screeps [`RawMemory`] global object.
 //!
+//! This is available as an alternative to the `Memory` object in the js heap,
+//! which itself is just a light wrapper around serializing into and
+//! deserializing JSON into [`RawMemory`]. String data stored can be retrieved
+//! after the running bot code is restarted (either by the server or by a new
+//! version of the code being uploaded) and decoded using serde or another
+//! option.
+//!
+//! Also contains functions for accessing memory segments and other
+//! players' active foreign segments.
+//!
 //! [`RawMemory`]: https://docs.screeps.com/api/#RawMemory
 
-use serde::Deserialize;
+use js_sys::{Array, JsString, Object};
 
-#[derive(Deserialize, Debug)]
-pub struct ForeignSegment {
-    username: String,
-    id: String,
-    data: String,
+use wasm_bindgen::prelude::*;
+
+use crate::js_collections::JsHashMap;
+
+#[wasm_bindgen]
+extern "C" {
+    pub type RawMemory;
+
+    #[wasm_bindgen(static_method_of = RawMemory, getter = segments)]
+    fn segments_internal() -> Object;
+
+    /// Get the foreign memory segment belonging to another player requested
+    /// last tick.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.foreignSegment)
+    #[wasm_bindgen(static_method_of = RawMemory, getter = foreignSegment)]
+    pub fn foreign_segment() -> Option<ForeignSegment>;
+
+    /// Get the stored serialized memory as a [`JsString`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.get)
+    #[wasm_bindgen(static_method_of = RawMemory)]
+    pub fn get() -> JsString;
+
+    /// Overwrite the stored memory with a new [`JsString`]. Maximum allowed
+    /// size [`MEMORY_SIZE_LIMIT`] UTF-16 units.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.set)
+    ///
+    /// [`MEMORY_SIZE_LIMIT`]: crate::constants::MEMORY_SIZE_LIMIT
+    #[wasm_bindgen(static_method_of = RawMemory)]
+    pub fn set(val: &JsString);
+
+    #[wasm_bindgen(static_method_of = RawMemory, js_name = setActiveSegments)]
+    fn set_active_segments_internal(segment_ids: &Array);
+
+    /// Sets available foreign memory segment for the next tick to a memory
+    /// segment marked as public by another user. If no id is passed, the user's
+    /// default public segment is retrieved.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setActiveForeignSegment)
+    #[wasm_bindgen(static_method_of = RawMemory, js_name = setActiveForeignSegment)]
+    pub fn set_active_foreign_segment(username: &JsString, segment_id: Option<u8>);
+
+    /// Sets your default foreign memory segment for other players to read, or
+    /// remove your public segment with `None`.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setDefaultPublicSegment)
+    #[wasm_bindgen(static_method_of = RawMemory, js_name = setDefaultPublicSegment)]
+    pub fn set_default_public_segment(segment_id: Option<u8>);
+
+    /// Sets which of your memory segments are readable to other players as
+    /// foreign segments, overriding previous settings.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setPublicSegments)
+    #[wasm_bindgen(static_method_of = RawMemory, js_name = setPublicSegments)]
+    pub fn set_public_segments(segment_ids: &[u8]);
 }
 
-js_deserializable!(ForeignSegment);
+impl RawMemory {
+    /// Get a [`JsHashMap<u8, String>`] with all of the segments requested on
+    /// the previous tick, with segment numbers as keys and segment data in
+    /// [`JsString`] form as values.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)
+    pub fn segments() -> JsHashMap<u8, String> {
+        RawMemory::segments_internal().into()
+    }
 
-pub fn get_active_segments() -> Vec<u32> {
-    js_unwrap!(Object.keys(RawMemory.segments).map(Number))
-}
+    /// Sets available memory segments for the next tick, as an array of numbers
+    /// from 0 to 99 (max of 10 segments allowed).
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setActiveSegments)
+    pub fn set_active_segments(segment_ids: &[u8]) {
+        let segment_ids: Array = segment_ids
+            .iter()
+            .map(|s| *s as f64)
+            .map(JsValue::from_f64)
+            .collect();
 
-/// Sets active segments (max 10 ids).
-pub fn set_active_segments(ids: &[u32]) {
-    assert!(
-        ids.len() <= 10,
-        "can't set more than 10 active segments at a time"
-    );
-    js! { @(no_return)
-        RawMemory.setActiveSegments(@{ids});
+        RawMemory::set_active_segments_internal(&segment_ids)
     }
 }
 
-pub fn get_segment(id: u32) -> Option<String> {
-    js_unwrap!(RawMemory.segments[@{id}])
-}
-
-pub fn set_segment(id: u32, data: &str) {
-    js! { @(no_return)
-        RawMemory.segments[@{id}] = @{data};
-    }
-}
-
-/// This drops the reference to a segment; it doesn't affect the content of the
-/// segment.
-///
-/// This is the equivalent of doing `delete RawMemory.segments[id]`. Again, this
-/// only deletes the local view of the segment, not the serialized one. It may
-/// be used to `set_segment` a new segment that wasn't part of the original 10
-/// active segments.
-pub fn drop_segment(id: u32) {
-    js! { @(no_return)
-        delete RawMemory.segments[@{id}];
-    }
-}
-
-pub fn get_foreign_segment() -> ForeignSegment {
-    js_unwrap!(RawMemory.foreignSegment)
-}
-
-/// Implements `RawMemory.setActiveForeignSegment`
-///
-/// To use the default public segment of `username` (as set with
-/// [`set_default_public_segment`]), Use `None` instead of `Some(id)`.
-///
-/// To clear the foreign segment, pass the empty string `""` as a username.
-pub fn set_active_foreign_segment(username: &str, id: Option<u32>) {
-    if username == "" {
-        js! { @(no_return)
-            RawMemory.setActiveForeignSegment(null);
-        }
-    } else {
-        match id {
-            Some(id) => js! { @(no_return)
-                RawMemory.setActiveForeignSegment(@{username}, @{id});
-            },
-            None => js! { @(no_return)
-                RawMemory.setActiveForeignSegment(@{username});
-            },
-        };
-    };
-}
-
-pub fn set_default_public_segment(id: u32) {
-    js! { @(no_return)
-        RawMemory.setDefaultPublicSegment(@{id});
-    }
-}
-
-pub fn set_public_segments(ids: &[u32]) {
-    js! { @(no_return)
-        RawMemory.setPublicSegments(@{ids});
-    }
-}
-
-pub fn get() -> String {
-    js_unwrap!(RawMemory.get())
-}
-
-pub fn set(value: &str) {
-    js! { @(no_return)
-        RawMemory.set(@{value});
-    }
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen]
+    pub type ForeignSegment;
+    #[wasm_bindgen(method, getter)]
+    pub fn username(this: &ForeignSegment) -> JsString;
+    #[wasm_bindgen(method, getter = type)]
+    pub fn id(this: &ForeignSegment) -> u8;
+    #[wasm_bindgen(method, getter)]
+    pub fn data(this: &ForeignSegment) -> JsString;
 }

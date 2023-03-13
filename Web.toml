@@ -1,1 +1,0 @@
-prepend-js = ["javascript/utils.js", "javascript/console_error.js"]

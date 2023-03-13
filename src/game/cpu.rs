@@ -1,138 +1,193 @@
-//! See [http://docs.screeps.com/api/#Game.cpu]
+//! Information about, and functions to manage, your code's resource utilization
 //!
-//! [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
-use std::collections;
+//! [Screeps documentation](http://docs.screeps.com/api/#Game.cpu)
+use js_sys::{JsString, Object};
+use wasm_bindgen::prelude::*;
 
-use serde::{Deserialize, Serialize};
+use crate::{constants::ReturnCode, js_collections::JsHashMap};
 
-use crate::{constants::ReturnCode, traits::TryInto};
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_name = "cpu")]
+    type Cpu;
 
-/// See [`v8_getheapstatistics`]
-///
-/// [`v8_getheapstatistics`]: https://nodejs.org/dist/latest-v8.x/docs/api/v8.html#v8_v8_getheapstatistics
-#[derive(Default, Serialize, Deserialize)]
-pub struct HeapStatistics {
-    pub total_heap_size: u32,
-    pub total_heap_size_executable: u32,
-    pub total_physical_size: u32,
-    pub total_available_size: i32,
-    pub used_heap_size: u32,
-    pub heap_size_limit: u32,
-    pub malloced_memory: u32,
-    pub peak_malloced_memory: u32,
-    pub does_zap_garbage: u32,
-    pub externally_allocated_size: u32,
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = limit)]
+    fn limit() -> u32;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = tickLimit)]
+    fn tick_limit() -> f64;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = bucket)]
+    fn bucket() -> i32;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = shardLimits)]
+    fn shard_limits() -> Object;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = unlocked)]
+    fn unlocked() -> bool;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = unlockedTime)]
+    fn unlocked_time() -> Option<u64>;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = getHeapStatistics)]
+    fn get_heap_statistics() -> HeapStatistics;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = getUsed)]
+    fn get_used() -> f64;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = halt)]
+    fn halt();
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = setShardLimits)]
+    fn set_shard_limits(limits: &Object) -> ReturnCode;
+
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = unlock)]
+    fn unlock() -> ReturnCode;
+
+    #[cfg(feature = "generate-pixel")]
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = generatePixel)]
+    fn generate_pixel() -> ReturnCode;
 }
 
-js_serializable!(HeapStatistics);
-js_deserializable!(HeapStatistics);
-
-/// See [http://docs.screeps.com/api/#Game.cpu]
-///
-/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
+/// Your assigned CPU for the current shard.
 pub fn limit() -> u32 {
-    js_unwrap!(Game.cpu.limit)
+    Cpu::limit()
 }
 
-/// See [http://docs.screeps.com/api/#Game.cpu]
+/// The amount of CPU available for execution this tick, which consists of
+/// your per-tick CPU [`limit`] plus your accrued [`bucket`], up to a maximum of
+/// 500 ([`CPU_TICK_LIMIT_MAX`]); [`f64::INFINITY`] on sim.
 ///
-/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
-pub fn tick_limit() -> u32 {
-    js_unwrap!(Game.cpu.tickLimit)
+/// [`CPU_TICK_LIMIT_MAX`]: crate::constants::extra::CPU_TICK_LIMIT_MAX
+pub fn tick_limit() -> f64 {
+    Cpu::tick_limit()
 }
 
-/// See [http://docs.screeps.com/api/#Game.cpu]
-///
-/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
-pub fn bucket() -> u32 {
-    js_unwrap!(Game.cpu.bucket)
+/// The amount of CPU that has accumulated in your bucket.
+pub fn bucket() -> i32 {
+    Cpu::bucket()
 }
 
-/// See [http://docs.screeps.com/api/#Game.cpu]
-///
-/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
-pub fn shard_limits() -> collections::HashMap<String, u32> {
-    js_unwrap!(Game.cpu.shardLimits)
+/// Your assigned CPU limits for each shard in an [`Object`], with shard
+/// names in [`JsString`] form as keys and numbers as values. This is the
+/// same format accepted by [`set_shard_limits`].
+pub fn shard_limits() -> JsHashMap<JsString, u32> {
+    Cpu::shard_limits().into()
 }
 
-/// Whether you have an active subscription and are able to use your full CPU
-/// limit. See [http://docs.screeps.com/api/#Game.cpu]
-///
-/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
+/// Whether your account is unlocked to have full CPU.
 pub fn unlocked() -> bool {
-    // undefined on private servers; return true in that case
-    js_unwrap!(Game.cpu.unlocked || Game.cpu.unlocked === undefined)
+    Cpu::unlocked()
 }
 
-/// Time of expiration of your current CPU subscription in milliseconds since
-/// epoch, or None when locked, or unlocked via subscription. See [http://docs.screeps.com/api/#Game.cpu]
-///
-/// [http://docs.screeps.com/api/#Game.cpu]: http://docs.screeps.com/api/#Game.cpu
+/// If your account has been unlocked for a limited time, contains the time
+/// it's unlocked until in milliseconds since epoch.
 pub fn unlocked_time() -> Option<u64> {
-    js_unwrap!(Game.cpu.unlockedTime)
+    Cpu::unlocked_time()
 }
 
-/// See [https://docs.screeps.com/api/#Game.cpu.getHeapStatistics]
+/// Get information about your script's memory heap usage.
 ///
-/// [https://docs.screeps.com/api/#Game.cpu.getHeapStatistics]: https://docs.screeps.com/api/#Game.cpu.getHeapStatistics
-///
-/// Returns object with all 0 values if heap statistics are not available.
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
 pub fn get_heap_statistics() -> HeapStatistics {
-    use stdweb::Value;
-
-    let heap_stats: Value = js_unwrap!(Game.cpu.getHeapStatistics && Game.cpu.getHeapStatistics());
-
-    match heap_stats {
-        Value::Null | Value::Undefined | Value::Bool(false) => HeapStatistics::default(),
-        other => other.try_into().expect(
-            "expected Game.cpu.getHeapStatistics() to return an object with a known format",
-        ),
-    }
+    Cpu::get_heap_statistics()
 }
 
-/// See [https://docs.screeps.com/api/#Game.cpu.getUsed]
+/// Get the amount of CPU time used for execution so far this tick.
 ///
-/// [https://docs.screeps.com/api/#Game.cpu.getUsed]: https://docs.screeps.com/api/#Game.cpu.getUsed
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getUsed)
 pub fn get_used() -> f64 {
-    js_unwrap!(Game.cpu.getUsed())
+    Cpu::get_used()
 }
 
-/// Reset your runtime environment and wipe all data in heap memory.
+/// Stop execution of your script, starting with a fresh environment next
+/// tick.
 ///
-/// See [`Game.cpu.halt`](https://docs.screeps.com/api/#Game.cpu.halt).
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.halt)
 pub fn halt() {
-    js! {
-        Game.cpu.halt();
-    }
+    Cpu::halt()
 }
 
-/// See [https://docs.screeps.com/api/#Game.cpu.setShardLimits]
+/// Sets new shard limits for your script in an [`Object`], with shard names
+/// in [`JsString`] form as keys and numbers as values. This is the same
+/// format accepted by [`shard_limits`]. Total amount of CPU should
+/// remain equal to the sum of the values of [`shard_limits`]. This method
+/// can be used only once per 12 hours ([`CPU_SET_SHARD_LIMITS_COOLDOWN`]).
 ///
-/// [https://docs.screeps.com/api/#Game.cpu.setShardLimits]: https://docs.screeps.com/api/#Game.cpu.setShardLimits
-pub fn set_shard_limits(limits: collections::HashMap<String, u32>) -> ReturnCode {
-    js_unwrap!(Game.cpu.setShardLimits(@{limits}))
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
+///
+/// [`CPU_SET_SHARD_LIMITS_COOLDOWN`]: crate::constants::CPU_SET_SHARD_LIMITS_COOLDOWN
+pub fn set_shard_limits(limits: &Object) -> ReturnCode {
+    Cpu::set_shard_limits(limits)
 }
 
-/// Spend a [`CPUUnlock`] from your intershard resource inventory to unlock your
-/// full CPU limit for 24 hours
+/// Consume a [`CpuUnlock`] to unlock your full CPU for 24 hours.
 ///
-/// See [`Game.cpu.unlock`](https://docs.screeps.com/api/#Game.cpu.unlock).
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.unlock)
 ///
-/// [`CPUUnlock`]: crate::constants::types::IntershardResourceType::CPUUnlock
+/// [`CpuUnlock`]: crate::constants::IntershardResourceType::CpuUnlock
 pub fn unlock() -> ReturnCode {
-    // undefined on private servers, return OK in that case
-    js_unwrap!(typeof(Game.cpu.unlock) == "function" && Game.cpu.unlock() || 0)
+    Cpu::unlock()
 }
 
-/// Generate a [`Pixel`], spending [`PIXEL_CPU_COST`] from [`game::cpu::bucket`]
+/// Generate a [`Pixel`], consuming [`PIXEL_CPU_COST`] CPU from your bucket.
 ///
-/// See [`Game.cpu.generatePixel`](https://docs.screeps.com/api/#Game.cpu.generatePixel).
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.generatePixel)
 ///
 /// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
-/// [`game::cpu::bucket`]: crate::game::cpu::bucket
 #[cfg(feature = "generate-pixel")]
 pub fn generate_pixel() -> ReturnCode {
-    // undefined on private servers, return OK in that case
-    js_unwrap!(typeof(Game.cpu.generatePixel) == "function" && Game.cpu.generatePixel() || 0)
+    Cpu::generate_pixel()
+}
+
+#[wasm_bindgen]
+extern "C" {
+    /// Object with info about the memory heap of your virtual machine.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.getHeapStatistics)
+    #[wasm_bindgen]
+    pub type HeapStatistics;
+
+    /// The total heap consumed.
+    #[wasm_bindgen(method, getter)]
+    pub fn total_heap_size(this: &HeapStatistics) -> u32;
+
+    /// The total heap consumed by executable code.
+    #[wasm_bindgen(method, getter)]
+    pub fn total_heap_size_executable(this: &HeapStatistics) -> u32;
+
+    /// The total amount of heap committed to memory.
+    #[wasm_bindgen(method, getter)]
+    pub fn total_physical_size(this: &HeapStatistics) -> u32;
+
+    /// Amount of heap available for allocation.
+    #[wasm_bindgen(method, getter)]
+    pub fn total_available_size(this: &HeapStatistics) -> u32;
+
+    /// Total heap consumed by application data.
+    #[wasm_bindgen(method, getter)]
+    pub fn used_heap_size(this: &HeapStatistics) -> u32;
+
+    /// The allowed limit for total heap memory.
+    #[wasm_bindgen(method, getter)]
+    pub fn heap_size_limit(this: &HeapStatistics) -> u32;
+
+    /// Total amount of memory obtained by malloc.
+    #[wasm_bindgen(method, getter)]
+    pub fn malloced_memory(this: &HeapStatistics) -> u32;
+
+    /// Maximum amount of memory obtained by malloc.
+    #[wasm_bindgen(method, getter)]
+    pub fn peak_malloced_memory(this: &HeapStatistics) -> u32;
+
+    /// Whether the virtual machine overwrites memory as it deallocates -
+    /// usually 0.
+    #[wasm_bindgen(method, getter)]
+    pub fn does_zap_garbage(this: &HeapStatistics) -> u32;
+
+    /// External allocations that are outside of the v8 heap but still count
+    /// against the memory limit.
+    #[wasm_bindgen(method, getter)]
+    pub fn externally_allocated_size(this: &HeapStatistics) -> u32;
 }

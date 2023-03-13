@@ -63,7 +63,7 @@ cargo screeps --help
 [actions-image]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml/badge.svg
 [actions-builds]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml
 [docsrs-badge]: https://docs.rs/screeps-game-api/badge.svg
-[cratesio-badge]: http://meritbadge.herokuapp.com/screeps-game-api
+[cratesio-badge]: https://img.shields.io/crates/v/screeps-game-api.svg
 [docs]: https://docs.rs/screeps-game-api/
 [crate]: https://crates.io/crates/screeps-game-api/
 [cargo-screeps]: https://github.com/rustyscreeps/cargo-screeps/

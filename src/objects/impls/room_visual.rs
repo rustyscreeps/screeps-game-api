@@ -1,4 +1,5 @@
 use crate::local::RoomName;
+use js_sys::JsString;
 use serde::Serialize;
 
 #[derive(Clone, Default, Serialize)]
@@ -15,7 +16,6 @@ pub struct CircleStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
     stroke_width: Option<f32>,
 }
-js_serializable!(CircleStyle);
 
 impl CircleStyle {
     pub fn radius(mut self, val: f32) -> CircleStyle {
@@ -51,29 +51,20 @@ pub struct CircleData {
     #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
     style: Option<CircleStyle>,
 }
-js_serializable!(CircleData);
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum LineDrawStyle {
+    #[default]
     Solid,
     Dashed,
     Dotted,
 }
-js_serializable!(LineDrawStyle);
-
-impl Default for LineDrawStyle {
-    fn default() -> LineDrawStyle {
-        LineDrawStyle::Solid
-    }
-}
 
 impl LineDrawStyle {
     pub fn is_solid(&self) -> bool {
-        match self {
-            LineDrawStyle::Solid => true,
-            _ => false,
-        }
+        matches!(self, LineDrawStyle::Solid)
     }
 }
 
@@ -89,7 +80,6 @@ pub struct LineStyle {
     #[serde(skip_serializing_if = "LineDrawStyle::is_solid")]
     line_style: LineDrawStyle,
 }
-js_serializable!(LineStyle);
 
 impl LineStyle {
     pub fn width(mut self, val: f32) -> LineStyle {
@@ -122,7 +112,6 @@ pub struct LineData {
     #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
     style: Option<LineStyle>,
 }
-js_serializable!(LineData);
 
 #[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -138,7 +127,6 @@ pub struct RectStyle {
     #[serde(skip_serializing_if = "LineDrawStyle::is_solid")]
     line_style: LineDrawStyle,
 }
-js_serializable!(RectStyle);
 
 impl RectStyle {
     pub fn fill(mut self, val: &str) -> RectStyle {
@@ -178,7 +166,6 @@ pub struct RectData {
     #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
     style: Option<RectStyle>,
 }
-js_serializable!(RectData);
 
 #[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -194,7 +181,6 @@ pub struct PolyStyle {
     #[serde(skip_serializing_if = "LineDrawStyle::is_solid")]
     line_style: LineDrawStyle,
 }
-js_serializable!(PolyStyle);
 
 impl PolyStyle {
     pub fn fill(mut self, val: &str) -> PolyStyle {
@@ -229,7 +215,6 @@ pub struct PolyData {
     #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
     style: Option<PolyStyle>,
 }
-js_serializable!(PolyData);
 
 #[derive(Clone, Serialize)]
 #[serde(untagged)]
@@ -237,29 +222,20 @@ pub enum FontStyle {
     Size(f32),
     Custom(String),
 }
-js_serializable!(FontStyle);
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum TextAlign {
+    #[default]
     Center,
     Left,
     Right,
 }
-js_serializable!(TextAlign);
-
-impl Default for TextAlign {
-    fn default() -> TextAlign {
-        TextAlign::Center
-    }
-}
 
 impl TextAlign {
     pub fn is_center(&self) -> bool {
-        match self {
-            TextAlign::Center => true,
-            _ => false,
-        }
+        matches!(self, TextAlign::Center)
     }
 }
 
@@ -283,7 +259,6 @@ pub struct TextStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f32>,
 }
-js_serializable!(TextStyle);
 
 impl TextStyle {
     pub fn color(mut self, val: &str) -> TextStyle {
@@ -340,7 +315,6 @@ pub struct TextData {
     #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
     style: Option<TextStyle>,
 }
-js_serializable!(TextData);
 
 #[derive(Clone, Serialize)]
 #[serde(tag = "t")]
@@ -356,7 +330,6 @@ pub enum Visual {
     #[serde(rename = "t")]
     Text(TextData),
 }
-js_serializable!(Visual);
 
 impl Visual {
     pub fn circle(x: f32, y: f32, style: Option<CircleStyle>) -> Visual {
@@ -402,12 +375,19 @@ impl RoomVisual {
     }
 
     pub fn draw(&self, visual: &Visual) {
-        js! { console.addVisual(@{self.room_name}, @{visual}); };
+        let name: Option<JsString> = self.room_name.map(|name| name.to_string().into());
+        let val = serde_wasm_bindgen::to_value(visual).expect("expect convert visual to value");
+
+        crate::console::add_visual(name.as_ref(), &val);
     }
 
     pub fn draw_multi(&self, visuals: &[Visual]) {
-        if !visuals.is_empty() {
-            js! { (@{&visuals}).forEach(function(v) { console.addVisual(@{self.room_name}, v); }); };
+        let name: Option<JsString> = self.room_name.map(|name| name.to_string().into());
+
+        for visual in visuals {
+            let val = serde_wasm_bindgen::to_value(visual).expect("expect convert visual to value");
+
+            crate::console::add_visual(name.as_ref(), &val);
         }
     }
 

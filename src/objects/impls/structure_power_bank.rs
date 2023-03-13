@@ -1,7 +1,34 @@
-use crate::objects::StructurePowerBank;
+use crate::{
+    objects::{RoomObject, Structure},
+    prelude::*,
+};
+use wasm_bindgen::prelude::*;
 
-simple_accessors! {
-    impl StructurePowerBank {
-        pub fn power() -> u32 = power;
+#[wasm_bindgen]
+extern "C" {
+    /// An object representing a [`StructurePowerBank`], which can be destroyed
+    /// for power resources.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructurePowerBank)
+    #[wasm_bindgen(extends = RoomObject, extends = Structure)]
+    #[derive(Clone, Debug)]
+    pub type StructurePowerBank;
+
+    /// The amount of power contained within the [`StructurePowerBank`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructurePowerBank.power)
+    #[wasm_bindgen(method, getter)]
+    pub fn power(this: &StructurePowerBank) -> u32;
+
+    /// The number of ticks until the [`StructurePowerBank`] will decay.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructurePowerBank.ticksToDecay)
+    #[wasm_bindgen(method, getter = ticksToDecay)]
+    pub fn ticks_to_decay(this: &StructurePowerBank) -> u32;
+}
+
+impl CanDecay for StructurePowerBank {
+    fn ticks_to_decay(&self) -> u32 {
+        Self::ticks_to_decay(self)
     }
 }

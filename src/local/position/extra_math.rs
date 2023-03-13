@@ -23,17 +23,35 @@ impl Position {
     /// # Example
     ///
     /// ```
-    /// use screeps::Position;
-    ///
+    /// # use std::convert::TryFrom;
+    /// # use screeps::{Position, RoomCoordinate};
     /// let e21s21 = "E21S21".parse().unwrap();
     /// let e21s22 = "E21S22".parse().unwrap();
     ///
-    /// let mut pos = Position::new(21, 21, e21s21);
+    /// let mut pos = Position::new(
+    ///     RoomCoordinate::try_from(21).unwrap(),
+    ///     RoomCoordinate::try_from(21).unwrap(),
+    ///     e21s21,
+    /// );
     /// pos.offset(5, 5);
-    /// assert_eq!(pos, Position::new(26, 26, e21s21));
+    /// assert_eq!(
+    ///     pos,
+    ///     Position::new(
+    ///         RoomCoordinate::try_from(26).unwrap(),
+    ///         RoomCoordinate::try_from(26).unwrap(),
+    ///         e21s21
+    ///     )
+    /// );
     ///
     /// pos.offset(0, 49);
-    /// assert_eq!(pos, Position::new(26, 25, e21s22));
+    /// assert_eq!(
+    ///     pos,
+    ///     Position::new(
+    ///         RoomCoordinate::try_from(26).unwrap(),
+    ///         RoomCoordinate::try_from(25).unwrap(),
+    ///         e21s22
+    ///     )
+    /// );
     /// ```
     #[inline]
     pub fn offset(&mut self, x: i32, y: i32) {
@@ -56,20 +74,45 @@ impl Add<(i32, i32)> for Position {
     /// # Example
     ///
     /// ```
-    /// use screeps::Position;
-    ///
+    /// # use std::convert::TryFrom;
+    /// # use screeps::{Position, RoomCoordinate};
     /// let w5s6 = "W5S6".parse().unwrap();
     /// let w5s5 = "W5S5".parse().unwrap();
     ///
-    /// let pos1 = Position::new(42, 42, w5s6);
+    /// let pos1 = Position::new(
+    ///     RoomCoordinate::try_from(42).unwrap(),
+    ///     RoomCoordinate::try_from(42).unwrap(),
+    ///     w5s6,
+    /// );
     /// let pos2 = pos1 + (7, 7);
-    /// assert_eq!(pos2, Position::new(49, 49, w5s6));
+    /// assert_eq!(
+    ///     pos2,
+    ///     Position::new(
+    ///         RoomCoordinate::try_from(49).unwrap(),
+    ///         RoomCoordinate::try_from(49).unwrap(),
+    ///         w5s6
+    ///     )
+    /// );
     ///
     /// let pos3 = pos2 + (0, -59);
-    /// assert_eq!(pos3, Position::new(49, 40, w5s5));
+    /// assert_eq!(
+    ///     pos3,
+    ///     Position::new(
+    ///         RoomCoordinate::try_from(49).unwrap(),
+    ///         RoomCoordinate::try_from(40).unwrap(),
+    ///         w5s5
+    ///     )
+    /// );
     ///
     /// let pos4 = pos3 - (49, 0);
-    /// assert_eq!(pos4, Position::new(0, 40, w5s5));
+    /// assert_eq!(
+    ///     pos4,
+    ///     Position::new(
+    ///         RoomCoordinate::try_from(0).unwrap(),
+    ///         RoomCoordinate::try_from(40).unwrap(),
+    ///         w5s5
+    ///     )
+    /// );
     /// ```
     #[inline]
     fn add(self, (x, y): (i32, i32)) -> Self {
@@ -97,13 +140,21 @@ impl Sub<Position> for Position {
     /// # Example
     ///
     /// ```
-    /// use screeps::Position;
-    ///
+    /// # use std::convert::TryFrom;
+    /// # use screeps::{Position, RoomCoordinate};
     /// let e5n5 = "E5N5".parse().unwrap();
     /// let e5n6 = "E5N6".parse().unwrap();
     ///
-    /// let pos1 = Position::new(40, 40, e5n5);
-    /// let pos2 = Position::new(0, 20, e5n6);
+    /// let pos1 = Position::new(
+    ///     RoomCoordinate::try_from(40).unwrap(),
+    ///     RoomCoordinate::try_from(40).unwrap(),
+    ///     e5n5,
+    /// );
+    /// let pos2 = Position::new(
+    ///     RoomCoordinate::try_from(0).unwrap(),
+    ///     RoomCoordinate::try_from(20).unwrap(),
+    ///     e5n6,
+    /// );
     /// assert_eq!(pos1 - pos2, (40, 70));
     /// ```
     #[inline]

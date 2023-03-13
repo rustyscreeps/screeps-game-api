@@ -1,6 +1,6 @@
 //! Utilities for doing math on [`Position`]s which are present in the
 //! JavaScript API.
-use crate::{constants::Direction, objects::HasPosition};
+use crate::constants::Direction;
 
 use super::Position;
 
@@ -11,13 +11,9 @@ impl Position {
     /// `TopLeft`/`TopRight`/`BottomLeft`/`BottomRight` by the magnitude in both
     /// directions. For instance, [`Direction::Top`] can be returned even
     /// if the target has a slightly different `x` coordinate.
-    pub fn get_direction_to<T>(self, target: &T) -> Option<Direction>
-    where
-        T: ?Sized + HasPosition,
-    {
-        // Logic copied from https://github.com/screeps/engine/blob/
-        // 020ba168a1fde9a8072f9f1c329d5c0be8b440d7/src/utils.js#L73-L107
-        let (dx, dy) = target.pos() - self;
+    pub fn get_direction_to(self, target: Position) -> Option<Direction> {
+        // Logic copied from https://github.com/screeps/engine/blob/020ba168a1fde9a8072f9f1c329d5c0be8b440d7/src/utils.js#L73-L107
+        let (dx, dy) = target - self;
         if dx.abs() > dy.abs() * 2 {
             if dx > 0 {
                 Some(Direction::Right)
@@ -30,18 +26,16 @@ impl Position {
             } else {
                 Some(Direction::Top)
             }
+        } else if dx > 0 && dy > 0 {
+            Some(Direction::BottomRight)
+        } else if dx > 0 && dy < 0 {
+            Some(Direction::TopRight)
+        } else if dx < 0 && dy > 0 {
+            Some(Direction::BottomLeft)
+        } else if dx < 0 && dy < 0 {
+            Some(Direction::TopLeft)
         } else {
-            if dx > 0 && dy > 0 {
-                Some(Direction::BottomRight)
-            } else if dx > 0 && dy < 0 {
-                Some(Direction::TopRight)
-            } else if dx < 0 && dy > 0 {
-                Some(Direction::BottomLeft)
-            } else if dx < 0 && dy < 0 {
-                Some(Direction::TopLeft)
-            } else {
-                None
-            }
+            None
         }
     }
 
@@ -52,11 +46,8 @@ impl Position {
     /// corresponding JavaScript method, `RoomPosition.getRangeTo` returns
     /// `Infinity` if given positions in different rooms.
     #[inline]
-    pub fn get_range_to<T>(self, target: &T) -> u32
-    where
-        T: ?Sized + HasPosition,
-    {
-        let (dx, dy) = self - target.pos();
+    pub fn get_range_to(self, target: Position) -> u32 {
+        let (dx, dy) = self - target;
         dx.abs().max(dy.abs()) as u32
     }
 
@@ -67,10 +58,7 @@ impl Position {
     /// Note that the corresponding JavaScript method, `RoomPosition.inRangeTo`,
     /// will always return `false` for positions from different rooms.
     #[inline]
-    pub fn in_range_to<T>(self, target: &T, range: u32) -> bool
-    where
-        T: ?Sized + HasPosition,
-    {
+    pub fn in_range_to(self, target: Position, range: u32) -> bool {
         self.get_range_to(target) <= range
     }
 
@@ -78,35 +66,30 @@ impl Position {
     ///
     /// Note that this is equivalent to `this_pos == target.pos()`.
     #[inline]
-    pub fn is_equal_to<T>(self, target: &T) -> bool
-    where
-        T: ?Sized + HasPosition,
-    {
-        self == target.pos()
+    pub fn is_equal_to(self, target: Position) -> bool {
+        self == target
     }
 
     /// True if this position is in the same room as the target, and the range
     /// is at most 1.
     #[inline]
-    pub fn is_near_to<T>(self, target: &T) -> bool
-    where
-        T: ?Sized + HasPosition,
-    {
-        let pos = target.pos();
-        self.room_name() == pos.room_name()
-            && (self.x() as i32 - pos.x() as i32).abs() <= 1
-            && (self.y() as i32 - pos.y() as i32).abs() <= 1
+    pub fn is_near_to(self, target: Position) -> bool {
+        self.room_name() == target.room_name()
+            && (u8::from(self.x()) as i32 - u8::from(target.x()) as i32).abs() <= 1
+            && (u8::from(self.y()) as i32 - u8::from(target.y()) as i32).abs() <= 1
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::{Direction, Position, RoomName};
+    use crate::{local::RoomCoordinate, Direction, Position, RoomName};
 
     #[test]
     fn test_direction_to() {
-        let a = Position::new(1, 1, RoomName::from_coords(1, 1).unwrap());
-        let b = Position::new(2, 2, RoomName::from_coords(1, 1).unwrap());
-        assert_eq!(a.get_direction_to(&b), Some(Direction::BottomRight));
+        let one = unsafe { RoomCoordinate::unchecked_new(1) };
+        let two = unsafe { RoomCoordinate::unchecked_new(2) };
+        let a = Position::new(one, one, RoomName::from_coords(1, 1).unwrap());
+        let b = Position::new(two, two, RoomName::from_coords(1, 1).unwrap());
+        assert_eq!(a.get_direction_to(b), Some(Direction::BottomRight));
     }
 }

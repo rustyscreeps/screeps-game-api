@@ -10,6 +10,9 @@ jobs:
       matrix:
         toolchain: [stable, nightly]
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
       - name: Install toolchain
         id: toolchain
         uses: actions-rs/toolchain@v1
@@ -37,24 +40,3 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ env.rustc-hash }}-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Install cargo-web
-        uses: actions-rs/install@v0.1
-        with:
-          crate: cargo-web
-          version: latest
-          use-tool-cache: true
-
-      - name: cargo web build
-        uses: actions-rs/cargo@v1
-        continue-on-error: false
-        with:
-          command: web
-          args: build --target=wasm32-unknown-unknown
-
-      - name: cargo web build --all-features
-        uses: actions-rs/cargo@v1
-        continue-on-error: false
-        with:
-          command: web
-          args: build --target=wasm32-unknown-unknown --all-features

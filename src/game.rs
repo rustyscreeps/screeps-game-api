@@ -1,16 +1,25 @@
-//! Get global Screeps resources.
+//! The main interface to objects in the Screeps game world.
 //!
-//! This contains all functionality from the [`Game`] object in Screeps. That
+//! This contains all functionality from the `Game` object in Screeps. That
 //! generally means all state which is true this tick throughout the world.
 //!
-//! [`Game`]: http://docs.screeps.com/api/#Game
-use std::collections::HashMap;
+//! # Safety
+//!
+//! All returned game objects must be used only during the tick they are
+//! retreived or resolved. They are considered "stale" on subsequent ticks, and
+//! the behavior of stale game objects is undefined.
+//!
+//! [Screeps documentation](http://docs.screeps.com/api/#Game)
+
+use js_sys::{JsString, Object};
+
+use wasm_bindgen::prelude::*;
 
 use crate::{
+    constants::IntershardResourceType,
+    js_collections::{JsHashMap, JsObjectId},
     local::{ObjectId, RawObjectId},
-    objects::{HasId, RoomObject, SizedRoomObject},
-    traits::TryInto,
-    ConversionError, ResourceType,
+    AccountPowerCreep, ConstructionSite, Creep, Flag, RoomName, StructureObject, StructureSpawn,
 };
 
 pub mod cpu;
@@ -18,237 +27,193 @@ pub mod gcl;
 pub mod gpl;
 pub mod map;
 pub mod market;
-pub mod shards;
+pub mod shard;
 
-/// See [http://docs.screeps.com/api/#Game.constructionSites]
-///
-/// [http://docs.screeps.com/api/#Game.constructionSites]: http://docs.screeps.com/api/#Game.constructionSites
-pub mod construction_sites {
-    game_map_access!(objects::ConstructionSite, Game.constructionSites);
+use crate::{objects::RoomObject, Room};
+
+#[wasm_bindgen]
+extern "C" {
+    type Game;
+
+    #[wasm_bindgen(static_method_of = Game, getter = constructionSites)]
+    fn construction_sites() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, getter = creeps)]
+    fn creeps() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, getter = flags)]
+    fn flags() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, getter = powerCreeps)]
+    fn power_creeps() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, getter = resources)]
+    fn resources() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, getter = rooms)]
+    fn rooms() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, getter = spawns)]
+    fn spawns() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, getter = structures)]
+    fn structures() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, getter = time)]
+    fn time() -> u32;
+
+    #[cfg(feature = "symbols")]
+    #[wasm_bindgen(static_method_of = Game, getter = score)]
+    fn score() -> u32;
+
+    #[cfg(feature = "symbols")]
+    #[wasm_bindgen(static_method_of = Game, getter = symbols)]
+    fn symbols() -> Object;
+
+    #[wasm_bindgen(static_method_of = Game, js_name = getObjectById)]
+    fn get_object_by_id(id: &JsString) -> Option<RoomObject>;
+
+    #[wasm_bindgen(static_method_of = Game, js_name = notify)]
+    fn notify(message: &JsString, group_interval: Option<u32>);
 }
 
-/// See [http://docs.screeps.com/api/#Game.creeps]
+/// Get a [`JsHashMap<RawObjectId, ConstructionSite>`] with all of your
+/// construction sites.
 ///
-/// [http://docs.screeps.com/api/#Game.creeps]: http://docs.screeps.com/api/#Game.creeps
-pub mod creeps {
-    game_map_access!(objects::Creep, Game.creeps);
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.constructionSites)
+pub fn construction_sites() -> JsHashMap<RawObjectId, ConstructionSite> {
+    Game::construction_sites().into()
 }
 
-/// See [http://docs.screeps.com/api/#Game.flags]
+/// Get a [`JsHashMap<String, Creep>`] with all of your creeps, which has creep
+/// names as keys.
 ///
-/// [http://docs.screeps.com/api/#Game.flags]: http://docs.screeps.com/api/#Game.flags
-pub mod flags {
-    game_map_access!(objects::Flag, Game.flags);
+/// Note that newly spawned creeps are immediately added when spawned, but will
+/// not have an id until the following tick.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
+pub fn creeps() -> JsHashMap<String, Creep> {
+    Game::creeps().into()
 }
 
-/// See [http://docs.screeps.com/api/#Game.powerCreeps]
+/// Get a [`JsHashMap<String, Flag>`] with all of your flags, which has flag
+/// names as keys.
 ///
-/// [http://docs.screeps.com/api/#Game.powerCreeps]: http://docs.screeps.com/api/#Game.powerCreeps
-pub mod power_creeps {
-    game_map_access!(objects::AccountPowerCreep, Game.powerCreeps);
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.flags)
+pub fn flags() -> JsHashMap<String, Flag> {
+    Game::flags().into()
 }
 
-/// See [http://docs.screeps.com/api/#Game.resources]
+/// Get a [`JsHashMap<String, AccountPowerCreep>`] with all of your power
+/// creeps, which has power creep names as keys.
 ///
-/// [http://docs.screeps.com/api/#Game.resources]: http://docs.screeps.com/api/#Game.resources
-pub mod resources {
-    use std::collections::HashMap;
-
-    use crate::constants::IntershardResourceType;
-
-    /// Retrieve the full `HashMap<IntershardResourceType, u32>`.
-    pub fn hashmap() -> HashMap<IntershardResourceType, u32> {
-        // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
-        //
-        // See https://github.com/koute/stdweb/issues/359.
-        let map: HashMap<String, u32> = js_unwrap!(Game.resources);
-        map.into_iter()
-            .map(|(key, val)| {
-                (
-                    key.parse()
-                        .expect("expected resource key in Game.resources to be a known intershard resource type"),
-                    val,
-                )
-            })
-            .collect()
-    }
-
-    /// Retrieve the string keys of this object.
-    pub fn keys() -> Vec<IntershardResourceType> {
-        js_unwrap!(Object.keys(Game.resources).map(__resource_type_str_to_num))
-    }
-
-    /// Retrieve a specific value by key.
-    pub fn get(key: IntershardResourceType) -> Option<u32> {
-        js_unwrap!(Game.resources[__resource_type_num_to_str(@{key as u32})])
-    }
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.powerCreeps)
+pub fn power_creeps() -> JsHashMap<String, AccountPowerCreep> {
+    Game::power_creeps().into()
 }
 
-/// See [http://docs.screeps.com/api/#Game.rooms]
+/// Get a [`JsHashMap<IntershardResourceType, u32>`] with all of your account
+/// resources.
 ///
-/// [http://docs.screeps.com/api/#Game.rooms]: http://docs.screeps.com/api/#Game.rooms
-pub mod rooms {
-    use std::collections::HashMap;
-
-    use crate::{local::RoomName, objects::Room};
-
-    /// Retrieve the full `HashMap<RoomName, Room>`.
-    pub fn hashmap() -> HashMap<RoomName, Room> {
-        // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
-        //
-        // See https://github.com/koute/stdweb/issues/359.
-        let map: HashMap<String, Room> = js_unwrap!(Game.rooms);
-        map.into_iter()
-            .map(|(key, val)| {
-                (
-                    key.parse()
-                        .expect("expected room name in Game.rooms to be valid"),
-                    val,
-                )
-            })
-            .collect()
-    }
-
-    /// Retrieve the string keys of this object.
-    pub fn keys() -> Vec<RoomName> {
-        js_unwrap!(Object.keys(Game.rooms))
-    }
-
-    /// Retrieve all values in this object.
-    pub fn values() -> Vec<Room> {
-        js_unwrap_ref!(Object.values(Game.rooms))
-    }
-
-    /// Retrieve a specific value by key.
-    pub fn get(name: RoomName) -> Option<Room> {
-        js_unwrap_ref!(Game.rooms[@{name}])
-    }
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.resources)
+pub fn resources() -> JsHashMap<IntershardResourceType, u32> {
+    Game::resources().into()
 }
 
-/// See [http://docs.screeps.com/api/#Game.spawns]
+/// Get an [`JsHashMap<RoomName, Room>`] with the rooms visible for the current
+/// tick.
 ///
-/// [http://docs.screeps.com/api/#Game.spawns]: http://docs.screeps.com/api/#Game.spawns
-pub mod spawns {
-    game_map_access!(objects::StructureSpawn, Game.spawns);
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
+pub fn rooms() -> JsHashMap<RoomName, Room> {
+    Game::rooms().into()
 }
 
-/// See [http://docs.screeps.com/api/#Game.structures]
+/// Get an [`JsHashMap<String, StructureSpawn>`] with all of your spawns, which
+/// has spawn names as keys.
 ///
-/// [http://docs.screeps.com/api/#Game.structures]: http://docs.screeps.com/api/#Game.structures
-pub mod structures {
-    game_map_access!(objects::Structure, Game.structures);
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
+pub fn spawns() -> JsHashMap<String, StructureSpawn> {
+    Game::spawns().into()
 }
 
-/// See [http://docs.screeps.com/api/#Game.time]
+/// Get an [`JsHashMap<RawObjectId, StructureObject>`] with all of your owned
+/// structures.
 ///
-/// [http://docs.screeps.com/api/#Game.time]: http://docs.screeps.com/api/#Game.time
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
+pub fn structures() -> JsHashMap<RawObjectId, StructureObject> {
+    Game::structures().into()
+}
+
+/// Get the current time, the number of ticks the game has been running.
+///
+/// [Screeps documentation](http://docs.screeps.com/api/#Game.time)
 pub fn time() -> u32 {
-    js_unwrap!(Game.time)
+    Game::time()
 }
 
 /// Your current score, as determined by the symbols you have decoded.
 ///
-/// See [https://docs-season.screeps.com/api/#Game.score]
-///
-/// [https://docs-season.screeps.com/api/#Game.score]: https://docs-season.screeps.com/api/#Game.score
+/// [Screeps documentation](https://docs-season.screeps.com/api/#Game.score)
 #[cfg(feature = "symbols")]
 pub fn score() -> u32 {
-    js_unwrap!(Game.score)
+    Game::score()
 }
 
-/// The symbols you've decoded after multiplier adjustments, used to determine
-/// your score.
+/// The symbols you've decoded after multiplier adjustments, used to
+/// determine your score.
 ///
-/// See [https://docs-season.screeps.com/api/#Game.symbols]
-///
-/// [https://docs-season.screeps.com/api/#Game.symbols]: https://docs-season.screeps.com/api/#Game.symbols
+/// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
 #[cfg(feature = "symbols")]
-pub fn symbols() -> HashMap<ResourceType, u32> {
-    // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
-    //
-    // See https://github.com/koute/stdweb/issues/359.
-    let map: HashMap<String, u32> = js_unwrap!(Game.symbols);
-    map.into_iter()
-        .map(|(key, val)| {
-            (
-                key.parse()
-                    .expect("expected resource key in Game.symbols to be a known resource type"),
-                val,
-            )
-        })
-        .collect()
+pub fn symbols() -> JsHashMap<crate::ResourceType, u32> {
+    Game::symbols().into()
 }
 
-/// See [http://docs.screeps.com/api/#Game.getObjectById]
+/// Get the typed object represented by a given [`JsObjectId`], if it's
+/// still alive and visible.
 ///
-/// This gets an object expecting a specific type and will return a
-/// `ConversionError` if the type does not match.
-///
-/// If all you want to assume is that something has an ID, use
-/// [`get_object_erased`].
-///
-/// This uses the typed id type, [`ObjectId`]. Note that if you'd rather store
-/// an untyped ID, it's free to convert from [`RawObjectId`] to [`ObjectId`].
-///
-/// # Example
-///
-/// ```no_run
-/// use screeps::{game, prelude::*, Creep, ObjectId};
-///
-/// // get your id however
-/// let id: ObjectId<Creep> = "aaaa".parse().unwrap();
-///
-/// let creep = game::get_object_typed(id).unwrap();
-/// match creep {
-///     Some(creep) => println!("creep with id aaaa has name {}", creep.name()),
-///     None => println!("no creep with id aaaa! such a surprise!"),
-/// }
-/// ```
-///
-/// Or, using `RawObjectId`,
-///
-/// ```no_run
-/// use screeps::{game, prelude::*, Creep, RawObjectId};
-///
-/// let id: RawObjectId = "bbbb".parse().unwrap();
-///
-/// let creep = game::get_object_typed::<Creep>(id.into()).unwrap();
-/// if let Some(creep) = creep {
-///     println!("creep with id bbbb exists, and has name {}", creep.name());
-/// }
-/// ```
-///
-/// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
-pub fn get_object_typed<T>(id: ObjectId<T>) -> Result<Option<T>, ConversionError>
+/// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
+pub fn get_object_by_js_id_typed<T>(id: &JsObjectId<T>) -> Option<T>
 where
-    T: HasId + SizedRoomObject,
+    T: From<JsValue>,
 {
-    let array_view = unsafe { id.unsafe_as_uploaded() };
-    (js! {
-        return Game.getObjectById(object_id_from_packed(@{array_view}));
-    })
-    .try_into()
+    Game::get_object_by_id(&id.raw)
+        .map(JsValue::from)
+        .map(Into::into)
 }
 
-/// See [http://docs.screeps.com/api/#Game.getObjectById]
+/// Get the typed object represented by a given [`ObjectId`], if it's still
+/// alive and visible.
 ///
-/// This gets the object in 'erased' form - all that is known about it is that
-/// it's a RoomObject.
-///
-/// If a more specific type is expected, [`get_object_typed`] can be used.
-///
-/// The ID passed in must be either an [`ObjectId`], or a [`RawObjectId`]. Both
-/// work, and the type of [`ObjectId`] if passed will be ignored.
-///
-/// [http://docs.screeps.com/api/#Game.getObjectById]: http://docs.screeps.com/api/#Game.getObjectById
-pub fn get_object_erased(id: impl Into<RawObjectId>) -> Option<RoomObject> {
-    let id = id.into();
-    let array_view = unsafe { id.unsafe_as_uploaded() };
-    js_unwrap_ref!(Game.getObjectById(object_id_from_packed(@{array_view})))
+/// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
+pub fn get_object_by_id_typed<T>(id: &ObjectId<T>) -> Option<T>
+where
+    T: From<JsValue>,
+{
+    // construct a reference to a javascript string using the id data
+    let js_str = JsString::from(id.to_string());
+
+    Game::get_object_by_id(&js_str)
+        .map(JsValue::from)
+        .map(Into::into)
 }
 
+/// Get the [`RoomObject`] represented by a given [`RawObjectId`], if it's
+/// still alive and visible.
+///
+/// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
+pub fn get_object_by_id_erased(id: &RawObjectId) -> Option<RoomObject> {
+    // construct a reference to a javascript string using the id data
+    let js_str = JsString::from(id.to_string());
+
+    Game::get_object_by_id(&js_str)
+}
+
+/// Send an email message to yourself with a given message. Set a group
+/// interval to only send messages every `group_interval` minutes.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.notify)
 pub fn notify(message: &str, group_interval: Option<u32>) {
-    js! { @(no_return)
-        Game.notify(@{message}, @{group_interval.unwrap_or(0)});
-    }
+    let message: JsString = message.into();
+
+    Game::notify(&message, group_interval)
 }

@@ -1,4 +1,5 @@
-//! Constants that apply only to Screeps seasonal servers.
+//! Constants that are unique to object types or mechanics found in Screeps
+//! seasonal.
 //!
 //! [Screeps seasonal documentation](https://docs-season.screeps.com/api/#Season-constants)
 
@@ -49,7 +50,6 @@ pub mod season_1 {
 pub mod season_2 {
     // RESOURCE_SYMBOL_* defined in `types.rs`
     use crate::constants::ResourceType;
-
     /// All of the resources which are 'symbols' that can be taken
     /// to the correct type of [`SymbolDecoder`] to score points.
     ///
@@ -75,7 +75,7 @@ pub mod season_2 {
         ResourceType::SymbolTsade,
         ResourceType::SymbolQoph,
         ResourceType::SymbolRes,
-        ResourceType::SymbolSim,
+        ResourceType::SymbolSin,
         ResourceType::SymbolTaw,
     ];
     // FIND_SYMBOL_CONTAINERS / FIND_SYMBOL_DECODERS defined in `find.rs`

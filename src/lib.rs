@@ -2,33 +2,48 @@
 //!
 //! # Cargo Features
 //!
-//! ## `check-all-casts`
+//! ## `generate-pixel`
 //!
-//! By default, `screeps-game-api` assumes that the Screeps JavaScript API calls
-//! return the types that they are documented to return and bypasses
-//! `instanceof` checks when constructing rust wrappers for those return values.
+//! Enables the function to generate pixels, which is only present on the
+//! Screeps: World official servers.
 //!
-//! To enable checking all types on all API calls, even ones when the screeps
-//! server reliably returns the expected type, depend on `screeps-game-api` with
-//! the `"check-all-casts"` feature flag:
+//! ## `inter-shard-memory`
 //!
-//! ```toml
-//! [dependencies]
-//! # ...
-//! screeps-game-api = { version = "0.3", features = ["check-all-casts"] }
-//! ```
+//! Enables interacting with `IntershardMemory`, which is not present in most
+//! private server environments.
+//!
+//! ## `score`
+//!
+//! Enables the score resource and entities, introduced for Screeps Seasonal's
+//! first season.
+//!
+//! ## `symbols`
+//!
+//! Enables the symbol resources and entities, introduced for Screeps Seasonal's
+//! second season.
+//!
+//! ## `mmo`
+//!
+//! Enables the `generate-pixel` and `inter-shard-memory` features, which are
+//! present on the Screeps: World official servers but not on private servers.
+//!
+//! ## `seasonal-season-1`
+//!
+//! Enables the `score` feature, a mechanic introduced for Screeps Seasonal's
+//! first season, as well as enabling constants relevant to season 1.
+//!
+//! ## `seasonal-season-2`
+//!
+//! Enables the `symbols` feature, a mechanic introduced for Screeps Seasonal's
+//! second season, as well as enabling constants relevant to season 2.
 #![recursion_limit = "128"]
 // to build locally with doc_cfg enabled, run:
 // `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
-#[macro_use]
-extern crate stdweb;
-
-#[macro_use]
-pub mod macros;
-
+pub mod console;
 pub mod constants;
+pub mod enums;
 pub mod game;
 #[cfg(feature = "inter-shard-memory")]
 pub mod inter_shard_memory;
@@ -37,40 +52,33 @@ pub mod local;
 pub mod memory;
 pub mod objects;
 pub mod pathfinder;
+pub(crate) mod prototypes;
 pub mod raw_memory;
 pub mod traits;
 
-pub use stdweb::private::ConversionError;
-
 pub use crate::{
-    constants::*,
-    js_collections::JsVec,
-    local::{ObjectId, Position, RawObjectId, RawObjectIdParseError, RoomName, RoomNameParseError},
-    objects::*,
-    traits::{FromExpectedType, IntoExpectedType},
+    constants::*, enums::*, game::*, js_collections::*, local::*, objects::*, pathfinder::*,
+    raw_memory::*, traits::*,
 };
 
-/// An alias for `Position` for those used to the JavaScript `RoomPosition`
-/// type.
-pub type RoomPosition = Position;
+#[cfg(feature = "inter-shard-memory")]
+pub use crate::inter_shard_memory::*;
 
 /// Traits which implement base functionalities for Screeps types.
 ///
 /// # Example
 ///
 /// ```no_run
-/// use screeps::prelude::*;
+/// use js_sys::{JsString, Reflect};
+/// use screeps::{game, prelude::*, Creep};
 ///
-/// let c = screeps::game::creeps::get("Bob").unwrap();
+/// let c = game::creeps().get(String::from("Bob")).unwrap();
 ///
 /// // `HasId` trait brought in from prelude
-/// let id = c.id();
+/// let id = c.try_id().unwrap();
 /// ```
 ///
 /// This module contains all base functionality traits, and no structures.
 pub mod prelude {
-    pub use crate::objects::{
-        CanDecay, HasCooldown, HasId, HasPosition, HasStore, OwnedStructureProperties,
-        RoomObjectProperties, SharedCreepProperties, StructureProperties,
-    };
+    pub use crate::traits::*;
 }

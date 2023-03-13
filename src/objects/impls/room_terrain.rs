@@ -1,70 +1,40 @@
-use stdweb::UnsafeTypedArray;
+use js_sys::{JsString, Uint8Array};
+use wasm_bindgen::prelude::*;
 
-use crate::{
-    constants::{ReturnCode, Terrain},
-    local::RoomName,
-    objects::RoomTerrain,
-    traits::TryInto,
-};
+use crate::{ReturnCode, Terrain};
 
-impl RoomTerrain {
-    pub fn constructor(room_name: RoomName) -> Self {
-        js_unwrap!(new Room.Terrain(@{room_name}))
-    }
+#[wasm_bindgen]
+extern "C" {
+    /// An object representing a room's terrain held in the javascript heap.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room-Terrain)
+    #[wasm_bindgen(js_namespace = Room, js_name = Terrain)]
+    pub type RoomTerrain;
 
-    pub fn get(&self, x: u32, y: u32) -> Terrain {
-        js_unwrap!(@{self.as_ref()}.get(@{x}, @{y}))
-    }
+    /// Gets the terrain for any room by name, regardless of current visibility
+    /// of the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.constructor)
+    #[wasm_bindgen(constructor, js_namespace = Room, js_class = Terrain)]
+    pub fn new(room_name: &JsString) -> RoomTerrain;
 
-    pub fn get_raw_buffer(&self) -> Vec<u8> {
-        let mut buffer: Vec<u8> = vec![0; 2500];
-        self.get_raw_buffer_to_vec(&mut buffer)
-            .expect("Panic in get_raw_buffer.");
-        buffer
-    }
+    /// Get the type of terrain at given coordinates.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.get)
+    #[wasm_bindgen(method)]
+    pub fn get(this: &RoomTerrain, x: u8, y: u8) -> Terrain;
 
-    pub fn get_raw_buffer_to_vec<'a>(
-        &self,
-        buffer: &'a mut Vec<u8>,
-    ) -> Result<&'a mut Vec<u8>, ReturnCode> {
-        let is_success: bool;
-        {
-            let arr: UnsafeTypedArray<'_, u8> =
-                unsafe { UnsafeTypedArray::new(buffer.as_mut_slice()) };
+    //TODO: wiarchbe: Need to handle return code?
+    /// Get a copy of the underlying Uint8Array with the data about the room's
+    /// terrain.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
+    #[wasm_bindgen(method, js_name = getRawBuffer)]
+    pub fn get_raw_buffer(this: &RoomTerrain) -> Uint8Array;
 
-            is_success = js! {
-                var bytes = @{arr};
-                return @{self.as_ref()}.getRawBuffer(bytes) === bytes;
-            }
-            .try_into()
-            .unwrap();
-        }
-        if is_success {
-            Ok(buffer)
-        } else {
-            Err(ReturnCode::InvalidArgs)
-        }
-    }
-
-    pub fn get_raw_buffer_to_array<'a>(
-        &self,
-        buffer: &'a mut [u8; 2500],
-    ) -> Result<(), ReturnCode> {
-        let is_success: bool;
-        {
-            let arr: UnsafeTypedArray<'_, u8> = unsafe { UnsafeTypedArray::new(&buffer[0..2500]) };
-
-            is_success = js! {
-                var bytes = @{arr};
-                return @{self.as_ref()}.getRawBuffer(bytes) === bytes;
-            }
-            .try_into()
-            .unwrap();
-        }
-        if is_success {
-            Ok(())
-        } else {
-            Err(ReturnCode::InvalidArgs)
-        }
-    }
+    /// Copy the data about the room's terrain into an existing [`Uint8Array`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
+    #[wasm_bindgen(method, js_name = getRawBuffer)]
+    pub fn get_raw_buffer_to_array(this: &RoomTerrain, destination: &Uint8Array) -> ReturnCode;
 }

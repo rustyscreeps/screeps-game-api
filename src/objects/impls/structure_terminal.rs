@@ -1,10 +1,50 @@
 use crate::{
     constants::{ResourceType, ReturnCode},
-    local::RoomName,
-    objects::StructureTerminal,
+    objects::{OwnedStructure, RoomObject, Store, Structure},
+    prelude::*,
+    RoomName,
 };
+use js_sys::JsString;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern "C" {
+    /// An object representing a [`StructureTerminal`], which can send resources
+    /// to distant rooms and participate in the market.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTerminal)
+    #[wasm_bindgen(extends = RoomObject, extends = Structure, extends = OwnedStructure)]
+    #[derive(Clone, Debug)]
+    pub type StructureTerminal;
+
+    /// The number of ticks until the [`StructureTerminal`] can use
+    /// [`StructureTerminal::send`] or be used in a market transaction again.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTerminal.cooldown)
+    #[wasm_bindgen(method, getter)]
+    pub fn cooldown(this: &StructureTerminal) -> u32;
+
+    /// The [`Store`] of the terminal, which contains information about what
+    /// resources it is it holding.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTerminal.store)
+    #[wasm_bindgen(method, getter)]
+    pub fn store(this: &StructureTerminal) -> Store;
+
+    #[wasm_bindgen(method, js_name = send)]
+    fn send_internal(
+        this: &StructureTerminal,
+        resource_type: ResourceType,
+        amount: u32,
+        destination: &JsString,
+        description: Option<&JsString>,
+    ) -> ReturnCode;
+}
 
 impl StructureTerminal {
+    /// Send resources to another room's terminal.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTerminal.send)
     pub fn send(
         &self,
         resource_type: ResourceType,
@@ -12,11 +52,27 @@ impl StructureTerminal {
         destination: RoomName,
         description: Option<&str>,
     ) -> ReturnCode {
-        js_unwrap! {
-            @{self.as_ref()}.send(__resource_type_num_to_str(@{resource_type as u32}),
-                                  @{amount},
-                                  @{destination},
-                                  @{description} || undefined)
-        }
+        let desination = destination.into();
+        let description = description.map(JsString::from);
+
+        Self::send_internal(
+            self,
+            resource_type,
+            amount,
+            &desination,
+            description.as_ref(),
+        )
+    }
+}
+
+impl HasCooldown for StructureTerminal {
+    fn cooldown(&self) -> u32 {
+        Self::cooldown(self)
+    }
+}
+
+impl HasStore for StructureTerminal {
+    fn store(&self) -> Store {
+        Self::store(self)
     }
 }
