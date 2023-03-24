@@ -1,8 +1,4 @@
-use std::{
-    convert::TryFrom,
-    error::Error,
-    fmt
-};
+use std::{convert::TryFrom, error::Error, fmt};
 
 use crate::constants::ROOM_SIZE;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
