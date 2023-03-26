@@ -1,9 +1,11 @@
 # Contributing to `cargo-screeps` and `screeps-game-api`:
 
-1. Ask questions. We're all in the `#rust-wasm` channel on the [screeps slack].
+1. Ask questions. We're all in the `#rust` channel on the [screeps discord].
 2. Make PRs early, often. We'll review code thoroughly and help where possible.
 3. Issues are your guide for what needs to be done. If you think something needs doing and it isn't
    already an issue, make it one!
+4. Whenever possible, include an update to the `CHANGELOG.md` in the Unreleased section briefly
+   describing your change; include "(breaking)" at the end of the line if appropriate.
 
 # Style
 
@@ -14,36 +16,30 @@ We adhere to the following guidelines:
 
 In addition, we have the following in-house guidelines:
 
-## Code Formatting
+## Code Formatting and Linting
 
-Please run `rustfmt` on the files you edit when submitting to this repository. This will handle all
-style issues mentioned in the 'fmt-rfcs' guidelines, so you should be able to simply run `cargo fmt`
-and be done with it.
+Please run `rustfmt` and `clippy` on the files you edit when submitting to this repository. This
+will handle all style issues mentioned in the 'fmt-rfcs' guidelines, so you should be able to
+simply run `cargo fmt` and `cargo clippy` and be done with it.
 
-To install `rustfmt`, use `rustup`:
+To install the required components, use `rustup`:
 
 ```console
-$ rustup component add --toolchain nightly rustfmt-preview
+$ rustup component add rustfmt
+$ rustup component add clippy
 ```
 
-Then to format the code in this repository, use the following:
+To format the code in this repository, use the following:
 
 ```console
 $ cargo fmt
 ```
 
-## Ordering within a module
+Also run `cargo clippy` and resolve any style issues it warns about.
 
-Items within a module should be order as follows. Each separate group should be newline separated
-with the exception of module documentation. The group immediately following module documentation
-should be directly under it with no double-newline separating it.
-
-- `//!` module documentation
-- `extern crate` declarations
-- private `use` declarations
-- `mod` declarations
-- `pub use` declarations
-- all other [items] in no particular order
+```console
+$ cargo clippy
+```
 
 ## `use` formatting
 
@@ -66,38 +62,6 @@ newline-separated groups:
 `pub use` statements should be similarly grouped, but should be separate from private `use` as
 mentioned in [Ordering within a module].
 
-All imports within a newline-separated group should use the use [RFC 2128] "nested groups" style.
-There should be one top-level `use` statement for each of `std`, the crate root, `self`, `super`
-and one for each external crate.
-
-In accordance to the `fmt-rfcs`, top-level `use` statements within a group and items within a `use`
-statement should be alphabetically ordered.
-
-Example import section:
-
-```rust
-use std::{
-    borrow::Cow,
-    cmp::{Eq, PartialEq},
-    collections::HashMap,
-    error, f64, fmt,
-    marker::PhantomData,
-    ops,
-};
-
-use serde::de::{Deserialize, Deserializer, Error, Unexpected, Visitor};
-use stdweb::{
-    unstable::{TryFrom, TryInto},
-    Reference, Value,
-};
-use void::Void;
-
-use {
-    constants::{ResourceType, ReturnCode, StructureType},
-    ConversionError,
-};
-```
-
 Last, when importing from within the current crate, try to import from a more specific module rather
 than a less specific one. When the crate re-exports tons of types from inner modules, it can be
 tempting to just import everything from the crate root, but this makes it all more confusing. Import
@@ -111,7 +75,7 @@ outside of the current module's hierarchy. If in `objects::impl::construction_si
 `objects::impl::room::Step` should be done with `objects::impl::room::Step` or `super::room::Step`,
 but if in `constants`, then it can just be done with `objects::Step`.
 
-[screeps slack]: https://chat.screeps.com/
+[screeps discord]: https://discord.gg/screeps
 [fmt-rfcs Rust Style Guide]: https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md
 [Rust API Guidelines]: https://rust-lang-nursery.github.io/api-guidelines/
 [RFC 2128]: https://github.com/rust-lang/rfcs/blob/master/text/2128-use-nested-groups.md

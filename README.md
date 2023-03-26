@@ -14,8 +14,8 @@ Also the homepage for tools relating to writing [Screeps] AIs in Rust.
 `screeps-game-api` is a Rust binding to the JavaScript APIs for programs compiled to WASM using
 [`wasm-pack`].
 
-Also in this organization is [`cargo screeps`][cargo-screeps], a binary program which wraps `cargo
-web` and lets one directly upload Rust WASM code to Screeps servers.
+Also in this organization is [`cargo screeps`][cargo-screeps], a binary program which wraps
+`wasm-pack` and lets one directly upload Rust WASM code to Screeps servers.
 
 These two tools go together well, but do not depend on eachother. `cargo-screeps` can compile and
 upload any screeps WASM project buildable with `wasm-bindgen`'s `wasm-pack`, and `screeps-game-api` is
@@ -50,7 +50,7 @@ cd screeps-starter-rust
 cp example-screeps.toml screeps.toml
 nano screeps.toml
 # configure credentials (API key) if you'd like to upload directly,
-# or a directory to copy to if you'd prepfer to use the game client to deploy
+# or a directory to copy to if you'd prefer to use the game client to deploy
 
 # build tool:
 cargo screeps --help
