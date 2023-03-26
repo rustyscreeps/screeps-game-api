@@ -4,8 +4,9 @@ use crate::{
     objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
     },
+    pathfinder::SingleRoomCostResult,
     prelude::*,
-    CostMatrix, MoveToOptions, RoomName, RoomPosition, SingleRoomCostResult,
+    CostMatrix, MoveToOptions, RoomName, RoomPosition,
 };
 use js_sys::{Array, JsString};
 use wasm_bindgen::{prelude::*, JsCast};
