@@ -14,8 +14,9 @@ use crate::{
     js_collections::JsCollectionFromValue,
     local::LodashFilter,
     objects::*,
+    pathfinder::RoomCostResult,
     prelude::*,
-    FindConstant, RoomCostResult, RoomName,
+    FindConstant, RoomName,
 };
 
 use js_sys::{Array, JsString, Object};

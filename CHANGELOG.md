@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+- Remove re-exports of `game::*`, `pathfinder::*`, and `raw_memory::*` to resolve name conflict
+  simplify crate namespace (breaking)
+
 0.10.0 (2023-03-13)
 ===================
 

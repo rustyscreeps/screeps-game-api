@@ -56,10 +56,7 @@ pub(crate) mod prototypes;
 pub mod raw_memory;
 pub mod traits;
 
-pub use crate::{
-    constants::*, enums::*, game::*, js_collections::*, local::*, objects::*, pathfinder::*,
-    raw_memory::*, traits::*,
-};
+pub use crate::{constants::*, enums::*, js_collections::*, local::*, objects::*, traits::*};
 
 #[cfg(feature = "inter-shard-memory")]
 pub use crate::inter_shard_memory::*;

@@ -8,8 +8,8 @@ use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::*, enums::*, objects::*, JsObjectId, ObjectId, Position, RawObjectId, RoomName,
-    SingleRoomCostResult,
+    constants::*, enums::*, objects::*, pathfinder::SingleRoomCostResult, JsObjectId, ObjectId,
+    Position, RawObjectId, RoomName,
 };
 
 #[enum_dispatch]
