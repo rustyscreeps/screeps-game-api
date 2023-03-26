@@ -1,4 +1,4 @@
-use std::{convert::TryFrom, fmt};
+use std::{convert::TryFrom, error::Error, fmt};
 
 use crate::constants::ROOM_SIZE;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
@@ -13,6 +13,8 @@ impl fmt::Display for OutOfBoundsError {
         write!(f, "Out of bounds coordinate: {}", self.0)
     }
 }
+
+impl Error for OutOfBoundsError {}
 
 #[inline]
 pub fn xy_to_linear_index(xy: RoomXY) -> usize {
