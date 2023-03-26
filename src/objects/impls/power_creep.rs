@@ -1,9 +1,9 @@
 use crate::{
     constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode},
     objects::{Owner, Resource, RoomObject, Store, StructureController, StructurePowerSpawn},
+    pathfinder::SingleRoomCostResult,
     prelude::*,
     CostMatrix, JsCollectionFromValue, JsHashMap, MoveToOptions, RoomName, RoomPosition,
-    SingleRoomCostResult,
 };
 use js_sys::{JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
