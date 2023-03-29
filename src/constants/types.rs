@@ -1,6 +1,6 @@
 //! `*Type` constants.
 use crate::{JsCollectionFromValue, JsCollectionIntoValue};
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::Sequence;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
@@ -31,7 +31,7 @@ macro_rules! named_enum_serialize_deserialize {
 
 /// Translates `STRUCTURE_*` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum StructureType {
     Spawn = "spawn",
     Extension = "extension",
@@ -203,7 +203,7 @@ impl StructureType {
 
 /// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 pub enum IntershardResourceType {
     // no longer used, not implemented
     // SubscriptionToken = "token",
@@ -214,7 +214,7 @@ pub enum IntershardResourceType {
 
 /// Resource type constant for all possible types of resources.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum ResourceType {
     Energy = "energy",
     Power = "power",
@@ -563,7 +563,7 @@ impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
 
 /// Translates the `POWER_CLASS` constants, which are classes of power creeps
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 pub enum PowerCreepClass {
     Operator = "operator",
 }
@@ -581,7 +581,7 @@ pub enum PowerCreepClass {
     FromPrimitive,
     Deserialize_repr,
     Serialize_repr,
-    IntoEnumIterator,
+    Sequence,
 )]
 #[repr(u32)]
 pub enum PowerType {

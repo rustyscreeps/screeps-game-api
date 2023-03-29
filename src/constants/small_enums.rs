@@ -1,7 +1,7 @@
 //! Various constants translated as small enums.
 
 use crate::constants::find::Find;
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::Sequence;
 use js_sys::JsString;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -132,7 +132,7 @@ impl From<Result<(), ErrorCode>> for ReturnCode {
     FromPrimitive,
     Serialize_repr,
     Deserialize_repr,
-    IntoEnumIterator,
+    Sequence,
 )]
 #[repr(u8)]
 pub enum Direction {
@@ -215,7 +215,7 @@ impl fmt::Display for Direction {
     FromPrimitive,
     Serialize_repr,
     Deserialize_repr,
-    IntoEnumIterator,
+    Sequence,
 )]
 #[repr(u8)]
 pub enum ExitDirection {
@@ -261,7 +261,7 @@ impl From<ExitDirection> for Direction {
     Hash,
     Deserialize_repr,
     Serialize_repr,
-    IntoEnumIterator,
+    Sequence,
 )]
 #[repr(u8)]
 pub enum Color {
@@ -289,7 +289,7 @@ pub enum Color {
     FromPrimitive,
     Serialize_repr,
     Deserialize_repr,
-    IntoEnumIterator,
+    Sequence,
 )]
 #[repr(u8)]
 pub enum Terrain {
@@ -386,7 +386,7 @@ impl FromStr for Part {
     Hash,
     Serialize_repr,
     Deserialize_repr,
-    IntoEnumIterator,
+    Sequence,
 )]
 #[repr(u8)]
 pub enum Density {
@@ -438,13 +438,13 @@ impl Density {
     }
 
     pub fn iter_values() -> impl Iterator<Item = Density> {
-        <Density as enum_iterator::IntoEnumIterator>::into_enum_iter()
+        enum_iterator::all::<Density>()
     }
 }
 
 /// Translates `ORDER_*` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 pub enum OrderType {
     Sell = "sell",
     Buy = "buy",
