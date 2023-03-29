@@ -1,10 +1,12 @@
 Unreleased
 ==========
 
+- Update `serde-wasm-bindgen` to 0.5
+- Update `enum-iterator` to 1.4 (breaking; `IntoEnumIterator` trait replaced with `Sequence`)
 - Remove re-exports of `game::*`, `pathfinder::*`, and `raw_memory::*` to resolve name conflict
-  simplify crate namespace (breaking)
+  and simplify crate namespace (breaking)
 - Implement `std::error::Error` for `OutOfBoundsError`, to make it more ergonomic to use with
-  other error types.
+  other error types
 
 0.10.0 (2023-03-13)
 ===================
