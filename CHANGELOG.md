@@ -1,7 +1,7 @@
 Unreleased
 ==========
 
-- Move `crate::inter_shard_memory::InterShardMemory::*` to `crate::inter_shard_memory::*` and moved
+- Move `crate::inter_shard_memory::InterShardMemory::*` to `crate::inter_shard_memory::*` and move
   `crate::raw_memory::RawMemory::*` to `crate::raw_memory::*` for consistency (breaking)
 - Update `serde-wasm-bindgen` to 0.5
 - Update `enum-iterator` to 1.4 (breaking; `IntoEnumIterator` trait replaced with `Sequence`)
