@@ -1,13 +1,18 @@
 //! Screeps object wrappers.
+//!
+//! Objects types that inherit [`RoomObject`] represent game objects with are
+//! valid to be used only during the current tick; reading or writing a 'stale'
+//! game object from a past tick will result in undefined behavior.
 mod impls;
 
 pub use event::*;
 pub use game_types::*;
-pub use generic::*;
+pub use input::*;
+pub use output::*;
 pub use room_objects::*;
 pub use visual::*;
 
-/// Object wrappers representing data retrieved from room event logs
+/// Object wrappers representing data retrieved from room event logs.
 pub mod event {
     pub use super::impls::{
         AttackEvent, AttackType, BuildEvent, Event, EventType, ExitEvent, HarvestEvent, HealEvent,
@@ -16,25 +21,32 @@ pub mod event {
     };
 }
 
-/// Object wrappers for game types that are not room objects and are safe to use
-/// in future ticks.
-pub mod game_types {
+/// Object wrappers for game types that are not room objects (are safe to use
+/// in future ticks).
+mod game_types {
     pub use super::impls::{CostMatrix, RoomPosition, RoomTerrain};
 }
 
+// todo shift these over to traits (will be breaking)
+pub use self::impls::{CostMatrixSet, HasLocalPosition};
+
 /// Object wrappers for simple javascript objects with known properties sent to
-/// or returned by game functions
-pub mod generic {
+/// game functions.
+pub mod input {
+    pub use super::impls::{FindPathOptions, JsFindPathOptions, MoveToOptions};
+}
+
+/// Object wrappers for simple javascript objects with known properties returned
+/// by game functions.
+pub mod output {
     pub use super::impls::{
-        AccountPowerCreep, BodyPart, CostMatrixSet, Effect, FindPathOptions, HasLocalPosition,
-        InterShardPortalDestination, JsFindPathOptions, MoveToOptions, Owner, Path,
+        AccountPowerCreep, BodyPart, Effect, InterShardPortalDestination, Owner, Path,
         PortalDestination, PowerInfo, Reservation, Sign, SpawnOptions, Step,
     };
 }
 
-/// Object wrappers representing room objects within the game world, which are
-/// unsafe to use in future ticks
-pub mod room_objects {
+/// Object wrappers for room objects.
+mod room_objects {
     pub use super::impls::{
         ConstructionSite, Creep, Deposit, Flag, Mineral, Nuke, OwnedStructure, PowerCreep,
         Resource, Room, RoomObject, Ruin, Source, Spawning, Store, Structure, StructureContainer,
@@ -53,7 +65,7 @@ pub mod room_objects {
 }
 
 /// Object wrappers allowing drawing of shapes in rooms or on the map in the
-/// game world
+/// game world.
 pub mod visual {
     pub use super::impls::{
         CircleStyle, FontStyle, LineDrawStyle, LineStyle, MapVisual, MapVisualShape, PolyStyle,
