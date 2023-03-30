@@ -74,5 +74,5 @@ pub use crate::{constants::*, enums::*, js_collections::*, local::*, objects::*,
 ///
 /// This module contains all base functionality traits, and no structures.
 pub mod prelude {
-    pub use crate::traits::*;
+    pub use crate::{js_collections::*, traits::*};
 }
