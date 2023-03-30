@@ -12,15 +12,14 @@
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
 
 use js_sys::{JsString, Object};
-
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::IntershardResourceType,
+    constants::{IntershardResourceType, ResourceType},
     enums::StructureObject,
     js_collections::{JsHashMap, JsObjectId},
     local::{ObjectId, RawObjectId, RoomName},
-    objects::{AccountPowerCreep, ConstructionSite, Creep, Flag, StructureSpawn},
+    objects::{AccountPowerCreep, ConstructionSite, Creep, Flag, Room, RoomObject, StructureSpawn},
 };
 
 pub mod cpu;
@@ -29,8 +28,6 @@ pub mod gpl;
 pub mod map;
 pub mod market;
 pub mod shard;
-
-use crate::{objects::RoomObject, Room};
 
 #[wasm_bindgen]
 extern "C" {
@@ -165,7 +162,7 @@ pub fn score() -> u32 {
 ///
 /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
 #[cfg(feature = "symbols")]
-pub fn symbols() -> JsHashMap<crate::ResourceType, u32> {
+pub fn symbols() -> JsHashMap<ResourceType, u32> {
     Game::symbols().into()
 }
 
