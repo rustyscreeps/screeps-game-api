@@ -249,7 +249,7 @@ impl From<ExitDirection> for Direction {
     }
 }
 
-/// Translates `COLOR_*` constants.
+/// Translates `COLOR_*` and `COLORS_ALL` constants.
 #[wasm_bindgen]
 #[derive(
     Debug,
@@ -322,9 +322,9 @@ impl Terrain {
     }
 }
 
-/// Translates body part constants.
+/// Translates body part type and `BODYPARTS_ALL` constants
 #[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, Serialize, Sequence)]
 pub enum Part {
     Move = "move",
     Work = "work",
