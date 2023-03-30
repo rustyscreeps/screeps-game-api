@@ -35,10 +35,10 @@ pub const CREEP_SAY_MAX_LENGTH: u32 = 10;
 /// Maximum length of names of flag objects.
 pub const FLAG_NAME_MAX_LENGTH: u32 = 60;
 
-/// Maximum size in UTF-16 units of data set in [`InterShardMemory`] for each
-/// shard.
+/// Maximum size in UTF-16 units of data allowed to be sent to
+/// [`inter_shard_memory::set_local`]
 ///
-/// [`InterShardMemory`]: crate::InterShardMemory
+/// [`inter_shard_memory::set_local`]: crate::inter_shard_memory::set_local
 pub const INTER_SHARD_MEMORY_SIZE_LIMIT: u32 = 100 * 1024;
 
 /// Owner username of hostile non-player structures and creeps which create
