@@ -1,7 +1,6 @@
 //! Access the in-game market to buy or sell resources.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-market)
-
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
 

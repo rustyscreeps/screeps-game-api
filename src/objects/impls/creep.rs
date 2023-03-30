@@ -1,3 +1,6 @@
+use js_sys::{Array, JsString};
+use wasm_bindgen::{prelude::*, JsCast};
+
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
     js_collections::JsCollectionFromValue,
@@ -8,8 +11,6 @@ use crate::{
     prelude::*,
     CostMatrix, MoveToOptions, RoomName, RoomPosition,
 };
-use js_sys::{Array, JsString};
-use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {

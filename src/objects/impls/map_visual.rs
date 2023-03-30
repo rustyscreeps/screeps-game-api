@@ -1,8 +1,10 @@
-use crate::local::{Position, RoomCoordinate, RoomName};
 use js_sys::JsString;
 use serde::Serialize;
 
-use crate::objects::impls::room_visual::{CircleStyle, LineStyle, PolyStyle, RectStyle, TextStyle};
+use crate::{
+    local::{Position, RoomCoordinate, RoomName},
+    objects::{CircleStyle, LineStyle, PolyStyle, RectStyle, TextStyle},
+};
 
 #[derive(Clone, Serialize)]
 pub struct MapCircleData {

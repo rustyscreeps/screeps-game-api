@@ -1,9 +1,9 @@
 use std::borrow::Borrow;
+
+use js_sys::{Array, Object, Uint8Array};
 use wasm_bindgen::prelude::*;
 
 use crate::{constants::ROOM_SIZE, local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
-
-use js_sys::{Array, Object, Uint8Array};
 
 #[wasm_bindgen]
 extern "C" {

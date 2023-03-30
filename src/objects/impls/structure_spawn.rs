@@ -1,3 +1,6 @@
+use js_sys::{Array, JsString, Object};
+use wasm_bindgen::{prelude::*, JsCast};
+
 use crate::{
     constants::ReturnCode,
     js_collections::{JsCollectionFromValue, ObjectExt},
@@ -5,8 +8,6 @@ use crate::{
     prelude::*,
     Direction, Part,
 };
-use js_sys::{Array, JsString, Object};
-use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {

@@ -11,7 +11,6 @@
 //! players' active foreign segments.
 //!
 //! [`RawMemory`]: https://docs.screeps.com/api/#RawMemory
-
 use js_sys::{Array, JsString, Object};
 
 use wasm_bindgen::prelude::*;

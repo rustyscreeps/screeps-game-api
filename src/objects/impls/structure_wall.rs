@@ -1,5 +1,6 @@
-use crate::objects::{RoomObject, Structure};
 use wasm_bindgen::prelude::*;
+
+use crate::objects::{RoomObject, Structure};
 
 #[wasm_bindgen]
 extern "C" {

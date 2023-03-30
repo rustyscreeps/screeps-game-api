@@ -1,5 +1,9 @@
 use std::convert::TryInto;
 
+use js_sys::{Array, JsString, Object};
+use num_traits::*;
+use wasm_bindgen::{prelude::*, JsCast};
+
 use crate::{
     constants::{find::*, look::*, Color, Direction, ErrorCode, ReturnCode, StructureType},
     local::{Position, RoomCoordinate, RoomName},
@@ -8,9 +12,6 @@ use crate::{
     prelude::*,
     prototypes::ROOM_POSITION_PROTOTYPE,
 };
-use js_sys::{Array, JsString, Object};
-use num_traits::*;
-use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {

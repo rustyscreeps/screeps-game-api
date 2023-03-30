@@ -10,12 +10,11 @@
 //! the behavior of stale game objects is undefined.
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
-
 use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{IntershardResourceType, ResourceType},
+    constants::IntershardResourceType,
     enums::StructureObject,
     js_collections::{JsHashMap, JsObjectId},
     local::{ObjectId, RawObjectId, RoomName},
@@ -162,7 +161,7 @@ pub fn score() -> u32 {
 ///
 /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
 #[cfg(feature = "symbols")]
-pub fn symbols() -> JsHashMap<ResourceType, u32> {
+pub fn symbols() -> JsHashMap<crate::ResourceType, u32> {
     Game::symbols().into()
 }
 
