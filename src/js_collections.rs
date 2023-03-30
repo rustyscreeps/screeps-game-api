@@ -1,12 +1,14 @@
 //! Typed JavaScript collection wrappers.
-use crate::{game, traits::Resolvable};
-use js_sys::{Array, JsString, Object};
 use std::{
     cmp::{Eq, PartialEq},
     fmt,
     marker::PhantomData,
 };
+
+use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
+
+use crate::{game, traits::Resolvable};
 
 #[wasm_bindgen]
 extern "C" {

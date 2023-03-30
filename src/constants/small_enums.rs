@@ -1,18 +1,19 @@
 //! Various constants translated as small enums.
+use std::{
+    convert::{Infallible, TryFrom},
+    fmt,
+    str::FromStr,
+};
 
-use crate::constants::find::Find;
 use enum_iterator::Sequence;
 use js_sys::JsString;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use std::{
-    convert::{Infallible, TryFrom},
-    fmt,
-    str::FromStr,
-};
 use wasm_bindgen::prelude::*;
+
+use crate::constants::find::Find;
 
 // Bindgen does not correctly handle i8 negative return values. Use custom
 // return values.

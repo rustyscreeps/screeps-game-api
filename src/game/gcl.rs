@@ -1,9 +1,9 @@
 //! Global Control Level information.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game.gcl)
-use crate::constants::{GCL_MULTIPLY, GCL_POW};
-
 use wasm_bindgen::prelude::*;
+
+use crate::constants::{GCL_MULTIPLY, GCL_POW};
 
 #[wasm_bindgen]
 extern "C" {

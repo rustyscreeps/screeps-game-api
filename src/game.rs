@@ -10,16 +10,15 @@
 //! the behavior of stale game objects is undefined.
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game)
-
 use js_sys::{JsString, Object};
-
 use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::IntershardResourceType,
+    enums::StructureObject,
     js_collections::{JsHashMap, JsObjectId},
-    local::{ObjectId, RawObjectId},
-    AccountPowerCreep, ConstructionSite, Creep, Flag, RoomName, StructureObject, StructureSpawn,
+    local::{ObjectId, RawObjectId, RoomName},
+    objects::{AccountPowerCreep, ConstructionSite, Creep, Flag, Room, RoomObject, StructureSpawn},
 };
 
 pub mod cpu;
@@ -28,8 +27,6 @@ pub mod gpl;
 pub mod map;
 pub mod market;
 pub mod shard;
-
-use crate::{objects::RoomObject, Room};
 
 #[wasm_bindgen]
 extern "C" {

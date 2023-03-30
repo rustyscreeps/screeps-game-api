@@ -1,6 +1,7 @@
-use crate::local::RoomName;
 use js_sys::JsString;
 use serde::Serialize;
+
+use crate::local::RoomName;
 
 #[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]

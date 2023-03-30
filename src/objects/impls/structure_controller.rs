@@ -1,9 +1,10 @@
+use js_sys::{Date, JsString};
+use wasm_bindgen::prelude::*;
+
 use crate::{
     constants::ReturnCode,
     objects::{OwnedStructure, RoomObject, Structure},
 };
-use js_sys::{Date, JsString};
-use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {

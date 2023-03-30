@@ -1,8 +1,9 @@
+use js_sys::Object;
+use wasm_bindgen::{prelude::*, JsCast};
+
 use crate::{
     objects::PolyStyle, pathfinder::SingleRoomCostResult, CostMatrix, FindPathOptions, RoomName,
 };
-use js_sys::Object;
-use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {

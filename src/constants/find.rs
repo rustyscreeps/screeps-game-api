@@ -19,10 +19,11 @@
 //!
 //! [`Room::find`]: crate::Room::find
 //! [`objects::RoomObject`]: crate::RoomObject
-use crate::{enums::StructureObject, objects::*};
 use enum_iterator::Sequence;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
+
+use crate::{enums::StructureObject, objects::*};
 
 /// Translates `FIND_*` constants.
 #[wasm_bindgen]

@@ -1,11 +1,12 @@
+use js_sys::Array;
+use wasm_bindgen::{prelude::*, JsCast};
+
 use crate::{
     constants::EffectType,
     objects::{Room, RoomPosition},
     prelude::*,
     Position,
 };
-use js_sys::Array;
-use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {

@@ -1,6 +1,7 @@
-use crate::constants::ResourceType;
 use js_sys::Object;
 use wasm_bindgen::{prelude::*, JsCast};
+
+use crate::constants::ResourceType;
 
 //TODO: wiarchbe: Need types for general purpose store and specific store.
 // (Specific store can return undefined for missing types.)

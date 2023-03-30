@@ -12,14 +12,14 @@
 //! [Screeps documentation](https://docs.screeps.com/api/#PathFinder)
 //!
 //! [`Room::find_path`]: crate::objects::Room::find_path
-
 use std::convert::TryInto;
 
-use crate::{objects::RoomPosition, CostMatrix, Position, RoomName};
 use js_sys::{Array, JsString, Object};
 use serde::Serialize;
 use serde_wasm_bindgen;
 use wasm_bindgen::{prelude::*, JsCast};
+
+use crate::{objects::RoomPosition, CostMatrix, Position, RoomName};
 
 #[wasm_bindgen]
 extern "C" {

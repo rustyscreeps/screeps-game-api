@@ -1,17 +1,19 @@
 //! Game map related functionality.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-map)
+use std::convert::{TryFrom, TryInto};
 
+use enum_iterator::Sequence;
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
 use serde::Deserialize;
-use std::convert::{TryFrom, TryInto};
-
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    constants::ExitDirection, js_collections::JsHashMap, objects::RoomTerrain, Direction,
-    ReturnCode, RoomName,
+    constants::{Direction, ExitDirection, ReturnCode},
+    js_collections::JsHashMap,
+    local::RoomName,
+    objects::RoomTerrain,
 };
 
 #[wasm_bindgen]
@@ -127,7 +129,7 @@ impl From<JsRoomStatusResult> for RoomStatusResult {
 }
 
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum RoomStatus {
     Normal = "normal",
     Closed = "closed",

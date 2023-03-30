@@ -1,11 +1,12 @@
 //! `*Type` constants.
-use crate::{JsCollectionFromValue, JsCollectionIntoValue};
 use enum_iterator::Sequence;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
+
+use crate::{JsCollectionFromValue, JsCollectionIntoValue};
 
 macro_rules! named_enum_serialize_deserialize {
     ($ty:ty) => {

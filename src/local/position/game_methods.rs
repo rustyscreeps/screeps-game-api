@@ -1,4 +1,7 @@
 //! Game method implementations on `Position`
+use js_sys::{JsString, Object};
+use wasm_bindgen::prelude::*;
+
 use crate::{
     constants::{
         look::{LookConstant, LookResult},
@@ -9,8 +12,6 @@ use crate::{
     pathfinder::RoomCostResult,
     prelude::*,
 };
-use js_sys::{JsString, Object};
-use wasm_bindgen::prelude::*;
 
 use super::Position;
 

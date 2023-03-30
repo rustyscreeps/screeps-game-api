@@ -2,9 +2,7 @@
 //! instances of your code running on different shards.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#InterShardMemory)
-
 use js_sys::JsString;
-
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

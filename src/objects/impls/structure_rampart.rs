@@ -1,9 +1,10 @@
+use wasm_bindgen::prelude::*;
+
 use crate::{
     constants::ReturnCode,
     objects::{OwnedStructure, RoomObject, Structure},
     prelude::*,
 };
-use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {

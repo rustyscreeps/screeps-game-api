@@ -1,9 +1,9 @@
 //! Global Power Level information.
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game.gpl)
-use crate::constants::{POWER_LEVEL_MULTIPLY, POWER_LEVEL_POW};
-
 use wasm_bindgen::prelude::*;
+
+use crate::constants::{POWER_LEVEL_MULTIPLY, POWER_LEVEL_POW};
 
 #[wasm_bindgen]
 extern "C" {

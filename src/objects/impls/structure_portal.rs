@@ -1,10 +1,11 @@
+use js_sys::JsString;
+use wasm_bindgen::{prelude::*, JsCast};
+
 use crate::{
     local::{Position, RoomName},
     objects::{RoomObject, RoomPosition, Structure},
     prelude::*,
 };
-use js_sys::JsString;
-use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
