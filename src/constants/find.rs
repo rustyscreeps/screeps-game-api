@@ -20,13 +20,13 @@
 //! [`Room::find`]: crate::Room::find
 //! [`objects::RoomObject`]: crate::RoomObject
 use crate::{enums::StructureObject, objects::*};
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::Sequence;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 /// Translates `FIND_*` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 #[repr(u16)]
 pub enum Find {
     /// Find all exit positions at the top of the room

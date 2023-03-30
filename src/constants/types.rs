@@ -1,6 +1,6 @@
 //! `*Type` constants.
 use crate::{JsCollectionFromValue, JsCollectionIntoValue};
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::Sequence;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
@@ -31,7 +31,7 @@ macro_rules! named_enum_serialize_deserialize {
 
 /// Translates `STRUCTURE_*` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum StructureType {
     Spawn = "spawn",
     Extension = "extension",
@@ -203,7 +203,7 @@ impl StructureType {
 
 /// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 pub enum IntershardResourceType {
     // no longer used, not implemented
     // SubscriptionToken = "token",
@@ -212,9 +212,10 @@ pub enum IntershardResourceType {
     AccessKey = "accessKey",
 }
 
-/// Resource type constant for all possible types of resources.
+/// Translates `RESOURCES_ALL` constant, representing all possible in-game
+/// (non-intershard) resources.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum ResourceType {
     Energy = "energy",
     Power = "power",
@@ -342,7 +343,7 @@ pub enum ResourceType {
     SymbolQoph = "symbol_qoph",
     #[cfg(feature = "symbols")]
     SymbolRes = "symbol_res",
-    // sin/sim mismatch is intended and present in the mod:
+    // sin/sim mismatch is intended here - see official mod:
     // https://github.com/screeps/mod-season2/blob/3dfaa8f6214b2610dbe2a700c6287a10e7960ae8/src/resources.js#L23
     #[cfg(feature = "symbols")]
     SymbolSin = "symbol_sim",
@@ -512,7 +513,7 @@ pub enum Boost {
 }
 
 /// Translates all resource types that can be used on the market.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 #[serde(untagged)]
 pub enum MarketResourceType {
     Resource(ResourceType),
@@ -563,7 +564,7 @@ impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
 
 /// Translates the `POWER_CLASS` constants, which are classes of power creeps
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 pub enum PowerCreepClass {
     Operator = "operator",
 }
@@ -581,7 +582,7 @@ pub enum PowerCreepClass {
     FromPrimitive,
     Deserialize_repr,
     Serialize_repr,
-    IntoEnumIterator,
+    Sequence,
 )]
 #[repr(u32)]
 pub enum PowerType {
@@ -626,7 +627,16 @@ impl JsCollectionIntoValue for PowerType {
 /// Translates the `EFFECT_*` constants, which are natural effect types
 #[wasm_bindgen]
 #[derive(
-    Copy, Clone, Debug, PartialEq, Eq, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Hash,
+    FromPrimitive,
+    Serialize_repr,
+    Deserialize_repr,
+    Sequence,
 )]
 #[repr(u32)]
 pub enum NaturalEffectType {
@@ -636,7 +646,7 @@ pub enum NaturalEffectType {
 
 /// Translates effect types on room objects, which can include both `PWR_*` and
 /// `EFFECT_*` constants.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum EffectType {
     PowerEffect(PowerType),
     NaturalEffect(NaturalEffectType),
