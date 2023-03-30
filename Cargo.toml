@@ -24,7 +24,8 @@ name = "screeps"
 
 [package.metadata.docs.rs]
 all-features = true
-# this workaround (and the cfg_attr wrapping around the doc(cfg()) calls) can go once the doc_cfg feature is stablized
+# this workaround (and the cfg_attr wrapping around the feature(doc_auto_cfg) call)
+# can go once the doc_auto_cfg feature is stablized
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
