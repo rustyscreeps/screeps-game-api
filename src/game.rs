@@ -17,9 +17,10 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::IntershardResourceType,
+    enums::StructureObject,
     js_collections::{JsHashMap, JsObjectId},
-    local::{ObjectId, RawObjectId},
-    AccountPowerCreep, ConstructionSite, Creep, Flag, RoomName, StructureObject, StructureSpawn,
+    local::{ObjectId, RawObjectId, RoomName},
+    objects::{AccountPowerCreep, ConstructionSite, Creep, Flag, StructureSpawn},
 };
 
 pub mod cpu;
