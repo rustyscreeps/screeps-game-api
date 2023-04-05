@@ -1,6 +1,7 @@
 use std::{fmt, fmt::Write, str::FromStr};
 
 use arrayvec::ArrayString;
+use js_sys::JsString;
 use serde::{
     de::{Error, Visitor},
     Deserialize, Serialize,
@@ -122,6 +123,15 @@ impl FromStr for RawObjectId {
         }
 
         Ok(Self::from(u128_id << 32 | pad_length))
+    }
+}
+
+impl TryFrom<JsString> for RawObjectId {
+    type Error = RawObjectIdParseError;
+
+    fn try_from(js_id: JsString) -> Result<Self, Self::Error> {
+        let id: String = js_id.into();
+        RawObjectId::from_str(&id)
     }
 }
 
