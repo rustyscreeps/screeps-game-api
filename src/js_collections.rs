@@ -3,12 +3,13 @@ use std::{
     cmp::{Eq, PartialEq},
     fmt,
     marker::PhantomData,
+    str::FromStr,
 };
 
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
 
-use crate::{game, traits::Resolvable};
+use crate::{game, local::RawObjectIdParseError, traits::Resolvable};
 
 #[wasm_bindgen]
 extern "C" {
@@ -198,15 +199,14 @@ impl<T> PartialEq for JsObjectId<T> {
 }
 impl<T> Eq for JsObjectId<T> {}
 
-// impl<T> FromStr for JsObjectId<T> {
-//     type Err = RawObjectIdParseError;
+impl<T> FromStr for JsObjectId<T> {
+    type Err = RawObjectIdParseError;
 
-//     fn from_str(s: &str) -> Result<Self, RawObjectIdParseError> {
-//         let raw: RawObjectId = s.parse()?;
-
-//         Ok(raw.into())
-//     }
-// }
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let js_string: JsString = s.into();
+        Ok(js_string.into())
+    }
+}
 
 impl<T> fmt::Display for JsObjectId<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
