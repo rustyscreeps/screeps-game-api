@@ -110,7 +110,7 @@ impl<'de> Deserialize<'de> for RawObjectId {
 impl FromStr for RawObjectId {
     type Err = RawObjectIdParseError;
 
-    fn from_str(s: &str) -> Result<Self, RawObjectIdParseError> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         // get the actual integer value of the id, which we'll store in the most
         // significant 96 bits of the u128
         let u128_id = u128::from_str_radix(s, 16)?;
