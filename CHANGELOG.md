@@ -1,6 +1,7 @@
 Unreleased
 ==========
 
+- Implement `TryFrom<JsString>` for `RawObjectId`
 - Move `crate::inter_shard_memory::InterShardMemory::*` to `crate::inter_shard_memory::*` and move
   `crate::raw_memory::RawMemory::*` to `crate::raw_memory::*` for consistency (breaking)
 - Update `serde-wasm-bindgen` to 0.5
