@@ -1,6 +1,7 @@
 use std::{fmt, fmt::Write, str::FromStr};
 
 use arrayvec::ArrayString;
+use js_sys::JsString;
 use serde::{
     de::{Error, Visitor},
     Deserialize, Serialize,
@@ -109,7 +110,7 @@ impl<'de> Deserialize<'de> for RawObjectId {
 impl FromStr for RawObjectId {
     type Err = RawObjectIdParseError;
 
-    fn from_str(s: &str) -> Result<Self, RawObjectIdParseError> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         // get the actual integer value of the id, which we'll store in the most
         // significant 96 bits of the u128
         let u128_id = u128::from_str_radix(s, 16)?;
@@ -122,6 +123,15 @@ impl FromStr for RawObjectId {
         }
 
         Ok(Self::from(u128_id << 32 | pad_length))
+    }
+}
+
+impl TryFrom<JsString> for RawObjectId {
+    type Error = RawObjectIdParseError;
+
+    fn try_from(js_id: JsString) -> Result<Self, Self::Error> {
+        let id: String = js_id.into();
+        RawObjectId::from_str(&id)
     }
 }
 

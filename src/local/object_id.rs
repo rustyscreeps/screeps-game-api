@@ -106,7 +106,7 @@ impl<T> Ord for ObjectId<T> {
 impl<T> FromStr for ObjectId<T> {
     type Err = RawObjectIdParseError;
 
-    fn from_str(s: &str) -> Result<Self, RawObjectIdParseError> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         let raw: RawObjectId = s.parse()?;
 
         Ok(raw.into())
