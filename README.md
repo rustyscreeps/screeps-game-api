@@ -71,7 +71,7 @@ cargo screeps deploy
 [cratesio-badge]: https://img.shields.io/crates/v/screeps-game-api.svg
 [crate]: https://crates.io/crates/screeps-game-api/
 [deps-badge]: https://deps.rs/repo/github/rustyscreeps/screeps-game-api/status.svg
-[deps]: (https://deps.rs/repo/github/rustyscreeps/screeps-game-api)
+[deps]: https://deps.rs/repo/github/rustyscreeps/screeps-game-api
 [docsrs-badge]: https://docs.rs/screeps-game-api/badge.svg
 [docs]: https://docs.rs/screeps-game-api/
 [cargo-screeps]: https://github.com/rustyscreeps/cargo-screeps/
