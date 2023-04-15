@@ -283,7 +283,7 @@ impl TextStyle {
     }
 
     pub fn stroke_width(mut self, val: f32) -> TextStyle {
-        self.opacity = Some(val);
+        self.stroke_width = Some(val);
         self
     }
 
@@ -293,7 +293,7 @@ impl TextStyle {
     }
 
     pub fn background_padding(mut self, val: f32) -> TextStyle {
-        self.opacity = Some(val);
+        self.background_padding = Some(val);
         self
     }
 
