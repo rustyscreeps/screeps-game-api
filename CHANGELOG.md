@@ -12,6 +12,8 @@ Unreleased
   and simplify crate namespace (breaking)
 - Implement `std::error::Error` for `OutOfBoundsError`, to make it more ergonomic to use with
   other error types
+- Fix `TextStyle::stroke_width` and `TextStyle::background_padding` functions setting incorrect
+  values.
 
 0.10.0 (2023-03-13)
 ===================
