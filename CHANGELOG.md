@@ -14,6 +14,7 @@ Unreleased
   other error types
 - Fix `TextStyle::stroke_width` and `TextStyle::background_padding` functions setting incorrect
   values.
+- Added `Default` derivation for `RoomCoordinate` and `RoomXY`.
 
 0.10.0 (2023-03-13)
 ===================
