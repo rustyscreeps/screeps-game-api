@@ -350,6 +350,8 @@ pub enum ResourceType {
     SymbolSin = "symbol_sim",
     #[cfg(feature = "symbols")]
     SymbolTaw = "symbol_taw",
+    #[cfg(feature = "thorium")]
+    Thorium = "T",
 }
 
 named_enum_serialize_deserialize!(ResourceType);

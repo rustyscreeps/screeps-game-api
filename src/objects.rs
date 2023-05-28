@@ -16,15 +16,18 @@ pub use self::impls::{
     StructureWall, Tombstone, TransferEvent, UpgradeControllerEvent,
 };
 
-#[cfg(feature = "score")]
-pub use self::impls::{ScoreCollector, ScoreContainer};
-
-#[cfg(feature = "symbols")]
-pub use self::impls::{SymbolContainer, SymbolDecoder};
-
 pub use self::impls::{
     CircleStyle, FontStyle, LineDrawStyle, LineStyle, PolyStyle, RectStyle, RoomVisual, TextAlign,
     TextStyle, Visual,
 };
 
 pub use self::impls::{MapVisual, MapVisualShape};
+
+#[cfg(feature = "score")]
+pub use self::impls::{ScoreCollector, ScoreContainer};
+
+#[cfg(feature = "symbols")]
+pub use self::impls::{SymbolContainer, SymbolDecoder};
+
+#[cfg(feature = "thorium")]
+pub use self::impls::Reactor;
