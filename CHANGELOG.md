@@ -1,24 +1,38 @@
 Unreleased
 ==========
 
+
+0.11.0 (2023-05-29)
+===================
+
+### Breaking:
+
+- Move `crate::inter_shard_memory::InterShardMemory::*` to `crate::inter_shard_memory::*` and move
+  `crate::raw_memory::RawMemory::*` to `crate::raw_memory::*` for consistency
+- Update `enum-iterator` to 1.4 (`IntoEnumIterator` trait replaced with `Sequence`)
+- Remove re-exports of `game::*`, `pathfinder::*`, and `raw_memory::*` to resolve name conflict
+  and simplify crate namespace
+
+### Additions:
+
 - Implement `TryFrom<JsString>` for `RawObjectId`
 - Implement `FromStr` for `JsObjectId`
-- Move `crate::inter_shard_memory::InterShardMemory::*` to `crate::inter_shard_memory::*` and move
-  `crate::raw_memory::RawMemory::*` to `crate::raw_memory::*` for consistency (breaking)
-- Update `serde-wasm-bindgen` to 0.5
-- Update `enum-iterator` to 1.4 (breaking; `IntoEnumIterator` trait replaced with `Sequence`)
 - Implement `BODYPARTS_ALL`, `RESOURCES_ALL`, and `COLORS_ALL` constants using `enum-iterator`
-- Remove re-exports of `game::*`, `pathfinder::*`, and `raw_memory::*` to resolve name conflict
-  and simplify crate namespace (breaking)
 - Implement `std::error::Error` for `OutOfBoundsError`, to make it more ergonomic to use with
   other error types
-- Fix `TextStyle::stroke_width` and `TextStyle::background_padding` functions setting incorrect
-  values.
-- Added `Default` derivation for `RoomCoordinate` and `RoomXY`.
+- Added `Default` derivation for `RoomCoordinate` and `RoomXY`
 - Added `Thorium` resource, `Reactor` room object, and relevant constants and formulas for season
   5; added `thorium` feature which enables `Reactor` and `Thorium`, and the `seasonal-season-5`
-  feature which enables the seasonal constants as well as the `thorium` feature.
-  
+  feature which enables the seasonal constants as well as the `thorium` feature
+
+### Bugfixes:
+
+- Fix `TextStyle::stroke_width` and `TextStyle::background_padding` functions setting incorrect
+  values
+
+### Misc:
+
+- Update `serde-wasm-bindgen` to 0.5
 
 0.10.0 (2023-03-13)
 ===================
@@ -34,15 +48,15 @@ Unreleased
 ==================
 
 - Fixed `Room::serialize_path` and `Room::deserialize_path`, which are static methods and don't
-  exist on instances of `Room` objects themselves.
-- Changed `BuildEvent` to match what's returned by the game, which doesn't match the documentation.
+  exist on instances of `Room` objects themselves
+- Changed `BuildEvent` to match what's returned by the game, which doesn't match the documentation
 - Add the `generate-pixel`, `inter-shard-memory`, and `score` features which enable features not
-  present in all server environments.
+  present in all server environments
 - Add the `mmo` feature which activates the `generate-pixel` and `inter-shard-memory` because
-  these interfaces don't exist on private servers.
-- Add the `seasonal-season-1` feature for season 1, which activates the `score` feature.
-- Add the `symbols` feature to support season 2.
-- Add the `seasonal-season-2` feature for season 2, which activates the `symbols` feature.
+  these interfaces don't exist on private servers
+- Add the `seasonal-season-1` feature for season 1, which activates the `score` feature
+- Add the `symbols` feature to support season 2
+- Add the `seasonal-season-2` feature for season 2, which activates the `symbols` feature
 
 0.9.0 (2021-01-23)
 ==================
@@ -54,7 +68,7 @@ Unreleased
 - Remove `constants::INVADER_CORE_EXPAND_TIME`, replaced by per-level
   `constants::invader_core_expand_time`
 - Add the ability to mark a room as impassable when using the pathfinder. Converts callback
-  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate.
+  functions for room cost to use `SingleRoomCostResult` and `MultiRoomCostResult` as appropriate
 
 ### Additions:
 
@@ -69,7 +83,7 @@ Unreleased
 - Add new `IntershardResourceType::CPUUnlock`, `IntershardResourceType::Pixel`, and
   `IntershardResourceType::AccessKey` resources
 - Add `game::cpu::generate_pixel` and `constants::PIXEL_CPU_COST`
-- Update `constants::PIXEL_CPU_COST` to match game balance change.
+- Update `constants::PIXEL_CPU_COST` to match game balance change
 
 ### Bugfixes:
 
@@ -148,7 +162,7 @@ Unreleased
 - Add `RoomTerrain::get_raw_buffer_to_array` to load a room's terrain into an existing `[u8; 2500]`
 - Add `game::gcl::total_for_level` and `game::gpl::total_for_level` which calculate the total
   lifetime points required for a given level of GCL or GPL
-- Add `CostMatrixSet` trait to allow applying costs to a cost matrix generically.
+- Add `CostMatrixSet` trait to allow applying costs to a cost matrix generically
 
 ### Bugfixes:
 
