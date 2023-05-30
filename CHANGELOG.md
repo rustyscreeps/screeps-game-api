@@ -15,6 +15,10 @@ Unreleased
 - Fix `TextStyle::stroke_width` and `TextStyle::background_padding` functions setting incorrect
   values.
 - Added `Default` derivation for `RoomCoordinate` and `RoomXY`.
+- Added `Thorium` resource, `Reactor` room object, and relevant constants and formulas for season
+  5; added `thorium` feature which enables `Reactor` and `Thorium`, and the `seasonal-season-5`
+  feature which enables the seasonal constants as well as the `thorium` feature.
+  
 
 0.10.0 (2023-03-13)
 ===================

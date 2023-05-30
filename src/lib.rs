@@ -22,6 +22,11 @@
 //! Enables the symbol resources and entities, introduced for Screeps Seasonal's
 //! second season.
 //!
+//! ## `thorium`
+//!
+//! Enables the thorium resource and reactor object, introduced for Screeps
+//! Seasonal's fifth season.
+//!
 //! ## `mmo`
 //!
 //! Enables the `generate-pixel` and `inter-shard-memory` features, which are
@@ -36,6 +41,11 @@
 //!
 //! Enables the `symbols` feature, a mechanic introduced for Screeps Seasonal's
 //! second season, as well as enabling constants relevant to season 2.
+//!
+//! ## `seasonal-season-5`
+//!
+//! Enables the `thorium` feature, a mechanic introduced for Screeps Seasonal's
+//! fifth season, as well as enabling constants relevant to season 5.
 #![recursion_limit = "128"]
 // to build locally with doc_cfg enabled, run:
 // `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
