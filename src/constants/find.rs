@@ -69,6 +69,8 @@ pub enum Find {
     SymbolContainers = 10021,
     //#[cfg(feature = "symbols")]
     SymbolDecoders = 10022,
+    //#[cfg(feature = "thorium")]
+    Reactors = 10051,
 }
 
 /// Trait representing things which can be used in the 'find' function.
@@ -128,6 +130,8 @@ pub enum RoomObject {
     SymbolContainers = 10021,
     #[cfg(feature = "symbols")]
     SymbolDecoders = 10022,
+    #[cfg(feature = "thorium")]
+    Reactors = 10051,
 }
 
 impl From<RoomObject> for Find {
@@ -164,6 +168,8 @@ impl From<RoomObject> for Find {
             RoomObject::SymbolContainers => Find::SymbolContainers,
             #[cfg(feature = "symbols")]
             RoomObject::SymbolDecoders => Find::SymbolDecoders,
+            #[cfg(feature = "thorium")]
+            RoomObject::Reactors => Find::Reactors,
         }
     }
 }
@@ -311,4 +317,9 @@ typesafe_find_constants! {
 typesafe_find_constants! {
     pub struct SYMBOL_CONTAINERS = (Find::SymbolContainers, SymbolContainer, Into::into);
     pub struct SYMBOL_DECODERS = (Find::SymbolDecoders, SymbolDecoder, Into::into);
+}
+
+#[cfg(feature = "thorium")]
+typesafe_find_constants! {
+    pub struct REACTORS = (Find::Reactors, Reactor, Into::into);
 }

@@ -52,6 +52,9 @@ mod symbol_container;
 #[cfg(feature = "symbols")]
 mod symbol_decoder;
 
+#[cfg(feature = "thorium")]
+mod reactor;
+
 pub use self::{
     construction_site::ConstructionSite,
     cost_matrix::{CostMatrix, CostMatrixSet, HasLocalPosition},
@@ -113,3 +116,6 @@ pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer}
 
 #[cfg(feature = "symbols")]
 pub use self::{symbol_container::SymbolContainer, symbol_decoder::SymbolDecoder};
+
+#[cfg(feature = "thorium")]
+pub use self::reactor::Reactor;
