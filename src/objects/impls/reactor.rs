@@ -7,7 +7,7 @@ use crate::{
 
 #[wasm_bindgen]
 extern "C" {
-    /// An object representing a [`Reactor`], which process [`Thorium`] into
+    /// An object representing a [`Reactor`], which process [`Thorium`] to gain
     /// season score.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Reactor)
@@ -16,7 +16,6 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject)]
     #[derive(Clone, Debug)]
     pub type Reactor;
-    // TODO also OwnedRoomObject
 
     /// Ticks of continuous work this reactor has done.
     ///
