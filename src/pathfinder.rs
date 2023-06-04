@@ -187,6 +187,7 @@ where
 }
 
 #[derive(Default, Serialize)]
+#[serde(rename_all = "camelCase")]
 struct InnerSearchOptions {
     plain_cost: Option<u8>,
     swamp_cost: Option<u8>,
