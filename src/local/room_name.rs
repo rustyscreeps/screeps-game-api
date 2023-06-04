@@ -311,7 +311,7 @@ impl ops::Sub<RoomName> for RoomName {
 impl FromStr for RoomName {
     type Err = RoomNameParseError;
 
-    fn from_str(s: &str) -> Result<Self, RoomNameParseError> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         parse_to_coords(s)
             .map_err(|()| RoomNameParseError::new(s))
             .and_then(|(x, y)| RoomName::from_coords(x, y))

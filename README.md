@@ -1,8 +1,9 @@
 screeps-game-api
 ================
 
-[![Linux Build Status][actions-image]][actions-builds]
+[![Linux Build Status][actions-badge]][actions-builds]
 [![crates.io version badge][cratesio-badge]][crate]
+[![dependency status][deps-badge]][deps]
 [![docs.rs version badge][docsrs-badge]][docs]
 
 ![Rusty Screeps Logo][logo]
@@ -65,11 +66,13 @@ cargo screeps deploy
 
 [screeps]: https://screeps.com/
 [`wasm-pack`]: https://rustwasm.github.io/wasm-pack/
-[actions-image]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml/badge.svg
+[actions-badge]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml/badge.svg
 [actions-builds]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml
-[docsrs-badge]: https://docs.rs/screeps-game-api/badge.svg
 [cratesio-badge]: https://img.shields.io/crates/v/screeps-game-api.svg
-[docs]: https://docs.rs/screeps-game-api/
 [crate]: https://crates.io/crates/screeps-game-api/
+[deps-badge]: https://deps.rs/repo/github/rustyscreeps/screeps-game-api/status.svg
+[deps]: https://deps.rs/repo/github/rustyscreeps/screeps-game-api
+[docsrs-badge]: https://docs.rs/screeps-game-api/badge.svg
+[docs]: https://docs.rs/screeps-game-api/
 [cargo-screeps]: https://github.com/rustyscreeps/cargo-screeps/
 [logo]: ./logo.png

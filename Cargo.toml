@@ -1,6 +1,6 @@
 [package]
 name = "screeps-game-api"
-version = "0.10.0"
+version = "0.11.0"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://docs.rs/screeps-game-api/"
 edition = "2021"
@@ -60,6 +60,9 @@ score = []
 # Enable symbol container, decoder, and resources - used in season 2
 symbols = []
 
+# Enable thorium resource and reactor structure - used in season 5
+thorium = []
+
 ## Sets of the above features for different server environments
 
 # Official MMO server features, not present on other environments
@@ -70,3 +73,6 @@ seasonal-season-1 = ["score"]
 
 # Seasonal server, season 2
 seasonal-season-2 = ["symbols"]
+
+# Seasonal server, season 5
+seasonal-season-5 = ["thorium"]
