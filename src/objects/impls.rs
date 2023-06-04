@@ -57,7 +57,7 @@ mod reactor;
 
 pub use self::{
     construction_site::ConstructionSite,
-    cost_matrix::{CostMatrix, CostMatrixSet, HasLocalPosition},
+    cost_matrix::CostMatrix,
     creep::{BodyPart, Creep},
     creep_shared::MoveToOptions,
     deposit::Deposit,

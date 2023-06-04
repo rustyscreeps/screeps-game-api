@@ -1,7 +1,7 @@
 use js_sys::{Array, Object, Uint8Array};
 use wasm_bindgen::prelude::*;
 
-use crate::{constants::ROOM_SIZE, local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
+use crate::{local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
 
 #[wasm_bindgen]
 extern "C" {
