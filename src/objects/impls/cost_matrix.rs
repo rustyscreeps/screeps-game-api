@@ -1,9 +1,7 @@
-use std::borrow::Borrow;
-
 use js_sys::{Array, Object, Uint8Array};
 use wasm_bindgen::prelude::*;
 
-use crate::{constants::ROOM_SIZE, local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
+use crate::{local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
 
 #[wasm_bindgen]
 extern "C" {
@@ -81,57 +79,5 @@ impl CostMatrix {
 impl From<LocalCostMatrix> for CostMatrix {
     fn from(matrix: LocalCostMatrix) -> Self {
         CostMatrix::new_from_bits(matrix.get_bits())
-    }
-}
-
-pub trait HasLocalPosition {
-    fn x(&self) -> u8;
-    fn y(&self) -> u8;
-}
-
-pub trait CostMatrixSet {
-    fn set<P, V>(&mut self, position: P, cost: V)
-    where
-        P: HasLocalPosition,
-        V: Borrow<u8>;
-
-    fn set_multi<D, B, P, V>(&mut self, data: D)
-    where
-        D: IntoIterator<Item = B>,
-        B: Borrow<(P, V)>,
-        P: HasLocalPosition,
-        V: Borrow<u8>;
-}
-
-#[inline]
-fn pos_as_idx(x: u8, y: u8) -> usize {
-    (x as usize) * ROOM_SIZE as usize + (y as usize)
-}
-
-impl CostMatrixSet for CostMatrix {
-    fn set<P, V>(&mut self, position: P, cost: V)
-    where
-        P: HasLocalPosition,
-        V: Borrow<u8>,
-    {
-        CostMatrix::set(self, position.x(), position.y(), *cost.borrow());
-    }
-
-    fn set_multi<D, B, P, V>(&mut self, data: D)
-    where
-        D: IntoIterator<Item = B>,
-        B: Borrow<(P, V)>,
-        P: HasLocalPosition,
-        V: Borrow<u8>,
-    {
-        let matrix_buffer = self.get_bits();
-
-        for entry in data.into_iter() {
-            let (pos, cost) = entry.borrow();
-
-            let offset = pos_as_idx(pos.x(), pos.y());
-
-            matrix_buffer.set_index(offset as u32, *cost.borrow());
-        }
     }
 }
