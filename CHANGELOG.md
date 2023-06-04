@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Fix `SearchOptions` not mapping to camel-cased field names when converting to js object. Fixes
+  `pathfinder::search` not using the specified settings for `max_ops`, `plain_cost`, etc.
 
 0.11.0 (2023-05-29)
 ===================
