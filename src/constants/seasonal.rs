@@ -6,7 +6,7 @@
 /// Constants for Screeps seasonal, season 1
 ///
 /// These constants are relevant to the mechanics in seasonal, season 1.
-/// [This mod](https://github.com/screeps/mod_season1) can be used to enable these mechanics
+/// [This mod](https://github.com/screeps/mod-season1) can be used to enable these mechanics
 /// on a private server.
 #[cfg(feature = "seasonal-season-1")]
 pub mod season_1 {
@@ -44,7 +44,7 @@ pub mod season_1 {
 /// Constants for Screeps seasonal, season 2
 ///
 /// These constants are relevant to the mechanics in seasonal, season 2.
-/// [This mod](https://github.com/screeps/mod_season2) can be used to enable these mechanics
+/// [This mod](https://github.com/screeps/mod-season2) can be used to enable these mechanics
 /// on a private server.
 #[cfg(feature = "seasonal-season-2")]
 pub mod season_2 {
@@ -113,7 +113,8 @@ pub mod season_2 {
 /// Constants for Screeps seasonal, season 5
 ///
 /// These constants are relevant to the mechanics in seasonal, season 5.
-// todo: mod link when it exists
+/// [This mod](https://github.com/screeps/mod-season5) can be used to enable these mechanics
+/// on a private server.
 #[cfg(feature = "seasonal-season-5")]
 pub mod season_5 {
     // RESOURCE_THORIUM defined in `types.rs`
