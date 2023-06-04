@@ -64,7 +64,7 @@ mod room_objects {
     pub use super::impls::{SymbolContainer, SymbolDecoder};
 
     #[cfg(feature = "thorium")]
-    pub use self::impls::Reactor;
+    pub use super::impls::Reactor;
 }
 
 /// Object wrappers allowing drawing of shapes in rooms or on the map in the
