@@ -27,9 +27,6 @@ mod game_types {
     pub use super::impls::{CostMatrix, RoomPosition, RoomTerrain};
 }
 
-// todo shift these over to traits (will be breaking)
-pub use self::impls::{CostMatrixSet, HasLocalPosition};
-
 /// Object wrappers for simple javascript objects with known properties sent to
 /// game functions.
 pub mod input {
