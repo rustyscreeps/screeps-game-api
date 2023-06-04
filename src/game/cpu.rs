@@ -100,8 +100,13 @@ pub fn get_used() -> f64 {
     Cpu::get_used()
 }
 
-/// Stop execution of your script, starting with a fresh environment next
-/// tick.
+/// Stop execution of your script immediately and requests the destruction of
+/// your code's environment, which will start fresh on the following tick.
+///
+/// Note that this will cause your code to not complete API calls called earlier
+/// in the current tick; no log messages will be sent to the console, email
+/// messages sent via `game::notify` are not sent, and game actions taken should
+/// not complete.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.halt)
 pub fn halt() {
