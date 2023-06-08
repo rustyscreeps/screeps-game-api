@@ -12,6 +12,9 @@ use crate::{
     CostMatrix, MoveToOptions, RoomName, RoomPosition,
 };
 
+#[cfg(feature = "thorium")]
+use crate::objects::Reactor;
+
 #[wasm_bindgen]
 extern "C" {
     /// A [`Creep`] unit in the game world.
@@ -134,6 +137,14 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.claimController)
     #[wasm_bindgen(final, method, js_name = claimController)]
     pub fn claim_controller(this: &Creep, target: &StructureController) -> ReturnCode;
+
+    /// Claim a [`Reactor`] in melee range as your own using a creep's claim
+    /// parts.
+    ///
+    /// [Screeps documentation](https://docs-season.screeps.com/api/#Creep.claimReactor)
+    #[cfg(feature = "thorium")]
+    #[wasm_bindgen(final, method, js_name = claimReactor)]
+    pub fn claim_reactor(this: &Creep, target: &Reactor) -> ReturnCode;
 
     #[wasm_bindgen(final, method, js_name = dismantle)]
     fn dismantle_internal(this: &Creep, target: &Structure) -> ReturnCode;

@@ -7,6 +7,10 @@ Unreleased
   all of their contents re-exported to maintain compatibiltiy with existing imports
 - Move `CostMatrixSet` and `HasLocalPosition` traits from `crate::objects` to `crate::traits`
   (breaking)
+- Add `Creep::claim_reactor` function for season 5
+- Add `Density::thorium_amount` function with additional season 5 constants
+- Remove `Density::iter_values`, update documentation to indicate `enum_iterator::all` should be
+  used instead (breaking)
 
 0.11.0 (2023-05-29)
 ===================
