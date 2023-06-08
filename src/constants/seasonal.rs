@@ -117,6 +117,7 @@ pub mod season_2 {
 /// on a private server.
 #[cfg(feature = "seasonal-season-5")]
 pub mod season_5 {
+    use crate::constants::Density;
     // RESOURCE_THORIUM defined in `types.rs`
     // FIND_REACTORS defined in `find.rs`
     /// Capacity of the [`Thorium`] storage of a [`Reactor`].
@@ -126,6 +127,22 @@ pub mod season_5 {
     // no official constant for this currently, but providing as 'extra' constant
     // for consistency with prior seasons
     pub const REACTOR_THORIUM_CAPACITY: u32 = 1_000;
+
+    impl Density {
+        /// Amount of [`Thorium`] generated for each density
+        /// level, replacing the amounts from [`Density::amount`].
+        ///
+        /// [`Thorium`]: crate::constants::ResourceType::Thorium
+        #[inline]
+        pub fn thorium_amount(self) -> u32 {
+            match self {
+                Density::Low => 10_000,
+                Density::Moderate => 22_000,
+                Density::High => 45_000,
+                Density::Ultra => 67_000,
+            }
+        }
+    }
 
     /// The added decay each tick for all creeps and decaying structures when
     /// [`Thorium`] is present on the same tile.

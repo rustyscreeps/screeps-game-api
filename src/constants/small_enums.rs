@@ -414,7 +414,7 @@ impl Density {
     ///
     /// These are values intended for subsequent percentage checks
     /// in the order `Low` -> `Medium` -> `High` -> `Ultra`. Use the
-    /// [`Density::iter_values`] iterator to iterate in this order.
+    /// [`enum_iterator::all`] iterator to iterate in this order.
     ///
     /// If low or ultra on previous regeneration, or random number rolled at
     /// probability [`MINERAL_DENSITY_CHANGE`], the mineral will determine a
@@ -426,8 +426,7 @@ impl Density {
     ///  - Ultra: 10% chance
     ///
     /// [source]: https://github.com/screeps/engine/blob/c0cfac8f746f26c660501686f16a1fcdb0396d8d/src/processor/intents/minerals/tick.js#L19
-    /// [`MINERAL_DENSITY_CHANGE`]:
-    /// crate::constants::MINERAL_DENSITY_CHANGE
+    /// [`MINERAL_DENSITY_CHANGE`]: crate::constants::MINERAL_DENSITY_CHANGE
     #[inline]
     pub fn probability(self) -> f32 {
         match self {
@@ -436,10 +435,6 @@ impl Density {
             Density::High => 0.9,
             Density::Ultra => 1.0,
         }
-    }
-
-    pub fn iter_values() -> impl Iterator<Item = Density> {
-        enum_iterator::all::<Density>()
     }
 }
 
