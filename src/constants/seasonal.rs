@@ -120,6 +120,7 @@ pub mod season_5 {
     use crate::constants::Density;
     // RESOURCE_THORIUM defined in `types.rs`
     // FIND_REACTORS defined in `find.rs`
+    // LOOK_REACTORS defined in `look.rs`
     /// Capacity of the [`Thorium`] storage of a [`Reactor`].
     ///
     /// [`Thorium`]: crate::constants::ResourceType::Thorium
