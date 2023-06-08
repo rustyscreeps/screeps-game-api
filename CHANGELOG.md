@@ -1,18 +1,31 @@
 Unreleased
 ==========
 
-- Fix `SearchOptions` not mapping to camel-cased field names when converting to js object. Fixes
-  `pathfinder::search` not using the specified settings for `max_ops`, `plain_cost`, etc.
-- Reorganize `crate::objects` module with some new public sub-modules to group them logically, with
-  all of their contents re-exported to maintain compatibiltiy with existing imports
+0.12.0 (2023-06-07)
+===================
+
+### Breaking:
+
+- Remove `Density::iter_values`, update documentation to indicate `enum_iterator::all` should be
+  used instead
 - Move `CostMatrixSet` and `HasLocalPosition` traits from `crate::objects` to `crate::traits`
-  (breaking)
+
+### Additions:
+
 - Add `Creep::claim_reactor` function for season 5
 - Add `Density::thorium_amount` function with additional season 5 constants
-- Remove `Density::iter_values`, update documentation to indicate `enum_iterator::all` should be
-  used instead (breaking)
 - Implement `From<Direction>` for `(i32, i32)`, as well as `Add<Direction>` and `Sub<Direction>`
   for `Position`, to support using directions for position math
+
+### Bugfixes:
+
+- Fix `SearchOptions` not mapping to camel-cased field names when converting to js object. Fixes
+  `pathfinder::search` not using the specified settings for `max_ops`, `plain_cost`, etc.
+
+### Misc:
+
+- Reorganize `crate::objects` module with some new public sub-modules to group them logically, with
+  all of their contents re-exported to maintain compatibiltiy with existing imports
 
 0.11.0 (2023-05-29)
 ===================
