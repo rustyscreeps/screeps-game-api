@@ -3,6 +3,7 @@
 use std::ops::{Add, Sub};
 
 use super::Position;
+use crate::constants::Direction;
 
 impl Position {
     /// Returns a new position offset from this position by the specified x
@@ -121,6 +122,16 @@ impl Add<(i32, i32)> for Position {
     }
 }
 
+impl Add<Direction> for Position {
+    type Output = Position;
+    #[inline]
+    fn add(self, direction: Direction) -> Self {
+        let (wx, wy) = self.world_coords();
+        let (x, y) = direction.into();
+        Self::from_world_coords(wx + x, wy + y)
+    }
+}
+
 impl Sub<(i32, i32)> for Position {
     type Output = Position;
 
@@ -128,6 +139,16 @@ impl Sub<(i32, i32)> for Position {
     #[inline]
     fn sub(self, (x, y): (i32, i32)) -> Self {
         self + (-x, -y)
+    }
+}
+
+impl Sub<Direction> for Position {
+    type Output = Position;
+    #[inline]
+    fn sub(self, direction: Direction) -> Self {
+        let (wx, wy) = self.world_coords();
+        let (x, y) = direction.into();
+        Self::from_world_coords(wx - x, wy - y)
     }
 }
 

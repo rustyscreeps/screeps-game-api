@@ -11,6 +11,8 @@ Unreleased
 - Add `Density::thorium_amount` function with additional season 5 constants
 - Remove `Density::iter_values`, update documentation to indicate `enum_iterator::all` should be
   used instead (breaking)
+- Implement `From<Direction>` for `(i32, i32)`, as well as `Add<Direction>` and `Sub<Direction>`
+  for `Position`, to support using directions for position math
 
 0.11.0 (2023-05-29)
 ===================
