@@ -41,10 +41,28 @@ impl Position {
 
     /// Gets linear range to the specified position.
     ///
+    /// Linear range (also called Chebyshev Distance) is an alternate
+    /// calculation of distance, calculated as the greater of the distance along
+    /// the x axis or the y axis. Most calculations in Screeps use this distance
+    /// metric. For more information see [Chebeshev Distance](https://en.wikipedia.org/wiki/Chebyshev_distance).
+    ///
     /// This operates on positions as "world positions", and will return an
     /// accurate range for positions in different rooms. Note that the
     /// corresponding JavaScript method, `RoomPosition.getRangeTo` returns
     /// `Infinity` if given positions in different rooms.
+    ///
+    /// # Examples
+    /// ```rust
+    /// # use screeps::Position;
+    /// // (5, 10) in E0N0
+    /// let pos_1 = Position::from_world_coords(5, 10);
+    /// // (8, 15) in E0N0
+    /// let pos_2 = Position::from_world_coords(8, 15);
+    /// // The differences are 3 along the X axis and 5 along the Y axis
+    /// // so the linear distance is 5.
+    /// assert_eq!(pos_1.get_range_to(pos_2), 5);
+    /// ```
+    #[doc(alias = "distance")]
     #[inline]
     pub fn get_range_to(self, target: Position) -> u32 {
         let (dx, dy) = self - target;
@@ -53,10 +71,43 @@ impl Position {
 
     /// Checks whether this position is in the given range of another position.
     ///
+    /// Linear range (also called Chebyshev Distance) is an alternate
+    /// calculation of distance, calculated as the greater of the distance along
+    /// the x axis or the y axis. Most calculations in Screeps use this distance
+    /// metric. For more information see [Chebeshev Distance](https://en.wikipedia.org/wiki/Chebyshev_distance).
+    ///
     /// This operates on positions as "world positions", and may return true for
     /// positions in different rooms which are still within the given range.
     /// Note that the corresponding JavaScript method, `RoomPosition.inRangeTo`,
     /// will always return `false` for positions from different rooms.
+    ///
+    /// # Examples
+    /// ```rust
+    /// # use screeps::Position;
+    /// // (5, 10) in E0N0
+    /// let pos_1 = Position::from_world_coords(5, 10);
+    /// // (8, 10) in E0N0
+    /// let pos_2 = Position::from_world_coords(8, 15);
+    ///
+    /// // The differences are 3 along the X axis and 0 along the Y axis
+    /// // so the linear distance is 3.
+    /// assert_eq!(pos_1.in_range_to(pos_2, 5), true);
+    ///
+    /// // (8, 15) in E0N0
+    /// let pos_3 = Position::from_world_coords(8, 15);
+    ///
+    /// // The differences are 3 along the X axis and 5 along the Y axis
+    /// // so the linear distance is 5.
+    /// // `in_range_to` returns true if the linear distance is equal to the range
+    /// assert_eq!(pos_1.in_range_to(pos_3, 5), true);
+    ///
+    /// // (20, 20) in E0N0
+    /// let pos_4 = Position::from_world_coords(20, 20);
+    /// // The differences are 15 along the X axis and 10 along the Y axis
+    /// // so the linear distance is 15.
+    /// assert_eq!(pos_1.in_range_to(pos_4, 5), false);
+    /// ```
+    #[doc(alias = "distance")]
     #[inline]
     pub fn in_range_to(self, target: Position, range: u32) -> bool {
         self.get_range_to(target) <= range
