@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Add undocumented `LOOK_REACTORS` constant
+
 0.12.0 (2023-06-07)
 ===================
 
