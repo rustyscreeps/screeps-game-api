@@ -41,6 +41,8 @@ pub enum Look {
     SymbolContainers = "symbolContainer",
     //#[cfg(feature = "symbols")]
     SymbolDecoders = "symbolDecoder",
+    //#[cfg(feature = "thorium")]
+    Reactors = "reactor",
 }
 
 //TODO: wiarchbe: Add back in calculated doc.
@@ -107,6 +109,11 @@ typesafe_look_constants! {
     pub struct SYMBOL_DECODERS = (Look::SymbolDecoders, SymbolDecoder, Into::into);
 }
 
+#[cfg(feature = "thorium")]
+typesafe_look_constants! {
+    pub struct REACTORS = (Look::Reactors, Reactor, Into::into);
+}
+
 #[derive(Debug)]
 pub enum LookResult {
     Creep(Creep),
@@ -131,6 +138,8 @@ pub enum LookResult {
     SymbolContainer(SymbolContainer),
     #[cfg(feature = "symbols")]
     SymbolDecoder(SymbolDecoder),
+    #[cfg(feature = "thorium")]
+    Reactor(Reactor),
 }
 
 impl LookResult {
@@ -158,6 +167,8 @@ impl LookResult {
             Look::SymbolContainers => Self::SymbolContainer(result.symbol_container()),
             #[cfg(feature = "symbols")]
             Look::SymbolDecoders => Self::SymbolDecoder(result.symbol_decoder()),
+            #[cfg(feature = "thorium")]
+            Look::Reactors => Self::Reactor(result.reactor()),
             _ => panic!("look result type not matched, object type feature may be disabled?"),
         }
     }
@@ -249,4 +260,7 @@ extern "C" {
     #[cfg(feature = "symbols")]
     #[wasm_bindgen(method, getter = symbolDecoder)]
     fn symbol_decoder(this: &JsLookResult) -> SymbolDecoder;
+    #[cfg(feature = "thorium")]
+    #[wasm_bindgen(method, getter = reactor)]
+    fn reactor(this: &JsLookResult) -> Reactor;
 }
