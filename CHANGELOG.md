@@ -1,7 +1,7 @@
 Unreleased
 ==========
 
-- Add undocumented `LOOK_REACTORS` constant
+- Add undocumented `LOOK_REACTORS` season 5 constant
 
 0.12.0 (2023-06-07)
 ===================
