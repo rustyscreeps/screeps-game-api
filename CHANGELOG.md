@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+- Add `HasNativeId` and `Transferable` traits to `Reactor`
+- Add `Transferable` and `Withdrawable` traits to season 1 and 2 object types
+
 0.12.0 (2023-06-07)
 ===================
 
