@@ -431,6 +431,12 @@ impl Transferable for StructureTower {}
 impl Transferable for StructurePowerSpawn {}
 impl Transferable for StructureTerminal {}
 impl Transferable for PowerCreep {}
+#[cfg(feature = "score")]
+impl Transferable for ScoreCollector {}
+#[cfg(feature = "symbols")]
+impl Transferable for SymbolDecoder {}
+#[cfg(feature = "thorium")]
+impl Transferable for Reactor {}
 
 // NOTE: keep impls for Structure* in sync with accessor methods in
 // src/objects/structure.rs
@@ -447,6 +453,10 @@ impl Withdrawable for StructureTower {}
 impl Withdrawable for StructurePowerSpawn {}
 impl Withdrawable for StructureTerminal {}
 impl Withdrawable for Tombstone {}
+#[cfg(feature = "score")]
+impl Withdrawable for ScoreContainer {}
+#[cfg(feature = "symbols")]
+impl Withdrawable for SymbolContainer {}
 
 impl Harvestable for Deposit {}
 impl Harvestable for Mineral {}

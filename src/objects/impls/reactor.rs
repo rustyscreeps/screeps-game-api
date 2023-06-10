@@ -1,3 +1,4 @@
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -16,6 +17,9 @@ extern "C" {
     #[wasm_bindgen(extends = RoomObject)]
     #[derive(Clone, Debug)]
     pub type Reactor;
+
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Reactor) -> JsString;
 
     /// Ticks of continuous work this reactor has done.
     ///
@@ -48,6 +52,12 @@ extern "C" {
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Reactor.owner)
     #[wasm_bindgen(method, getter)]
     pub fn owner(this: &Reactor) -> Option<Owner>;
+}
+
+impl HasNativeId for Reactor {
+    fn native_id(&self) -> JsString {
+        Self::id_internal(self)
+    }
 }
 
 impl HasStore for Reactor {
