@@ -1,7 +1,15 @@
 Unreleased
 ==========
 
+0.12.1 (2023-06-10)
+===================
+
+### Additions:
+
 - Add undocumented `LOOK_REACTORS` season 5 constant
+
+### Bugfixes:
+
 - Add `HasNativeId` and `Transferable` traits to `Reactor`
 - Add `Transferable` and `Withdrawable` traits to season 1 and 2 object types
 
