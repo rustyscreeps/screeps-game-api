@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
-use crate::constants::find::Find;
+use crate::{constants::find::Find, find::Exit};
 
 // Bindgen does not correctly handle i8 negative return values. Use custom
 // return values.
@@ -263,6 +263,17 @@ impl From<ExitDirection> for Direction {
             ExitDirection::Right => Direction::Right,
             ExitDirection::Bottom => Direction::Bottom,
             ExitDirection::Left => Direction::Left,
+        }
+    }
+}
+
+impl From<ExitDirection> for Exit {
+    fn from(value: ExitDirection) -> Self {
+        match value {
+            ExitDirection::Top => Exit::Top,
+            ExitDirection::Right => Exit::Right,
+            ExitDirection::Bottom => Exit::Bottom,
+            ExitDirection::Left => Exit::Left,
         }
     }
 }
