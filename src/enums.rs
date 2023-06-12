@@ -7,7 +7,7 @@ use std::convert::TryFrom;
 use enum_dispatch::enum_dispatch;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::{js_collections::JsCollectionFromValue, objects::*, prelude::*};
+use crate::{objects::*, prelude::*};
 
 #[enum_dispatch(Attackable)]
 pub enum AttackableObject {

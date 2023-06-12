@@ -3,7 +3,6 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::{ReturnCode, StructureType},
-    js_collections::JsCollectionFromValue,
     objects::{Owner, RoomObject},
     prelude::*,
 };

@@ -3,7 +3,6 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode},
-    js_collections::{JsCollectionFromValue, JsHashMap},
     local::RoomName,
     objects::{
         CostMatrix, MoveToOptions, Owner, Resource, RoomObject, RoomPosition, Store,

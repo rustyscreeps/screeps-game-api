@@ -14,7 +14,6 @@ use crate::{
         look::*, Color, Direction, ErrorCode, ExitDirection, Find, FindConstant, PowerType,
         ResourceType, ReturnCode, StructureType,
     },
-    js_collections::JsCollectionFromValue,
     local::{LodashFilter, RoomName},
     objects::*,
     pathfinder::RoomCostResult,
