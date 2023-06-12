@@ -2,11 +2,10 @@ use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    constants::ReturnCode,
+    constants::{Direction, Part, ReturnCode},
     js_collections::{JsCollectionFromValue, ObjectExt},
     objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
-    Direction, Part,
 };
 
 #[wasm_bindgen]

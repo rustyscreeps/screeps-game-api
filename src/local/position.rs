@@ -8,9 +8,9 @@ use std::{
     fmt,
 };
 
-use super::{RoomCoordinate, RoomName, RoomXY, HALF_WORLD_SIZE};
-
 use crate::{constants::ROOM_SIZE, objects::RoomPosition, HasPosition};
+
+use super::{RoomCoordinate, RoomName, RoomXY, HALF_WORLD_SIZE};
 
 mod approximate_offsets;
 mod extra_math;

@@ -1,7 +1,7 @@
 use js_sys::{JsString, Uint8Array};
 use wasm_bindgen::prelude::*;
 
-use crate::{ReturnCode, Terrain};
+use crate::constants::{ReturnCode, Terrain};
 
 #[wasm_bindgen]
 extern "C" {

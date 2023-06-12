@@ -1,7 +1,8 @@
 use std::{convert::TryFrom, error::Error, fmt};
 
-use crate::constants::ROOM_SIZE;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
+
+use crate::constants::ROOM_SIZE;
 
 pub(crate) const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
 
