@@ -2,7 +2,9 @@ use js_sys::Object;
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    objects::PolyStyle, pathfinder::SingleRoomCostResult, CostMatrix, FindPathOptions, RoomName,
+    local::RoomName,
+    objects::{CostMatrix, FindPathOptions, PolyStyle},
+    pathfinder::SingleRoomCostResult,
 };
 
 #[wasm_bindgen]

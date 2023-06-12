@@ -3,9 +3,9 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::EffectType,
+    local::Position,
     objects::{Room, RoomPosition},
     prelude::*,
-    Position,
 };
 
 #[wasm_bindgen]

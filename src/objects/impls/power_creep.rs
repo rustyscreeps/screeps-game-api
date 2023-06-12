@@ -3,10 +3,13 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::{Direction, PowerCreepClass, PowerType, ResourceType, ReturnCode},
-    objects::{Owner, Resource, RoomObject, Store, StructureController, StructurePowerSpawn},
+    local::RoomName,
+    objects::{
+        CostMatrix, MoveToOptions, Owner, Resource, RoomObject, RoomPosition, Store,
+        StructureController, StructurePowerSpawn,
+    },
     pathfinder::SingleRoomCostResult,
     prelude::*,
-    CostMatrix, JsCollectionFromValue, JsHashMap, MoveToOptions, RoomName, RoomPosition,
 };
 
 #[wasm_bindgen]

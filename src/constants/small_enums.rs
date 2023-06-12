@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
-use crate::{constants::find::Find, find::Exit};
+use crate::constants::find::{Exit, Find};
 
 // Bindgen does not correctly handle i8 negative return values. Use custom
 // return values.

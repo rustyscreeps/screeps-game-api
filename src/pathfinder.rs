@@ -19,7 +19,10 @@ use serde::Serialize;
 use serde_wasm_bindgen;
 use wasm_bindgen::{prelude::*, JsCast};
 
-use crate::{objects::RoomPosition, CostMatrix, Position, RoomName};
+use crate::{
+    local::{Position, RoomName},
+    objects::{CostMatrix, RoomPosition},
+};
 
 #[wasm_bindgen]
 extern "C" {

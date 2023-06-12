@@ -11,15 +11,13 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::{
-        look::*, Color, Direction, ErrorCode, ExitDirection, Find, PowerType, ResourceType,
-        ReturnCode, StructureType,
+        look::*, Color, Direction, ErrorCode, ExitDirection, Find, FindConstant, PowerType,
+        ResourceType, ReturnCode, StructureType,
     },
-    js_collections::JsCollectionFromValue,
-    local::LodashFilter,
+    local::{LodashFilter, RoomName},
     objects::*,
     pathfinder::RoomCostResult,
     prelude::*,
-    FindConstant, RoomName,
 };
 
 #[wasm_bindgen]

@@ -6,10 +6,11 @@ use std::{
     str::FromStr,
 };
 
-use crate::{game, Resolvable, RoomObject};
 use arrayvec::ArrayString;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsCast;
+
+use crate::{game, Resolvable, RoomObject};
 
 mod errors;
 mod raw;

@@ -3,9 +3,9 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{ResourceType, ReturnCode},
+    local::RoomName,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
-    RoomName,
 };
 
 #[wasm_bindgen]

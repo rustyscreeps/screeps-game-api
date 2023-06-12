@@ -3,7 +3,6 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::{Direction, Part, ResourceType, ReturnCode},
-    js_collections::JsCollectionFromValue,
     objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
     },
