@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Add custom implementation of `Debug` for `RoomName` showing the non-packed name
+
 0.12.1 (2023-06-10)
 ===================
 
