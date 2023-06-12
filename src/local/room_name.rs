@@ -32,7 +32,7 @@ use super::{HALF_WORLD_SIZE, VALID_ROOM_NAME_COORDINATES};
 /// from above.
 ///
 /// [`BTreeMap`]: std::collections::BTreeMap
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct RoomName {
     /// A bit-packed integer, containing, from highest-order to lowest:
     ///
@@ -78,6 +78,15 @@ impl fmt::Display for RoomName {
         }
 
         Ok(())
+    }
+}
+
+impl fmt::Debug for RoomName {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("RoomName")
+            .field("packed", &self.packed)
+            .field("real", &self.to_array_string())
+            .finish()
     }
 }
 
