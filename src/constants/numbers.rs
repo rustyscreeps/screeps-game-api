@@ -5,13 +5,15 @@ use super::types::{ResourceType, StructureType};
 
 // FIND_* defined in `find.rs`
 
-// directions and colors defined in `small_enums.rs`
+// directions and COLOR_* defined in `small_enums.rs`
 
 // LOOK_* defined in `look.rs`
 
 // OBSTACLE_OBJECT_TYPES not yet implemented
 
-// body parts and their costs defined in `small_enums.rs`
+// BODYPART_COST defined in `small_enums.rs`
+
+// WORLD_WIDTH/HEIGHT deprecated, not implemented
 
 /// Initial ticks_to_live of a creep without any claim parts.
 pub const CREEP_LIFE_TIME: u32 = 1500;
@@ -368,9 +370,10 @@ pub const CONTROLLER_NUKE_BLOCKED_UPGRADE: u32 = 200;
 pub const SAFE_MODE_DURATION: u32 = 20_000;
 /// Ticks since last safe mode activation before another is allowed.
 pub const SAFE_MODE_COOLDOWN: u32 = 50_000;
-/// Cost in Ghodium to add a safe mode activation to a controller via
+/// Cost in [`Ghodium`] to add a safe mode activation to a controller via
 /// [`Creep::generate_safe_mode`]
 ///
+/// [`Ghodium`]: crate::constants::ResourceType::Ghodium
 /// [`Creep::generate_safe_mode`]: crate::objects::Creep::generate_safe_mode
 pub const SAFE_MODE_COST: u32 = 1000;
 
@@ -484,13 +487,19 @@ pub const LAB_ENERGY_CAPACITY: u32 = 2000;
 pub const LAB_BOOST_ENERGY: u32 = 20;
 /// Cost in boost minerals to boost each creep body part.
 pub const LAB_BOOST_MINERAL: u32 = 30;
+// LAB_COOLDOWN is marked as unused, not implemented
 /// Amount of compounds consumed and produced per reaction, before power creep
 /// effects.
 pub const LAB_REACTION_AMOUNT: u32 = 5;
-// LAB_COOLDOWN is marked as unused, not implemented
-/// Energy refunded by unboost per creep body part (none)
+/// Energy refunded by [`StructureLab::unboost_creep`] per creep body part
+/// (none).
+///
+/// [`StructureLab::unboost_creep`]: crate::objects::StructureLab::unboost_creep
 pub const LAB_UNBOOST_ENERGY: u32 = 0;
-/// Minerals spent on boosts refunded by unboost per creep body part.
+/// Minerals spent on boosts refunded by [`StructureLab::unboost_creep`] per
+/// creep body part.
+///
+/// [`StructureLab::unboost_creep`]: crate::objects::StructureLab::unboost_creep
 pub const LAB_UNBOOST_MINERAL: u32 = 15;
 
 /// Exponential growth rate of control points needed per global control level
@@ -761,6 +770,20 @@ pub const POWER_CREEP_LIFE_TIME: u32 = 5000;
 /// [`StructureType::initial_hits`] function.
 pub const INVADER_CORE_HITS: u32 = 100_000;
 
+/// Ticks per body part that invader cores of each level take to spawn defensive
+/// creeps.
+#[inline]
+pub fn invader_core_creep_spawn_time(core_level: u32) -> Option<u32> {
+    match core_level {
+        1 => Some(0),
+        2 => Some(6),
+        3 => Some(3),
+        4 => Some(2),
+        5 => Some(1),
+        _ => None,
+    }
+}
+
 /// Ticks between creation of invader cores in rooms in the sector for each
 /// level of stronghold.
 #[inline]
@@ -782,20 +805,6 @@ pub const INVADER_CORE_CONTROLLER_POWER: u32 = 2;
 /// The name reflects prior behavior by strongholds upgrading controllers
 /// in owned rooms, which has been removed.  Now only used for the deploy timer.
 pub const INVADER_CORE_CONTROLLER_DOWNGRADE: u32 = 5000;
-
-/// Ticks per body part that invader cores of each level take to spawn defensive
-/// creeps.
-#[inline]
-pub fn invader_core_creep_spawn_time(core_level: u32) -> Option<u32> {
-    match core_level {
-        1 => Some(0),
-        2 => Some(6),
-        3 => Some(3),
-        4 => Some(2),
-        5 => Some(1),
-        _ => None,
-    }
-}
 
 /// Rampart hits for each level of stronghold.
 #[inline]
