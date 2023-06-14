@@ -1,6 +1,7 @@
 //! Constants, most copied from [the game constants][1].
 //!
-//! Last updated on 2020-12-13, `e4589666113334bb1f967b9a5540b642141b6dab`
+//! Last updated on 2020-12-13, at commit
+//! `e4589666113334bb1f967b9a5540b642141b6dab`.
 //!
 //! Currently missing:
 //! - OBSTACLE_OBJECT_TYPES
