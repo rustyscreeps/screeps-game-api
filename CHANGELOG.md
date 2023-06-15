@@ -3,6 +3,7 @@ Unreleased
 
 - Add custom implementation of `Debug` for `RoomName` showing the non-packed name
 - Add implementation of `From<ExitDirection>` for `Exit`
+- Added an extra constant for CPU/intent and the range of creeps' ranged actions
 
 0.12.1 (2023-06-10)
 ===================
