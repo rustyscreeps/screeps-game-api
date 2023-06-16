@@ -23,6 +23,11 @@ pub const CPU_SET_SHARD_LIMITS_COOLDOWN: u32 = 12 * 3600 * 1000;
 /// [`cpu::tick_limit`]: crate::game::cpu::tick_limit
 pub const CPU_TICK_LIMIT_MAX: u32 = 500;
 
+/// The cost of a single intent, i.e., an action that changes the game state, in
+/// the fraction of CPU. Note that 1 CPU is 1 ms of execution time on the
+/// official server.
+pub const INTENT_CPU_COST: f64 = 0.2;
+
 /// Hits per creep body part.
 pub const CREEP_HITS_PER_PART: u32 = 100;
 
@@ -75,6 +80,9 @@ pub const POWER_CREEP_HITS_PER_LEVEL: u32 = 1000;
 
 /// Maximum length of names of power creeps.
 pub const POWER_CREEP_NAME_MAX_LENGTH: u32 = 100;
+
+/// The range of all ranged actions of creeps.
+pub const CREEP_RANGED_ACTION_RANGE: u8 = 3;
 
 /// Hits of damage per effective ranged attack part per
 /// [`Creep::ranged_mass_attack`] action at range 1.
