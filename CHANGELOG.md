@@ -1,9 +1,15 @@
 Unreleased
 ==========
 
+0.12.2 (2023-06-17)
+===================
+
+### Additions:
+
 - Add custom implementation of `Debug` for `RoomName` showing the non-packed name
 - Add implementation of `From<ExitDirection>` for `Exit`
-- Added an extra constant for CPU/intent and the range of creeps' ranged actions
+- Added extra constants for CPU cost per intent, `INTENT_CPU_COST`, and the range of creeps' ranged
+  actions, `CREEP_RANGED_ACTION_RANGE`
 
 0.12.1 (2023-06-10)
 ===================
