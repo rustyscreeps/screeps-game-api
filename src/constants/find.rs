@@ -33,6 +33,7 @@ use crate::{enums::StructureObject, objects::*};
 ///
 /// This is hidden from the documentation to avoid confusion due to its narrow
 /// use case, but wasm_bindgen requires it remain public.
+#[doc(hidden)]
 #[wasm_bindgen]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 #[repr(u16)]
