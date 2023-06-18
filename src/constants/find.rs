@@ -25,7 +25,14 @@ use wasm_bindgen::prelude::*;
 
 use crate::{enums::StructureObject, objects::*};
 
-/// Translates `FIND_*` constants.
+/// Translates `FIND_*` constants for interal API calls
+///
+/// Unless you're storing the type of find constant to be used for a call, you
+/// likely want the constants which implement the `FindConstant` trait to make
+/// calls to find methods.
+///
+/// This is hidden from the documentation to avoid confusion due to its narrow
+/// use case, but wasm_bindgen requires it remain public.
 #[wasm_bindgen]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 #[repr(u16)]

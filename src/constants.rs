@@ -20,13 +20,8 @@ mod small_enums;
 mod types;
 
 pub use self::{
-    extra::*,
-    find::{Find, FindConstant},
-    look::{Look, LookConstant},
-    numbers::*,
-    recipes::FactoryRecipe,
-    small_enums::*,
-    types::*,
+    extra::*, find::FindConstant, look::LookConstant, numbers::*, recipes::FactoryRecipe,
+    small_enums::*, types::*,
 };
 
 /// Re-export of all constants related to [`Creep`] behavior and operations.

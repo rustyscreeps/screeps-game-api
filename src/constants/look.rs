@@ -13,7 +13,15 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{constants::Terrain, enums::StructureObject, objects::*};
 
-/// Translates `LOOK_*` constants.
+/// Translates `LOOK_*` constants for interal API calls
+///
+/// Unless you're storing the type of look constant to be used for a call, you
+/// likely want the constants which implement the `LookConstant` trait to make
+/// calls to look methods.
+///
+/// This is hidden from the documentation to avoid confusion due to its
+/// narrow use case, but wasm_bindgen requires it remain public.
+#[doc(hidden)]
 #[wasm_bindgen]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
 pub enum Look {
