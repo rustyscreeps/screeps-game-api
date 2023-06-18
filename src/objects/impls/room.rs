@@ -11,8 +11,8 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
     constants::{
-        look::*, Color, Direction, ErrorCode, ExitDirection, Find, FindConstant, PowerType,
-        ResourceType, ReturnCode, StructureType,
+        find::*, look::*, Color, Direction, ErrorCode, ExitDirection, PowerType, ResourceType,
+        ReturnCode, StructureType,
     },
     local::{LodashFilter, RoomName},
     objects::*,
