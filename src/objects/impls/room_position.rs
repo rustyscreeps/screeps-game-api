@@ -191,11 +191,11 @@ extern "C" {
     #[wasm_bindgen(method, js_name = isNearTo)]
     pub fn is_near_to_xy(this: &RoomPosition, x: u8, y: u8) -> bool;
 
-    #[wasm_bindgen(method, js_name = look)]
-    fn look_internal(this: &RoomPosition) -> Array;
+    #[wasm_bindgen(method, catch, js_name = look)]
+    fn look_internal(this: &RoomPosition) -> Result<Array, JsValue>;
 
-    #[wasm_bindgen(method, js_name = lookFor)]
-    fn look_for_internal(this: &RoomPosition, ty: Look) -> Option<Array>;
+    #[wasm_bindgen(method, catch, js_name = lookFor)]
+    fn look_for_internal(this: &RoomPosition, ty: Look) -> Result<Option<Array>, JsValue>;
 }
 
 impl RoomPosition {
@@ -353,26 +353,34 @@ impl RoomPosition {
         }
     }
 
-    /// Get all objects at this position.
+    /// Get all objects at this position. Will fail if the position is in a room
+    /// that's not visible during the current tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.look)
-    pub fn look(&self) -> Vec<LookResult> {
-        self.look_internal()
-            .iter()
-            .map(LookResult::from_jsvalue_unknown_type)
-            .collect()
+    pub fn look(&self) -> Result<Vec<LookResult>, ErrorCode> {
+        match self.look_internal() {
+            Ok(array) => Ok(array
+                .iter()
+                .map(LookResult::from_jsvalue_unknown_type)
+                .collect()),
+            Err(_) => Err(ErrorCode::NotInRange),
+        }
     }
 
-    /// Get all objects of a given type at this position, if any.
+    /// Get all objects of a given type at this position, if any. Will fail if
+    /// the position is in a room that's not visible during the current tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
-    pub fn look_for<T>(&self, _ty: T) -> Vec<T::Item>
+    pub fn look_for<T>(&self, _ty: T) -> Result<Vec<T::Item>, ErrorCode>
     where
         T: LookConstant,
     {
-        self.look_for_internal(T::look_code())
-            .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
-            .unwrap_or_else(Vec::new)
+        match self.look_for_internal(T::look_code()) {
+            Ok(array) => Ok(array
+                .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
+                .unwrap_or_else(Vec::new)),
+            Err(_) => Err(ErrorCode::NotInRange),
+        }
     }
 }
 
