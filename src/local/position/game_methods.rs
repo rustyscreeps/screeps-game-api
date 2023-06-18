@@ -128,19 +128,21 @@ impl Position {
         RoomPosition::from(self).find_path_to_xy(x, y, options)
     }
 
-    /// Get all objects at this position.
+    /// Get all objects at this position. Will fail if the position is in a room
+    /// that's not visible during the current tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.look)
     #[inline]
-    pub fn look(self) -> Vec<LookResult> {
+    pub fn look(self) -> Result<Vec<LookResult>, ErrorCode> {
         RoomPosition::from(self).look()
     }
 
-    /// Get all objects of a given type at this position, if any.
+    /// Get all objects of a given type at this position, if any. Will fail if
+    /// the position is in a room that's not visible during the current tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.lookFor)
     #[inline]
-    pub fn look_for<T>(self, ty: T) -> Vec<T::Item>
+    pub fn look_for<T>(self, ty: T) -> Result<Vec<T::Item>, ErrorCode>
     where
         T: LookConstant,
     {
