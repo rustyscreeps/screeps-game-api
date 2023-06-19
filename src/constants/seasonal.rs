@@ -170,19 +170,30 @@ pub mod season_5 {
 
         #[test]
         fn decay_formula() {
+            assert_eq!(thorium_decay(0), 0);
+            // quantities of thorium below 10 do not cause any additional decay
+            assert_eq!(thorium_decay(1), 0);
+            assert_eq!(thorium_decay(9), 0);
             assert_eq!(thorium_decay(10), 1);
+            assert_eq!(thorium_decay(99), 1);
             assert_eq!(thorium_decay(100), 2);
+            assert_eq!(thorium_decay(999), 2);
             assert_eq!(thorium_decay(1000), 3);
+            assert_eq!(thorium_decay(10_000), 4);
         }
 
         #[test]
         fn score_formula() {
             assert_eq!(reactor_points_per_tick(0), 1);
             assert_eq!(reactor_points_per_tick(1), 1);
+            assert_eq!(reactor_points_per_tick(9), 1);
             assert_eq!(reactor_points_per_tick(10), 2);
+            assert_eq!(reactor_points_per_tick(99), 2);
             assert_eq!(reactor_points_per_tick(100), 3);
+            assert_eq!(reactor_points_per_tick(999), 3);
             assert_eq!(reactor_points_per_tick(1000), 4);
-            assert_eq!(reactor_points_per_tick(10000), 5);
+            assert_eq!(reactor_points_per_tick(10_000), 5);
+            assert_eq!(reactor_points_per_tick(100_000), 6);
         }
     }
 }
