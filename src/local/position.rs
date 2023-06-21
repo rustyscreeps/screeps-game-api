@@ -246,7 +246,7 @@ impl fmt::Display for Position {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct WorldPositionOutOfBoundsError(i32, i32);
+pub struct WorldPositionOutOfBoundsError(pub i32, pub i32);
 
 impl Position {
     /// Create a new Position
