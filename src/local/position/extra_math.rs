@@ -3,7 +3,7 @@
 use std::ops::{Add, Sub};
 
 use super::Position;
-use crate::constants::Direction;
+use crate::{constants::Direction, local::position::WorldPositionOutOfBoundsError};
 
 impl Position {
     /// Returns a new position offset from this position by the specified x
@@ -55,8 +55,48 @@ impl Position {
     /// );
     /// ```
     #[inline]
+    #[track_caller]
     pub fn offset(&mut self, x: i32, y: i32) {
         *self = *self + (x, y);
+    }
+
+    /// Adds an `(x, y)` pair to this room position's world coordinates and
+    /// returns the result.
+    ///
+    /// Will change rooms if necessary.
+    ///
+    /// # Errors
+    /// Returns `Err` if the new position's room is outside bounds.
+    ///
+    /// For a panicking variant of this function, see [`Position::add`].
+    ///
+    /// See [`Position::from_world_coords`].
+    #[inline]
+    pub fn checked_add(self, rhs: (i32, i32)) -> Result<Position, WorldPositionOutOfBoundsError> {
+        let (x1, y1) = self.world_coords();
+        let (x2, y2) = rhs;
+
+        Position::checked_from_world_coords(x1 + x2, y1 + y2)
+    }
+
+    /// Adds a [`Direction`] to this room position's world coordinates and
+    /// returns the result.
+    ///
+    /// Will change rooms if necessary.
+    ///
+    /// # Errors
+    /// Returns `Err` if the new position's room is outside bounds.
+    ///
+    /// See [`Position::from_world_coords`].
+    #[inline]
+    pub fn checked_add_direction(
+        self,
+        direction: Direction,
+    ) -> Result<Position, WorldPositionOutOfBoundsError> {
+        let (x1, y1) = self.world_coords();
+        let (x2, y2) = direction.into();
+
+        Position::checked_from_world_coords(x1 + x2, y1 + y2)
     }
 }
 
@@ -116,19 +156,18 @@ impl Add<(i32, i32)> for Position {
     /// );
     /// ```
     #[inline]
+    #[track_caller]
     fn add(self, (x, y): (i32, i32)) -> Self {
-        let (wx, wy) = self.world_coords();
-        Self::from_world_coords(wx + x, wy + y)
+        self.checked_add((x, y)).unwrap()
     }
 }
 
 impl Add<Direction> for Position {
     type Output = Position;
     #[inline]
+    #[track_caller]
     fn add(self, direction: Direction) -> Self {
-        let (wx, wy) = self.world_coords();
-        let (x, y) = direction.into();
-        Self::from_world_coords(wx + x, wy + y)
+        self.checked_add_direction(direction).unwrap()
     }
 }
 
@@ -137,8 +176,9 @@ impl Sub<(i32, i32)> for Position {
 
     /// See the implementation of `Add<(i32, i32)>` for [`Position`].
     #[inline]
+    #[track_caller]
     fn sub(self, (x, y): (i32, i32)) -> Self {
-        self + (-x, -y)
+        self.checked_add((-x, -y)).unwrap()
     }
 }
 
@@ -146,9 +186,7 @@ impl Sub<Direction> for Position {
     type Output = Position;
     #[inline]
     fn sub(self, direction: Direction) -> Self {
-        let (wx, wy) = self.world_coords();
-        let (x, y) = direction.into();
-        Self::from_world_coords(wx - x, wy - y)
+        self.checked_add_direction(-direction).unwrap()
     }
 }
 
