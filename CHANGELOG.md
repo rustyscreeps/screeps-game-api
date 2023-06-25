@@ -6,6 +6,7 @@ Unreleased
 - Remove re-exports of `constants::find::Find` and `constants::look::Look` enums and mark them as
   hidden from docs, since they're likely to cause confusion and not generally needed (breaking)
 - Fix js property mapping for `crate::raw_memory::ForeignSegment::id`
+- Remove `ReturnCode` and replace with `Result<(), ErrorCode>` (breaking)
 
 0.12.2 (2023-06-17)
 ===================
