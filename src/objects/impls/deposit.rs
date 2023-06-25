@@ -47,18 +47,18 @@ extern "C" {
 
 impl CanDecay for Deposit {
     fn ticks_to_decay(&self) -> u32 {
-        Self::ticks_to_decay(self)
+        self.ticks_to_decay()
     }
 }
 
 impl HasCooldown for Deposit {
     fn cooldown(&self) -> u32 {
-        Self::cooldown(self)
+        self.cooldown()
     }
 }
 
 impl HasNativeId for Deposit {
     fn native_id(&self) -> JsString {
-        Self::id_internal(self)
+        self.id_internal()
     }
 }

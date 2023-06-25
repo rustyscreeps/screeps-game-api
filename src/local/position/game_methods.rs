@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     constants::{
         look::{LookConstant, LookResult},
-        Color, ErrorCode, FindConstant, ReturnCode, StructureType,
+        Color, ErrorCode, FindConstant, StructureType,
     },
     local::{RoomCoordinate, RoomName},
     objects::{CostMatrix, FindPathOptions, Path, RoomPosition},
@@ -28,7 +28,7 @@ impl Position {
         self,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> ReturnCode {
+    ) -> Result<(), ErrorCode> {
         RoomPosition::from(self).create_construction_site(ty, name)
     }
 
