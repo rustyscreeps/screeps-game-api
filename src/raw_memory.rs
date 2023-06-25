@@ -128,7 +128,7 @@ extern "C" {
     pub type ForeignSegment;
     #[wasm_bindgen(method, getter)]
     pub fn username(this: &ForeignSegment) -> JsString;
-    #[wasm_bindgen(method, getter = type)]
+    #[wasm_bindgen(method, getter)]
     pub fn id(this: &ForeignSegment) -> u8;
     #[wasm_bindgen(method, getter)]
     pub fn data(this: &ForeignSegment) -> JsString;
