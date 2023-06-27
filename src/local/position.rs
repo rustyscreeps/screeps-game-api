@@ -3,6 +3,7 @@
 //! This is a reimplementation/translation of the `RoomPosition` code originally
 //! written in JavaScript. All RoomPosition to RoomPosition operations in this
 //! file stay within Rust.
+use core::fmt::Debug;
 use std::{
     cmp::{Ord, Ordering, PartialOrd},
     fmt,
@@ -243,6 +244,9 @@ impl fmt::Display for Position {
         )
     }
 }
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct WorldPositionOutOfBoundsError(pub i32, pub i32);
 
 impl Position {
     /// Create a new Position
