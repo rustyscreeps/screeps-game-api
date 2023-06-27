@@ -23,46 +23,49 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type Creep;
 
-    #[wasm_bindgen(method, getter = body)]
+    // explicitly structural getters here, as these may have varying
+    // getter methods (notably on the first tick a creep is spawning):
+    // https://github.com/screeps/engine/blob/c6c4fc9e656f160e0e0174b0dd9a817d2dd18976/src/game/structures.js#L1134-L1213
+    #[wasm_bindgen(structural, method, getter = body)]
     fn body_internal(this: &Creep) -> Array;
 
-    #[wasm_bindgen(method, getter = fatigue)]
+    #[wasm_bindgen(structural, method, getter = fatigue)]
     fn fatigue_internal(this: &Creep) -> u32;
 
-    #[wasm_bindgen(method, getter = hits)]
+    #[wasm_bindgen(structural, method, getter = hits)]
     fn hits_internal(this: &Creep) -> u32;
 
-    #[wasm_bindgen(method, getter = hitsMax)]
+    #[wasm_bindgen(structural, method, getter = hitsMax)]
     fn hits_max_internal(this: &Creep) -> u32;
 
-    #[wasm_bindgen(method, getter = id)]
+    #[wasm_bindgen(structural, method, getter = id)]
     fn id_internal(this: &Creep) -> Option<JsString>;
 
-    #[wasm_bindgen(method, getter = memory)]
+    #[wasm_bindgen(structural, method, getter = memory)]
     fn memory_internal(this: &Creep) -> JsValue;
 
-    #[wasm_bindgen(method, setter = memory)]
+    #[wasm_bindgen(structural, method, setter = memory)]
     fn set_memory_internal(this: &Creep, val: &JsValue);
 
-    #[wasm_bindgen(method, getter = my)]
+    #[wasm_bindgen(structural, method, getter = my)]
     fn my_internal(this: &Creep) -> bool;
 
-    #[wasm_bindgen(method, getter = name)]
+    #[wasm_bindgen(structural, method, getter = name)]
     fn name_internal(this: &Creep) -> JsString;
 
-    #[wasm_bindgen(method, getter = owner)]
+    #[wasm_bindgen(structural, method, getter = owner)]
     fn owner_internal(this: &Creep) -> Owner;
 
-    #[wasm_bindgen(method, getter = saying)]
+    #[wasm_bindgen(structural, method, getter = saying)]
     fn saying_internal(this: &Creep) -> Option<JsString>;
 
-    #[wasm_bindgen(method, getter = spawning)]
+    #[wasm_bindgen(structural, method, getter = spawning)]
     fn spawning_internal(this: &Creep) -> bool;
 
-    #[wasm_bindgen(final, method, getter = store)]
+    #[wasm_bindgen(structural, method, getter = store)]
     fn store_internal(this: &Creep) -> Store;
 
-    #[wasm_bindgen(method, getter = ticksToLive)]
+    #[wasm_bindgen(structural, method, getter = ticksToLive)]
     fn ticks_to_live_internal(this: &Creep) -> Option<u32>;
 
     #[wasm_bindgen(final, method, js_name = attack)]

@@ -14,6 +14,7 @@ Unreleased
   bounds coordinates
 - Add `Position::checked_add` and `Position::checked_add_direction`, alternatives to `Add<_>` which
   can error
+- Fixed a panic when accessing the store of a creep while spawning
 
 0.12.2 (2023-06-17)
 ===================
