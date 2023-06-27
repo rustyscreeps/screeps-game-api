@@ -63,6 +63,10 @@ symbols = []
 # Enable thorium resource and reactor structure - used in season 5
 thorium = []
 
+# Enable unsafe conversions of return codes with undefined behavior when values
+# aren't in the expected range
+unsafe-return-conversion = []
+
 ## Sets of the above features for different server environments
 
 # Official MMO server features, not present on other environments

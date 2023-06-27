@@ -56,7 +56,10 @@ impl FromReturnCode for ErrorCode {
             -14 => Err(ErrorCode::RclNotEnough),
             -15 => Err(ErrorCode::GclNotEnough),
             // SAFETY: Return codes must always be one of the values already covered
+            #[cfg(feature = "unsafe-return-conversion")]
             _ => unsafe { std::hint::unreachable_unchecked() },
+            #[cfg(not(feature = "unsafe-return-conversion"))]
+            _ => unreachable!(),
         }
     }
 
