@@ -123,7 +123,7 @@ pub fn halt() {
 ///
 /// [`CPU_SET_SHARD_LIMITS_COOLDOWN`]: crate::constants::CPU_SET_SHARD_LIMITS_COOLDOWN
 pub fn set_shard_limits(limits: &Object) -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8_unchecked(Cpu::set_shard_limits(limits))
+    ErrorCode::result_from_i8(Cpu::set_shard_limits(limits))
 }
 
 /// Consume a [`CpuUnlock`] to unlock your full CPU for 24 hours.
@@ -132,7 +132,7 @@ pub fn set_shard_limits(limits: &Object) -> Result<(), ErrorCode> {
 ///
 /// [`CpuUnlock`]: crate::constants::IntershardResourceType::CpuUnlock
 pub fn unlock() -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8_unchecked(Cpu::unlock())
+    ErrorCode::result_from_i8(Cpu::unlock())
 }
 
 /// Generate a [`Pixel`], consuming [`PIXEL_CPU_COST`] CPU from your bucket.
@@ -143,7 +143,7 @@ pub fn unlock() -> Result<(), ErrorCode> {
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
 #[cfg(feature = "generate-pixel")]
 pub fn generate_pixel() -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8_unchecked(Cpu::generate_pixel())
+    ErrorCode::result_from_i8(Cpu::generate_pixel())
 }
 
 #[wasm_bindgen]

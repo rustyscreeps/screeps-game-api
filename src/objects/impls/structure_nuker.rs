@@ -41,7 +41,7 @@ impl StructureNuker {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureNuker.launchNuke)
     pub fn launch_nuke(&self, target: &RoomPosition) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.launch_nuke_internal(target))
+        ErrorCode::result_from_i8(self.launch_nuke_internal(target))
     }
 }
 

@@ -56,7 +56,7 @@ impl StructureTerminal {
         let desination = destination.into();
         let description = description.map(JsString::from);
 
-        ErrorCode::result_from_i8_unchecked(self.send_internal(
+        ErrorCode::result_from_i8(self.send_internal(
             resource_type,
             amount,
             &desination,

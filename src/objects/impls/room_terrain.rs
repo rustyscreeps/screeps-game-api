@@ -51,6 +51,6 @@ impl RoomTerrain {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
     pub fn get_raw_buffer_to_array(&self, destination: &Uint8Array) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.get_raw_buffer_to_array_internal(destination))
+        ErrorCode::result_from_i8(self.get_raw_buffer_to_array_internal(destination))
     }
 }

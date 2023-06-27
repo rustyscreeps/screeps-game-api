@@ -45,7 +45,7 @@ impl StructureTower {
     where
         T: ?Sized + Attackable,
     {
-        ErrorCode::result_from_i8_unchecked(self.attack_internal(target.as_ref()))
+        ErrorCode::result_from_i8(self.attack_internal(target.as_ref()))
     }
 
     /// Heal a [`Creep`] or [`PowerCreep`] in the room, adding hit points
@@ -59,7 +59,7 @@ impl StructureTower {
     where
         T: ?Sized + Healable,
     {
-        ErrorCode::result_from_i8_unchecked(self.heal_internal(target.as_ref()))
+        ErrorCode::result_from_i8(self.heal_internal(target.as_ref()))
     }
 
     /// Repair a [`Structure`] in the room, adding hit points depending on
@@ -67,7 +67,7 @@ impl StructureTower {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.repair)
     pub fn repair(&self, target: &Structure) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.repair_internal(target))
+        ErrorCode::result_from_i8(self.repair_internal(target))
     }
 }
 

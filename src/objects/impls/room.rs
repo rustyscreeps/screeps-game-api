@@ -240,7 +240,7 @@ impl Room {
         ty: StructureType,
         name: Option<&JsString>,
     ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.create_construction_site_internal(x, y, ty, name))
+        ErrorCode::result_from_i8(self.create_construction_site_internal(x, y, ty, name))
     }
 
     /// Creates a [`Flag`] at given coordinates within this room. The name of

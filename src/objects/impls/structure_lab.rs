@@ -69,7 +69,7 @@ impl StructureLab {
         creep: &Creep,
         body_part_count: Option<u32>,
     ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.boost_creep_internal(creep, body_part_count))
+        ErrorCode::result_from_i8(self.boost_creep_internal(creep, body_part_count))
     }
 
     /// Reverse a reaction, splitting the compound in this [`StructureLab`] into
@@ -81,7 +81,7 @@ impl StructureLab {
         lab1: &StructureLab,
         lab2: &StructureLab,
     ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.reverse_reaction_internal(lab1, lab2))
+        ErrorCode::result_from_i8(self.reverse_reaction_internal(lab1, lab2))
     }
 
     /// Run a reaction, combining components from two other [`StructureLab`]s
@@ -89,7 +89,7 @@ impl StructureLab {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.runReaction)
     pub fn run_reaction(&self, lab1: &StructureLab, lab2: &StructureLab) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.run_reaction_internal(lab1, lab2))
+        ErrorCode::result_from_i8(self.run_reaction_internal(lab1, lab2))
     }
 
     /// Unboost a [`Creep`], removing all boosts from its body and dropping
@@ -100,7 +100,7 @@ impl StructureLab {
     ///
     /// [`LAB_UNBOOST_ENERGY`]: crate::constants::numbers::LAB_UNBOOST_ENERGY
     pub fn unboost_creep(&self, creep: &Creep) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.unboost_creep_internal(creep))
+        ErrorCode::result_from_i8(self.unboost_creep_internal(creep))
     }
 }
 

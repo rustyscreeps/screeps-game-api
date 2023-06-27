@@ -52,7 +52,7 @@ impl StructureLink {
         target: &StructureLink,
         amount: Option<u32>,
     ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.transfer_energy_internal(target, amount))
+        ErrorCode::result_from_i8(self.transfer_energy_internal(target, amount))
     }
 }
 

@@ -347,8 +347,8 @@ where
     if result >= 0 {
         Ok(ExitDirection::from_i8(result).expect("expected exit direction for pathing"))
     } else {
-        // SAFETY: can never be an `Ok()` return from `result_from_i8_unchecked` because
+        // SAFETY: can never be an `Ok()` return from `result_from_i8` because
         // non-negative values are handled by the first branch above
-        Err(unsafe { ErrorCode::result_from_i8_unchecked(result).unwrap_err_unchecked() })
+        Err(unsafe { ErrorCode::result_from_i8(result).unwrap_err_unchecked() })
     }
 }

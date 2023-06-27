@@ -224,7 +224,7 @@ impl RoomPosition {
         ty: StructureType,
         name: Option<&JsString>,
     ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(Self::create_construction_site_internal(self, ty, name))
+        ErrorCode::result_from_i8(Self::create_construction_site_internal(self, ty, name))
     }
 
     /// Creates a [`Flag`] at this position. If successful, returns the name of

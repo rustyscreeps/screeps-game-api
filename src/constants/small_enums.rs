@@ -38,7 +38,7 @@ pub enum ErrorCode {
 impl FromReturnCode for ErrorCode {
     type Error = Self;
 
-    fn result_from_i8_unchecked(val: i8) -> Result<(), Self::Error> {
+    fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         match val {
             0 => Ok(()),
             -1 => Err(ErrorCode::NotOwner),

@@ -97,7 +97,7 @@ where
     }
 
     fn destroy(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(Structure::destroy(self.as_ref()))
+        ErrorCode::result_from_i8(Structure::destroy(self.as_ref()))
     }
 
     fn is_active(&self) -> bool {
@@ -105,6 +105,6 @@ where
     }
 
     fn notify_when_attacked(&self, val: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(Structure::notify_when_attacked(self.as_ref(), val))
+        ErrorCode::result_from_i8(Structure::notify_when_attacked(self.as_ref(), val))
     }
 }

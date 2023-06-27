@@ -43,7 +43,7 @@ impl StructureRampart {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureRampart.setPublic)
     pub fn set_public(&self, public: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.set_public_internal(public))
+        ErrorCode::result_from_i8(self.set_public_internal(public))
     }
 }
 

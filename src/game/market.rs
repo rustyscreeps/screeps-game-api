@@ -107,7 +107,7 @@ pub fn calc_transaction_cost(amount: u32, room_1: &JsString, room_2: &JsString) 
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.cancelOrder)
 pub fn cancel_order(order_id: &JsString) -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8_unchecked(Market::cancel_order(order_id))
+    ErrorCode::result_from_i8(Market::cancel_order(order_id))
 }
 
 /// Change the price of an existing order. If new_price is greater than old
@@ -118,7 +118,7 @@ pub fn cancel_order(order_id: &JsString) -> Result<(), ErrorCode> {
 ///
 /// [`MARKET_FEE`]: crate::constants::MARKET_FEE
 pub fn change_order_price(order_id: &JsString, new_price: f64) -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8_unchecked(Market::change_order_price(order_id, new_price))
+    ErrorCode::result_from_i8(Market::change_order_price(order_id, new_price))
 }
 
 // todo type to serialize call options into
@@ -126,7 +126,7 @@ pub fn change_order_price(order_id: &JsString, new_price: f64) -> Result<(), Err
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.createOrder)
 pub fn create_order(order_parameters: &Object) -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8_unchecked(Market::create_order(order_parameters))
+    ErrorCode::result_from_i8(Market::create_order(order_parameters))
 }
 
 /// Execute a trade on an order on the market. Name of a room with a
@@ -139,7 +139,7 @@ pub fn deal(
     amount: u32,
     room_name: Option<RoomName>,
 ) -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8_unchecked(match room_name {
+    ErrorCode::result_from_i8(match room_name {
         Some(r) => Market::deal(order_id, amount, Some(&r.into())),
         None => Market::deal(order_id, amount, None),
     })
@@ -150,7 +150,7 @@ pub fn deal(
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.extendOrder)
 pub fn extend_order(order_id: &JsString, add_amount: u32) -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8_unchecked(Market::extend_order(order_id, add_amount))
+    ErrorCode::result_from_i8(Market::extend_order(order_id, add_amount))
 }
 
 /// Get all [`Order`]s on the market, with an optional

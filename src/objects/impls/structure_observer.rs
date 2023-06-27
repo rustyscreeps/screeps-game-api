@@ -30,6 +30,6 @@ impl StructureObserver {
     pub fn observe_room(&self, target: RoomName) -> Result<(), ErrorCode> {
         let target = target.into();
 
-        ErrorCode::result_from_i8_unchecked(self.observe_room_internal(&target))
+        ErrorCode::result_from_i8(self.observe_room_internal(&target))
     }
 }

@@ -47,7 +47,7 @@ extern "C" {
 
 impl StructureFactory {
     pub fn produce(&self, ty: ResourceType) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.produce_internal(ty))
+        ErrorCode::result_from_i8(self.produce_internal(ty))
     }
 }
 

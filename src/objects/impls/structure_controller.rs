@@ -112,11 +112,11 @@ extern "C" {
 
 impl StructureController {
     pub fn activate_safe_mode(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.activate_safe_mode_internal())
+        ErrorCode::result_from_i8(self.activate_safe_mode_internal())
     }
 
     pub fn unclaim(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.unclaim_internal())
+        ErrorCode::result_from_i8(self.unclaim_internal())
     }
 }
 

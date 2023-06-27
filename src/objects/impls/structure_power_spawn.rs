@@ -42,7 +42,7 @@ impl StructurePowerSpawn {
     /// [`POWER_SPAWN_ENERGY_RATIO`]:
     /// crate::constants::numbers::POWER_SPAWN_ENERGY_RATIO
     pub fn process_power(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.process_power_internal())
+        ErrorCode::result_from_i8(self.process_power_internal())
     }
 }
 

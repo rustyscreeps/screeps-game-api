@@ -81,7 +81,7 @@ impl ConstructionSite {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.remove)
     pub fn remove(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.remove_internal())
+        ErrorCode::result_from_i8(self.remove_internal())
     }
 }
 

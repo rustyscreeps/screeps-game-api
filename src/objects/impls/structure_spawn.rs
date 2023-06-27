@@ -75,7 +75,7 @@ impl StructureSpawn {
     pub fn spawn_creep(&self, body: &[Part], name: &str) -> Result<(), ErrorCode> {
         let body = body.iter().cloned().map(JsValue::from).collect();
 
-        ErrorCode::result_from_i8_unchecked(Self::spawn_creep_internal(self, &body, name, None))
+        ErrorCode::result_from_i8(Self::spawn_creep_internal(self, &body, name, None))
     }
 
     /// Create a new creep with the specified body part [`Array`], name
@@ -113,7 +113,7 @@ impl StructureSpawn {
             ObjectExt::set(&js_opts, "directions", array);
         }
 
-        ErrorCode::result_from_i8_unchecked(Self::spawn_creep_internal(
+        ErrorCode::result_from_i8(Self::spawn_creep_internal(
             self,
             &body,
             name,
@@ -127,7 +127,7 @@ impl StructureSpawn {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.recycleCreep)
     pub fn recycle_creep(&self, creep: &Creep) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.recycle_creep_internal(creep))
+        ErrorCode::result_from_i8(self.recycle_creep_internal(creep))
     }
 
     /// Renew a [`Creep`] in melee range, removing all boosts adding to its TTL.
@@ -135,7 +135,7 @@ impl StructureSpawn {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.renewCreep)
     pub fn renew_creep(&self, creep: &Creep) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.renew_creep_internal(creep))
+        ErrorCode::result_from_i8(self.renew_creep_internal(creep))
     }
 }
 
@@ -257,7 +257,7 @@ impl Spawning {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.cancel)
     pub fn cancel(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.cancel_internal())
+        ErrorCode::result_from_i8(self.cancel_internal())
     }
 
     /// Change allowed directions for the creep to leave the spawn once it's
@@ -265,6 +265,6 @@ impl Spawning {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.setDirections)
     pub fn set_directions(&self, directions: &Array) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8_unchecked(self.set_directions_internal(directions))
+        ErrorCode::result_from_i8(self.set_directions_internal(directions))
     }
 }
