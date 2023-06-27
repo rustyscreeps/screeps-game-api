@@ -1,79 +1,17 @@
 //! Various constants translated as small enums.
-use std::{
-    convert::{Infallible, TryFrom},
-    fmt,
-    str::FromStr,
-};
+use std::{convert::Infallible, fmt, str::FromStr};
 
 use enum_iterator::Sequence;
 use js_sys::JsString;
 use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
-use crate::constants::find::{Exit, Find};
-
-// Bindgen does not correctly handle i8 negative return values. Use custom
-// return values.
-/// Translates return code constants.
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
-)]
-#[repr(i8)]
-pub enum ReturnCode {
-    Ok = 0,
-    NotOwner = -1,
-    NoPath = -2,
-    NameExists = -3,
-    Busy = -4,
-    NotFound = -5,
-    NotEnough = -6,
-    InvalidTarget = -7,
-    Full = -8,
-    NotInRange = -9,
-    InvalidArgs = -10,
-    Tired = -11,
-    NoBodypart = -12,
-    RclNotEnough = -14,
-    GclNotEnough = -15,
-}
-
-impl wasm_bindgen::convert::IntoWasmAbi for ReturnCode {
-    type Abi = i32;
-
-    #[inline]
-    fn into_abi(self) -> Self::Abi {
-        (self as i32).into_abi()
-    }
-}
-
-impl wasm_bindgen::convert::FromWasmAbi for ReturnCode {
-    type Abi = i32;
-
-    #[inline]
-    unsafe fn from_abi(js: i32) -> Self {
-        Self::from_i32(js).unwrap()
-    }
-}
-
-impl wasm_bindgen::describe::WasmDescribe for ReturnCode {
-    fn describe() {
-        wasm_bindgen::describe::inform(wasm_bindgen::describe::I32)
-    }
-}
-
-impl TryFrom<JsValue> for ReturnCode {
-    type Error = String;
-
-    fn try_from(value: JsValue) -> Result<Self, Self::Error> {
-        value
-            .as_f64()
-            .and_then(|f| Self::from_i32(f as i32))
-            .ok_or_else(|| "expected number for return code".to_owned())
-    }
-}
+use crate::{
+    constants::find::{Exit, Find},
+    prelude::*,
+};
 
 /// Translates non-OK return codes.
 #[derive(
@@ -97,26 +35,52 @@ pub enum ErrorCode {
     GclNotEnough = -15,
 }
 
-impl From<ReturnCode> for Result<(), ErrorCode> {
-    fn from(value: ReturnCode) -> Self {
-        match value {
-            ReturnCode::Ok => Ok(()),
-            code => {
-                // SAFETY: ErrorCode is a duplicate of ReturnCode, minus the Ok variant that
-                // was covered above.
-                let err_code = unsafe { ErrorCode::from_i8(code as i8).unwrap_unchecked() };
-                Err(err_code)
-            }
+impl FromReturnCode for ErrorCode {
+    type Error = Self;
+
+    fn result_from_i8(val: i8) -> Result<(), Self::Error> {
+        match val {
+            0 => Ok(()),
+            -1 => Err(ErrorCode::NotOwner),
+            -2 => Err(ErrorCode::NoPath),
+            -3 => Err(ErrorCode::NameExists),
+            -4 => Err(ErrorCode::Busy),
+            -5 => Err(ErrorCode::NotFound),
+            -6 => Err(ErrorCode::NotEnough),
+            -7 => Err(ErrorCode::InvalidTarget),
+            -8 => Err(ErrorCode::Full),
+            -9 => Err(ErrorCode::NotInRange),
+            -10 => Err(ErrorCode::InvalidArgs),
+            -11 => Err(ErrorCode::Tired),
+            -12 => Err(ErrorCode::NoBodypart),
+            -14 => Err(ErrorCode::RclNotEnough),
+            -15 => Err(ErrorCode::GclNotEnough),
+            // SAFETY: Return codes must always be one of the values already covered
+            #[cfg(feature = "unsafe-return-conversion")]
+            _ => unsafe { std::hint::unreachable_unchecked() },
+            #[cfg(not(feature = "unsafe-return-conversion"))]
+            _ => unreachable!(),
         }
     }
-}
 
-impl From<Result<(), ErrorCode>> for ReturnCode {
-    fn from(value: Result<(), ErrorCode>) -> Self {
-        match value {
-            Ok(_) => ReturnCode::Ok,
-            // SAFETY: all ErrorCodes are valid ReturnCodes.
-            Err(code) => unsafe { ReturnCode::from_i8(code as i8).unwrap_unchecked() },
+    fn try_result_from_i8(val: i8) -> Option<Result<(), Self::Error>> {
+        match val {
+            0 => Some(Ok(())),
+            -1 => Some(Err(ErrorCode::NotOwner)),
+            -2 => Some(Err(ErrorCode::NoPath)),
+            -3 => Some(Err(ErrorCode::NameExists)),
+            -4 => Some(Err(ErrorCode::Busy)),
+            -5 => Some(Err(ErrorCode::NotFound)),
+            -6 => Some(Err(ErrorCode::NotEnough)),
+            -7 => Some(Err(ErrorCode::InvalidTarget)),
+            -8 => Some(Err(ErrorCode::Full)),
+            -9 => Some(Err(ErrorCode::NotInRange)),
+            -10 => Some(Err(ErrorCode::InvalidArgs)),
+            -11 => Some(Err(ErrorCode::Tired)),
+            -12 => Some(Err(ErrorCode::NoBodypart)),
+            -14 => Some(Err(ErrorCode::RclNotEnough)),
+            -15 => Some(Err(ErrorCode::GclNotEnough)),
+            _ => None,
         }
     }
 }

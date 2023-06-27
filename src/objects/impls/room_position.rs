@@ -5,7 +5,7 @@ use num_traits::*;
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    constants::{find::*, look::*, Color, Direction, ErrorCode, ReturnCode, StructureType},
+    constants::{find::*, look::*, Color, Direction, ErrorCode, StructureType},
     local::{Position, RoomCoordinate, RoomName},
     objects::{CostMatrix, FindPathOptions, Path},
     pathfinder::RoomCostResult,
@@ -67,18 +67,12 @@ extern "C" {
     #[wasm_bindgen(method, setter = __packedPos)]
     pub fn set_packed(this: &RoomPosition, val: u32);
 
-    /// Creates a [`ConstructionSite`] at this position. If it's a
-    /// [`StructureSpawn`], a name can optionally be assigned for the structure.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
-    ///
-    /// [`ConstructionSite`]: crate::objects::ConstructionSite
     #[wasm_bindgen(method, js_name = createConstructionSite)]
-    pub fn create_construction_site(
+    fn create_construction_site_internal(
         this: &RoomPosition,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> ReturnCode;
+    ) -> i8;
 
     #[wasm_bindgen(method, catch, js_name = createFlag)]
     fn create_flag_internal(
@@ -217,6 +211,20 @@ impl RoomPosition {
         Self::room_name_internal(self)
             .try_into()
             .expect("expected parseable room name")
+    }
+
+    /// Creates a [`ConstructionSite`] at this position. If it's a
+    /// [`StructureSpawn`], a name can optionally be assigned for the structure.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
+    ///
+    /// [`ConstructionSite`]: crate::objects::ConstructionSite
+    pub fn create_construction_site(
+        &self,
+        ty: StructureType,
+        name: Option<&JsString>,
+    ) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(Self::create_construction_site_internal(self, ty, name))
     }
 
     /// Creates a [`Flag`] at this position. If successful, returns the name of

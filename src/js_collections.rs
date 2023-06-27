@@ -9,7 +9,7 @@ use std::{
 use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
 
-use crate::{game, local::RawObjectIdParseError, traits::Resolvable};
+use crate::{game, local::RawObjectIdParseError, prelude::*};
 
 #[wasm_bindgen]
 extern "C" {

@@ -4,7 +4,7 @@
 use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
-use crate::{constants::ReturnCode, js_collections::JsHashMap};
+use crate::{constants::ErrorCode, prelude::*};
 
 #[wasm_bindgen]
 extern "C" {
@@ -39,14 +39,14 @@ extern "C" {
     fn halt();
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = setShardLimits)]
-    fn set_shard_limits(limits: &Object) -> ReturnCode;
+    fn set_shard_limits(limits: &Object) -> i8;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = unlock)]
-    fn unlock() -> ReturnCode;
+    fn unlock() -> i8;
 
     #[cfg(feature = "generate-pixel")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = generatePixel)]
-    fn generate_pixel() -> ReturnCode;
+    fn generate_pixel() -> i8;
 }
 
 /// Your assigned CPU for the current shard.
@@ -122,8 +122,8 @@ pub fn halt() {
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
 ///
 /// [`CPU_SET_SHARD_LIMITS_COOLDOWN`]: crate::constants::CPU_SET_SHARD_LIMITS_COOLDOWN
-pub fn set_shard_limits(limits: &Object) -> ReturnCode {
-    Cpu::set_shard_limits(limits)
+pub fn set_shard_limits(limits: &Object) -> Result<(), ErrorCode> {
+    ErrorCode::result_from_i8(Cpu::set_shard_limits(limits))
 }
 
 /// Consume a [`CpuUnlock`] to unlock your full CPU for 24 hours.
@@ -131,8 +131,8 @@ pub fn set_shard_limits(limits: &Object) -> ReturnCode {
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.unlock)
 ///
 /// [`CpuUnlock`]: crate::constants::IntershardResourceType::CpuUnlock
-pub fn unlock() -> ReturnCode {
-    Cpu::unlock()
+pub fn unlock() -> Result<(), ErrorCode> {
+    ErrorCode::result_from_i8(Cpu::unlock())
 }
 
 /// Generate a [`Pixel`], consuming [`PIXEL_CPU_COST`] CPU from your bucket.
@@ -142,8 +142,8 @@ pub fn unlock() -> ReturnCode {
 /// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
 #[cfg(feature = "generate-pixel")]
-pub fn generate_pixel() -> ReturnCode {
-    Cpu::generate_pixel()
+pub fn generate_pixel() -> Result<(), ErrorCode> {
+    ErrorCode::result_from_i8(Cpu::generate_pixel())
 }
 
 #[wasm_bindgen]

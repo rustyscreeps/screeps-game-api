@@ -2,7 +2,7 @@ use js_sys::JsString;
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    constants::{ReturnCode, StructureType},
+    constants::{ErrorCode, StructureType},
     objects::{Owner, RoomObject},
     prelude::*,
 };
@@ -17,55 +17,81 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type ConstructionSite;
 
-    /// The Object ID of the [`ConstructionSite`], or `None` if it was created
-    /// this tick.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.id)
     #[wasm_bindgen(method, getter = id)]
     fn id_internal(this: &ConstructionSite) -> Option<JsString>;
 
+    #[wasm_bindgen(method, getter = my)]
+    fn my_internal(this: &ConstructionSite) -> bool;
+
+    #[wasm_bindgen(method, getter = owner)]
+    fn owner_internal(this: &ConstructionSite) -> Owner;
+
+    #[wasm_bindgen(method, getter = progress)]
+    fn progress_internal(this: &ConstructionSite) -> u32;
+
+    #[wasm_bindgen(method, getter = progressTotal)]
+    fn progress_total_internal(this: &ConstructionSite) -> u32;
+
+    #[wasm_bindgen(method, getter = structureType)]
+    fn structure_type_internal(this: &ConstructionSite) -> StructureType;
+
+    #[wasm_bindgen(method, js_name = remove)]
+    fn remove_internal(this: &ConstructionSite) -> i8;
+}
+
+impl ConstructionSite {
     /// Whether you own the [`ConstructionSite`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.my)
-    #[wasm_bindgen(method, getter)]
-    pub fn my(this: &ConstructionSite) -> bool;
+    pub fn my(&self) -> bool {
+        self.my_internal()
+    }
 
     /// The [`Owner`] of this construction site, which contains the owner's
     /// username.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.owner)
-    #[wasm_bindgen(method, getter)]
-    pub fn owner(this: &ConstructionSite) -> Owner;
+    pub fn owner(&self) -> Owner {
+        self.owner_internal()
+    }
 
     /// The current progress toward completion of the structure being built.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.progress)
-    #[wasm_bindgen(method, getter)]
-    pub fn progress(this: &ConstructionSite) -> u32;
+    pub fn progress(&self) -> u32 {
+        self.progress_internal()
+    }
 
     /// The total progess toward constuction progress needed for the structure
     /// to be completed.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.progressTotal)
-    #[wasm_bindgen(method, getter = progressTotal)]
-    pub fn progress_total(this: &ConstructionSite) -> u32;
+    pub fn progress_total(&self) -> u32 {
+        self.progress_total_internal()
+    }
 
     /// The type of structure being constructed.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.structureType)
-    #[wasm_bindgen(method, getter = structureType)]
-    pub fn structure_type(this: &ConstructionSite) -> StructureType;
+    pub fn structure_type(&self) -> StructureType {
+        self.structure_type_internal()
+    }
 
     /// Remove the [`ConstructionSite`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.remove)
-    #[wasm_bindgen(method)]
-    pub fn remove(this: &ConstructionSite) -> ReturnCode;
+    pub fn remove(&self) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.remove_internal())
+    }
 }
 
 impl MaybeHasNativeId for ConstructionSite {
+    /// The Object ID of the [`ConstructionSite`], or `None` if it was created
+    /// this tick.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.id)
     fn try_native_id(&self) -> Option<JsString> {
-        Self::id_internal(self)
+        self.id_internal()
     }
 }
 

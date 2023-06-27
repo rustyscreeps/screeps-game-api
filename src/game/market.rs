@@ -5,9 +5,9 @@ use js_sys::{Array, JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    constants::{MarketResourceType, OrderType, ResourceType, ReturnCode},
-    js_collections::{JsCollectionFromValue, JsHashMap},
+    constants::{ErrorCode, MarketResourceType, OrderType, ResourceType},
     local::{LodashFilter, RoomName},
+    prelude::*,
 };
 
 #[wasm_bindgen]
@@ -31,19 +31,19 @@ extern "C" {
     fn calc_transaction_cost(amount: u32, room_1: &JsString, room_2: &JsString) -> u32;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = cancelOrder)]
-    fn cancel_order(order_id: &JsString) -> ReturnCode;
+    fn cancel_order(order_id: &JsString) -> i8;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = changeOrderPrice)]
-    fn change_order_price(order_id: &JsString, new_price: f64) -> ReturnCode;
+    fn change_order_price(order_id: &JsString, new_price: f64) -> i8;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = createOrder)]
-    fn create_order(order_parameters: &Object) -> ReturnCode;
+    fn create_order(order_parameters: &Object) -> i8;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = deal)]
-    fn deal(order_id: &JsString, amount: u32, room_name: Option<&JsString>) -> ReturnCode;
+    fn deal(order_id: &JsString, amount: u32, room_name: Option<&JsString>) -> i8;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = extendOrder)]
-    fn extend_order(order_id: &JsString, add_amount: u32) -> ReturnCode;
+    fn extend_order(order_id: &JsString, add_amount: u32) -> i8;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "market", static_method_of = Market, js_name = getAllOrders)]
     fn get_all_orders(filter: Option<&LodashFilter>) -> Array;
@@ -106,8 +106,8 @@ pub fn calc_transaction_cost(amount: u32, room_1: &JsString, room_2: &JsString) 
 /// associated fees.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.cancelOrder)
-pub fn cancel_order(order_id: &JsString) -> ReturnCode {
-    Market::cancel_order(order_id)
+pub fn cancel_order(order_id: &JsString) -> Result<(), ErrorCode> {
+    ErrorCode::result_from_i8(Market::cancel_order(order_id))
 }
 
 /// Change the price of an existing order. If new_price is greater than old
@@ -117,16 +117,16 @@ pub fn cancel_order(order_id: &JsString) -> ReturnCode {
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.changeOrderPrice)
 ///
 /// [`MARKET_FEE`]: crate::constants::MARKET_FEE
-pub fn change_order_price(order_id: &JsString, new_price: f64) -> ReturnCode {
-    Market::change_order_price(order_id, new_price)
+pub fn change_order_price(order_id: &JsString, new_price: f64) -> Result<(), ErrorCode> {
+    ErrorCode::result_from_i8(Market::change_order_price(order_id, new_price))
 }
 
 // todo type to serialize call options into
 /// Create a new order on the market.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.createOrder)
-pub fn create_order(order_parameters: &Object) -> ReturnCode {
-    Market::create_order(order_parameters)
+pub fn create_order(order_parameters: &Object) -> Result<(), ErrorCode> {
+    ErrorCode::result_from_i8(Market::create_order(order_parameters))
 }
 
 /// Execute a trade on an order on the market. Name of a room with a
@@ -134,19 +134,23 @@ pub fn create_order(order_parameters: &Object) -> ReturnCode {
 /// order is for an account resource.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.deal)
-pub fn deal(order_id: &JsString, amount: u32, room_name: Option<RoomName>) -> ReturnCode {
-    match room_name {
+pub fn deal(
+    order_id: &JsString,
+    amount: u32,
+    room_name: Option<RoomName>,
+) -> Result<(), ErrorCode> {
+    ErrorCode::result_from_i8(match room_name {
         Some(r) => Market::deal(order_id, amount, Some(&r.into())),
         None => Market::deal(order_id, amount, None),
-    }
+    })
 }
 
 /// Adds more capacity to one of your existing orders, offering or
 /// requesting more of the resource and incurring additional fees.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.extendOrder)
-pub fn extend_order(order_id: &JsString, add_amount: u32) -> ReturnCode {
-    Market::extend_order(order_id, add_amount)
+pub fn extend_order(order_id: &JsString, add_amount: u32) -> Result<(), ErrorCode> {
+    ErrorCode::result_from_i8(Market::extend_order(order_id, add_amount))
 }
 
 /// Get all [`Order`]s on the market, with an optional

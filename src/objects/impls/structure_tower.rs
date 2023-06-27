@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ReturnCode,
+    constants::ErrorCode,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -24,17 +24,13 @@ extern "C" {
     pub fn store(this: &StructureTower) -> Store;
 
     #[wasm_bindgen(method, js_name = attack)]
-    fn attack_internal(this: &StructureTower, target: &RoomObject) -> ReturnCode;
+    fn attack_internal(this: &StructureTower, target: &RoomObject) -> i8;
 
     #[wasm_bindgen(method, js_name = heal)]
-    fn heal_internal(this: &StructureTower, target: &RoomObject) -> ReturnCode;
+    fn heal_internal(this: &StructureTower, target: &RoomObject) -> i8;
 
-    /// Repair a [`Structure`] in the room, adding hit points depending on
-    /// range.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.repair)
     #[wasm_bindgen(method, js_name = repair)]
-    pub fn repair(this: &StructureTower, target: &Structure) -> ReturnCode;
+    fn repair_internal(this: &StructureTower, target: &Structure) -> i8;
 }
 
 impl StructureTower {
@@ -45,11 +41,11 @@ impl StructureTower {
     ///
     /// [`Creep`]: crate::objects::Creep
     /// [`PowerCreep`]: crate::objects::PowerCreep
-    pub fn attack<T>(&self, target: &T) -> ReturnCode
+    pub fn attack<T>(&self, target: &T) -> Result<(), ErrorCode>
     where
         T: ?Sized + Attackable,
     {
-        Self::attack_internal(self, target.as_ref())
+        ErrorCode::result_from_i8(self.attack_internal(target.as_ref()))
     }
 
     /// Heal a [`Creep`] or [`PowerCreep`] in the room, adding hit points
@@ -59,11 +55,19 @@ impl StructureTower {
     ///
     /// [`Creep`]: crate::objects::Creep
     /// [`PowerCreep`]: crate::objects::PowerCreep
-    pub fn heal<T>(&self, target: &T) -> ReturnCode
+    pub fn heal<T>(&self, target: &T) -> Result<(), ErrorCode>
     where
         T: ?Sized + Healable,
     {
-        Self::heal_internal(self, target.as_ref())
+        ErrorCode::result_from_i8(self.heal_internal(target.as_ref()))
+    }
+
+    /// Repair a [`Structure`] in the room, adding hit points depending on
+    /// range.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.repair)
+    pub fn repair(&self, target: &Structure) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.repair_internal(target))
     }
 }
 

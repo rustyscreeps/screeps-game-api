@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ReturnCode,
+    constants::ErrorCode,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -30,7 +30,20 @@ extern "C" {
     /// [`POWER_SPAWN_ENERGY_RATIO`]:
     /// crate::constants::numbers::POWER_SPAWN_ENERGY_RATIO
     #[wasm_bindgen(method, js_name = processPower)]
-    pub fn process_power(this: &StructurePowerSpawn) -> ReturnCode;
+    fn process_power_internal(this: &StructurePowerSpawn) -> i8;
+}
+
+impl StructurePowerSpawn {
+    /// Process power, consuming 1 power and [`POWER_SPAWN_ENERGY_RATIO`] energy
+    /// and increasing your GPL by one point.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructurePowerSpawn.processPower)
+    ///
+    /// [`POWER_SPAWN_ENERGY_RATIO`]:
+    /// crate::constants::numbers::POWER_SPAWN_ENERGY_RATIO
+    pub fn process_power(&self) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.process_power_internal())
+    }
 }
 
 impl HasStore for StructurePowerSpawn {

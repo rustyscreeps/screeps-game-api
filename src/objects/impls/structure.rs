@@ -2,7 +2,7 @@ use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{ReturnCode, StructureType},
+    constants::{ErrorCode, StructureType},
     objects::RoomObject,
     prelude::*,
 };
@@ -50,7 +50,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.destroy)
     #[wasm_bindgen(method)]
-    pub fn destroy(this: &Structure) -> ReturnCode;
+    pub fn destroy(this: &Structure) -> i8;
 
     /// Determine if the structure is active and can be used at the current RCL.
     ///
@@ -63,7 +63,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.notifyWhenAttacked)
     #[wasm_bindgen(method, js_name = notifyWhenAttacked)]
-    pub fn notify_when_attacked(this: &Structure, val: bool) -> ReturnCode;
+    pub fn notify_when_attacked(this: &Structure, val: bool) -> i8;
 }
 
 impl<T> HasNativeId for T
@@ -96,15 +96,15 @@ where
         Structure::structure_type(self.as_ref())
     }
 
-    fn destroy(&self) -> ReturnCode {
-        Structure::destroy(self.as_ref())
+    fn destroy(&self) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(Structure::destroy(self.as_ref()))
     }
 
     fn is_active(&self) -> bool {
         Structure::is_active(self.as_ref())
     }
 
-    fn notify_when_attacked(&self, val: bool) -> ReturnCode {
-        Structure::notify_when_attacked(self.as_ref(), val)
+    fn notify_when_attacked(&self, val: bool) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(Structure::notify_when_attacked(self.as_ref(), val))
     }
 }

@@ -10,11 +10,23 @@ use wasm_bindgen::prelude::*;
 use crate::{
     constants::*,
     enums::*,
-    js_collections::JsObjectId,
     local::{ObjectId, Position, RawObjectId, RoomName},
     objects::*,
     pathfinder::SingleRoomCostResult,
+    prelude::*,
 };
+
+pub trait FromReturnCode {
+    type Error;
+
+    fn result_from_i8(val: i8) -> Result<(), Self::Error>;
+
+    fn try_result_from_i8(val: i8) -> Option<Result<(), Self::Error>>;
+
+    fn try_result_from_jsvalue(val: &JsValue) -> Option<Result<(), Self::Error>> {
+        val.as_f64().and_then(|f| Self::try_result_from_i8(f as i8))
+    }
+}
 
 #[enum_dispatch]
 pub trait HasHits {
@@ -292,24 +304,24 @@ pub trait SharedCreepProperties {
     /// Cancel an a successfully called creep function from earlier in the tick,
     /// with a [`JsString`] that must contain the JS version of the function
     /// name.
-    fn cancel_order(&self, target: &JsString) -> ReturnCode;
+    fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode>;
 
     /// Drop a resource on the ground from the creep's [`Store`].
-    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
+    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode>;
 
     /// Move one square in the specified direction.
-    fn move_direction(&self, direction: Direction) -> ReturnCode;
+    fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode>;
 
     /// Move the creep along a previously determined path returned from a
     /// pathfinding function, in array or serialized string form.
-    fn move_by_path(&self, path: &JsValue) -> ReturnCode;
+    fn move_by_path(&self, path: &JsValue) -> Result<(), ErrorCode>;
 
     /// Move the creep toward the specified goal, either a [`RoomPosition`] or
     /// [`RoomObject`]. Note that using this function will store data in
     /// `Memory.creeps[creep_name]` and enable the default serialization
     /// behavior of the `Memory` object, which may hamper attempts to directly
     /// use `RawMemory`.
-    fn move_to<T>(&self, target: T) -> ReturnCode
+    fn move_to<T>(&self, target: T) -> Result<(), ErrorCode>
     where
         T: HasPosition;
 
@@ -322,33 +334,43 @@ pub trait SharedCreepProperties {
         &self,
         target: T,
         options: Option<MoveToOptions<F>>,
-    ) -> ReturnCode
+    ) -> Result<(), ErrorCode>
     where
         T: HasPosition,
         F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult;
 
     /// Whether to send an email notification when this creep is attacked.
-    fn notify_when_attacked(&self, enabled: bool) -> ReturnCode;
+    fn notify_when_attacked(&self, enabled: bool) -> Result<(), ErrorCode>;
 
     /// Pick up a [`Resource`] in melee range (or at the same position as the
     /// creep).
-    fn pickup(&self, target: &Resource) -> ReturnCode;
+    fn pickup(&self, target: &Resource) -> Result<(), ErrorCode>;
 
     /// Display a string in a bubble above the creep next tick. 10 character
     /// limit.
-    fn say(&self, message: &str, public: bool) -> ReturnCode;
+    fn say(&self, message: &str, public: bool) -> Result<(), ErrorCode>;
 
     /// Immediately kill the creep.
-    fn suicide(&self) -> ReturnCode;
+    fn suicide(&self) -> Result<(), ErrorCode>;
 
     /// Transfer a resource from the creep's store to [`Structure`],
     /// [`PowerCreep`], or another [`Creep`].
-    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    fn transfer<T>(
+        &self,
+        target: &T,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> Result<(), ErrorCode>
     where
         T: Transferable;
 
     /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
-    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
+    fn withdraw<T>(
+        &self,
+        target: &T,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> Result<(), ErrorCode>
     where
         T: Withdrawable;
 }
@@ -357,11 +379,11 @@ pub trait SharedCreepProperties {
 pub trait StructureProperties {
     fn structure_type(&self) -> StructureType;
 
-    fn destroy(&self) -> ReturnCode;
+    fn destroy(&self) -> Result<(), ErrorCode>;
 
     fn is_active(&self) -> bool;
 
-    fn notify_when_attacked(&self, val: bool) -> ReturnCode;
+    fn notify_when_attacked(&self, val: bool) -> Result<(), ErrorCode>;
 }
 
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
