@@ -1,12 +1,19 @@
 Unreleased
 ==========
 
+0.13.0 (2023-06-27)
+===================
+
+### Breaking:
+
+- Remove `ReturnCode` and replace with `Result<(), ErrorCode>`
 - Change `RoomPosition` and `Position` methods `look` and `look_for` to return a `Result` instead
-  of panicking when used in room not visible in the current tick (breaking)
+  of panicking when used in room not visible in the current tick
 - Remove re-exports of `constants::find::Find` and `constants::look::Look` enums and mark them as
-  hidden from docs, since they're likely to cause confusion and not generally needed (breaking)
-- Fix js property mapping for `crate::raw_memory::ForeignSegment::id`
-- Remove `ReturnCode` and replace with `Result<(), ErrorCode>` (breaking)
+  hidden from docs, since they're likely to cause confusion and not generally needed
+
+### Additions:
+
 - Add feature `unsafe-return-conversion` that allows skipping bounds checks on return codes for all
   game functions using integer return codes, risking undefined behavior for values outside the
   expected range
@@ -14,7 +21,11 @@ Unreleased
   bounds coordinates
 - Add `Position::checked_add` and `Position::checked_add_direction`, alternatives to `Add<_>` which
   can error
-- Fixed a panic when accessing the store of a creep while spawning
+
+### Bugfixes:
+
+- Fix panic when accessing the store of a creep while spawning
+- Fix js property mapping for `crate::raw_memory::ForeignSegment::id`
 
 0.12.2 (2023-06-17)
 ===================
