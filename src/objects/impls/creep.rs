@@ -2,7 +2,7 @@ use js_sys::{Array, JsString};
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    constants::{Direction, Part, ResourceType, ReturnCode},
+    constants::{Direction, ErrorCode, Part, ResourceType},
     objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
     },
@@ -26,133 +26,312 @@ extern "C" {
     #[wasm_bindgen(method, getter = body)]
     fn body_internal(this: &Creep) -> Array;
 
+    #[wasm_bindgen(method, getter = fatigue)]
+    fn fatigue_internal(this: &Creep) -> u32;
+
+    #[wasm_bindgen(method, getter = hits)]
+    fn hits_internal(this: &Creep) -> u32;
+
+    #[wasm_bindgen(method, getter = hitsMax)]
+    fn hits_max_internal(this: &Creep) -> u32;
+
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &Creep) -> Option<JsString>;
+
+    #[wasm_bindgen(method, getter = memory)]
+    fn memory_internal(this: &Creep) -> JsValue;
+
+    #[wasm_bindgen(method, setter = memory)]
+    fn set_memory_internal(this: &Creep, val: &JsValue);
+
+    #[wasm_bindgen(method, getter = my)]
+    fn my_internal(this: &Creep) -> bool;
+
+    #[wasm_bindgen(method, getter = name)]
+    fn name_internal(this: &Creep) -> JsString;
+
+    #[wasm_bindgen(method, getter = owner)]
+    fn owner_internal(this: &Creep) -> Owner;
+
+    #[wasm_bindgen(method, getter = saying)]
+    fn saying_internal(this: &Creep) -> Option<JsString>;
+
+    #[wasm_bindgen(method, getter = spawning)]
+    fn spawning_internal(this: &Creep) -> bool;
+
+    #[wasm_bindgen(final, method, getter = store)]
+    fn store_internal(this: &Creep) -> Store;
+
+    #[wasm_bindgen(method, getter = ticksToLive)]
+    fn ticks_to_live_internal(this: &Creep) -> Option<u32>;
+
+    #[wasm_bindgen(final, method, js_name = attack)]
+    fn attack_internal(this: &Creep, target: &RoomObject) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = attackController)]
+    fn attack_controller_internal(this: &Creep, target: &StructureController) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = build)]
+    fn build_internal(this: &Creep, target: &ConstructionSite) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = cancelOrder)]
+    fn cancel_order_internal(this: &Creep, target: &JsString) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = claimController)]
+    fn claim_controller_internal(this: &Creep, target: &StructureController) -> i8;
+
+    #[cfg(feature = "thorium")]
+    #[wasm_bindgen(final, method, js_name = claimReactor)]
+    fn claim_reactor_internal(this: &Creep, target: &Reactor) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = dismantle)]
+    fn dismantle_internal(this: &Creep, target: &Structure) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = drop)]
+    fn drop_internal(this: &Creep, ty: ResourceType, amount: Option<u32>) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = generateSafeMode)]
+    fn generate_safe_mode_internal(this: &Creep, target: &StructureController) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = getActiveBodyparts)]
+    fn get_active_bodyparts_internal(this: &Creep, ty: Part) -> u8;
+
+    #[wasm_bindgen(final, method, js_name = harvest)]
+    fn harvest_internal(this: &Creep, target: &RoomObject) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = heal)]
+    fn heal_internal(this: &Creep, target: &RoomObject) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = move)]
+    fn move_direction_internal(this: &Creep, direction: Direction) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = move)]
+    fn move_pulled_by_internal(this: &Creep, target: &Creep) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = moveByPath)]
+    fn move_by_path_internal(this: &Creep, path: &JsValue) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = moveTo)]
+    fn move_to_internal(this: &Creep, target: &JsValue, options: &JsValue) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = notifyWhenAttacked)]
+    fn notify_when_attacked_internal(this: &Creep, enabled: bool) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = pickup)]
+    fn pickup_internal(this: &Creep, target: &Resource) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = pull)]
+    fn pull_internal(this: &Creep, target: &Creep) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = rangedAttack)]
+    fn ranged_attack_internal(this: &Creep, target: &RoomObject) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = rangedHeal)]
+    fn ranged_heal_internal(this: &Creep, target: &RoomObject) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = rangedMassAttack)]
+    fn ranged_mass_attack_internal(this: &Creep) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = repair)]
+    fn repair_internal(this: &Creep, target: &RoomObject) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = reserveController)]
+    fn reserve_controller_internal(this: &Creep, target: &StructureController) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = say)]
+    fn say_internal(this: &Creep, message: &str, public: bool) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = signController)]
+    fn sign_controller_internal(this: &Creep, target: &StructureController, text: &str) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = suicide)]
+    fn suicide_internal(this: &Creep) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = transfer)]
+    fn transfer_internal(
+        this: &Creep,
+        target: &RoomObject,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = upgradeController)]
+    fn upgrade_controller_internal(this: &Creep, target: &StructureController) -> i8;
+
+    #[wasm_bindgen(final, method, js_name = withdraw)]
+    fn withdraw_internal(
+        this: &Creep,
+        target: &RoomObject,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> i8;
+}
+
+impl Creep {
+    /// Retrieve a [`Vec<BodyPart>`] containing details about the creep's body
+    /// parts and boosts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.body)
+    pub fn body(&self) -> Vec<BodyPart> {
+        self.body_internal().iter().map(BodyPart::from).collect()
+    }
+
     /// The amount of fatigue the creep has. If greater than 0, it cannot move
     /// this tick without being pulled.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.fatigue)
-    #[wasm_bindgen(method, getter)]
-    pub fn fatigue(this: &Creep) -> u32;
+    pub fn fatigue(&self) -> u32 {
+        self.fatigue_internal()
+    }
 
     /// Retrieve the current hits of this creep.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.hits)
-    #[wasm_bindgen(method, getter)]
-    pub fn hits(this: &Creep) -> u32;
+    pub fn hits(&self) -> u32 {
+        self.hits_internal()
+    }
 
     /// Retrieve the maximum hits of this creep, which generally equals 50 per
     /// body part.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.hitsMax)
-    #[wasm_bindgen(method, getter = hitsMax)]
-    pub fn hits_max(this: &Creep) -> u32;
-
-    /// Object ID of the creep, which can be used to efficiently fetch a fresh
-    /// reference to the object on subsequent ticks.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
-    #[wasm_bindgen(method, getter = id)]
-    fn id_internal(this: &Creep) -> Option<JsString>;
+    pub fn hits_max(&self) -> u32 {
+        self.hits_max_internal()
+    }
 
     /// A shortcut to `Memory.creeps[creep.name]`.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.memory)
-    #[wasm_bindgen(method, getter)]
-    pub fn memory(this: &Creep) -> JsValue;
+    pub fn memory(&self) -> JsValue {
+        self.memory_internal()
+    }
 
     /// Sets a new value to `Memory.creeps[creep.name]`.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.memory)
-    #[wasm_bindgen(method, setter)]
-    pub fn set_memory(this: &Creep, val: &JsValue);
+    pub fn set_memory(&self, val: &JsValue) {
+        self.set_memory_internal(val)
+    }
 
     /// Whether this creep is owned by the player.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.my)
-    #[wasm_bindgen(method, getter)]
-    pub fn my(this: &Creep) -> bool;
-
-    #[wasm_bindgen(method, getter = name)]
-    fn name_internal(this: &Creep) -> JsString;
+    pub fn my(&self) -> bool {
+        self.my_internal()
+    }
 
     /// The [`Owner`] of this creep that contains the owner's username.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.owner)
-    #[wasm_bindgen(method, getter)]
-    pub fn owner(this: &Creep) -> Owner;
+    pub fn owner(&self) -> Owner {
+        self.owner_internal()
+    }
 
     /// What the creep said last tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.saying)
-    #[wasm_bindgen(method, getter)]
-    pub fn saying(this: &Creep) -> Option<JsString>;
+    pub fn saying(&self) -> Option<JsString> {
+        self.saying_internal()
+    }
 
     /// Whether the creep is still spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.spawning)
-    #[wasm_bindgen(method, getter)]
-    pub fn spawning(this: &Creep) -> bool;
+    pub fn spawning(&self) -> bool {
+        self.spawning_internal()
+    }
 
     /// The [`Store`] of the creep, which contains information about what
     /// resources it is it carrying.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.store)
-    #[wasm_bindgen(final, method, getter)]
-    pub fn store(this: &Creep) -> Store;
+    pub fn store(&self) -> Store {
+        self.store_internal()
+    }
 
     /// The number of ticks the creep has left to live
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.ticksToLive)
-    #[wasm_bindgen(method, getter = ticksToLive)]
-    pub fn ticks_to_live(this: &Creep) -> Option<u32>;
+    pub fn ticks_to_live(&self) -> Option<u32> {
+        self.ticks_to_live_internal()
+    }
 
-    #[wasm_bindgen(final, method, js_name = attack)]
-    fn attack_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
+    /// Attack a target in melee range using a creep's attack parts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.attack)
+    pub fn attack<T>(&self, target: &T) -> Result<(), ErrorCode>
+    where
+        T: ?Sized + Attackable,
+    {
+        ErrorCode::result_from_i8(self.attack_internal(target.as_ref()))
+    }
 
     /// Attack a [`StructureController`] in melee range using a creep's claim
     /// parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.attackController)
-    #[wasm_bindgen(final, method, js_name = attackController)]
-    pub fn attack_controller(this: &Creep, target: &StructureController) -> ReturnCode;
+    pub fn attack_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.attack_controller_internal(target))
+    }
 
     /// Use a creep's work parts to consume carried energy, putting it toward
     /// progress in a [`ConstructionSite`] in range 3.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.build)
-    #[wasm_bindgen(final, method)]
-    pub fn build(this: &Creep, target: &ConstructionSite) -> ReturnCode;
+    pub fn build(&self, target: &ConstructionSite) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.build_internal(target))
+    }
 
     /// Cancel an a successfully called creep function from earlier in the tick,
     /// with a [`JsString`] that must contain the JS version of the function
     /// name.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.cancelOrder)
-    #[wasm_bindgen(final, method, js_name = cancelOrder)]
-    pub fn cancel_order(this: &Creep, target: &JsString) -> ReturnCode;
+    pub fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.cancel_order_internal(target))
+    }
 
     /// Claim an unowned [`StructureController`] in melee range as your own
     /// using a creep's claim parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.claimController)
-    #[wasm_bindgen(final, method, js_name = claimController)]
-    pub fn claim_controller(this: &Creep, target: &StructureController) -> ReturnCode;
+    pub fn claim_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.claim_controller_internal(target))
+    }
 
     /// Claim a [`Reactor`] in melee range as your own using a creep's claim
     /// parts.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Creep.claimReactor)
     #[cfg(feature = "thorium")]
-    #[wasm_bindgen(final, method, js_name = claimReactor)]
-    pub fn claim_reactor(this: &Creep, target: &Reactor) -> ReturnCode;
+    pub fn claim_reactor(&self, target: &Reactor) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.claim_reactor_internal(target))
+    }
 
-    #[wasm_bindgen(final, method, js_name = dismantle)]
-    fn dismantle_internal(this: &Creep, target: &Structure) -> ReturnCode;
+    /// Dismantle a [`Structure`] in melee range, removing [`DISMANTLE_POWER`]
+    /// hits per effective work part, giving the creep energy equivalent to half
+    /// of the cost to repair the same hits. Can only be used against types
+    /// of structures that can be constructed; if
+    /// [`StructureType::construction_cost`] is `None`, dismantling is
+    /// impossible.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.dismantle)
+    ///
+    /// [`DISMANTLE_POWER`]: crate::constants::DISMANTLE_POWER
+    /// [`StructureType::construction_cost`]: crate::constants::StructureType::construction_cost
+    pub fn dismantle<T>(&self, target: &T) -> Result<(), ErrorCode>
+    where
+        T: ?Sized + Dismantleable,
+    {
+        ErrorCode::result_from_i8(self.dismantle_internal(target.as_ref()))
+    }
 
     /// Drop a resource on the ground from the creep's [`Store`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.drop)
-    #[wasm_bindgen(final, method)]
-    pub fn drop(this: &Creep, ty: ResourceType, amount: Option<u32>) -> ReturnCode;
+    pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.drop_internal(ty, amount))
+    }
 
     /// Consume [`ResourceType::Ghodium`] (in the amount of [`SAFE_MODE_COST`])
     /// from the creep's [`Store`] to add a safe mode activation to a
@@ -161,146 +340,310 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.generateSafeMode)
     ///
     /// [`SAFE_MODE_COST`]: crate::constants::SAFE_MODE_COST
-    #[wasm_bindgen(final, method, js_name = generateSafeMode)]
-    pub fn generate_safe_mode(this: &Creep, target: &StructureController) -> ReturnCode;
+    pub fn generate_safe_mode(&self, target: &StructureController) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.generate_safe_mode_internal(target))
+    }
 
     /// Get the number of parts of the given type the creep has in its body,
     /// excluding fully damaged parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.getActiveBodyparts)
-    #[wasm_bindgen(final, method, js_name = getActiveBodyparts)]
-    pub fn get_active_bodyparts(this: &Creep, ty: Part) -> u8;
+    pub fn get_active_bodyparts(&self, ty: Part) -> u8 {
+        self.get_active_bodyparts_internal(ty)
+    }
 
-    #[wasm_bindgen(final, method, js_name = harvest)]
-    fn harvest_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
+    /// Harvest from a [`Source`], [`Mineral`], or [`Deposit`] in melee range.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.harvest)
+    ///
+    /// [`Source`]: crate::objects::Source
+    /// [`Mineral`]: crate::objects::Mineral
+    /// [`Deposit`]: crate::objects::Deposit
+    pub fn harvest<T>(&self, target: &T) -> Result<(), ErrorCode>
+    where
+        T: ?Sized + Harvestable,
+    {
+        ErrorCode::result_from_i8(self.harvest_internal(target.as_ref()))
+    }
 
-    #[wasm_bindgen(final, method, js_name = heal)]
-    fn heal_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
+    /// Heal a [`Creep`] or [`PowerCreep`] in melee range, including itself.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.heal)
+    ///
+    /// [`PowerCreep`]: crate::objects::PowerCreep
+    pub fn heal<T>(&self, target: &T) -> Result<(), ErrorCode>
+    where
+        T: ?Sized + Healable,
+    {
+        ErrorCode::result_from_i8(self.heal_internal(target.as_ref()))
+    }
 
     /// Move one square in the specified direction.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.move)
-    #[wasm_bindgen(final, method, js_name = move)]
-    pub fn move_direction(this: &Creep, direction: Direction) -> ReturnCode;
+    pub fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.move_direction_internal(direction))
+    }
 
     /// Accept an attempt by another creep to pull this one.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.move)
-    #[wasm_bindgen(final, method, js_name = move)]
-    pub fn move_pulled_by(this: &Creep, target: &Creep) -> ReturnCode;
+    pub fn move_pulled_by(&self, target: &Creep) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.move_pulled_by_internal(target))
+    }
 
     /// Move the creep along a previously determined path returned from a
     /// pathfinding function, in array or serialized string form.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.moveByPath)
-    #[wasm_bindgen(final, method, js_name = moveByPath)]
-    pub fn move_by_path(this: &Creep, path: &JsValue) -> ReturnCode;
-
-    /// Move the creep toward the specified goal, either a [`RoomPosition`] or
-    /// [`RoomObject`]. Note that using this function will store data in
-    /// `Memory.creeps[creep_name]` and enable the default serialization
-    /// behavior of the `Memory` object, which may hamper attempts to directly
-    /// use `RawMemory`.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.moveByPath)
-    #[wasm_bindgen(final, method, js_name = moveTo)]
-    fn move_to_internal(this: &Creep, target: &JsValue, options: &JsValue) -> ReturnCode;
+    pub fn move_by_path(&self, path: &JsValue) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.move_by_path_internal(path))
+    }
 
     /// Whether to send an email notification when this creep is attacked.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.notifyWhenAttacked)
-    #[wasm_bindgen(final, method, js_name = notifyWhenAttacked)]
-    pub fn notify_when_attacked(this: &Creep, enabled: bool) -> ReturnCode;
+    pub fn notify_when_attacked(&self, enabled: bool) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.notify_when_attacked_internal(enabled))
+    }
 
     /// Pick up a [`Resource`] in melee range (or at the same position as the
     /// creep).
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.pickup)
-    #[wasm_bindgen(final, method)]
-    pub fn pickup(this: &Creep, target: &Resource) -> ReturnCode;
+    pub fn pickup(&self, target: &Resource) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.pickup_internal(target))
+    }
 
     /// Help another creep to move by pulling, if the second creep accepts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.pull)
-    #[wasm_bindgen(final, method)]
-    pub fn pull(this: &Creep, target: &Creep) -> ReturnCode;
+    pub fn pull(&self, target: &Creep) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.pull_internal(target))
+    }
 
-    #[wasm_bindgen(final, method, js_name = rangedAttack)]
-    fn ranged_attack_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
+    /// Attack a target in range 3 using a creep's ranged attack parts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedAttack)
+    pub fn ranged_attack<T>(&self, target: &T) -> Result<(), ErrorCode>
+    where
+        T: ?Sized + Attackable,
+    {
+        ErrorCode::result_from_i8(self.ranged_attack_internal(target.as_ref()))
+    }
 
-    #[wasm_bindgen(final, method, js_name = rangedHeal)]
-    fn ranged_heal_internal(this: &Creep, target: &RoomObject) -> ReturnCode;
+    /// Heal a target in range 3 using a creep's heal parts.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedHeal)
+    pub fn ranged_heal<T>(&self, target: &T) -> Result<(), ErrorCode>
+    where
+        T: ?Sized + Healable,
+    {
+        ErrorCode::result_from_i8(self.ranged_heal_internal(target.as_ref()))
+    }
 
     /// Attack all enemy targets in range using a creep's ranged attack parts,
     /// with lower damage depending on range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedMassAttack)
-    #[wasm_bindgen(final, method, js_name = rangedMassAttack)]
-    pub fn ranged_mass_attack(this: &Creep) -> ReturnCode;
+    pub fn ranged_mass_attack(&self) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.ranged_mass_attack_internal())
+    }
 
     /// Repair a target in range 3 using carried energy and the creep's work
     /// parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.repair)
-    #[wasm_bindgen(final, method)]
-    pub fn repair(this: &Creep, target: &RoomObject) -> ReturnCode;
+    pub fn repair(&self, target: &RoomObject) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.repair_internal(target))
+    }
 
     /// Reserve an unowned [`StructureController`] in melee range using a
     /// creep's claim parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.reserveController)
-    #[wasm_bindgen(final, method, js_name = reserveController)]
-    pub fn reserve_controller(this: &Creep, target: &StructureController) -> ReturnCode;
+    pub fn reserve_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.reserve_controller_internal(target))
+    }
 
     /// Display a string in a bubble above the creep next tick. 10 character
     /// limit.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.say)
-    #[wasm_bindgen(final, method)]
-    pub fn say(this: &Creep, message: &str, public: bool) -> ReturnCode;
+    pub fn say(&self, message: &str, public: bool) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.say_internal(message, public))
+    }
 
     /// Add (or remove, using an empty string) a sign to a
     /// [`StructureController`] in melee range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.signController)
-    #[wasm_bindgen(final, method, js_name = signController)]
-    pub fn sign_controller(this: &Creep, target: &StructureController, text: &str) -> ReturnCode;
+    pub fn sign_controller(
+        &self,
+        target: &StructureController,
+        text: &str,
+    ) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.sign_controller_internal(target, text))
+    }
 
     /// Immediately kill the creep.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.suicide)
-    #[wasm_bindgen(final, method)]
-    pub fn suicide(this: &Creep) -> ReturnCode;
-
-    /// Transfer a resource from the creep's store to [`Structure`],
-    /// [`PowerCreep`], or another [`Creep`].
+    /// Actions taken by the creep earlier in the tick may be cancelled.
     ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.transfer)
-    #[wasm_bindgen(final, method, js_name = transfer)]
-    fn transfer_internal(
-        this: &Creep,
-        target: &RoomObject,
-        ty: ResourceType,
-        amount: Option<u32>,
-    ) -> ReturnCode;
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.suicide)
+    pub fn suicide(&self) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.suicide_internal())
+    }
 
     /// Upgrade a [`StructureController`] in range 3 using carried energy and
     /// the creep's work parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.upgradeController)
-    #[wasm_bindgen(final, method, js_name = upgradeController)]
-    pub fn upgrade_controller(this: &Creep, target: &StructureController) -> ReturnCode;
+    pub fn upgrade_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.upgrade_controller_internal(target))
+    }
+}
 
-    /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.withdraw)
-    #[wasm_bindgen(final, method, js_name = withdraw)]
-    fn withdraw_internal(
-        this: &Creep,
-        target: &RoomObject,
+impl JsCollectionFromValue for Creep {
+    fn from_value(val: JsValue) -> Self {
+        val.unchecked_into()
+    }
+}
+
+impl HasHits for Creep {
+    fn hits(&self) -> u32 {
+        self.hits()
+    }
+
+    fn hits_max(&self) -> u32 {
+        self.hits_max()
+    }
+}
+
+impl MaybeHasNativeId for Creep {
+    fn try_native_id(&self) -> Option<JsString> {
+        self.id_internal()
+    }
+}
+
+impl HasStore for Creep {
+    fn store(&self) -> Store {
+        self.store()
+    }
+}
+
+impl SharedCreepProperties for Creep {
+    fn memory(&self) -> JsValue {
+        self.memory()
+    }
+
+    fn set_memory(&self, val: &JsValue) {
+        self.set_memory(val)
+    }
+
+    fn my(&self) -> bool {
+        self.my()
+    }
+
+    fn name(&self) -> String {
+        self.name_internal().into()
+    }
+
+    fn owner(&self) -> Owner {
+        self.owner()
+    }
+
+    fn saying(&self) -> Option<JsString> {
+        self.saying()
+    }
+
+    fn ticks_to_live(&self) -> Option<u32> {
+        self.ticks_to_live()
+    }
+
+    fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode> {
+        self.cancel_order(target)
+    }
+
+    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode> {
+        self.drop(ty, amount)
+    }
+
+    fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode> {
+        self.move_direction(direction)
+    }
+
+    fn move_by_path(&self, path: &JsValue) -> Result<(), ErrorCode> {
+        self.move_by_path(path)
+    }
+
+    fn move_to<T>(&self, target: T) -> Result<(), ErrorCode>
+    where
+        T: HasPosition,
+    {
+        let target: RoomPosition = target.pos().into();
+        ErrorCode::result_from_i8(self.move_to_internal(&target, &JsValue::UNDEFINED))
+    }
+
+    fn move_to_with_options<T, F>(
+        &self,
+        target: T,
+        options: Option<MoveToOptions<F>>,
+    ) -> Result<(), ErrorCode>
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
+    {
+        let target: RoomPosition = target.pos().into();
+
+        if let Some(options) = options {
+            options.into_js_options(|js_options| {
+                ErrorCode::result_from_i8(self.move_to_internal(&target, js_options))
+            })
+        } else {
+            ErrorCode::result_from_i8(self.move_to_internal(&target, &JsValue::UNDEFINED))
+        }
+    }
+
+    fn notify_when_attacked(&self, enabled: bool) -> Result<(), ErrorCode> {
+        self.notify_when_attacked(enabled)
+    }
+
+    fn pickup(&self, target: &Resource) -> Result<(), ErrorCode> {
+        self.pickup(target)
+    }
+
+    fn say(&self, message: &str, public: bool) -> Result<(), ErrorCode> {
+        self.say(message, public)
+    }
+
+    fn suicide(&self) -> Result<(), ErrorCode> {
+        self.suicide()
+    }
+
+    fn transfer<T>(
+        &self,
+        target: &T,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> ReturnCode;
+    ) -> Result<(), ErrorCode>
+    where
+        T: Transferable,
+    {
+        ErrorCode::result_from_i8(self.transfer_internal(target.as_ref(), ty, amount))
+    }
+
+    fn withdraw<T>(
+        &self,
+        target: &T,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> Result<(), ErrorCode>
+    where
+        T: Withdrawable,
+    {
+        ErrorCode::result_from_i8(self.withdraw_internal(target.as_ref(), ty, amount))
+    }
 }
 
 #[wasm_bindgen]
@@ -319,214 +662,4 @@ extern "C" {
 
     #[wasm_bindgen(method, getter)]
     pub fn hits(this: &BodyPart) -> u32;
-}
-
-impl Creep {
-    /// Retrieve a [`Vec<BodyPart>`] containing details about the creep's body
-    /// parts and boosts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.body)
-    pub fn body(&self) -> Vec<BodyPart> {
-        self.body_internal().iter().map(BodyPart::from).collect()
-    }
-
-    /// Attack a target in melee range using a creep's attack parts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.attack)
-    pub fn attack<T>(&self, target: &T) -> ReturnCode
-    where
-        T: ?Sized + Attackable,
-    {
-        Self::attack_internal(self, target.as_ref())
-    }
-
-    /// Dismantle a [`Structure`] in melee range, removing [`DISMANTLE_POWER`]
-    /// hits per effective work part, giving the creep energy equivalent to half
-    /// of the cost to repair the same hits. Can only be used against types
-    /// of structures that can be constructed; if
-    /// [`StructureType::construction_cost`] is `None`, dismantling is
-    /// impossible.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.dismantle)
-    ///
-    /// [`DISMANTLE_POWER`]: crate::constants::DISMANTLE_POWER
-    /// [`StructureType::construction_cost`]: crate::constants::StructureType::construction_cost
-    pub fn dismantle<T>(&self, target: &T) -> ReturnCode
-    where
-        T: ?Sized + Dismantleable,
-    {
-        Self::dismantle_internal(self, target.as_ref())
-    }
-
-    /// Harvest from a [`Source`], [`Mineral`], or [`Deposit`] in melee range.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.harvest)
-    ///
-    /// [`Source`]: crate::objects::Source
-    /// [`Mineral`]: crate::objects::Mineral
-    /// [`Deposit`]: crate::objects::Deposit
-    pub fn harvest<T>(&self, target: &T) -> ReturnCode
-    where
-        T: ?Sized + Harvestable,
-    {
-        Self::harvest_internal(self, target.as_ref())
-    }
-
-    /// Heal a [`Creep`] or [`PowerCreep`] in melee range, including itself.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.heal)
-    ///
-    /// [`PowerCreep`]: crate::objects::PowerCreep
-    pub fn heal<T>(&self, target: &T) -> ReturnCode
-    where
-        T: ?Sized + Healable,
-    {
-        Self::heal_internal(self, target.as_ref())
-    }
-
-    /// Attack a target in range 3 using a creep's ranged attack parts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedAttack)
-    pub fn ranged_attack<T>(&self, target: &T) -> ReturnCode
-    where
-        T: ?Sized + Attackable,
-    {
-        Self::ranged_attack_internal(self, target.as_ref())
-    }
-
-    /// Heal a target in range 3 using a creep's heal parts.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedHeal)
-    pub fn ranged_heal<T>(&self, target: &T) -> ReturnCode
-    where
-        T: ?Sized + Healable,
-    {
-        Self::ranged_heal_internal(self, target.as_ref())
-    }
-}
-
-impl JsCollectionFromValue for Creep {
-    fn from_value(val: JsValue) -> Self {
-        val.unchecked_into()
-    }
-}
-
-impl HasHits for Creep {
-    fn hits(&self) -> u32 {
-        Self::hits(self)
-    }
-
-    fn hits_max(&self) -> u32 {
-        Self::hits_max(self)
-    }
-}
-
-impl MaybeHasNativeId for Creep {
-    fn try_native_id(&self) -> Option<JsString> {
-        Self::id_internal(self)
-    }
-}
-
-impl HasStore for Creep {
-    fn store(&self) -> Store {
-        Self::store(self)
-    }
-}
-
-impl SharedCreepProperties for Creep {
-    fn memory(&self) -> JsValue {
-        Self::memory(self)
-    }
-
-    fn set_memory(&self, val: &JsValue) {
-        Self::set_memory(self, val)
-    }
-
-    fn my(&self) -> bool {
-        Self::my(self)
-    }
-
-    fn name(&self) -> String {
-        Self::name_internal(self).into()
-    }
-
-    fn owner(&self) -> Owner {
-        Self::owner(self)
-    }
-
-    fn saying(&self) -> Option<JsString> {
-        Self::saying(self)
-    }
-
-    fn ticks_to_live(&self) -> Option<u32> {
-        Self::ticks_to_live(self)
-    }
-
-    fn cancel_order(&self, target: &JsString) -> ReturnCode {
-        Self::cancel_order(self, target)
-    }
-
-    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> ReturnCode {
-        Self::drop(self, ty, amount)
-    }
-
-    fn move_direction(&self, direction: Direction) -> ReturnCode {
-        Self::move_direction(self, direction)
-    }
-
-    fn move_by_path(&self, path: &JsValue) -> ReturnCode {
-        Self::move_by_path(self, path)
-    }
-
-    fn move_to<T>(&self, target: T) -> ReturnCode
-    where
-        T: HasPosition,
-    {
-        let target: RoomPosition = target.pos().into();
-        Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
-    }
-
-    fn move_to_with_options<T, F>(&self, target: T, options: Option<MoveToOptions<F>>) -> ReturnCode
-    where
-        T: HasPosition,
-        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
-    {
-        let target: RoomPosition = target.pos().into();
-
-        if let Some(options) = options {
-            options.into_js_options(|js_options| Self::move_to_internal(self, &target, js_options))
-        } else {
-            Self::move_to_internal(self, &target, &JsValue::UNDEFINED)
-        }
-    }
-
-    fn notify_when_attacked(&self, enabled: bool) -> ReturnCode {
-        Self::notify_when_attacked(self, enabled)
-    }
-
-    fn pickup(&self, target: &Resource) -> ReturnCode {
-        Self::pickup(self, target)
-    }
-
-    fn say(&self, message: &str, public: bool) -> ReturnCode {
-        Self::say(self, message, public)
-    }
-
-    fn suicide(&self) -> ReturnCode {
-        Self::suicide(self)
-    }
-
-    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
-    where
-        T: Transferable,
-    {
-        Self::transfer_internal(self, target.as_ref(), ty, amount)
-    }
-
-    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> ReturnCode
-    where
-        T: Withdrawable,
-    {
-        Self::withdraw_internal(self, target.as_ref(), ty, amount)
-    }
 }

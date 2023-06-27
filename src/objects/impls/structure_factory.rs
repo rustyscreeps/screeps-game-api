@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{ResourceType, ReturnCode},
+    constants::{ErrorCode, ResourceType},
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -41,8 +41,14 @@ extern "C" {
     /// Produce a commodity in the factory.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureFactory.produce)
-    #[wasm_bindgen(method)]
-    pub fn produce(this: &StructureFactory, ty: ResourceType) -> ReturnCode;
+    #[wasm_bindgen(method, js_name = produce)]
+    fn produce_internal(this: &StructureFactory, ty: ResourceType) -> i8;
+}
+
+impl StructureFactory {
+    pub fn produce(&self, ty: ResourceType) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.produce_internal(ty))
+    }
 }
 
 impl HasCooldown for StructureFactory {

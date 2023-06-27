@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ReturnCode,
+    constants::ErrorCode,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -30,6 +30,15 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureLink) -> Store;
 
+    #[wasm_bindgen(method, js_name = transferEnergy)]
+    fn transfer_energy_internal(
+        this: &StructureLink,
+        target: &StructureLink,
+        amount: Option<u32>,
+    ) -> i8;
+}
+
+impl StructureLink {
     /// Transfer energy from this [`StructureLink`] to another, losing
     /// [`LINK_LOSS_RATIO`] percent of the energt and incurring a cooldown of
     /// [`LINK_COOLDOWN`] tick per range to the target.
@@ -38,12 +47,13 @@ extern "C" {
     ///
     /// [`LINK_LOSS_RATIO`]: crate::constants::LINK_LOSS_RATIO
     /// [`LINK_COOLDOWN`]: crate::constants::LINK_COOLDOWN
-    #[wasm_bindgen(method, js_name = transferEnergy)]
     pub fn transfer_energy(
-        this: &StructureLink,
+        &self,
         target: &StructureLink,
         amount: Option<u32>,
-    ) -> ReturnCode;
+    ) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.transfer_energy_internal(target, amount))
+    }
 }
 
 impl HasCooldown for StructureLink {

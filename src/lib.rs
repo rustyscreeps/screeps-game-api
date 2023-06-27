@@ -27,6 +27,12 @@
 //! Enables the thorium resource and reactor object, introduced for Screeps
 //! Seasonal's fifth season.
 //!
+//! ## `unsafe-return-conversion`
+//!
+//! Enables return code conversion from game functions that presumes all return
+//! code values are in the expected ranges skipping checks, and risks undefined
+//! behavior if they are not.
+//!
 //! ## `mmo`
 //!
 //! Enables the `generate-pixel` and `inter-shard-memory` features, which are

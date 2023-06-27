@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ReturnCode,
+    constants::ErrorCode,
     objects::{OwnedStructure, RoomObject, Structure},
     prelude::*,
 };
@@ -33,12 +33,18 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToDecay)]
     pub fn ticks_to_decay(this: &StructureRampart) -> u32;
 
+    #[wasm_bindgen(method, js_name = setPublic)]
+    fn set_public_internal(this: &StructureRampart, val: bool) -> i8;
+}
+
+impl StructureRampart {
     /// Set whether [`StructureRampart`] is public, allowing hostile creeps to
     /// walk on it.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureRampart.setPublic)
-    #[wasm_bindgen(method, js_name = setPublic)]
-    pub fn set_public(this: &StructureRampart, val: bool) -> ReturnCode;
+    pub fn set_public(&self, public: bool) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.set_public_internal(public))
+    }
 }
 
 impl CanDecay for StructureRampart {

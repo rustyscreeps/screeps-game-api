@@ -40,7 +40,7 @@ pub mod creep {
             MAX_CREEP_SIZE, RANGED_HEAL_POWER, REPAIR_COST, REPAIR_POWER, SPAWN_RENEW_RATIO,
             UPGRADE_CONTROLLER_POWER,
         },
-        small_enums::{Part, ReturnCode},
+        small_enums::Part,
     };
 }
 

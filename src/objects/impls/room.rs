@@ -12,7 +12,7 @@ use wasm_bindgen::{prelude::*, JsCast};
 use crate::{
     constants::{
         find::*, look::*, Color, Direction, ErrorCode, ExitDirection, PowerType, ResourceType,
-        ReturnCode, StructureType,
+        StructureType,
     },
     local::{LodashFilter, RoomName},
     objects::*,
@@ -94,26 +94,14 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Room, js_name = deserializePath)]
     fn deserialize_path_internal(path: &JsString) -> Array;
 
-    /// Creates a construction site at given coordinates within this room. If
-    /// it's a [`StructureSpawn`], a name can optionally be assigned for the
-    /// structure.
-    ///
-    /// See [`RoomPosition::create_construction_site`] to create at a specified
-    /// position.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.createConstructionSite)
-    ///
-    /// [`StructureSpawn`]: crate::objects::StructureSpawn
-    /// [`RoomPosition::create_construction_site`]:
-    /// crate::objects::RoomPosition::create_construction_site
     #[wasm_bindgen(final, method, js_name = createConstructionSite)]
-    pub fn create_construction_site(
+    fn create_construction_site_internal(
         this: &Room,
         x: u8,
         y: u8,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> ReturnCode;
+    ) -> i8;
 
     #[wasm_bindgen(final, method, js_name = createFlag)]
     fn create_flag_internal(
@@ -231,6 +219,28 @@ impl Room {
 
     pub fn visual(&self) -> RoomVisual {
         RoomVisual::new(Some(self.name()))
+    }
+
+    /// Creates a construction site at given coordinates within this room. If
+    /// it's a [`StructureSpawn`], a name can optionally be assigned for the
+    /// structure.
+    ///
+    /// See [`RoomPosition::create_construction_site`] to create at a specified
+    /// position.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.createConstructionSite)
+    ///
+    /// [`StructureSpawn`]: crate::objects::StructureSpawn
+    /// [`RoomPosition::create_construction_site`]:
+    /// crate::objects::RoomPosition::create_construction_site
+    pub fn create_construction_site(
+        &self,
+        x: u8,
+        y: u8,
+        ty: StructureType,
+        name: Option<&JsString>,
+    ) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.create_construction_site_internal(x, y, ty, name))
     }
 
     /// Creates a [`Flag`] at given coordinates within this room. The name of

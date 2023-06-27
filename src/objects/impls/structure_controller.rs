@@ -2,8 +2,9 @@ use js_sys::{Date, JsString};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ReturnCode,
+    constants::ErrorCode,
     objects::{OwnedStructure, RoomObject, Structure},
+    prelude::*,
 };
 
 #[wasm_bindgen]
@@ -100,13 +101,23 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.activateSafeMode)
     #[wasm_bindgen(method, js_name = activateSafeMode)]
-    pub fn activate_safe_mode(this: &StructureController) -> ReturnCode;
+    fn activate_safe_mode_internal(this: &StructureController) -> i8;
 
     /// Relinquish ownership of the controller and its room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.unclaim)
-    #[wasm_bindgen(method)]
-    pub fn unclaim(this: &StructureController) -> ReturnCode;
+    #[wasm_bindgen(method, js_name = unclaim)]
+    fn unclaim_internal(this: &StructureController) -> i8;
+}
+
+impl StructureController {
+    pub fn activate_safe_mode(&self) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.activate_safe_mode_internal())
+    }
+
+    pub fn unclaim(&self) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.unclaim_internal())
+    }
 }
 
 #[wasm_bindgen]

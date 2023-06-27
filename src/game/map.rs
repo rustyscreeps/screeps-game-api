@@ -1,7 +1,7 @@
 //! Game map related functionality.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-map)
-use std::convert::{TryFrom, TryInto};
+use std::convert::TryInto;
 
 use enum_iterator::Sequence;
 use js_sys::{Array, JsString, Object};
@@ -10,10 +10,10 @@ use serde::Deserialize;
 use wasm_bindgen::{prelude::*, JsCast};
 
 use crate::{
-    constants::{Direction, ExitDirection, ReturnCode},
-    js_collections::JsHashMap,
+    constants::{Direction, ErrorCode, ExitDirection},
     local::RoomName,
     objects::RoomTerrain,
+    prelude::*,
 };
 
 #[wasm_bindgen]
@@ -25,7 +25,7 @@ extern "C" {
     fn describe_exits(room_name: &JsString) -> Object;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = findExit)]
-    fn find_exit(from_room: &JsString, to_room: &JsString, options: &JsValue) -> i32;
+    fn find_exit(from_room: &JsString, to_room: &JsString, options: &JsValue) -> i8;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = findRoute)]
     fn find_route(from_room: &JsString, to_room: &JsString, options: &JsValue) -> JsValue;
@@ -290,7 +290,7 @@ pub fn find_route<F>(
     from: RoomName,
     to: RoomName,
     options: Option<FindRouteOptions<F>>,
-) -> Result<Vec<RouteStep>, ReturnCode>
+) -> Result<Vec<RouteStep>, ErrorCode>
 where
     F: FnMut(RoomName, RoomName) -> f64,
 {
@@ -313,10 +313,12 @@ where
 
         Ok(steps)
     } else {
-        let return_code =
-            ReturnCode::try_from(result).expect("expected return code for pathing failure");
-
-        Err(return_code)
+        // SAFETY: can never be a 0 return from the find_route API function
+        Err(unsafe {
+            ErrorCode::try_result_from_jsvalue(&result)
+                .expect("expected return code for pathing failure")
+                .unwrap_err_unchecked()
+        })
     }
 }
 
@@ -329,7 +331,7 @@ pub fn find_exit<F>(
     from: RoomName,
     to: RoomName,
     options: Option<FindRouteOptions<F>>,
-) -> Result<ExitDirection, ReturnCode>
+) -> Result<ExitDirection, ErrorCode>
 where
     F: FnMut(RoomName, RoomName) -> f64,
 {
@@ -343,8 +345,10 @@ where
     };
 
     if result >= 0 {
-        Ok(ExitDirection::from_i32(result).expect("expected exit direction for pathing"))
+        Ok(ExitDirection::from_i8(result).expect("expected exit direction for pathing"))
     } else {
-        Err(ReturnCode::from_i32(result).expect("expected return code for pathing failure"))
+        // SAFETY: can never be an `Ok()` return from `result_from_i8` because
+        // non-negative values are handled by the first branch above
+        Err(unsafe { ErrorCode::result_from_i8(result).unwrap_err_unchecked() })
     }
 }

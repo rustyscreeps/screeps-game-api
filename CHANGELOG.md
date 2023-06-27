@@ -5,6 +5,11 @@ Unreleased
   of panicking when used in room not visible in the current tick (breaking)
 - Remove re-exports of `constants::find::Find` and `constants::look::Look` enums and mark them as
   hidden from docs, since they're likely to cause confusion and not generally needed (breaking)
+- Fix js property mapping for `crate::raw_memory::ForeignSegment::id`
+- Remove `ReturnCode` and replace with `Result<(), ErrorCode>` (breaking)
+- Add feature `unsafe-return-conversion` that allows skipping bounds checks on return codes for all
+  game functions using integer return codes, risking undefined behavior for values outside the
+  expected range.
 
 0.12.2 (2023-06-17)
 ===================

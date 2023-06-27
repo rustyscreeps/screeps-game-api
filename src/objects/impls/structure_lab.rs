@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{ResourceType, ReturnCode},
+    constants::{ErrorCode, ResourceType},
     objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -37,6 +37,25 @@ extern "C" {
     #[wasm_bindgen(method, getter = mineralType)]
     pub fn mineral_type(this: &StructureLab) -> Option<ResourceType>;
 
+    #[wasm_bindgen(method, js_name = boostCreep)]
+    fn boost_creep_internal(this: &StructureLab, creep: &Creep, body_part_count: Option<u32>)
+        -> i8;
+
+    #[wasm_bindgen(method, js_name = reverseReaction)]
+    fn reverse_reaction_internal(
+        this: &StructureLab,
+        lab1: &StructureLab,
+        lab2: &StructureLab,
+    ) -> i8;
+
+    #[wasm_bindgen(method, js_name = runReaction)]
+    fn run_reaction_internal(this: &StructureLab, lab1: &StructureLab, lab2: &StructureLab) -> i8;
+
+    #[wasm_bindgen(method, js_name = unboostCreep)]
+    fn unboost_creep_internal(this: &StructureLab, creep: &Creep) -> i8;
+}
+
+impl StructureLab {
     /// Boost a [`Creep`] in melee range, consuming [`LAB_BOOST_ENERGY`] energy
     /// and [`LAB_BOOST_MINERAL`] of the boost compound from the
     /// [`StructureLab::store`] per boosted body part.
@@ -45,34 +64,33 @@ extern "C" {
     ///
     /// [`LAB_BOOST_ENERGY`]: crate::constants::numbers::LAB_BOOST_ENERGY
     /// [`LAB_BOOST_MINERAL`]: crate::constants::numbers::LAB_BOOST_MINERAL
-    #[wasm_bindgen(method, js_name = boostCreep)]
     pub fn boost_creep(
-        this: &StructureLab,
+        &self,
         creep: &Creep,
         body_part_count: Option<u32>,
-    ) -> ReturnCode;
+    ) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.boost_creep_internal(creep, body_part_count))
+    }
 
     /// Reverse a reaction, splitting the compound in this [`StructureLab`] into
     /// its components in two other labs.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.reverseReaction)
-    #[wasm_bindgen(method, js_name = reverseReaction)]
     pub fn reverse_reaction(
-        this: &StructureLab,
+        &self,
         lab1: &StructureLab,
         lab2: &StructureLab,
-    ) -> ReturnCode;
+    ) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.reverse_reaction_internal(lab1, lab2))
+    }
 
     /// Run a reaction, combining components from two other [`StructureLab`]s
     /// into a new compound in this lab.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.runReaction)
-    #[wasm_bindgen(method, js_name = runReaction)]
-    pub fn run_reaction(
-        this: &StructureLab,
-        lab1: &StructureLab,
-        lab2: &StructureLab,
-    ) -> ReturnCode;
+    pub fn run_reaction(&self, lab1: &StructureLab, lab2: &StructureLab) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.run_reaction_internal(lab1, lab2))
+    }
 
     /// Unboost a [`Creep`], removing all boosts from its body and dropping
     /// [`LAB_UNBOOST_MINERAL`] per body part on the ground, with a cooldown
@@ -81,8 +99,9 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.unboostCreep)
     ///
     /// [`LAB_UNBOOST_ENERGY`]: crate::constants::numbers::LAB_UNBOOST_ENERGY
-    #[wasm_bindgen(method, js_name = unboostCreep)]
-    pub fn unboost_creep(this: &StructureLab, creep: &Creep) -> ReturnCode;
+    pub fn unboost_creep(&self, creep: &Creep) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.unboost_creep_internal(creep))
+    }
 }
 
 impl HasCooldown for StructureLab {

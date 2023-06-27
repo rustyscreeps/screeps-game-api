@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ReturnCode,
+    constants::ErrorCode,
     objects::{OwnedStructure, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -32,13 +32,17 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureNuker) -> Store;
 
-    /// Transfer energy from this [`StructureNuker`] to another, losing
-    /// [`LINK_LOSS_RATIO`] and incurring a cooldown of [`LINK_COOLDOWN`] per
-    /// range to the target.
+    #[wasm_bindgen(method, js_name = launchNuke)]
+    fn launch_nuke_internal(this: &StructureNuker, target: &RoomPosition) -> i8;
+}
+
+impl StructureNuker {
+    /// Launch a nuke at a target [`RoomPosition`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureNuker.launchNuke)
-    #[wasm_bindgen(method, js_name = launchNuke)]
-    pub fn launch_nuke(this: &StructureNuker, target: &RoomPosition) -> ReturnCode;
+    pub fn launch_nuke(&self, target: &RoomPosition) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.launch_nuke_internal(target))
+    }
 }
 
 impl HasCooldown for StructureNuker {
