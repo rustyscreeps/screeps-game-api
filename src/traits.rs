@@ -54,7 +54,6 @@ pub trait HasNativeId {
 }
 
 pub trait MaybeHasNativeId {
-
     fn try_native_id(&self) -> Option<JsString>;
 }
 
@@ -356,12 +355,22 @@ pub trait SharedCreepProperties {
 
     /// Transfer a resource from the creep's store to [`Structure`],
     /// [`PowerCreep`], or another [`Creep`].
-    fn transfer<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode>
+    fn transfer<T>(
+        &self,
+        target: &T,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> Result<(), ErrorCode>
     where
         T: Transferable;
 
     /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
-    fn withdraw<T>(&self, target: &T, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode>
+    fn withdraw<T>(
+        &self,
+        target: &T,
+        ty: ResourceType,
+        amount: Option<u32>,
+    ) -> Result<(), ErrorCode>
     where
         T: Withdrawable;
 }
