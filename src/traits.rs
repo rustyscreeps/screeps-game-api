@@ -362,7 +362,7 @@ pub trait SharedCreepProperties {
         amount: Option<u32>,
     ) -> Result<(), ErrorCode>
     where
-        T: Transferable;
+        T: Transferable + ?Sized;
 
     /// Withdraw a resource from a [`Structure`], [`Tombstone`], or [`Ruin`].
     fn withdraw<T>(
@@ -372,7 +372,7 @@ pub trait SharedCreepProperties {
         amount: Option<u32>,
     ) -> Result<(), ErrorCode>
     where
-        T: Withdrawable;
+        T: Withdrawable + ?Sized;
 }
 
 #[enum_dispatch]
