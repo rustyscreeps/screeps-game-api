@@ -436,7 +436,7 @@ impl SharedCreepProperties for PowerCreep {
         amount: Option<u32>,
     ) -> Result<(), ErrorCode>
     where
-        T: Transferable,
+        T: Transferable + ?Sized,
     {
         ErrorCode::result_from_i8(self.transfer_internal(target.as_ref(), ty, amount))
     }
@@ -448,7 +448,7 @@ impl SharedCreepProperties for PowerCreep {
         amount: Option<u32>,
     ) -> Result<(), ErrorCode>
     where
-        T: Withdrawable,
+        T: Withdrawable + ?Sized,
     {
         ErrorCode::result_from_i8(self.withdraw_internal(target.as_ref(), ty, amount))
     }

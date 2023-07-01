@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Add `?Sized` to `SharedCreepProperties::withdraw` and `transfer` methods to allow dynamic use
+
 0.13.0 (2023-06-27)
 ===================
 
