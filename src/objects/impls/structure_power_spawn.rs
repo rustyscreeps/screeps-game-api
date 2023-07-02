@@ -39,8 +39,7 @@ impl StructurePowerSpawn {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructurePowerSpawn.processPower)
     ///
-    /// [`POWER_SPAWN_ENERGY_RATIO`]:
-    /// crate::constants::numbers::POWER_SPAWN_ENERGY_RATIO
+    /// [`POWER_SPAWN_ENERGY_RATIO`]: crate::constants::POWER_SPAWN_ENERGY_RATIO
     pub fn process_power(&self) -> Result<(), ErrorCode> {
         ErrorCode::result_from_i8(self.process_power_internal())
     }

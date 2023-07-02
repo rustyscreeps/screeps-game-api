@@ -62,8 +62,8 @@ impl StructureLab {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.boostCreep)
     ///
-    /// [`LAB_BOOST_ENERGY`]: crate::constants::numbers::LAB_BOOST_ENERGY
-    /// [`LAB_BOOST_MINERAL`]: crate::constants::numbers::LAB_BOOST_MINERAL
+    /// [`LAB_BOOST_ENERGY`]: crate::constants::LAB_BOOST_ENERGY
+    /// [`LAB_BOOST_MINERAL`]: crate::constants::LAB_BOOST_MINERAL
     pub fn boost_creep(
         &self,
         creep: &Creep,
@@ -98,7 +98,7 @@ impl StructureLab {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.unboostCreep)
     ///
-    /// [`LAB_UNBOOST_ENERGY`]: crate::constants::numbers::LAB_UNBOOST_ENERGY
+    /// [`LAB_UNBOOST_MINERAL`]: crate::constants::LAB_UNBOOST_MINERAL
     pub fn unboost_creep(&self, creep: &Creep) -> Result<(), ErrorCode> {
         ErrorCode::result_from_i8(self.unboost_creep_internal(creep))
     }

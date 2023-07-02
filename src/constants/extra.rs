@@ -1,8 +1,12 @@
 //! Additional constants representing internal game mechanics that aren't
 //! included in the game's constants
 
-/// Percentage of energy spent on construction that is list if the construction
-/// site is destroyed by being stepped on by a hostile creep.
+/// Percentage of energy spent on construction that is left in a [`Resource`] if
+/// the construction site is destroyed by [`ConstructionSite::remove`] or being
+/// stepped on by a hostile creep
+///
+/// [`Resource`]: crate::objects::Resource
+/// [`ConstructionSite::remove`]: crate::objects::ConstructionSite::remove
 pub const CONSTRUCTION_SITE_STOMP_RATIO: f32 = 0.5;
 
 /// Maximum length of signs on controllers.
@@ -23,11 +27,6 @@ pub const CPU_SET_SHARD_LIMITS_COOLDOWN: u32 = 12 * 3600 * 1000;
 /// [`cpu::tick_limit`]: crate::game::cpu::tick_limit
 pub const CPU_TICK_LIMIT_MAX: u32 = 500;
 
-/// The cost of a single intent, i.e., an action that changes the game state, in
-/// the fraction of CPU. Note that 1 CPU is 1 ms of execution time on the
-/// official server.
-pub const INTENT_CPU_COST: f64 = 0.2;
-
 /// Hits per creep body part.
 pub const CREEP_HITS_PER_PART: u32 = 100;
 
@@ -39,6 +38,11 @@ pub const CREEP_SAY_MAX_LENGTH: u32 = 10;
 
 /// Maximum length of names of flag objects.
 pub const FLAG_NAME_MAX_LENGTH: u32 = 60;
+
+/// The cost of a single intent, i.e., an action that changes the game state, in
+/// the fraction of CPU. Note that 1 CPU is 1 ms of execution time on the
+/// official server.
+pub const INTENT_CPU_COST: f64 = 0.2;
 
 /// Maximum size in UTF-16 units of data allowed to be sent to
 /// [`inter_shard_memory::set_local`]
