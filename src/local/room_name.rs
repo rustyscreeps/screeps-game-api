@@ -156,6 +156,19 @@ impl RoomName {
         self.packed
     }
 
+    /// Adds an `(x, y)` pair to this room's name.
+    ///
+    /// # Errors
+    /// Returns an error if the coordinates are outside of the valid room name
+    /// bounds.
+    ///
+    /// For a panicking variant of this function, see [`RoomName::add`].
+    pub fn checked_add(&self, offset: (i32, i32)) -> Result<RoomName, RoomNameParseError> {
+        let (x1, y1) = (self.x_coord(), self.y_coord());
+        let (x2, y2) = offset;
+        Self::from_coords(x1 + x2, y1 + y2)
+    }
+
     /// Converts this RoomName into an efficient, stack-based string.
     ///
     /// This is equivalent to [`ToString::to_string`], but involves no
