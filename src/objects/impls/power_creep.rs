@@ -153,7 +153,7 @@ impl PowerCreep {
     }
 
     /// Current level of the power creep, which can be increased with
-    /// [`PowerCreep::upgrade`] if you have unspent GPL.
+    /// [`AccountPowerCreep::upgrade`] if you have unspent GPL.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.level)
     pub fn level(&self) -> u32 {
@@ -222,6 +222,8 @@ impl PowerCreep {
     /// renewed at a [`StructurePowerSpawn`] or [`StructurePowerBank`]
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.ticksToLive)
+    ///
+    /// [`StructurePowerBank`]: crate::objects::StructurePowerBank
     pub fn ticks_to_live(&self) -> Option<u32> {
         self.ticks_to_live_internal()
     }
@@ -284,6 +286,8 @@ impl PowerCreep {
     /// [`StructurePowerBank`] in melee range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.renew)
+    ///
+    /// [`StructurePowerBank`]: crate::objects::StructurePowerBank
     pub fn renew(&self, target: &RoomObject) -> Result<(), ErrorCode> {
         ErrorCode::result_from_i8(self.renew_internal(target))
     }
@@ -507,8 +511,8 @@ impl AccountPowerCreep {
 
     // todo should be u64 but seems to panic at the moment, follow up
     /// The timestamp, in milliseconds since epoch, when the [`PowerCreep`] will
-    /// be permanently deleted due to [`PowerCreep::delete`]. Can be cancelled
-    /// with the same function until then.
+    /// be permanently deleted due to [`AccountPowerCreep::delete`]. Can be
+    /// cancelled with the same function until then.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.deleteTime)
     pub fn delete_time(&self) -> Option<f64> {
@@ -516,7 +520,7 @@ impl AccountPowerCreep {
     }
 
     /// Current level of the power creep, which can be increased with
-    /// [`PowerCreep::upgrade`] if you have unspent GPL.
+    /// [`AccountPowerCreep::upgrade`] if you have unspent GPL.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.level)
     pub fn level(&self) -> u32 {

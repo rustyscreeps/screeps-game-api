@@ -219,6 +219,7 @@ impl RoomPosition {
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomPosition.createConstructionSite)
     ///
     /// [`ConstructionSite`]: crate::objects::ConstructionSite
+    /// [`StructureSpawn`]: crate::objects::StructureSpawn
     pub fn create_construction_site(
         &self,
         ty: StructureType,

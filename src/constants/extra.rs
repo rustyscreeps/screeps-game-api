@@ -1,8 +1,12 @@
 //! Additional constants representing internal game mechanics that aren't
 //! included in the game's constants
 
-/// Percentage of energy spent on construction that is left in a [`Resource`] if the construction
-/// site is destroyed by [`ConstructionSite::remove`] or being stepped on by a hostile creep
+/// Percentage of energy spent on construction that is left in a [`Resource`] if
+/// the construction site is destroyed by [`ConstructionSite::remove`] or being
+/// stepped on by a hostile creep
+///
+/// [`Resource`]: crate::objects::Resource
+/// [`ConstructionSite::remove`]: crate::objects::ConstructionSite::remove
 pub const CONSTRUCTION_SITE_STOMP_RATIO: f32 = 0.5;
 
 /// Maximum length of signs on controllers.
