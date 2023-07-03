@@ -27,9 +27,11 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn get(this: &RoomTerrain, x: u8, y: u8) -> Terrain;
 
+    // when called without a destination array, can't fail - no error code possible
     #[wasm_bindgen(method, js_name = getRawBuffer)]
-    fn get_raw_buffer_internal(this: &RoomTerrain) -> JsValue;
+    fn get_raw_buffer_internal(this: &RoomTerrain) -> Uint8Array;
 
+    // and when called with a destination, it can only ever return a return code int
     #[wasm_bindgen(method, js_name = getRawBuffer)]
     fn get_raw_buffer_to_array_internal(this: &RoomTerrain, destination: &Uint8Array) -> i8;
 }
@@ -39,17 +41,15 @@ impl RoomTerrain {
     /// terrain.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
-    pub fn get_raw_buffer(&self) -> Result<Uint8Array, ErrorCode> {
-        // the only possible error for this function is invalid args, so simply return
-        // that directly instead of further checks if it's not a Uint8Array
+    #[inline]
+    pub fn get_raw_buffer(&self) -> Uint8Array {
         self.get_raw_buffer_internal()
-            .dyn_into()
-            .map_err(|_| ErrorCode::InvalidArgs)
     }
 
     /// Copy the data about the room's terrain into an existing [`Uint8Array`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.getRawBuffer)
+    #[inline]
     pub fn get_raw_buffer_to_array(&self, destination: &Uint8Array) -> Result<(), ErrorCode> {
         ErrorCode::result_from_i8(self.get_raw_buffer_to_array_internal(destination))
     }

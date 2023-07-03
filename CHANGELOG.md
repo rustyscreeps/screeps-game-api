@@ -2,6 +2,8 @@ Unreleased
 ==========
 
 - Add `?Sized` to `SharedCreepProperties::withdraw` and `transfer` methods to allow dynamic use
+- Revert `RoomTerrain::get_raw_buffer` return type from `Result<Uint8Array, ErrorCode>` back to
+  pre-0.13 `Uint8Array`, since it can't error when called with no destination (breaking)
 
 0.13.0 (2023-06-27)
 ===================
