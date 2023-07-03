@@ -130,7 +130,7 @@ impl StructureType {
                 _ => 1,
             },
             Tower => match current_rcl {
-                0 | 1 | 2 => 0,
+                0..=2 => 0,
                 3 | 4 => 1,
                 5 | 6 => 2,
                 7 => 3,

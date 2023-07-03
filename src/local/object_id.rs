@@ -69,10 +69,7 @@ pub struct ObjectId<T> {
 impl<T> Copy for ObjectId<T> {}
 impl<T> Clone for ObjectId<T> {
     fn clone(&self) -> ObjectId<T> {
-        ObjectId {
-            raw: self.raw,
-            phantom: PhantomData,
-        }
+        *self
     }
 }
 impl<T> fmt::Debug for ObjectId<T> {
