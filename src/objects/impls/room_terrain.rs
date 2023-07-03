@@ -31,8 +31,7 @@ extern "C" {
     #[wasm_bindgen(method, js_name = getRawBuffer)]
     fn get_raw_buffer_internal(this: &RoomTerrain) -> Uint8Array;
 
-    // and when run with a destination array, it can only ever return a return code
-    // int
+    // and when called with a destination, it can only ever return a return code int
     #[wasm_bindgen(method, js_name = getRawBuffer)]
     fn get_raw_buffer_to_array_internal(this: &RoomTerrain, destination: &Uint8Array) -> i8;
 }
