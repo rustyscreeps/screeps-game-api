@@ -530,10 +530,11 @@ mod test {
                     (
                         RoomCoordinate::unchecked_new(5),
                         RoomCoordinate::unchecked_new(5),
-                        #[cfg(feature = "sim")]
-                        "sim",
-                        #[cfg(not(feature = "sim"))]
-                        "W127N127",
+                        if cfg!(feature = "sim") {
+                            "sim"
+                        } else {
+                            "W127N127"
+                        },
                     ),
                 ),
             ]

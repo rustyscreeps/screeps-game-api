@@ -558,10 +558,11 @@ mod test {
     #[test]
     fn test_string_equality() {
         use super::RoomName;
-        #[cfg(feature = "sim")]
-        let top_left_room = "sim";
-        #[cfg(not(feature = "sim"))]
-        let top_left_room = "W127N127";
+        let top_left_room = if cfg!(feature = "sim") {
+            "sim"
+        } else {
+            "W127N127"
+        };
         let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5", top_left_room];
         for room_name in room_names {
             assert_eq!(room_name, RoomName::new(room_name).unwrap());
