@@ -332,7 +332,7 @@ pub enum Part {
 impl Part {
     /// Translates the `BODYPART_COST` constant.
     #[inline]
-    pub fn cost(self) -> u32 {
+    pub const fn cost(self) -> u32 {
         match self {
             Part::Move => 50,
             Part::Work => 100,
@@ -393,7 +393,7 @@ impl Density {
     /// Translates the `MINERAL_DENSITY` constant, the amount of mineral
     /// generated for each density level
     #[inline]
-    pub fn amount(self) -> u32 {
+    pub const fn amount(self) -> u32 {
         match self {
             Density::Low => 15_000,
             Density::Moderate => 35_000,
@@ -420,7 +420,7 @@ impl Density {
     /// [source]: https://github.com/screeps/engine/blob/c0cfac8f746f26c660501686f16a1fcdb0396d8d/src/processor/intents/minerals/tick.js#L19
     /// [`MINERAL_DENSITY_CHANGE`]: crate::constants::MINERAL_DENSITY_CHANGE
     #[inline]
-    pub fn probability(self) -> f32 {
+    pub const fn probability(self) -> f32 {
         match self {
             Density::Low => 0.1,
             Density::Moderate => 0.5,

@@ -96,7 +96,7 @@ pub mod season_2 {
     ///
     /// [`SymbolDecoder`]: crate::objects::SymbolDecoder
     #[inline]
-    pub fn controller_level_score_multiplers(rcl: u32) -> u32 {
+    pub const fn controller_level_score_multiplers(rcl: u32) -> u32 {
         match rcl {
             4 => 3,
             5 => 9,
@@ -135,7 +135,7 @@ pub mod season_5 {
         ///
         /// [`Thorium`]: crate::constants::ResourceType::Thorium
         #[inline]
-        pub fn thorium_amount(self) -> u32 {
+        pub const fn thorium_amount(self) -> u32 {
             match self {
                 Density::Low => 10_000,
                 Density::Moderate => 22_000,

@@ -37,7 +37,7 @@ impl From<ParseIntError> for RawObjectIdParseError {
 }
 
 impl RawObjectIdParseError {
-    pub(crate) fn value_too_large(val: u128) -> Self {
+    pub(crate) const fn value_too_large(val: u128) -> Self {
         RawObjectIdParseError::LargeValue(val)
     }
 }

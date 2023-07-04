@@ -155,7 +155,7 @@ mod test {
                     let x = corner_x + x;
                     let y = corner_y + y;
 
-                    if x < -6400 || x > 6399 || y < -6400 || y > 6399 {
+                    if !(-6400..=6399).contains(&x) || !(-6400..=6399).contains(&y) {
                         assert_eq!(
                             Err(WorldPositionOutOfBoundsError(x, y)),
                             Position::checked_from_world_coords(x, y)

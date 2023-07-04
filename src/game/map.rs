@@ -240,7 +240,7 @@ where
 
 impl Default for FindRouteOptions<fn(RoomName, RoomName) -> f64> {
     fn default() -> Self {
-        fn room_cost(_to_room: RoomName, _from_room: RoomName) -> f64 {
+        const fn room_cost(_to_room: RoomName, _from_room: RoomName) -> f64 {
             1.0
         }
 

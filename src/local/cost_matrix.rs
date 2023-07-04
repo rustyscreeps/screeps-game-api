@@ -25,7 +25,7 @@ impl Default for LocalCostMatrix {
 
 impl LocalCostMatrix {
     #[inline]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         LocalCostMatrix {
             bits: [0; ROOM_AREA],
         }
@@ -47,7 +47,7 @@ impl LocalCostMatrix {
         self[xy]
     }
 
-    pub fn get_bits(&self) -> &[u8; ROOM_AREA] {
+    pub const fn get_bits(&self) -> &[u8; ROOM_AREA] {
         &self.bits
     }
 

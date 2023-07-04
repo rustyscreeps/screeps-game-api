@@ -140,7 +140,7 @@ impl RawObjectId {
     ///
     /// The input to this function is the bytes representing the up-to-24 hex
     /// digits in the object id.
-    pub fn from_packed(packed: u128) -> Self {
+    pub const fn from_packed(packed: u128) -> Self {
         RawObjectId { packed }
     }
 
