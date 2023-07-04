@@ -43,7 +43,7 @@ pub fn progress_total() -> f64 {
 /// given Global Power Level. The resulting value for your current level, added
 /// to your [`progress`], would calculate your total lifetime power
 /// points.
-pub fn total_for_level(level: u32) -> u64 {
+pub const fn total_for_level(level: u32) -> u64 {
     // formula from
     // https://github.com/screeps/engine/blob/6d498f2f0db4e0744fa6bf8563836d36b49b6a29/src/game/game.js#L120
     (level as u64).pow(POWER_LEVEL_POW) * POWER_LEVEL_MULTIPLY as u64

@@ -18,7 +18,7 @@ impl fmt::Display for OutOfBoundsError {
 impl Error for OutOfBoundsError {}
 
 #[inline]
-pub fn xy_to_linear_index(xy: RoomXY) -> usize {
+pub const fn xy_to_linear_index(xy: RoomXY) -> usize {
     ((xy.x.0 as usize) * (ROOM_SIZE as usize)) + (xy.y.0 as usize)
 }
 
@@ -60,7 +60,7 @@ impl RoomCoordinate {
         RoomCoordinate(coord)
     }
 
-    pub fn u8(self) -> u8 {
+    pub const fn u8(self) -> u8 {
         self.0
     }
 }

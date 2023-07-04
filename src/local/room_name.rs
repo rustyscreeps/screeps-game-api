@@ -113,7 +113,7 @@ impl RoomName {
     }
 
     #[inline]
-    pub(crate) fn from_packed(packed: u16) -> Self {
+    pub(crate) const fn from_packed(packed: u16) -> Self {
         RoomName { packed }
     }
 
@@ -145,7 +145,7 @@ impl RoomName {
     ///
     /// For `Wxx` rooms, returns `-xx - 1`. For `Exx` rooms, returns `xx`.
     #[inline]
-    pub(super) fn x_coord(&self) -> i32 {
+    pub(super) const fn x_coord(&self) -> i32 {
         ((self.packed >> 8) & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
@@ -153,12 +153,12 @@ impl RoomName {
     ///
     /// For `Nyy` rooms, returns `-yy - 1`. For `Syy` rooms, returns `yy`.
     #[inline]
-    pub(super) fn y_coord(&self) -> i32 {
+    pub(super) const fn y_coord(&self) -> i32 {
         (self.packed & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
     #[inline]
-    pub(super) fn packed_repr(&self) -> u16 {
+    pub(super) const fn packed_repr(&self) -> u16 {
         self.packed
     }
 
