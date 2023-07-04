@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+- Change `game::gpl::total_for_level` to return `u128` to allow for valid values to be calculated
+  for all possible input `u32` values (breaking)
+
 0.14.0 (2023-07-03)
 ===================
 
