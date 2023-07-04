@@ -20,7 +20,7 @@ pub struct FactoryRecipe {
 impl ResourceType {
     /// Translates the `REACTIONS` constant.
     #[inline]
-    pub fn reaction_components(self) -> Option<[ResourceType; 2]> {
+    pub const fn reaction_components(self) -> Option<[ResourceType; 2]> {
         use ResourceType::*;
         let components = match self {
             // OH: O + H,
@@ -99,7 +99,7 @@ impl ResourceType {
 
     /// Translates the `REACTION_TIME` constant.
     #[inline]
-    pub fn reaction_time(self) -> Option<u32> {
+    pub const fn reaction_time(self) -> Option<u32> {
         use ResourceType::*;
         let time = match self {
             // these comments copied directly from JavaScript 'constants.js' file.

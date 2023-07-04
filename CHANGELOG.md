@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Add `const` to most functions representing constants, so they can be evaluated during compile
+
 0.14.0 (2023-07-03)
 ===================
 

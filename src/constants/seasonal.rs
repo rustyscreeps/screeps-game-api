@@ -96,7 +96,7 @@ pub mod season_2 {
     ///
     /// [`SymbolDecoder`]: crate::objects::SymbolDecoder
     #[inline]
-    pub fn controller_level_score_multiplers(rcl: u32) -> u32 {
+    pub const fn controller_level_score_multiplers(rcl: u32) -> u32 {
         match rcl {
             4 => 3,
             5 => 9,
@@ -135,7 +135,7 @@ pub mod season_5 {
         ///
         /// [`Thorium`]: crate::constants::ResourceType::Thorium
         #[inline]
-        pub fn thorium_amount(self) -> u32 {
+        pub const fn thorium_amount(self) -> u32 {
             match self {
                 Density::Low => 10_000,
                 Density::Moderate => 22_000,
@@ -149,7 +149,7 @@ pub mod season_5 {
     /// [`Thorium`] is present on the same tile.
     ///
     /// [`Thorium`]: crate::constants::ResourceType::Thorium
-    pub fn thorium_decay(thorium_amount: u32) -> u32 {
+    pub const fn thorium_decay(thorium_amount: u32) -> u32 {
         // Math.floor(Math.log10([total Thorium on the tile]))
         (thorium_amount as f64).log10().floor() as u32
     }
@@ -159,7 +159,7 @@ pub mod season_5 {
     ///
     /// [`Thorium`]: crate::constants::ResourceType::Thorium
     /// [`Reactor`]: crate::objects::Reactor
-    pub fn reactor_points_per_tick(continuous_work_ticks: u32) -> u32 {
+    pub const fn reactor_points_per_tick(continuous_work_ticks: u32) -> u32 {
         // 1 + Math.floor(Math.log10([ticks of continuous operating]))
         1 + (continuous_work_ticks as f64).log10().floor() as u32
     }
