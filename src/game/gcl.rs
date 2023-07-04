@@ -56,7 +56,7 @@ mod test {
     use super::total_for_level;
 
     #[test]
-    fn level_formula() { 
+    fn level_formula() {
         // the sanity of these values has been validated up to GCL 33
         // on the MMO game server
         assert_approx_eq!(total_for_level(1), 0.);

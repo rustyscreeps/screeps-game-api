@@ -54,7 +54,7 @@ mod test {
     use super::total_for_level;
 
     #[test]
-    fn level_formula() { 
+    fn level_formula() {
         // the sanity of these values has been validated up to GCL 33
         // on the MMO game server
         assert_eq!(total_for_level(0), 0);
@@ -83,8 +83,14 @@ mod test {
         assert_eq!(total_for_level(135_818_791), 18_446_743_988_701_681_000);
         // must be u128 return to fit this one!
         assert_eq!(total_for_level(135_818_792), 18_446_744_260_339_264_000);
-        assert_eq!(total_for_level(1_000_000_000), 1_000_000_000_000_000_000_000);
-        assert_eq!(total_for_level(4_000_000_000), 16_000_000_000_000_000_000_000);
+        assert_eq!(
+            total_for_level(1_000_000_000),
+            1_000_000_000_000_000_000_000
+        );
+        assert_eq!(
+            total_for_level(4_000_000_000),
+            16_000_000_000_000_000_000_000
+        );
         assert_eq!(total_for_level(u32::MAX), 18_446_744_065_119_617_025_000);
     }
 }
