@@ -61,20 +61,22 @@ impl fmt::Display for RoomName {
         let x_coord = self.x_coord();
         let y_coord = self.y_coord();
 
+        #[cfg(feature = "sim")]
         if self.packed == 0 {
             write!(f, "sim")?;
-        } else {
-            if x_coord >= 0 {
-                write!(f, "E{x_coord}")?;
-            } else {
-                write!(f, "W{}", -x_coord - 1)?;
-            }
+            return Ok(());
+        }
 
-            if y_coord >= 0 {
-                write!(f, "S{y_coord}")?;
-            } else {
-                write!(f, "N{}", -y_coord - 1)?;
-            }
+        if x_coord >= 0 {
+            write!(f, "E{}", x_coord)?;
+        } else {
+            write!(f, "W{}", -x_coord - 1)?;
+        }
+
+        if y_coord >= 0 {
+            write!(f, "S{}", y_coord)?;
+        } else {
+            write!(f, "N{}", -y_coord - 1)?;
         }
 
         Ok(())
@@ -328,6 +330,7 @@ impl FromStr for RoomName {
 }
 
 fn parse_to_coords(s: &str) -> Result<(i32, i32), ()> {
+    #[cfg(feature = "sim")]
     if s == "sim" {
         return Ok((-HALF_WORLD_SIZE, -HALF_WORLD_SIZE));
     }
@@ -555,7 +558,11 @@ mod test {
     #[test]
     fn test_string_equality() {
         use super::RoomName;
-        let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5", "sim"];
+        #[cfg(feature = "sim")]
+        let top_left_room = "sim";
+        #[cfg(not(feature = "sim"))]
+        let top_left_room = "W127N127";
+        let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5", top_left_room];
         for room_name in room_names {
             assert_eq!(room_name, RoomName::new(room_name).unwrap());
             assert_eq!(RoomName::new(room_name).unwrap(), room_name);
