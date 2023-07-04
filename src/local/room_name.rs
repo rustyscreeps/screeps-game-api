@@ -56,13 +56,14 @@ impl fmt::Display for RoomName {
     /// Resulting string will be `(E|W)[0-9]+(N|S)[0-9]+`, and will result
     /// in the same RoomName if passed into [`RoomName::new`].
     ///
+    /// If the `sim` feature is enabled, the result may also be `sim`.
+    ///
     /// [`RoomName::new`]: struct.RoomName.html#method.new
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let x_coord = self.x_coord();
         let y_coord = self.y_coord();
 
-        #[cfg(feature = "sim")]
-        if self.packed == 0 {
+        if cfg!(feature = "sim") && self.packed == 0 {
             write!(f, "sim")?;
             return Ok(());
         }
@@ -99,7 +100,9 @@ impl RoomName {
     /// invalid room name.
     ///
     /// The expected format can be represented by the regex
-    /// `[ewEW][0-9]+[nsNS][0-9]+`.
+    /// `[ewEW][0-9]+[nsNS][0-9]+`. If the `sim` feature is enabled, `sim` is
+    /// also valid and uses the packed position of W127N127 (0), matching the
+    /// game's internal implementation of the sim room's packed positions.
     #[inline]
     pub fn new<T>(x: &T) -> Result<Self, RoomNameParseError>
     where
@@ -330,8 +333,7 @@ impl FromStr for RoomName {
 }
 
 fn parse_to_coords(s: &str) -> Result<(i32, i32), ()> {
-    #[cfg(feature = "sim")]
-    if s == "sim" {
+    if cfg!(feature = "sim") && s == "sim" {
         return Ok((-HALF_WORLD_SIZE, -HALF_WORLD_SIZE));
     }
 
