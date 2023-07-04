@@ -56,7 +56,8 @@ impl fmt::Display for RoomName {
     /// Resulting string will be `(E|W)[0-9]+(N|S)[0-9]+`, and will result
     /// in the same RoomName if passed into [`RoomName::new`].
     ///
-    /// If the `sim` feature is enabled, the result may also be `sim`.
+    /// If the `sim` feature is enabled, the room corresponding to W127N127
+    /// outputs `sim` instead.
     ///
     /// [`RoomName::new`]: struct.RoomName.html#method.new
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
