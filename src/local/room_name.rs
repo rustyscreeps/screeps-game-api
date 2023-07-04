@@ -56,25 +56,29 @@ impl fmt::Display for RoomName {
     /// Resulting string will be `(E|W)[0-9]+(N|S)[0-9]+`, and will result
     /// in the same RoomName if passed into [`RoomName::new`].
     ///
+    /// If the `sim` feature is enabled, the room corresponding to W127N127
+    /// outputs `sim` instead.
+    ///
     /// [`RoomName::new`]: struct.RoomName.html#method.new
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let x_coord = self.x_coord();
         let y_coord = self.y_coord();
 
-        if self.packed == 0 {
+        if cfg!(feature = "sim") && self.packed == 0 {
             write!(f, "sim")?;
-        } else {
-            if x_coord >= 0 {
-                write!(f, "E{x_coord}")?;
-            } else {
-                write!(f, "W{}", -x_coord - 1)?;
-            }
+            return Ok(());
+        }
 
-            if y_coord >= 0 {
-                write!(f, "S{y_coord}")?;
-            } else {
-                write!(f, "N{}", -y_coord - 1)?;
-            }
+        if x_coord >= 0 {
+            write!(f, "E{}", x_coord)?;
+        } else {
+            write!(f, "W{}", -x_coord - 1)?;
+        }
+
+        if y_coord >= 0 {
+            write!(f, "S{}", y_coord)?;
+        } else {
+            write!(f, "N{}", -y_coord - 1)?;
         }
 
         Ok(())
@@ -97,7 +101,9 @@ impl RoomName {
     /// invalid room name.
     ///
     /// The expected format can be represented by the regex
-    /// `[ewEW][0-9]+[nsNS][0-9]+`.
+    /// `[ewEW][0-9]+[nsNS][0-9]+`. If the `sim` feature is enabled, `sim` is
+    /// also valid and uses the packed position of W127N127 (0), matching the
+    /// game's internal implementation of the sim room's packed positions.
     #[inline]
     pub fn new<T>(x: &T) -> Result<Self, RoomNameParseError>
     where
@@ -328,7 +334,7 @@ impl FromStr for RoomName {
 }
 
 fn parse_to_coords(s: &str) -> Result<(i32, i32), ()> {
-    if s == "sim" {
+    if cfg!(feature = "sim") && s == "sim" {
         return Ok((-HALF_WORLD_SIZE, -HALF_WORLD_SIZE));
     }
 
@@ -555,7 +561,12 @@ mod test {
     #[test]
     fn test_string_equality() {
         use super::RoomName;
-        let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5", "sim"];
+        let top_left_room = if cfg!(feature = "sim") {
+            "sim"
+        } else {
+            "W127N127"
+        };
+        let room_names = vec!["E21N4", "w6S42", "W17s5", "e2n5", top_left_room];
         for room_name in room_names {
             assert_eq!(room_name, RoomName::new(room_name).unwrap());
             assert_eq!(RoomName::new(room_name).unwrap(), room_name);

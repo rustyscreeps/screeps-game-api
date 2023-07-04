@@ -2,6 +2,13 @@
 //!
 //! # Cargo Features
 //!
+//! ## `sim`
+//!
+//! Enables special-case handling of the unique room name present in the
+//! simulator - must be enabled to build code that is compatible with that
+//! environment. If this is enabled, the top-left valid room coordinate has the
+//! name `sim`, otherwise it's named `W127N127`.
+//!
 //! ## `generate-pixel`
 //!
 //! Enables the function to generate pixels, which is only present on the

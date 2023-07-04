@@ -516,19 +516,25 @@ mod test {
                     ),
                 ),
                 (
-                    1285u32,
-                    (
-                        RoomCoordinate::unchecked_new(5),
-                        RoomCoordinate::unchecked_new(5),
-                        "sim",
-                    ),
-                ),
-                (
                     2021333800u32,
                     (
                         RoomCoordinate::unchecked_new(27),
                         RoomCoordinate::unchecked_new(40),
                         "W7N4",
+                    ),
+                ),
+                // this one is in the top left room - which is either sim, or W127N127 if the
+                // sim position overrides are inactive
+                (
+                    1285u32,
+                    (
+                        RoomCoordinate::unchecked_new(5),
+                        RoomCoordinate::unchecked_new(5),
+                        if cfg!(feature = "sim") {
+                            "sim"
+                        } else {
+                            "W127N127"
+                        },
                     ),
                 ),
             ]

@@ -4,6 +4,8 @@ Unreleased
 - Add `?Sized` to `SharedCreepProperties::withdraw` and `transfer` methods to allow dynamic use
 - Revert `RoomTerrain::get_raw_buffer` return type from `Result<Uint8Array, ErrorCode>` back to
   pre-0.13 `Uint8Array`, since it can't error when called with no destination (breaking)
+- Add `sim` feature which enables the sim-related special case name of `sim` for a room at the
+  coordinates of W127N127, allowing for bots to be built to not include that support
 
 0.13.0 (2023-06-27)
 ===================
