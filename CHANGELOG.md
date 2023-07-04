@@ -14,6 +14,8 @@ Unreleased
 ### Additions:
 
 - Add `?Sized` to `SharedCreepProperties::withdraw` and `transfer` methods to allow dynamic use
+- Add `RoomName::checked_add` to allow a math to be done on the position of the room on the map
+  without the potential to panic that the `ops::Add` implementation has
 
 0.13.0 (2023-06-27)
 ===================
