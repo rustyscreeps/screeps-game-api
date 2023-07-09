@@ -265,7 +265,7 @@ impl Position {
     ///
     /// Non-public as this doesn't check the bounds for any of these values.
     #[inline]
-    fn from_coords_and_world_coords_adjusted(x: u8, y: u8, room_x: u32, room_y: u32) -> Self {
+    const fn from_coords_and_world_coords_adjusted(x: u8, y: u8, room_x: u32, room_y: u32) -> Self {
         Position {
             packed: (room_x << 24) | (room_y << 16) | ((x as u32) << 8) | (y as u32),
         }
@@ -276,14 +276,14 @@ impl Position {
     ///
     /// Non-public as this doesn't check the bounds for any of these values.
     #[inline]
-    fn from_coords_adjusted_and_room_packed(x: u8, y: u8, room_repr_packed: u16) -> Self {
+    const fn from_coords_adjusted_and_room_packed(x: u8, y: u8, room_repr_packed: u16) -> Self {
         Position {
             packed: ((room_repr_packed as u32) << 16) | ((x as u32) << 8) | (y as u32),
         }
     }
 
     #[inline]
-    pub fn packed_repr(self) -> u32 {
+    pub const fn packed_repr(self) -> u32 {
         self.packed
     }
 

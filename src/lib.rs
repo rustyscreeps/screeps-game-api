@@ -63,6 +63,12 @@
 // to build locally with doc_cfg enabled, run:
 // `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+// warn when functions can safely be given the const keyword, see
+// https://rust-lang.github.io/rust-clippy/master/index.html#/missing_const_for_fn
+// unfortunately this warns for bindgen-attached functions so we can't leave it
+// enabled
+
+// #![warn(clippy::missing_const_for_fn)]
 
 pub mod console;
 pub mod constants;

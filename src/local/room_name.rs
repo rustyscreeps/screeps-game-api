@@ -113,7 +113,7 @@ impl RoomName {
     }
 
     #[inline]
-    pub(crate) fn from_packed(packed: u16) -> Self {
+    pub(crate) const fn from_packed(packed: u16) -> Self {
         RoomName { packed }
     }
 
@@ -145,7 +145,7 @@ impl RoomName {
     ///
     /// For `Wxx` rooms, returns `-xx - 1`. For `Exx` rooms, returns `xx`.
     #[inline]
-    pub(super) fn x_coord(&self) -> i32 {
+    pub(super) const fn x_coord(&self) -> i32 {
         ((self.packed >> 8) & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
@@ -153,13 +153,28 @@ impl RoomName {
     ///
     /// For `Nyy` rooms, returns `-yy - 1`. For `Syy` rooms, returns `yy`.
     #[inline]
-    pub(super) fn y_coord(&self) -> i32 {
+    pub(super) const fn y_coord(&self) -> i32 {
         (self.packed & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
     #[inline]
-    pub(super) fn packed_repr(&self) -> u16 {
+    pub(super) const fn packed_repr(&self) -> u16 {
         self.packed
+    }
+
+    /// Adds an `(x, y)` pair to this room's name.
+    ///
+    /// # Errors
+    /// Returns an error if the coordinates are outside of the valid room name
+    /// bounds.
+    ///
+    /// For a panicking variant of this function, see [`RoomName::add`].
+    pub fn checked_add(&self, offset: (i32, i32)) -> Option<RoomName> {
+        let (x1, y1) = (self.x_coord(), self.y_coord());
+        let (x2, y2) = offset;
+        let new_x = x1.checked_add(x2)?;
+        let new_y = y1.checked_add(y2)?;
+        Self::from_coords(new_x, new_y).ok()
     }
 
     /// Converts this RoomName into an efficient, stack-based string.
@@ -558,6 +573,8 @@ mod serde {
 
 #[cfg(test)]
 mod test {
+    use crate::RoomName;
+
     #[test]
     fn test_string_equality() {
         use super::RoomName;
@@ -573,5 +590,60 @@ mod test {
             assert_eq!(RoomName::new(room_name).unwrap(), &room_name.to_string());
             assert_eq!(&room_name.to_string(), RoomName::new(room_name).unwrap());
         }
+    }
+
+    #[test]
+    fn checked_add() {
+        let w0n0 = RoomName::new("W0N0").unwrap();
+        let e0n0 = RoomName::new("E0N0").unwrap();
+        let e10n75 = RoomName::new("E10N75").unwrap();
+        let w3n53 = RoomName::new("W3N53").unwrap();
+
+        // corners
+        let w127n127 = RoomName::new("W127N127").unwrap();
+        let w127s127 = RoomName::new("W127S127").unwrap();
+        let e127n127 = RoomName::new("E127N127").unwrap();
+        let e127s127 = RoomName::new("E127S127").unwrap();
+
+        // side
+        let w127n5 = RoomName::new("W127N5").unwrap();
+
+        // valid
+        assert_eq!(w0n0.checked_add((1, 0)), Some(e0n0));
+        assert_eq!(e0n0.checked_add((10, -75)), Some(e10n75));
+        assert_eq!(e10n75.checked_add((-14, 22)), Some(w3n53));
+        assert_eq!(w3n53.checked_add((-124, -74)), Some(w127n127));
+
+        assert_eq!(w127n127.checked_add((127, 127)), Some(w0n0));
+        assert_eq!(w127s127.checked_add((127, -128)), Some(w0n0));
+        assert_eq!(e127n127.checked_add((-128, 127)), Some(w0n0));
+        assert_eq!(e127s127.checked_add((-128, -128)), Some(w0n0));
+        assert_eq!(w127n5.checked_add((127, 5)), Some(w0n0));
+
+        // overflow
+        assert_eq!(w127n127.checked_add((-1, 0)), None);
+        assert_eq!(w127n127.checked_add((-10, 10)), None);
+        assert_eq!(w127n127.checked_add((i32::MIN, 0)), None);
+        assert_eq!(w127n127.checked_add((i32::MIN, i32::MAX)), None);
+
+        assert_eq!(w127s127.checked_add((-1, 0)), None);
+        assert_eq!(w127s127.checked_add((-10, 10)), None);
+        assert_eq!(w127s127.checked_add((i32::MIN, 0)), None);
+        assert_eq!(w127s127.checked_add((i32::MIN, i32::MAX)), None);
+
+        assert_eq!(e127n127.checked_add((1, 0)), None);
+        assert_eq!(e127n127.checked_add((-1, -10)), None);
+        assert_eq!(e127n127.checked_add((i32::MIN, 0)), None);
+        assert_eq!(e127n127.checked_add((i32::MIN, i32::MAX)), None);
+
+        assert_eq!(e127s127.checked_add((1, 0)), None);
+        assert_eq!(e127s127.checked_add((-1, 10)), None);
+        assert_eq!(e127s127.checked_add((i32::MIN, 0)), None);
+        assert_eq!(e127s127.checked_add((i32::MIN, i32::MAX)), None);
+
+        assert_eq!(w127n5.checked_add((-1, 0)), None);
+        assert_eq!(w127n5.checked_add((-1, 10)), None);
+        assert_eq!(w127n5.checked_add((i32::MIN, 0)), None);
+        assert_eq!(w127n5.checked_add((i32::MIN, i32::MAX)), None);
     }
 }

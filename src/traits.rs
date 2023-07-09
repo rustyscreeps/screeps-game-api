@@ -201,7 +201,7 @@ pub trait CostMatrixSet {
 }
 
 #[inline]
-fn pos_as_idx(x: u8, y: u8) -> usize {
+const fn pos_as_idx(x: u8, y: u8) -> usize {
     (x as usize) * ROOM_SIZE as usize + (y as usize)
 }
 
