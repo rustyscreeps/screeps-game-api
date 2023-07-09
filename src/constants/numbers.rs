@@ -505,15 +505,15 @@ pub const LAB_UNBOOST_MINERAL: u32 = 15;
 /// Exponential growth rate of control points needed per global control level
 /// (GCL).
 ///
-/// Use the [`game::gcl::total_for_level`] function to calculate for each level
+/// See [`control_points_for_gcl`] function to calculate for each level
 ///
-/// [`game::gcl::total_for_level`]: crate::game::gcl::total_for_level
+/// [`control_points_for_gcl`]: crate::constants::math::control_points_for_gcl
 pub const GCL_POW: f64 = 2.4;
 /// Base growth rate of control points needed per global control level (GCL).
 ///
-/// Use the [`game::gcl::total_for_level`] function to calculate for each level
+/// See [`control_points_for_gcl`] function to calculate for each level
 ///
-/// [`game::gcl::total_for_level`]: crate::game::gcl::total_for_level
+/// [`control_points_for_gcl`]: crate::constants::math::control_points_for_gcl
 pub const GCL_MULTIPLY: u32 = 1_000_000;
 /// Maximum GCL for players allowed to spawn in a Novice area.
 pub const GCL_NOVICE: u32 = 3;
@@ -741,16 +741,16 @@ pub const SIGN_PLANNED_AREA: &str = "A new Novice or Respawn Area is being plann
 
 /// Base growth rate of processed power needed per global power level (GPL).
 ///
-/// Use the [`game::gpl::total_for_level`] function to calculate for each level
+/// See [`power_for_gpl`] function to calculate for each level
 ///
-/// [`game::gpl::total_for_level`]: crate::game::gpl::total_for_level
+/// [`power_for_gpl`]: crate::constants::math::power_for_gpl
 pub const POWER_LEVEL_MULTIPLY: u32 = 1000;
 /// Exponential growth rate of processed power needed per global power level
 /// (GPL).
 ///
-/// Use the [`game::gpl::total_for_level`] function to calculate for each level
+/// See [`power_for_gpl`] function to calculate for each level
 ///
-/// [`game::gpl::total_for_level`]: crate::game::gpl::total_for_level
+/// [`power_for_gpl`]: crate::constants::math::power_for_gpl
 pub const POWER_LEVEL_POW: u32 = 2;
 /// Time, in milliseconds, that a power creep must wait to respawn after dying.
 pub const POWER_CREEP_SPAWN_COOLDOWN: u32 = 8 * 3600 * 1000;
