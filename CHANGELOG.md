@@ -12,6 +12,7 @@ Unreleased
 - Add new extra constant `constants::extras::POWER_CREEP_CARRY_CAPACITY_PER_LEVEL`
 - Rename `RoomObject::pos` to `RoomObject::js_pos` to avoid confusion with `HasPosition::pos`
   and remove the possibiliy for differing behavior based on whether the trait was imported
+  (breaking)
 
 0.14.0 (2023-07-03)
 ===================
