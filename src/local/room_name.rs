@@ -168,7 +168,8 @@ impl RoomName {
     /// Returns an error if the coordinates are outside of the valid room name
     /// bounds.
     ///
-    /// For a panicking variant of this function, see [`RoomName::add`].
+    /// For a panicking variant of this function, use the implementation of
+    /// [`ops::Add`] for `(i32, i32)`.
     pub fn checked_add(&self, offset: (i32, i32)) -> Option<RoomName> {
         let (x1, y1) = (self.x_coord(), self.y_coord());
         let (x2, y2) = offset;

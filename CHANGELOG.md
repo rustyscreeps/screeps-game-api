@@ -8,6 +8,8 @@ Unreleased
   `game::gpl::total_for_level` to `constants::math::power_for_gpl` (breaking)
 - Change `constants::math::power_for_gpl` to return `u128` to allow for valid values to be
   calculated for all possible input `u32` values (breaking)
+- Fix incorrect value of `constants::extras::FLAG_NAME_MAX_LENGTH` - now 100, previously 60
+- Add new extra constant `constants::extras::POWER_CREEP_CARRY_CAPACITY_PER_LEVEL`
 
 0.14.0 (2023-07-03)
 ===================
