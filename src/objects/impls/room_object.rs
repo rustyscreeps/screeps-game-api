@@ -22,11 +22,16 @@ extern "C" {
     #[wasm_bindgen(method, getter = effects)]
     fn effects_internal(this: &RoomObject) -> Option<Array>;
 
-    /// Position of the object.
+    /// Gets the [`RoomPosition`] of an object, which is a reference to an
+    /// object in the javascript heap. In most cases, you'll likely want a
+    /// native [`Position`] instead of using this function (see
+    /// [`HasPosition::pos`]), there may be cases where this can provide
+    /// some slight performance benefits due to reducing object churn in the js
+    /// heap, so this is kept public.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#RoomObject.pos)
-    #[wasm_bindgen(method, getter)]
-    pub fn pos(this: &RoomObject) -> RoomPosition;
+    #[wasm_bindgen(method, getter = pos)]
+    pub fn js_pos(this: &RoomObject) -> RoomPosition;
 
     /// A link to the room that the object is currently in, or `None` if the
     /// object is a power creep not spawned on the current shard, or a flag or
@@ -58,7 +63,7 @@ where
     T: AsRef<RoomObject>,
 {
     fn pos(&self) -> Position {
-        RoomObject::pos(self.as_ref()).into()
+        self.as_ref().js_pos().into()
     }
 }
 
