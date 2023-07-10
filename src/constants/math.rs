@@ -10,9 +10,9 @@ use crate::constants::*;
 /// Global Control Level. The game's API only exposes current level plus
 /// progress toward the next level; this allows you to see much many points
 /// you've spent to achieve your current level
+///
+/// [Code reference](https://github.com/screeps/engine/blob/6d498f2f0db4e0744fa6bf8563836d36b49b6a29/src/game/game.js#L117)
 pub fn control_points_for_gcl(level: u32) -> f64 {
-    // formula from
-    // https://github.com/screeps/engine/blob/6d498f2f0db4e0744fa6bf8563836d36b49b6a29/src/game/game.js#L117
     ((level - 1) as f64).powf(GCL_POW) * GCL_MULTIPLY as f64
 }
 
@@ -23,9 +23,9 @@ pub fn control_points_for_gcl(level: u32) -> f64 {
 /// given Global Power Level. The game's API only exposes current level plus
 /// progress toward the next level; this allows you to see how much you
 /// processed to achieve your current level
+///
+/// [Code reference](https://github.com/screeps/engine/blob/6d498f2f0db4e0744fa6bf8563836d36b49b6a29/src/game/game.js#L120)
 pub const fn power_for_gpl(level: u32) -> u128 {
-    // formula from
-    // https://github.com/screeps/engine/blob/6d498f2f0db4e0744fa6bf8563836d36b49b6a29/src/game/game.js#L120
     (level as u128).pow(POWER_LEVEL_POW) * POWER_LEVEL_MULTIPLY as u128
 }
 
