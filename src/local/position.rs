@@ -36,7 +36,7 @@ mod world_utils;
 /// # Using Position
 ///
 /// You can retrieve a `Position` by getting the position of a game object using
-/// [`RoomObject::pos`], or by creating one from coordinates with
+/// [`HasPosition::pos`], or by creating one from coordinates with
 /// [`Position::new`].
 ///
 /// You can use any of the math methods available on this page to manipulate
