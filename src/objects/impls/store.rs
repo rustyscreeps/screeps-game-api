@@ -22,13 +22,13 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Store.getCapacity)
     #[wasm_bindgen(method, js_name = getCapacity)]
-    pub fn get_capacity(this: &Store, ty: Option<ResourceType>) -> u32;
+    fn get_capacity_internal(this: &Store, ty: Option<ResourceType>) -> Option<u32>;
 
     /// Return the free capacity of the [`Store`] for the specified resource.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Store.getFreeCapacity)
     #[wasm_bindgen(method, js_name = getFreeCapacity)]
-    pub fn get_free_capacity(this: &Store, ty: Option<ResourceType>) -> i32;
+    fn get_free_capacity_internal(this: &Store, ty: Option<ResourceType>) -> Option<i32>;
 
     /// Return the used capacity of the [`Store`] for the specified resource. If
     /// the [`Store`] can contain any resource, passing `None` as the type will
@@ -36,7 +36,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Store.getUsedCapacity)
     #[wasm_bindgen(method, js_name = getUsedCapacity)]
-    pub fn get_used_capacity(this: &Store, ty: Option<ResourceType>) -> u32;
+    fn get_used_capacity_internal(this: &Store, ty: Option<ResourceType>) -> Option<u32>;
 }
 
 impl Store {
@@ -45,5 +45,17 @@ impl Store {
             .iter()
             .filter_map(|v| ResourceType::from_js_value(&v))
             .collect()
+    }
+
+    pub fn get_capacity(&self, ty: Option<ResourceType>) -> u32 {
+        self.get_capacity_internal(ty).unwrap_or(0)
+    }
+
+    pub fn get_free_capacity(&self, ty: Option<ResourceType>) -> i32 {
+        self.get_free_capacity_internal(ty).unwrap_or(0)
+    }
+
+    pub fn get_used_capacity(&self, ty: Option<ResourceType>) -> u32 {
+        self.get_used_capacity_internal(ty).unwrap_or(0)
     }
 }
