@@ -3,6 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{ErrorCode, Terrain},
+    local::RoomName,
     prelude::*,
 };
 
@@ -14,12 +15,8 @@ extern "C" {
     #[wasm_bindgen(js_namespace = Room, js_name = Terrain)]
     pub type RoomTerrain;
 
-    /// Gets the terrain for any room by name, regardless of current visibility
-    /// of the room.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.constructor)
     #[wasm_bindgen(constructor, js_namespace = Room, js_class = Terrain)]
-    pub fn new(room_name: &JsString) -> RoomTerrain;
+    fn new_internal(room_name: &JsString) -> RoomTerrain;
 
     /// Get the type of terrain at given coordinates.
     ///
@@ -37,6 +34,16 @@ extern "C" {
 }
 
 impl RoomTerrain {
+    /// Gets the terrain for any room by name, regardless of current visibility
+    /// of the room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.constructor)
+    pub fn new(room_name: RoomName) -> RoomTerrain {
+        let name = room_name.into();
+
+        Self::new_internal(&name)
+    }
+
     /// Get a copy of the underlying Uint8Array with the data about the room's
     /// terrain.
     ///
