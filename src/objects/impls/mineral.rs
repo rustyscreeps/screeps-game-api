@@ -41,11 +41,12 @@ extern "C" {
     #[wasm_bindgen(method, getter = id)]
     fn id_internal(this: &Mineral) -> JsString;
 
-    /// The number of ticks until this mineral regenerates from depletion.
+    /// The number of ticks until this mineral regenerates from depletion, or
+    /// `None` if it's not currently regenerating.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Mineral.ticksToRegeneration)
     #[wasm_bindgen(method, getter = ticksToRegeneration)]
-    pub fn ticks_to_regeneration(this: &Mineral) -> u32;
+    pub fn ticks_to_regeneration(this: &Mineral) -> Option<u32>;
 }
 
 impl HasNativeId for Mineral {
