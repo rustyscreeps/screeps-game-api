@@ -17,6 +17,7 @@ Unreleased
   isn't currently valid for
 - Change `Source::ticks_to_regeneration` and `Mineral::ticks_to_regeneration` return types to
   `Option<u32>`, returning `None` when the timer isn't active instead of panic (breaking)
+- Change `RoomTerrain::new` room name argument type from `&JsString` to `RoomName` (breaking)
 
 0.14.0 (2023-07-03)
 ===================
