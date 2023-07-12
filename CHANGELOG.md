@@ -15,6 +15,8 @@ Unreleased
   (breaking)
 - Fix potential for panic in store functions when called with resource types that the store
   isn't currently valid for
+- Change `Source::ticks_to_regeneration` and `Mineral::ticks_to_regeneration` return types to
+  `Option<u32>`, returning `None` when the timer isn't active instead of panic (breaking)
 
 0.14.0 (2023-07-03)
 ===================

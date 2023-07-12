@@ -45,11 +45,12 @@ extern "C" {
     fn id_internal(this: &Source) -> JsString;
 
     /// The number of ticks until this source regenerates to its
-    /// [`Source::energy_capacity`], or 0 if the timer has not started yet.
+    /// [`Source::energy_capacity`], or `None` if the source has not started to
+    /// regenerate.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Source.ticksToRegeneration)
     #[wasm_bindgen(method, getter = ticksToRegeneration)]
-    pub fn ticks_to_regeneration(this: &Source) -> u32;
+    pub fn ticks_to_regeneration(this: &Source) -> Option<u32>;
 }
 
 impl HasNativeId for Source {
