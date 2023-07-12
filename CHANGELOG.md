@@ -13,6 +13,8 @@ Unreleased
 - Rename `RoomObject::pos` to `RoomObject::js_pos` to avoid confusion with `HasPosition::pos`
   and remove the possibiliy for differing behavior based on whether the trait was imported
   (breaking)
+- Fix potential for panic in store functions when called with resource types that the store
+  isn't currently valid for
 
 0.14.0 (2023-07-03)
 ===================
