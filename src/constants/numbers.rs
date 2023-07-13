@@ -398,10 +398,10 @@ pub const TOWER_POWER_HEAL: u32 = 400;
 pub const TOWER_POWER_REPAIR: u32 = 800;
 /// Tower actions at a range beyond this distance suffer falloff penalties - see
 /// [`TOWER_FALLOFF`].
-pub const TOWER_OPTIMAL_RANGE: u32 = 5;
+pub const TOWER_OPTIMAL_RANGE: u8 = 5;
 /// Tower actions at a range greater than or equal to this distance suffer the
 /// maxium falloff penalties - see [`TOWER_FALLOFF`].
-pub const TOWER_FALLOFF_RANGE: u32 = 20;
+pub const TOWER_FALLOFF_RANGE: u8 = 20;
 /// Maximum percentage reduction in healing, repair, and attack effectiveness
 /// for towers due to range.
 ///
@@ -415,7 +415,7 @@ pub const TOWER_FALLOFF_RANGE: u32 = 20;
 /// ```
 ///
 /// [source]: https://github.com/screeps/engine/blob/f02d16a44a00c35615ae227fc72a3c9a07a6a39a/src/processor/intents/towers/attack.js#L38
-pub const TOWER_FALLOFF: f32 = 0.75;
+pub const TOWER_FALLOFF: f64 = 0.75;
 
 /// Initial hits for observer structures; consider using the
 /// [`StructureType::initial_hits`] function.

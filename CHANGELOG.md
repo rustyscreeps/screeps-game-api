@@ -18,6 +18,10 @@ Unreleased
 - Change `Source::ticks_to_regeneration` and `Mineral::ticks_to_regeneration` return types to
   `Option<u32>`, returning `None` when the timer isn't active instead of panic (breaking)
 - Change `RoomTerrain::new` room name argument type from `&JsString` to `RoomName` (breaking)
+- Add `constants::math::tower_attack_power_at_range` function and equivalents for `repair` and
+  `heal` to calculate effective tower power at a given range
+- Change `TOWER_OPTIMAL_RANGE` and `TOWER_FALLOFF_RANGE` types to `u8` and `TOWER_FALLOFF` type
+  to `f64` (breaking)
 
 0.14.0 (2023-07-03)
 ===================
