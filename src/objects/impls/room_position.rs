@@ -305,7 +305,7 @@ impl RoomPosition {
     {
         self.find_in_range_internal(find.find_code(), range, None)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
     }
 
     /// Find a path from this position to a position or room object, with an

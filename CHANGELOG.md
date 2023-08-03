@@ -1,23 +1,33 @@
 Unreleased
 ==========
 
+0.15.0 (2023-08-03)
+===================
+
+### Breaking:
+
+- Move `game::gcl::total_for_level` to `constants::math::control_points_for_gcl` and move 
+  `game::gpl::total_for_level` to `constants::math::power_for_gpl`
+- Change `constants::math::power_for_gpl` to return `u128` to allow for valid values to be
+  calculated for all possible input `u32` values
+- Rename `RoomObject::pos` to `RoomObject::js_pos` to avoid confusion with `HasPosition::pos`
+  and remove the possibiliy for differing behavior based on whether the trait was imported
+- Change `Source::ticks_to_regeneration` and `Mineral::ticks_to_regeneration` return types to
+  `Option<u32>`, returning `None` when the timer isn't active instead of panic
+- Change `RoomTerrain::new` room name argument type from `&JsString` to `RoomName`
+
+### Additions:
+
 - Add `RoomName::checked_add` to allow a math to be done on the position of the room on the map
   without the potential to panic that the `ops::Add` implementation has
 - Add `const` to most functions representing constants, so they can be evaluated during compile
-- Move `game::gcl::total_for_level` to `constants::math::control_points_for_gcl` and move 
-  `game::gpl::total_for_level` to `constants::math::power_for_gpl` (breaking)
-- Change `constants::math::power_for_gpl` to return `u128` to allow for valid values to be
-  calculated for all possible input `u32` values (breaking)
 - Fix incorrect value of `constants::extras::FLAG_NAME_MAX_LENGTH` - now 100, previously 60
 - Add new extra constant `constants::extras::POWER_CREEP_CARRY_CAPACITY_PER_LEVEL`
-- Rename `RoomObject::pos` to `RoomObject::js_pos` to avoid confusion with `HasPosition::pos`
-  and remove the possibiliy for differing behavior based on whether the trait was imported
-  (breaking)
+
+### Bugfixes:
+
 - Fix potential for panic in store functions when called with resource types that the store
   isn't currently valid for
-- Change `Source::ticks_to_regeneration` and `Mineral::ticks_to_regeneration` return types to
-  `Option<u32>`, returning `None` when the timer isn't active instead of panic (breaking)
-- Change `RoomTerrain::new` room name argument type from `&JsString` to `RoomName` (breaking)
 
 0.14.0 (2023-07-03)
 ===================

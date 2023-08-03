@@ -351,7 +351,7 @@ impl Room {
                     .map(PositionedLookResult::from_jsvalue_unknown_type)
                     .collect()
             })
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
     }
 
     /// Get all objects of a given type at this position, if any.
@@ -366,7 +366,7 @@ impl Room {
 
         self.look_for_at_internal(T::look_code(), &pos)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
     }
 
     /// Get all objects of a given type at the given coordinates, if
@@ -379,7 +379,7 @@ impl Room {
     {
         self.look_for_at_xy_internal(T::look_code(), x, y)
             .map(|arr| arr.iter().map(T::convert_and_check_item).collect())
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
     }
 
     /// Get all objects of a certain type in a certain area.
@@ -402,7 +402,7 @@ impl Room {
                     .map(|lr| PositionedLookResult::from_jsvalue_with_type(lr, T::look_code()))
                     .collect()
             })
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
     }
 }
 

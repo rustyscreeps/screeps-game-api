@@ -74,7 +74,7 @@ where
     fn effects(&self) -> Vec<Effect> {
         RoomObject::effects_internal(self.as_ref())
             .map(|arr| arr.iter().map(JsCast::unchecked_into).collect())
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
     }
 
     fn effects_raw(&self) -> Option<Array> {
