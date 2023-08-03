@@ -177,7 +177,7 @@ pub fn get_all_orders(filter: Option<&LodashFilter>) -> Vec<Order> {
 pub fn get_history(resource: Option<ResourceType>) -> Vec<OrderHistoryRecord> {
     Market::get_history(resource)
         .map(|arr| arr.iter().map(Into::into).collect())
-        .unwrap_or_else(Vec::new)
+        .unwrap_or_default()
 }
 
 /// Get an object with information about a specific order, in the same
