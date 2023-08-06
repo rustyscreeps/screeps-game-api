@@ -460,6 +460,31 @@ mod serde {
     }
 }
 
+/// Module for use with `serde`'s [`with` attribute] to allow serialization of
+/// positions as their packed representation, even when using a human-readable
+/// serializer.
+///
+/// [`with` attribute]: https://serde.rs/field-attrs.html#with
+pub mod serde_position_packed {
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+    use super::Position;
+
+    pub fn serialize<S>(pos: &Position, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        pos.packed_repr().serialize(serializer)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Position, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        u32::deserialize(deserializer).map(Position::from_packed)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::{Position, RoomCoordinate};
