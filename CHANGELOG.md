@@ -3,6 +3,7 @@ Unreleased
 
 - Add `local::serde_position_packed` module, for use with the `with` serde attribute, allowing
   serialized positions to be stored as packed even with human-readable serializers
+- Change `Room::find_exit_to` input type from `&JsString` to `RoomName` (breaking)
 
 0.15.0 (2023-08-03)
 ===================
