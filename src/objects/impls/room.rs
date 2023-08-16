@@ -131,7 +131,7 @@ extern "C" {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.findExitTo)
     #[wasm_bindgen(final, method, js_name = findExitTo)]
-    pub fn find_exit_to(this: &Room, room: &JsValue) -> ExitDirection;
+    pub fn find_exit_to(this: &Room, room: RoomName) -> ExitDirection;
 
     #[wasm_bindgen(final, method, js_name = findPath)]
     fn find_path_internal(
