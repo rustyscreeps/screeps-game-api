@@ -5,6 +5,7 @@ use crate::{
     constants::{ErrorCode, Terrain},
     local::RoomName,
     prelude::*,
+    RawRoomTerrain,
 };
 
 #[wasm_bindgen]
@@ -42,6 +43,16 @@ impl RoomTerrain {
         let name = room_name.into();
 
         Self::new_internal(&name)
+    }
+
+    /// Gets a copy of the underlying [`Terrain`] of the room, in a packed
+    /// format that uses the normal position APIs.
+    #[inline]
+    #[must_use = "gets a copy of the terrain"]
+    pub fn get_raw(&self) -> RawRoomTerrain {
+        // SAFETY: Assumes that the data returned from the engine is valid bit
+        // patterns for `Terrain`.
+        unsafe { RawRoomTerrain::new_from_js_buf(&self.get_raw_buffer()) }
     }
 
     /// Get a copy of the underlying Uint8Array with the data about the room's

@@ -92,7 +92,6 @@ mod test {
         local::{position::WorldPositionOutOfBoundsError, RoomCoordinate},
         ROOM_SIZE,
     };
-    use core::ops::Range;
 
     const TEST_ROOM_NAMES: &[&str] = &[
         "E1N1", "E20N0", "W0N0", "E0N0", "W0S0", "E0S0", "W0N0", "E0N0", "W0S0", "E0S0", "W50S20",
@@ -124,8 +123,10 @@ mod test {
         }
     }
 
+    #[cfg(not(miri))] // far too slow under miri
     #[test]
     fn checked_world_coords() {
+        use core::ops::Range;
         // this tests:
         // - the 16 rooms around the center of the world
         // - the 16 rooms around each corner of the max world size (12 of them are out
@@ -192,7 +193,7 @@ mod test {
     }
 
     // don't run this test if debug assertions are enabled, it won't complete
-    #[cfg(not(debug_assertions))]
+    #[cfg(not(any(debug_assertions, miri)))]
     #[test]
     fn exhaustive_checked_world_coords() {
         use crate::local::VALID_WORLD_POSITIONS;
