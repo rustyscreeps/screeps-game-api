@@ -18,6 +18,7 @@ const PACKED_ROOM_BYTES: usize = ROOM_AREA / TERRAIN_PER_BYTE;
 // TERRAIN_PER_BYTE * PACKED_ROOM_BYTES == ROOM_AREA is an important property.
 // Make sure that it holds. This can't become false unless major breaking
 // changes happen.
+#[allow(clippy::assertions_on_constants)] // see above
 const _ASSERT_TERRAIN_PER_BYTE_MULTIPLE: () =
     assert!(TERRAIN_PER_BYTE * PACKED_ROOM_BYTES == ROOM_AREA);
 
