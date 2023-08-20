@@ -189,7 +189,7 @@ impl StructureType {
             Observer => OBSERVER_HITS,
             PowerBank => POWER_BANK_HITS,
             PowerSpawn => POWER_SPAWN_HITS,
-            Extractor => EXTENSION_HITS,
+            Extractor => EXTRACTOR_HITS,
             Lab => LAB_HITS,
             Terminal => TERMINAL_HITS,
             Container => CONTAINER_HITS,
@@ -408,7 +408,7 @@ impl ResourceType {
             //     rangedAttack: 3,
             //     rangedMassAttack: 3
             // },
-            KeaniumAlkalide => Boost::RangedAttack(4),
+            KeaniumAlkalide => Boost::RangedAttack(3),
             // XKHO2: {
             //     rangedAttack: 4,
             //     rangedMassAttack: 4
