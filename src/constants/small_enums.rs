@@ -1,6 +1,7 @@
 //! Various constants translated as small enums.
 use std::{convert::Infallible, fmt, str::FromStr};
 
+use bytemuck::{CheckedBitPattern, NoUninit};
 use enum_iterator::Sequence;
 use js_sys::JsString;
 use num_derive::FromPrimitive;
@@ -283,6 +284,8 @@ pub enum Color {
     Serialize_repr,
     Deserialize_repr,
     Sequence,
+    CheckedBitPattern,
+    NoUninit,
 )]
 #[repr(u8)]
 pub enum Terrain {

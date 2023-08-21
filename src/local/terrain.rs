@@ -1,4 +1,5 @@
 use crate::{RoomXY, Terrain, ROOM_AREA, ROOM_SIZE};
+use bytemuck::CheckedBitPattern;
 use core::fmt::Write;
 use js_sys::Uint8Array;
 use num_traits::FromPrimitive;
@@ -34,7 +35,7 @@ pub struct RawRoomTerrain {
 impl RawRoomTerrain {
     /// Gets the terrain at the specified position in this room.
     #[must_use]
-    pub fn get_xy(&self, xy: RoomXY) -> Terrain {
+    pub fn get(&self, xy: RoomXY) -> Terrain {
         let linear = terrain_xy_to_linear(xy);
         let (arr_idx, bit_offset) = linear_idx_to_bit_idx(linear);
         // SAFETY:
@@ -55,34 +56,37 @@ impl RawRoomTerrain {
 
 // impl details
 impl RawRoomTerrain {
-    /// SAFETY: `data` must not contain any bytes that are not valid bit
-    /// patterns for `Terrain`.
     #[must_use]
-    pub(crate) unsafe fn new_from_js_buf(data: &Uint8Array) -> Self {
+    pub(crate) fn new_from_js_buf(data: &Uint8Array) -> Self {
         let mut buf =
             Box::<[u8; ROOM_AREA]>::try_from(vec![0_u8; ROOM_AREA].into_boxed_slice()).unwrap();
         data.copy_to(&mut *buf);
 
-        // SAFETY: valid byte condition upheld by caller.
-        unsafe { Self::new_from_unpacked(&buf) }
+        Self::new_from_unpacked(&buf)
     }
 
-    /// SAFETY: `data` must not contain any bytes that are not valid bit
-    /// patterns for `Terrain`.
     #[must_use]
-    pub(crate) unsafe fn new_from_unpacked(data: &[u8; ROOM_AREA]) -> Self {
+    pub(crate) fn new_from_unpacked(data: &[u8; ROOM_AREA]) -> Self {
+        for b in data {
+            if !Terrain::is_valid_bit_pattern(b) {
+                panic!("invalid `Terrain` data");
+            }
+        }
+
+        // SAFETY: every byte in `data` is checked to be a valid bit pattern for
+        // `Terrain`. `Terrain` and `u8` have the same size. This factors the
+        // array into its components.
+        let split = unsafe {
+            &*(data as *const [u8; ROOM_AREA])
+                .cast::<[[Terrain; TERRAIN_PER_BYTE]; PACKED_ROOM_BYTES]>()
+        };
+
         // Note: The intermediate Vec and try_from are optimized out so that the
         // `unwrap` is unreachable, but it's here for the types to work out.
         let mut packed = Box::<[u8; PACKED_ROOM_BYTES]>::try_from(
             vec![0_u8; PACKED_ROOM_BYTES].into_boxed_slice(),
         )
         .unwrap();
-
-        // Split the array into groups of TERRAIN_PER_BYTE.
-        // LLVM is good at recognizing and optimizing out checks in `bytemuck` methods,
-        // so this is a no-op at runtime.
-        let split = bytemuck::cast_ref::<_, [[u8; TERRAIN_PER_BYTE]; PACKED_ROOM_BYTES]>(data);
-
         for (idx, unpacked) in split.iter().enumerate() {
             packed[idx] = RawRoomTerrain::pack_byte(*unpacked);
         }
@@ -92,11 +96,11 @@ impl RawRoomTerrain {
 
     #[must_use]
     #[inline]
-    fn pack_byte(terrain_data: [u8; TERRAIN_PER_BYTE]) -> u8 {
+    fn pack_byte(terrain_data: [Terrain; TERRAIN_PER_BYTE]) -> u8 {
         let mut packed = 0_u8;
         for data in terrain_data {
             packed <<= BITS_PER_TERRAIN;
-            packed |= data & TERRAIN_BIT_MASK;
+            packed |= data as u8;
         }
 
         packed
@@ -223,75 +227,73 @@ mod tests {
         buf[50 * 1 + 6] = Terrain::Wall as u8;
         buf[50 * 1 + 7] = Terrain::Swamp as u8;
 
-        // SAFETY: The 0 defaults are a valid Terrain, and the buffer is populated by
-        // casting the Terrain to a byte, so all bytes are valid.
-        let raw = unsafe { RawRoomTerrain::new_from_unpacked(&buf) };
+        let raw = RawRoomTerrain::new_from_unpacked(&buf);
 
         // first row
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((0_u8, 0_u8)).unwrap()),
+            raw.get(RoomXY::try_from((0_u8, 0_u8)).unwrap()),
             Terrain::Plain
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((1_u8, 0_u8)).unwrap()),
+            raw.get(RoomXY::try_from((1_u8, 0_u8)).unwrap()),
             Terrain::Swamp
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((2_u8, 0_u8)).unwrap()),
+            raw.get(RoomXY::try_from((2_u8, 0_u8)).unwrap()),
             Terrain::Swamp
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((3_u8, 0_u8)).unwrap()),
+            raw.get(RoomXY::try_from((3_u8, 0_u8)).unwrap()),
             Terrain::Swamp
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((4_u8, 0_u8)).unwrap()),
+            raw.get(RoomXY::try_from((4_u8, 0_u8)).unwrap()),
             Terrain::Plain
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((5_u8, 0_u8)).unwrap()),
+            raw.get(RoomXY::try_from((5_u8, 0_u8)).unwrap()),
             Terrain::Swamp
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((6_u8, 0_u8)).unwrap()),
+            raw.get(RoomXY::try_from((6_u8, 0_u8)).unwrap()),
             Terrain::Plain
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((7_u8, 0_u8)).unwrap()),
+            raw.get(RoomXY::try_from((7_u8, 0_u8)).unwrap()),
             Terrain::Swamp
         );
 
         // second row
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((0_u8, 1_u8)).unwrap()),
+            raw.get(RoomXY::try_from((0_u8, 1_u8)).unwrap()),
             Terrain::Wall
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((1_u8, 1_u8)).unwrap()),
+            raw.get(RoomXY::try_from((1_u8, 1_u8)).unwrap()),
             Terrain::Wall
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((2_u8, 1_u8)).unwrap()),
+            raw.get(RoomXY::try_from((2_u8, 1_u8)).unwrap()),
             Terrain::Swamp
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((3_u8, 1_u8)).unwrap()),
+            raw.get(RoomXY::try_from((3_u8, 1_u8)).unwrap()),
             Terrain::Plain
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((4_u8, 1_u8)).unwrap()),
+            raw.get(RoomXY::try_from((4_u8, 1_u8)).unwrap()),
             Terrain::Wall
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((5_u8, 1_u8)).unwrap()),
+            raw.get(RoomXY::try_from((5_u8, 1_u8)).unwrap()),
             Terrain::Plain
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((6_u8, 1_u8)).unwrap()),
+            raw.get(RoomXY::try_from((6_u8, 1_u8)).unwrap()),
             Terrain::Wall
         );
         assert_eq!(
-            raw.get_xy(RoomXY::try_from((7_u8, 1_u8)).unwrap()),
+            raw.get(RoomXY::try_from((7_u8, 1_u8)).unwrap()),
             Terrain::Swamp
         );
     }

@@ -31,7 +31,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 arrayvec = "0.7"
 # min_const_generics feature enables generic array length impls introduced in rustc 1.51
-bytemuck = { version = "1.13.1", features = ["min_const_generics"] }
+bytemuck = { version = "1.13.1", features = ["derive", "min_const_generics"] }
 enum_dispatch = "0.3"
 enum-iterator = "1.4"
 js-sys = "0.3"
