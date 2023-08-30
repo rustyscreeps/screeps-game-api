@@ -3,6 +3,8 @@ Unreleased
 
 - Add `local::serde_position_packed` module, for use with the `with` serde attribute, allowing
   serialized positions to be stored as packed even with human-readable serializers
+- Fix incorrect return values in `StructureType::initial_hits` and `ResourceType::boost` constant
+  functions
 
 0.15.0 (2023-08-03)
 ===================
