@@ -97,6 +97,13 @@ pub enum MapFontVariant {
 /// font data, where map visuals require stricter color formats and have
 /// different font options.
 ///
+/// <div class="warning">
+/// <b>Warning</b>
+///
+/// The `backgroundPadding` setting in the Screeps docs does not function in
+/// game so it is not present in this API.
+/// </div><br/>
+///
 /// See also: [Screeps docs](https://docs.screeps.com/api/#Game.map-visual.text).
 ///
 /// [`TextStyle`]: crate::objects::visual::TextStyle
