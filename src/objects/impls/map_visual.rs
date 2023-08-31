@@ -118,8 +118,9 @@ pub struct MapTextStyle {
     stroke_width: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     background_color: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    background_padding: Option<f32>,
+    // This setting does not do anything, even though it's documented.
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    // background_padding: Option<f32>,
     #[serde(skip_serializing_if = "TextAlign::is_center")]
     align: TextAlign,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -274,25 +275,6 @@ impl MapTextStyle {
     // type.
     pub fn background_color(mut self, val: Option<&str>) -> Self {
         self.background_color = val.map(String::from);
-        self
-    }
-
-    /// ⚠️⚠️⚠️ This API does not appear to work ⚠️⚠️⚠️
-    /// TODO: More investigation is needed, it has only been tested on private
-    /// servers.
-    ///
-    /// Sets the padding of the background's rectangle.
-    ///
-    /// The default value is `0.3`.
-    ///
-    /// # Examples
-    /// ```rust
-    /// use screeps::MapTextStyle;
-    ///
-    /// let thick = MapTextStyle::default().background_padding(10.0_f32);
-    /// ```
-    pub fn background_padding(mut self, val: f32) -> Self {
-        self.background_padding = Some(val);
         self
     }
 
