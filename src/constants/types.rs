@@ -692,7 +692,7 @@ mod test {
     use crate::ResourceType;
 
     #[test]
-    fn rust_to_serde_json_from_serde_json_roundtrip() {
+    fn resources_rust_to_serde_json_from_serde_json_roundtrip() {
         for resource in enum_iterator::all::<ResourceType>() {
             if resource != ResourceType::__Nonexhaustive {
                 let serialized = serde_json::to_string(&resource).unwrap();
@@ -703,7 +703,7 @@ mod test {
     }
 
     #[test]
-    fn rust_vec_to_serde_json_from_serde_json_roundtrip() {
+    fn resources_rust_vec_to_serde_json_from_serde_json_roundtrip() {
         let mut resources = vec![];
         for resource in enum_iterator::all::<ResourceType>() {
             if resource != ResourceType::__Nonexhaustive {
@@ -711,8 +711,21 @@ mod test {
             }
         }
         let serialized = serde_json::to_string(&resources).unwrap();
-        //panic!("{}", serialized);
         let resources_reparsed: Vec<ResourceType> = serde_json::from_str(&serialized).unwrap();
         assert_eq!(resources, resources_reparsed);
+    }
+
+    #[test]
+    fn resources_rust_vec_to_serde_json_from_serde_json_roundtrip_via_values() {
+        let mut resources = vec![];
+        for resource in enum_iterator::all::<ResourceType>() {
+            if resource != ResourceType::__Nonexhaustive {
+                resources.push(resource);
+            }
+        }
+        let serialized = serde_json::to_string(&resources).unwrap();
+        let resources_reparsed_values: Vec<serde_json::Value> = serde_json::from_str(&serialized).unwrap();
+        let resources_reparsed_native: Vec<ResourceType> = resources_reparsed_values.iter().map(|v| serde_json::from_value(v.clone()).unwrap()).collect();
+        assert_eq!(resources, resources_reparsed_native);
     }
 }
