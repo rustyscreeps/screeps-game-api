@@ -6,6 +6,7 @@ Unreleased
 - `MapVisualShape::text` and `MapVisual::text` `style` arguments changed to be type `Option<MapTextStyle>`.
   - The map visual APIs use a different set of options than room visuals, so they need to be a different type to express those options.
   - Note that all color settings for map visuals are much more restrictive: they only accept colors of the form `#FF22DD`, no web-style color names.
+- Change `Room::find_exit_to` input type from `&JsString` to `RoomName`
 
 ### Additions:
 
