@@ -212,7 +212,7 @@ impl StructureType {
 
 /// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum IntershardResourceType {
     // no longer used, not implemented
     // SubscriptionToken = "token",
@@ -220,6 +220,8 @@ pub enum IntershardResourceType {
     Pixel = "pixel",
     AccessKey = "accessKey",
 }
+
+named_enum_serialize_deserialize!(IntershardResourceType);
 
 /// Translates `RESOURCES_ALL` constant, representing all possible in-game
 /// (non-intershard) resources.
@@ -575,10 +577,12 @@ impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
 
 /// Translates the `POWER_CLASS` constants, which are classes of power creeps
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum PowerCreepClass {
     Operator = "operator",
 }
+
+named_enum_serialize_deserialize!(PowerCreepClass);
 
 /// Translates the `PWR_*` constants, which are types of powers used by power
 /// creeps

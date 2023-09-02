@@ -7,6 +7,8 @@ Unreleased
   functions
 - Use `std::Cow` in custom deserialization process for `StructureType` and `ResourceType` to fix
   failures when deserializing in some cases, like from `serde_json::Value`
+- Use constant values compatible with the game for serializing `PowerCreepClass` and
+  `IntershardResourceType` as string (breaking)
 
 0.15.0 (2023-08-03)
 ===================
