@@ -109,7 +109,7 @@ pub use self::room_visual::{
     TextStyle, Visual,
 };
 
-pub use self::map_visual::{MapVisual, MapVisualShape};
+pub use self::map_visual::{MapFontStyle, MapFontVariant, MapTextStyle, MapVisual, MapVisualShape};
 
 #[cfg(feature = "score")]
 pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer};
