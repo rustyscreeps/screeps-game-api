@@ -68,7 +68,8 @@ mod room_objects {
 /// game world.
 pub mod visual {
     pub use super::impls::{
-        CircleStyle, FontStyle, LineDrawStyle, LineStyle, MapVisual, MapVisualShape, PolyStyle,
-        RectStyle, RoomVisual, TextAlign, TextStyle, Visual,
+        CircleStyle, FontStyle, LineDrawStyle, LineStyle, MapFontStyle, MapFontVariant,
+        MapTextStyle, MapVisual, MapVisualShape, PolyStyle, RectStyle, RoomVisual, TextAlign,
+        TextStyle, Visual,
     };
 }
