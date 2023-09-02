@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::local::RoomName;
 
-#[derive(Clone, Default, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CircleStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -45,7 +45,7 @@ impl CircleStyle {
     }
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct CircleData {
     x: f32,
     y: f32,
@@ -53,9 +53,8 @@ pub struct CircleData {
     style: Option<CircleStyle>,
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "camelCase")]
-#[derive(Default)]
 pub enum LineDrawStyle {
     #[default]
     Solid,
@@ -69,7 +68,7 @@ impl LineDrawStyle {
     }
 }
 
-#[derive(Clone, Default, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LineStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -104,7 +103,7 @@ impl LineStyle {
     }
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct LineData {
     x1: f32,
     y1: f32,
@@ -114,7 +113,7 @@ pub struct LineData {
     style: Option<LineStyle>,
 }
 
-#[derive(Clone, Default, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RectStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -156,7 +155,7 @@ impl RectStyle {
     }
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct RectData {
     x: f32,
     y: f32,
@@ -168,7 +167,7 @@ pub struct RectData {
     style: Option<RectStyle>,
 }
 
-#[derive(Clone, Default, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PolyStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -210,23 +209,22 @@ impl PolyStyle {
     }
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PolyData {
     points: Vec<(f32, f32)>,
     #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
     style: Option<PolyStyle>,
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum FontStyle {
     Size(f32),
     Custom(String),
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "camelCase")]
-#[derive(Default)]
 pub enum TextAlign {
     #[default]
     Center,
@@ -240,7 +238,7 @@ impl TextAlign {
     }
 }
 
-#[derive(Clone, Default, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TextStyle {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -308,7 +306,7 @@ impl TextStyle {
     }
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct TextData {
     text: String,
     x: f32,
@@ -317,7 +315,7 @@ pub struct TextData {
     style: Option<TextStyle>,
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(tag = "t")]
 pub enum Visual {
     #[serde(rename = "c")]
@@ -366,6 +364,7 @@ impl Visual {
     }
 }
 
+#[derive(Debug)]
 pub struct RoomVisual {
     room_name: Option<RoomName>,
 }
