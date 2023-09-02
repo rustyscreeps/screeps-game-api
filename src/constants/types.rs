@@ -701,4 +701,18 @@ mod test {
             }
         }
     }
+
+    #[test]
+    fn rust_vec_to_serde_json_from_serde_json_roundtrip() {
+        let mut resources = vec![];
+        for resource in enum_iterator::all::<ResourceType>() {
+            if resource != ResourceType::__Nonexhaustive {
+                resources.push(resource);
+            }
+        }
+        let serialized = serde_json::to_string(&resources).unwrap();
+        //panic!("{}", serialized);
+        let resources_reparsed: Vec<ResourceType> = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(resources, resources_reparsed);
+    }
 }
