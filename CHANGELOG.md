@@ -5,6 +5,8 @@ Unreleased
   serialized positions to be stored as packed even with human-readable serializers
 - Fix incorrect return values in `StructureType::initial_hits` and `ResourceType::boost` constant
   functions
+- Use `std::Cow` in custom deserialization process for `StructureType` and `ResourceType` to fix
+  failures when deserializing in some cases, like from `serde_json::Value`
 
 0.15.0 (2023-08-03)
 ===================
