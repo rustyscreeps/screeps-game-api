@@ -1,8 +1,10 @@
 //! `*Type` constants.
+use std::borrow::Cow;
+
 use enum_iterator::Sequence;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de::*};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
@@ -15,8 +17,8 @@ macro_rules! named_enum_serialize_deserialize {
             where
                 D: serde::Deserializer<'de>,
             {
-                let str = <&'de str>::deserialize(deserializer)?;
-                Ok(<$ty>::from_str(str).unwrap_or(<$ty>::__Nonexhaustive))
+                let s: Cow<'de, str> = Cow::deserialize(deserializer)?;
+                <$ty>::from_str(&s).ok_or(D::Error::invalid_value(serde::de::Unexpected::Str(&s), &"a valid {$ty} constant string"))
             }
         }
         impl serde::Serialize for $ty {
