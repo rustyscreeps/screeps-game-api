@@ -694,9 +694,11 @@ mod test {
     #[test]
     fn rust_to_serde_json_from_serde_json_roundtrip() {
         for resource in enum_iterator::all::<ResourceType>() {
-            let serialized = serde_json::to_string(&resource).unwrap();
-            let parsed: ResourceType = serde_json::from_str(&serialized).unwrap();
-            assert_eq!(resource, parsed);
+            if resource != ResourceType::__Nonexhaustive {
+                let serialized = serde_json::to_string(&resource).unwrap();
+                let parsed: ResourceType = serde_json::from_str(&serialized).unwrap();
+                assert_eq!(resource, parsed);
+            }
         }
     }
 }
