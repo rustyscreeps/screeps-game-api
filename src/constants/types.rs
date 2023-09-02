@@ -37,6 +37,7 @@ macro_rules! named_enum_serialize_deserialize {
         }
     };
 }
+pub(crate) use named_enum_serialize_deserialize;
 
 /// Translates `STRUCTURE_*` constants.
 #[wasm_bindgen]
