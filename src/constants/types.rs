@@ -23,7 +23,7 @@ macro_rules! named_enum_serialize_deserialize {
                 let s: Cow<'de, str> = Cow::deserialize(deserializer)?;
                 <$ty>::from_str(&s).ok_or(D::Error::invalid_value(
                     Unexpected::Str(&s),
-                    &"a valid {$ty} constant string",
+                    &stringify!($ty),
                 ))
             }
         }
