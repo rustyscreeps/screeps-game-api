@@ -4,7 +4,10 @@ use std::borrow::Cow;
 use enum_iterator::Sequence;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use serde::{Deserialize, Serialize, de::*};
+use serde::{
+    de::{Error as _, Unexpected},
+    Deserialize, Serialize,
+};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
@@ -18,7 +21,10 @@ macro_rules! named_enum_serialize_deserialize {
                 D: serde::Deserializer<'de>,
             {
                 let s: Cow<'de, str> = Cow::deserialize(deserializer)?;
-                <$ty>::from_str(&s).ok_or(D::Error::invalid_value(serde::de::Unexpected::Str(&s), &"a valid {$ty} constant string"))
+                <$ty>::from_str(&s).ok_or(D::Error::invalid_value(
+                    Unexpected::Str(&s),
+                    &"a valid {$ty} constant string",
+                ))
             }
         }
         impl serde::Serialize for $ty {
@@ -726,8 +732,12 @@ mod test {
             }
         }
         let serialized = serde_json::to_string(&resources).unwrap();
-        let resources_reparsed_values: Vec<serde_json::Value> = serde_json::from_str(&serialized).unwrap();
-        let resources_reparsed_native: Vec<ResourceType> = resources_reparsed_values.iter().map(|v| serde_json::from_value(v.clone()).unwrap()).collect();
+        let resources_reparsed_values: Vec<serde_json::Value> =
+            serde_json::from_str(&serialized).unwrap();
+        let resources_reparsed_native: Vec<ResourceType> = resources_reparsed_values
+            .iter()
+            .map(|v| serde_json::from_value(v.clone()).unwrap())
+            .collect();
         assert_eq!(resources, resources_reparsed_native);
     }
 }
