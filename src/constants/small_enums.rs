@@ -11,7 +11,7 @@ use serde::{
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
-use super::types::named_enum_serialize_deserialize;
+use super::{macros::named_enum_serialize_deserialize, InvalidConstantString};
 use crate::{
     constants::find::{Exit, Find},
     prelude::*,

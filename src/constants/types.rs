@@ -1,5 +1,5 @@
 //! `*Type` constants.
-use std::borrow::Cow;
+use std::{borrow::Cow, fmt};
 
 use enum_iterator::Sequence;
 use num_derive::FromPrimitive;
@@ -11,33 +11,8 @@ use serde::{
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
+use super::{macros::named_enum_serialize_deserialize, InvalidConstantString};
 use crate::{JsCollectionFromValue, JsCollectionIntoValue};
-
-macro_rules! named_enum_serialize_deserialize {
-    ($ty:ty) => {
-        impl<'de> serde::Deserialize<'de> for $ty {
-            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                let s: Cow<'de, str> = Cow::deserialize(deserializer)?;
-                <$ty>::from_str(&s).ok_or(D::Error::invalid_value(
-                    Unexpected::Str(&s),
-                    &stringify!($ty),
-                ))
-            }
-        }
-        impl serde::Serialize for $ty {
-            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-            where
-                S: serde::Serializer,
-            {
-                serializer.serialize_str(self.to_str())
-            }
-        }
-    };
-}
-pub(crate) use named_enum_serialize_deserialize;
 
 /// Translates `STRUCTURE_*` constants.
 #[wasm_bindgen]
@@ -716,6 +691,17 @@ mod test {
     }
 
     #[test]
+    fn resources_rust_to_display_from_str_roundtrip() {
+        for resource in enum_iterator::all::<ResourceType>() {
+            if resource != ResourceType::__Nonexhaustive {
+                let string = format!("{}", resource);
+                let parsed = ResourceType::from_str(&string).unwrap();
+                assert_eq!(resource, parsed);
+            }
+        }
+    }
+
+    #[test]
     fn resources_rust_vec_to_serde_json_from_serde_json_roundtrip() {
         let mut resources = vec![];
         for resource in enum_iterator::all::<ResourceType>() {
@@ -752,6 +738,17 @@ mod test {
             if resource != IntershardResourceType::__Nonexhaustive {
                 let serialized = serde_json::to_string(&resource).unwrap();
                 let parsed: IntershardResourceType = serde_json::from_str(&serialized).unwrap();
+                assert_eq!(resource, parsed);
+            }
+        }
+    }
+
+    #[test]
+    fn intershard_resources_rust_to_display_from_str_roundtrip() {
+        for resource in enum_iterator::all::<IntershardResourceType>() {
+            if resource != IntershardResourceType::__Nonexhaustive {
+                let string = format!("{}", resource);
+                let parsed = IntershardResourceType::from_str(&string).unwrap();
                 assert_eq!(resource, parsed);
             }
         }

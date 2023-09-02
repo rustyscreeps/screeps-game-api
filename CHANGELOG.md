@@ -3,16 +3,17 @@ Unreleased
 
 ### Breaking:
 
+- Use constant values compatible with the game for serializing `PowerCreepClass`, and
+  `IntershardResourceType`, and `Part` as string - note that if you've stored any of these values,
+  they will fail to parse after updating!
 - `MapVisualShape::text` and `MapVisual::text` `style` arguments changed to be type
   `Option<MapTextStyle>`
   - The map visual APIs use a different set of options than room visuals, so they need to be a
     different type to express those options
   - Note that all color settings for map visuals are much more restrictive: they only accept colors
     of the form `#FF22DD`, no web-style color names
-- Removed `std::FromStr` impl on `Part` which unnecessarily duplicates the generated `from_str`
-  from wasm-bindgen
-- Use constant values compatible with the game for serializing `PowerCreepClass`, and
-  `IntershardResourceType`, and `Part` as string
+- Removed `FromStr` impl on `Part` and replace with automatically-generated implementations for all
+  string-represented constant enums, as well as adding `Display` implementation.
 
 ### Additions:
 
