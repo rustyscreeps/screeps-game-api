@@ -60,9 +60,6 @@ extern "C" {
     #[wasm_bindgen(method, setter)]
     pub fn set_memory(this: &Room, val: &JsValue);
 
-    /// The room's name as an owned reference to a [`JsString`].
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.name)
     #[wasm_bindgen(method, getter = name)]
     fn name_internal(this: &Room) -> JsString;
 
@@ -80,17 +77,9 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn terminal(this: &Room) -> Option<StructureTerminal>;
 
-    /// Serialize a path array from [`Room::find_path`] into a string
-    /// representation safe to store in memory.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.serializePath)
     #[wasm_bindgen(static_method_of = Room, js_name = serializePath)]
     fn serialize_path_internal(path: &Array) -> JsString;
 
-    /// Deserialize a string representation from [`Room::serialize_path`] back
-    /// to a path array.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.deserializePath)
     #[wasm_bindgen(static_method_of = Room, js_name = deserializePath)]
     fn deserialize_path_internal(path: &JsString) -> Array;
 
@@ -113,25 +102,11 @@ extern "C" {
         secondary_color: Option<Color>,
     ) -> JsValue;
 
-    /// Find all objects of the specified type in the room, without passing
-    /// additional options.
-    ///
-    /// Returns an [`Array`] containing the found objects, which should be
-    /// converted into the type of object you searched for.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
     #[wasm_bindgen(method, js_name = find)]
     fn find_internal(this: &Room, ty: Find, options: Option<&FindOptions>) -> Array;
 
-    /// Find an exit from the current room which leads to a target room, either
-    /// a [`Room`] object or [`JsString`] representation of the room name.
-    ///
-    /// Returns an [`Array`] containing the found objects, which should be
-    /// converted into the type of object you searched for.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Room.findExitTo)
     #[wasm_bindgen(final, method, js_name = findExitTo)]
-    pub fn find_exit_to(this: &Room, room: &JsValue) -> ExitDirection;
+    fn find_exit_to_internal(this: &Room, room: &JsString) -> ExitDirection;
 
     #[wasm_bindgen(final, method, js_name = findPath)]
     fn find_path_internal(
@@ -195,12 +170,19 @@ extern "C" {
 }
 
 impl Room {
+    /// The room's name.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.name)
     pub fn name(&self) -> RoomName {
         self.name_internal()
             .try_into()
             .expect("expected parseable room name")
     }
 
+    /// Serialize a path array from [`Room::find_path`] into a string
+    /// representation safe to store in memory.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.serializePath)
     pub fn serialize_path(path: &[Step]) -> String {
         Self::serialize_path_internal(
             serde_wasm_bindgen::to_value(path)
@@ -210,6 +192,10 @@ impl Room {
         .into()
     }
 
+    /// Deserialize a string representation from [`Room::serialize_path`] back
+    /// to a path array.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.deserializePath)
     pub fn deserialize_path(path: &str) -> Vec<Step> {
         serde_wasm_bindgen::from_value(
             Self::deserialize_path_internal(&JsString::from(path)).unchecked_into(),
@@ -268,6 +254,13 @@ impl Room {
         }
     }
 
+    /// Find all objects of the specified type in the room, without passing
+    /// additional options.
+    ///
+    /// Returns an [`Vec`] containing the found objects, which should be
+    /// converted into the type of object you searched for.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.find)
     pub fn find<T>(&self, ty: T, options: Option<&FindOptions>) -> Vec<T::Item>
     where
         T: FindConstant,
@@ -276,6 +269,13 @@ impl Room {
             .iter()
             .map(T::convert_and_check_item)
             .collect()
+    }
+
+    /// Find an exit from the current room which leads to a target room.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Room.findExitTo)
+    pub fn find_exit_to(&self, room: RoomName) -> ExitDirection {
+        self.find_exit_to_internal(&room.into())
     }
 
     /// Find a path within the room from one position to another.
