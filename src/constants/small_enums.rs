@@ -1,13 +1,17 @@
 //! Various constants translated as small enums.
-use std::{convert::Infallible, fmt, str::FromStr};
+use std::{borrow::Cow, fmt};
 
 use enum_iterator::Sequence;
 use js_sys::JsString;
 use num_derive::FromPrimitive;
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{Error as _, Unexpected},
+    Deserialize, Serialize,
+};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
+use super::{macros::named_enum_serialize_deserialize, InvalidConstantString};
 use crate::{
     constants::find::{Exit, Find},
     prelude::*,
@@ -317,7 +321,7 @@ impl Terrain {
 
 /// Translates body part type and `BODYPARTS_ALL` constants
 #[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, Serialize, Sequence)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Sequence)]
 pub enum Part {
     Move = "move",
     Work = "work",
@@ -328,6 +332,8 @@ pub enum Part {
     Heal = "heal",
     Claim = "claim",
 }
+
+named_enum_serialize_deserialize!(Part);
 
 impl Part {
     /// Translates the `BODYPART_COST` constant.
@@ -345,24 +351,6 @@ impl Part {
             // I guess bindgen is adding a `#[non_exhaustive]` onto the enum and forcing us to do
             // this:
             _ => 0,
-        }
-    }
-}
-
-impl FromStr for Part {
-    type Err = Infallible;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "move" => Ok(Part::Move),
-            "work" => Ok(Part::Work),
-            "carry" => Ok(Part::Carry),
-            "attack" => Ok(Part::Attack),
-            "ranged_attack" => Ok(Part::RangedAttack),
-            "tough" => Ok(Part::Tough),
-            "heal" => Ok(Part::Heal),
-            "claim" => Ok(Part::Claim),
-            _ => panic!("unknown part type"),
         }
     }
 }

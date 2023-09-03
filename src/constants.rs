@@ -10,6 +10,60 @@
 //!
 //! [1]: https://github.com/screeps/common/commits/master/lib/constants.js
 
+use std::{error::Error, fmt};
+
+#[derive(Debug, Clone)]
+pub struct InvalidConstantString(String);
+
+impl fmt::Display for InvalidConstantString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "value not valid for constant: {}", self.0)
+    }
+}
+
+impl Error for InvalidConstantString {}
+
+pub(crate) mod macros {
+    macro_rules! named_enum_serialize_deserialize {
+        ($ty:ty) => {
+            impl<'de> Deserialize<'de> for $ty {
+                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+                where
+                    D: serde::Deserializer<'de>,
+                {
+                    let s: Cow<'de, str> = Cow::deserialize(deserializer)?;
+                    <$ty>::from_str(&s).ok_or(D::Error::invalid_value(
+                        Unexpected::Str(&s),
+                        &stringify!($ty),
+                    ))
+                }
+            }
+            impl Serialize for $ty {
+                fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+                where
+                    S: serde::Serializer,
+                {
+                    serializer.serialize_str(self.to_str())
+                }
+            }
+            impl fmt::Display for $ty {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                    write!(f, "{}", self.to_str())
+                }
+            }
+            impl std::str::FromStr for $ty {
+                // add a new error type for this -  or something
+                type Err = InvalidConstantString;
+
+                fn from_str(s: &str) -> Result<Self, Self::Err> {
+                    Self::from_str(s).ok_or(InvalidConstantString(s.to_owned()))
+                }
+            }
+        };
+    }
+    pub(crate) use named_enum_serialize_deserialize;
+}
+
 pub mod extra;
 pub mod find;
 pub mod look;

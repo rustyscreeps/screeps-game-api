@@ -3,21 +3,31 @@ Unreleased
 
 ### Breaking:
 
-- `MapVisualShape::text` and `MapVisual::text` `style` arguments changed to be type `Option<MapTextStyle>`.
-  - The map visual APIs use a different set of options than room visuals, so they need to be a different type to express those options.
-  - Note that all color settings for map visuals are much more restrictive: they only accept colors of the form `#FF22DD`, no web-style color names.
+- Use constant values compatible with the game for serializing `PowerCreepClass`, and
+  `IntershardResourceType`, and `Part` as string - note that if you've stored any of these values,
+  they will fail to parse after updating!
+- Removed `FromStr` impl on `Part` and replace with automatically-generated implementations for all
+  string-represented constant enums, as well as adding `Display` implementation
+- `MapVisualShape::text` and `MapVisual::text` `style` arguments changed to be type
+  `Option<MapTextStyle>`
+  - The map visual APIs use a different set of options than room visuals, so they need to be a
+    different type to express those options
+  - Note that all color settings for map visuals are much more restrictive: they only accept colors
+    of the form `#FF22DD`, no web-style color names
 - Change `Room::find_exit_to` input type from `&JsString` to `RoomName`
 
 ### Additions:
 
 - Add `local::serde_position_packed` module, for use with the `with` serde attribute, allowing
   serialized positions to be stored as packed even with human-readable serializers
-- New types `MapFontStyle`, `MapFontVariant`, `MapTextStyle` for use in the changes to map visuals.
+- New types `MapFontStyle`, `MapFontVariant`, `MapTextStyle` for use in the changes to map visuals
 
 ### Bugfixes:
 
 - Fix incorrect return values in `StructureType::initial_hits` and `ResourceType::boost` constant
   functions
+- Use `std::Cow` in custom deserialization process for `StructureType` and `ResourceType` to fix
+  failures when deserializing in some cases, like from `serde_json::Value`
 
 0.15.0 (2023-08-03)
 ===================

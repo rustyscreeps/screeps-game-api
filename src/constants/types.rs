@@ -1,34 +1,18 @@
 //! `*Type` constants.
+use std::{borrow::Cow, fmt};
+
 use enum_iterator::Sequence;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{Error as _, Unexpected},
+    Deserialize, Serialize,
+};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
+use super::{macros::named_enum_serialize_deserialize, InvalidConstantString};
 use crate::{JsCollectionFromValue, JsCollectionIntoValue};
-
-macro_rules! named_enum_serialize_deserialize {
-    ($ty:ty) => {
-        impl<'de> serde::Deserialize<'de> for $ty {
-            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                let str = <&'de str>::deserialize(deserializer)?;
-                Ok(<$ty>::from_str(str).unwrap_or(<$ty>::__Nonexhaustive))
-            }
-        }
-        impl serde::Serialize for $ty {
-            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-            where
-                S: serde::Serializer,
-            {
-                serializer.serialize_str(self.to_str())
-            }
-        }
-    };
-}
 
 /// Translates `STRUCTURE_*` constants.
 #[wasm_bindgen]
@@ -204,7 +188,7 @@ impl StructureType {
 
 /// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum IntershardResourceType {
     // no longer used, not implemented
     // SubscriptionToken = "token",
@@ -212,6 +196,8 @@ pub enum IntershardResourceType {
     Pixel = "pixel",
     AccessKey = "accessKey",
 }
+
+named_enum_serialize_deserialize!(IntershardResourceType);
 
 /// Translates `RESOURCES_ALL` constant, representing all possible in-game
 /// (non-intershard) resources.
@@ -567,10 +553,12 @@ impl wasm_bindgen::describe::WasmDescribe for MarketResourceType {
 
 /// Translates the `POWER_CLASS` constants, which are classes of power creeps
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Sequence)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum PowerCreepClass {
     Operator = "operator",
 }
+
+named_enum_serialize_deserialize!(PowerCreepClass);
 
 /// Translates the `PWR_*` constants, which are types of powers used by power
 /// creeps
@@ -684,5 +672,175 @@ impl wasm_bindgen::convert::FromWasmAbi for EffectType {
 impl wasm_bindgen::describe::WasmDescribe for EffectType {
     fn describe() {
         wasm_bindgen::describe::inform(wasm_bindgen::describe::U32)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn resources_rust_to_serde_json_from_serde_json_roundtrip() {
+        for resource in enum_iterator::all::<ResourceType>() {
+            if resource != ResourceType::__Nonexhaustive {
+                let serialized = serde_json::to_string(&resource).unwrap();
+                let parsed: ResourceType = serde_json::from_str(&serialized).unwrap();
+                assert_eq!(resource, parsed);
+            }
+        }
+    }
+
+    #[test]
+    fn resources_rust_to_display_from_str_roundtrip() {
+        for resource in enum_iterator::all::<ResourceType>() {
+            if resource != ResourceType::__Nonexhaustive {
+                let string = format!("{}", resource);
+                let parsed = ResourceType::from_str(&string).unwrap();
+                assert_eq!(resource, parsed);
+            }
+        }
+    }
+
+    #[test]
+    fn resources_rust_vec_to_serde_json_from_serde_json_roundtrip() {
+        let mut resources = vec![];
+        for resource in enum_iterator::all::<ResourceType>() {
+            if resource != ResourceType::__Nonexhaustive {
+                resources.push(resource);
+            }
+        }
+        let serialized = serde_json::to_string(&resources).unwrap();
+        let resources_reparsed: Vec<ResourceType> = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(resources, resources_reparsed);
+    }
+
+    #[test]
+    fn resources_rust_vec_to_serde_json_from_serde_json_roundtrip_via_values() {
+        let mut resources = vec![];
+        for resource in enum_iterator::all::<ResourceType>() {
+            if resource != ResourceType::__Nonexhaustive {
+                resources.push(resource);
+            }
+        }
+        let serialized = serde_json::to_string(&resources).unwrap();
+        let resources_reparsed_values: Vec<serde_json::Value> =
+            serde_json::from_str(&serialized).unwrap();
+        let resources_reparsed_native: Vec<ResourceType> = resources_reparsed_values
+            .iter()
+            .map(|v| serde_json::from_value(v.clone()).unwrap())
+            .collect();
+        assert_eq!(resources, resources_reparsed_native);
+    }
+
+    #[test]
+    fn intershard_resources_rust_to_serde_json_from_serde_json_roundtrip() {
+        for resource in enum_iterator::all::<IntershardResourceType>() {
+            if resource != IntershardResourceType::__Nonexhaustive {
+                let serialized = serde_json::to_string(&resource).unwrap();
+                let parsed: IntershardResourceType = serde_json::from_str(&serialized).unwrap();
+                assert_eq!(resource, parsed);
+            }
+        }
+    }
+
+    #[test]
+    fn intershard_resources_rust_to_display_from_str_roundtrip() {
+        for resource in enum_iterator::all::<IntershardResourceType>() {
+            if resource != IntershardResourceType::__Nonexhaustive {
+                let string = format!("{}", resource);
+                let parsed = IntershardResourceType::from_str(&string).unwrap();
+                assert_eq!(resource, parsed);
+            }
+        }
+    }
+
+    #[test]
+    fn intershard_resources_rust_vec_to_serde_json_from_serde_json_roundtrip() {
+        let mut resources = vec![];
+        for resource in enum_iterator::all::<IntershardResourceType>() {
+            if resource != IntershardResourceType::__Nonexhaustive {
+                resources.push(resource);
+            }
+        }
+        let serialized = serde_json::to_string(&resources).unwrap();
+        let resources_reparsed: Vec<IntershardResourceType> =
+            serde_json::from_str(&serialized).unwrap();
+        assert_eq!(resources, resources_reparsed);
+    }
+
+    #[test]
+    fn intershard_resources_rust_vec_to_serde_json_from_serde_json_roundtrip_via_values() {
+        let mut resources = vec![];
+        for resource in enum_iterator::all::<IntershardResourceType>() {
+            if resource != IntershardResourceType::__Nonexhaustive {
+                resources.push(resource);
+            }
+        }
+        let serialized = serde_json::to_string(&resources).unwrap();
+        let resources_reparsed_values: Vec<serde_json::Value> =
+            serde_json::from_str(&serialized).unwrap();
+        let resources_reparsed_native: Vec<IntershardResourceType> = resources_reparsed_values
+            .iter()
+            .map(|v| serde_json::from_value(v.clone()).unwrap())
+            .collect();
+        assert_eq!(resources, resources_reparsed_native);
+    }
+
+    #[test]
+    fn market_resources_rust_to_serde_json_from_serde_json_roundtrip() {
+        for resource in enum_iterator::all::<MarketResourceType>() {
+            if resource != MarketResourceType::Resource(ResourceType::__Nonexhaustive)
+                && resource
+                    != MarketResourceType::IntershardResource(
+                        IntershardResourceType::__Nonexhaustive,
+                    )
+            {
+                let serialized = serde_json::to_string(&resource).unwrap();
+                let parsed: MarketResourceType = serde_json::from_str(&serialized).unwrap();
+                assert_eq!(resource, parsed);
+            }
+        }
+    }
+
+    #[test]
+    fn market_resources_rust_vec_to_serde_json_from_serde_json_roundtrip() {
+        let mut resources = vec![];
+        for resource in enum_iterator::all::<MarketResourceType>() {
+            if resource != MarketResourceType::Resource(ResourceType::__Nonexhaustive)
+                && resource
+                    != MarketResourceType::IntershardResource(
+                        IntershardResourceType::__Nonexhaustive,
+                    )
+            {
+                resources.push(resource);
+            }
+        }
+        let serialized = serde_json::to_string(&resources).unwrap();
+        let resources_reparsed: Vec<MarketResourceType> =
+            serde_json::from_str(&serialized).unwrap();
+        assert_eq!(resources, resources_reparsed);
+    }
+
+    #[test]
+    fn market_resources_rust_vec_to_serde_json_from_serde_json_roundtrip_via_values() {
+        let mut resources = vec![];
+        for resource in enum_iterator::all::<MarketResourceType>() {
+            if resource != MarketResourceType::Resource(ResourceType::__Nonexhaustive)
+                && resource
+                    != MarketResourceType::IntershardResource(
+                        IntershardResourceType::__Nonexhaustive,
+                    )
+            {
+                resources.push(resource);
+            }
+        }
+        let serialized = serde_json::to_string(&resources).unwrap();
+        let resources_reparsed_values: Vec<serde_json::Value> =
+            serde_json::from_str(&serialized).unwrap();
+        let resources_reparsed_native: Vec<MarketResourceType> = resources_reparsed_values
+            .iter()
+            .map(|v| serde_json::from_value(v.clone()).unwrap())
+            .collect();
+        assert_eq!(resources, resources_reparsed_native);
     }
 }
