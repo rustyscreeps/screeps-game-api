@@ -18,11 +18,12 @@ impl LocalRoomTerrain {
         // not using Terrain::from_u8() because `0b11` value, wall+swamp, happens
         // in commonly used server environments (notably the private server default
         // map), and is special-cased in the engine code; we special-case it here
-        match byte {
+        match byte & 0b11 {
             0b00 => Terrain::Plain,
             0b01 | 0b11 => Terrain::Wall,
             0b10 => Terrain::Swamp,
-            _ => panic!("unexpected terrain"),
+            // Should be optimized out
+            _ => unreachable!("all combinations of 2 bits are covered"),
         }
     }
 
