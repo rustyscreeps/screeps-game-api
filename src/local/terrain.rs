@@ -28,6 +28,9 @@ impl LocalRoomTerrain {
         }
     }
 
+    /// Creates a `LocalRoomTerrain` from the bytes that correspond to the room's terrain data.  This is like the `RoomTerrain` type but performs all operations on data stored in wasm.
+    /// Each byte in the array corresponds to the value of the `Terrain` at the given position.
+    /// The bytes are in row-major order, that is they start at the top left, then move to the top right, and then start at the left of the next row. This is different from `LocalCostMatrix`, which is column-major.
     pub fn new_from_bits(bits: Box<[u8; ROOM_AREA]>) -> Self {
         Self { bits }
     }
