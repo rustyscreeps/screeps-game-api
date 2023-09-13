@@ -53,6 +53,7 @@ impl From<RoomTerrain> for LocalRoomTerrain {
         // again
         drop(js_buffer);
         // we've got the data in our boxed array, change to the needed type
-        LocalRoomTerrain::new_from_bits(unsafe { std::mem::transmute(data) })
+        // SAFETY: `Box` has the same layout for sized types. `MaybeUninit<u8>` has the same layout as `u8`. The arrays are the same size. The `MaybeUninit<u8>` are all initialized because JS wrote to them.
+        LocalRoomTerrain::new_from_bits(unsafe { std::mem::transmute::<Box<[MaybeUninit<u8>; ROOM_AREA]>, Box<[u8; ROOM_AREA]>>(data) })
     }
 }
