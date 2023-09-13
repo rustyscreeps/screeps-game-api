@@ -6,6 +6,7 @@ use crate::{constants::Terrain, objects::RoomTerrain};
 
 use super::{xy_to_terrain_index, RoomXY, ROOM_AREA};
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LocalRoomTerrain {
     bits: Box<[u8; ROOM_AREA]>,
 }
