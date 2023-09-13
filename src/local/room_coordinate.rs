@@ -17,11 +17,16 @@ impl fmt::Display for OutOfBoundsError {
 
 impl Error for OutOfBoundsError {}
 
+/// Converts a [`RoomXY`] coordinate pair to a linear index appropriate for use
+/// with the internal representation of a [`CostMatrix`] or [`LocalCostMatrix`].
 #[inline]
 pub const fn xy_to_linear_index(xy: RoomXY) -> usize {
-    ((xy.x.0 as usize) * (ROOM_SIZE as usize)) + (xy.y.0 as usize)
+    xy.x.u8() as usize * ROOM_SIZE as usize + xy.y.u8() as usize
 }
 
+/// Converts a linear index from the internal representation of a [`CostMatrix`]
+/// or [`LocalCostMatrix`] to a [`RoomXY`] coordinate pair for the position the
+/// index represents.
 #[inline]
 pub fn linear_index_to_xy(idx: usize) -> RoomXY {
     assert!(idx < ROOM_AREA, "Out of bounds index: {idx}");
@@ -29,6 +34,26 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
     RoomXY {
         x: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_SIZE as usize)) as u8) },
         y: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_SIZE as usize)) as u8) },
+    }
+}
+
+/// Converts a [`RoomXY`] coordinate pair to a terrain index appropriate for use
+/// with the internal representation of [`RoomTerrain`] or [`LocalRoomTerrain`].
+#[inline]
+pub const fn xy_to_terrain_index(xy: RoomXY) -> usize {
+    xy.y.u8() as usize * ROOM_SIZE as usize + xy.x.u8() as usize
+}
+
+/// Converts a terrain index from the internal representation of a
+/// [`RoomTerrain`] or [`LocalRoomTerrain`] to a [`RoomXY`] coordinate pair for
+/// the position the index represents.
+#[inline]
+pub fn terrain_index_to_xy(idx: usize) -> RoomXY {
+    assert!(idx < ROOM_AREA, "Out of bounds index: {idx}");
+    // SAFETY: bounds checking above ensures both are within range.
+    RoomXY {
+        x: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_SIZE as usize)) as u8) },
+        y: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_SIZE as usize)) as u8) },
     }
 }
 
