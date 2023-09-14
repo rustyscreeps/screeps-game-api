@@ -6,7 +6,7 @@ use crate::{constants::Terrain, objects::RoomTerrain};
 
 use super::{xy_to_terrain_index, RoomXY, ROOM_AREA};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct LocalRoomTerrain {
     bits: Box<[u8; ROOM_AREA]>,
 }
@@ -28,9 +28,16 @@ impl LocalRoomTerrain {
         }
     }
 
-    /// Creates a `LocalRoomTerrain` from the bytes that correspond to the room's terrain data.  This is like the `RoomTerrain` type but performs all operations on data stored in wasm.
-    /// Each byte in the array corresponds to the value of the `Terrain` at the given position.
-    /// The bytes are in row-major order, that is they start at the top left, then move to the top right, and then start at the left of the next row. This is different from `LocalCostMatrix`, which is column-major.
+    /// Creates a `LocalRoomTerrain` from the bytes that correspond to the
+    /// room's terrain data.
+    ///
+    /// This is like the `RoomTerrain` type but performs all operations on data
+    /// stored in wasm memory. Each byte in the array corresponds to the value
+    /// of the `Terrain` at the given position.
+    ///
+    /// The bytes are in row-major order - that is they start at the top left,
+    /// then move to the top right, and then start at the left of the next row.
+    /// This is different from `LocalCostMatrix`, which is column-major.
     pub fn new_from_bits(bits: Box<[u8; ROOM_AREA]>) -> Self {
         Self { bits }
     }
@@ -43,11 +50,12 @@ impl From<RoomTerrain> for LocalRoomTerrain {
             Box::new([MaybeUninit::uninit(); ROOM_AREA]);
         // create a Uint8Array mapped to the same point in wasm linear memory as our
         // uninitialized boxed array
+
+        // SAFETY: if any allocations happen in rust, this buffer will be detached from
+        // wasm memory and no longer writable - we use it immediately then discard it to
+        // avoid this
         let js_buffer =
             unsafe { Uint8Array::view_mut_raw(data.as_mut_ptr() as *mut u8, ROOM_AREA) };
-        // SAFETY: it's important to not allocate _anything_ in rust memory now that
-        // we've created the Uint8Array pointed at an arbitrary wasm memory location;
-        // we'd overwrite the wrong memory if the array moved due to allocation!
 
         // copy the terrain buffer into the memory backing the Uint8Array - this is the
         // boxed array, so this initializes it
@@ -58,7 +66,11 @@ impl From<RoomTerrain> for LocalRoomTerrain {
         // again
         drop(js_buffer);
         // we've got the data in our boxed array, change to the needed type
-        // SAFETY: `Box` has the same layout for sized types. `MaybeUninit<u8>` has the same layout as `u8`. The arrays are the same size. The `MaybeUninit<u8>` are all initialized because JS wrote to them.
-        LocalRoomTerrain::new_from_bits(unsafe { std::mem::transmute::<Box<[MaybeUninit<u8>; ROOM_AREA]>, Box<[u8; ROOM_AREA]>>(data) })
+        // SAFETY: `Box` has the same layout for sized types. `MaybeUninit<u8>` has the
+        // same layout as `u8`. The arrays are the same size. The `MaybeUninit<u8>` are
+        // all initialized because JS wrote to them.
+        LocalRoomTerrain::new_from_bits(unsafe {
+            std::mem::transmute::<Box<[MaybeUninit<u8>; ROOM_AREA]>, Box<[u8; ROOM_AREA]>>(data)
+        })
     }
 }
