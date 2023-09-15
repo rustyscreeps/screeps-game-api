@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.16.0 (2023-09-14)
+===================
+
 ### Breaking:
 
 - Use constant values compatible with the game for serializing `PowerCreepClass`, and
