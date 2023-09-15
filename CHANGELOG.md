@@ -21,6 +21,8 @@ Unreleased
 - Add `local::serde_position_packed` module, for use with the `with` serde attribute, allowing
   serialized positions to be stored as packed even with human-readable serializers
 - New types `MapFontStyle`, `MapFontVariant`, `MapTextStyle` for use in the changes to map visuals
+- Newly public functions `RoomName::x_coord` and `RoomName::y_coord` to get the position of a room
+  in the world map
 
 ### Bugfixes:
 
