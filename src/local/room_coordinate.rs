@@ -2,7 +2,7 @@ use std::{convert::TryFrom, error::Error, fmt};
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
-use crate::constants::ROOM_SIZE;
+use crate::constants::{Direction, ROOM_SIZE};
 
 pub(crate) const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
 
@@ -88,6 +88,32 @@ impl RoomCoordinate {
     pub const fn u8(self) -> u8 {
         self.0
     }
+
+    pub fn checked_add(self, rhs: i8) -> Option<RoomCoordinate> {
+        match (self.0 as i8).checked_add(rhs) {
+            Some(result) => match result {
+                // less than 0
+                i8::MIN..=-1 => None,
+                // greater than 49
+                50..=i8::MAX => None,
+                // SAFETY: we've checked that this coord is in the valid range
+                c => Some(unsafe { RoomCoordinate::unchecked_new(c as u8) }),
+            },
+            None => None,
+        }
+    }
+
+    pub fn saturating_add(self, rhs: i8) -> RoomCoordinate {
+        let result = match (self.0 as i8).saturating_add(rhs) {
+            // less than 0, saturate to 0
+            i8::MIN..=-1 => 0,
+            // greater than 49, saturate to 49
+            50..=i8::MAX => ROOM_SIZE - 1,
+            c => c as u8,
+        };
+        // SAFETY: we've ensured that this coord is in the valid range
+        unsafe { RoomCoordinate::unchecked_new(result) }
+    }
 }
 
 impl fmt::Display for RoomCoordinate {
@@ -112,6 +138,34 @@ impl RoomXY {
             x: RoomCoordinate::unchecked_new(x),
             y: RoomCoordinate::unchecked_new(y),
         }
+    }
+
+    pub fn checked_add(self, rhs: (i8, i8)) -> Option<RoomXY> {
+        let x = match self.x.checked_add(rhs.0) {
+            Some(x) => x,
+            None => return None,
+        };
+        let y = match self.y.checked_add(rhs.1) {
+            Some(y) => y,
+            None => return None,
+        };
+        Some(RoomXY { x, y })
+    }
+
+    pub fn saturating_add(self, rhs: (i8, i8)) -> RoomXY {
+        let x = self.x.saturating_add(rhs.0);
+        let y = self.y.saturating_add(rhs.1);
+        RoomXY { x, y }
+    }
+
+    pub fn checked_add_direction(self, rhs: Direction) -> Option<RoomXY> {
+        let (dx, dy) = rhs.into();
+        self.checked_add((dx as i8, dy as i8))
+    }
+
+    pub fn saturating_add_direction(self, rhs: Direction) -> RoomXY {
+        let (dx, dy) = rhs.into();
+        self.saturating_add((dx as i8, dy as i8))
     }
 }
 
