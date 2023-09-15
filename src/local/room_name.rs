@@ -61,13 +61,13 @@ impl fmt::Display for RoomName {
     ///
     /// [`RoomName::new`]: struct.RoomName.html#method.new
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let x_coord = self.x_coord();
-        let y_coord = self.y_coord();
-
         if cfg!(feature = "sim") && self.packed == 0 {
             write!(f, "sim")?;
             return Ok(());
         }
+
+        let x_coord = self.x_coord();
+        let y_coord = self.y_coord();
 
         if x_coord >= 0 {
             write!(f, "E{}", x_coord)?;
@@ -145,7 +145,7 @@ impl RoomName {
     ///
     /// For `Wxx` rooms, returns `-xx - 1`. For `Exx` rooms, returns `xx`.
     #[inline]
-    pub(super) const fn x_coord(&self) -> i32 {
+    pub const fn x_coord(&self) -> i32 {
         ((self.packed >> 8) & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
@@ -153,7 +153,7 @@ impl RoomName {
     ///
     /// For `Nyy` rooms, returns `-yy - 1`. For `Syy` rooms, returns `yy`.
     #[inline]
-    pub(super) const fn y_coord(&self) -> i32 {
+    pub const fn y_coord(&self) -> i32 {
         (self.packed & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
