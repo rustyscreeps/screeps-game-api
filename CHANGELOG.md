@@ -23,6 +23,7 @@ Unreleased
 - New types `MapFontStyle`, `MapFontVariant`, `MapTextStyle` for use in the changes to map visuals
 - Newly public functions `RoomName::x_coord` and `RoomName::y_coord` to get the position of a room
   in the world map
+- Add `LocalRoomTerrain`, a wrapper in wasm memory of the data in a `RoomTerrain` object.
 
 ### Bugfixes:
 
