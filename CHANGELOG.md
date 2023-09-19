@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Fix incorrect setter name on `visualize_path_style` causing the setting to not work
+
 0.16.0 (2023-09-14)
 ===================
 

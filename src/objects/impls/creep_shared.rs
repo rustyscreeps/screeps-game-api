@@ -21,7 +21,7 @@ extern "C" {
     #[wasm_bindgen(method, setter = noPathFinding)]
     pub fn no_path_finding(this: &JsMoveToOptions, require: bool);
 
-    #[wasm_bindgen(method, setter = vizualizePathStyle)]
+    #[wasm_bindgen(method, setter = visualizePathStyle)]
     pub fn visualize_path_style(this: &JsMoveToOptions, style: &JsValue);
 
     // todo this is wrong, the additional options are supposed to be added to the
