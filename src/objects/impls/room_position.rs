@@ -1,5 +1,6 @@
 use std::convert::TryInto;
 
+use gloo_utils::format::JsValueSerdeExt;
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
 use wasm_bindgen::{prelude::*, JsCast};
@@ -322,13 +323,13 @@ impl RoomPosition {
 
         if let Some(options) = options {
             options.into_js_options(|js_options| {
-                serde_wasm_bindgen::from_value(
-                    self.find_path_to_internal(&target, Some(js_options.unchecked_ref())),
-                )
-                .expect("invalid path from RoomPosition.findPathTo")
+                self.find_path_to_internal(&target, None)
+                    .into_serde()
+                    .expect("invalid path from RoomPosition.findPathTo")
             })
         } else {
-            serde_wasm_bindgen::from_value(self.find_path_to_internal(&target, None))
+            self.find_path_to_internal(&target, None)
+                .into_serde()
                 .expect("invalid path from RoomPosition.findPathTo")
         }
     }
