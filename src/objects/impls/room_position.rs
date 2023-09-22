@@ -323,7 +323,7 @@ impl RoomPosition {
 
         if let Some(options) = options {
             options.into_js_options(|js_options| {
-                self.find_path_to_internal(&target, None)
+                self.find_path_to_internal(&target, Some(js_options.unchecked_ref()))
                     .into_serde()
                     .expect("invalid path from RoomPosition.findPathTo")
             })
