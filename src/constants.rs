@@ -74,7 +74,7 @@ mod small_enums;
 mod types;
 
 pub use self::{
-    extra::*, find::FindConstant, look::LookConstant, math::*, numbers::*, recipes::FactoryRecipe,
+    extra::*, find::FindConstant, look::LookConstant, numbers::*, recipes::FactoryRecipe,
     small_enums::*, types::*,
 };
 
