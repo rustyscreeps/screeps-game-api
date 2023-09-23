@@ -2,6 +2,8 @@ Unreleased
 ==========
 
 - Fix incorrect setter name on `visualize_path_style` causing the setting to not work
+- Remove `constants::math::control_points_for_gcl` and `power_for_gpl` - moved to new
+  `screeps-game-utils` crate
 
 0.16.0 (2023-09-14)
 ===================
