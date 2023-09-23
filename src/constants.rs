@@ -67,7 +67,6 @@ pub(crate) mod macros {
 pub mod extra;
 pub mod find;
 pub mod look;
-pub mod math;
 mod numbers;
 mod recipes;
 pub mod seasonal;
