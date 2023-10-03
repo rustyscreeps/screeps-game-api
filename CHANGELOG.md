@@ -1,7 +1,11 @@
 Unreleased
 ==========
 
+### Bugfixes:
 - Fix incorrect setter name on `visualize_path_style` causing the setting to not work
+- `OwnedStructure`, `OwnedStructureObject`, and `OwnedStructureProperties`'s `my` method now
+  correctly handles the value being undefined.
+  - This fixes a panic on checking `my` for unowned controllers. (again)
 
 0.16.0 (2023-09-14)
 ===================
