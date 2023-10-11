@@ -116,21 +116,6 @@ pub enum Direction {
 }
 
 impl Direction {
-    /// Whether the direction is diagonal.
-    ///
-    /// Example usage:
-    ///
-    /// ```
-    /// use screeps::Direction::*;
-    ///
-    /// assert_eq!(Top.is_diagonal(), false);
-    /// assert_eq!(TopRight.is_diagonal(), true);
-    /// ```
-    pub fn is_diagonal(self) -> bool {
-        use Direction::*;
-
-        matches!(self, TopRight | BottomRight | BottomLeft | TopLeft)
-    }
 
     /// Whether the direction is orthogonal.
     ///
@@ -143,7 +128,23 @@ impl Direction {
     /// assert_eq!(TopRight.is_orthogonal(), false);
     /// ```
     pub fn is_orthogonal(self) -> bool {
-        !self.is_diagonal()
+        use Direction::*;
+
+        matches!(self, Top | Right | Bottom | Left)
+    }
+
+    /// Whether the direction is diagonal.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::Direction::*;
+    ///
+    /// assert_eq!(Top.is_diagonal(), false);
+    /// assert_eq!(TopRight.is_diagonal(), true);
+    /// ```
+    pub fn is_diagonal(self) -> bool {
+        !self.is_orthogonal()
     }
 
     /// Rotate the direction by a specified number of steps clockwise if
