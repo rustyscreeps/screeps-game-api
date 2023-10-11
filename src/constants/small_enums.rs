@@ -4,6 +4,7 @@ use std::{borrow::Cow, fmt};
 use enum_iterator::Sequence;
 use js_sys::JsString;
 use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 use serde::{
     de::{Error as _, Unexpected},
     Deserialize, Serialize,
@@ -162,7 +163,9 @@ impl Direction {
     /// ```
     pub fn multi_rot(self, times: i8) -> Self {
         let raw_dir = ((self as u8) - 1).wrapping_add_signed(times) % 8 + 1;
-        unsafe { std::mem::transmute(raw_dir) }
+        // unwrap should be optimized away, as the integer we ended up with
+        // is always a valid value
+        Self::from_u8(raw_dir).unwrap()
     }
 
     /// Rotate the direction clockwise by one step.
