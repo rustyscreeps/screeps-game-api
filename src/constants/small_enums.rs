@@ -116,7 +116,6 @@ pub enum Direction {
 }
 
 impl Direction {
-
     /// Whether the direction is orthogonal.
     ///
     /// Example usage:
