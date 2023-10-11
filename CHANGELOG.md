@@ -1,7 +1,13 @@
 Unreleased
 ==========
 
+### Additions:
+
+- Add new geometry helper functions to `Direction`: `is_diagonal()`, `is_orthogonal()`,
+  `multi_rot()`, `rot_cw()`, and `rot_ccw()`
+
 ### Bugfixes:
+
 - Fix incorrect setter name on `visualize_path_style` causing the setting to not work
 - `OwnedStructure`, `OwnedStructureObject`, and `OwnedStructureProperties`'s `my` method now
   correctly handles the value being undefined.
