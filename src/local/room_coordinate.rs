@@ -64,6 +64,8 @@ pub fn terrain_index_to_xy(idx: usize) -> RoomXY {
 pub struct RoomCoordinate(u8);
 
 impl RoomCoordinate {
+    /// Create a `RoomCoordinate` from a `u8`, returning an error if the
+    /// coordinate is not in the valid room size range
     #[inline]
     pub const fn new(coord: u8) -> Result<Self, OutOfBoundsError> {
         if coord < ROOM_SIZE {
@@ -73,6 +75,9 @@ impl RoomCoordinate {
         }
     }
 
+    /// Create a `RoomCoordinate` from a `u8`, without checking whether it's in
+    /// the range of valid values.
+    ///
     /// # Safety
     /// Calling this method with `coord >= ROOM_SIZE` can result in undefined
     /// behaviour when the resulting `RoomCoordinate` is used.
@@ -85,10 +90,27 @@ impl RoomCoordinate {
         RoomCoordinate(coord)
     }
 
+    /// Get the integer value of this coordinate
     pub const fn u8(self) -> u8 {
         self.0
     }
 
+    /// Get the coordinate adjusted by a certain value, returning `None` if the
+    /// result is outside the valid range.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomCoordinate;
+    ///
+    /// let zero = RoomCoordinate::new(0).unwrap();
+    /// let forty_nine = RoomCoordinate::new(49).unwrap();
+    ///
+    /// assert_eq!(zero.checked_add(1), Some(RoomCoordinate::new(1).unwrap()));
+    /// assert_eq!(zero.checked_add(-1), None);
+    /// assert_eq!(zero.checked_add(49), Some(forty_nine));
+    /// assert_eq!(forty_nine.checked_add(1), None);
+    /// ```
     pub fn checked_add(self, rhs: i8) -> Option<RoomCoordinate> {
         match (self.0 as i8).checked_add(rhs) {
             Some(result) => match result {
@@ -103,6 +125,22 @@ impl RoomCoordinate {
         }
     }
 
+    /// Get the coordinate adjusted by a certain value, saturating at the edges
+    /// of the room if the result would be outside of the valid range.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomCoordinate;
+    ///
+    /// let zero = RoomCoordinate::new(0).unwrap();
+    /// let forty_nine = RoomCoordinate::new(49).unwrap();
+    ///
+    /// assert_eq!(zero.saturating_add(1), RoomCoordinate::new(1).unwrap());
+    /// assert_eq!(zero.saturating_add(-1), zero);
+    /// assert_eq!(zero.saturating_add(49), forty_nine);
+    /// assert_eq!(forty_nine.saturating_add(1), forty_nine);
+    /// ```
     pub fn saturating_add(self, rhs: i8) -> RoomCoordinate {
         let result = match (self.0 as i8).saturating_add(rhs) {
             // less than 0, saturate to 0
