@@ -168,6 +168,9 @@ pub struct RoomXY {
 }
 
 impl RoomXY {
+    /// Create a `RoomXY` from a pair of `u8`, without checking whether it's in
+    /// the range of valid values.
+    ///
     /// # Safety
     /// Calling this method with `x >= ROOM_SIZE` or `y >= ROOM_SIZE` can result
     /// in undefined behaviour when the resulting `RoomXY` is used.
@@ -179,6 +182,23 @@ impl RoomXY {
         }
     }
 
+    /// Get the coordinate adjusted by a certain value, returning `None` if the
+    /// result is outside the valid range.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomXY;
+    ///
+    /// let zero = unsafe { RoomXY::unchecked_new(0, 0) };
+    /// let one = unsafe { RoomXY::unchecked_new(1, 1) };
+    /// let forty_nine = unsafe { RoomXY::unchecked_new(49, 49) };
+    ///
+    /// assert_eq!(zero.checked_add((1, 1)), Some(one));
+    /// assert_eq!(zero.checked_add((-1, 0)), None);
+    /// assert_eq!(zero.checked_add((49, 49)), Some(forty_nine));
+    /// assert_eq!(forty_nine.checked_add((1, 1)), None);
+    /// ```
     pub fn checked_add(self, rhs: (i8, i8)) -> Option<RoomXY> {
         let x = match self.x.checked_add(rhs.0) {
             Some(x) => x,
@@ -191,6 +211,24 @@ impl RoomXY {
         Some(RoomXY { x, y })
     }
 
+    /// Get the coordinate adjusted by a certain value, saturating at the edges of the room if the result would be outside the valid range.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomXY;
+    ///
+    /// let zero = unsafe { RoomXY::unchecked_new(0, 0) };
+    /// let one = unsafe { RoomXY::unchecked_new(1, 1) };
+    /// let forty_nine = unsafe { RoomXY::unchecked_new(49, 49) };
+    ///
+    /// assert_eq!(zero.saturating_add((1, 1)), one);
+    /// assert_eq!(zero.saturating_add((-1, 0)), zero);
+    /// assert_eq!(zero.saturating_add((49, 49)), forty_nine);
+    /// assert_eq!(zero.saturating_add((i8::MAX, i8::MAX)), forty_nine);
+    /// assert_eq!(forty_nine.saturating_add((1, 1)), forty_nine);
+    /// assert_eq!(forty_nine.saturating_add((i8::MIN, i8::MIN)), zero);
+    /// ```
     pub fn saturating_add(self, rhs: (i8, i8)) -> RoomXY {
         let x = self.x.saturating_add(rhs.0);
         let y = self.y.saturating_add(rhs.1);
