@@ -710,11 +710,20 @@ pub struct Step {
     pub direction: Direction,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum Path {
     Vectorized(Vec<Step>),
     Serialized(String),
+}
+
+impl ToString for Path {
+    fn to_string(&self) -> String {
+        match self {
+            Path::Vectorized(path) => Room::serialize_path(path),
+            Path::Serialized(path) => path.clone(),
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
