@@ -211,7 +211,8 @@ impl RoomXY {
         Some(RoomXY { x, y })
     }
 
-    /// Get the coordinate adjusted by a certain value, saturating at the edges of the room if the result would be outside the valid room area.
+    /// Get the coordinate adjusted by a certain value, saturating at the edges
+    /// of the room if the result would be outside the valid room area.
     ///
     /// Example usage:
     ///
@@ -235,7 +236,8 @@ impl RoomXY {
         RoomXY { x, y }
     }
 
-    /// Get the neighbor of a given `RoomXY` in the given direction, returning `None` if the result is outside the valid room area.
+    /// Get the neighbor of a given `RoomXY` in the given direction, returning
+    /// `None` if the result is outside the valid room area.
     ///
     /// Example usage:
     ///
@@ -256,7 +258,8 @@ impl RoomXY {
         self.checked_add((dx as i8, dy as i8))
     }
 
-    /// Get the neighbor of a given `RoomXY` in the given direction, saturating at the edges if the result is outside the valid room area.
+    /// Get the neighbor of a given `RoomXY` in the given direction, saturating
+    /// at the edges if the result is outside the valid room area.
     ///
     /// Example usage:
     ///
