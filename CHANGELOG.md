@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.16.1 (2023-10-11)
+===================
+
 ### Additions:
 
 - Add new geometry helper functions to `Direction`: `is_diagonal`, `is_orthogonal`, `multi_rot`,
