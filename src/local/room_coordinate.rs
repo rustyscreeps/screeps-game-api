@@ -138,8 +138,9 @@ impl RoomCoordinate {
     ///
     /// assert_eq!(zero.saturating_add(1), RoomCoordinate::new(1).unwrap());
     /// assert_eq!(zero.saturating_add(-1), zero);
-    /// assert_eq!(zero.saturating_add(49), forty_nine);
+    /// assert_eq!(zero.saturating_add(i8::MAX), forty_nine);
     /// assert_eq!(forty_nine.saturating_add(1), forty_nine);
+    /// assert_eq!(forty_nine.saturating_add(i8::MIN), zero);
     /// ```
     pub fn saturating_add(self, rhs: i8) -> RoomCoordinate {
         let result = match (self.0 as i8).saturating_add(rhs) {
