@@ -183,7 +183,7 @@ impl RoomXY {
     }
 
     /// Get the coordinate adjusted by a certain value, returning `None` if the
-    /// result is outside the valid range.
+    /// result is outside the valid room area.
     ///
     /// Example usage:
     ///
@@ -211,7 +211,7 @@ impl RoomXY {
         Some(RoomXY { x, y })
     }
 
-    /// Get the coordinate adjusted by a certain value, saturating at the edges of the room if the result would be outside the valid range.
+    /// Get the coordinate adjusted by a certain value, saturating at the edges of the room if the result would be outside the valid room area.
     ///
     /// Example usage:
     ///
@@ -235,11 +235,43 @@ impl RoomXY {
         RoomXY { x, y }
     }
 
+    /// Get the neighbor of a given `RoomXY` in the given direction, returning `None` if the result is outside the valid room area.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::{constants::Direction::*, local::RoomXY};
+    ///
+    /// let zero = unsafe { RoomXY::unchecked_new(0, 0) };
+    /// let one = unsafe { RoomXY::unchecked_new(1, 1) };
+    /// let forty_nine = unsafe { RoomXY::unchecked_new(49, 49) };
+    ///
+    /// assert_eq!(zero.checked_add_direction(BottomRight), Some(one));
+    /// assert_eq!(zero.checked_add_direction(TopLeft), None);
+    /// assert_eq!(one.checked_add_direction(TopLeft), Some(zero));
+    /// assert_eq!(forty_nine.checked_add_direction(BottomRight), None);
+    /// ```
     pub fn checked_add_direction(self, rhs: Direction) -> Option<RoomXY> {
         let (dx, dy) = rhs.into();
         self.checked_add((dx as i8, dy as i8))
     }
 
+    /// Get the neighbor of a given `RoomXY` in the given direction, saturating at the edges if the result is outside the valid room area.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::{constants::Direction::*, local::RoomXY};
+    ///
+    /// let zero = unsafe { RoomXY::unchecked_new(0, 0) };
+    /// let one = unsafe { RoomXY::unchecked_new(1, 1) };
+    /// let forty_nine = unsafe { RoomXY::unchecked_new(49, 49) };
+    ///
+    /// assert_eq!(zero.saturating_add_direction(BottomRight), one);
+    /// assert_eq!(zero.saturating_add_direction(TopLeft), zero);
+    /// assert_eq!(one.saturating_add_direction(TopLeft), zero);
+    /// assert_eq!(forty_nine.saturating_add_direction(BottomRight), forty_nine);
+    /// ```
     pub fn saturating_add_direction(self, rhs: Direction) -> RoomXY {
         let (dx, dy) = rhs.into();
         self.saturating_add((dx as i8, dy as i8))
