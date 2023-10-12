@@ -3,8 +3,10 @@ Unreleased
 
 ### Additions:
 
-- Add new geometry helper functions to `Direction`: `is_diagonal()`, `is_orthogonal()`,
-  `multi_rot()`, `rot_cw()`, and `rot_ccw()`
+- Add new geometry helper functions to `Direction`: `is_diagonal`, `is_orthogonal`, `multi_rot`,
+  `rot_cw`, and `rot_ccw`
+- Add `checked_add` and `saturating_add` functions to `RoomCoordinate` and `RoomXY`, as well as
+  `checked_add_direction` and `saturating_add_direction` to `RoomXY`
 
 ### Bugfixes:
 
