@@ -195,6 +195,12 @@ impl Direction {
     }
 }
 
+impl JsCollectionIntoValue for Direction {
+    fn into_value(self) -> JsValue {
+        (self as u8).into()
+    }
+}
+
 impl From<Direction> for (i32, i32) {
     /// Returns the change in (x, y) when moving in each direction.
     #[inline]

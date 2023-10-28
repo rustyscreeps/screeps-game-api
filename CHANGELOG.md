@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+### Bugfixes:
+
+- Implement `JsCollectionIntoValue` for `Direction`, making the `JsHashMap` returned by
+  `game::map::describe_exits` able to be used
+
 0.16.1 (2023-10-11)
 ===================
 
