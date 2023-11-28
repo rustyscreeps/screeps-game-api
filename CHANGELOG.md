@@ -1,6 +1,15 @@
 Unreleased
 ==========
 
+### Breaking:
+
+- Changed `RoomTerrain::new` and `game::map::get_room_terrain` return type to
+  `Option<RoomTerrain>`, returning `None` when the specified room is outside the server's
+  map
+- Changed `game::map::get_room_status` return type to `Option<RoomStatusResult>`, returning
+  `None` instead of the previous behavior of returning an artificial 'normal' status for rooms
+  outside the server's map
+
 ### Bugfixes:
 
 - Implement `JsCollectionIntoValue` for `Direction`, making the `JsHashMap` returned by

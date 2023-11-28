@@ -15,8 +15,8 @@ extern "C" {
     #[wasm_bindgen(js_namespace = Room, js_name = Terrain)]
     pub type RoomTerrain;
 
-    #[wasm_bindgen(constructor, js_namespace = Room, js_class = Terrain)]
-    fn new_internal(room_name: &JsString) -> RoomTerrain;
+    #[wasm_bindgen(constructor, js_namespace = Room, js_class = Terrain, catch)]
+    fn new_internal(room_name: &JsString) -> Result<RoomTerrain, JsValue>;
 
     /// Get the type of terrain at given coordinates.
     ///
@@ -38,10 +38,10 @@ impl RoomTerrain {
     /// of the room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.Terrain.constructor)
-    pub fn new(room_name: RoomName) -> RoomTerrain {
+    pub fn new(room_name: RoomName) -> Option<RoomTerrain> {
         let name = room_name.into();
 
-        Self::new_internal(&name)
+        Self::new_internal(&name).ok()
     }
 
     /// Get a copy of the underlying Uint8Array with the data about the room's
