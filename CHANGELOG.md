@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+### Breaking:
+
+- Change `TOWER_OPTIMAL_RANGE` and `TOWER_FALLOFF_RANGE` types to `u8` and `TOWER_FALLOFF` type
+  to `f64`
+
 ### Bugfixes:
 
 - Implement `JsCollectionIntoValue` for `Direction`, making the `JsHashMap` returned by
