@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.17.0 (2023-11-27)
+===================
+
 ### Breaking:
 
 - Change `TOWER_OPTIMAL_RANGE` and `TOWER_FALLOFF_RANGE` types to `u8` and `TOWER_FALLOFF` type
