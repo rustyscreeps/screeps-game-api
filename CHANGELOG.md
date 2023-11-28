@@ -11,6 +11,8 @@ Unreleased
 - Changed `game::map::get_room_status` return type to `Option<RoomStatusResult>`, returning
   `None` instead of the previous behavior of returning an artificial 'normal' status for rooms
   outside the server's map
+- Remove `constants::math::control_points_for_gcl` and `power_for_gpl` - moved to new
+  `screeps-game-utils` crate
 
 ### Bugfixes:
 

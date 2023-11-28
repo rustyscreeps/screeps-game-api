@@ -67,7 +67,6 @@ pub(crate) mod macros {
 pub mod extra;
 pub mod find;
 pub mod look;
-pub mod math;
 mod numbers;
 mod recipes;
 pub mod seasonal;
@@ -75,7 +74,7 @@ mod small_enums;
 mod types;
 
 pub use self::{
-    extra::*, find::FindConstant, look::LookConstant, math::*, numbers::*, recipes::FactoryRecipe,
+    extra::*, find::FindConstant, look::LookConstant, numbers::*, recipes::FactoryRecipe,
     small_enums::*, types::*,
 };
 
