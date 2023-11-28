@@ -95,6 +95,7 @@ extern "C" {
     pub fn timestamp(this: &JsRoomStatusResult) -> Option<f64>;
 }
 
+#[derive(Clone, Debug)]
 pub struct RoomStatusResult {
     status: RoomStatus,
     timestamp: Option<f64>,
