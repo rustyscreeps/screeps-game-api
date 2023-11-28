@@ -1,7 +1,7 @@
 //! Traits associated with how specific [game objects] can be used.
 //!
 //! [game objects]: crate::objects
-use std::{borrow::Borrow, str::FromStr};
+use std::str::FromStr;
 
 use enum_dispatch::enum_dispatch;
 use js_sys::{Array, JsString};
@@ -10,7 +10,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     constants::*,
     enums::*,
-    local::{ObjectId, Position, RawObjectId, RoomName},
+    local::{ObjectId, Position, RawObjectId, RoomName, RoomXY},
     objects::*,
     pathfinder::SingleRoomCostResult,
     prelude::*,
@@ -181,56 +181,12 @@ pub trait MaybeHasPosition {
     fn try_pos(&self) -> Option<Position>;
 }
 
-pub trait HasLocalPosition {
-    fn x(&self) -> u8;
-    fn y(&self) -> u8;
-}
-
 pub trait CostMatrixSet {
-    fn set<P, V>(&mut self, position: P, cost: V)
-    where
-        P: HasLocalPosition,
-        V: Borrow<u8>;
-
-    fn set_multi<D, B, P, V>(&mut self, data: D)
-    where
-        D: IntoIterator<Item = B>,
-        B: Borrow<(P, V)>,
-        P: HasLocalPosition,
-        V: Borrow<u8>;
+    fn set_xy(&mut self, xy: RoomXY, cost: u8);
 }
 
-#[inline]
-const fn pos_as_idx(x: u8, y: u8) -> usize {
-    (x as usize) * ROOM_SIZE as usize + (y as usize)
-}
-
-impl CostMatrixSet for CostMatrix {
-    fn set<P, V>(&mut self, position: P, cost: V)
-    where
-        P: HasLocalPosition,
-        V: Borrow<u8>,
-    {
-        CostMatrix::set(self, position.x(), position.y(), *cost.borrow());
-    }
-
-    fn set_multi<D, B, P, V>(&mut self, data: D)
-    where
-        D: IntoIterator<Item = B>,
-        B: Borrow<(P, V)>,
-        P: HasLocalPosition,
-        V: Borrow<u8>,
-    {
-        let matrix_buffer = self.get_bits();
-
-        for entry in data.into_iter() {
-            let (pos, cost) = entry.borrow();
-
-            let offset = pos_as_idx(pos.x(), pos.y());
-
-            matrix_buffer.set_index(offset as u32, *cost.borrow());
-        }
-    }
+pub trait CostMatrixGet {
+    fn get_xy(&mut self, xy: RoomXY) -> u8;
 }
 
 #[enum_dispatch]

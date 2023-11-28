@@ -1,6 +1,15 @@
 Unreleased
 ==========
 
+### Breaking:
+
+- Simplification of cost matrix types and traits:
+  - Remove `SparseCostMatrix`, to be moved to `screeps-game-utils` crate
+  - Remove `LocalCostMatrix::merge_from_dense` / `merge_from_sparse`
+  - Remove `CostMatrixSet::set_multi` and replace `CostMatrixSet::set` with `set_xy`
+  - Add `CostMatrixGet` trait with `get_xy` function
+  - Remove `HasLocalPosition` trait with no implementations
+
 0.17.0 (2023-11-27)
 ===================
 

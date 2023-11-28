@@ -1,7 +1,11 @@
 use js_sys::{Array, Object, Uint8Array};
 use wasm_bindgen::prelude::*;
 
-use crate::{local::LocalCostMatrix, prototypes::COST_MATRIX_PROTOTYPE};
+use crate::{
+    local::{LocalCostMatrix, RoomXY},
+    prototypes::COST_MATRIX_PROTOTYPE,
+    traits::{CostMatrixGet, CostMatrixSet},
+};
 
 #[wasm_bindgen]
 extern "C" {
@@ -79,5 +83,17 @@ impl CostMatrix {
 impl From<LocalCostMatrix> for CostMatrix {
     fn from(matrix: LocalCostMatrix) -> Self {
         CostMatrix::new_from_bits(matrix.get_bits())
+    }
+}
+
+impl CostMatrixSet for CostMatrix {
+    fn set_xy(&mut self, xy: RoomXY, cost: u8) {
+        CostMatrix::set(self, xy.x.u8(), xy.y.u8(), cost);
+    }
+}
+
+impl CostMatrixGet for CostMatrix {
+    fn get_xy(&mut self, xy: RoomXY) -> u8 {
+        CostMatrix::get(self, xy.x.u8(), xy.y.u8())
     }
 }
