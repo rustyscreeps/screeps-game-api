@@ -1,9 +1,41 @@
 Unreleased
 ==========
 
-- Fix incorrect setter name on `visualize_path_style` causing the setting to not work
+### Breaking:
+
+- Change `TOWER_OPTIMAL_RANGE` and `TOWER_FALLOFF_RANGE` types to `u8` and `TOWER_FALLOFF` type
+  to `f64`
+- Changed `RoomTerrain::new` and `game::map::get_room_terrain` return type to
+  `Option<RoomTerrain>`, returning `None` when the specified room is outside the server's
+  map
+- Changed `game::map::get_room_status` return type to `Option<RoomStatusResult>`, returning
+  `None` instead of the previous behavior of returning an artificial 'normal' status for rooms
+  outside the server's map
 - Remove `constants::math::control_points_for_gcl` and `power_for_gpl` - moved to new
   `screeps-game-utils` crate
+
+### Bugfixes:
+
+- Implement `JsCollectionIntoValue` for `Direction`, making the `JsHashMap` returned by
+  `game::map::describe_exits` able to be used
+- Handle object return properly from `RoomTerrain::get_raw_buffer_to_array` when built in dev mode
+
+0.16.1 (2023-10-11)
+===================
+
+### Additions:
+
+- Add new geometry helper functions to `Direction`: `is_diagonal`, `is_orthogonal`, `multi_rot`,
+  `rot_cw`, and `rot_ccw`
+- Add `checked_add` and `saturating_add` functions to `RoomCoordinate` and `RoomXY`, as well as
+  `checked_add_direction` and `saturating_add_direction` to `RoomXY`
+
+### Bugfixes:
+
+- Fix incorrect setter name on `visualize_path_style` causing the setting to not work
+- `OwnedStructure`, `OwnedStructureObject`, and `OwnedStructureProperties`'s `my` method now
+  correctly handles the value being undefined.
+  - This fixes a panic on checking `my` for unowned controllers. (again)
 
 0.16.0 (2023-09-14)
 ===================

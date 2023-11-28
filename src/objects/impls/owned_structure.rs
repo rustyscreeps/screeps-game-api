@@ -16,11 +16,11 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type OwnedStructure;
 
-    /// Whether this structure is owned by the player.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#OwnedStructure.my)
-    #[wasm_bindgen(method, getter)]
-    pub fn my(this: &OwnedStructure) -> bool;
+    // For controllers (possibly other structures?) user can be set to null, even
+    // though it's meant to always be owned. This internal method is used to map
+    // that case to false.
+    #[wasm_bindgen(method, getter = my)]
+    fn my_internal(this: &OwnedStructure) -> Option<bool>;
 
     /// The [`Owner`] of this structure that contains the owner's username, or
     /// `None` if it's an ownable structure currently not under a player's
@@ -29,6 +29,17 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#OwnedStructure.owner)
     #[wasm_bindgen(method, getter)]
     pub fn owner(this: &OwnedStructure) -> Option<Owner>;
+}
+
+impl OwnedStructure {
+    /// Whether this structure is owned by the player.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#OwnedStructure.my)
+    pub fn my(&self) -> bool {
+        // If there is no user assigned, like in unowned controllers, `my` returns
+        // undefined. That should be `false`, since that's not owned by the caller.
+        self.my_internal().unwrap_or(false)
+    }
 }
 
 impl<T> OwnedStructureProperties for T
