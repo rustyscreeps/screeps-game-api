@@ -33,8 +33,8 @@ extern "C" {
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomLinearDistance)]
     fn get_room_linear_distance(room_1: &JsString, room_2: &JsString, continuous: bool) -> u32;
 
-    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomTerrain)]
-    fn get_room_terrain(room_name: &JsString) -> RoomTerrain;
+    #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getRoomTerrain, catch)]
+    fn get_room_terrain(room_name: &JsString) -> Result<RoomTerrain, JsValue>;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "map", static_method_of = Map, js_name = getWorldSize)]
     fn get_world_size() -> u32;
@@ -70,10 +70,10 @@ pub fn get_room_linear_distance(from_room: RoomName, to_room: RoomName, continuo
 /// vision in.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomTerrain)
-pub fn get_room_terrain(room_name: RoomName) -> RoomTerrain {
+pub fn get_room_terrain(room_name: RoomName) -> Option<RoomTerrain> {
     let name = room_name.into();
 
-    Map::get_room_terrain(&name)
+    Map::get_room_terrain(&name).ok()
 }
 
 /// Get the size of the world map.
@@ -95,6 +95,7 @@ extern "C" {
     pub fn timestamp(this: &JsRoomStatusResult) -> Option<f64>;
 }
 
+#[derive(Clone, Debug)]
 pub struct RoomStatusResult {
     status: RoomStatus,
     timestamp: Option<f64>,
@@ -107,15 +108,6 @@ impl RoomStatusResult {
 
     pub fn timestamp(&self) -> Option<f64> {
         self.timestamp
-    }
-}
-
-impl Default for RoomStatusResult {
-    fn default() -> Self {
-        RoomStatusResult {
-            status: RoomStatus::Normal,
-            timestamp: None,
-        }
     }
 }
 
@@ -141,13 +133,10 @@ pub enum RoomStatus {
 /// area or currently inaccessible.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.map.getRoomStatus)
-pub fn get_room_status(room_name: RoomName) -> RoomStatusResult {
+pub fn get_room_status(room_name: RoomName) -> Option<RoomStatusResult> {
     let name = room_name.into();
 
-    Map::get_room_status(&name)
-        .ok()
-        .map(RoomStatusResult::from)
-        .unwrap_or_default()
+    Map::get_room_status(&name).ok().map(RoomStatusResult::from)
 }
 
 #[wasm_bindgen]
