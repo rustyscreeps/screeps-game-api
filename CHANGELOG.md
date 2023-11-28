@@ -3,6 +3,8 @@ Unreleased
 
 ### Breaking:
 
+- Change `TOWER_OPTIMAL_RANGE` and `TOWER_FALLOFF_RANGE` types to `u8` and `TOWER_FALLOFF` type
+  to `f64`
 - Changed `RoomTerrain::new` and `game::map::get_room_terrain` return type to
   `Option<RoomTerrain>`, returning `None` when the specified room is outside the server's
   map
