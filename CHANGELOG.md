@@ -5,6 +5,7 @@ Unreleased
 
 - Implement `JsCollectionIntoValue` for `Direction`, making the `JsHashMap` returned by
   `game::map::describe_exits` able to be used
+- Handle object return properly from `RoomTerrain::get_raw_buffer_to_array` when built in dev mode
 
 0.16.1 (2023-10-11)
 ===================
