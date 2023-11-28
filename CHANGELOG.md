@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+
+
+0.18.0 (2023-11-27)
+===================
+
 ### Breaking:
 
 - Simplification of cost matrix types and traits:
