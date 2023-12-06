@@ -11,6 +11,9 @@ pub struct LocalRoomTerrain {
     bits: Box<[u8; ROOM_AREA]>,
 }
 
+/// A matrix representing the terrain of a room, stored in Rust memory.
+///
+/// Use [`RoomTerrain`] if data stored in JavaScript memory is preferred.
 impl LocalRoomTerrain {
     /// Gets the terrain at the specified position in this room.
     pub fn get(&self, xy: RoomXY) -> Terrain {
