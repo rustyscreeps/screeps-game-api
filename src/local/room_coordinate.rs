@@ -69,7 +69,8 @@ pub fn terrain_index_to_xy(idx: usize) -> RoomXY {
     }
 }
 
-/// An X or Y coordinate in a room, restricted to the valid range of coordinates.
+/// An X or Y coordinate in a room, restricted to the valid range of
+/// coordinates.
 #[derive(
     Debug, Hash, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize,
 )]

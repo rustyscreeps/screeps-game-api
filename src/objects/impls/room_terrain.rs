@@ -9,9 +9,11 @@ use crate::{
 
 #[wasm_bindgen]
 extern "C" {
-    /// A matrix representing the terrain of a room, held in the JavaScript heap.
+    /// A matrix representing the terrain of a room, held in the JavaScript
+    /// heap.
     ///
-    /// Use [`LocalRoomTerrain`] to store and access the same data in Rust memory.
+    /// Use [`LocalRoomTerrain`] to store and access the same data in Rust
+    /// memory.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room-Terrain)
     #[wasm_bindgen(js_namespace = Room, js_name = Terrain)]
