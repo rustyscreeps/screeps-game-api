@@ -175,6 +175,7 @@ impl fmt::Display for RoomCoordinate {
     }
 }
 
+/// An X/Y pair representing a given coordinate relative to any room.
 #[derive(Debug, Default, Hash, Clone, Copy, PartialEq, Eq)]
 pub struct RoomXY {
     pub x: RoomCoordinate,

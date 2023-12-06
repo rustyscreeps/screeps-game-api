@@ -20,13 +20,11 @@ mod game_methods;
 mod pair_utils;
 mod world_utils;
 
-/// Represents a position in a particular room in Screeps.
+/// Represents a position in a particular room in Screeps, stored in Rust
+/// memory.
 ///
-/// **Note:** This is analogous to the `RoomPosition` JavaScript type.
-///
-/// We've renamed this type to `Position` in `screeps-game-api` to reflect the
-/// fact that it's implemented entirely as a local type, and does represent a
-/// position located within an entire shard, not only within a single room.
+/// Use [`RoomPosition`] if a reference to an object stored in JavaScript memory
+/// is preferred.
 ///
 /// This should be a very efficient type to use in most if not all situations.
 /// It's represented by a single `u32`, all math operations are implemented in
@@ -112,7 +110,7 @@ mod world_utils;
 ///
 /// # Method Behavior
 ///
-/// While this corresponds with the JavaScript `RoomPosition` type, it is not
+/// While this corresponds with the JavaScript [`RoomPosition`] type, it is not
 /// identical. In particular, all "calculation" methods which take in another
 /// position are re-implemented in pure Rust code, and some behave slightly
 /// different.
