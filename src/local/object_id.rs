@@ -21,7 +21,7 @@ pub use raw::*;
 /// Represents an Object ID and a type that the ID points to, stored in Rust
 /// memory.
 ///
-/// If a reference stored in JavaScript memory is preferred, use [`JsObjectId`].
+/// Use [`JsObjectId`] If a reference stored in JavaScript memory is preferred.
 ///
 /// Each object id in screeps is represented by an ID of up to 24 hexidemical
 /// characters, which cannot change. This implementation takes advantage of that

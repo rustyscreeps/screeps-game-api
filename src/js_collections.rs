@@ -164,7 +164,7 @@ impl<T> std::iter::ExactSizeIterator for OwnedArrayIter<T> where T: JsCollection
 /// Represents a reference to an Object ID string in JavaScript memory, typed
 /// according to the object type Rust expects for the object after resolving.
 ///
-/// If a value stored in Rust memory is preferred, use [`ObjectId`]; the
+/// Use [`ObjectId`] if a value stored in Rust memory is preferred; the
 /// JavaScript representation can be harder to work with in Rust code due to
 /// lack of visibility on the underlying string and lack of most trait
 /// implementations, and consumes more memory, but is faster to resolve and may
