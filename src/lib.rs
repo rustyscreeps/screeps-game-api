@@ -1,4 +1,26 @@
-//! Typed bindings to the Screeps in-game API for WASM Rust AIs.
+//! Typed bindings to the Screeps: World in-game API for WASM Rust AIs.
+//!
+//! # Performance
+//!
+//! Due to the limited CPU available to the player in Screeps: World, the
+//! performance implications of running WebAssembly are good to be aware of.
+//!
+//! WebAssembly instances have a dedicated linear memory, and data being passed
+//! in or out must be copied. Additionally, Rust uses UTF-8 strings while
+//! JavaScript uses UTF-16 strings, so any strings being copied must also be
+//! converted between encodings.
+//!
+//! Additionally, compile time for the `WebAssembly.Module` can be considerable,
+//! requiring a lot of CPU time on each initial startup tick (and potentially
+//! requiring skipped ticks for larger bots). However, global resets are very
+//! infrequent in most environments, so the impact of this isn't severe.
+//!
+//! After compilation, the WebAssembly environment has near-native performance,
+//! and no Javascript garbage collection happening for its memory space,
+//! allowing for faster execution of some types of workloads. Overall, the
+//! advantages and disadvantages of WebAssembly in Screeps are relatively small,
+//! especially when compared to the relatively high 0.2 CPU cost of game
+//! actions.
 //!
 //! # Cargo Features
 //!
