@@ -11,7 +11,8 @@ use super::{linear_index_to_xy, xy_to_linear_index, Position, RoomXY, ROOM_AREA}
 
 /// A matrix of pathing costs for a room, stored in Rust memory.
 ///
-/// Use [`CostMatrix`] if data stored in JavaScript memory is preferred.
+/// Use [`CostMatrix`] if a reference to data stored in JavaScript memory is
+/// preferred.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct LocalCostMatrix {

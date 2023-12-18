@@ -19,8 +19,7 @@
 //! and no Javascript garbage collection happening for its memory space,
 //! allowing for faster execution of some types of workloads. Overall, the
 //! advantages and disadvantages of WebAssembly in Screeps are relatively small,
-//! especially when compared to the relatively high 0.2ms cost of game
-//! actions.
+//! especially when compared to the relatively high 0.2ms cost of game actions.
 //!
 //! # Data Persistence
 //!
