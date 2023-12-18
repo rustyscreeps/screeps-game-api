@@ -504,16 +504,8 @@ pub const LAB_UNBOOST_MINERAL: u32 = 15;
 
 /// Exponential growth rate of control points needed per global control level
 /// (GCL).
-///
-/// See [`control_points_for_gcl`] function to calculate for each level
-///
-/// [`control_points_for_gcl`]: crate::constants::math::control_points_for_gcl
 pub const GCL_POW: f64 = 2.4;
 /// Base growth rate of control points needed per global control level (GCL).
-///
-/// See [`control_points_for_gcl`] function to calculate for each level
-///
-/// [`control_points_for_gcl`]: crate::constants::math::control_points_for_gcl
 pub const GCL_MULTIPLY: u32 = 1_000_000;
 /// Maximum GCL for players allowed to spawn in a Novice area.
 pub const GCL_NOVICE: u32 = 3;
@@ -740,17 +732,9 @@ pub const SIGN_PLANNED_AREA: &str = "A new Novice or Respawn Area is being plann
 // EVENT_* constants in src/objects/impls/room.rs
 
 /// Base growth rate of processed power needed per global power level (GPL).
-///
-/// See [`power_for_gpl`] function to calculate for each level
-///
-/// [`power_for_gpl`]: crate::constants::math::power_for_gpl
 pub const POWER_LEVEL_MULTIPLY: u32 = 1000;
 /// Exponential growth rate of processed power needed per global power level
 /// (GPL).
-///
-/// See [`power_for_gpl`] function to calculate for each level
-///
-/// [`power_for_gpl`]: crate::constants::math::power_for_gpl
 pub const POWER_LEVEL_POW: u32 = 2;
 /// Time, in milliseconds, that a power creep must wait to respawn after dying.
 pub const POWER_CREEP_SPAWN_COOLDOWN: u32 = 8 * 3600 * 1000;

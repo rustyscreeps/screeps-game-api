@@ -52,7 +52,6 @@ pub(crate) mod macros {
                 }
             }
             impl std::str::FromStr for $ty {
-                // add a new error type for this -  or something
                 type Err = InvalidConstantString;
 
                 fn from_str(s: &str) -> Result<Self, Self::Err> {

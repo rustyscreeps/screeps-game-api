@@ -9,7 +9,11 @@ use crate::{
 
 #[wasm_bindgen]
 extern "C" {
-    /// An object representing a [`CostMatrix`] held in the javascript heap.
+    /// A reference to a matrix of pathing costs for a room, stored in
+    /// JavaScript memory.
+    ///
+    /// Use [`LocalCostMatrix`] to store and access the same data in Rust
+    /// memory.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PathFinder-CostMatrix)
     #[wasm_bindgen(js_namespace = PathFinder)]

@@ -18,18 +18,16 @@ mod raw;
 pub use errors::*;
 pub use raw::*;
 
-/// Represents an Object ID and a type that the ID points to.
+/// Represents an Object ID and a type that the ID points to, stored in Rust
+/// memory.
 ///
-/// Each object id in screeps is represented by a Mongo GUID, which,
-/// while not guaranteed, is unlikely to change. This takes advantage of that by
-/// storing a packed representation of 12 bytes.
+/// Use [`JsObjectId`] if a reference stored in JavaScript memory is preferred.
 ///
-/// This object ID is typed, but not strictly. It's completely safe to create an
-/// ObjectId with an incorrect type, and all operations which use the type will
-/// double-check at runtime.
-///
-/// With that said, using this can provide nice type inference, and should have
-/// few disadvantages to the lower-level alternative, [`RawObjectId`].
+/// Each object ID in Screeps: World is represented by an ID of up to 24
+/// hexidemical characters, which cannot change. This implementation takes
+/// advantage of that by storing a packed representation in a `u128`, using 96
+/// bits for the ID and 32 bits for tracking the length of the ID string for
+/// reconstruction in JS.
 ///
 /// # Conversion
 ///
@@ -55,6 +53,7 @@ pub use raw::*;
 /// accuracy, these ids will be sorted by object creation time.
 ///
 /// [`BTreeMap`]: std::collections::BTreeMap
+/// [`JsObjectId`]: crate::js_collections::JsObjectId
 /// [1]: https://docs.mongodb.com/manual/reference/method/ObjectId/
 // Copy, Clone, Debug, PartialEq, Eq, Hash, PartialEq, Eq implemented manually below
 #[derive(Serialize, Deserialize)]

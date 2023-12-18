@@ -19,6 +19,9 @@ impl Error for OutOfBoundsError {}
 
 /// Converts a [`RoomXY`] coordinate pair to a linear index appropriate for use
 /// with the internal representation of a [`CostMatrix`] or [`LocalCostMatrix`].
+///
+/// [`CostMatrix`]: crate::objects::CostMatrix
+/// [`LocalCostMatrix`]: crate::local::LocalCostMatrix
 #[inline]
 pub const fn xy_to_linear_index(xy: RoomXY) -> usize {
     xy.x.u8() as usize * ROOM_SIZE as usize + xy.y.u8() as usize
@@ -27,6 +30,9 @@ pub const fn xy_to_linear_index(xy: RoomXY) -> usize {
 /// Converts a linear index from the internal representation of a [`CostMatrix`]
 /// or [`LocalCostMatrix`] to a [`RoomXY`] coordinate pair for the position the
 /// index represents.
+///
+/// [`CostMatrix`]: crate::objects::CostMatrix
+/// [`LocalCostMatrix`]: crate::local::LocalCostMatrix
 #[inline]
 pub fn linear_index_to_xy(idx: usize) -> RoomXY {
     assert!(idx < ROOM_AREA, "Out of bounds index: {idx}");
@@ -39,6 +45,9 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
 
 /// Converts a [`RoomXY`] coordinate pair to a terrain index appropriate for use
 /// with the internal representation of [`RoomTerrain`] or [`LocalRoomTerrain`].
+///
+/// [`RoomTerrain`]: crate::objects::RoomTerrain
+/// [`LocalRoomTerrain`]: crate::local::LocalRoomTerrain
 #[inline]
 pub const fn xy_to_terrain_index(xy: RoomXY) -> usize {
     xy.y.u8() as usize * ROOM_SIZE as usize + xy.x.u8() as usize
@@ -47,6 +56,9 @@ pub const fn xy_to_terrain_index(xy: RoomXY) -> usize {
 /// Converts a terrain index from the internal representation of a
 /// [`RoomTerrain`] or [`LocalRoomTerrain`] to a [`RoomXY`] coordinate pair for
 /// the position the index represents.
+///
+/// [`RoomTerrain`]: crate::objects::RoomTerrain
+/// [`LocalRoomTerrain`]: crate::local::LocalRoomTerrain
 #[inline]
 pub fn terrain_index_to_xy(idx: usize) -> RoomXY {
     assert!(idx < ROOM_AREA, "Out of bounds index: {idx}");
@@ -57,6 +69,8 @@ pub fn terrain_index_to_xy(idx: usize) -> RoomXY {
     }
 }
 
+/// An X or Y coordinate in a room, restricted to the valid range of
+/// coordinates.
 #[derive(
     Debug, Hash, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize,
 )]
@@ -161,6 +175,7 @@ impl fmt::Display for RoomCoordinate {
     }
 }
 
+/// An X/Y pair representing a given coordinate relative to any room.
 #[derive(Debug, Default, Hash, Clone, Copy, PartialEq, Eq)]
 pub struct RoomXY {
     pub x: RoomCoordinate,
