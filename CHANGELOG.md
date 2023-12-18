@@ -9,7 +9,7 @@ Unreleased
 
 ### Bugfixes:
 
-- An undefined `hits` or `hitsMax` value on an unvulnerable wall or certain controllers will no
+- An undefined `hits` or `hitsMax` value on an invulnerable wall or certain controllers will no
   longer cause a panic when building in dev mode
 
 0.18.0 (2023-11-27)
