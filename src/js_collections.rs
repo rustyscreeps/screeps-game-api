@@ -35,6 +35,8 @@ pub trait JsCollectionFromValue {
     fn from_value(val: JsValue) -> Self;
 }
 
+/// Container holding a reference to an [`Object`] in JavaScript as well as
+/// expected types for both the keys and values.
 pub struct JsHashMap<K, V> {
     map: Object,
     _phantom: PhantomData<(K, V)>,

@@ -117,7 +117,7 @@ pub fn resources() -> JsHashMap<IntershardResourceType, u32> {
     Game::resources().into()
 }
 
-/// Get an [`JsHashMap<RoomName, Room>`] with the rooms visible for the current
+/// Get a [`JsHashMap<RoomName, Room>`] with the rooms visible for the current
 /// tick.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.rooms)
@@ -125,7 +125,7 @@ pub fn rooms() -> JsHashMap<RoomName, Room> {
     Game::rooms().into()
 }
 
-/// Get an [`JsHashMap<String, StructureSpawn>`] with all of your spawns, which
+/// Get a [`JsHashMap<String, StructureSpawn>`] with all of your spawns, which
 /// has spawn names as keys.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
@@ -133,7 +133,7 @@ pub fn spawns() -> JsHashMap<String, StructureSpawn> {
     Game::spawns().into()
 }
 
-/// Get an [`JsHashMap<RawObjectId, StructureObject>`] with all of your owned
+/// Get a [`JsHashMap<RawObjectId, StructureObject>`] with all of your owned
 /// structures.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
@@ -205,8 +205,10 @@ pub fn get_object_by_id_erased(id: &RawObjectId) -> Option<RoomObject> {
     Game::get_object_by_id(&js_str)
 }
 
-/// Send an email message to yourself with a given message. Set a group
-/// interval to only send messages every `group_interval` minutes.
+/// Send an email message to yourself with a given message.
+///
+/// Set a `group_interval` with a limit, in minutes, on how frequently emails
+/// are allowed to be sent.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.notify)
 pub fn notify(message: &str, group_interval: Option<u32>) {
