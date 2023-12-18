@@ -19,8 +19,35 @@
 //! and no Javascript garbage collection happening for its memory space,
 //! allowing for faster execution of some types of workloads. Overall, the
 //! advantages and disadvantages of WebAssembly in Screeps are relatively small,
-//! especially when compared to the relatively high 0.2 CPU cost of game
+//! especially when compared to the relatively high 0.2ms cost of game
 //! actions.
+//!
+//! # Data Persistence
+//!
+//! In the Screeps: World JavaScript environment, the `Memory` object is the
+//! typical way to store data in a way that persists through the environment
+//! resets that happen occasionally, either triggered by deploying a new version
+//! of your code or due to natural expiration in the server. It provides a
+//! wrapper that automatically deserializes the contents of `RawMemory` via the
+//! `JSON.parse()` JavaScript function when accessed for the first time each
+//! tick, then gets serialized by `JSON.stringify()` at the end of the tick.
+//!
+//! Using this untyped `Memory` object (or the reference to a part of it, which
+//! can be obtained from the `memory` function on various game objects) from
+//! within WebAssembly can be awkward, but is recommended if you need to
+//! maintain compatibility with the default `Memory` object.
+//!
+//! An alternative that you may prefer is to use `RawMemory` instead, fetching
+//! the stored data in string format using [`raw_memory::get`] and deserializing
+//! within WebAssembly using [`serde`] or another serializion approach, then
+//! serializing and using [`raw_memory::set`] to store the data.
+//!
+//! If you choose the `RawMemory` approach, be aware that some game methods
+//! (notably [`StructureSpawn::spawn_creep`] and [`Creep::move_to`]) directly
+//! store data in the `Memory` object; replacing the 'special' `Memory` object
+//! with one that doesn't attempt to deserialize the contents of `RawMemory` may
+//! be advisable if you're using it directly (note that this needs to be done
+//! each tick to be effective).
 //!
 //! # Cargo Features
 //!
