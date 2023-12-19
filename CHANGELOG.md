@@ -1,7 +1,16 @@
 Unreleased
 ==========
 
+### Breaking:
 
+- A number of functions on `StructureController` now return `Option<u32>` to account for cases 
+  where they may be undefined: `progress`, `progress_total`, `ticks_to_downgrade`, and
+  `upgrade_blocked`
+
+### Bugfixes:
+
+- An undefined `hits` or `hitsMax` value on an invulnerable wall or certain controllers will no
+  longer cause a panic when building in dev mode
 
 0.18.0 (2023-11-27)
 ===================

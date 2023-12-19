@@ -17,21 +17,11 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type Structure;
 
-    /// Retrieve the current hits of this structure, or `0` if this structure is
-    /// indestructible, such as a notice area border wall, portal, or room
-    /// controller.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.hits)
-    #[wasm_bindgen(method, getter)]
-    pub fn hits(this: &Structure) -> u32;
+    #[wasm_bindgen(method, getter = hits)]
+    fn hits_internal(this: &Structure) -> Option<u32>;
 
-    /// Retrieve the maximum hits of this structure, or `0` if this structure is
-    /// indestructible, such as a notice area border wall, portal, or room
-    /// controller.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.hitsMax)
     #[wasm_bindgen(method, getter = hitsMax)]
-    pub fn hits_max(this: &Structure) -> u32;
+    fn hits_max_internal(this: &Structure) -> Option<u32>;
 
     /// Object ID of the structure, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks.
@@ -64,6 +54,26 @@ extern "C" {
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.notifyWhenAttacked)
     #[wasm_bindgen(method, js_name = notifyWhenAttacked)]
     pub fn notify_when_attacked(this: &Structure, val: bool) -> i8;
+}
+
+impl Structure {
+    /// Retrieve the current hits of this structure, or `0` if this structure is
+    /// indestructible, such as a notice area border wall, portal, or room
+    /// controller.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.hits)
+    pub fn hits(&self) -> u32 {
+        self.hits_internal().unwrap_or(0)
+    }
+
+    /// Retrieve the maximum hits of this structure, or `0` if this structure is
+    /// indestructible, such as a notice area border wall, portal, or room
+    /// controller.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.hitsMax)
+    pub fn hits_max(&self) -> u32 {
+        self.hits_max_internal().unwrap_or(0)
+    }
 }
 
 impl<T> HasNativeId for T
