@@ -11,6 +11,7 @@ Unreleased
 
 - An undefined `hits` or `hitsMax` value on an invulnerable wall or certain controllers will no
   longer cause a panic when building in dev mode
+- Fixed incorrect JavaScript field name on `StructurePortal::destination()` getter
 
 0.18.0 (2023-11-27)
 ===================
