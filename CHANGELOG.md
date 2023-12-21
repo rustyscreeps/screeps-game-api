@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.19.0 (2023-12-20)
+===================
+
 ### Breaking:
 
 - A number of functions on `StructureController` now return `Option<u32>` to account for cases 
