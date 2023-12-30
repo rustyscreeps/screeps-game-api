@@ -524,7 +524,8 @@ impl HasHits for Creep {
 }
 
 impl MaybeHasId<Creep> for Creep {
-    /// The Object ID of the [`Creep`], or `None` if it began spawning this tick.
+    /// The Object ID of the [`Creep`], or `None` if it began spawning this
+    /// tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
     fn try_js_raw_id(&self) -> Option<JsString> {
