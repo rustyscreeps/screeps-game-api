@@ -76,7 +76,7 @@ impl Structure {
     }
 }
 
-impl<T> HasId<T> for T
+impl<T> HasId for T
 where
     T: AsRef<Structure>,
 {

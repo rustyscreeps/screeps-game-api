@@ -51,15 +51,17 @@ pub trait HasCooldown {
 
 pub trait Resolvable: From<JsValue> {}
 
-impl<T> Resolvable for T where T: MaybeHasId<T> + From<JsValue> {}
+impl<T> Resolvable for T where T: MaybeHasId + From<JsValue> {}
 
 /// Trait for all game objects which have an associated unique identifier.
-#[enum_dispatch]
-pub trait HasId<T> {
+pub trait HasId: MaybeHasId {
     /// Object ID of the object stored in Rust memory, which can be used to
     /// efficiently fetch a fresh reference to the object on subsequent
     /// ticks.
-    fn id(&self) -> ObjectId<T> {
+    fn id(&self) -> ObjectId<Self>
+    where
+        Self: Sized,
+    {
         self.raw_id().into()
     }
 
@@ -74,7 +76,10 @@ pub trait HasId<T> {
     /// Object ID of the object stored in JavaScript memory, which can be used
     /// to efficiently fetch a fresh reference to the object on subsequent
     /// ticks.
-    fn js_id(&self) -> JsObjectId<T> {
+    fn js_id(&self) -> JsObjectId<Self>
+    where
+        Self: Sized,
+    {
         self.js_raw_id().into()
     }
 
@@ -85,12 +90,14 @@ pub trait HasId<T> {
 
 /// Trait for all game objects which may (or may not) have an associated unique
 /// identifier.
-#[enum_dispatch]
-pub trait MaybeHasId<T> {
+pub trait MaybeHasId {
     /// Object ID of the object, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks, or `None` if the
     /// object doesn't currently have an ID.
-    fn try_id(&self) -> Option<ObjectId<T>> {
+    fn try_id(&self) -> Option<ObjectId<Self>>
+    where
+        Self: Sized,
+    {
         self.try_raw_id().map(Into::into)
     }
 
@@ -105,7 +112,10 @@ pub trait MaybeHasId<T> {
     /// Object ID of the object stored in JavaScript memory, which can be used
     /// to efficiently fetch a fresh reference to the object on subsequent
     /// ticks, or `None` if the object doesn't currently have an ID.
-    fn try_js_id(&self) -> Option<JsObjectId<T>> {
+    fn try_js_id(&self) -> Option<JsObjectId<Self>>
+    where
+        Self: Sized,
+    {
         self.try_js_raw_id().map(Into::into)
     }
 
@@ -115,9 +125,9 @@ pub trait MaybeHasId<T> {
     fn try_js_raw_id(&self) -> Option<JsString>;
 }
 
-impl<T> MaybeHasId<T> for T
+impl<T> MaybeHasId for T
 where
-    T: HasId<T>,
+    T: HasId,
 {
     fn try_js_raw_id(&self) -> Option<JsString> {
         Some(self.js_raw_id())

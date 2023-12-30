@@ -85,7 +85,7 @@ impl ConstructionSite {
     }
 }
 
-impl MaybeHasId<ConstructionSite> for ConstructionSite {
+impl MaybeHasId for ConstructionSite {
     /// The Object ID of the [`ConstructionSite`], or `None` if it was created
     /// this tick.
     ///

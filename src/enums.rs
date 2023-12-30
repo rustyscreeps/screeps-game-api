@@ -118,89 +118,6 @@ pub enum CooldownObject {
     StructureTerminal,
 }
 
-#[enum_dispatch(HasId)]
-pub enum ObjectWithId {
-    Deposit,
-    Mineral,
-    Nuke,
-    Resource,
-    Ruin,
-    #[cfg(feature = "score")]
-    ScoreCollector,
-    #[cfg(feature = "score")]
-    ScoreContainer,
-    Source,
-    StructureContainer,
-    StructureController,
-    StructureExtension,
-    StructureExtractor,
-    StructureFactory,
-    StructureInvaderCore,
-    StructureKeeperLair,
-    StructureLab,
-    StructureLink,
-    StructureNuker,
-    StructureObserver,
-    StructurePortal,
-    StructurePowerBank,
-    StructurePowerSpawn,
-    StructureRampart,
-    StructureRoad,
-    StructureSpawn,
-    StructureStorage,
-    StructureTerminal,
-    StructureTower,
-    StructureWall,
-    #[cfg(feature = "symbols")]
-    SymbolContainer,
-    #[cfg(feature = "symbols")]
-    SymbolDecoder,
-    Tombstone,
-}
-
-#[enum_dispatch(MaybeHasId)]
-pub enum ObjectWithMaybeId {
-    ConstructionSite,
-    Creep,
-    Deposit,
-    Mineral,
-    Nuke,
-    PowerCreep,
-    Resource,
-    Ruin,
-    #[cfg(feature = "score")]
-    ScoreCollector,
-    #[cfg(feature = "score")]
-    ScoreContainer,
-    Source,
-    StructureContainer,
-    StructureController,
-    StructureExtension,
-    StructureExtractor,
-    StructureFactory,
-    StructureInvaderCore,
-    StructureKeeperLair,
-    StructureLab,
-    StructureLink,
-    StructureNuker,
-    StructureObserver,
-    StructurePortal,
-    StructurePowerBank,
-    StructurePowerSpawn,
-    StructureRampart,
-    StructureRoad,
-    StructureSpawn,
-    StructureStorage,
-    StructureTerminal,
-    StructureTower,
-    StructureWall,
-    #[cfg(feature = "symbols")]
-    SymbolContainer,
-    #[cfg(feature = "symbols")]
-    SymbolDecoder,
-    Tombstone,
-}
-
 #[enum_dispatch(HasPosition)]
 pub enum ObjectWithPosition {
     ConstructionSite,
@@ -273,7 +190,7 @@ pub enum StoreObject {
 
 /// Enum used for converting a [`Structure`] into a typed object of its specific
 /// structure type.
-#[enum_dispatch(OwnedStructureProperties, HasId)]
+#[enum_dispatch(OwnedStructureProperties)]
 pub enum OwnedStructureObject {
     StructureController,
     StructureExtension,

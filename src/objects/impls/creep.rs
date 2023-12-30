@@ -523,7 +523,7 @@ impl HasHits for Creep {
     }
 }
 
-impl MaybeHasId<Creep> for Creep {
+impl MaybeHasId for Creep {
     /// The Object ID of the [`Creep`], or `None` if it began spawning this
     /// tick.
     ///

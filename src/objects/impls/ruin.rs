@@ -58,7 +58,7 @@ impl CanDecay for Ruin {
     }
 }
 
-impl HasId<Ruin> for Ruin {
+impl HasId for Ruin {
     fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }

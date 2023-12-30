@@ -57,7 +57,7 @@ impl HasCooldown for Deposit {
     }
 }
 
-impl HasId<Deposit> for Deposit {
+impl HasId for Deposit {
     fn js_raw_id(&self) -> JsString {
         self.id_internal()
     }
