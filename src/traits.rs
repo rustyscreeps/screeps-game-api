@@ -49,122 +49,78 @@ pub trait HasCooldown {
     fn cooldown(&self) -> u32;
 }
 
-pub trait HasNativeId {
-    fn native_id(&self) -> JsString;
-}
-
-pub trait MaybeHasNativeId {
-    fn try_native_id(&self) -> Option<JsString>;
-}
-
-impl<T> MaybeHasNativeId for T
-where
-    T: HasNativeId,
-{
-    fn try_native_id(&self) -> Option<JsString> {
-        Some(<Self as HasNativeId>::native_id(self))
-    }
-}
-
 pub trait Resolvable: From<JsValue> {}
 
-impl<T> Resolvable for T where T: MaybeHasTypedId<T> + From<JsValue> {}
+impl<T> Resolvable for T where T: MaybeHasId<T> + From<JsValue> {}
 
+/// Trait for all game objects which have an associated unique identifier.
 #[enum_dispatch]
-pub trait HasId {
-    /// Object ID of the object, which can be used to efficiently fetch a
-    /// fresh reference to the object on subsequent ticks.
-    fn raw_id(&self) -> RawObjectId;
-}
+pub trait HasId<T> {
+    /// Object ID of the object stored in Rust memory, which can be used to
+    /// efficiently fetch a fresh reference to the object on subsequent
+    /// ticks.
+    fn id(&self) -> ObjectId<T> {
+        self.raw_id().into()
+    }
 
-impl<T> HasId for T
-where
-    T: HasNativeId,
-{
+    /// Object ID of the object stored in Rust memory, without its associated
+    /// type information.
     fn raw_id(&self) -> RawObjectId {
-        let id: String = self.native_id().into();
+        let id: String = self.js_raw_id().into();
 
         RawObjectId::from_str(&id).expect("expected object ID to be parseable")
     }
-}
 
-#[enum_dispatch]
-pub trait HasTypedId<T> {
-    /// Object ID of the object, which can be used to efficiently fetch a
-    /// fresh reference to the object on subsequent ticks.
-    fn id(&self) -> ObjectId<T>;
-
-    fn js_id(&self) -> JsObjectId<T>;
-}
-
-impl<T> HasTypedId<T> for T
-where
-    T: HasId + HasNativeId,
-{
-    fn id(&self) -> ObjectId<T> {
-        self.raw_id().into()
-    }
-
+    /// Object ID of the object stored in JavaScript memory, which can be used
+    /// to efficiently fetch a fresh reference to the object on subsequent
+    /// ticks.
     fn js_id(&self) -> JsObjectId<T> {
-        self.native_id().into()
+        self.js_raw_id().into()
     }
+
+    /// Object ID of the object stored in JavaScript memory, without its
+    /// associated type information.
+    fn js_raw_id(&self) -> JsString;
 }
 
-impl<T> HasTypedId<T> for &T
-where
-    T: HasId + HasNativeId,
-{
-    fn id(&self) -> ObjectId<T> {
-        self.raw_id().into()
-    }
-
-    fn js_id(&self) -> JsObjectId<T> {
-        self.native_id().into()
-    }
-}
-
+/// Trait for all game objects which may (or may not) have an associated unique
+/// identifier.
 #[enum_dispatch]
-pub trait MaybeHasId {
+pub trait MaybeHasId<T> {
     /// Object ID of the object, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks, or `None` if the
-    /// object doesn't currently have an id.
-    fn try_raw_id(&self) -> Option<RawObjectId>;
-}
+    /// object doesn't currently have an ID.
+    fn try_id(&self) -> Option<ObjectId<T>> {
+        self.try_raw_id().map(Into::into)
+    }
 
-impl<T> MaybeHasId for T
-where
-    T: MaybeHasNativeId,
-{
+    /// Object ID of the object, without its associated type information, or
+    /// `None` if the object doesn't currently have an ID.
     fn try_raw_id(&self) -> Option<RawObjectId> {
-        self.try_native_id()
+        self.try_js_raw_id()
             .map(String::from)
             .map(|id| RawObjectId::from_str(&id).expect("expected object ID to be parseable"))
     }
-}
 
-#[enum_dispatch]
-pub trait MaybeHasTypedId<T> {
-    /// Object ID of the object, which can be used to efficiently fetch a
-    /// fresh reference to the object on subsequent ticks, or `None` if the
-    /// object doesn't currently have an id.
-    fn try_id(&self) -> Option<ObjectId<T>>;
-}
-
-impl<T> MaybeHasTypedId<T> for T
-where
-    T: MaybeHasId,
-{
-    fn try_id(&self) -> Option<ObjectId<T>> {
-        self.try_raw_id().map(Into::into)
+    /// Object ID of the object stored in JavaScript memory, which can be used
+    /// to efficiently fetch a fresh reference to the object on subsequent
+    /// ticks, or `None` if the object doesn't currently have an ID.
+    fn try_js_id(&self) -> Option<JsObjectId<T>> {
+        self.try_js_raw_id().map(Into::into)
     }
+
+    /// Object ID of the object stored in JavaScript memory, without its
+    /// associated type information, or `None` if the object doesn't currently
+    /// have an ID.
+    fn try_js_raw_id(&self) -> Option<JsString>;
 }
 
-impl<T> MaybeHasTypedId<T> for &T
+impl<T> MaybeHasId<T> for T
 where
-    T: MaybeHasId,
+    T: HasId<T>,
 {
-    fn try_id(&self) -> Option<ObjectId<T>> {
-        self.try_raw_id().map(Into::into)
+    fn try_js_raw_id(&self) -> Option<JsString> {
+        Some(self.js_raw_id())
     }
 }
 

@@ -329,8 +329,8 @@ impl HasHits for PowerCreep {
     }
 }
 
-impl HasNativeId for PowerCreep {
-    fn native_id(&self) -> JsString {
+impl HasId<PowerCreep> for PowerCreep {
+    fn js_raw_id(&self) -> JsString {
         self.id_internal()
     }
 }

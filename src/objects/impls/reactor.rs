@@ -54,8 +54,8 @@ extern "C" {
     pub fn owner(this: &Reactor) -> Option<Owner>;
 }
 
-impl HasNativeId for Reactor {
-    fn native_id(&self) -> JsString {
+impl HasId<Reactor> for Reactor {
+    fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }
 }

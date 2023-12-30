@@ -34,8 +34,8 @@ extern "C" {
     pub fn store(this: &ScoreCollector) -> Store;
 }
 
-impl HasNativeId for ScoreCollector {
-    fn native_id(&self) -> JsString {
+impl HasId<ScoreCollector> for ScoreCollector {
+    fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }
 }
