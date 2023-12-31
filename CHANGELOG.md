@@ -8,6 +8,7 @@ Unreleased
   - Renamed `native_id`/`try_native_id` to `js_raw_id`/`try_js_raw_id` for consistency with the
     other trait functions
 - Remove `Resolvable` trait, moving its functionality to `MaybeHasId`
+- Remove `ObjectWithId` and `ObjectWithMaybeId` enums
 
 0.19.0 (2023-12-20)
 ===================
