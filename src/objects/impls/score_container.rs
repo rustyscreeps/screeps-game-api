@@ -47,7 +47,7 @@ impl CanDecay for ScoreContainer {
     }
 }
 
-impl HasId<ScoreContainer> for ScoreContainer {
+impl HasId for ScoreContainer {
     fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }

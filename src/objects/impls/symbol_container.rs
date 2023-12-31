@@ -56,7 +56,7 @@ impl CanDecay for SymbolContainer {
     }
 }
 
-impl HasId<SymbolContainer> for SymbolContainer {
+impl HasId for SymbolContainer {
     fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }
