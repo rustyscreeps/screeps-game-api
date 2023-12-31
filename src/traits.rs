@@ -86,7 +86,7 @@ pub trait HasId: MaybeHasId {
 
 /// Trait for all game objects which may (or may not) have an associated unique
 /// identifier.
-pub trait MaybeHasId: JsCast {
+pub trait MaybeHasId {
     /// Object ID of the object, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks, or `None` if the
     /// object doesn't currently have an ID.
@@ -123,7 +123,7 @@ pub trait MaybeHasId: JsCast {
 
 impl<T> MaybeHasId for T
 where
-    T: HasId + JsCast,
+    T: HasId,
 {
     fn try_js_raw_id(&self) -> Option<JsString> {
         Some(self.js_raw_id())

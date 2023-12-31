@@ -169,7 +169,7 @@ impl<T> ObjectId<T> {
     /// we don't have vision for.
     pub fn try_resolve(self) -> Result<Option<T>, RoomObject>
     where
-        T: MaybeHasId,
+        T: MaybeHasId + JsCast,
     {
         match game::get_object_by_id_erased(&self.raw) {
             Some(v) => v.dyn_into().map(|v| Some(v)),
@@ -186,7 +186,7 @@ impl<T> ObjectId<T> {
     /// don't have vision for.
     pub fn resolve(self) -> Option<T>
     where
-        T: MaybeHasId,
+        T: MaybeHasId + JsCast,
     {
         game::get_object_by_id_typed(&self)
     }

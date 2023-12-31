@@ -172,7 +172,7 @@ pub fn symbols() -> JsHashMap<crate::ResourceType, u32> {
 /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
 pub fn get_object_by_js_id_typed<T>(id: &JsObjectId<T>) -> Option<T>
 where
-    T: MaybeHasId,
+    T: MaybeHasId + JsCast,
 {
     Game::get_object_by_id(&id.raw).map(JsCast::unchecked_into)
 }
@@ -183,7 +183,7 @@ where
 /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
 pub fn get_object_by_id_typed<T>(id: &ObjectId<T>) -> Option<T>
 where
-    T: MaybeHasId,
+    T: MaybeHasId + JsCast,
 {
     // construct a reference to a javascript string using the id data
     let js_str = JsString::from(id.to_string());
