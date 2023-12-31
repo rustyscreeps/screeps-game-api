@@ -46,8 +46,7 @@ extern "C" {
     pub fn my(this: &Reactor) -> bool;
 
     /// The [`Owner`] of this reactor that contains the owner's username, or
-    /// `None` if it's currently not under a player's
-    /// control.
+    /// `None` if it's currently not under a player's control.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Reactor.owner)
     #[wasm_bindgen(method, getter)]
