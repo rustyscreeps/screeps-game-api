@@ -78,7 +78,7 @@ impl Structure {
 
 impl<T> HasId for T
 where
-    T: AsRef<Structure>,
+    T: AsRef<Structure> + JsCast,
 {
     fn js_raw_id(&self) -> JsString {
         Structure::id_internal(self.as_ref())

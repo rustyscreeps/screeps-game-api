@@ -49,10 +49,6 @@ pub trait HasCooldown {
     fn cooldown(&self) -> u32;
 }
 
-pub trait Resolvable: From<JsValue> {}
-
-impl<T> Resolvable for T where T: MaybeHasId + From<JsValue> {}
-
 /// Trait for all game objects which have an associated unique identifier.
 pub trait HasId: MaybeHasId {
     /// Object ID of the object stored in Rust memory, which can be used to
@@ -90,7 +86,7 @@ pub trait HasId: MaybeHasId {
 
 /// Trait for all game objects which may (or may not) have an associated unique
 /// identifier.
-pub trait MaybeHasId {
+pub trait MaybeHasId: JsCast {
     /// Object ID of the object, which can be used to efficiently fetch a
     /// fresh reference to the object on subsequent ticks, or `None` if the
     /// object doesn't currently have an ID.
@@ -127,7 +123,7 @@ pub trait MaybeHasId {
 
 impl<T> MaybeHasId for T
 where
-    T: HasId,
+    T: HasId + JsCast,
 {
     fn try_js_raw_id(&self) -> Option<JsString> {
         Some(self.js_raw_id())
