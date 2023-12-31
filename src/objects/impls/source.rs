@@ -53,8 +53,8 @@ extern "C" {
     pub fn ticks_to_regeneration(this: &Source) -> Option<u32>;
 }
 
-impl HasNativeId for Source {
-    fn native_id(&self) -> JsString {
+impl HasId for Source {
+    fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }
 }

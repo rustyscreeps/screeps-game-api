@@ -33,8 +33,8 @@ extern "C" {
     pub fn time_to_land(this: &Nuke) -> u32;
 }
 
-impl HasNativeId for Nuke {
-    fn native_id(&self) -> JsString {
+impl HasId for Nuke {
+    fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }
 }

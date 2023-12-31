@@ -85,12 +85,12 @@ impl ConstructionSite {
     }
 }
 
-impl MaybeHasNativeId for ConstructionSite {
+impl MaybeHasId for ConstructionSite {
     /// The Object ID of the [`ConstructionSite`], or `None` if it was created
     /// this tick.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.id)
-    fn try_native_id(&self) -> Option<JsString> {
+    fn try_js_raw_id(&self) -> Option<JsString> {
         self.id_internal()
     }
 }

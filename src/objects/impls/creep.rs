@@ -523,8 +523,12 @@ impl HasHits for Creep {
     }
 }
 
-impl MaybeHasNativeId for Creep {
-    fn try_native_id(&self) -> Option<JsString> {
+impl MaybeHasId for Creep {
+    /// The Object ID of the [`Creep`], or `None` if it began spawning this
+    /// tick.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.id)
+    fn try_js_raw_id(&self) -> Option<JsString> {
         self.id_internal()
     }
 }

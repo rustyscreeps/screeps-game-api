@@ -241,7 +241,7 @@ impl<T> JsObjectId<T> {
     /// don't have vision for.
     pub fn resolve(&self) -> Option<T>
     where
-        T: Resolvable,
+        T: MaybeHasId + JsCast,
     {
         game::get_object_by_js_id_typed(self)
     }

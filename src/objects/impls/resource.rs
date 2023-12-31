@@ -33,8 +33,8 @@ extern "C" {
     pub fn resource_type(this: &Resource) -> ResourceType;
 }
 
-impl HasNativeId for Resource {
-    fn native_id(&self) -> JsString {
+impl HasId for Resource {
+    fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }
 }

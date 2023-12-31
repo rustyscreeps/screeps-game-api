@@ -57,8 +57,8 @@ impl CanDecay for Tombstone {
     }
 }
 
-impl HasNativeId for Tombstone {
-    fn native_id(&self) -> JsString {
+impl HasId for Tombstone {
+    fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }
 }

@@ -10,7 +10,7 @@ use arrayvec::ArrayString;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsCast;
 
-use crate::{game, Resolvable, RoomObject};
+use crate::{game, objects::RoomObject, traits::MaybeHasId};
 
 mod errors;
 mod raw;
@@ -157,9 +157,8 @@ impl<T> ObjectId<T> {
         self.raw.to_array_string()
     }
 
-    /// Resolves this object ID into an object.
-    ///
-    /// This is a shortcut for [`game::get_object_by_id_typed(id)`][1]
+    /// Resolves this object ID into an object, verifying that the returned
+    /// object matches the expected type.
     ///
     /// # Errors
     ///
@@ -168,11 +167,9 @@ impl<T> ObjectId<T> {
     ///
     /// Will return `Ok(None)` if the object no longer exists, or is in a room
     /// we don't have vision for.
-    ///
-    /// [1]: crate::game::get_object_by_id_typed
     pub fn try_resolve(self) -> Result<Option<T>, RoomObject>
     where
-        T: Resolvable + JsCast,
+        T: MaybeHasId + JsCast,
     {
         match game::get_object_by_id_erased(&self.raw) {
             Some(v) => v.dyn_into().map(|v| Some(v)),
@@ -189,7 +186,7 @@ impl<T> ObjectId<T> {
     /// don't have vision for.
     pub fn resolve(self) -> Option<T>
     where
-        T: Resolvable,
+        T: MaybeHasId + JsCast,
     {
         game::get_object_by_id_typed(&self)
     }

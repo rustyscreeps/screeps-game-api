@@ -49,8 +49,8 @@ extern "C" {
     pub fn ticks_to_regeneration(this: &Mineral) -> Option<u32>;
 }
 
-impl HasNativeId for Mineral {
-    fn native_id(&self) -> JsString {
+impl HasId for Mineral {
+    fn js_raw_id(&self) -> JsString {
         Self::id_internal(self)
     }
 }

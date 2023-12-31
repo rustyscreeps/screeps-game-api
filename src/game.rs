@@ -19,6 +19,7 @@ use crate::{
     js_collections::{JsHashMap, JsObjectId},
     local::{ObjectId, RawObjectId, RoomName},
     objects::{AccountPowerCreep, ConstructionSite, Creep, Flag, Room, RoomObject, StructureSpawn},
+    traits::MaybeHasId,
 };
 
 pub mod cpu;
@@ -171,11 +172,9 @@ pub fn symbols() -> JsHashMap<crate::ResourceType, u32> {
 /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
 pub fn get_object_by_js_id_typed<T>(id: &JsObjectId<T>) -> Option<T>
 where
-    T: From<JsValue>,
+    T: MaybeHasId + JsCast,
 {
-    Game::get_object_by_id(&id.raw)
-        .map(JsValue::from)
-        .map(Into::into)
+    Game::get_object_by_id(&id.raw).map(JsCast::unchecked_into)
 }
 
 /// Get the typed object represented by a given [`ObjectId`], if it's still
@@ -184,14 +183,12 @@ where
 /// [Screeps documentation](http://docs.screeps.com/api/#Game.getObjectById)
 pub fn get_object_by_id_typed<T>(id: &ObjectId<T>) -> Option<T>
 where
-    T: From<JsValue>,
+    T: MaybeHasId + JsCast,
 {
     // construct a reference to a javascript string using the id data
     let js_str = JsString::from(id.to_string());
 
-    Game::get_object_by_id(&js_str)
-        .map(JsValue::from)
-        .map(Into::into)
+    Game::get_object_by_id(&js_str).map(JsCast::unchecked_into)
 }
 
 /// Get the [`RoomObject`] represented by a given [`RawObjectId`], if it's

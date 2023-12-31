@@ -76,11 +76,11 @@ impl Structure {
     }
 }
 
-impl<T> HasNativeId for T
+impl<T> HasId for T
 where
-    T: AsRef<Structure>,
+    T: AsRef<Structure> + JsCast,
 {
-    fn native_id(&self) -> JsString {
+    fn js_raw_id(&self) -> JsString {
         Structure::id_internal(self.as_ref())
     }
 }
