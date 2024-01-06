@@ -40,10 +40,10 @@ extern "C" {
     fn set_active_foreign_segment(username: &JsString, segment_id: Option<u8>);
 
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setDefaultPublicSegment)]
-    fn set_default_public_segment(segment_id: Option<u8>);
+    fn set_default_public_segment(segment_id: JsValue);
 
     #[wasm_bindgen(static_method_of = RawMemory, js_name = setPublicSegments)]
-    fn set_public_segments(segment_ids: &[u8]);
+    fn set_public_segments(segment_ids: &Array);
 }
 
 /// Get a [`JsHashMap<u8, String>`] with all of the segments requested on
@@ -108,7 +108,11 @@ pub fn set_active_foreign_segment(username: &JsString, segment_id: Option<u8>) {
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setDefaultPublicSegment)
 pub fn set_default_public_segment(segment_id: Option<u8>) {
-    RawMemory::set_default_public_segment(segment_id)
+    RawMemory::set_default_public_segment(
+        segment_id
+            .map(|f| JsValue::from_f64(f as f64))
+            .unwrap_or(JsValue::NULL),
+    )
 }
 
 /// Sets which of your memory segments are readable to other players as
@@ -116,7 +120,13 @@ pub fn set_default_public_segment(segment_id: Option<u8>) {
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setPublicSegments)
 pub fn set_public_segments(segment_ids: &[u8]) {
-    RawMemory::set_public_segments(segment_ids)
+    let segment_ids: Array = segment_ids
+        .iter()
+        .map(|s| *s as f64)
+        .map(JsValue::from_f64)
+        .collect();
+
+    RawMemory::set_public_segments(&segment_ids)
 }
 
 #[wasm_bindgen]

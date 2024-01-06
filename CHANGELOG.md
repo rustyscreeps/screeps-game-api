@@ -10,6 +10,10 @@ Unreleased
 - Remove `Resolvable` trait, moving its functionality to `MaybeHasId`
 - Remove `ObjectWithId` and `ObjectWithMaybeId` enums
 
+### Bugfixes:
+
+- Fix `raw_memory::set_public_segments` and `set_default_public_segment` argument conversion
+
 0.19.0 (2023-12-20)
 ===================
 
