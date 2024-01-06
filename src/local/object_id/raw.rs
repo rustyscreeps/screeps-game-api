@@ -279,7 +279,7 @@ mod test {
     }
 
     // sorted first by id value (lowest first), then by the length of the string
-    // (sortest first)
+    // (shortest first)
     const SORTED_IDS: &[&str] = &[
         "0", "00", "000", "0000", "1", "01", "001", "0001", "2", "a", "f", "00f", "10", "010",
         "0010", "100", "0100", "f00", "0f00", "1000",
