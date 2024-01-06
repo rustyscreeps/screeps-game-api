@@ -278,6 +278,44 @@ mod test {
         assert_eq!(ids_parsed, ids_reparsed);
     }
 
+    // sorted first by id value (lowest first), then by the length of the string
+    // (shortest first)
+    #[rustfmt::skip]
+    const SORTED_IDS: &[&str] = &[
+        "0",
+        "00",
+        "000",
+        "0000",
+        "1",
+        "01",
+        "001",
+        "0001",
+        "2",
+        "a",
+        "f",
+        "00f",
+        "10",
+        "010",
+        "0010",
+        "100",
+        "0100",
+        "f00",
+        "0f00",
+        "1000",
+    ];
+
+    #[test]
+    fn sort_order() {
+        let mut ids_parsed = vec![];
+        for id in SORTED_IDS {
+            let parsed: RawObjectId = id.parse().unwrap();
+            ids_parsed.push(parsed);
+        }
+        let mut ids_sort: Vec<_> = ids_parsed.clone();
+        ids_sort.sort();
+        assert_eq!(ids_sort, ids_parsed);
+    }
+
     const INVALID_IDS: &[&str] = &[
         // empty string
         "",
