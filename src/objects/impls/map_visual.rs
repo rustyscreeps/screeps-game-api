@@ -368,12 +368,7 @@ impl MapVisualShape {
         })
     }
 
-    pub fn rect(
-        top_left: Position,
-        width: u32,
-        height: u32,
-        style: RectStyle,
-    ) -> MapVisualShape {
+    pub fn rect(top_left: Position, width: u32, height: u32, style: RectStyle) -> MapVisualShape {
         MapVisualShape::Rect(MapRectData {
             x: top_left.x(),
             y: top_left.y(),
