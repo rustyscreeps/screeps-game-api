@@ -108,7 +108,11 @@ pub fn set_active_foreign_segment(username: &JsString, segment_id: Option<u8>) {
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.setDefaultPublicSegment)
 pub fn set_default_public_segment(segment_id: Option<u8>) {
-    RawMemory::set_default_public_segment(segment_id.map(|f| JsValue::from_f64(f as f64)).unwrap_or(JsValue::null()))
+    RawMemory::set_default_public_segment(
+        segment_id
+            .map(|f| JsValue::from_f64(f as f64))
+            .unwrap_or(JsValue::NULL),
+    )
 }
 
 /// Sets which of your memory segments are readable to other players as
