@@ -57,15 +57,6 @@ generate-pixel = []
 # Enable the interface for inter-shard memory - only present on official MMO servers
 inter-shard-memory = []
 
-# Enable score container, collector, and resource - used in season 1
-score = []
-
-# Enable symbol container, decoder, and resources - used in season 2
-symbols = []
-
-# Enable thorium resource and reactor structure - used in season 5
-thorium = []
-
 # Enable unsafe conversions of return codes with undefined behavior when values
 # aren't in the expected range
 unsafe-return-conversion = []
@@ -75,11 +66,11 @@ unsafe-return-conversion = []
 # Official MMO server features, not present on other environments
 mmo = ["generate-pixel", "inter-shard-memory"]
 
-# Seasonal server, season 1
-seasonal-season-1 = ["score"]
+# Seasonal server, season 1 - enable score container, collector, and resource
+seasonal-season-1 = []
 
-# Seasonal server, season 2
-seasonal-season-2 = ["symbols"]
+# Seasonal server, season 2 - enable symbol container, decoder, and resources
+seasonal-season-2 = []
 
-# Seasonal server, season 5
-seasonal-season-5 = ["thorium"]
+# Seasonal server, season 5 - enable thorium resource and reactor structure
+seasonal-season-5 = []

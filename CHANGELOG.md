@@ -11,6 +11,8 @@ Unreleased
 - Remove `ObjectWithId` and `ObjectWithMaybeId` enums
 - Remove `Option<_>` for style options on `MapVisual`, fixes all visuals failing to render if
   one without style was used
+- Remove `score`, `symbols`, and `thorium` features, moving all items they enabled to their
+  respective `seasonal-season-1`, `seasonal-season-2`, and `seasonal-season-5` features
 
 ### Bugfixes:
 

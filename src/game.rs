@@ -60,11 +60,11 @@ extern "C" {
     #[wasm_bindgen(static_method_of = Game, getter = time)]
     fn time() -> u32;
 
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     #[wasm_bindgen(static_method_of = Game, getter = score)]
     fn score() -> u32;
 
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     #[wasm_bindgen(static_method_of = Game, getter = symbols)]
     fn symbols() -> Object;
 
@@ -152,7 +152,7 @@ pub fn time() -> u32 {
 /// Your current score, as determined by the symbols you have decoded.
 ///
 /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.score)
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 pub fn score() -> u32 {
     Game::score()
 }
@@ -161,7 +161,7 @@ pub fn score() -> u32 {
 /// determine your score.
 ///
 /// [Screeps documentation](https://docs-season.screeps.com/api/#Game.symbols)
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 pub fn symbols() -> JsHashMap<crate::ResourceType, u32> {
     Game::symbols().into()
 }

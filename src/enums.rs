@@ -95,14 +95,14 @@ impl AsRef<RoomObject> for AttackableObject {
 pub enum DecayingObject {
     Deposit,
     Ruin,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreContainer,
     StructureContainer,
     StructurePortal,
     StructurePowerBank,
     StructureRampart,
     StructureRoad,
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolContainer,
     Tombstone,
 }
@@ -130,9 +130,9 @@ pub enum ObjectWithPosition {
     Resource,
     RoomPosition,
     Ruin,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreCollector,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreContainer,
     Source,
     StructureContainer,
@@ -156,9 +156,9 @@ pub enum ObjectWithPosition {
     StructureTerminal,
     StructureTower,
     StructureWall,
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolContainer,
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolDecoder,
     Tombstone,
 }
@@ -168,9 +168,9 @@ pub enum StoreObject {
     Creep,
     PowerCreep,
     Ruin,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreCollector,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreContainer,
     StructureContainer,
     StructureExtension,
@@ -183,7 +183,7 @@ pub enum StoreObject {
     StructureStorage,
     StructureTerminal,
     StructureTower,
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolContainer,
     Tombstone,
 }
@@ -224,9 +224,9 @@ pub enum TypedRoomObject {
     PowerCreep,
     Resource,
     Ruin,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreCollector,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreContainer,
     Source,
     StructureContainer,
@@ -250,9 +250,9 @@ pub enum TypedRoomObject {
     StructureTerminal,
     StructureTower,
     StructureWall,
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolContainer,
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolDecoder,
     Tombstone,
 }

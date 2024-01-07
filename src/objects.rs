@@ -54,13 +54,13 @@ mod room_objects {
         StructureTower, StructureWall, Tombstone,
     };
 
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     pub use super::impls::{ScoreCollector, ScoreContainer};
 
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     pub use super::impls::{SymbolContainer, SymbolDecoder};
 
-    #[cfg(feature = "thorium")]
+    #[cfg(feature = "seasonal-season-5")]
     pub use super::impls::Reactor;
 }
 

@@ -69,15 +69,15 @@ pub enum Find {
     Ruins = 123,
     // todo these seem to not work when conditionally compiled out - they're not hurting to leave
     // in but need to figure that out
-    //#[cfg(feature = "score")]
+    //#[cfg(feature = "seasonal-season-1")]
     ScoreContainers = 10011,
-    //#[cfg(feature = "score")]
+    //#[cfg(feature = "seasonal-season-1")]
     ScoreCollectors = 10012,
-    //#[cfg(feature = "symbols")]
+    //#[cfg(feature = "seasonal-season-2")]
     SymbolContainers = 10021,
-    //#[cfg(feature = "symbols")]
+    //#[cfg(feature = "seasonal-season-2")]
     SymbolDecoders = 10022,
-    //#[cfg(feature = "thorium")]
+    //#[cfg(feature = "seasonal-season-5")]
     Reactors = 10051,
 }
 
@@ -130,15 +130,15 @@ pub enum RoomObject {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreContainers = 10011,
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreCollectors = 10012,
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolContainers = 10021,
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolDecoders = 10022,
-    #[cfg(feature = "thorium")]
+    #[cfg(feature = "seasonal-season-5")]
     Reactors = 10051,
 }
 
@@ -168,15 +168,15 @@ impl From<RoomObject> for Find {
             RoomObject::HostilePowerCreeps => Find::HostilePowerCreeps,
             RoomObject::Deposits => Find::Deposits,
             RoomObject::Ruins => Find::Ruins,
-            #[cfg(feature = "score")]
+            #[cfg(feature = "seasonal-season-1")]
             RoomObject::ScoreContainers => Find::ScoreContainers,
-            #[cfg(feature = "score")]
+            #[cfg(feature = "seasonal-season-1")]
             RoomObject::ScoreCollectors => Find::ScoreCollectors,
-            #[cfg(feature = "symbols")]
+            #[cfg(feature = "seasonal-season-2")]
             RoomObject::SymbolContainers => Find::SymbolContainers,
-            #[cfg(feature = "symbols")]
+            #[cfg(feature = "seasonal-season-2")]
             RoomObject::SymbolDecoders => Find::SymbolDecoders,
-            #[cfg(feature = "thorium")]
+            #[cfg(feature = "seasonal-season-5")]
             RoomObject::Reactors => Find::Reactors,
         }
     }
@@ -315,19 +315,19 @@ typesafe_find_constants! {
     pub struct EXIT = (Find::Exit, RoomPosition, Into::into);
 }
 
-#[cfg(feature = "score")]
+#[cfg(feature = "seasonal-season-1")]
 typesafe_find_constants! {
     pub struct SCORE_CONTAINERS = (Find::ScoreContainers, ScoreContainer, Into::into);
     pub struct SCORE_COLLECTORS = (Find::ScoreCollectors, ScoreCollector, Into::into);
 }
 
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 typesafe_find_constants! {
     pub struct SYMBOL_CONTAINERS = (Find::SymbolContainers, SymbolContainer, Into::into);
     pub struct SYMBOL_DECODERS = (Find::SymbolDecoders, SymbolDecoder, Into::into);
 }
 
-#[cfg(feature = "thorium")]
+#[cfg(feature = "seasonal-season-5")]
 typesafe_find_constants! {
     pub struct REACTORS = (Find::Reactors, Reactor, Into::into);
 }

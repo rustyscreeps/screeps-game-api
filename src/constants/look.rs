@@ -41,15 +41,15 @@ pub enum Look {
     Ruins = "ruin",
     // todo these seem to not work when conditionally compiled out - they're not hurting to leave
     // in but need to figure that out
-    //#[cfg(feature = "score")]
+    //#[cfg(feature = "seasonal-season-1")]
     ScoreContainers = "scoreContainer",
-    //#[cfg(feature = "score")]
+    //#[cfg(feature = "seasonal-season-1")]
     ScoreCollectors = "scoreCollector",
-    //#[cfg(feature = "symbols")]
+    //#[cfg(feature = "seasonal-season-2")]
     SymbolContainers = "symbolContainer",
-    //#[cfg(feature = "symbols")]
+    //#[cfg(feature = "seasonal-season-2")]
     SymbolDecoders = "symbolDecoder",
-    //#[cfg(feature = "thorium")]
+    //#[cfg(feature = "seasonal-season-5")]
     Reactors = "reactor",
 }
 
@@ -105,19 +105,19 @@ typesafe_look_constants! {
     pub struct RUINS = (Look::Ruins, Ruin, Into::into);
 }
 
-#[cfg(feature = "score")]
+#[cfg(feature = "seasonal-season-1")]
 typesafe_look_constants! {
     pub struct SCORE_CONTAINERS = (Look::ScoreContainers, ScoreContainer, Into::into);
     pub struct SCORE_COLLECTORS = (Look::ScoreCollectors, ScoreCollector, Into::into);
 }
 
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 typesafe_look_constants! {
     pub struct SYMBOL_CONTAINERS = (Look::SymbolContainers, SymbolContainer, Into::into);
     pub struct SYMBOL_DECODERS = (Look::SymbolDecoders, SymbolDecoder, Into::into);
 }
 
-#[cfg(feature = "thorium")]
+#[cfg(feature = "seasonal-season-5")]
 typesafe_look_constants! {
     pub struct REACTORS = (Look::Reactors, Reactor, Into::into);
 }
@@ -138,15 +138,15 @@ pub enum LookResult {
     Tombstone(Tombstone),
     PowerCreep(PowerCreep),
     Ruin(Ruin),
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreContainer(ScoreContainer),
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     ScoreCollector(ScoreCollector),
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolContainer(SymbolContainer),
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     SymbolDecoder(SymbolDecoder),
-    #[cfg(feature = "thorium")]
+    #[cfg(feature = "seasonal-season-5")]
     Reactor(Reactor),
 }
 
@@ -167,15 +167,15 @@ impl LookResult {
             Look::Tombstones => Self::Tombstone(result.tombstone()),
             Look::PowerCreeps => Self::PowerCreep(result.power_creep()),
             Look::Ruins => Self::Ruin(result.ruin()),
-            #[cfg(feature = "score")]
+            #[cfg(feature = "seasonal-season-1")]
             Look::ScoreContainers => Self::ScoreContainer(result.score_container()),
-            #[cfg(feature = "score")]
+            #[cfg(feature = "seasonal-season-1")]
             Look::ScoreCollectors => Self::ScoreCollector(result.score_collector()),
-            #[cfg(feature = "symbols")]
+            #[cfg(feature = "seasonal-season-2")]
             Look::SymbolContainers => Self::SymbolContainer(result.symbol_container()),
-            #[cfg(feature = "symbols")]
+            #[cfg(feature = "seasonal-season-2")]
             Look::SymbolDecoders => Self::SymbolDecoder(result.symbol_decoder()),
-            #[cfg(feature = "thorium")]
+            #[cfg(feature = "seasonal-season-5")]
             Look::Reactors => Self::Reactor(result.reactor()),
             _ => panic!("look result type not matched, object type feature may be disabled?"),
         }
@@ -256,19 +256,19 @@ extern "C" {
     fn power_creep(this: &JsLookResult) -> PowerCreep;
     #[wasm_bindgen(method, getter)]
     fn ruin(this: &JsLookResult) -> Ruin;
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     #[wasm_bindgen(method, getter = scoreContainer)]
     fn score_container(this: &JsLookResult) -> ScoreContainer;
-    #[cfg(feature = "score")]
+    #[cfg(feature = "seasonal-season-1")]
     #[wasm_bindgen(method, getter = scoreCollector)]
     fn score_collector(this: &JsLookResult) -> ScoreCollector;
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     #[wasm_bindgen(method, getter = symbolContainer)]
     fn symbol_container(this: &JsLookResult) -> SymbolContainer;
-    #[cfg(feature = "symbols")]
+    #[cfg(feature = "seasonal-season-2")]
     #[wasm_bindgen(method, getter = symbolDecoder)]
     fn symbol_decoder(this: &JsLookResult) -> SymbolDecoder;
-    #[cfg(feature = "thorium")]
+    #[cfg(feature = "seasonal-season-5")]
     #[wasm_bindgen(method, getter = reactor)]
     fn reactor(this: &JsLookResult) -> Reactor;
 }
