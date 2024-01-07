@@ -78,6 +78,12 @@ pub enum MapFontStyle {
     Oblique,
 }
 
+impl MapFontStyle {
+    pub fn is_normal(&self) -> bool {
+        matches!(self, MapFontStyle::Normal)
+    }
+}
+
 /// The font variant for map text visuals.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -87,6 +93,12 @@ pub enum MapFontVariant {
     Normal,
     /// Render all lowercase characters in small caps.
     SmallCaps,
+}
+
+impl MapFontVariant {
+    pub fn is_normal(&self) -> bool {
+        matches!(self, MapFontVariant::Normal)
+    }
 }
 
 /// Settings for text visuals on the map, used with [`MapVisual::text`].
@@ -117,7 +129,9 @@ pub struct MapTextStyle {
     font_family: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     font_size: Option<f32>,
+    #[serde(skip_serializing_if = "MapFontStyle::is_normal")]
     font_style: MapFontStyle,
+    #[serde(skip_serializing_if = "MapFontVariant::is_normal")]
     font_variant: MapFontVariant,
     #[serde(skip_serializing_if = "Option::is_none")]
     stroke: Option<String>,
