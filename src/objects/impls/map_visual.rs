@@ -12,8 +12,8 @@ pub struct MapCircleData {
     x: RoomCoordinate,
     y: RoomCoordinate,
     n: RoomName,
-    #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
-    style: Option<CircleStyle>,
+    #[serde(rename = "s")]
+    style: CircleStyle,
 }
 
 #[derive(Clone, Serialize)]
@@ -24,8 +24,8 @@ pub struct MapLineData {
     x2: RoomCoordinate,
     y2: RoomCoordinate,
     n2: RoomName,
-    #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
-    style: Option<LineStyle>,
+    #[serde(rename = "s")]
+    style: LineStyle,
 }
 
 #[derive(Clone, Serialize)]
@@ -37,8 +37,8 @@ pub struct MapRectData {
     width: u32,
     #[serde(rename = "h")]
     height: u32,
-    #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
-    style: Option<RectStyle>,
+    #[serde(rename = "s")]
+    style: RectStyle,
 }
 
 #[derive(Clone, Serialize)]
@@ -61,8 +61,8 @@ impl From<&Position> for MapPolyPoint {
 #[derive(Clone, Serialize)]
 pub struct MapPolyData {
     points: Vec<MapPolyPoint>,
-    #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
-    style: Option<PolyStyle>,
+    #[serde(rename = "s")]
+    style: PolyStyle,
 }
 
 /// The font style for map text visuals.
@@ -78,6 +78,12 @@ pub enum MapFontStyle {
     Oblique,
 }
 
+impl MapFontStyle {
+    pub fn is_normal(&self) -> bool {
+        matches!(self, MapFontStyle::Normal)
+    }
+}
+
 /// The font variant for map text visuals.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -87,6 +93,12 @@ pub enum MapFontVariant {
     Normal,
     /// Render all lowercase characters in small caps.
     SmallCaps,
+}
+
+impl MapFontVariant {
+    pub fn is_normal(&self) -> bool {
+        matches!(self, MapFontVariant::Normal)
+    }
 }
 
 /// Settings for text visuals on the map, used with [`MapVisual::text`].
@@ -117,7 +129,9 @@ pub struct MapTextStyle {
     font_family: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     font_size: Option<f32>,
+    #[serde(skip_serializing_if = "MapFontStyle::is_normal")]
     font_style: MapFontStyle,
+    #[serde(skip_serializing_if = "MapFontVariant::is_normal")]
     font_variant: MapFontVariant,
     #[serde(skip_serializing_if = "Option::is_none")]
     stroke: Option<String>,
@@ -327,8 +341,8 @@ pub struct MapTextData {
     x: RoomCoordinate,
     y: RoomCoordinate,
     n: RoomName,
-    #[serde(rename = "s", skip_serializing_if = "Option::is_none")]
-    style: Option<MapTextStyle>,
+    #[serde(rename = "s")]
+    style: MapTextStyle,
 }
 
 #[derive(Clone, Serialize)]
@@ -347,7 +361,7 @@ pub enum MapVisualShape {
 }
 
 impl MapVisualShape {
-    pub fn circle(center: Position, style: Option<CircleStyle>) -> MapVisualShape {
+    pub fn circle(center: Position, style: CircleStyle) -> MapVisualShape {
         MapVisualShape::Circle(MapCircleData {
             x: center.x(),
             y: center.y(),
@@ -356,7 +370,7 @@ impl MapVisualShape {
         })
     }
 
-    pub fn line(from: Position, to: Position, style: Option<LineStyle>) -> MapVisualShape {
+    pub fn line(from: Position, to: Position, style: LineStyle) -> MapVisualShape {
         MapVisualShape::Line(MapLineData {
             x1: from.x(),
             y1: from.y(),
@@ -368,12 +382,7 @@ impl MapVisualShape {
         })
     }
 
-    pub fn rect(
-        top_left: Position,
-        width: u32,
-        height: u32,
-        style: Option<RectStyle>,
-    ) -> MapVisualShape {
+    pub fn rect(top_left: Position, width: u32, height: u32, style: RectStyle) -> MapVisualShape {
         MapVisualShape::Rect(MapRectData {
             x: top_left.x(),
             y: top_left.y(),
@@ -384,11 +393,11 @@ impl MapVisualShape {
         })
     }
 
-    pub fn poly(points: Vec<MapPolyPoint>, style: Option<PolyStyle>) -> MapVisualShape {
+    pub fn poly(points: Vec<MapPolyPoint>, style: PolyStyle) -> MapVisualShape {
         MapVisualShape::Poly(MapPolyData { points, style })
     }
 
-    pub fn text(pos: Position, text: String, style: Option<MapTextStyle>) -> MapVisualShape {
+    pub fn text(pos: Position, text: String, style: MapTextStyle) -> MapVisualShape {
         MapVisualShape::Text(MapTextData {
             x: pos.x(),
             y: pos.y(),
@@ -416,24 +425,24 @@ impl MapVisual {
         }
     }
 
-    pub fn circle(pos: Position, style: Option<CircleStyle>) {
+    pub fn circle(pos: Position, style: CircleStyle) {
         Self::draw(&MapVisualShape::circle(pos, style));
     }
 
-    pub fn line(from: Position, to: Position, style: Option<LineStyle>) {
+    pub fn line(from: Position, to: Position, style: LineStyle) {
         Self::draw(&MapVisualShape::line(from, to, style));
     }
 
-    pub fn rect(top_left: Position, width: u32, height: u32, style: Option<RectStyle>) {
+    pub fn rect(top_left: Position, width: u32, height: u32, style: RectStyle) {
         Self::draw(&MapVisualShape::rect(top_left, width, height, style));
     }
 
-    pub fn poly(points: Vec<Position>, style: Option<PolyStyle>) {
+    pub fn poly(points: Vec<Position>, style: PolyStyle) {
         let points = points.iter().map(Into::into).collect();
         Self::draw(&MapVisualShape::poly(points, style));
     }
 
-    pub fn text(pos: Position, text: String, style: Option<MapTextStyle>) {
+    pub fn text(pos: Position, text: String, style: MapTextStyle) {
         Self::draw(&MapVisualShape::text(pos, text, style));
     }
 }

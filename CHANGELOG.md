@@ -9,6 +9,8 @@ Unreleased
     other trait functions
 - Remove `Resolvable` trait, moving its functionality to `MaybeHasId`
 - Remove `ObjectWithId` and `ObjectWithMaybeId` enums
+- Remove `Option<_>` for style options on `MapVisual`, fixes all visuals failing to render if
+  one without style was used
 
 ### Bugfixes:
 
