@@ -62,3 +62,5 @@ impl HasId for Deposit {
         self.id_internal()
     }
 }
+
+impl Harvestable for Deposit {}

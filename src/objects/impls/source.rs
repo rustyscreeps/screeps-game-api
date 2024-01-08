@@ -58,3 +58,5 @@ impl HasId for Source {
         Self::id_internal(self)
     }
 }
+
+impl Harvestable for Source {}

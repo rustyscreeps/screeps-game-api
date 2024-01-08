@@ -54,3 +54,5 @@ impl HasId for Mineral {
         Self::id_internal(self)
     }
 }
+
+impl Harvestable for Mineral {}

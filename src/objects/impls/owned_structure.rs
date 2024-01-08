@@ -42,6 +42,8 @@ impl OwnedStructure {
     }
 }
 
+impl Attackable for OwnedStructure {}
+
 impl<T> OwnedStructureProperties for T
 where
     T: AsRef<OwnedStructure>,

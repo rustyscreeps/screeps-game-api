@@ -1,6 +1,9 @@
 use wasm_bindgen::prelude::*;
 
-use crate::objects::{OwnedStructure, RoomObject, Spawning, Structure};
+use crate::{
+    objects::{OwnedStructure, RoomObject, Spawning, Structure},
+    prelude::*,
+};
 
 #[wasm_bindgen]
 extern "C" {
@@ -33,3 +36,5 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn spawning(this: &StructureInvaderCore) -> Option<Spawning>;
 }
+
+impl Attackable for StructureInvaderCore {}

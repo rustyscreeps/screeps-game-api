@@ -151,6 +151,12 @@ impl HasStore for StructureSpawn {
     }
 }
 
+impl Attackable for StructureSpawn {}
+impl Dismantleable for StructureSpawn {}
+impl Repairable for StructureSpawn {}
+impl Transferable for StructureSpawn {}
+impl Withdrawable for StructureSpawn {}
+
 #[derive(Default)]
 pub struct SpawnOptions {
     memory: Option<JsValue>,

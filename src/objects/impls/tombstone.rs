@@ -68,3 +68,5 @@ impl HasStore for Tombstone {
         Self::store(self)
     }
 }
+
+impl Withdrawable for Tombstone {}

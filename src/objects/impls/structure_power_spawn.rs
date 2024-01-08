@@ -50,3 +50,9 @@ impl HasStore for StructurePowerSpawn {
         Self::store(self)
     }
 }
+
+impl Attackable for StructurePowerSpawn {}
+impl Dismantleable for StructurePowerSpawn {}
+impl Repairable for StructurePowerSpawn {}
+impl Transferable for StructurePowerSpawn {}
+impl Withdrawable for StructurePowerSpawn {}

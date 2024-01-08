@@ -33,3 +33,7 @@ impl CanDecay for StructurePowerBank {
         Self::ticks_to_decay(self)
     }
 }
+
+impl Attackable for StructurePowerBank {}
+impl Dismantleable for StructurePowerBank {}
+impl Repairable for StructurePowerBank {}

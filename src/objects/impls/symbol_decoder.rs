@@ -42,3 +42,5 @@ impl HasId for SymbolDecoder {
         Self::id_internal(self)
     }
 }
+
+impl Transferable for SymbolDecoder {}

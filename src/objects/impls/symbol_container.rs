@@ -67,3 +67,5 @@ impl HasStore for SymbolContainer {
         Self::store(self)
     }
 }
+
+impl Withdrawable for SymbolContainer {}

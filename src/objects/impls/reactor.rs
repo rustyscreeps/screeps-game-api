@@ -64,3 +64,5 @@ impl HasStore for Reactor {
         Self::store(self)
     }
 }
+
+impl Transferable for Reactor {}

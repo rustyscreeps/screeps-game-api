@@ -56,3 +56,8 @@ impl HasStore for StructureNuker {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureNuker {}
+impl Dismantleable for StructureNuker {}
+impl Repairable for StructureNuker {}
+impl Transferable for StructureNuker {}

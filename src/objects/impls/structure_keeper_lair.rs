@@ -1,6 +1,9 @@
 use wasm_bindgen::prelude::*;
 
-use crate::objects::{OwnedStructure, RoomObject, Structure};
+use crate::{
+    objects::{OwnedStructure, RoomObject, Structure},
+    prelude::*,
+};
 
 #[wasm_bindgen]
 extern "C" {
@@ -19,3 +22,5 @@ extern "C" {
     #[wasm_bindgen(method, getter = ticksToSpawn)]
     pub fn ticks_to_spawn(this: &StructureKeeperLair) -> u32;
 }
+
+impl Attackable for StructureKeeperLair {}

@@ -45,3 +45,5 @@ impl HasStore for ScoreCollector {
         Self::store(self)
     }
 }
+
+impl Transferable for ScoreCollector {}

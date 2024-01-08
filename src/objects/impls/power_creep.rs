@@ -341,6 +341,10 @@ impl HasStore for PowerCreep {
     }
 }
 
+impl Attackable for PowerCreep {}
+impl Healable for PowerCreep {}
+impl Transferable for PowerCreep {}
+
 // todo
 // impl TryFrom<AccountPowerCreep> for PowerCreep
 
