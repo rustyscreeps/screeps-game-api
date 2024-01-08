@@ -663,6 +663,32 @@ impl StructureObject {
         }
     }
 
+    pub fn as_repairable(&self) -> Option<&dyn Repairable> {
+        match self {
+            Self::StructureSpawn(s) => Some(s),
+            Self::StructureExtension(s) => Some(s),
+            Self::StructureRoad(s) => Some(s),
+            Self::StructureWall(s) => Some(s),
+            Self::StructureRampart(s) => Some(s),
+            Self::StructureKeeperLair(_) => None,
+            Self::StructurePortal(_) => None,
+            Self::StructureController(_) => None,
+            Self::StructureLink(s) => Some(s),
+            Self::StructureStorage(s) => Some(s),
+            Self::StructureTower(s) => Some(s),
+            Self::StructureObserver(s) => Some(s),
+            Self::StructurePowerBank(s) => Some(s),
+            Self::StructurePowerSpawn(s) => Some(s),
+            Self::StructureExtractor(s) => Some(s),
+            Self::StructureLab(s) => Some(s),
+            Self::StructureTerminal(s) => Some(s),
+            Self::StructureContainer(s) => Some(s),
+            Self::StructureNuker(s) => Some(s),
+            Self::StructureFactory(s) => Some(s),
+            Self::StructureInvaderCore(_) => None,
+        }
+    }
+
     pub fn as_dismantleable(&self) -> Option<&dyn Dismantleable> {
         match self {
             Self::StructureSpawn(s) => Some(s),
