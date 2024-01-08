@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.20.0 (2024-01-08)
+===================
+
 ### Breaking:
 
 - Remove `HasNativeId`, `MaybeHasNativeId`, `HasTypedId`, and `MaybeHasTypedId` traits, adding
