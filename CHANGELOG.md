@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+### Additions:
+
+- Add implementation of `TryFrom<AccountPowerCreep>` for `PowerCreep`
+
 0.20.0 (2024-01-08)
 ===================
 

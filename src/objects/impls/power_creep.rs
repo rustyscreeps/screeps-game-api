@@ -1,3 +1,5 @@
+use std::{error::Error, fmt};
+
 use js_sys::{JsString, Object};
 use wasm_bindgen::{prelude::*, JsCast};
 
@@ -345,9 +347,6 @@ impl Attackable for PowerCreep {}
 impl Healable for PowerCreep {}
 impl Transferable for PowerCreep {}
 
-// todo
-// impl TryFrom<AccountPowerCreep> for PowerCreep
-
 impl SharedCreepProperties for PowerCreep {
     fn memory(&self) -> JsValue {
         self.memory()
@@ -471,6 +470,9 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type AccountPowerCreep;
 
+    #[wasm_bindgen(method, getter = id)]
+    fn id_internal(this: &AccountPowerCreep) -> Option<JsString>;
+
     #[wasm_bindgen(method, getter = className)]
     fn class_internal(this: &AccountPowerCreep) -> PowerCreepClass;
 
@@ -589,6 +591,28 @@ impl AccountPowerCreep {
 impl JsCollectionFromValue for AccountPowerCreep {
     fn from_value(val: JsValue) -> Self {
         val.unchecked_into()
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PowerCreepNotSpawned {}
+
+impl fmt::Display for PowerCreepNotSpawned {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "PowerCreep not currently spawned")
+    }
+}
+
+impl Error for PowerCreepNotSpawned {}
+
+impl TryFrom<AccountPowerCreep> for PowerCreep {
+    type Error = PowerCreepNotSpawned;
+
+    fn try_from(account_power_creep: AccountPowerCreep) -> Result<Self, Self::Error> {
+        match account_power_creep.id_internal() {
+            Some(_) => Ok(account_power_creep.unchecked_into()),
+            None => Err(PowerCreepNotSpawned {}),
+        }
     }
 }
 
