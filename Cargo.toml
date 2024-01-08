@@ -48,23 +48,23 @@ wasm-bindgen-test = "0.3"
 [features]
 ## Specific features to enable conditional API endpoints
 
-# enable compatibility with the sim environment for positions
-sim = []
-
 # Enable the function call for pixel generation - only present on official MMO servers
 generate-pixel = []
 
 # Enable the interface for inter-shard memory - only present on official MMO servers
 inter-shard-memory = []
 
-# Enable score container, collector, and resource - used in season 1
-score = []
+# Seasonal server, season 1 - enable score container, collector, and resource
+seasonal-season-1 = []
 
-# Enable symbol container, decoder, and resources - used in season 2
-symbols = []
+# Seasonal server, season 2 - enable symbol container, decoder, and resources
+seasonal-season-2 = []
 
-# Enable thorium resource and reactor structure - used in season 5
-thorium = []
+# Seasonal server, season 5 - enable thorium resource and reactor structure
+seasonal-season-5 = []
+
+# enable compatibility with the sim environment for positions
+sim = []
 
 # Enable unsafe conversions of return codes with undefined behavior when values
 # aren't in the expected range
@@ -74,12 +74,3 @@ unsafe-return-conversion = []
 
 # Official MMO server features, not present on other environments
 mmo = ["generate-pixel", "inter-shard-memory"]
-
-# Seasonal server, season 1
-seasonal-season-1 = ["score"]
-
-# Seasonal server, season 2
-seasonal-season-2 = ["symbols"]
-
-# Seasonal server, season 5
-seasonal-season-5 = ["thorium"]

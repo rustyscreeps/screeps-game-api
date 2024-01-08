@@ -42,17 +42,17 @@ mod structure_tower;
 mod structure_wall;
 mod tombstone;
 
-#[cfg(feature = "score")]
+#[cfg(feature = "seasonal-season-1")]
 mod score_collector;
-#[cfg(feature = "score")]
+#[cfg(feature = "seasonal-season-1")]
 mod score_container;
 
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 mod symbol_container;
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 mod symbol_decoder;
 
-#[cfg(feature = "thorium")]
+#[cfg(feature = "seasonal-season-5")]
 mod reactor;
 
 pub use self::{
@@ -111,11 +111,11 @@ pub use self::room_visual::{
 
 pub use self::map_visual::{MapFontStyle, MapFontVariant, MapTextStyle, MapVisual, MapVisualShape};
 
-#[cfg(feature = "score")]
+#[cfg(feature = "seasonal-season-1")]
 pub use self::{score_collector::ScoreCollector, score_container::ScoreContainer};
 
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 pub use self::{symbol_container::SymbolContainer, symbol_decoder::SymbolDecoder};
 
-#[cfg(feature = "thorium")]
+#[cfg(feature = "seasonal-season-5")]
 pub use self::reactor::Reactor;

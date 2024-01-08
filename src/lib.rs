@@ -50,13 +50,6 @@
 //!
 //! # Cargo Features
 //!
-//! ## `sim`
-//!
-//! Enables special-case handling of the unique room name present in the
-//! simulator - must be enabled to build code that is compatible with that
-//! environment. If this is enabled, the top-left valid room coordinate has the
-//! name `sim`, otherwise it's named `W127N127`.
-//!
 //! ## `generate-pixel`
 //!
 //! Enables the function to generate pixels, which is only present on the
@@ -67,20 +60,27 @@
 //! Enables interacting with `IntershardMemory`, which is not present in most
 //! private server environments.
 //!
-//! ## `score`
+//! ## `seasonal-season-1`
 //!
 //! Enables the score resource and entities, introduced for Screeps Seasonal's
-//! first season.
+//! first season, as well as enabling constants relevant to season 1.
 //!
-//! ## `symbols`
+//! ## `seasonal-season-2`
 //!
 //! Enables the symbol resources and entities, introduced for Screeps Seasonal's
-//! second season.
+//! second season, as well as enabling constants relevant to season 2.
 //!
-//! ## `thorium`
+//! ## `seasonal-season-5`
 //!
 //! Enables the thorium resource and reactor object, introduced for Screeps
-//! Seasonal's fifth season.
+//! Seasonal's fifth season, as well as enabling constants relevant to season 5.
+//!
+//! ## `sim`
+//!
+//! Enables special-case handling of the unique room name present in the
+//! simulator - must be enabled to build code that is compatible with that
+//! environment. If this is enabled, the top-left valid room coordinate has the
+//! name `sim`, otherwise it's named `W127N127`.
 //!
 //! ## `unsafe-return-conversion`
 //!
@@ -92,21 +92,6 @@
 //!
 //! Enables the `generate-pixel` and `inter-shard-memory` features, which are
 //! present on the Screeps: World official servers but not on private servers.
-//!
-//! ## `seasonal-season-1`
-//!
-//! Enables the `score` feature, a mechanic introduced for Screeps Seasonal's
-//! first season, as well as enabling constants relevant to season 1.
-//!
-//! ## `seasonal-season-2`
-//!
-//! Enables the `symbols` feature, a mechanic introduced for Screeps Seasonal's
-//! second season, as well as enabling constants relevant to season 2.
-//!
-//! ## `seasonal-season-5`
-//!
-//! Enables the `thorium` feature, a mechanic introduced for Screeps Seasonal's
-//! fifth season, as well as enabling constants relevant to season 5.
 #![recursion_limit = "128"]
 // to build locally with doc_cfg enabled, run:
 // `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`

@@ -375,11 +375,11 @@ impl Transferable for StructureTower {}
 impl Transferable for StructurePowerSpawn {}
 impl Transferable for StructureTerminal {}
 impl Transferable for PowerCreep {}
-#[cfg(feature = "score")]
+#[cfg(feature = "seasonal-season-1")]
 impl Transferable for ScoreCollector {}
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 impl Transferable for SymbolDecoder {}
-#[cfg(feature = "thorium")]
+#[cfg(feature = "seasonal-season-5")]
 impl Transferable for Reactor {}
 
 // NOTE: keep impls for Structure* in sync with accessor methods in
@@ -397,9 +397,9 @@ impl Withdrawable for StructureTower {}
 impl Withdrawable for StructurePowerSpawn {}
 impl Withdrawable for StructureTerminal {}
 impl Withdrawable for Tombstone {}
-#[cfg(feature = "score")]
+#[cfg(feature = "seasonal-season-1")]
 impl Withdrawable for ScoreContainer {}
-#[cfg(feature = "symbols")]
+#[cfg(feature = "seasonal-season-2")]
 impl Withdrawable for SymbolContainer {}
 
 impl Harvestable for Deposit {}

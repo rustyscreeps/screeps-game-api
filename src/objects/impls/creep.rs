@@ -11,7 +11,7 @@ use crate::{
     CostMatrix, MoveToOptions, RoomName, RoomPosition,
 };
 
-#[cfg(feature = "thorium")]
+#[cfg(feature = "seasonal-season-5")]
 use crate::objects::Reactor;
 
 #[wasm_bindgen]
@@ -83,7 +83,7 @@ extern "C" {
     #[wasm_bindgen(final, method, js_name = claimController)]
     fn claim_controller_internal(this: &Creep, target: &StructureController) -> i8;
 
-    #[cfg(feature = "thorium")]
+    #[cfg(feature = "seasonal-season-5")]
     #[wasm_bindgen(final, method, js_name = claimReactor)]
     fn claim_reactor_internal(this: &Creep, target: &Reactor) -> i8;
 
@@ -306,7 +306,7 @@ impl Creep {
     /// parts.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Creep.claimReactor)
-    #[cfg(feature = "thorium")]
+    #[cfg(feature = "seasonal-season-5")]
     pub fn claim_reactor(&self, target: &Reactor) -> Result<(), ErrorCode> {
         ErrorCode::result_from_i8(self.claim_reactor_internal(target))
     }
