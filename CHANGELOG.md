@@ -3,7 +3,9 @@ Unreleased
 
 ### Additions:
 
-- Add implementation of `TryFrom<AccountPowerCreep>` for `PowerCreep`
+- Add implementations of `TryFrom<AccountPowerCreep>` and `AsRef<AccountPowerCreep>` for
+  `PowerCreep`
+- Add implementation of `From<PowerCreep>` for `AccountPowerCreep`
 
 0.20.0 (2024-01-08)
 ===================

@@ -616,6 +616,18 @@ impl TryFrom<AccountPowerCreep> for PowerCreep {
     }
 }
 
+impl AsRef<AccountPowerCreep> for PowerCreep {
+    fn as_ref(&self) -> &AccountPowerCreep {
+        self.unchecked_ref()
+    }
+}
+
+impl From<PowerCreep> for AccountPowerCreep {
+    fn from(power_creep: PowerCreep) -> Self {
+        power_creep.unchecked_into()
+    }
+}
+
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen]
