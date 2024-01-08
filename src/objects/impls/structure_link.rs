@@ -67,3 +67,9 @@ impl HasStore for StructureLink {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureLink {}
+impl Dismantleable for StructureLink {}
+impl Repairable for StructureLink {}
+impl Transferable for StructureLink {}
+impl Withdrawable for StructureLink {}

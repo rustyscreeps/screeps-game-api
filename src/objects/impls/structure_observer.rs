@@ -33,3 +33,7 @@ impl StructureObserver {
         ErrorCode::result_from_i8(self.observe_room_internal(&target))
     }
 }
+
+impl Attackable for StructureObserver {}
+impl Dismantleable for StructureObserver {}
+impl Repairable for StructureObserver {}

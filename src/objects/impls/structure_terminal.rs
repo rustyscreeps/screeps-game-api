@@ -76,3 +76,9 @@ impl HasStore for StructureTerminal {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureTerminal {}
+impl Dismantleable for StructureTerminal {}
+impl Repairable for StructureTerminal {}
+impl Transferable for StructureTerminal {}
+impl Withdrawable for StructureTerminal {}

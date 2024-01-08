@@ -1,6 +1,9 @@
 use wasm_bindgen::prelude::*;
 
-use crate::objects::{RoomObject, Structure};
+use crate::{
+    objects::{RoomObject, Structure},
+    prelude::*,
+};
 
 #[wasm_bindgen]
 extern "C" {
@@ -12,3 +15,7 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type StructureWall;
 }
+
+impl Attackable for StructureWall {}
+impl Dismantleable for StructureWall {}
+impl Repairable for StructureWall {}

@@ -79,3 +79,9 @@ impl HasStore for StructureTower {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureTower {}
+impl Dismantleable for StructureTower {}
+impl Repairable for StructureTower {}
+impl Transferable for StructureTower {}
+impl Withdrawable for StructureTower {}

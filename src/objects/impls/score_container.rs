@@ -58,3 +58,5 @@ impl HasStore for ScoreContainer {
         Self::store(self)
     }
 }
+
+impl Withdrawable for ScoreContainer {}

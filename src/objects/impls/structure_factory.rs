@@ -62,3 +62,9 @@ impl HasStore for StructureFactory {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureFactory {}
+impl Dismantleable for StructureFactory {}
+impl Repairable for StructureFactory {}
+impl Transferable for StructureFactory {}
+impl Withdrawable for StructureFactory {}

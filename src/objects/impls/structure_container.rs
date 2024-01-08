@@ -49,3 +49,9 @@ impl HasStore for StructureContainer {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureContainer {}
+impl Dismantleable for StructureContainer {}
+impl Repairable for StructureContainer {}
+impl Transferable for StructureContainer {}
+impl Withdrawable for StructureContainer {}

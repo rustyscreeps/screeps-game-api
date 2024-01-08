@@ -52,3 +52,7 @@ impl CanDecay for StructureRampart {
         Self::ticks_to_decay(self)
     }
 }
+
+impl Attackable for StructureRampart {}
+impl Dismantleable for StructureRampart {}
+impl Repairable for StructureRampart {}

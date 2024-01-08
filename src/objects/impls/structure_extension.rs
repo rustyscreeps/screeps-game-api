@@ -28,3 +28,9 @@ impl HasStore for StructureExtension {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureExtension {}
+impl Dismantleable for StructureExtension {}
+impl Repairable for StructureExtension {}
+impl Transferable for StructureExtension {}
+impl Withdrawable for StructureExtension {}

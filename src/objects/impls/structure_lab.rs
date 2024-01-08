@@ -115,3 +115,9 @@ impl HasStore for StructureLab {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureLab {}
+impl Dismantleable for StructureLab {}
+impl Repairable for StructureLab {}
+impl Transferable for StructureLab {}
+impl Withdrawable for StructureLab {}

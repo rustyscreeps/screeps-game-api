@@ -33,3 +33,7 @@ impl HasCooldown for StructureExtractor {
         Self::cooldown(self)
     }
 }
+
+impl Attackable for StructureExtractor {}
+impl Dismantleable for StructureExtractor {}
+impl Repairable for StructureExtractor {}

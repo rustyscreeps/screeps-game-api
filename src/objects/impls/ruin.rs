@@ -69,3 +69,5 @@ impl HasStore for Ruin {
         Self::store(self)
     }
 }
+
+impl Withdrawable for Ruin {}

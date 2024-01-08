@@ -31,3 +31,7 @@ impl CanDecay for StructureRoad {
         Self::ticks_to_decay(self)
     }
 }
+
+impl Attackable for StructureRoad {}
+impl Dismantleable for StructureRoad {}
+impl Repairable for StructureRoad {}

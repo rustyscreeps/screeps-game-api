@@ -542,6 +542,10 @@ impl HasStore for Creep {
     }
 }
 
+impl Attackable for Creep {}
+impl Healable for Creep {}
+impl Transferable for Creep {}
+
 impl SharedCreepProperties for Creep {
     fn memory(&self) -> JsValue {
         self.memory()

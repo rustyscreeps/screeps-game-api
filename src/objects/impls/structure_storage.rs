@@ -28,3 +28,9 @@ impl HasStore for StructureStorage {
         Self::store(self)
     }
 }
+
+impl Attackable for StructureStorage {}
+impl Dismantleable for StructureStorage {}
+impl Repairable for StructureStorage {}
+impl Transferable for StructureStorage {}
+impl Withdrawable for StructureStorage {}
