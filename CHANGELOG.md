@@ -13,6 +13,8 @@ Unreleased
   one without style was used
 - Remove `score`, `symbols`, and `thorium` features, moving all items they enabled to their
   respective `seasonal-season-1`, `seasonal-season-2`, and `seasonal-season-5` features
+- Add `Repairable` trait, and change target type for `Creep::repair` and `StructureTower::repair`
+  to `?Sized + Repairable` to match ergonomics of similar functions
 
 ### Bugfixes:
 

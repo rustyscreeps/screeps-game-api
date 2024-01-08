@@ -457,8 +457,11 @@ impl Creep {
     /// parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.repair)
-    pub fn repair(&self, target: &RoomObject) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.repair_internal(target))
+    pub fn repair<T>(&self, target: &T) -> Result<(), ErrorCode>
+    where
+        T: ?Sized + Repairable,
+    {
+        ErrorCode::result_from_i8(self.repair_internal(target.as_ref()))
     }
 
     /// Reserve an unowned [`StructureController`] in melee range using a

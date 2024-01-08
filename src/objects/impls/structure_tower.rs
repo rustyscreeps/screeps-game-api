@@ -66,8 +66,11 @@ impl StructureTower {
     /// range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.repair)
-    pub fn repair(&self, target: &Structure) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.repair_internal(target))
+    pub fn repair<T>(&self, target: &T) -> Result<(), ErrorCode>
+    where
+        T: ?Sized + Repairable,
+    {
+        ErrorCode::result_from_i8(self.repair_internal(target.as_ref()))
     }
 }
 

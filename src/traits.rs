@@ -351,6 +351,15 @@ pub trait Attackable: HasHits + AsRef<RoomObject> {}
 pub trait Dismantleable: HasHits + AsRef<Structure> {}
 
 /// Trait for all wrappers over Screeps JavaScript objects which can be the
+/// target of `Creep.repair` or `StructureTower.repair`.
+///
+/// # Contracts
+///
+/// The reference returned from `AsRef<Structure>::as_ref` must be a valid
+/// target for repair.
+pub trait Repairable: HasHits + AsRef<Structure> {}
+
+/// Trait for all wrappers over Screeps JavaScript objects which can be the
 /// target of `Creep.heal`.
 ///
 /// # Contracts
@@ -453,7 +462,23 @@ impl Dismantleable for StructureTerminal {}
 impl Dismantleable for StructureTower {}
 impl Dismantleable for StructureWall {}
 
+impl Repairable for StructureContainer {}
+impl Repairable for StructureExtension {}
+impl Repairable for StructureExtractor {}
+impl Repairable for StructureFactory {}
+impl Repairable for StructureLab {}
+impl Repairable for StructureLink {}
+impl Repairable for StructureNuker {}
+impl Repairable for StructureObserver {}
+impl Repairable for StructurePowerBank {}
+impl Repairable for StructurePowerSpawn {}
+impl Repairable for StructureRampart {}
+impl Repairable for StructureRoad {}
+impl Repairable for StructureSpawn {}
+impl Repairable for StructureStorage {}
+impl Repairable for StructureTerminal {}
+impl Repairable for StructureTower {}
+impl Repairable for StructureWall {}
+
 impl Healable for Creep {}
 impl Healable for PowerCreep {}
-
-//TODO: wiarchbe: Add Repairable trait.
