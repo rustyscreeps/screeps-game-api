@@ -163,6 +163,18 @@ pub const MEMORY_SIZE_LIMIT: u32 = 2 * 1024 * 1024;
 /// [`Part::Move`]: crate::constants::Part::Move
 pub const MOVE_POWER: u32 = 2;
 
+/// Maximum length (in UTF-16 units) of message content sent to
+/// [`game::notify`].
+///
+/// Note that the official documentation reflects a limit of 1000, but a limit
+/// of 500 is enforced in the driver (truncating to that length if a longer
+/// string is input).
+///
+/// [Code reference](https://github.com/screeps/driver/blob/e691bd3ee843cb12ac4bedc68397b2b92709f622/lib/index.js#L208)
+///
+/// [`game::notify`]: crate::game::notify
+pub const NOTIFY_MAX_LENGTH: u32 = 500;
+
 /// Maximum carry capacity of a [`PowerCreep`] per level
 ///
 /// [Code reference](https://github.com/screeps/engine/blob/c6c4fc9e656f160e0e0174b0dd9a817d2dd18976/src/processor/global-intents/power/upgradePowerCreep.js#L46)
