@@ -83,8 +83,8 @@ pub fn construction_sites() -> JsHashMap<RawObjectId, ConstructionSite> {
     Game::construction_sites().into()
 }
 
-/// Get a [`JsHashMap<JsString, Creep>`] with all of your creeps, which has creep
-/// names as keys.
+/// Get a [`JsHashMap<JsString, Creep>`] with all of your creeps, which has
+/// creep names as keys.
 ///
 /// Note that newly spawned creeps are immediately added when spawned, but will
 /// not have an id until the following tick.
