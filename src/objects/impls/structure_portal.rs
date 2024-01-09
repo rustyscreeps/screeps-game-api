@@ -62,7 +62,7 @@ extern "C" {
     fn room_internal(this: &InterShardPortalDestination) -> JsString;
 
     #[wasm_bindgen(method, getter)]
-    pub fn shard(this: &InterShardPortalDestination) -> String;
+    pub fn shard(this: &InterShardPortalDestination) -> JsString;
 }
 
 impl InterShardPortalDestination {
