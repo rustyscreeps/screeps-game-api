@@ -128,7 +128,7 @@ pub use crate::{constants::*, enums::*, js_collections::*, local::*, objects::*,
 /// use js_sys::{JsString, Reflect};
 /// use screeps::{game, prelude::*, Creep};
 ///
-/// let c = game::creeps().get(String::from("Bob")).unwrap();
+/// let c = game::creeps().get("Bob".into()).unwrap();
 ///
 /// // `HasId` trait brought in from prelude
 /// let id = c.try_id().unwrap();
