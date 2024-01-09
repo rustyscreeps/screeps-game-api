@@ -609,10 +609,10 @@ impl TryFrom<AccountPowerCreep> for PowerCreep {
     type Error = PowerCreepNotSpawned;
 
     fn try_from(account_power_creep: AccountPowerCreep) -> Result<Self, Self::Error> {
-        match account_power_creep.id_internal() {
-            Some(_) => Ok(account_power_creep.unchecked_into()),
-            None => Err(PowerCreepNotSpawned {}),
-        }
+        account_power_creep
+            .id_internal()
+            .map(JsCast::unchecked_into)
+            .ok_or(PowerCreepNotSpawned {})
     }
 }
 
