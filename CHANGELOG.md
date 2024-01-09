@@ -3,6 +3,7 @@ Unreleased
 
 ### Additions:
 
+- Add `StructureObject::as_repairable` matching related functions for other object traits
 - Add implementations of `TryFrom<AccountPowerCreep>` and `AsRef<AccountPowerCreep>` for
   `PowerCreep`
 - Add implementation of `From<PowerCreep>` for `AccountPowerCreep`
