@@ -86,7 +86,7 @@ pub fn outgoing_transactions() -> Vec<Transaction> {
 /// order ID [`JsString`] keys and [`MyOrder`] values.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.orders)
-pub fn orders() -> JsHashMap<String, MyOrder> {
+pub fn orders() -> JsHashMap<JsString, MyOrder> {
     Market::orders().into()
 }
 

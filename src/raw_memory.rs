@@ -46,12 +46,12 @@ extern "C" {
     fn set_public_segments(segment_ids: &Array);
 }
 
-/// Get a [`JsHashMap<u8, String>`] with all of the segments requested on
+/// Get a [`JsHashMap<u8, JsString>`] with all of the segments requested on
 /// the previous tick, with segment numbers as keys and segment data in
 /// [`JsString`] form as values.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#RawMemory.segments)
-pub fn segments() -> JsHashMap<u8, String> {
+pub fn segments() -> JsHashMap<u8, JsString> {
     RawMemory::segments().into()
 }
 

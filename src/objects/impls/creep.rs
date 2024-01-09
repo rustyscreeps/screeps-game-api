@@ -559,8 +559,8 @@ impl SharedCreepProperties for Creep {
         self.my()
     }
 
-    fn name(&self) -> String {
-        self.name_internal().into()
+    fn name(&self) -> JsString {
+        self.name_internal()
     }
 
     fn owner(&self) -> Owner {

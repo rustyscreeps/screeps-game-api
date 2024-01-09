@@ -283,20 +283,6 @@ impl JsCollectionFromValue for JsString {
     }
 }
 
-impl JsCollectionIntoValue for String {
-    fn into_value(self) -> JsValue {
-        self.into()
-    }
-}
-
-impl JsCollectionFromValue for String {
-    fn from_value(val: JsValue) -> String {
-        let val: JsString = val.unchecked_into();
-
-        val.into()
-    }
-}
-
 impl JsCollectionIntoValue for u8 {
     fn into_value(self) -> JsValue {
         JsValue::from_f64(self as f64)

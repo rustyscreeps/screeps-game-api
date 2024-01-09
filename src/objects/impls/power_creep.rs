@@ -360,8 +360,8 @@ impl SharedCreepProperties for PowerCreep {
         self.my()
     }
 
-    fn name(&self) -> String {
-        self.name_internal().into()
+    fn name(&self) -> JsString {
+        self.name_internal()
     }
 
     fn owner(&self) -> Owner {
@@ -531,6 +531,13 @@ impl AccountPowerCreep {
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.level)
     pub fn level(&self) -> u32 {
         self.level_internal()
+    }
+
+    /// Name of the power creep.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.name)
+    pub fn name(&self) -> JsString {
+        self.name_internal()
     }
 
     /// The levels of this power creep's abilities, with [`PowerType`] keys and
