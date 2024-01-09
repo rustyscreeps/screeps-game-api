@@ -205,7 +205,7 @@ pub trait SharedCreepProperties {
     /// Whether this creep is owned by the player.
     fn my(&self) -> bool;
 
-    /// The creep's name as an owned reference to a [`String`].
+    /// The creep's name as a [`JsString`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.name)
     fn name(&self) -> JsString;
