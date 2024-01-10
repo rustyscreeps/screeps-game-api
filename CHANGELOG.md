@@ -1,12 +1,16 @@
 Unreleased
 ==========
 
+0.20.1 (2024-01-09)
+===================
+
 ### Additions:
 
 - Add `StructureObject::as_repairable` matching related functions for other object traits
 - Add implementations of `TryFrom<AccountPowerCreep>` and `AsRef<AccountPowerCreep>` for
   `PowerCreep`
 - Add implementation of `From<PowerCreep>` for `AccountPowerCreep`
+- Add `constants::extra::NOTIFY_MAX_LENGTH` with the length of allowed input to `game::notify`
 
 0.20.0 (2024-01-08)
 ===================

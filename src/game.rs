@@ -205,9 +205,12 @@ pub fn get_object_by_id_erased(id: &RawObjectId) -> Option<RoomObject> {
 /// Send an email message to yourself with a given message.
 ///
 /// Set a `group_interval` with a limit, in minutes, on how frequently emails
-/// are allowed to be sent.
+/// are allowed to be sent. Message will be truncated to [`NOTIFY_MAX_LENGTH`]
+/// characters.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.notify)
+///
+/// [`NOTIFY_MAX_LENGTH`]: crate::constants::NOTIFY_MAX_LENGTH
 pub fn notify(message: &str, group_interval: Option<u32>) {
     let message: JsString = message.into();
 
