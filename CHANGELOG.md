@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.20.1 (2024-01-09)
+===================
+
 ### Additions:
 
 - Add `StructureObject::as_repairable` matching related functions for other object traits
