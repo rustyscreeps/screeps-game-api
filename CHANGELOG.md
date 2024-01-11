@@ -1,6 +1,19 @@
 Unreleased
 ==========
 
+### Breaking:
+
+- Replace a number of conversions from `JsString` to `String` that are happening internally
+  within the crate, allowing either explicit conversion in user code or keeping the string in
+  JavaScript if preferred
+  - All functions in `game` and `game::market` modules returning `JsHashMap<String, _>` now
+    return `JsHashMap<JsString, _>`
+  - `raw_memory::segments` now returns `JsHashMap<u8, JsString>`
+  - `game::shard` getters returning `String` now return `JsString`
+  - `SharedCreepProperties::name` now returns `JsString` instead of `String`
+  - `StructurePortal::shard` now returns `JsString` instead of `String`
+  - `Owner`, `Reservation`, and `Sign` getters returning `String` now return `JsString`
+
 0.20.1 (2024-01-09)
 ===================
 
