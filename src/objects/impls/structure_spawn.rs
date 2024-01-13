@@ -248,6 +248,8 @@ extern "C" {
     /// [`StructureSpawn`] or a [`StructureInvaderCore`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.spawn)
+    ///
+    /// [`StructureInvaderCore`]: crate::objects::StructureInvaderCore
     #[wasm_bindgen(method, getter)]
     pub fn spawn(this: &Spawning) -> Structure;
 
