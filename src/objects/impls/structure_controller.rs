@@ -1,4 +1,4 @@
-use js_sys::{Date, JsString};
+use js_sys::Date;
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -132,7 +132,7 @@ extern "C" {
 
     /// The name of the player that has reserved this controller.
     #[wasm_bindgen(method, getter)]
-    pub fn username(this: &Reservation) -> JsString;
+    pub fn username(this: &Reservation) -> String;
 
     /// The number of ticks until the reservation expires.
     #[wasm_bindgen(method, getter = ticksToEnd)]
@@ -149,11 +149,11 @@ extern "C" {
 
     /// The name of the player that has reserved this controller.
     #[wasm_bindgen(method, getter)]
-    pub fn username(this: &Sign) -> JsString;
+    pub fn username(this: &Sign) -> String;
 
     /// The text of the sign on this controller.
     #[wasm_bindgen(method, getter)]
-    pub fn text(this: &Sign) -> JsString;
+    pub fn text(this: &Sign) -> String;
 
     /// The tick when this sign was written.
     #[wasm_bindgen(method, getter)]

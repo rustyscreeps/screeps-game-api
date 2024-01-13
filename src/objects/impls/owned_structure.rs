@@ -1,4 +1,3 @@
-use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -65,5 +64,5 @@ extern "C" {
 
     /// The name of the player that owns this object.
     #[wasm_bindgen(method, getter = username)]
-    pub fn username(this: &Owner) -> JsString;
+    pub fn username(this: &Owner) -> String;
 }

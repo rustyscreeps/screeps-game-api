@@ -83,6 +83,17 @@ pub fn construction_sites() -> JsHashMap<RawObjectId, ConstructionSite> {
     Game::construction_sites().into()
 }
 
+/// Get a [`JsHashMap<String, Creep>`] with all of your creeps, which has creep
+/// names as keys.
+///
+/// Note that newly spawned creeps are immediately added when spawned, but will
+/// not have an id until the following tick.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
+pub fn creeps() -> JsHashMap<String, Creep> {
+    Game::creeps().into()
+}
+
 /// Get a [`JsHashMap<JsString, Creep>`] with all of your creeps, which has
 /// creep names as keys.
 ///
@@ -90,23 +101,39 @@ pub fn construction_sites() -> JsHashMap<RawObjectId, ConstructionSite> {
 /// not have an id until the following tick.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.creeps)
-pub fn creeps() -> JsHashMap<JsString, Creep> {
+pub fn creeps_jsstring() -> JsHashMap<JsString, Creep> {
     Game::creeps().into()
+}
+
+/// Get a [`JsHashMap<String, Flag>`] with all of your flags, which has flag
+/// names as keys.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.flags)
+pub fn flags() -> JsHashMap<String, Flag> {
+    Game::flags().into()
 }
 
 /// Get a [`JsHashMap<JsString, Flag>`] with all of your flags, which has flag
 /// names as keys.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.flags)
-pub fn flags() -> JsHashMap<JsString, Flag> {
+pub fn flags_jsstring() -> JsHashMap<JsString, Flag> {
     Game::flags().into()
+}
+
+/// Get a [`JsHashMap<String, AccountPowerCreep>`] with all of your power
+/// creeps, which has power creep names as keys.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.powerCreeps)
+pub fn power_creeps() -> JsHashMap<String, AccountPowerCreep> {
+    Game::power_creeps().into()
 }
 
 /// Get a [`JsHashMap<JsString, AccountPowerCreep>`] with all of your power
 /// creeps, which has power creep names as keys.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.powerCreeps)
-pub fn power_creeps() -> JsHashMap<JsString, AccountPowerCreep> {
+pub fn power_creeps_jsstring() -> JsHashMap<JsString, AccountPowerCreep> {
     Game::power_creeps().into()
 }
 
@@ -126,11 +153,19 @@ pub fn rooms() -> JsHashMap<RoomName, Room> {
     Game::rooms().into()
 }
 
+/// Get a [`JsHashMap<String, StructureSpawn>`] with all of your spawns, which
+/// has spawn names as keys.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
+pub fn spawns() -> JsHashMap<String, StructureSpawn> {
+    Game::spawns().into()
+}
+
 /// Get a [`JsHashMap<JsString, StructureSpawn>`] with all of your spawns, which
 /// has spawn names as keys.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
-pub fn spawns() -> JsHashMap<JsString, StructureSpawn> {
+pub fn spawns_jsstring() -> JsHashMap<JsString, StructureSpawn> {
     Game::spawns().into()
 }
 
