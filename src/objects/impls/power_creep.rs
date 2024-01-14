@@ -543,7 +543,7 @@ impl AccountPowerCreep {
         self.level_internal()
     }
 
-    /// The power creep's name as an owned reference to a [`String`].
+    /// The power creep's name as a [`String`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.name)
     pub fn name(&self) -> String {
