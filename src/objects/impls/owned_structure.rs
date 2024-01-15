@@ -63,6 +63,6 @@ extern "C" {
     pub type Owner;
 
     /// The name of the player that owns this object.
-    #[wasm_bindgen(method, getter = username)]
+    #[wasm_bindgen(method, getter)]
     pub fn username(this: &Owner) -> String;
 }
