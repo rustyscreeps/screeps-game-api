@@ -1,6 +1,18 @@
 Unreleased
 ==========
 
+### Breaking:
+
+- Change return type of `Flag::name` and `StructureSpawn::name` to `String` from `JsString`
+
+### Additions:
+
+- Add functions `game::creeps_jsstring`, `game::flags_jsstring`, `game::power_creeps_jsstring`,
+  and `game::spawns_jsstring` to get the object as `JsHashMap<JsString, _>` instead of `String`
+- Add function `game::market::orders_jsstring` to get the object as `JsHashMap<JsString, MyOrder>`
+- Add function `name_jsstring` to `SharedCreepProperties` trait, `Flag`, and `StructureSpawn`
+- Add function `raw_memory::segments_jsstring` to get the object as `JsHashMap<u8, JsString>`
+
 0.20.1 (2024-01-09)
 ===================
 

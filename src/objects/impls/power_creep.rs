@@ -51,7 +51,10 @@ extern "C" {
     fn my_internal(this: &PowerCreep) -> bool;
 
     #[wasm_bindgen(method, getter = name)]
-    fn name_internal(this: &PowerCreep) -> JsString;
+    fn name_internal(this: &PowerCreep) -> String;
+
+    #[wasm_bindgen(method, getter = name)]
+    fn name_jsstring_internal(this: &PowerCreep) -> JsString;
 
     #[wasm_bindgen(method, getter = owner)]
     fn owner_internal(this: &PowerCreep) -> Owner;
@@ -361,7 +364,11 @@ impl SharedCreepProperties for PowerCreep {
     }
 
     fn name(&self) -> String {
-        self.name_internal().into()
+        self.name_internal()
+    }
+
+    fn name_jsstring(&self) -> JsString {
+        self.name_jsstring_internal()
     }
 
     fn owner(&self) -> Owner {
@@ -483,7 +490,10 @@ extern "C" {
     fn level_internal(this: &AccountPowerCreep) -> u32;
 
     #[wasm_bindgen(method, getter = name)]
-    fn name_internal(this: &AccountPowerCreep) -> JsString;
+    fn name_internal(this: &AccountPowerCreep) -> String;
+
+    #[wasm_bindgen(method, getter = name)]
+    fn name_jsstring_internal(this: &AccountPowerCreep) -> JsString;
 
     #[wasm_bindgen(method, getter = powers)]
     fn powers_internal(this: &AccountPowerCreep) -> Object;
@@ -531,6 +541,20 @@ impl AccountPowerCreep {
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.level)
     pub fn level(&self) -> u32 {
         self.level_internal()
+    }
+
+    /// The power creep's name as a [`String`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.name)
+    pub fn name(&self) -> String {
+        self.name_internal()
+    }
+
+    /// The power creep's name as a [`JsString`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.name)
+    pub fn name_jsstring(&self) -> JsString {
+        self.name_jsstring_internal()
     }
 
     /// The levels of this power creep's abilities, with [`PowerType`] keys and

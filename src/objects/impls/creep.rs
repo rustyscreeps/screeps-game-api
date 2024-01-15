@@ -51,7 +51,10 @@ extern "C" {
     fn my_internal(this: &Creep) -> bool;
 
     #[wasm_bindgen(structural, method, getter = name)]
-    fn name_internal(this: &Creep) -> JsString;
+    fn name_internal(this: &Creep) -> String;
+
+    #[wasm_bindgen(structural, method, getter = name)]
+    fn name_jsstring_internal(this: &Creep) -> JsString;
 
     #[wasm_bindgen(structural, method, getter = owner)]
     fn owner_internal(this: &Creep) -> Owner;
@@ -560,7 +563,11 @@ impl SharedCreepProperties for Creep {
     }
 
     fn name(&self) -> String {
-        self.name_internal().into()
+        self.name_internal()
+    }
+
+    fn name_jsstring(&self) -> JsString {
+        self.name_jsstring_internal()
     }
 
     fn owner(&self) -> Owner {

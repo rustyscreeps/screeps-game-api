@@ -1,4 +1,4 @@
-use js_sys::{Date, JsString};
+use js_sys::Date;
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -130,19 +130,13 @@ extern "C" {
     #[wasm_bindgen]
     pub type Reservation;
 
-    #[wasm_bindgen(method, getter = username)]
-    fn username_internal(this: &Reservation) -> JsString;
+    /// The name of the player that has reserved this controller.
+    #[wasm_bindgen(method, getter)]
+    pub fn username(this: &Reservation) -> String;
 
     /// The number of ticks until the reservation expires.
     #[wasm_bindgen(method, getter = ticksToEnd)]
     pub fn ticks_to_end(this: &Reservation) -> u32;
-}
-
-impl Reservation {
-    /// The name of the player that has reserved this controller.
-    pub fn username(&self) -> String {
-        Self::username_internal(self).into()
-    }
 }
 
 #[wasm_bindgen]
@@ -153,11 +147,13 @@ extern "C" {
     #[wasm_bindgen]
     pub type Sign;
 
-    #[wasm_bindgen(method, getter = username)]
-    fn username_internal(this: &Sign) -> JsString;
+    /// The name of the player that has reserved this controller.
+    #[wasm_bindgen(method, getter)]
+    pub fn username(this: &Sign) -> String;
 
-    #[wasm_bindgen(method, getter = text)]
-    fn text_internal(this: &Sign) -> JsString;
+    /// The text of the sign on this controller.
+    #[wasm_bindgen(method, getter)]
+    pub fn text(this: &Sign) -> String;
 
     /// The tick when this sign was written.
     #[wasm_bindgen(method, getter)]
@@ -166,16 +162,4 @@ extern "C" {
     /// The timestamp of when this sign was written.
     #[wasm_bindgen(method, getter)]
     pub fn datetime(this: &Sign) -> Date;
-}
-
-impl Sign {
-    /// The name of the player that has reserved this controller.
-    pub fn username(&self) -> String {
-        Self::username_internal(self).into()
-    }
-
-    /// The text of the sign on this controller.
-    pub fn text(&self) -> String {
-        Self::text_internal(self).into()
-    }
 }

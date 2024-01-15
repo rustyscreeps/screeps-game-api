@@ -38,11 +38,17 @@ extern "C" {
     #[wasm_bindgen(method, setter)]
     pub fn set_memory(this: &Flag, val: &JsValue);
 
-    /// The flag's name as an owned reference to a [`JsString`].
+    /// The flag's name as a [`String`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Flag.name)
     #[wasm_bindgen(method, getter)]
-    pub fn name(this: &Flag) -> JsString;
+    pub fn name(this: &Flag) -> String;
+
+    /// The flag's name as a [`JsString`].
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Flag.name)
+    #[wasm_bindgen(method, getter = name)]
+    pub fn name_jsstring(this: &Flag) -> JsString;
 
     /// Remove the flag.
     ///

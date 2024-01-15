@@ -103,6 +103,10 @@
 
 // #![warn(clippy::missing_const_for_fn)]
 
+// temporary; remove after fix synced to nightly clippy
+#![allow(unknown_lints)]
+#![allow(clippy::unconditional_recursion)]
+
 pub mod console;
 pub mod constants;
 pub mod enums;

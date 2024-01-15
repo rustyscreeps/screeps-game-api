@@ -83,10 +83,18 @@ pub fn outgoing_transactions() -> Vec<Transaction> {
 }
 
 /// An [`Object`] with your current buy and sell orders on the market, with
-/// order ID [`JsString`] keys and [`MyOrder`] values.
+/// order ID [`String`] keys and [`MyOrder`] values.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.orders)
 pub fn orders() -> JsHashMap<String, MyOrder> {
+    Market::orders().into()
+}
+
+/// An [`Object`] with your current buy and sell orders on the market, with
+/// order ID [`JsString`] keys and [`MyOrder`] values.
+///
+/// [Screeps documentation](https://docs.screeps.com/api/#Game.market.orders)
+pub fn orders_jsstring() -> JsHashMap<JsString, MyOrder> {
     Market::orders().into()
 }
 
