@@ -16,7 +16,7 @@ pub struct LocalRoomTerrain {
 /// Use [`RoomTerrain`] if data stored in JavaScript memory is preferred.
 impl LocalRoomTerrain {
     /// Gets the terrain at the specified position in this room.
-    pub fn get(&self, xy: RoomXY) -> Terrain {
+    pub fn get_xy(&self, xy: RoomXY) -> Terrain {
         // SAFETY: RoomXY is always a valid coordinate.
         let byte = unsafe { self.bits.get_unchecked(xy_to_terrain_index(xy)) };
         // not using Terrain::from_u8() because `0b11` value, wall+swamp, happens

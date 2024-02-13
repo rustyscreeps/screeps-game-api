@@ -4,6 +4,7 @@ Unreleased
 ### Breaking:
 
 - Change return type of `Flag::name` and `StructureSpawn::name` to `String` from `JsString`
+- Change name of `LocalRoomTerrain::get` to `get_xy` for consistency with `RoomTerrain`
 
 ### Additions:
 
@@ -12,6 +13,7 @@ Unreleased
 - Add function `game::market::orders_jsstring` to get the object as `JsHashMap<JsString, MyOrder>`
 - Add function `name_jsstring` to `SharedCreepProperties` trait, `Flag`, and `StructureSpawn`
 - Add function `raw_memory::segments_jsstring` to get the object as `JsHashMap<u8, JsString>`
+- Add `RoomTerrain::get_xy` which takes a `RoomXY` instead of a coordinate pair
 
 0.20.1 (2024-01-09)
 ===================
