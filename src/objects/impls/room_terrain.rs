@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{ErrorCode, Terrain},
-    local::RoomName,
+    local::{RoomName, RoomXY},
     prelude::*,
 };
 
@@ -70,5 +70,11 @@ impl RoomTerrain {
             Some(n) => ErrorCode::result_from_i8(n as i8),
             None => Ok(()),
         }
+    }
+
+    /// Get the type of terrain at the given [`RoomXY`].
+    #[inline]
+    pub fn get_xy(&mut self, xy: RoomXY) -> Terrain {
+        self.get(xy.x.u8(), xy.y.u8())
     }
 }
