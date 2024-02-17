@@ -202,7 +202,8 @@ impl RoomXY {
         }
     }
 
-    /// Get whether this coordinate pair represents an edge position (0 or 49 for either coordinate)
+    /// Get whether this coordinate pair represents an edge position (0 or 49
+    /// for either coordinate)
     pub const fn is_edge(self) -> bool {
         self.x.is_edge() || self.y.is_edge()
     }
