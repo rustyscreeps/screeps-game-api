@@ -14,6 +14,7 @@ Unreleased
 - Add function `name_jsstring` to `SharedCreepProperties` trait, `Flag`, and `StructureSpawn`
 - Add function `raw_memory::segments_jsstring` to get the object as `JsHashMap<u8, JsString>`
 - Add `RoomTerrain::get_xy` which takes a `RoomXY` instead of a coordinate pair
+- Add `RoomCoordinate::is_edge` and `RoomXY::is_edge`
 
 0.20.1 (2024-01-09)
 ===================
