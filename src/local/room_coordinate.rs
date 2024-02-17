@@ -109,6 +109,11 @@ impl RoomCoordinate {
         self.0
     }
 
+    /// Get whether this coordinate represents an edge position (0 or 49)
+    pub const fn is_edge(self) -> bool {
+        self.0 == 0 || self.0 == ROOM_SIZE - 1
+    }
+
     /// Get the coordinate adjusted by a certain value, returning `None` if the
     /// result is outside the valid range.
     ///
@@ -195,6 +200,11 @@ impl RoomXY {
             x: RoomCoordinate::unchecked_new(x),
             y: RoomCoordinate::unchecked_new(y),
         }
+    }
+
+    /// Get whether this coordinate pair represents an edge position (0 or 49 for either coordinate)
+    pub const fn is_edge(self) -> bool {
+        self.x.is_edge() || self.y.is_edge()
     }
 
     /// Get the coordinate adjusted by a certain value, returning `None` if the
