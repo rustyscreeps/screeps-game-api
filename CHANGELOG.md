@@ -15,6 +15,9 @@ Unreleased
 - Add function `raw_memory::segments_jsstring` to get the object as `JsHashMap<u8, JsString>`
 - Add `RoomTerrain::get_xy` which takes a `RoomXY` instead of a coordinate pair
 - Add `RoomCoordinate::is_edge` and `RoomXY::is_edge`
+- Add new extra constant `constants::extra::CONTROLLER_DOWNGRADE_PROGRESS_RATIO`, which is
+  the percentage toward the previous level that a downgrading controller's progress is set to
+- Add new extra constants `constants::extra::MOVE_COST_PLAIN`, `MOVE_COST_ROAD`, `MOVE_COST_SWAMP`
 
 0.20.1 (2024-01-09)
 ===================

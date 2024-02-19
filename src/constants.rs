@@ -83,8 +83,10 @@ pub use self::{
 pub mod creep {
     pub use super::{
         extra::{
-            CREEP_HITS_PER_PART, MOVE_POWER, RANGED_MASS_ATTACK_POWER_RANGE_1,
-            RANGED_MASS_ATTACK_POWER_RANGE_2, RANGED_MASS_ATTACK_POWER_RANGE_3,
+            CREEP_HITS_PER_PART, CREEP_NAME_MAX_LENGTH, CREEP_RANGED_ACTION_RANGE,
+            CREEP_SAY_MAX_LENGTH, MOVE_COST_PLAIN, MOVE_COST_ROAD, MOVE_COST_SWAMP, MOVE_POWER,
+            RANGED_MASS_ATTACK_POWER_RANGE_1, RANGED_MASS_ATTACK_POWER_RANGE_2,
+            RANGED_MASS_ATTACK_POWER_RANGE_3,
         },
         numbers::{
             ATTACK_POWER, BUILD_POWER, CARRY_CAPACITY, CREEP_CLAIM_LIFE_TIME, CREEP_CORPSE_RATE,
@@ -100,7 +102,7 @@ pub mod creep {
 /// Re-export of all constants related to structures.
 pub mod structure {
     pub use super::{
-        extra::{LAB_REACTION_RANGE, TERMINAL_SEND_COST_SCALE},
+        extra::{CONSTRUCTION_SITE_STOMP_RATIO, LAB_REACTION_RANGE, TERMINAL_SEND_COST_SCALE},
         numbers::{
             extension_energy_capacity, invader_core_creep_spawn_time, invader_core_expand_time,
             rampart_hits_max, ruin_decay_structures, stronghold_rampart_hits,
@@ -146,20 +148,26 @@ pub mod minerals {
 ///
 /// [`StructureController`]: crate::objects::StructureController
 pub mod control {
-    pub use super::numbers::{
-        controller_downgrade, controller_levels, CONTROLLER_ATTACK_BLOCKED_UPGRADE,
-        CONTROLLER_CLAIM_DOWNGRADE, CONTROLLER_DOWNGRADE_RESTORE,
-        CONTROLLER_DOWNGRADE_SAFEMODE_THRESHOLD, CONTROLLER_MAX_UPGRADE_PER_TICK,
-        CONTROLLER_NUKE_BLOCKED_UPGRADE, CONTROLLER_RESERVE, CONTROLLER_RESERVE_MAX, GCL_MULTIPLY,
-        GCL_NOVICE, GCL_POW, SAFE_MODE_COOLDOWN, SAFE_MODE_COST, SAFE_MODE_DURATION,
-        SIGN_PLANNED_AREA, SYSTEM_USERNAME,
+    pub use super::{
+        extra::{CONTROLLER_DOWNGRADE_PROGRESS_RATIO, CONTROLLER_SIGN_MAX_LENGTH},
+        numbers::{
+            controller_downgrade, controller_levels, CONTROLLER_ATTACK_BLOCKED_UPGRADE,
+            CONTROLLER_CLAIM_DOWNGRADE, CONTROLLER_DOWNGRADE_RESTORE,
+            CONTROLLER_DOWNGRADE_SAFEMODE_THRESHOLD, CONTROLLER_MAX_UPGRADE_PER_TICK,
+            CONTROLLER_NUKE_BLOCKED_UPGRADE, CONTROLLER_RESERVE, CONTROLLER_RESERVE_MAX,
+            GCL_MULTIPLY, GCL_NOVICE, GCL_POW, SAFE_MODE_COOLDOWN, SAFE_MODE_COST,
+            SAFE_MODE_DURATION, SIGN_PLANNED_AREA, SYSTEM_USERNAME,
+        },
     };
 }
 
 /// Re-export of all constants related to power.
 pub mod power {
     pub use super::{
-        extra::POWER_CREEP_HITS_PER_LEVEL,
+        extra::{
+            POWER_CREEP_CARRY_CAPACITY_PER_LEVEL, POWER_CREEP_HITS_PER_LEVEL,
+            POWER_CREEP_NAME_MAX_LENGTH,
+        },
         numbers::{
             POWER_BANK_CAPACITY_MAX, POWER_BANK_CAPACITY_MIN, POWER_BANK_DECAY, POWER_BANK_HITS,
             POWER_BANK_HIT_BACK, POWER_BANK_RESPAWN_TIME, POWER_CREEP_DELETE_COOLDOWN,
@@ -194,9 +202,12 @@ pub mod source {
 ///
 /// [market]: crate::game::market
 pub mod market {
-    pub use super::numbers::{
-        MARKET_FEE, MARKET_MAX_ORDERS, MARKET_ORDER_LIFE_TIME, TERMINAL_CAPACITY,
-        TERMINAL_COOLDOWN, TERMINAL_MIN_SEND, TERMINAL_SEND_COST,
+    pub use super::{
+        extra::MARKET_MAX_DEALS_PER_TICK,
+        numbers::{
+            MARKET_FEE, MARKET_MAX_ORDERS, MARKET_ORDER_LIFE_TIME, TERMINAL_CAPACITY,
+            TERMINAL_COOLDOWN, TERMINAL_MIN_SEND, TERMINAL_SEND_COST,
+        },
     };
 }
 
@@ -204,9 +215,12 @@ pub mod market {
 ///
 /// [`StructureSpawn`]: crate::objects::StructureSpawn
 pub mod spawn {
-    pub use super::numbers::{
-        extension_energy_capacity, CREEP_SPAWN_TIME, ENERGY_REGEN_TIME, MAX_CREEP_SIZE,
-        SPAWN_ENERGY_CAPACITY, SPAWN_ENERGY_START, SPAWN_RENEW_RATIO,
+    pub use super::{
+        extra::SPAWN_NAME_MAX_LENGTH,
+        numbers::{
+            extension_energy_capacity, CREEP_SPAWN_TIME, ENERGY_REGEN_TIME, MAX_CREEP_SIZE,
+            SPAWN_ENERGY_CAPACITY, SPAWN_ENERGY_START, SPAWN_RENEW_RATIO,
+        },
     };
 }
 
@@ -256,5 +270,5 @@ pub mod tombstone {
 ///
 /// [`Flag`]: crate::objects::Flag
 pub mod flags {
-    pub use super::{numbers::FLAGS_LIMIT, small_enums::Color};
+    pub use super::{extra::FLAG_NAME_MAX_LENGTH, numbers::FLAGS_LIMIT, small_enums::Color};
 }
