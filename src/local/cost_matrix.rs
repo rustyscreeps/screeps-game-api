@@ -139,7 +139,6 @@ impl CostMatrixGet for LocalCostMatrix {
 // ROOM_AREA
 mod serde_impls {
     use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
-    use std::convert::TryInto;
 
     use super::ROOM_AREA;
 

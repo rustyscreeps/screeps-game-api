@@ -1,8 +1,6 @@
-use std::convert::TryInto;
-
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{find::*, look::*, Color, Direction, ErrorCode, StructureType},

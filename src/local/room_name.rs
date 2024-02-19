@@ -1,6 +1,5 @@
 use std::{
-    cmp::{Ord, Ordering, PartialOrd},
-    convert::TryFrom,
+    cmp::Ordering,
     error::Error,
     fmt::{self, Write},
     ops,
