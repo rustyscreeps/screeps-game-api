@@ -2,7 +2,7 @@
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-market)
 use js_sys::{Array, JsString, Object};
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{ErrorCode, MarketResourceType, OrderType, ResourceType},

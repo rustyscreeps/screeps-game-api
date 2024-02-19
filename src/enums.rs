@@ -2,8 +2,6 @@
 //! shared traits.
 //!
 //! [`enum_dispatch`]: enum_dispatch::enum_dispatch
-use std::convert::TryFrom;
-
 use enum_dispatch::enum_dispatch;
 use wasm_bindgen::{JsCast, JsValue};
 

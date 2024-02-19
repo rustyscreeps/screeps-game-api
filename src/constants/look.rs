@@ -9,7 +9,7 @@
 //! [`Room::look_for_at`]: crate::objects::Room::look_for_at
 use enum_iterator::Sequence;
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 use crate::{constants::Terrain, enums::StructureObject, objects::*};
 

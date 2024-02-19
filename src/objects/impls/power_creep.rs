@@ -1,7 +1,7 @@
 use std::{error::Error, fmt};
 
 use js_sys::{JsString, Object};
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{Direction, ErrorCode, PowerCreepClass, PowerType, ResourceType},

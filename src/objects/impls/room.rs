@@ -1,4 +1,4 @@
-use std::{convert::TryInto, fmt};
+use std::fmt;
 
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
@@ -7,7 +7,7 @@ use serde::{
     Deserialize, Deserializer, Serialize,
 };
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{
