@@ -1,13 +1,11 @@
 //! Game map related functionality.
 //!
 //! [Screeps documentation](https://docs.screeps.com/api/#Game-map)
-use std::convert::TryInto;
-
 use enum_iterator::Sequence;
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
 use serde::Deserialize;
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{Direction, ErrorCode, ExitDirection},

@@ -1,5 +1,5 @@
 use std::{
-    cmp::{Eq, Ord, Ordering, PartialEq, PartialOrd},
+    cmp::Ordering,
     fmt,
     hash::{Hash, Hasher},
     marker::PhantomData,

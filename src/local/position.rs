@@ -4,10 +4,7 @@
 //! written in JavaScript. All RoomPosition to RoomPosition operations in this
 //! file stay within Rust.
 use core::fmt::Debug;
-use std::{
-    cmp::{Ord, Ordering, PartialOrd},
-    fmt,
-};
+use std::{cmp::Ordering, fmt};
 
 use crate::{constants::ROOM_SIZE, objects::RoomPosition, HasPosition};
 

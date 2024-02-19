@@ -1,5 +1,5 @@
 use js_sys::Array;
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::EffectType,

@@ -1,13 +1,8 @@
 //! Typed JavaScript collection wrappers.
-use std::{
-    cmp::{Eq, PartialEq},
-    fmt,
-    marker::PhantomData,
-    str::FromStr,
-};
+use std::{fmt, marker::PhantomData, str::FromStr};
 
 use js_sys::{Array, JsString, Object};
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 use crate::{game, local::RawObjectIdParseError, prelude::*};
 

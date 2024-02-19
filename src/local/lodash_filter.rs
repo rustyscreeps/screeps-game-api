@@ -1,7 +1,7 @@
 use crate::MarketResourceType;
 
 use js_sys::Object;
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
