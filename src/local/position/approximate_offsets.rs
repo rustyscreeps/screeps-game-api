@@ -46,8 +46,6 @@ impl Position {
 
 #[cfg(test)]
 mod test {
-    use std::convert::TryInto;
-
     use super::Position;
     use crate::RoomName;
 
