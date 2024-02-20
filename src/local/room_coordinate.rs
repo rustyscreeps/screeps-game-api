@@ -105,11 +105,13 @@ impl RoomCoordinate {
     }
 
     /// Get the integer value of this coordinate
+    #[inline]
     pub const fn u8(self) -> u8 {
         self.0
     }
 
     /// Get whether this coordinate represents an edge position (0 or 49)
+    #[inline]
     pub const fn is_edge(self) -> bool {
         self.0 == 0 || self.0 == ROOM_SIZE - 1
     }
@@ -204,6 +206,7 @@ impl RoomXY {
 
     /// Get whether this coordinate pair represents an edge position (0 or 49
     /// for either coordinate)
+    #[inline]
     pub const fn is_edge(self) -> bool {
         self.x.is_edge() || self.y.is_edge()
     }
