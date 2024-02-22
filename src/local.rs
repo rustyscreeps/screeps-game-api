@@ -7,6 +7,7 @@ mod object_id;
 mod position;
 mod room_coordinate;
 mod room_name;
+mod room_xy;
 mod terrain;
 
 /// Represents two constants related to room names.
@@ -32,5 +33,5 @@ use crate::ROOM_SIZE;
 
 pub use self::{
     cost_matrix::*, lodash_filter::*, object_id::*, position::*, room_coordinate::*, room_name::*,
-    terrain::*,
+    room_xy::*, terrain::*,
 };
