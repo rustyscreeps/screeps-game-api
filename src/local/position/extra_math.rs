@@ -6,6 +6,12 @@ use super::Position;
 use crate::{constants::Direction, local::position::WorldPositionOutOfBoundsError};
 
 impl Position {
+    /// Returns whether this coordinate represents a room edge position (0 or
+    /// 49)
+    pub fn is_room_edge(self) -> bool {
+        self.xy().is_room_edge()
+    }
+
     /// Returns a new position offset from this position by the specified x
     /// coords and y coords.
     ///
