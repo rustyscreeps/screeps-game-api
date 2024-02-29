@@ -165,6 +165,8 @@ pub enum ObjectWithPosition {
 pub enum StoreObject {
     Creep,
     PowerCreep,
+    #[cfg(feature = "seasonal-season-5")]
+    Reactor,
     Ruin,
     #[cfg(feature = "seasonal-season-1")]
     ScoreCollector,
@@ -214,7 +216,13 @@ impl StoreObject {
         match self {
             StoreObject::Creep(_) => RESOURCES_ALL,
             StoreObject::PowerCreep(_) => RESOURCES_ALL,
+            #[cfg(feature = "seasonal-season-5")]
+            StoreObject::Reactor(_) => &[ResourceType::Thorium],
             StoreObject::Ruin(_) => RESOURCES_ALL,
+            #[cfg(feature = "seasonal-season-1")]
+            StoreObject::ScoreCollector(_) => &[ResourceType::Score],
+            #[cfg(feature = "seasonal-season-1")]
+            StoreObject::ScoreContainer(_) => &[ResourceType::Score],
             StoreObject::StructureContainer(_) => RESOURCES_ALL,
             StoreObject::StructureExtension(_) => &[ResourceType::Energy],
             StoreObject::StructureFactory(_) => RESOURCES_ALL,
@@ -226,6 +234,8 @@ impl StoreObject {
             StoreObject::StructureStorage(_) => RESOURCES_ALL,
             StoreObject::StructureTerminal(_) => RESOURCES_ALL,
             StoreObject::StructureTower(_) => &[ResourceType::Energy],
+            #[cfg(feature = "seasonal-season-2")]
+            StoreObject::SymbolContainer(_) => &crate::constants::seasonal::season_2::SYMBOLS,
             StoreObject::Tombstone(_) => RESOURCES_ALL,
         }
     }
