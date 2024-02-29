@@ -256,7 +256,10 @@ pub mod observer {
 ///
 /// [`Resource`]: crate::objects::Resource
 pub mod resource {
-    pub use super::{numbers::ENERGY_DECAY, types::ResourceType};
+    pub use super::{
+        numbers::ENERGY_DECAY,
+        types::{ResourceType, RESOURCES_ALL},
+    };
 }
 
 /// Re-export of all constants related to [`Tombstone`]s.

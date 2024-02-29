@@ -199,8 +199,8 @@ pub enum IntershardResourceType {
 
 named_enum_serialize_deserialize!(IntershardResourceType);
 
-/// Translates `RESOURCES_ALL` constant, representing all possible in-game
-/// (non-intershard) resources.
+/// Translates the values of the `RESOURCES_ALL` constant, representing all
+/// possible in-game (non-intershard) resources.
 #[wasm_bindgen]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum ResourceType {
@@ -484,6 +484,146 @@ impl ResourceType {
         Some(boost)
     }
 }
+
+/// A collection of all resource types. This is a direct translation of the
+/// `RESOURCES_ALL` constant in game using the rust `ResourceType` enum.
+///
+/// Feature-specific resources are included in this list when the appropriate
+/// feature is enabled.
+pub const RESOURCES_ALL: &[ResourceType] = &[
+    ResourceType::Power,
+    ResourceType::Energy,
+    ResourceType::Hydrogen,
+    ResourceType::Oxygen,
+    ResourceType::Utrium,
+    ResourceType::Lemergium,
+    ResourceType::Keanium,
+    ResourceType::Zynthium,
+    ResourceType::Catalyst,
+    ResourceType::Ghodium,
+    ResourceType::Silicon,
+    ResourceType::Metal,
+    ResourceType::Biomass,
+    ResourceType::Mist,
+    ResourceType::Hydroxide,
+    ResourceType::ZynthiumKeanite,
+    ResourceType::UtriumLemergite,
+    ResourceType::UtriumHydride,
+    ResourceType::UtriumOxide,
+    ResourceType::KeaniumHydride,
+    ResourceType::KeaniumOxide,
+    ResourceType::LemergiumHydride,
+    ResourceType::LemergiumOxide,
+    ResourceType::ZynthiumHydride,
+    ResourceType::ZynthiumOxide,
+    ResourceType::GhodiumHydride,
+    ResourceType::GhodiumOxide,
+    ResourceType::UtriumAcid,
+    ResourceType::UtriumAlkalide,
+    ResourceType::KeaniumAcid,
+    ResourceType::KeaniumAlkalide,
+    ResourceType::LemergiumAcid,
+    ResourceType::LemergiumAlkalide,
+    ResourceType::ZynthiumAcid,
+    ResourceType::ZynthiumAlkalide,
+    ResourceType::GhodiumAcid,
+    ResourceType::GhodiumAlkalide,
+    ResourceType::CatalyzedUtriumAcid,
+    ResourceType::CatalyzedUtriumAlkalide,
+    ResourceType::CatalyzedKeaniumAcid,
+    ResourceType::CatalyzedKeaniumAlkalide,
+    ResourceType::CatalyzedLemergiumAcid,
+    ResourceType::CatalyzedLemergiumAlkalide,
+    ResourceType::CatalyzedZynthiumAcid,
+    ResourceType::CatalyzedZynthiumAlkalide,
+    ResourceType::CatalyzedGhodiumAcid,
+    ResourceType::CatalyzedGhodiumAlkalide,
+    ResourceType::Ops,
+    ResourceType::UtriumBar,
+    ResourceType::LemergiumBar,
+    ResourceType::ZynthiumBar,
+    ResourceType::KeaniumBar,
+    ResourceType::GhodiumMelt,
+    ResourceType::Oxidant,
+    ResourceType::Reductant,
+    ResourceType::Purifier,
+    ResourceType::Battery,
+    ResourceType::Composite,
+    ResourceType::Crystal,
+    ResourceType::Liquid,
+    ResourceType::Wire,
+    ResourceType::Switch,
+    ResourceType::Transistor,
+    ResourceType::Microchip,
+    ResourceType::Circuit,
+    ResourceType::Device,
+    ResourceType::Cell,
+    ResourceType::Phlegm,
+    ResourceType::Tissue,
+    ResourceType::Muscle,
+    ResourceType::Organoid,
+    ResourceType::Organism,
+    ResourceType::Alloy,
+    ResourceType::Tube,
+    ResourceType::Fixtures,
+    ResourceType::Frame,
+    ResourceType::Hydraulics,
+    ResourceType::Machine,
+    ResourceType::Condensate,
+    ResourceType::Concentrate,
+    ResourceType::Extract,
+    ResourceType::Spirit,
+    ResourceType::Emanation,
+    ResourceType::Essence,
+    #[cfg(feature = "seasonal-season-1")]
+    ResourceType::Score,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolAleph,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolBeth,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolGimmel,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolDaleth,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolHe,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolWaw,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolZayin,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolHeth,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolTeth,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolYodh,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolKaph,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolLamedh,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolMem,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolNun,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolSamekh,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolAyin,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolPe,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolTsade,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolQoph,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolRes,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolSin,
+    #[cfg(feature = "seasonal-season-2")]
+    ResourceType::SymbolTaw,
+    #[cfg(feature = "seasonal-season-5")]
+    ResourceType::Thorium,
+];
 
 /// Returned values from [`ResourceType::boost`] representing the effect of
 /// boosting a creep with the given resource.

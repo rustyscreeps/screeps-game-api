@@ -5,7 +5,7 @@
 use enum_dispatch::enum_dispatch;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::{objects::*, prelude::*};
+use crate::{objects::*, prelude::*, ResourceType, RESOURCES_ALL};
 
 #[enum_dispatch(Attackable)]
 pub enum AttackableObject {
@@ -165,6 +165,8 @@ pub enum ObjectWithPosition {
 pub enum StoreObject {
     Creep,
     PowerCreep,
+    #[cfg(feature = "seasonal-season-5")]
+    Reactor,
     Ruin,
     #[cfg(feature = "seasonal-season-1")]
     ScoreCollector,
@@ -184,6 +186,59 @@ pub enum StoreObject {
     #[cfg(feature = "seasonal-season-2")]
     SymbolContainer,
     Tombstone,
+}
+
+impl StoreObject {
+    /// All possible resources that this store may hold.
+    ///
+    /// Note: [`StructureLab`] is slightly odd in that it can hold any possible
+    /// resource (including non-lab resources like power), but only one
+    /// non-energy resource at a time.
+    ///
+    /// # Example
+    /// Assuming that `store_object` is a [`StoreObject::StructureExtension`]:
+    /// ```no_run
+    /// # use screeps::{ResourceType, StoreObject};
+    /// # let store_object: StoreObject = todo!();
+    /// assert_eq!(store_object.resource_types(), &[ResourceType::Energy]);
+    /// ```
+    /// To access this property from a [`StructureObject`], use the following
+    /// conversion:
+    /// ```no_run
+    /// # use screeps::{ResourceType, StoreObject, StoreObjectConversionError, StructureObject};
+    /// # let structure_object: StructureObject = todo!();
+    /// let ty: Result<&[ResourceType], StoreObjectConversionError> =
+    ///     StoreObject::try_from(structure_object).map(|store_obj| store_obj.resource_types());
+    /// ```
+    ///
+    /// Data collected on 2024-02-29 from <https://github.com/screeps/engine/tree/97c9d12385fed686655c13b09f5f2457dd83a2bf>
+    pub const fn resource_types(&self) -> &'static [ResourceType] {
+        match self {
+            StoreObject::Creep(_) => RESOURCES_ALL,
+            StoreObject::PowerCreep(_) => RESOURCES_ALL,
+            #[cfg(feature = "seasonal-season-5")]
+            StoreObject::Reactor(_) => &[ResourceType::Thorium],
+            StoreObject::Ruin(_) => RESOURCES_ALL,
+            #[cfg(feature = "seasonal-season-1")]
+            StoreObject::ScoreCollector(_) => &[ResourceType::Score],
+            #[cfg(feature = "seasonal-season-1")]
+            StoreObject::ScoreContainer(_) => &[ResourceType::Score],
+            StoreObject::StructureContainer(_) => RESOURCES_ALL,
+            StoreObject::StructureExtension(_) => &[ResourceType::Energy],
+            StoreObject::StructureFactory(_) => RESOURCES_ALL,
+            StoreObject::StructureLab(_) => RESOURCES_ALL,
+            StoreObject::StructureLink(_) => &[ResourceType::Energy],
+            StoreObject::StructureNuker(_) => &[ResourceType::Energy, ResourceType::Ghodium],
+            StoreObject::StructurePowerSpawn(_) => &[ResourceType::Energy, ResourceType::Power],
+            StoreObject::StructureSpawn(_) => &[ResourceType::Energy],
+            StoreObject::StructureStorage(_) => RESOURCES_ALL,
+            StoreObject::StructureTerminal(_) => RESOURCES_ALL,
+            StoreObject::StructureTower(_) => &[ResourceType::Energy],
+            #[cfg(feature = "seasonal-season-2")]
+            StoreObject::SymbolContainer(_) => &crate::constants::seasonal::season_2::SYMBOLS,
+            StoreObject::Tombstone(_) => RESOURCES_ALL,
+        }
+    }
 }
 
 /// Enum used for converting a [`Structure`] into a typed object of its specific
