@@ -193,6 +193,22 @@ impl StoreObject {
     /// resource (including non-lab resources like power), but only one
     /// non-energy resource at a time.
     ///
+    /// # Example
+    /// Assuming that `store_object` is a [`StoreObject::StructureExtension`]:
+    /// ```no_run
+    /// # use screeps::{ResourceType, StoreObject};
+    /// # let store_object: StoreObject = todo!();
+    /// assert_eq!(store_object.resource_types(), &[ResourceType::Energy]);
+    /// ```
+    /// To access this property from a [`StructureObject`], use the following
+    /// conversion:
+    /// ```no_run
+    /// # use screeps::{ResourceType, StoreObject, StoreObjectConversionError, StructureObject};
+    /// # let structure_object: StructureObject = todo!();
+    /// let ty: Result<&[ResourceType], StoreObjectConversionError> =
+    ///     StoreObject::try_from(structure_object).map(|store_obj| store_obj.resource_types());
+    /// ```
+    ///
     /// Data collected on 2024-02-29 from <https://github.com/screeps/engine/tree/97c9d12385fed686655c13b09f5f2457dd83a2bf>
     pub const fn resource_types(&self) -> &'static [ResourceType] {
         match self {
