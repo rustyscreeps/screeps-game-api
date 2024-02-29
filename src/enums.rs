@@ -5,7 +5,7 @@
 use enum_dispatch::enum_dispatch;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::{objects::*, prelude::*};
+use crate::{objects::*, prelude::*, ResourceType, RESOURCES_ALL};
 
 #[enum_dispatch(Attackable)]
 pub enum AttackableObject {
@@ -184,6 +184,35 @@ pub enum StoreObject {
     #[cfg(feature = "seasonal-season-2")]
     SymbolContainer,
     Tombstone,
+}
+
+impl StoreObject {
+    /// All possible resources that this store may hold.
+    ///
+    /// Note: [`StructureLab`] is slightly odd in that it can hold any possible
+    /// resource (including non-lab resources like power), but only one
+    /// non-energy resource at a time.
+    ///
+    /// Data collected on 2024-02-29 from <https://github.com/screeps/engine/tree/97c9d12385fed686655c13b09f5f2457dd83a2bf>
+    pub const fn resource_types(&self) -> &'static [ResourceType] {
+        match self {
+            StoreObject::Creep(_) => RESOURCES_ALL,
+            StoreObject::PowerCreep(_) => RESOURCES_ALL,
+            StoreObject::Ruin(_) => RESOURCES_ALL,
+            StoreObject::StructureContainer(_) => RESOURCES_ALL,
+            StoreObject::StructureExtension(_) => &[ResourceType::Energy],
+            StoreObject::StructureFactory(_) => RESOURCES_ALL,
+            StoreObject::StructureLab(_) => RESOURCES_ALL,
+            StoreObject::StructureLink(_) => &[ResourceType::Energy],
+            StoreObject::StructureNuker(_) => &[ResourceType::Energy, ResourceType::Ghodium],
+            StoreObject::StructurePowerSpawn(_) => &[ResourceType::Energy, ResourceType::Power],
+            StoreObject::StructureSpawn(_) => &[ResourceType::Energy],
+            StoreObject::StructureStorage(_) => RESOURCES_ALL,
+            StoreObject::StructureTerminal(_) => RESOURCES_ALL,
+            StoreObject::StructureTower(_) => &[ResourceType::Energy],
+            StoreObject::Tombstone(_) => RESOURCES_ALL,
+        }
+    }
 }
 
 /// Enum used for converting a [`Structure`] into a typed object of its specific
