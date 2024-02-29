@@ -490,7 +490,7 @@ impl ResourceType {
 ///
 /// Feature-specific resources are included in this list when the appropriate
 /// feature is enabled.
-pub const RESOURCES_ALL: &'static [ResourceType] = &[
+pub const RESOURCES_ALL: &[ResourceType] = &[
     ResourceType::Power,
     ResourceType::Energy,
     ResourceType::Hydrogen,
