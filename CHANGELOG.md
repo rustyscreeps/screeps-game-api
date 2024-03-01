@@ -25,6 +25,10 @@ Unreleased
       which returns a `Result<&'static [ResourceType], StoreObjectConversionError>`
 - Add missing `StoreObject::Reactor` to the `seasonal-season-5` feature.
 
+### Other
+- Change `PhantomData` in `screeps::local::ObjectId` to better model `ObjectId`'s relationship with the wrapped type.
+    - This allows `ObjectId` to be `Send + Sync` regardless of the wrapped type
+
 0.20.1 (2024-01-09)
 ===================
 

@@ -60,8 +60,12 @@ pub use raw::*;
 #[serde(transparent, bound = "")]
 pub struct ObjectId<T> {
     raw: RawObjectId,
+
+    // Needed to consider the `T` as "used" even though we mostly use it as a marker. Because of
+    // auto traits, `PhantomData<fn() -> T>` is used instead: this struct doesn't *hold* a `T`, it
+    // *produces* one.
     #[serde(skip)]
-    phantom: PhantomData<T>,
+    phantom: PhantomData<fn() -> T>,
 }
 
 // traits implemented manually so they don't depend on `T` implementing them.
