@@ -37,7 +37,8 @@ jobs:
       matrix:
         rust:
           - stable
-          - nightly
+          # temporarily disabled, see https://github.com/rustyscreeps/screeps-game-api/issues/501
+          #- nightly
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
