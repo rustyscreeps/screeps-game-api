@@ -31,7 +31,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 arrayvec = "0.7"
 enum_dispatch = "0.3"
-enum-iterator = "1.4"
+enum-iterator = "2.0"
 js-sys = "0.3"
 num-derive = "0.4"
 num-traits = "0.2"
