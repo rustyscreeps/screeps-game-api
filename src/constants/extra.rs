@@ -9,7 +9,7 @@
 ///
 /// [`Resource`]: crate::objects::Resource
 /// [`ConstructionSite::remove`]: crate::objects::ConstructionSite::remove
-pub const CONSTRUCTION_SITE_STOMP_RATIO: f32 = 0.5;
+pub const CONSTRUCTION_SITE_DROP_RATIO: f32 = 0.5;
 
 /// Maximum length (in UTF-16 units) of input to [`Creep::sign_controller`]
 ///
@@ -22,7 +22,9 @@ pub const CONTROLLER_SIGN_MAX_LENGTH: u32 = 100;
 ///
 /// After a downgrade, the controller loses its previous progress toward the
 /// next level, and has its progress set to 90% of the amount needed to upgrade
-/// back to the level that it just downgraded from. [Code reference](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/processor/intents/controllers/tick.js#L66)
+/// back to the level that it just downgraded from.
+///
+/// [Code reference](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/processor/intents/controllers/tick.js#L66)
 pub const CONTROLLER_DOWNGRADE_PROGRESS_RATIO: f32 = 0.9;
 
 /// Maximum amount of CPU that can be accumulated in [`game::cpu::bucket`] per
@@ -163,20 +165,20 @@ pub const MEMORY_SEGMENT_ACTIVE_LIMIT: u32 = 10;
 /// [`raw_memory::set`]: crate::raw_memory::set
 pub const MEMORY_SIZE_LIMIT: u32 = 2 * 1024 * 1024;
 
-/// Fatigue points added per body points that generate them when stepping onto a
-/// tile with a [`StructureRoad`]
+/// Fatigue points added for each body part that generates fatigue when stepping
+/// onto a tile with a [`StructureRoad`]
 ///
 /// [`StructureRoad`]: crate::objects::StructureRoad
 pub const MOVE_COST_ROAD: u32 = 1;
 
-/// Fatigue points added per body points that generate them when stepping onto a
-/// tile with [`Terrain::Plain`]
+/// Fatigue points added for each body part that generates fatigue when stepping
+/// onto a tile with [`Terrain::Plain`]
 ///
 /// [`Terrain::Plain`]: crate::constants::Terrain::Plain
 pub const MOVE_COST_PLAIN: u32 = 2;
 
-/// Fatigue points added per body points that generate them when stepping onto a
-/// tile with [`Terrain::Swamp`]
+/// Fatigue points added for each body part that generates fatigue when stepping
+/// onto a tile with [`Terrain::Swamp`]
 ///
 /// [`Terrain::Swamp`]: crate::constants::Terrain::Swamp
 pub const MOVE_COST_SWAMP: u32 = 10;
