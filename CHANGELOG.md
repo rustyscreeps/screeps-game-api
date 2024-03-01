@@ -5,6 +5,8 @@ Unreleased
 
 - Change return type of `Flag::name` and `StructureSpawn::name` to `String` from `JsString`
 - Change name of `LocalRoomTerrain::get` to `get_xy` for consistency with `RoomTerrain`
+- Change name of `constants::extra::CONSTRUCTION_SITE_STOMP_RATIO` to
+  `CONSTRUCTION_SITE_DROP_RATIO`
 
 ### Additions:
 
