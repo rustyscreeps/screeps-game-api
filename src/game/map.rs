@@ -4,7 +4,7 @@
 use enum_iterator::Sequence;
 use js_sys::{Array, JsString, Object};
 use num_traits::*;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -119,7 +119,7 @@ impl From<JsRoomStatusResult> for RoomStatusResult {
 }
 
 #[wasm_bindgen]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Sequence, Deserialize, Serialize)]
 pub enum RoomStatus {
     Normal = "normal",
     Closed = "closed",
