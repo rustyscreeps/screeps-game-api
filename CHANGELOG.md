@@ -30,6 +30,7 @@ Unreleased
 ### Bugfixes:
 
 - Implement `JsCollectionFromValue` for `Direction`
+- Implement `Debug` for `RouteStep`
 
 ### Misc:
 
