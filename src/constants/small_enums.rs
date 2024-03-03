@@ -201,6 +201,14 @@ impl JsCollectionIntoValue for Direction {
     }
 }
 
+impl JsCollectionFromValue for Direction {
+    fn from_value(val: JsValue) -> Direction {
+        let n = val.as_f64().expect("expected number value") as u8;
+
+        Self::from_u8(n).expect("unknown direction")
+    }
+}
+
 impl From<Direction> for (i32, i32) {
     /// Returns the change in (x, y) when moving in each direction.
     #[inline]

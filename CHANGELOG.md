@@ -25,7 +25,11 @@ Unreleased
 - Add function `StoreObject::resource_types` to get the types of resources that a store can hold
     - This can be used with a `StructureObject` as `StoreObject::try_from(structure_object).map(|store| store.resource_types())`
       which returns a `Result<&'static [ResourceType], StoreObjectConversionError>`
-- Add missing `StoreObject::Reactor` to the `seasonal-season-5` feature.
+- Add missing `StoreObject::Reactor` to the `seasonal-season-5` feature
+
+### Bugfixes:
+
+- Implement `JsCollectionFromValue` for `Direction`
 
 ### Misc:
 
