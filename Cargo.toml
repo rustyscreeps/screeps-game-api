@@ -48,11 +48,8 @@ wasm-bindgen-test = "0.3"
 [features]
 ## Specific features to enable conditional API endpoints
 
-# Enable the function call for pixel generation - only present on official MMO servers
-generate-pixel = []
-
-# Enable the interface for inter-shard memory - only present on official MMO servers
-inter-shard-memory = []
+# Official MMO server features, not present on other environments
+mmo = []
 
 # Seasonal server, season 1 - enable score container, collector, and resource
 seasonal-season-1 = []
@@ -69,8 +66,3 @@ sim = []
 # Enable unsafe conversions of return codes with undefined behavior when values
 # aren't in the expected range
 unsafe-return-conversion = []
-
-## Sets of the above features for different server environments
-
-# Official MMO server features, not present on other environments
-mmo = ["generate-pixel", "inter-shard-memory"]

@@ -7,6 +7,9 @@ Unreleased
 - Change name of `LocalRoomTerrain::get` to `get_xy` for consistency with `RoomTerrain`
 - Change name of `constants::extra::CONSTRUCTION_SITE_STOMP_RATIO` to
   `CONSTRUCTION_SITE_DROP_RATIO`
+- Remove features `generate-pixel` and `inter-shard-memory`, use the `mmo` feature instead
+- Place `game::cpu::{shard_limits, unlocked, unlocked_time, set_shard_limits, unlock}` functions
+  behind the `mmo` feature
 
 ### Additions:
 
@@ -35,7 +38,8 @@ Unreleased
 
 ### Misc:
 
-- Change `PhantomData` in `screeps::local::ObjectId` to better model `ObjectId`'s relationship with the wrapped type.
+- Change `PhantomData` in `screeps::local::ObjectId` to better model `ObjectId`'s relationship with
+  the wrapped type.
     - This allows `ObjectId` to be `Send + Sync` regardless of the wrapped type
 - Update `enum-iterator` to 2.0
 
