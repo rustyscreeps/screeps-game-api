@@ -203,7 +203,11 @@ impl JsCollectionIntoValue for Direction {
 
 impl JsCollectionFromValue for Direction {
     fn from_value(val: JsValue) -> Direction {
-        let n = val.as_f64().expect("expected number value") as u8;
+        let n = if let Some(val) = val.as_string() {
+            val.parse::<u8>().expect("expected parseable u8 string")
+        } else {
+            val.as_f64().expect("expected number value") as u8
+        };
 
         Self::from_u8(n).expect("unknown direction")
     }
