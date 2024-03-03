@@ -1,10 +1,12 @@
 //! Information about, and functions to manage, your code's resource utilization
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game.cpu)
-use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "mmo")]
 use crate::{constants::ErrorCode, prelude::*};
+#[cfg(feature = "mmo")]
+use js_sys::{JsString, Object};
 
 #[wasm_bindgen]
 extern "C" {
