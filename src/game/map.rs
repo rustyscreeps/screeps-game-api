@@ -258,7 +258,7 @@ where
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Debug, Deserialize)]
 pub struct RouteStep {
     pub exit: ExitDirection,
     pub room: RoomName,
