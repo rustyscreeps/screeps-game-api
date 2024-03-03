@@ -26,6 +26,7 @@ Unreleased
     - This can be used with a `StructureObject` as `StoreObject::try_from(structure_object).map(|store| store.resource_types())`
       which returns a `Result<&'static [ResourceType], StoreObjectConversionError>`
 - Add missing `StoreObject::Reactor` to the `seasonal-season-5` feature
+- Implement `Serialize` and `Deserialize` for `RoomStatus`
 
 ### Bugfixes:
 
