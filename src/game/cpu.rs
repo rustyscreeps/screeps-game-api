@@ -1,10 +1,12 @@
 //! Information about, and functions to manage, your code's resource utilization
 //!
 //! [Screeps documentation](http://docs.screeps.com/api/#Game.cpu)
-use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "mmo")]
 use crate::{constants::ErrorCode, prelude::*};
+#[cfg(feature = "mmo")]
+use js_sys::{JsString, Object};
 
 #[wasm_bindgen]
 extern "C" {
@@ -20,12 +22,15 @@ extern "C" {
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = bucket)]
     fn bucket() -> i32;
 
+    #[cfg(feature = "mmo")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = shardLimits)]
     fn shard_limits() -> Object;
 
+    #[cfg(feature = "mmo")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = unlocked)]
     fn unlocked() -> bool;
 
+    #[cfg(feature = "mmo")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = unlockedTime)]
     fn unlocked_time() -> Option<u64>;
 
@@ -38,13 +43,15 @@ extern "C" {
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = halt)]
     fn halt();
 
+    #[cfg(feature = "mmo")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = setShardLimits)]
     fn set_shard_limits(limits: &Object) -> i8;
 
+    #[cfg(feature = "mmo")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = unlock)]
     fn unlock() -> i8;
 
-    #[cfg(feature = "generate-pixel")]
+    #[cfg(feature = "mmo")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = generatePixel)]
     fn generate_pixel() -> i8;
 }
@@ -71,17 +78,20 @@ pub fn bucket() -> i32 {
 /// Your assigned CPU limits for each shard in an [`Object`], with shard
 /// names in [`JsString`] form as keys and numbers as values. This is the
 /// same format accepted by [`set_shard_limits`].
+#[cfg(feature = "mmo")]
 pub fn shard_limits() -> JsHashMap<JsString, u32> {
     Cpu::shard_limits().into()
 }
 
 /// Whether your account is unlocked to have full CPU.
+#[cfg(feature = "mmo")]
 pub fn unlocked() -> bool {
     Cpu::unlocked()
 }
 
 /// If your account has been unlocked for a limited time, contains the time
 /// it's unlocked until in milliseconds since epoch.
+#[cfg(feature = "mmo")]
 pub fn unlocked_time() -> Option<u64> {
     Cpu::unlocked_time()
 }
@@ -122,6 +132,7 @@ pub fn halt() {
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
 ///
 /// [`CPU_SET_SHARD_LIMITS_COOLDOWN`]: crate::constants::CPU_SET_SHARD_LIMITS_COOLDOWN
+#[cfg(feature = "mmo")]
 pub fn set_shard_limits(limits: &Object) -> Result<(), ErrorCode> {
     ErrorCode::result_from_i8(Cpu::set_shard_limits(limits))
 }
@@ -131,6 +142,7 @@ pub fn set_shard_limits(limits: &Object) -> Result<(), ErrorCode> {
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.unlock)
 ///
 /// [`CpuUnlock`]: crate::constants::IntershardResourceType::CpuUnlock
+#[cfg(feature = "mmo")]
 pub fn unlock() -> Result<(), ErrorCode> {
     ErrorCode::result_from_i8(Cpu::unlock())
 }
@@ -141,7 +153,7 @@ pub fn unlock() -> Result<(), ErrorCode> {
 ///
 /// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
-#[cfg(feature = "generate-pixel")]
+#[cfg(feature = "mmo")]
 pub fn generate_pixel() -> Result<(), ErrorCode> {
     ErrorCode::result_from_i8(Cpu::generate_pixel())
 }
