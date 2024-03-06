@@ -7,10 +7,11 @@ use std::{
 };
 
 use arrayvec::ArrayString;
+use js_sys::JsString;
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{JsCast, JsValue};
 
-use crate::{game, objects::RoomObject, traits::MaybeHasId};
+use crate::{game, js_collections::JsCollectionFromValue, objects::RoomObject, traits::MaybeHasId};
 
 mod errors;
 mod raw;
@@ -260,5 +261,13 @@ impl<T> From<ObjectId<T>> for u128 {
 impl<T> From<u128> for ObjectId<T> {
     fn from(packed: u128) -> Self {
         Self::from_packed(packed)
+    }
+}
+
+impl<T> JsCollectionFromValue for ObjectId<T> {
+    fn from_value(val: JsValue) -> Self {
+        let val: JsString = val.unchecked_into();
+        let val: String = val.into();
+        val.parse().expect("valid id string")
     }
 }

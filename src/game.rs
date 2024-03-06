@@ -18,7 +18,10 @@ use crate::{
     enums::StructureObject,
     js_collections::{JsHashMap, JsObjectId},
     local::{ObjectId, RawObjectId, RoomName},
-    objects::{AccountPowerCreep, ConstructionSite, Creep, Flag, Room, RoomObject, StructureSpawn},
+    objects::{
+        AccountPowerCreep, ConstructionSite, Creep, Flag, Room, RoomObject, Structure,
+        StructureSpawn,
+    },
     traits::MaybeHasId,
 };
 
@@ -75,11 +78,11 @@ extern "C" {
     fn notify(message: &JsString, group_interval: Option<u32>);
 }
 
-/// Get a [`JsHashMap<RawObjectId, ConstructionSite>`] with all of your
-/// construction sites.
+/// Get a [`JsHashMap<ObjectId<ConstructionSite>, ConstructionSite>`] with all
+/// of your construction sites.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.constructionSites)
-pub fn construction_sites() -> JsHashMap<RawObjectId, ConstructionSite> {
+pub fn construction_sites() -> JsHashMap<ObjectId<ConstructionSite>, ConstructionSite> {
     Game::construction_sites().into()
 }
 
@@ -169,11 +172,11 @@ pub fn spawns_jsstring() -> JsHashMap<JsString, StructureSpawn> {
     Game::spawns().into()
 }
 
-/// Get a [`JsHashMap<RawObjectId, StructureObject>`] with all of your owned
-/// structures.
+/// Get a [`JsHashMap<ObjectId<Structure>, StructureObject>`] with all of your
+/// owned structures.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.spawns)
-pub fn structures() -> JsHashMap<RawObjectId, StructureObject> {
+pub fn structures() -> JsHashMap<ObjectId<Structure>, StructureObject> {
     Game::structures().into()
 }
 
