@@ -10,8 +10,8 @@ Unreleased
 - Remove features `generate-pixel` and `inter-shard-memory`, use the `mmo` feature instead
 - Place `game::cpu::{shard_limits, unlocked, unlocked_time, set_shard_limits, unlock}` functions
   behind the `mmo` feature
-- Change return type of `game::{construction_sites, structures}` to return `ObjectId<_>` instead of
-  `RawObjectId`
+- Change return type of `game::{construction_sites, structures}` to `JsHashMap<ObjectId<_>, _>`
+  instead of `JsHashMap<RawObjectId, _>`
 
 ### Additions:
 
