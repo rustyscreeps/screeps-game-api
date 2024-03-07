@@ -10,6 +10,8 @@ Unreleased
 - Remove features `generate-pixel` and `inter-shard-memory`, use the `mmo` feature instead
 - Place `game::cpu::{shard_limits, unlocked, unlocked_time, set_shard_limits, unlock}` functions
   behind the `mmo` feature
+- Change return type of `game::{construction_sites, structures}` to `JsHashMap<ObjectId<_>, _>`
+  instead of `JsHashMap<RawObjectId, _>`
 
 ### Additions:
 
@@ -33,7 +35,7 @@ Unreleased
 
 ### Bugfixes:
 
-- Implement `JsCollectionFromValue` for `Direction`
+- Implement `JsCollectionFromValue` for `Direction`, `ObjectId<_>`
 - Implement `Debug` for `RouteStep`
 
 ### Misc:
