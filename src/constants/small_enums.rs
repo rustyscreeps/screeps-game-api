@@ -1,18 +1,14 @@
 //! Various constants translated as small enums.
-use std::{borrow::Cow, fmt};
+use std::fmt;
 
 use enum_iterator::Sequence;
 use js_sys::JsString;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use serde::{
-    de::{Error as _, Unexpected},
-    Deserialize, Serialize,
-};
+use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use wasm_bindgen::prelude::*;
 
-use super::{macros::named_enum_serialize_deserialize, InvalidConstantString};
 use crate::{
     constants::find::{Exit, Find},
     prelude::*,
@@ -414,42 +410,6 @@ impl Terrain {
     pub fn from_look_constant_jsvalue(terrain_look_jsvalue: JsValue) -> Self {
         let terrain_look_string: String = JsString::from(terrain_look_jsvalue).into();
         Self::from_look_constant_str(&terrain_look_string)
-    }
-}
-
-/// Translates body part type and `BODYPARTS_ALL` constants
-#[wasm_bindgen]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Sequence)]
-pub enum Part {
-    Move = "move",
-    Work = "work",
-    Carry = "carry",
-    Attack = "attack",
-    RangedAttack = "ranged_attack",
-    Tough = "tough",
-    Heal = "heal",
-    Claim = "claim",
-}
-
-named_enum_serialize_deserialize!(Part);
-
-impl Part {
-    /// Translates the `BODYPART_COST` constant.
-    #[inline]
-    pub const fn cost(self) -> u32 {
-        match self {
-            Part::Move => 50,
-            Part::Work => 100,
-            Part::Carry => 50,
-            Part::Attack => 80,
-            Part::RangedAttack => 150,
-            Part::Tough => 10,
-            Part::Heal => 250,
-            Part::Claim => 600,
-            // I guess bindgen is adding a `#[non_exhaustive]` onto the enum and forcing us to do
-            // this:
-            _ => 0,
-        }
     }
 }
 

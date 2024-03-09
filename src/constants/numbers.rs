@@ -11,7 +11,7 @@ use super::types::{ResourceType, StructureType};
 
 // OBSTACLE_OBJECT_TYPES not yet implemented
 
-// BODYPART_COST defined in `small_enums.rs`
+// body parts and BODYPART_COST defined in `part.rs`
 
 // WORLD_WIDTH/HEIGHT deprecated, not implemented
 
@@ -816,7 +816,7 @@ pub const fn stronghold_rampart_hits(core_level: u32) -> Option<u32> {
 pub const STRONGHOLD_DECAY_TICKS: u32 = 75_000;
 
 // POWER_INFO not yet implemented
-// BODYPARTS_ALL implemented via Sequence trait in `small_enums.rs`
+// BODYPARTS_ALL implemented via Sequence trait in `part.rs`
 // RESOURCES_ALL implemented via Sequence trait in `types.rs`
 // COLORS_ALL implemented via Sequence trait in `small_enums.rs`
 // INTERSHARD_RESOURCES defined in `types.rs`
