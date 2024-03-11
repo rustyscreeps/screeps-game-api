@@ -1,4 +1,4 @@
-object_id_into_uint8array = function(id, arr) {
+module.exports.object_id_into_uint8array = function(id, arr) {
     // passed array is exactly 16 bytes -- 12 for id, 3 blank, 1 for string pad length
     // initialize all of them so that we can assume they're initialized on the rust side
     const padding = id.length;
