@@ -61,6 +61,18 @@ where
 
 impl<K, V> JsHashMap<K, V>
 where
+    K: JsCollectionFromValue,
+    V: JsCollectionFromValue,
+{
+    pub fn entries(&self) -> impl Iterator<Item = (K, V)> {
+        let array = Object::entries(self.map.unchecked_ref());
+
+        OwnedArrayIter::new(array)
+    }
+}
+
+impl<K, V> JsHashMap<K, V>
+where
     K: JsCollectionIntoValue,
     V: JsCollectionFromValue,
 {
@@ -305,5 +317,18 @@ impl JsCollectionFromValue for u8 {
         } else {
             val.as_f64().expect("expected number value") as u8
         }
+    }
+}
+
+impl<K, V> JsCollectionFromValue for (K, V)
+where
+    K: JsCollectionFromValue,
+    V: JsCollectionFromValue,
+{
+    fn from_value(val: JsValue) -> Self {
+        let val: &Array = val.dyn_ref().expect("expected tuple of length 2");
+        let k = K::from_value(val.get(0));
+        let v = V::from_value(val.get(1));
+        (k, v)
     }
 }
