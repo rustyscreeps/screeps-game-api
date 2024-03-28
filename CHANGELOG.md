@@ -38,6 +38,7 @@ Unreleased
 
 - Implement `JsCollectionFromValue` for `Direction`, `ObjectId<_>`
 - Implement `Debug` for `RouteStep`
+- Made the `AttackController` event deserialize correctly
 
 ### Misc:
 
