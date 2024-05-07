@@ -84,15 +84,21 @@
 //! code values are in the expected ranges skipping checks, and risks undefined
 //! behavior if they are not.
 #![recursion_limit = "128"]
+
 // to build locally with doc_cfg enabled, run:
 // `RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features`
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+
 // warn when functions can safely be given the const keyword, see
 // https://rust-lang.github.io/rust-clippy/master/index.html#/missing_const_for_fn
 // unfortunately this warns for bindgen-attached functions so we can't leave it
 // enabled
 
 // #![warn(clippy::missing_const_for_fn)]
+
+// temporary workaround for https://github.com/rust-lang/rust-clippy/issues/12377
+// fix not being in current stable rust 1.78; should be fixed in 1.79
+#![allow(clippy::empty_docs)]
 
 pub mod console;
 pub mod constants;
