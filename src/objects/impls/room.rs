@@ -751,7 +751,6 @@ impl<'de> Deserialize<'de> for Event {
             {
                 let mut event_type = None;
                 let mut obj_id = None;
-                let mut data = None;
                 let mut data_buffer: Option<serde_json::Value> = None;
 
                 while let Some(key) = map.next_key()? {
@@ -769,77 +768,60 @@ impl<'de> Deserialize<'de> for Event {
                             obj_id = Some(map.next_value()?);
                         }
                         Field::Data => {
-                            if data.is_some() {
+                            if data_buffer.is_some() {
                                 return Err(de::Error::duplicate_field("data"));
                             }
 
-                            match event_type {
-                                None => data_buffer = map.next_value()?,
-                                Some(event_id) => {
-                                    data = match event_id {
-                                        1 => Some(EventType::Attack(map.next_value()?)),
-                                        2 => Some(EventType::ObjectDestroyed(map.next_value()?)),
-                                        3 => Some(EventType::AttackController),
-                                        4 => Some(EventType::Build(map.next_value()?)),
-                                        5 => Some(EventType::Harvest(map.next_value()?)),
-                                        6 => Some(EventType::Heal(map.next_value()?)),
-                                        7 => Some(EventType::Repair(map.next_value()?)),
-                                        8 => Some(EventType::ReserveController(map.next_value()?)),
-                                        9 => Some(EventType::UpgradeController(map.next_value()?)),
-                                        10 => Some(EventType::Exit(map.next_value()?)),
-                                        11 => Some(EventType::Power(map.next_value()?)),
-                                        12 => Some(EventType::Transfer(map.next_value()?)),
-                                        _ => {
-                                            return Err(de::Error::custom(format!(
-                                                "Event Type Unrecognized: {event_id}"
-                                            )));
-                                        }
-                                    };
-                                }
-                            };
+                            data_buffer = map.next_value()?;
                         }
                     }
                 }
 
-                if data.is_none() {
-                    let err = |e| {
-                        de::Error::custom(format_args!(
-                            "can't parse event data due to inner error {e}"
-                        ))
-                    };
+                let event_id = event_type.ok_or_else(|| de::Error::missing_field("event"))?;
 
-                    if let (Some(val), Some(event_id)) = (data_buffer, event_type) {
-                        data = match event_id {
-                            1 => Some(EventType::Attack(serde_json::from_value(val).map_err(err)?)),
-                            2 => Some(EventType::ObjectDestroyed(
-                                serde_json::from_value(val).map_err(err)?,
-                            )),
-                            3 => Some(EventType::AttackController),
-                            4 => Some(EventType::Build(serde_json::from_value(val).map_err(err)?)),
-                            5 => Some(EventType::Harvest(
-                                serde_json::from_value(val).map_err(err)?,
-                            )),
-                            6 => Some(EventType::Heal(serde_json::from_value(val).map_err(err)?)),
-                            7 => Some(EventType::Repair(serde_json::from_value(val).map_err(err)?)),
-                            8 => Some(EventType::ReserveController(
-                                serde_json::from_value(val).map_err(err)?,
-                            )),
-                            9 => Some(EventType::UpgradeController(
-                                serde_json::from_value(val).map_err(err)?,
-                            )),
-                            10 => Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
-                            11 => Some(EventType::Power(serde_json::from_value(val).map_err(err)?)),
-                            12 => Some(EventType::Transfer(
-                                serde_json::from_value(val).map_err(err)?,
-                            )),
-                            _ => {
-                                return Err(de::Error::custom(format!(
-                                    "Event Type Unrecognized: {event_id}"
-                                )));
-                            }
-                        };
+                let err = |e| {
+                    de::Error::custom(format_args!(
+                        "can't parse event data due to inner error {e}"
+                    ))
+                };
+
+                let data = if let Some(val) = data_buffer {
+                    match event_id {
+                        1 => Some(EventType::Attack(serde_json::from_value(val).map_err(err)?)),
+                        2 => Some(EventType::ObjectDestroyed(
+                            serde_json::from_value(val).map_err(err)?,
+                        )),
+                        3 => Some(EventType::AttackController),
+                        4 => Some(EventType::Build(serde_json::from_value(val).map_err(err)?)),
+                        5 => Some(EventType::Harvest(
+                            serde_json::from_value(val).map_err(err)?,
+                        )),
+                        6 => Some(EventType::Heal(serde_json::from_value(val).map_err(err)?)),
+                        7 => Some(EventType::Repair(serde_json::from_value(val).map_err(err)?)),
+                        8 => Some(EventType::ReserveController(
+                            serde_json::from_value(val).map_err(err)?,
+                        )),
+                        9 => Some(EventType::UpgradeController(
+                            serde_json::from_value(val).map_err(err)?,
+                        )),
+                        10 => Some(EventType::Exit(serde_json::from_value(val).map_err(err)?)),
+                        11 => Some(EventType::Power(serde_json::from_value(val).map_err(err)?)),
+                        12 => Some(EventType::Transfer(
+                            serde_json::from_value(val).map_err(err)?,
+                        )),
+                        _ => {
+                            return Err(de::Error::custom(format!(
+                                "Event Type Unrecognized: {event_id}"
+                            )));
+                        }
                     }
-                }
+                } else {
+                    // These events do not contain a data field, currently only AttackController
+                    match event_id {
+                        3 => Some(EventType::AttackController),
+                        _ => None,
+                    }
+                };
 
                 let data = data.ok_or_else(|| de::Error::missing_field("data"))?;
                 let obj_id = obj_id.ok_or_else(|| de::Error::missing_field("objectId"))?;
