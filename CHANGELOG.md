@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.21.0 (2024-05-14)
+===================
+
 ### Breaking:
 
 - Change return type of `Flag::name` and `StructureSpawn::name` to `String` from `JsString`
