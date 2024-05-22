@@ -56,7 +56,7 @@ extern "C" {
     #[wasm_bindgen(method, js_name = spawnCreep)]
     fn spawn_creep_internal(
         this: &StructureSpawn,
-        body: &Array,
+        body: Array,
         name: &str,
         options: Option<&Object>,
     ) -> i8;
@@ -79,9 +79,9 @@ impl StructureSpawn {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.spawnCreep)
     pub fn spawn_creep(&self, body: &[Part], name: &str) -> Result<(), ErrorCode> {
-        let body = body.iter().cloned().map(JsValue::from).collect();
+        let body_array = Part::slice_to_js_array(body);
 
-        ErrorCode::result_from_i8(Self::spawn_creep_internal(self, &body, name, None))
+        ErrorCode::result_from_i8(Self::spawn_creep_internal(self, body_array, name, None))
     }
 
     /// Create a new creep with the specified body part [`Array`], name
@@ -99,7 +99,7 @@ impl StructureSpawn {
         name: &str,
         opts: &SpawnOptions,
     ) -> Result<(), ErrorCode> {
-        let body = body.iter().cloned().map(JsValue::from).collect();
+        let body_array = Part::slice_to_js_array(body);
 
         let js_opts = ObjectExt::unchecked_from_js(JsValue::from(Object::new()));
 
@@ -121,7 +121,7 @@ impl StructureSpawn {
 
         ErrorCode::result_from_i8(Self::spawn_creep_internal(
             self,
-            &body,
+            body_array,
             name,
             Some(&js_opts),
         ))
