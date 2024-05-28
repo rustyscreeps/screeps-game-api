@@ -184,6 +184,49 @@ impl RoomXY {
         let (dx, dy) = rhs.into();
         self.saturating_add((dx as i8, dy as i8))
     }
+
+    /// Get all the valid neighbors of a given `RoomXY`.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomXY;
+    ///
+    /// let zero_zero = unsafe { RoomXY::unchecked_new(0, 0) };
+    /// let zero_one = unsafe { RoomXY::unchecked_new(0, 1) };
+    /// let one_zero = unsafe { RoomXY::unchecked_new(1, 0) };
+    /// let one_one = unsafe { RoomXY::unchecked_new(1, 1) };
+    ///
+    /// let zero_two = unsafe { RoomXY::unchecked_new(0, 2) };
+    /// let one_two = unsafe { RoomXY::unchecked_new(1, 2) };
+    /// let two_two = unsafe { RoomXY::unchecked_new(2, 2) };
+    /// let two_one = unsafe { RoomXY::unchecked_new(2, 1) };
+    /// let two_zero = unsafe { RoomXY::unchecked_new(2, 0) };
+    ///
+    /// let zero_zero_neighbors = zero_zero.neighbors();
+    ///
+    /// assert_eq!(zero_zero_neighbors.len(), 3);
+    /// assert!(zero_zero_neighbors.contains(&zero_one));
+    /// assert!(zero_zero_neighbors.contains(&one_one));
+    /// assert!(zero_zero_neighbors.contains(&one_zero));
+    ///
+    /// let one_one_neighbors = one_one.neighbors();
+    ///
+    /// assert_eq!(one_one_neighbors.len(), 8);
+    /// assert!(one_one_neighbors.contains(&zero_zero));
+    /// assert!(one_one_neighbors.contains(&zero_one));
+    /// assert!(one_one_neighbors.contains(&one_zero));
+    /// assert!(one_one_neighbors.contains(&zero_two));
+    /// assert!(one_one_neighbors.contains(&one_two));
+    /// assert!(one_one_neighbors.contains(&two_two));
+    /// assert!(one_one_neighbors.contains(&two_one));
+    /// assert!(one_one_neighbors.contains(&two_zero));
+    /// ```
+    pub fn neighbors(self) -> Vec<RoomXY> {
+        Direction::iter()
+            .filter_map(|dir| self.checked_add_direction(*dir))
+            .collect()
+    }
 }
 
 impl fmt::Display for RoomXY {

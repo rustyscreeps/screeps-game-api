@@ -1,5 +1,5 @@
 //! Various constants translated as small enums.
-use std::{borrow::Cow, fmt};
+use std::{borrow::Cow, fmt, slice::Iter};
 
 use enum_iterator::Sequence;
 use js_sys::JsString;
@@ -192,6 +192,48 @@ impl Direction {
     /// ```
     pub fn rot_ccw(self) -> Self {
         self.multi_rot(-1)
+    }
+
+    /// Returns an iterator over all 8 direction constants, in clockwise order.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::Direction;
+    ///
+    /// for dir in Direction::iter() {
+    ///     println!("{:?}", dir);
+    /// }
+    /// ```
+    ///
+    /// Alternatively:
+    /// ```
+    /// use screeps::Direction;
+    /// let mut dirs = Direction::iter();
+    ///
+    /// assert_eq!(dirs.next(), Some(&Direction::Top));
+    /// assert_eq!(dirs.next(), Some(&Direction::TopRight));
+    /// assert_eq!(dirs.next(), Some(&Direction::Right));
+    /// assert_eq!(dirs.next(), Some(&Direction::BottomRight));
+    /// assert_eq!(dirs.next(), Some(&Direction::Bottom));
+    /// assert_eq!(dirs.next(), Some(&Direction::BottomLeft));
+    /// assert_eq!(dirs.next(), Some(&Direction::Left));
+    /// assert_eq!(dirs.next(), Some(&Direction::TopLeft));
+    /// assert_eq!(dirs.next(), None);
+    /// ```
+    pub fn iter() -> Iter<'static, Direction> {
+        use crate::Direction::*;
+        static DIRECTIONS: [Direction; 8] = [
+            Top,
+            TopRight,
+            Right,
+            BottomRight,
+            Bottom,
+            BottomLeft,
+            Left,
+            TopLeft,
+        ];
+        DIRECTIONS.iter()
     }
 }
 
