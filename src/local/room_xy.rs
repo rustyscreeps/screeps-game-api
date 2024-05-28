@@ -224,8 +224,8 @@ impl RoomXY {
     /// ```
     pub fn neighbors(self) -> Vec<RoomXY> {
         Direction::iter()
-          .filter_map(|dir| self.checked_add_direction(*dir))
-          .collect()
+            .filter_map(|dir| self.checked_add_direction(*dir))
+            .collect()
     }
 }
 

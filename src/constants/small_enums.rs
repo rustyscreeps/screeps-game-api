@@ -202,7 +202,7 @@ impl Direction {
     /// use screeps::Direction;
     ///
     /// for dir in Direction::iter() {
-    ///   println!("{:?}", dir);
+    ///     println!("{:?}", dir);
     /// }
     /// ```
     ///
@@ -223,7 +223,16 @@ impl Direction {
     /// ```
     pub fn iter() -> Iter<'static, Direction> {
         use crate::Direction::*;
-        static DIRECTIONS: [Direction; 8] = [Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft];
+        static DIRECTIONS: [Direction; 8] = [
+            Top,
+            TopRight,
+            Right,
+            BottomRight,
+            Bottom,
+            BottomLeft,
+            Left,
+            TopLeft,
+        ];
         DIRECTIONS.iter()
     }
 }
