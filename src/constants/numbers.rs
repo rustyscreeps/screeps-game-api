@@ -324,10 +324,10 @@ pub const CONTROLLER_DOWNGRADE_RESTORE: u32 = 100;
 ///
 /// Quoting from the [3.2.0 patch notes](https://blog.screeps.com/2018/12/changelog-2018-12-14/):
 ///
-/// > * When the controller gains or loses one level, its downgrade timer is set
-/// > to 50% instead of 100%.
-/// > * Safe mode activation unavailable period starts from this 50% point minus
-/// > 5000 ticks.
+/// * When the controller gains or loses one level, its downgrade timer is set
+///   to 50% instead of 100%.
+/// * Safe mode activation unavailable period starts from this 50% point minus
+///   5000 ticks.
 ///
 /// For example, a newly upgraded RCL7 room will have 75,000 ticks to downgrade
 /// out of its 150,000 maximum, and safe mode becomes unavailable if the timer
