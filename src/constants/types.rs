@@ -201,7 +201,7 @@ named_enum_serialize_deserialize!(IntershardResourceType);
 
 impl JsCollectionIntoValue for IntershardResourceType {
     fn into_value(self) -> JsValue {
-        (self as u8).into()
+        self.into()
     }
 }
 
