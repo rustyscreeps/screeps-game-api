@@ -320,6 +320,22 @@ impl JsCollectionFromValue for u8 {
     }
 }
 
+impl JsCollectionIntoValue for u32 {
+    fn into_value(self) -> JsValue {
+        JsValue::from_f64(self as f64)
+    }
+}
+
+impl JsCollectionFromValue for u32 {
+    fn from_value(val: JsValue) -> u32 {
+        if let Some(val) = val.as_string() {
+            val.parse::<u32>().expect("expected parseable u32 string")
+        } else {
+            val.as_f64().expect("expected number value") as u32
+        }
+    }
+}
+
 impl<K, V> JsCollectionFromValue for (K, V)
 where
     K: JsCollectionFromValue,

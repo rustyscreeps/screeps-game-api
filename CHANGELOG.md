@@ -6,7 +6,8 @@ Unreleased
 - Add function `Direction::iter` which returns an iterator over all the `Direction` enum values
 - Add function `RoomXY::neighbors` which returns an iterator over all the valid neighbors of
   a given `RoomXY` position
-- Implement `JsCollectionIntoValue` and `JsCollectionFromValue` for `IntershardResourceType`
+- Implement `JsCollectionIntoValue` and `JsCollectionFromValue` for `IntershardResourceType` and
+  `u32` to allow `game::resources()` return value to be used as expected
 
 0.21.0 (2024-05-14)
 ===================
