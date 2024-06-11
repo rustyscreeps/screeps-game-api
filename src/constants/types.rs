@@ -199,6 +199,18 @@ pub enum IntershardResourceType {
 
 named_enum_serialize_deserialize!(IntershardResourceType);
 
+impl JsCollectionIntoValue for IntershardResourceType {
+    fn into_value(self) -> JsValue {
+        (self as u8).into()
+    }
+}
+
+impl JsCollectionFromValue for IntershardResourceType {
+    fn from_value(v: JsValue) -> IntershardResourceType {
+        IntershardResourceType::from_js_value(&v).expect("valid intershard resource type string")
+    }
+}
+
 /// Translates the values of the `RESOURCES_ALL` constant, representing all
 /// possible in-game (non-intershard) resources.
 #[wasm_bindgen]
