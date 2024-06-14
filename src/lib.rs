@@ -94,10 +94,6 @@
 
 // #![warn(clippy::missing_const_for_fn)]
 
-// temporary workaround for https://github.com/rust-lang/rust-clippy/issues/12377
-// fix not being in current stable rust 1.78; should be fixed in 1.79
-#![allow(clippy::empty_docs)]
-
 pub mod console;
 pub mod constants;
 pub mod enums;
