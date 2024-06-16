@@ -7,7 +7,7 @@ Unreleased
 - Add function `RoomXY::neighbors` which returns an iterator over all the valid neighbors of
   a given `RoomXY` position
 - Add static function `RoomXY::new` to allow creating a new `RoomXY` from `RoomCoordinates`
-- Add static function `RoomXY::checked_new` to allow creating a new RoomXY from a (u8, u8)
+- Add static function `RoomXY::checked_new` to allow creating a new `RoomXY` from a (u8, u8)
   pair, while checking the validity of the coordinates provided
 - Add function `RoomXY::towards` which returns a `RoomXY` between two `RoomXY` positions,
   rounding towards the start position if necessary
