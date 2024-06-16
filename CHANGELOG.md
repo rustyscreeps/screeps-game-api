@@ -6,6 +6,28 @@ Unreleased
 - Add function `Direction::iter` which returns an iterator over all the `Direction` enum values
 - Add function `RoomXY::neighbors` which returns an iterator over all the valid neighbors of
   a given `RoomXY` position
+- Add static function `RoomXY::new` to allow creating a new `RoomXY` from `RoomCoordinates`
+- Add static function `RoomXY::checked_new` to allow creating a new RoomXY from a (u8, u8)
+  pair, while checking the validity of the coordinates provided
+- Add function `RoomXY::towards` which returns a `RoomXY` between two `RoomXY` positions,
+  rounding towards the start position if necessary
+- Add function `RoomXY::between` which returns a `RoomXY` between two `RoomXY` positions,
+  rounding towards the target position if necessary
+- Add function `RoomXY::midpoint_between` which returns the `RoomXY` midpoint between
+  two `RoomXY` positions, rounding towards the target position if necessary
+- Add function `RoomXY::offset` which modifies a `RoomXY` in-place by a (i8, i8) offset
+- Add function `RoomXY::get_direction_to` which returns a `Direction` that is closest to
+  a given `RoomXY` position
+- Add function `RoomXY::get_range_to` which returns the Chebyshev Distance to a given
+  `RoomXY` position
+- Add function `RoomXY::in_range_to` which returns whether the Chebyshev Distance to a given
+  `RoomXY` position is less-than-or-equal-to a given distance
+- Add function `RoomXY::is_near_to` which returns whether a given `RoomXY` position is adjacent
+- Add function `RoomXY::is_equal_to` which returns whether a given `RoomXY` position is
+  the same position
+- Implement the `PartialOrd` and `Ord` traits for `RoomXY`
+- Implement the `Add<(i8, i8)>`, `Add<Direction>`, `Sub<(i8, i8)>`, `Sub<Direction>`,
+  and `Sub<RoomXY>` traits for `RoomXY`
 
 0.21.0 (2024-05-14)
 ===================
