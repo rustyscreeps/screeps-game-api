@@ -6,6 +6,8 @@ Unreleased
 - Add function `Direction::iter` which returns an iterator over all the `Direction` enum values
 - Add function `RoomXY::neighbors` which returns an iterator over all the valid neighbors of
   a given `RoomXY` position
+- Add static function `LocalCostMatrix::new_with_value` which returns a `LocalCostMatrix` with
+  every position set to a given `u8` value
 
 0.21.0 (2024-05-14)
 ===================
