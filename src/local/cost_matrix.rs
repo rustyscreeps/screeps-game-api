@@ -32,7 +32,7 @@ impl LocalCostMatrix {
     /// # Example
     ///
     /// ```rust
-    /// use screeps::local::{ LocalCostMatrix, RoomXY };
+    /// use screeps::local::{LocalCostMatrix, RoomXY};
     ///
     /// let lcm = LocalCostMatrix::new();
     /// let pos = unsafe { RoomXY::unchecked_new(10, 10) };
@@ -48,7 +48,7 @@ impl LocalCostMatrix {
     /// # Example
     ///
     /// ```rust
-    /// use screeps::local::{ LocalCostMatrix, RoomXY };
+    /// use screeps::local::{LocalCostMatrix, RoomXY};
     ///
     /// let lcm = LocalCostMatrix::new_with_value(u8::MAX);
     /// let pos = unsafe { RoomXY::unchecked_new(10, 10) };
