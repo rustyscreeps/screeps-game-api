@@ -5,7 +5,6 @@ use crate::constants::Direction;
 
 use super::RoomXY;
 
-
 impl RoomXY {
     /// Gets linear direction to the specified position.
     ///

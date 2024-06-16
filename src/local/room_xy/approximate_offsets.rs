@@ -3,7 +3,6 @@
 
 use super::RoomXY;
 
-
 impl RoomXY {
     /// Calculates an approximate midpoint between this point and the target.
     ///
@@ -20,17 +19,35 @@ impl RoomXY {
     /// // Exact distances
     /// let start = RoomXY::checked_new(10, 10).unwrap();
     /// let target = RoomXY::checked_new(10, 15).unwrap();
-    /// assert_eq!(start.towards(target, 1), RoomXY::checked_new(10, 11).unwrap());
-    /// assert_eq!(start.towards(target, 4), RoomXY::checked_new(10, 14).unwrap());
-    /// assert_eq!(start.towards(target, 10), RoomXY::checked_new(10, 15).unwrap());
+    /// assert_eq!(
+    ///     start.towards(target, 1),
+    ///     RoomXY::checked_new(10, 11).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     start.towards(target, 4),
+    ///     RoomXY::checked_new(10, 14).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     start.towards(target, 10),
+    ///     RoomXY::checked_new(10, 15).unwrap()
+    /// );
     ///
     /// // Approximate/rounded distances
     /// let start = RoomXY::checked_new(10, 10).unwrap();
     /// let target_1 = RoomXY::checked_new(15, 20).unwrap();
     /// let target_2 = RoomXY::checked_new(0, 5).unwrap();
-    /// assert_eq!(start.towards(target_1, 1), RoomXY::checked_new(10, 11).unwrap());
-    /// assert_eq!(start.towards(target_1, 9), RoomXY::checked_new(14, 19).unwrap());
-    /// assert_eq!(start.towards(target_2, 1), RoomXY::checked_new(9, 10).unwrap());
+    /// assert_eq!(
+    ///     start.towards(target_1, 1),
+    ///     RoomXY::checked_new(10, 11).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     start.towards(target_1, 9),
+    ///     RoomXY::checked_new(14, 19).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     start.towards(target_2, 1),
+    ///     RoomXY::checked_new(9, 10).unwrap()
+    /// );
     /// ```
     pub fn towards(self, target: RoomXY, distance_towards_target: i8) -> RoomXY {
         let (offset_x, offset_y) = target - self;
@@ -63,17 +80,35 @@ impl RoomXY {
     /// // Exact distances
     /// let start = RoomXY::checked_new(10, 15).unwrap();
     /// let target = RoomXY::checked_new(10, 10).unwrap();
-    /// assert_eq!(start.between(target, 1), RoomXY::checked_new(10, 11).unwrap());
-    /// assert_eq!(start.between(target, 4), RoomXY::checked_new(10, 14).unwrap());
-    /// assert_eq!(start.between(target, 10), RoomXY::checked_new(10, 15).unwrap());
+    /// assert_eq!(
+    ///     start.between(target, 1),
+    ///     RoomXY::checked_new(10, 11).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     start.between(target, 4),
+    ///     RoomXY::checked_new(10, 14).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     start.between(target, 10),
+    ///     RoomXY::checked_new(10, 15).unwrap()
+    /// );
     ///
     /// // Approximate/rounded distances
     /// let start_1 = RoomXY::checked_new(15, 20).unwrap();
     /// let start_2 = RoomXY::checked_new(0, 5).unwrap();
     /// let target = RoomXY::checked_new(10, 10).unwrap();
-    /// assert_eq!(start_1.between(target, 1), RoomXY::checked_new(10, 11).unwrap());
-    /// assert_eq!(start_1.between(target, 9), RoomXY::checked_new(14, 19).unwrap());
-    /// assert_eq!(start_2.between(target, 1), RoomXY::checked_new(9, 10).unwrap());
+    /// assert_eq!(
+    ///     start_1.between(target, 1),
+    ///     RoomXY::checked_new(10, 11).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     start_1.between(target, 9),
+    ///     RoomXY::checked_new(14, 19).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     start_2.between(target, 1),
+    ///     RoomXY::checked_new(9, 10).unwrap()
+    /// );
     /// ```
     pub fn between(self, target: RoomXY, distance_from_target: i8) -> RoomXY {
         target.towards(self, distance_from_target)
@@ -92,32 +127,55 @@ impl RoomXY {
     /// let start = RoomXY::checked_new(10, 10).unwrap();
     ///
     /// let target_1 = RoomXY::checked_new(10, 16).unwrap();
-    /// assert_eq!(start.midpoint_between(target_1), RoomXY::checked_new(10, 13).unwrap());
+    /// assert_eq!(
+    ///     start.midpoint_between(target_1),
+    ///     RoomXY::checked_new(10, 13).unwrap()
+    /// );
     ///
     /// let target_2 = RoomXY::checked_new(20, 10).unwrap();
-    /// assert_eq!(start.midpoint_between(target_2), RoomXY::checked_new(15, 10).unwrap());
+    /// assert_eq!(
+    ///     start.midpoint_between(target_2),
+    ///     RoomXY::checked_new(15, 10).unwrap()
+    /// );
     ///
     /// let target_3 = RoomXY::checked_new(12, 12).unwrap();
-    /// assert_eq!(start.midpoint_between(target_3), RoomXY::checked_new(11, 11).unwrap());
+    /// assert_eq!(
+    ///     start.midpoint_between(target_3),
+    ///     RoomXY::checked_new(11, 11).unwrap()
+    /// );
     ///
     /// let target_4 = RoomXY::checked_new(4, 4).unwrap();
-    /// assert_eq!(start.midpoint_between(target_4), RoomXY::checked_new(7, 7).unwrap());
+    /// assert_eq!(
+    ///     start.midpoint_between(target_4),
+    ///     RoomXY::checked_new(7, 7).unwrap()
+    /// );
     ///
     /// // Approximate/rounded distances
     /// let start = RoomXY::checked_new(10, 10).unwrap();
     ///
     /// let target_1 = RoomXY::checked_new(10, 15).unwrap();
-    /// assert_eq!(start.midpoint_between(target_1), RoomXY::checked_new(10, 13).unwrap());
+    /// assert_eq!(
+    ///     start.midpoint_between(target_1),
+    ///     RoomXY::checked_new(10, 13).unwrap()
+    /// );
     ///
     /// let target_2 = RoomXY::checked_new(19, 10).unwrap();
-    /// assert_eq!(start.midpoint_between(target_2), RoomXY::checked_new(15, 10).unwrap());
+    /// assert_eq!(
+    ///     start.midpoint_between(target_2),
+    ///     RoomXY::checked_new(15, 10).unwrap()
+    /// );
     ///
     /// let target_3 = RoomXY::checked_new(11, 11).unwrap();
-    /// assert_eq!(start.midpoint_between(target_3), RoomXY::checked_new(11, 11).unwrap());
+    /// assert_eq!(
+    ///     start.midpoint_between(target_3),
+    ///     RoomXY::checked_new(11, 11).unwrap()
+    /// );
     ///
     /// let target_4 = RoomXY::checked_new(15, 15).unwrap();
-    /// assert_eq!(start.midpoint_between(target_4), RoomXY::checked_new(13, 13).unwrap());
-    ///
+    /// assert_eq!(
+    ///     start.midpoint_between(target_4),
+    ///     RoomXY::checked_new(13, 13).unwrap()
+    /// );
     /// ```
     pub fn midpoint_between(self, target: RoomXY) -> RoomXY {
         let (offset_x, offset_y) = self - target;

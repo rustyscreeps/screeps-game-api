@@ -6,7 +6,6 @@ use std::ops::{Add, Sub};
 use super::RoomXY;
 use crate::constants::Direction;
 
-
 impl RoomXY {
     /// Returns a new position offset from this position by the specified x
     /// coords and y coords.
