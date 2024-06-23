@@ -255,7 +255,7 @@ impl PartialOrd for RoomXY {
 
 impl Ord for RoomXY {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.y.cmp(&other.y).then_with(|| self.x.cmp(&other.x))
+        (self.y, self.x).cmp(&(other.y, other.x))
     }
 }
 
