@@ -154,14 +154,14 @@ impl Sub<RoomXY> for RoomXY {
     /// let pos1 = RoomXY::checked_new(40, 40).unwrap();
     /// let pos2 = RoomXY::checked_new(0, 20).unwrap();
     /// assert_eq!(pos1 - pos2, (40, 20));
+    ///
+    /// let pos3 = RoomXY::checked_new(45, 45).unwrap();
+    /// assert_eq!(pos1 - pos3, (-5, -5));
     /// ```
     #[inline]
     fn sub(self, other: RoomXY) -> (i8, i8) {
-        let mx: i8 = self.x.0.try_into().unwrap();
-        let my: i8 = self.y.0.try_into().unwrap();
-        let ox: i8 = other.x.0.try_into().unwrap();
-        let oy: i8 = other.y.0.try_into().unwrap();
-
-        ((mx - ox), (my - oy))
+        let dx = self.x.0.wrapping_sub(other.x.0) as i8;
+        let dy = self.y.0.wrapping_sub(other.y.0) as i8;
+        (dx, dy)
     }
 }
