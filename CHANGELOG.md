@@ -8,6 +8,8 @@ Unreleased
   a given `RoomXY` position
 - Add static function `LocalCostMatrix::new_with_value` which returns a `LocalCostMatrix` with
   every position set to a given `u8` value
+- Implement `JsCollectionIntoValue` and `JsCollectionFromValue` for `IntershardResourceType` and
+  `u32` to allow `game::resources()` return value to be used as expected
 
 0.21.0 (2024-05-14)
 ===================
