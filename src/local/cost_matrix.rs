@@ -27,10 +27,37 @@ impl Default for LocalCostMatrix {
 }
 
 impl LocalCostMatrix {
+    /// Create a `LocalCostMatrix` with a default value of 0 for all positions.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use screeps::local::{LocalCostMatrix, RoomXY};
+    ///
+    /// let lcm = LocalCostMatrix::new();
+    /// let pos = unsafe { RoomXY::unchecked_new(10, 10) };
+    /// assert_eq!(lcm.get(pos), 0);
+    /// ```
     #[inline]
     pub const fn new() -> Self {
+        LocalCostMatrix::new_with_value(0)
+    }
+
+    /// Create a `LocalCostMatrix` with a default value for all positions.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use screeps::local::{LocalCostMatrix, RoomXY};
+    ///
+    /// let lcm = LocalCostMatrix::new_with_value(u8::MAX);
+    /// let pos = unsafe { RoomXY::unchecked_new(10, 10) };
+    /// assert_eq!(lcm.get(pos), u8::MAX);
+    /// ```
+    #[inline]
+    pub const fn new_with_value(value: u8) -> Self {
         LocalCostMatrix {
-            bits: [0; ROOM_AREA],
+            bits: [value; ROOM_AREA],
         }
     }
 
