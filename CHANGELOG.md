@@ -6,6 +6,10 @@ Unreleased
 - Add function `Direction::iter` which returns an iterator over all the `Direction` enum values
 - Add function `RoomXY::neighbors` which returns an iterator over all the valid neighbors of
   a given `RoomXY` position
+- Add static function `LocalCostMatrix::new_with_value` which returns a `LocalCostMatrix` with
+  every position set to a given `u8` value
+- Implement `JsCollectionIntoValue` and `JsCollectionFromValue` for `IntershardResourceType` and
+  `u32` to allow `game::resources()` return value to be used as expected
 - Add static function `RoomXY::new` to allow creating a new `RoomXY` from `RoomCoordinates`
 - Add static function `RoomXY::checked_new` to allow creating a new `RoomXY` from a (u8, u8)
   pair, while checking the validity of the coordinates provided
