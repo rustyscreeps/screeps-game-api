@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.21.1 (2024-06-28)
+===================
+
 ### Additions:
 
 - Add function `Direction::iter` which returns an iterator over all the `Direction` enum values
