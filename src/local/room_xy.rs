@@ -1,9 +1,13 @@
-use std::fmt;
+use std::{cmp::Ordering, fmt};
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 use super::room_coordinate::{OutOfBoundsError, RoomCoordinate};
 use crate::constants::{Direction, ROOM_SIZE};
+
+mod approximate_offsets;
+mod extra_math;
+mod game_math;
 
 pub(crate) const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
 
@@ -67,6 +71,19 @@ pub struct RoomXY {
 }
 
 impl RoomXY {
+    /// Create a new `RoomXY` from a pair of `RoomCoordinate`.
+    #[inline]
+    pub fn new(x: RoomCoordinate, y: RoomCoordinate) -> Self {
+        RoomXY { x, y }
+    }
+
+    /// Create a new `RoomXY` from a pair of `u8`, checking that they're in
+    /// the range of valid values.
+    #[inline]
+    pub fn checked_new(x: u8, y: u8) -> Result<RoomXY, OutOfBoundsError> {
+        RoomXY::try_from((x, y))
+    }
+
     /// Create a `RoomXY` from a pair of `u8`, without checking whether it's in
     /// the range of valid values.
     ///
@@ -226,6 +243,19 @@ impl RoomXY {
         Direction::iter()
             .filter_map(|dir| self.checked_add_direction(*dir))
             .collect()
+    }
+}
+
+impl PartialOrd for RoomXY {
+    #[inline]
+    fn partial_cmp(&self, other: &RoomXY) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for RoomXY {
+    fn cmp(&self, other: &Self) -> Ordering {
+        (self.y, self.x).cmp(&(other.y, other.x))
     }
 }
 
