@@ -3,11 +3,12 @@ use std::ops::{Index, IndexMut};
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    constants::ROOM_AREA,
     objects::CostMatrix,
     traits::{CostMatrixGet, CostMatrixSet},
 };
 
-use super::{linear_index_to_xy, xy_to_linear_index, Position, RoomXY, ROOM_AREA};
+use super::{linear_index_to_xy, xy_to_linear_index, Position, RoomXY};
 
 /// A matrix of pathing costs for a room, stored in Rust memory.
 ///

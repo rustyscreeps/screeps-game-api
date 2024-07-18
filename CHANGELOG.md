@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+### Misc:
+
+- Move crate constant `ROOM_AREA` to extra constants module and make public
+
 0.21.1 (2024-06-28)
 ===================
 

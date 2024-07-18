@@ -2,9 +2,12 @@ use std::mem::MaybeUninit;
 
 use js_sys::Uint8Array;
 
-use crate::{constants::Terrain, objects::RoomTerrain};
+use crate::{
+    constants::{Terrain, ROOM_AREA},
+    objects::RoomTerrain,
+};
 
-use super::{xy_to_terrain_index, RoomXY, ROOM_AREA};
+use super::{xy_to_terrain_index, RoomXY};
 
 #[derive(Debug, Clone)]
 pub struct LocalRoomTerrain {
