@@ -267,6 +267,11 @@ pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
 /// [`Room`]: crate::objects::Room
 pub const ROOM_SIZE: u8 = 50;
 
+/// The number of total tiles in each [`Room`] in the game
+///
+/// [`Room`]: crate::objects::Room
+pub const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
+
 /// Owner username of hostile non-player structures and creeps which occupy
 /// sector center rooms.
 pub const SOURCE_KEEPER_USERNAME: &str = "Source Keeper";

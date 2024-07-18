@@ -3,13 +3,11 @@ use std::{cmp::Ordering, fmt};
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 use super::room_coordinate::{OutOfBoundsError, RoomCoordinate};
-use crate::constants::{Direction, ROOM_SIZE};
+use crate::constants::{Direction, ROOM_AREA, ROOM_SIZE};
 
 mod approximate_offsets;
 mod extra_math;
 mod game_math;
-
-pub(crate) const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
 
 /// Converts a [`RoomXY`] coordinate pair to a linear index appropriate for use
 /// with the internal representation of a [`CostMatrix`] or [`LocalCostMatrix`].
