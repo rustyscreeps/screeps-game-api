@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+### Breaking:
+
+- Change return type of `RoomXY::get_range_to` and input type of `RoomXY::in_range_to` to u8
+
 ### Misc:
 
 - Move crate constant `ROOM_AREA` to extra constants module and make public
