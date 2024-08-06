@@ -58,9 +58,9 @@ impl RoomXY {
     /// ```
     #[doc(alias = "distance")]
     #[inline]
-    pub fn get_range_to(self, target: RoomXY) -> u32 {
+    pub fn get_range_to(self, target: RoomXY) -> u8 {
         let (dx, dy) = self - target;
-        dx.abs().max(dy.abs()) as u32
+        dx.unsigned_abs().max(dy.unsigned_abs())
     }
 
     /// Checks whether this position is in the given range of another position.
@@ -96,7 +96,7 @@ impl RoomXY {
     /// ```
     #[doc(alias = "distance")]
     #[inline]
-    pub fn in_range_to(self, target: RoomXY, range: u32) -> bool {
+    pub fn in_range_to(self, target: RoomXY, range: u8) -> bool {
         self.get_range_to(target) <= range
     }
 
