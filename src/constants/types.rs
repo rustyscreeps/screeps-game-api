@@ -943,9 +943,7 @@ mod test {
         for resource in enum_iterator::all::<MarketResourceType>() {
             if resource != MarketResourceType::Resource(ResourceType::__Invalid)
                 && resource
-                    != MarketResourceType::IntershardResource(
-                        IntershardResourceType::__Invalid,
-                    )
+                    != MarketResourceType::IntershardResource(IntershardResourceType::__Invalid)
             {
                 let serialized = serde_json::to_string(&resource).unwrap();
                 let parsed: MarketResourceType = serde_json::from_str(&serialized).unwrap();
@@ -960,9 +958,7 @@ mod test {
         for resource in enum_iterator::all::<MarketResourceType>() {
             if resource != MarketResourceType::Resource(ResourceType::__Invalid)
                 && resource
-                    != MarketResourceType::IntershardResource(
-                        IntershardResourceType::__Invalid,
-                    )
+                    != MarketResourceType::IntershardResource(IntershardResourceType::__Invalid)
             {
                 resources.push(resource);
             }
@@ -979,9 +975,7 @@ mod test {
         for resource in enum_iterator::all::<MarketResourceType>() {
             if resource != MarketResourceType::Resource(ResourceType::__Invalid)
                 && resource
-                    != MarketResourceType::IntershardResource(
-                        IntershardResourceType::__Invalid,
-                    )
+                    != MarketResourceType::IntershardResource(IntershardResourceType::__Invalid)
             {
                 resources.push(resource);
             }
