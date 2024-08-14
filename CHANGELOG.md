@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.21.2 (2024-08-14)
+===================
+
 ### Bugfixes:
 
 - Update for new string enum implementation's implementation in wasm-bindgen 0.2.93
