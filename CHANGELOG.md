@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+### Bugfixes:
+
+- Update for new string enum implementation's implementation in wasm-bindgen 0.2.93
+
 ### Misc:
 
 - Move crate constant `ROOM_AREA` to extra constants module and make public
