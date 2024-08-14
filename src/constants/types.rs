@@ -674,7 +674,7 @@ impl wasm_bindgen::convert::FromWasmAbi for MarketResourceType {
                 // try with IntershardResourceType
                 match IntershardResourceType::from_js_value(&s) {
                     Some(r) => Self::IntershardResource(r),
-                    None => Self::Resource(ResourceType::__Nonexhaustive),
+                    None => panic!("unmapped market resource"),
                 }
             }
         }
