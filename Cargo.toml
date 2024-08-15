@@ -1,6 +1,6 @@
 [package]
 name = "screeps-game-api"
-version = "0.21.2"
+version = "0.21.3"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://docs.rs/screeps-game-api/"
 edition = "2021"
@@ -39,7 +39,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 serde_repr = "0.1"
 serde-wasm-bindgen = "0.6"
-wasm-bindgen = "0.2"
+wasm-bindgen = "=0.2.92"
 
 [dev-dependencies]
 bincode = "1.3"
