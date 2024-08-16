@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+- Make `RoomName::from_packed` and `RoomName::packed_repr` public
+
+0.21.3 (2024-08-14)
+===================
+
 ### Bugfixes:
 
 - Temporarily pin to wasm-bindgen 0.2.92 due to incompatible generated javascript
