@@ -111,8 +111,9 @@ impl RoomName {
         x.as_ref().parse()
     }
 
+    /// Get the [`RoomName`] represented by a packed integer
     #[inline]
-    pub(crate) const fn from_packed(packed: u16) -> Self {
+    pub const fn from_packed(packed: u16) -> Self {
         RoomName { packed }
     }
 
@@ -156,8 +157,12 @@ impl RoomName {
         (self.packed & 0xFF) as i32 - HALF_WORLD_SIZE
     }
 
+    /// Get the inner packed representation of the room name.
+    ///
+    /// This data structure matches the implementation of the upper 16 bits of
+    /// the js Position type.
     #[inline]
-    pub(super) const fn packed_repr(&self) -> u16 {
+    pub const fn packed_repr(&self) -> u16 {
         self.packed
     }
 
