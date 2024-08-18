@@ -18,7 +18,7 @@ use super::{linear_index_to_xy, xy_to_linear_index, Position, RoomXY};
 #[serde(transparent)]
 pub struct LocalCostMatrix {
     #[serde(with = "serde_impls")]
-    bits: [u8; ROOM_AREA],
+    bits: Box<[u8; ROOM_AREA]>,
 }
 
 impl Default for LocalCostMatrix {
@@ -40,7 +40,7 @@ impl LocalCostMatrix {
     /// assert_eq!(lcm.get(pos), 0);
     /// ```
     #[inline]
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         LocalCostMatrix::new_with_value(0)
     }
 
@@ -56,9 +56,9 @@ impl LocalCostMatrix {
     /// assert_eq!(lcm.get(pos), u8::MAX);
     /// ```
     #[inline]
-    pub const fn new_with_value(value: u8) -> Self {
+    pub fn new_with_value(value: u8) -> Self {
         LocalCostMatrix {
-            bits: [value; ROOM_AREA],
+            bits: Box::new([value; ROOM_AREA]),
         }
     }
 
@@ -102,13 +102,13 @@ impl From<LocalCostMatrix> for Vec<u8> {
     /// `idx = ((x * ROOM_SIZE) + y)`.
     #[inline]
     fn from(lcm: LocalCostMatrix) -> Vec<u8> {
-        lcm.bits.into()
+        (*lcm.bits).into()
     }
 }
 
 impl From<&LocalCostMatrix> for Vec<u8> {
     fn from(lcm: &LocalCostMatrix) -> Vec<u8> {
-        lcm.bits.into()
+        (*lcm.bits).into()
     }
 }
 
@@ -117,7 +117,9 @@ impl From<&CostMatrix> for LocalCostMatrix {
         let mut bits = [0; ROOM_AREA];
         js_matrix.get_bits().copy_to(&mut bits);
 
-        LocalCostMatrix { bits }
+        LocalCostMatrix {
+            bits: Box::new(bits),
+        }
     }
 }
 
@@ -177,7 +179,7 @@ mod serde_impls {
         bits[..].serialize(serializer)
     }
 
-    pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<[u8; ROOM_AREA], D::Error>
+    pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<Box<[u8; ROOM_AREA]>, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -191,6 +193,6 @@ mod serde_impls {
         }
 
         // SAFETY: If the length wasn't right, we would have hit the check above
-        Ok(bits_slice.try_into().unwrap())
+        Ok(Box::new(bits_slice.try_into().unwrap()))
     }
 }
