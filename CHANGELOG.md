@@ -1,6 +1,12 @@
 Unreleased
 ==========
 
+### Breaking:
+
+- Change return type of `RoomXY::get_range_to` and input type of `RoomXY::in_range_to` to u8
+
+### Additions:
+
 - Make `RoomName::from_packed` and `RoomName::packed_repr` public
 
 0.21.3 (2024-08-14)
