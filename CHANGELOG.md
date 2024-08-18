@@ -3,6 +3,8 @@ Unreleased
 
 ### Breaking:
 
+- `cargo-screeps` is no longer supported as a deployment method - `wasm-bindgen` as of 0.2.93
+  generates code that needs transpiled; (todo readme on migrating)
 - Change return type of `RoomXY::get_range_to` and input type of `RoomXY::in_range_to` to u8
 
 ### Additions:
