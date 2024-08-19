@@ -1,6 +1,6 @@
 on: [push, pull_request]
 
-name: test
+name: check
 
 jobs:
   test-stable:
@@ -8,10 +8,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-features -- -D warnings
       - run: cargo test --all-features
   test-nightly:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@nightly
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-features -- -D warnings
       - run: cargo test --all-features
