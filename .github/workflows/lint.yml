@@ -3,13 +3,17 @@ on: [push, pull_request]
 name: lint
 
 jobs:
-  lint:
-    name: lint (${{ matrix.toolchain }})
+  lint-stable:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        toolchain: [stable, nightly]
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@${{ matrix.toolchain }}
+      - uses: dtolnay/rust-toolchain@stable
       - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-features -- -D warnings
+  lint-nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-features -- -D warnings
