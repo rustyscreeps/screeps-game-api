@@ -124,11 +124,13 @@ pub fn halt() {
     Cpu::halt()
 }
 
-/// Sets new shard limits for your script in an [`Object`], with shard names
-/// in [`JsString`] form as keys and numbers as values. This is the same
-/// format accepted by [`shard_limits`]. Total amount of CPU should
-/// remain equal to the sum of the values of [`shard_limits`]. This method
-/// can be used only once per 12 hours ([`CPU_SET_SHARD_LIMITS_COOLDOWN`]).
+/// Set the allocation of your CPU among the server shards.
+///
+/// Limits should be in an [`Object`], with shard names in [`JsString`] form as
+/// keys and numbers as values. This is the same format returned by
+/// [`shard_limits`]. Total amount of CPU should remain equal to the sum of the
+/// values of [`shard_limits`]. This method can be used only once per 12 hours
+/// ([`CPU_SET_SHARD_LIMITS_COOLDOWN`]).
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
 ///
