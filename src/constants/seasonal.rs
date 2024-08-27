@@ -39,6 +39,114 @@ pub mod season_1 {
     ///
     /// [`ScoreCollector`]: crate::objects::ScoreCollector
     pub const SCORE_COLLECTOR_MAX_CAPACITY: u32 = 20_000;
+
+    // extra constants for s1 related to the score spawn bonus/crisis cycle
+    // https://github.com/screeps/mod-season1/blob/7ca3c7ddb47bf9dfbdfb4e72b666a3159fde8780/src/scoreContainer.roomObject.js
+    /// The duration of a full score cycle.
+    pub const SCORE_CYCLE_DURATION: u32 = 50_000;
+
+    /// The point of the score cycle where bonus time begins, multiplying
+    /// spawned score by [`SCORE_CYCLE_BONUS_MULTIPLIER`].
+    pub const SCORE_CYCLE_BONUS_START: u32 = 45_000;
+
+    /// The point of the score cycle where bonus time ends.
+    pub const SCORE_CYCLE_BONUS_END: u32 = 50_000;
+
+    /// The multiplier for score spawned during bonus time.
+    pub const SCORE_CYCLE_BONUS_MULTIPLIER: u8 = 2;
+
+    /// The point of the score cycle where crisis time begins, during which no
+    /// new [`ScoreContainer`]s will be spawned.
+    ///
+    /// [`ScoreContainer`]: crate::objects::ScoreContainer
+    pub const SCORE_CYCLE_CRISIS_START: u32 = 10_000;
+
+    /// The point of the score cycle where crisis time ends, allowing
+    /// [`ScoreContainer`]s to be spawned once again.
+    ///
+    /// [`ScoreContainer`]: crate::objects::ScoreContainer
+    pub const SCORE_CYCLE_CRISIS_END: u32 = 15_000;
+
+    /// The multiplier for score spawned during crisis time.
+    pub const SCORE_CYCLE_CRISIS_MULTIPLIER: u8 = 0;
+
+    /// The minimum amount of ticks a [`ScoreContainer`] can exist before
+    /// despawning.
+    ///
+    /// [`ScoreContainer`]: crate::objects::ScoreContainer
+    // https://github.com/screeps/mod-season1/blob/7ca3c7ddb47bf9dfbdfb4e72b666a3159fde8780/src/scoreContainer.roomObject.js#L93
+    pub const SCORE_MIN_DECAY: u16 = 500;
+
+    /// The maximum amount of ticks a [`ScoreContainer`] can exist before
+    /// despawning.
+    ///
+    /// [`ScoreContainer`]: crate::objects::ScoreContainer
+    pub const SCORE_MAX_DECAY: u16 = 5_000;
+
+    /// The different periods in the score cycle.
+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+    pub enum ScoreCycleState {
+        /// Normal score spawns during the normal parts of the cycle
+        Normal,
+        /// No score spawns during the crisis period
+        Crisis,
+        /// Double score in each container during the bonus period
+        Bonus,
+    }
+
+    impl ScoreCycleState {
+        /// Gets the multiplier of score associated with the represented part of
+        /// the score cycle.
+        pub fn multiplier(&self) -> u8 {
+            match self {
+                ScoreCycleState::Normal => 1,
+                ScoreCycleState::Crisis => SCORE_CYCLE_CRISIS_MULTIPLIER,
+                ScoreCycleState::Bonus => SCORE_CYCLE_BONUS_MULTIPLIER,
+            }
+        }
+    }
+
+    pub const fn score_cycle_at_tick(tick: u32) -> ScoreCycleState {
+        match tick % SCORE_CYCLE_DURATION {
+            // the bonus/crisis periods are exclusive of their boundaries
+            // https://github.com/screeps/mod-season1/blob/7ca3c7ddb47bf9dfbdfb4e72b666a3159fde8780/src/scoreContainer.roomObject.js#L77-L81
+            // match on those exact values first
+            SCORE_CYCLE_CRISIS_START => ScoreCycleState::Normal,
+            SCORE_CYCLE_BONUS_START => ScoreCycleState::Normal,
+            // then on the remaining ranges
+            SCORE_CYCLE_CRISIS_START..SCORE_CYCLE_CRISIS_END => ScoreCycleState::Crisis,
+            SCORE_CYCLE_BONUS_START..SCORE_CYCLE_BONUS_END => ScoreCycleState::Bonus,
+            _ => ScoreCycleState::Normal,
+        }
+    }
+
+    #[cfg(test)]
+    mod test {
+        use super::{score_cycle_at_tick, ScoreCycleState};
+
+        #[test]
+        fn score_cycle() {
+            assert_eq!(score_cycle_at_tick(0), ScoreCycleState::Normal);
+            assert_eq!(score_cycle_at_tick(10_000), ScoreCycleState::Normal);
+            assert_eq!(score_cycle_at_tick(10_001), ScoreCycleState::Crisis);
+            assert_eq!(score_cycle_at_tick(14_999), ScoreCycleState::Crisis);
+            assert_eq!(score_cycle_at_tick(15_000), ScoreCycleState::Normal);
+            assert_eq!(score_cycle_at_tick(45_000), ScoreCycleState::Normal);
+            assert_eq!(score_cycle_at_tick(45_001), ScoreCycleState::Bonus);
+            assert_eq!(score_cycle_at_tick(49_999), ScoreCycleState::Bonus);
+            assert_eq!(score_cycle_at_tick(50_000), ScoreCycleState::Normal);
+
+            assert_eq!(score_cycle_at_tick(200_000), ScoreCycleState::Normal);
+            assert_eq!(score_cycle_at_tick(210_000), ScoreCycleState::Normal);
+            assert_eq!(score_cycle_at_tick(210_001), ScoreCycleState::Crisis);
+            assert_eq!(score_cycle_at_tick(214_999), ScoreCycleState::Crisis);
+            assert_eq!(score_cycle_at_tick(215_000), ScoreCycleState::Normal);
+            assert_eq!(score_cycle_at_tick(245_000), ScoreCycleState::Normal);
+            assert_eq!(score_cycle_at_tick(245_001), ScoreCycleState::Bonus);
+            assert_eq!(score_cycle_at_tick(249_999), ScoreCycleState::Bonus);
+            assert_eq!(score_cycle_at_tick(250_000), ScoreCycleState::Normal);
+        }
+    }
 }
 
 /// Constants for Screeps seasonal, season 2
