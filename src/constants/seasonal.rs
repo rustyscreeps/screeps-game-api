@@ -45,7 +45,8 @@ pub mod season_1 {
     /// The duration of a full score cycle
     pub const SCORE_CYCLE_DURATION: u32 = 50_000;
 
-    /// The point of the score cycle where bonus time begins, multiplying dropped spawned by [`SCORE_BONUS_MULTIPLIER`].
+    /// The point of the score cycle where bonus time begins, multiplying
+    /// dropped spawned by [`SCORE_BONUS_MULTIPLIER`].
     pub const SCORE_BONUS_START: u32 = 45_000;
 
     /// The point of the score cycle where bonus time ends
@@ -54,12 +55,14 @@ pub mod season_1 {
     /// The multiplier for score spawned during bonus time
     pub const SCORE_BONUS_MULTIPLIER: u8 = 2;
 
-    /// The point of the score cycle where crisis time begins, during which no new [`ScoreContainer`]s will be spawned.
+    /// The point of the score cycle where crisis time begins, during which no
+    /// new [`ScoreContainer`]s will be spawned.
     ///
     /// [`ScoreContainer`]: crate::objects::ScoreContainer
     pub const SCORE_CRISIS_START: u32 = 10_000;
 
-    /// The point of the score cycle where crisis time ends, allowing [`ScoreContainer`]s to be spawned once again.
+    /// The point of the score cycle where crisis time ends, allowing
+    /// [`ScoreContainer`]s to be spawned once again.
     ///
     /// [`ScoreContainer`]: crate::objects::ScoreContainer
     pub const SCORE_CRISIS_END: u32 = 15_000;
@@ -67,17 +70,20 @@ pub mod season_1 {
     /// The multiplier for score spawned during crisis time
     pub const SCORE_CRISIS_MULTIPLIER: u8 = 0;
 
-    /// The minimum amount of ticks a [`ScoreContainer`] can exist before despawning
+    /// The minimum amount of ticks a [`ScoreContainer`] can exist before
+    /// despawning
     ///
     /// [`ScoreContainer`]: crate::objects::ScoreContainer
     // https://github.com/screeps/mod-season1/blob/7ca3c7ddb47bf9dfbdfb4e72b666a3159fde8780/src/scoreContainer.roomObject.js#L93
     pub const SCORE_MIN_DECAY: u16 = 500;
 
-    /// The maximum amount of ticks a [`ScoreContainer`] can exist before despawning
+    /// The maximum amount of ticks a [`ScoreContainer`] can exist before
+    /// despawning
     ///
     /// [`ScoreContainer`]: crate::objects::ScoreContainer
     pub const SCORE_MAX_DECAY: u16 = 5_000;
 
+    /// The different parts of the score cycle
     #[derive(Copy, Clone, Debug, Eq, PartialEq)]
     pub enum ScoreCycleState {
         Normal,
@@ -86,6 +92,8 @@ pub mod season_1 {
     }
 
     impl ScoreCycleState {
+        /// Gets the multiplier of score associated with the represented part of
+        /// the score cycle
         pub fn multiplier(&self) -> u8 {
             match self {
                 ScoreCycleState::Normal => 1,
@@ -102,6 +110,7 @@ pub mod season_1 {
             // match on those exact values first
             SCORE_CRISIS_START => ScoreCycleState::Normal,
             SCORE_BONUS_START => ScoreCycleState::Normal,
+            // then on the remaining ranges
             SCORE_CRISIS_START..SCORE_CRISIS_END => ScoreCycleState::Crisis,
             SCORE_BONUS_START..SCORE_BONUS_END => ScoreCycleState::Bonus,
             _ => ScoreCycleState::Normal,
