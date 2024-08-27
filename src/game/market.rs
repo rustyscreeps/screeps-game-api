@@ -176,10 +176,9 @@ pub fn get_all_orders(filter: Option<&LodashFilter>) -> Vec<Order> {
 }
 
 /// Get information about the price history on the market for the last 14
-/// days for a given resource as an [`Array`] of [`OrderHistoryRecord`]s, or
-/// for all resources if `None`. Warning: returns an empty [`Object`]
-/// instead of an array if there is no history for the resource, verifying
-/// the type is recommended before use if the market might be empty.
+/// days.
+///
+/// Gets information for a given resource, or for all resources if `None`.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getHistory)
 pub fn get_history(resource: Option<ResourceType>) -> Vec<OrderHistoryRecord> {
