@@ -63,7 +63,7 @@ pub fn limit() -> u32 {
 
 /// The amount of CPU available for execution in a given tick.
 ///
-/// consists of your per-tick CPU [`limit`] plus your accrued [`bucket`], up to
+/// Consists of your per-tick CPU [`limit`] plus your accrued [`bucket`], up to
 /// a maximum of 500 ([`CPU_TICK_LIMIT_MAX`]); [`f64::INFINITY`] on sim.
 ///
 /// [`CPU_TICK_LIMIT_MAX`]: crate::constants::extra::CPU_TICK_LIMIT_MAX
