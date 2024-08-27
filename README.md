@@ -15,8 +15,8 @@ Also the homepage for tools relating to writing [Screeps] AIs in Rust.
 `screeps-game-api` is a Rust binding to the JavaScript APIs for programs compiled to WASM using
 [`wasm-pack`].
 
-Please see the [screeps-starter-rust example project] for an example project with instructructions
-for getting started.
+Please see the [screeps-starter-rust example project] for an example with instructructions for
+getting started, or the [docs] for a detailed API reference.
 
 Writing Screeps code in Rust can be nice, but it can also be annoying. If you have tips, tricks, or
 other things you'd like to share, make an issue! We need to write more documentation, and if we have
