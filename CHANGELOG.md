@@ -10,6 +10,7 @@ Unreleased
 ### Additions:
 
 - Make `RoomName::from_packed` and `RoomName::packed_repr` public
+- Add constants to `season_1` module representing the Season 1 score cycle mechanic
 
 0.21.3 (2024-08-14)
 ===================
