@@ -46,7 +46,7 @@ pub mod season_1 {
     pub const SCORE_CYCLE_DURATION: u32 = 50_000;
 
     /// The point of the score cycle where bonus time begins, multiplying
-    /// dropped spawned by [`SCORE_BONUS_MULTIPLIER`].
+    /// spawned score by [`SCORE_BONUS_MULTIPLIER`].
     pub const SCORE_BONUS_START: u32 = 45_000;
 
     /// The point of the score cycle where bonus time ends
