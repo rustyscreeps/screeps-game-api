@@ -34,6 +34,8 @@ impl RoomXY {
     /// pos.offset(-5, 5);
     /// assert_eq!(pos, RoomXY::checked_new(16, 26).unwrap());
     /// ```
+    ///
+    /// [`Position::offset`]: crate::local::Position::offset
     #[inline]
     #[track_caller]
     pub fn offset(&mut self, x: i8, y: i8) {
