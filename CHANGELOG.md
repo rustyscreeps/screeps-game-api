@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.22.0 (2024-08-27)
+===================
+
 ### Breaking:
 
 - `cargo-screeps` is no longer supported as a deployment method, `wasm-bindgen` as of 0.2.93
