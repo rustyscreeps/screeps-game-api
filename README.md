@@ -1,7 +1,7 @@
 screeps-game-api
 ================
 
-[![Linux Build Status][actions-badge]][actions-builds]
+[![Build Status][actions-badge]][actions-builds]
 [![crates.io version badge][cratesio-badge]][crate]
 [![dependency status][deps-badge]][deps]
 [![docs.rs version badge][docsrs-badge]][docs]
@@ -66,8 +66,8 @@ cargo screeps deploy
 
 [screeps]: https://screeps.com/
 [`wasm-pack`]: https://rustwasm.github.io/wasm-pack/
-[actions-badge]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml/badge.svg
-[actions-builds]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/build.yml
+[actions-badge]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/check.yml/badge.svg
+[actions-builds]: https://github.com/rustyscreeps/screeps-game-api/actions/workflows/check.yml
 [cratesio-badge]: https://img.shields.io/crates/v/screeps-game-api.svg
 [crate]: https://crates.io/crates/screeps-game-api/
 [deps-badge]: https://deps.rs/repo/github/rustyscreeps/screeps-game-api/status.svg
