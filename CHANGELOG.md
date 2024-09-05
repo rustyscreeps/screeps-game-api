@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+### Breaking:
+
+- Change return type of `Structure::destroy` from `i8` to `Result<(), ErrorCode>`.
+
 0.22.0 (2024-08-27)
 ===================
 
