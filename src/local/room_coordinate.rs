@@ -21,7 +21,7 @@ impl Error for OutOfBoundsError {}
     Debug, Hash, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize,
 )]
 #[serde(try_from = "u8", into = "u8")]
-pub struct RoomCoordinate(pub u8);
+pub struct RoomCoordinate(u8);
 
 impl RoomCoordinate {
     /// Create a `RoomCoordinate` from a `u8`, returning an error if the
