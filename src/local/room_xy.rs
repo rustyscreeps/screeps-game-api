@@ -265,7 +265,7 @@ impl fmt::Display for RoomXY {
 
 impl From<RoomXY> for (u8, u8) {
     fn from(xy: RoomXY) -> (u8, u8) {
-        (xy.x.u8(), xy.y.())
+        (xy.x.u8(), xy.y.u8())
     }
 }
 
