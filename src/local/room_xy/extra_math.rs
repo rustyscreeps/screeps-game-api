@@ -162,8 +162,8 @@ impl Sub<RoomXY> for RoomXY {
     /// ```
     #[inline]
     fn sub(self, other: RoomXY) -> (i8, i8) {
-        let dx = self.x.0.wrapping_sub(other.x.0) as i8;
-        let dy = self.y.0.wrapping_sub(other.y.0) as i8;
+        let dx = self.x.u8() as i8 - other.x.u8() as i8;
+        let dy = self.y.u8() as i8 - other.y.u8() as i8;
         (dx, dy)
     }
 }
