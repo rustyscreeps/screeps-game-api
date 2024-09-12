@@ -3,7 +3,9 @@ Unreleased
 
 ### Breaking:
 
-- Change return type of `Structure::destroy` from `i8` to `Result<(), ErrorCode>`.
+- Change return type of `Structure::destroy` from `i8` to `Result<(), ErrorCode>`
+- Change inner u8 of `RoomCoordinate` to private
+- Use `f64` instead of `u64` to work around bindgen expecting `BigInt` return values
 
 0.22.0 (2024-08-27)
 ===================
