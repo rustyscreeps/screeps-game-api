@@ -32,7 +32,7 @@ extern "C" {
 
     #[cfg(feature = "mmo")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = unlockedTime)]
-    fn unlocked_time() -> Option<u64>;
+    fn unlocked_time() -> Option<f64>;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = getHeapStatistics)]
     fn get_heap_statistics() -> HeapStatistics;
@@ -90,10 +90,11 @@ pub fn unlocked() -> bool {
     Cpu::unlocked()
 }
 
+// note: f64 due to https://github.com/rustwasm/wasm-bindgen/issues/4113
 /// If your account has been unlocked for a limited time, contains the time
 /// it's unlocked until in milliseconds since epoch.
 #[cfg(feature = "mmo")]
-pub fn unlocked_time() -> Option<u64> {
+pub fn unlocked_time() -> Option<f64> {
     Cpu::unlocked_time()
 }
 
