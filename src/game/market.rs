@@ -210,7 +210,7 @@ extern "C" {
     /// Tick of order creation, `None` for intershard orders.
     #[wasm_bindgen(method, getter)]
     pub fn created(this: &Order) -> Option<u32>;
-    // todo should be u64 but seems to panic at the moment, follow up
+    // note: f64 due to https://github.com/rustwasm/wasm-bindgen/issues/4113
     /// Timestamp of order creation in milliseconds since epoch.
     #[wasm_bindgen(method, getter = createdTimestamp)]
     pub fn created_timestamp(this: &Order) -> f64;
@@ -307,9 +307,10 @@ extern "C" {
     /// Tick of order creation, `None` for intershard orders
     #[wasm_bindgen(method, getter)]
     pub fn created(this: &MyOrder) -> Option<u32>;
+    // note: f64 due to https://github.com/rustwasm/wasm-bindgen/issues/4113
     /// Timestamp of order creation in milliseconds since epoch
     #[wasm_bindgen(method, getter = createdTimestamp)]
-    pub fn created_timestamp(this: &MyOrder) -> u64;
+    pub fn created_timestamp(this: &MyOrder) -> f64;
     #[wasm_bindgen(method, getter)]
     pub fn active(this: &MyOrder) -> bool;
     #[wasm_bindgen(method, getter = type)]
