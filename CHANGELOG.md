@@ -7,6 +7,11 @@ Unreleased
 - Change inner u8 of `RoomCoordinate` to private
 - Use `f64` instead of `u64` to work around bindgen expecting `BigInt` return values
 
+### Additions:
+
+- Add `s7_score_cycle_at_tick` seasonal constant function to reflect the reversed score cycle in
+  season 7
+
 0.22.0 (2024-08-27)
 ===================
 
