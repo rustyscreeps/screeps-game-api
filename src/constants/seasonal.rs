@@ -130,7 +130,8 @@ pub mod season_1 {
             // match on those exact values first
             SCORE_CYCLE_CRISIS_START => ScoreCycleState::Normal,
             SCORE_CYCLE_BONUS_START => ScoreCycleState::Normal,
-            // then on the remaining ranges
+            // then on the remaining ranges - these are flipped from normal in s7, which is
+            // not currently open sourced
             SCORE_CYCLE_CRISIS_START..SCORE_CYCLE_CRISIS_END => ScoreCycleState::Bonus,
             SCORE_CYCLE_BONUS_START..SCORE_CYCLE_BONUS_END => ScoreCycleState::Crisis,
             _ => ScoreCycleState::Normal,
