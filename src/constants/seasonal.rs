@@ -140,7 +140,7 @@ pub mod season_1 {
 
     #[cfg(test)]
     mod test {
-        use super::{score_cycle_at_tick, ScoreCycleState};
+        use super::{s7_score_cycle_at_tick, score_cycle_at_tick, ScoreCycleState};
 
         #[test]
         fn s1_score_cycle() {
