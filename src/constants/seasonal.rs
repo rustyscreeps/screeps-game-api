@@ -106,6 +106,7 @@ pub mod season_1 {
         }
     }
 
+    /// Calculates the state of the score cycle for season 1
     pub const fn score_cycle_at_tick(tick: u32) -> ScoreCycleState {
         match tick % SCORE_CYCLE_DURATION {
             // the bonus/crisis periods are exclusive of their boundaries
@@ -120,12 +121,29 @@ pub mod season_1 {
         }
     }
 
+    /// Calculates the state of the score cycle for season 7, which reverses the
+    /// crisis/bonus order
+    pub const fn s7_score_cycle_at_tick(tick: u32) -> ScoreCycleState {
+        match tick % SCORE_CYCLE_DURATION {
+            // the bonus/crisis periods are exclusive of their boundaries
+            // https://github.com/screeps/mod-season1/blob/7ca3c7ddb47bf9dfbdfb4e72b666a3159fde8780/src/scoreContainer.roomObject.js#L77-L81
+            // match on those exact values first
+            SCORE_CYCLE_CRISIS_START => ScoreCycleState::Normal,
+            SCORE_CYCLE_BONUS_START => ScoreCycleState::Normal,
+            // then on the remaining ranges - these are flipped from normal in s7, which is
+            // not currently open sourced
+            SCORE_CYCLE_CRISIS_START..SCORE_CYCLE_CRISIS_END => ScoreCycleState::Bonus,
+            SCORE_CYCLE_BONUS_START..SCORE_CYCLE_BONUS_END => ScoreCycleState::Crisis,
+            _ => ScoreCycleState::Normal,
+        }
+    }
+
     #[cfg(test)]
     mod test {
-        use super::{score_cycle_at_tick, ScoreCycleState};
+        use super::{s7_score_cycle_at_tick, score_cycle_at_tick, ScoreCycleState};
 
         #[test]
-        fn score_cycle() {
+        fn s1_score_cycle() {
             assert_eq!(score_cycle_at_tick(0), ScoreCycleState::Normal);
             assert_eq!(score_cycle_at_tick(10_000), ScoreCycleState::Normal);
             assert_eq!(score_cycle_at_tick(10_001), ScoreCycleState::Crisis);
@@ -145,6 +163,29 @@ pub mod season_1 {
             assert_eq!(score_cycle_at_tick(245_001), ScoreCycleState::Bonus);
             assert_eq!(score_cycle_at_tick(249_999), ScoreCycleState::Bonus);
             assert_eq!(score_cycle_at_tick(250_000), ScoreCycleState::Normal);
+        }
+
+        #[test]
+        fn s7_score_cycle() {
+            assert_eq!(s7_score_cycle_at_tick(0), ScoreCycleState::Normal);
+            assert_eq!(s7_score_cycle_at_tick(10_000), ScoreCycleState::Normal);
+            assert_eq!(s7_score_cycle_at_tick(10_001), ScoreCycleState::Bonus);
+            assert_eq!(s7_score_cycle_at_tick(14_999), ScoreCycleState::Bonus);
+            assert_eq!(s7_score_cycle_at_tick(15_000), ScoreCycleState::Normal);
+            assert_eq!(s7_score_cycle_at_tick(45_000), ScoreCycleState::Normal);
+            assert_eq!(s7_score_cycle_at_tick(45_001), ScoreCycleState::Crisis);
+            assert_eq!(s7_score_cycle_at_tick(49_999), ScoreCycleState::Crisis);
+            assert_eq!(s7_score_cycle_at_tick(50_000), ScoreCycleState::Normal);
+
+            assert_eq!(s7_score_cycle_at_tick(200_000), ScoreCycleState::Normal);
+            assert_eq!(s7_score_cycle_at_tick(210_000), ScoreCycleState::Normal);
+            assert_eq!(s7_score_cycle_at_tick(210_001), ScoreCycleState::Bonus);
+            assert_eq!(s7_score_cycle_at_tick(214_999), ScoreCycleState::Bonus);
+            assert_eq!(s7_score_cycle_at_tick(215_000), ScoreCycleState::Normal);
+            assert_eq!(s7_score_cycle_at_tick(245_000), ScoreCycleState::Normal);
+            assert_eq!(s7_score_cycle_at_tick(245_001), ScoreCycleState::Crisis);
+            assert_eq!(s7_score_cycle_at_tick(249_999), ScoreCycleState::Crisis);
+            assert_eq!(s7_score_cycle_at_tick(250_000), ScoreCycleState::Normal);
         }
     }
 }
