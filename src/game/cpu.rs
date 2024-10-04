@@ -32,7 +32,7 @@ extern "C" {
 
     #[cfg(feature = "mmo")]
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, getter, js_name = unlockedTime)]
-    fn unlocked_time() -> Option<u64>;
+    fn unlocked_time() -> Option<f64>;
 
     #[wasm_bindgen(js_namespace = ["Game"], js_class = "cpu", static_method_of = Cpu, js_name = getHeapStatistics)]
     fn get_heap_statistics() -> HeapStatistics;
@@ -61,9 +61,10 @@ pub fn limit() -> u32 {
     Cpu::limit()
 }
 
-/// The amount of CPU available for execution this tick, which consists of
-/// your per-tick CPU [`limit`] plus your accrued [`bucket`], up to a maximum of
-/// 500 ([`CPU_TICK_LIMIT_MAX`]); [`f64::INFINITY`] on sim.
+/// The amount of CPU available for execution in a given tick.
+///
+/// Consists of your per-tick CPU [`limit`] plus your accrued [`bucket`], up to
+/// a maximum of 500 ([`CPU_TICK_LIMIT_MAX`]); [`f64::INFINITY`] on sim.
 ///
 /// [`CPU_TICK_LIMIT_MAX`]: crate::constants::extra::CPU_TICK_LIMIT_MAX
 pub fn tick_limit() -> f64 {
@@ -89,10 +90,11 @@ pub fn unlocked() -> bool {
     Cpu::unlocked()
 }
 
+// note: f64 due to https://github.com/rustwasm/wasm-bindgen/issues/4113
 /// If your account has been unlocked for a limited time, contains the time
 /// it's unlocked until in milliseconds since epoch.
 #[cfg(feature = "mmo")]
-pub fn unlocked_time() -> Option<u64> {
+pub fn unlocked_time() -> Option<f64> {
     Cpu::unlocked_time()
 }
 
@@ -123,11 +125,13 @@ pub fn halt() {
     Cpu::halt()
 }
 
-/// Sets new shard limits for your script in an [`Object`], with shard names
-/// in [`JsString`] form as keys and numbers as values. This is the same
-/// format accepted by [`shard_limits`]. Total amount of CPU should
-/// remain equal to the sum of the values of [`shard_limits`]. This method
-/// can be used only once per 12 hours ([`CPU_SET_SHARD_LIMITS_COOLDOWN`]).
+/// Set the allocation of your CPU among the server shards.
+///
+/// Limits should be in an [`Object`], with shard names in [`JsString`] form as
+/// keys and numbers as values. This is the same format returned by
+/// [`shard_limits`]. Total amount of CPU should remain equal to the sum of the
+/// values of [`shard_limits`]. This method can be used only once per 12 hours
+/// ([`CPU_SET_SHARD_LIMITS_COOLDOWN`]).
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.cpu.setShardLimits)
 ///

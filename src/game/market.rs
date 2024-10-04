@@ -176,10 +176,9 @@ pub fn get_all_orders(filter: Option<&LodashFilter>) -> Vec<Order> {
 }
 
 /// Get information about the price history on the market for the last 14
-/// days for a given resource as an [`Array`] of [`OrderHistoryRecord`]s, or
-/// for all resources if `None`. Warning: returns an empty [`Object`]
-/// instead of an array if there is no history for the resource, verifying
-/// the type is recommended before use if the market might be empty.
+/// days.
+///
+/// Gets information for a given resource, or for all resources if `None`.
 ///
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.getHistory)
 pub fn get_history(resource: Option<ResourceType>) -> Vec<OrderHistoryRecord> {
@@ -211,7 +210,7 @@ extern "C" {
     /// Tick of order creation, `None` for intershard orders.
     #[wasm_bindgen(method, getter)]
     pub fn created(this: &Order) -> Option<u32>;
-    // todo should be u64 but seems to panic at the moment, follow up
+    // note: f64 due to https://github.com/rustwasm/wasm-bindgen/issues/4113
     /// Timestamp of order creation in milliseconds since epoch.
     #[wasm_bindgen(method, getter = createdTimestamp)]
     pub fn created_timestamp(this: &Order) -> f64;
@@ -308,9 +307,10 @@ extern "C" {
     /// Tick of order creation, `None` for intershard orders
     #[wasm_bindgen(method, getter)]
     pub fn created(this: &MyOrder) -> Option<u32>;
+    // note: f64 due to https://github.com/rustwasm/wasm-bindgen/issues/4113
     /// Timestamp of order creation in milliseconds since epoch
     #[wasm_bindgen(method, getter = createdTimestamp)]
-    pub fn created_timestamp(this: &MyOrder) -> u64;
+    pub fn created_timestamp(this: &MyOrder) -> f64;
     #[wasm_bindgen(method, getter)]
     pub fn active(this: &MyOrder) -> bool;
     #[wasm_bindgen(method, getter = type)]

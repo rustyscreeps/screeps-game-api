@@ -36,11 +36,8 @@ extern "C" {
     #[wasm_bindgen(method, getter = structureType)]
     pub fn structure_type(this: &Structure) -> StructureType;
 
-    /// Destroy the structure, if possible.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.destroy)
-    #[wasm_bindgen(method)]
-    pub fn destroy(this: &Structure) -> i8;
+    #[wasm_bindgen(method, js_name = destroy)]
+    fn destroy_internal(this: &Structure) -> i8;
 
     /// Determine if the structure is active and can be used at the current RCL.
     ///
@@ -73,6 +70,13 @@ impl Structure {
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.hitsMax)
     pub fn hits_max(&self) -> u32 {
         self.hits_max_internal().unwrap_or(0)
+    }
+
+    /// Destroy the structure, if possible.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.destroy)
+    pub fn destroy(&self) -> Result<(), ErrorCode> {
+        ErrorCode::result_from_i8(self.destroy_internal())
     }
 }
 
@@ -107,7 +111,7 @@ where
     }
 
     fn destroy(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(Structure::destroy(self.as_ref()))
+        Structure::destroy(self.as_ref())
     }
 
     fn is_active(&self) -> bool {

@@ -199,6 +199,18 @@ pub enum IntershardResourceType {
 
 named_enum_serialize_deserialize!(IntershardResourceType);
 
+impl JsCollectionIntoValue for IntershardResourceType {
+    fn into_value(self) -> JsValue {
+        self.into()
+    }
+}
+
+impl JsCollectionFromValue for IntershardResourceType {
+    fn from_value(v: JsValue) -> IntershardResourceType {
+        IntershardResourceType::from_js_value(&v).expect("valid intershard resource type string")
+    }
+}
+
 /// Translates the values of the `RESOURCES_ALL` constant, representing all
 /// possible in-game (non-intershard) resources.
 #[wasm_bindgen]
@@ -662,7 +674,7 @@ impl wasm_bindgen::convert::FromWasmAbi for MarketResourceType {
                 // try with IntershardResourceType
                 match IntershardResourceType::from_js_value(&s) {
                     Some(r) => Self::IntershardResource(r),
-                    None => Self::Resource(ResourceType::__Nonexhaustive),
+                    None => unreachable!("should have come from IntoWasmAbi"),
                 }
             }
         }
@@ -822,7 +834,7 @@ mod test {
     #[test]
     fn resources_rust_to_serde_json_from_serde_json_roundtrip() {
         for resource in enum_iterator::all::<ResourceType>() {
-            if resource != ResourceType::__Nonexhaustive {
+            if resource != ResourceType::__Invalid {
                 let serialized = serde_json::to_string(&resource).unwrap();
                 let parsed: ResourceType = serde_json::from_str(&serialized).unwrap();
                 assert_eq!(resource, parsed);
@@ -833,7 +845,7 @@ mod test {
     #[test]
     fn resources_rust_to_display_from_str_roundtrip() {
         for resource in enum_iterator::all::<ResourceType>() {
-            if resource != ResourceType::__Nonexhaustive {
+            if resource != ResourceType::__Invalid {
                 let string = format!("{}", resource);
                 let parsed = ResourceType::from_str(&string).unwrap();
                 assert_eq!(resource, parsed);
@@ -845,7 +857,7 @@ mod test {
     fn resources_rust_vec_to_serde_json_from_serde_json_roundtrip() {
         let mut resources = vec![];
         for resource in enum_iterator::all::<ResourceType>() {
-            if resource != ResourceType::__Nonexhaustive {
+            if resource != ResourceType::__Invalid {
                 resources.push(resource);
             }
         }
@@ -858,7 +870,7 @@ mod test {
     fn resources_rust_vec_to_serde_json_from_serde_json_roundtrip_via_values() {
         let mut resources = vec![];
         for resource in enum_iterator::all::<ResourceType>() {
-            if resource != ResourceType::__Nonexhaustive {
+            if resource != ResourceType::__Invalid {
                 resources.push(resource);
             }
         }
@@ -875,7 +887,7 @@ mod test {
     #[test]
     fn intershard_resources_rust_to_serde_json_from_serde_json_roundtrip() {
         for resource in enum_iterator::all::<IntershardResourceType>() {
-            if resource != IntershardResourceType::__Nonexhaustive {
+            if resource != IntershardResourceType::__Invalid {
                 let serialized = serde_json::to_string(&resource).unwrap();
                 let parsed: IntershardResourceType = serde_json::from_str(&serialized).unwrap();
                 assert_eq!(resource, parsed);
@@ -886,7 +898,7 @@ mod test {
     #[test]
     fn intershard_resources_rust_to_display_from_str_roundtrip() {
         for resource in enum_iterator::all::<IntershardResourceType>() {
-            if resource != IntershardResourceType::__Nonexhaustive {
+            if resource != IntershardResourceType::__Invalid {
                 let string = format!("{}", resource);
                 let parsed = IntershardResourceType::from_str(&string).unwrap();
                 assert_eq!(resource, parsed);
@@ -898,7 +910,7 @@ mod test {
     fn intershard_resources_rust_vec_to_serde_json_from_serde_json_roundtrip() {
         let mut resources = vec![];
         for resource in enum_iterator::all::<IntershardResourceType>() {
-            if resource != IntershardResourceType::__Nonexhaustive {
+            if resource != IntershardResourceType::__Invalid {
                 resources.push(resource);
             }
         }
@@ -912,7 +924,7 @@ mod test {
     fn intershard_resources_rust_vec_to_serde_json_from_serde_json_roundtrip_via_values() {
         let mut resources = vec![];
         for resource in enum_iterator::all::<IntershardResourceType>() {
-            if resource != IntershardResourceType::__Nonexhaustive {
+            if resource != IntershardResourceType::__Invalid {
                 resources.push(resource);
             }
         }
@@ -929,11 +941,9 @@ mod test {
     #[test]
     fn market_resources_rust_to_serde_json_from_serde_json_roundtrip() {
         for resource in enum_iterator::all::<MarketResourceType>() {
-            if resource != MarketResourceType::Resource(ResourceType::__Nonexhaustive)
+            if resource != MarketResourceType::Resource(ResourceType::__Invalid)
                 && resource
-                    != MarketResourceType::IntershardResource(
-                        IntershardResourceType::__Nonexhaustive,
-                    )
+                    != MarketResourceType::IntershardResource(IntershardResourceType::__Invalid)
             {
                 let serialized = serde_json::to_string(&resource).unwrap();
                 let parsed: MarketResourceType = serde_json::from_str(&serialized).unwrap();
@@ -946,11 +956,9 @@ mod test {
     fn market_resources_rust_vec_to_serde_json_from_serde_json_roundtrip() {
         let mut resources = vec![];
         for resource in enum_iterator::all::<MarketResourceType>() {
-            if resource != MarketResourceType::Resource(ResourceType::__Nonexhaustive)
+            if resource != MarketResourceType::Resource(ResourceType::__Invalid)
                 && resource
-                    != MarketResourceType::IntershardResource(
-                        IntershardResourceType::__Nonexhaustive,
-                    )
+                    != MarketResourceType::IntershardResource(IntershardResourceType::__Invalid)
             {
                 resources.push(resource);
             }
@@ -965,11 +973,9 @@ mod test {
     fn market_resources_rust_vec_to_serde_json_from_serde_json_roundtrip_via_values() {
         let mut resources = vec![];
         for resource in enum_iterator::all::<MarketResourceType>() {
-            if resource != MarketResourceType::Resource(ResourceType::__Nonexhaustive)
+            if resource != MarketResourceType::Resource(ResourceType::__Invalid)
                 && resource
-                    != MarketResourceType::IntershardResource(
-                        IntershardResourceType::__Nonexhaustive,
-                    )
+                    != MarketResourceType::IntershardResource(IntershardResourceType::__Invalid)
             {
                 resources.push(resource);
             }

@@ -94,6 +94,10 @@
 
 // #![warn(clippy::missing_const_for_fn)]
 
+// disable deprecation warnings - TODO need to figure out how to get wasm_bindgen's new thread_local
+// attribute working
+#![allow(deprecated)]
+
 pub mod console;
 pub mod constants;
 pub mod enums;

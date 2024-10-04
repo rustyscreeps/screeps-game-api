@@ -154,7 +154,8 @@ pub const CREEP_SPAWN_TIME: u32 = 3;
 /// Quoting from [`StructureSpawn.renewCreep`] documentation:
 ///
 /// > Each execution increases the creep's timer by amount of ticks according to
-/// this formula:
+/// > this formula:
+/// >
 /// > `floor(600/body_size)`
 /// >
 /// > Energy required for each execution is determined using this formula:
@@ -323,14 +324,14 @@ pub const CONTROLLER_DOWNGRADE_RESTORE: u32 = 100;
 ///
 /// Quoting from the [3.2.0 patch notes](https://blog.screeps.com/2018/12/changelog-2018-12-14/):
 ///
-/// > * When the controller gains or loses one level, its downgrade timer is set
-/// to 50% instead of 100%.
-/// > * Safe mode activation unavailable period starts from this 50% point minus
-/// 5000 ticks.
+/// * When the controller gains or loses one level, its downgrade timer is set
+///   to 50% instead of 100%.
+/// * Safe mode activation unavailable period starts from this 50% point minus
+///   5000 ticks.
 ///
-/// For example, a newly upgraded RCL7 room will have 75_000 ticks to downgrade
-/// out of its 150_000 maximum, and safe mode becomes unavailable if the timer
-/// falls below 70_000 ticks.
+/// For example, a newly upgraded RCL7 room will have 75,000 ticks to downgrade
+/// out of its 150,000 maximum, and safe mode becomes unavailable if the timer
+/// falls below 70,000 ticks.
 ///
 /// [`StructureController::ticks_to_downgrade`]:
 /// crate::objects::StructureController::ticks_to_downgrade

@@ -89,9 +89,12 @@ pub const CREEP_SAY_MAX_LENGTH: u32 = 10;
 /// [`Flag`]: crate::objects::Flag
 pub const FLAG_NAME_MAX_LENGTH: u32 = 100;
 
-/// The cost of a single 'intent' (in milliseconds), a CPU penalty charged for
-/// most successful API calls which change the game state ([`Creep::pull`],
-/// [`Creep::say`], and [`PowerCreep::say`] are excepted)
+/// The cost of a single 'intent' in CPU time, charged for all successful
+/// changes to game state.
+///
+/// API calls which change the game state ([`Creep::pull`], [`Creep::say`], and
+/// [`PowerCreep::say`] are excepted) will add this amount to your used CPU for
+/// the tick each time they're successful.
 ///
 /// [Code reference](https://github.com/screeps/driver/blob/97a9e51d124c7170429caa1621096f0f4d888d72/lib/runtime/runtime.js#L52)
 ///
@@ -266,6 +269,11 @@ pub const ROOM_VISUAL_PER_ROOM_SIZE_LIMIT: u32 = 500 * 1024;
 ///
 /// [`Room`]: crate::objects::Room
 pub const ROOM_SIZE: u8 = 50;
+
+/// The number of total tiles in each [`Room`] in the game
+///
+/// [`Room`]: crate::objects::Room
+pub const ROOM_AREA: usize = (ROOM_SIZE as usize) * (ROOM_SIZE as usize);
 
 /// Owner username of hostile non-player structures and creeps which occupy
 /// sector center rooms.

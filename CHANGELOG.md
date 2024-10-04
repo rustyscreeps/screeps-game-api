@@ -3,6 +3,87 @@ Unreleased
 
 ### Breaking:
 
+- Change return type of `Structure::destroy` from `i8` to `Result<(), ErrorCode>`
+- Change inner u8 of `RoomCoordinate` to private
+- Use `f64` instead of `u64` to work around bindgen expecting `BigInt` return values
+
+### Additions:
+
+- Add `s7_score_cycle_at_tick` seasonal constant function to reflect the reversed score cycle in
+  season 7
+
+0.22.0 (2024-08-27)
+===================
+
+### Breaking:
+
+- `cargo-screeps` is no longer supported as a deployment method, `wasm-bindgen` as of 0.2.93
+  generates code that needs transpiled; see the starter project's README for migration instructions
+- Change return type of `RoomXY::get_range_to` and input type of `RoomXY::in_range_to` to u8
+
+### Additions:
+
+- Make `RoomName::from_packed` and `RoomName::packed_repr` public
+- Add constants to `season_1` module representing the Season 1 score cycle mechanic
+
+0.21.3 (2024-08-14)
+===================
+
+### Bugfixes:
+
+- Temporarily pin to wasm-bindgen 0.2.92 due to incompatible generated javascript
+
+0.21.2 (2024-08-14)
+===================
+
+### Bugfixes:
+
+- Update for new string enum implementation in wasm-bindgen 0.2.93
+
+### Misc:
+
+- Move crate constant `ROOM_AREA` to extra constants module and make public
+
+0.21.1 (2024-06-28)
+===================
+
+### Additions:
+
+- Add function `Direction::iter` which returns an iterator over all the `Direction` enum values
+- Add function `RoomXY::neighbors` which returns an iterator over all the valid neighbors of
+  a given `RoomXY` position
+- Add static function `LocalCostMatrix::new_with_value` which returns a `LocalCostMatrix` with
+  every position set to a given `u8` value
+- Implement `JsCollectionIntoValue` and `JsCollectionFromValue` for `IntershardResourceType` and
+  `u32` to allow `game::resources()` return value to be used as expected
+- Add static function `RoomXY::new` to allow creating a new `RoomXY` from `RoomCoordinates`
+- Add static function `RoomXY::checked_new` to allow creating a new `RoomXY` from a (u8, u8)
+  pair, while checking the validity of the coordinates provided
+- Add function `RoomXY::towards` which returns a `RoomXY` between two `RoomXY` positions,
+  rounding towards the start position if necessary
+- Add function `RoomXY::between` which returns a `RoomXY` between two `RoomXY` positions,
+  rounding towards the target position if necessary
+- Add function `RoomXY::midpoint_between` which returns the `RoomXY` midpoint between
+  two `RoomXY` positions, rounding towards the target position if necessary
+- Add function `RoomXY::offset` which modifies a `RoomXY` in-place by a (i8, i8) offset
+- Add function `RoomXY::get_direction_to` which returns a `Direction` that is closest to
+  a given `RoomXY` position
+- Add function `RoomXY::get_range_to` which returns the Chebyshev Distance to a given
+  `RoomXY` position
+- Add function `RoomXY::in_range_to` which returns whether the Chebyshev Distance to a given
+  `RoomXY` position is less-than-or-equal-to a given distance
+- Add function `RoomXY::is_near_to` which returns whether a given `RoomXY` position is adjacent
+- Add function `RoomXY::is_equal_to` which returns whether a given `RoomXY` position is
+  the same position
+- Implement the `PartialOrd` and `Ord` traits for `RoomXY`
+- Implement the `Add<(i8, i8)>`, `Add<Direction>`, `Sub<(i8, i8)>`, `Sub<Direction>`,
+  and `Sub<RoomXY>` traits for `RoomXY`
+
+0.21.0 (2024-05-14)
+===================
+
+### Breaking:
+
 - Change return type of `Flag::name` and `StructureSpawn::name` to `String` from `JsString`
 - Change name of `LocalRoomTerrain::get` to `get_xy` for consistency with `RoomTerrain`
 - Change name of `constants::extra::CONSTRUCTION_SITE_STOMP_RATIO` to
@@ -38,6 +119,7 @@ Unreleased
 
 - Implement `JsCollectionFromValue` for `Direction`, `ObjectId<_>`
 - Implement `Debug` for `RouteStep`
+- Made the `AttackController` event deserialize correctly
 
 ### Misc:
 
