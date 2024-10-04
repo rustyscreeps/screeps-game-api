@@ -69,7 +69,7 @@ impl Serialize for RawObjectId {
 
 struct RawObjectIdVisitor;
 
-impl<'de> Visitor<'de> for RawObjectIdVisitor {
+impl Visitor<'_> for RawObjectIdVisitor {
     type Value = RawObjectId;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
