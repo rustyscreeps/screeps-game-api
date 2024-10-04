@@ -122,7 +122,7 @@ impl Part {
         PART_NUM_TO_STR_MAP.with(|map| {
             // SAFETY: &[Part] contains u8 values because it's repr(u8), safe to transmute
             // to &[u8]
-            part_nums_to_str_array(map, unsafe { std::mem::transmute(parts) })
+            part_nums_to_str_array(map, unsafe { std::mem::transmute::<&[Part], &[u8]>(parts) })
         })
     }
 
