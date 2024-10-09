@@ -7,7 +7,7 @@ use crate::{
     objects::RoomTerrain,
 };
 
-use super::{xy_to_terrain_index, RoomXY};
+use super::RoomXY;
 
 #[derive(Debug, Clone)]
 pub struct LocalRoomTerrain {
@@ -20,8 +20,7 @@ pub struct LocalRoomTerrain {
 impl LocalRoomTerrain {
     /// Gets the terrain at the specified position in this room.
     pub fn get_xy(&self, xy: RoomXY) -> Terrain {
-        // SAFETY: RoomXY is always a valid coordinate.
-        let byte = unsafe { self.bits.get_unchecked(xy_to_terrain_index(xy)) };
+        let byte = self.bits[xy.y][xy.x];
         // not using Terrain::from_u8() because `0b11` value, wall+swamp, happens
         // in commonly used server environments (notably the private server default
         // map), and is special-cased in the engine code; we special-case it here

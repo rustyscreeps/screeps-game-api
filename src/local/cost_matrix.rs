@@ -8,7 +8,7 @@ use crate::{
     traits::{CostMatrixGet, CostMatrixSet},
 };
 
-use super::{linear_index_to_xy, xy_to_linear_index, Position, RoomXY};
+use super::{linear_index_to_xy, Position, RoomXY, XMajor};
 
 /// A matrix of pathing costs for a room, stored in Rust memory.
 ///
@@ -121,19 +121,29 @@ impl From<&CostMatrix> for LocalCostMatrix {
     }
 }
 
+impl AsRef<XMajor<u8>> for LocalCostMatrix {
+    fn as_ref(&self) -> &XMajor<u8> {
+        XMajor::from_flat_ref(&self.bits)
+    }
+}
+
+impl AsMut<XMajor<u8>> for LocalCostMatrix {
+    fn as_mut(&mut self) -> &mut XMajor<u8> {
+        XMajor::from_flat_mut(&mut self.bits)
+    }
+}
+
 impl Index<RoomXY> for LocalCostMatrix {
     type Output = u8;
 
     fn index(&self, xy: RoomXY) -> &Self::Output {
-        // SAFETY: RoomXY is always a valid coordinate.
-        unsafe { self.bits.get_unchecked(xy_to_linear_index(xy)) }
+        &self.bits[xy.x][xy.y]
     }
 }
 
 impl IndexMut<RoomXY> for LocalCostMatrix {
     fn index_mut(&mut self, xy: RoomXY) -> &mut Self::Output {
-        // SAFETY: RoomXY is always a valid coordinate.
-        unsafe { self.bits.get_unchecked_mut(xy_to_linear_index(xy)) }
+        &mut self.bits[xy.x][xy.y]
     }
 }
 
