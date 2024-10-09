@@ -6,7 +6,10 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-use crate::{constants::ROOM_SIZE, ROOM_AREA};
+use crate::{
+    constants::{ROOM_SIZE, ROOM_USIZE},
+    ROOM_AREA,
+};
 
 #[derive(Debug, Clone, Copy)]
 pub struct OutOfBoundsError(pub u8);
@@ -144,46 +147,42 @@ impl TryFrom<u8> for RoomCoordinate {
     }
 }
 
-impl<T> Index<RoomCoordinate> for [T; ROOM_SIZE as usize] {
+impl<T> Index<RoomCoordinate> for [T; ROOM_USIZE] {
     type Output = T;
 
     fn index(&self, index: RoomCoordinate) -> &Self::Output {
-        // SAFETY: index.0 is a u8 < ROOM_SIZE, so it is always in-bounds for [T;
-        // ROOM_SIZE]
+        // SAFETY: index.0 is a u8 < ROOM_USIZE, so it is always in-bounds for [T;
+        // ROOM_USIZE]
         unsafe { self.get_unchecked(index.0 as usize) }
     }
 }
 
-impl<T> IndexMut<RoomCoordinate> for [T; ROOM_SIZE as usize] {
+impl<T> IndexMut<RoomCoordinate> for [T; ROOM_USIZE] {
     fn index_mut(&mut self, index: RoomCoordinate) -> &mut Self::Output {
-        // SAFETY: index.0 is a u8 < ROOM_SIZE, so it is always in-bounds for [T;
-        // ROOM_SIZE]
+        // SAFETY: index.0 is a u8 < ROOM_USIZE, so it is always in-bounds for [T;
+        // ROOM_USIZE]
         unsafe { self.get_unchecked_mut(index.0 as usize) }
     }
 }
 
 impl<T> Index<RoomCoordinate> for [T; ROOM_AREA] {
-    type Output = [T; ROOM_SIZE as usize];
+    type Output = [T; ROOM_USIZE];
 
     fn index(&self, index: RoomCoordinate) -> &Self::Output {
-        // SAFETY: ROOM_SIZE * ROOM_SIZE = ROOM_AREA, so [T; ROOM_AREA] and [[T;
-        // ROOM_SIZE]; ROOM_SIZE] have the same layout.
-        let this = unsafe {
-            &*(self as *const [T; ROOM_AREA]
-                as *const [[T; ROOM_SIZE as usize]; ROOM_SIZE as usize])
-        };
+        // SAFETY: ROOM_USIZE * ROOM_USIZE = ROOM_AREA, so [T; ROOM_AREA] and [[T;
+        // ROOM_USIZE]; ROOM_USIZE] have the same layout.
+        let this =
+            unsafe { &*(self as *const [T; ROOM_AREA] as *const [[T; ROOM_USIZE]; ROOM_USIZE]) };
         &this[index]
     }
 }
 
 impl<T> IndexMut<RoomCoordinate> for [T; ROOM_AREA] {
     fn index_mut(&mut self, index: RoomCoordinate) -> &mut Self::Output {
-        // SAFETY: ROOM_SIZE * ROOM_SIZE = ROOM_AREA, so [T; ROOM_AREA] and [[T;
-        // ROOM_SIZE]; ROOM_SIZE] have the same layout.
-        let this = unsafe {
-            &mut *(self as *mut [T; ROOM_AREA]
-                as *mut [[T; ROOM_SIZE as usize]; ROOM_SIZE as usize])
-        };
+        // SAFETY: ROOM_USIZE * ROOM_USIZE = ROOM_AREA, so [T; ROOM_AREA] and [[T;
+        // ROOM_USIZE]; ROOM_USIZE] have the same layout.
+        let this =
+            unsafe { &mut *(self as *mut [T; ROOM_AREA] as *mut [[T; ROOM_USIZE]; ROOM_USIZE]) };
         &mut this[index]
     }
 }
