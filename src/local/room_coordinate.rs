@@ -6,10 +6,7 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    constants::{ROOM_SIZE, ROOM_USIZE},
-    ROOM_AREA,
-};
+use crate::constants::{ROOM_AREA, ROOM_SIZE, ROOM_USIZE};
 
 #[derive(Debug, Clone, Copy)]
 pub struct OutOfBoundsError(pub u8);
