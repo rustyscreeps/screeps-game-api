@@ -96,19 +96,8 @@ impl RoomCoordinate {
     /// assert_eq!(forty_nine.checked_add(1), None);
     /// ```
     pub fn checked_add(self, rhs: i8) -> Option<RoomCoordinate> {
-        const ROOM_SIZE_I8: i8 = ROOM_SIZE as i8;
         self.assume_size_constraint();
-        match (self.0 as i8).checked_add(rhs) {
-            Some(result) => match result {
-                // less than 0
-                i8::MIN..=-1 => None,
-                // greater than 49
-                ROOM_SIZE_I8..=i8::MAX => None,
-                // SAFETY: we've checked that this coord is in the valid range
-                c => Some(unsafe { RoomCoordinate::unchecked_new(c as u8) }),
-            },
-            None => None,
-        }
+        RoomCoordinate::new(self.0.checked_add_signed(rhs)?).ok()
     }
 
     /// Get the coordinate adjusted by a certain value, saturating at the edges
@@ -129,15 +118,8 @@ impl RoomCoordinate {
     /// assert_eq!(forty_nine.saturating_add(i8::MIN), zero);
     /// ```
     pub fn saturating_add(self, rhs: i8) -> RoomCoordinate {
-        const ROOM_SIZE_I8: i8 = ROOM_SIZE as i8;
         self.assume_size_constraint();
-        let result = match (self.0 as i8).saturating_add(rhs) {
-            // less than 0, saturate to 0
-            i8::MIN..=-1 => 0,
-            // >= ROOM_SIZE, saturate to ROOM_SIZE - 1
-            ROOM_SIZE_I8..=i8::MAX => ROOM_SIZE - 1,
-            c => c as u8,
-        };
+        let result = self.0.saturating_add_signed(rhs).min(ROOM_SIZE - 1);
         // Optimizer will see the return is always Ok
         RoomCoordinate::new(result).unwrap_throw()
     }
