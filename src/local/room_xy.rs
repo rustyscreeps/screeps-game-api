@@ -124,14 +124,8 @@ impl RoomXY {
     /// assert_eq!(forty_nine.checked_add((1, 1)), None);
     /// ```
     pub fn checked_add(self, rhs: (i8, i8)) -> Option<RoomXY> {
-        let x = match self.x.checked_add(rhs.0) {
-            Some(x) => x,
-            None => return None,
-        };
-        let y = match self.y.checked_add(rhs.1) {
-            Some(y) => y,
-            None => return None,
-        };
+        let x = self.x.checked_add(rhs.0)?;
+        let y = self.y.checked_add(rhs.1)?;
         Some(RoomXY { x, y })
     }
 
