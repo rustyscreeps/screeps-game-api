@@ -1,10 +1,12 @@
 use std::{
     error::Error,
     fmt,
+    hint::assert_unchecked,
     ops::{Index, IndexMut},
 };
 
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::UnwrapThrowExt;
 
 use crate::constants::{ROOM_AREA, ROOM_SIZE, ROOM_USIZE};
 
@@ -20,7 +22,8 @@ impl fmt::Display for OutOfBoundsError {
 impl Error for OutOfBoundsError {}
 
 /// An X or Y coordinate in a room, restricted to the valid range of
-/// coordinates.
+/// coordinates. This restriction can be used in safety constraints, and is
+/// enforced by all safe `RoomCoordinate` constructors.
 #[derive(
     Debug, Hash, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize,
 )]
@@ -54,6 +57,18 @@ impl RoomCoordinate {
         RoomCoordinate(coord)
     }
 
+    /// Provides a hint to the compiler that the contained `u8` is smaller than
+    /// `ROOM_SIZE`. Allows for better optimized safe code that uses this
+    /// property.
+    pub fn assume_size_constraint(self) {
+        debug_assert!(self.0 < ROOM_SIZE);
+        // SAFETY: It is only safe to construct `RoomCoordinate` when self.0 <
+        // ROOM_SIZE.
+        unsafe {
+            assert_unchecked(self.0 < ROOM_SIZE);
+        }
+    }
+
     /// Get the integer value of this coordinate
     pub const fn u8(self) -> u8 {
         self.0
@@ -81,12 +96,14 @@ impl RoomCoordinate {
     /// assert_eq!(forty_nine.checked_add(1), None);
     /// ```
     pub fn checked_add(self, rhs: i8) -> Option<RoomCoordinate> {
+        const ROOM_SIZE_I8: i8 = ROOM_SIZE as i8;
+        self.assume_size_constraint();
         match (self.0 as i8).checked_add(rhs) {
             Some(result) => match result {
                 // less than 0
                 i8::MIN..=-1 => None,
                 // greater than 49
-                50..=i8::MAX => None,
+                ROOM_SIZE_I8..=i8::MAX => None,
                 // SAFETY: we've checked that this coord is in the valid range
                 c => Some(unsafe { RoomCoordinate::unchecked_new(c as u8) }),
             },
@@ -112,15 +129,17 @@ impl RoomCoordinate {
     /// assert_eq!(forty_nine.saturating_add(i8::MIN), zero);
     /// ```
     pub fn saturating_add(self, rhs: i8) -> RoomCoordinate {
+        const ROOM_SIZE_I8: i8 = ROOM_SIZE as i8;
+        self.assume_size_constraint();
         let result = match (self.0 as i8).saturating_add(rhs) {
             // less than 0, saturate to 0
             i8::MIN..=-1 => 0,
-            // greater than 49, saturate to 49
-            50..=i8::MAX => ROOM_SIZE - 1,
+            // >= ROOM_SIZE, saturate to ROOM_SIZE - 1
+            ROOM_SIZE_I8..=i8::MAX => ROOM_SIZE - 1,
             c => c as u8,
         };
-        // SAFETY: we've ensured that this coord is in the valid range
-        unsafe { RoomCoordinate::unchecked_new(result) }
+        // Optimizer will see the return is always Ok
+        RoomCoordinate::new(result).unwrap_throw()
     }
 }
 
@@ -148,17 +167,15 @@ impl<T> Index<RoomCoordinate> for [T; ROOM_USIZE] {
     type Output = T;
 
     fn index(&self, index: RoomCoordinate) -> &Self::Output {
-        // SAFETY: index.0 is a u8 < ROOM_USIZE, so it is always in-bounds for [T;
-        // ROOM_USIZE]
-        unsafe { self.get_unchecked(index.0 as usize) }
+        index.assume_size_constraint();
+        &self[index.0 as usize]
     }
 }
 
 impl<T> IndexMut<RoomCoordinate> for [T; ROOM_USIZE] {
     fn index_mut(&mut self, index: RoomCoordinate) -> &mut Self::Output {
-        // SAFETY: index.0 is a u8 < ROOM_USIZE, so it is always in-bounds for [T;
-        // ROOM_USIZE]
-        unsafe { self.get_unchecked_mut(index.0 as usize) }
+        index.assume_size_constraint();
+        &mut self[index.0 as usize]
     }
 }
 
