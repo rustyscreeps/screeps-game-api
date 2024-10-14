@@ -97,7 +97,14 @@ impl RoomCoordinate {
     /// ```
     pub fn checked_add(self, rhs: i8) -> Option<RoomCoordinate> {
         self.assume_size_constraint();
-        RoomCoordinate::new(self.0.checked_add_signed(rhs)?).ok()
+        // Why this works, assuming ROOM_SIZE < i8::MAX + 1 == 128 and ignoring the
+        // test:
+        //   - if rhs < 0: the smallest value this can produce is -128, which casted to
+        //     u8 is 128. The closer rhs is to 0, the larger the cast sum is. So if
+        //     ROOM_SIZE <= i8::MAX, any underflow will fail the x < ROOM_SIZE check.
+        //   - if rhs > 0: as long as self.0 <= i8::MAX, self.0 + rhs <= 2 * i8::MAX <
+        //     256, so there isn't unsigned overflow.
+        RoomCoordinate::new(self.0.wrapping_add_signed(rhs)).ok()
     }
 
     /// Get the coordinate adjusted by a certain value, saturating at the edges
@@ -180,5 +187,79 @@ impl<T> IndexMut<RoomCoordinate> for [T; ROOM_AREA] {
         let this =
             unsafe { &mut *(self as *mut [T; ROOM_AREA] as *mut [[T; ROOM_USIZE]; ROOM_USIZE]) };
         &mut this[index]
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn checked_add() {
+        for coord_inner in 0..ROOM_SIZE {
+            let coord = RoomCoordinate::new(coord_inner).unwrap();
+            for rhs in i8::MIN..=i8::MAX {
+                let sum = coord.checked_add(rhs);
+                assert_eq!(
+                    sum.is_some(),
+                    (0..ROOM_SIZE as i16).contains(&(coord_inner as i16 + rhs as i16))
+                );
+                if let Some(res) = sum {
+                    assert_eq!(res.u8(), (coord_inner as i16 + rhs as i16) as u8);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn saturating_add() {
+        for coord_inner in 0..ROOM_SIZE {
+            let coord = RoomCoordinate::new(coord_inner).unwrap();
+            for rhs in i8::MIN..=i8::MAX {
+                assert_eq!(
+                    coord.saturating_add(rhs).u8(),
+                    (coord_inner as i16 + rhs as i16)
+                        .max(0)
+                        .min(ROOM_SIZE as i16 - 1) as u8
+                )
+            }
+        }
+    }
+
+    #[test]
+    fn index_room_size() {
+        let mut base: Box<[u8; ROOM_USIZE]> = (0..50)
+            .collect::<Vec<u8>>()
+            .into_boxed_slice()
+            .try_into()
+            .unwrap();
+        for i in 0..ROOM_SIZE {
+            let coord = RoomCoordinate::new(i).unwrap();
+            assert_eq!(base[coord], i);
+            base[coord] += 1;
+        }
+        base.iter()
+            .zip(1..51)
+            .for_each(|(&actual, expected)| assert_eq!(actual, expected));
+    }
+
+    #[test]
+    fn index_room_area() {
+        let mut base: Box<[u8; ROOM_AREA]> = Box::new([0; ROOM_AREA]);
+        for i in 0..ROOM_USIZE {
+            for j in 0..ROOM_USIZE {
+                base[i * ROOM_USIZE + j] = i as u8;
+            }
+        }
+
+        for i in 0..ROOM_SIZE {
+            let coord = RoomCoordinate::new(i).unwrap();
+            assert_eq!(base[coord], [i; 50]);
+            base[coord][0] += 1;
+        }
+
+        for i in 0..ROOM_SIZE {
+            assert_eq!(base[i as usize * 50], i + 1);
+        }
     }
 }
