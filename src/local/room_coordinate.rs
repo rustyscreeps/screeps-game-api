@@ -218,9 +218,7 @@ mod test {
             for rhs in i8::MIN..=i8::MAX {
                 assert_eq!(
                     coord.saturating_add(rhs).u8(),
-                    (coord_inner as i16 + rhs as i16)
-                        .max(0)
-                        .min(ROOM_SIZE as i16 - 1) as u8
+                    (coord_inner as i16 + rhs as i16).clamp(0, ROOM_SIZE as i16 - 1) as u8
                 )
             }
         }
