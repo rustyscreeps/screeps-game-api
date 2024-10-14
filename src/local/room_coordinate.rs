@@ -1,8 +1,8 @@
 use std::{
     error::Error,
-    fmt,
+    fmt::{self, Display},
     hint::assert_unchecked,
-    ops::{Index, IndexMut},
+    ops::{Index, IndexMut, Neg, Sub},
 };
 
 use serde::{Deserialize, Serialize};
@@ -28,6 +28,7 @@ impl Error for OutOfBoundsError {}
     Debug, Hash, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize,
 )]
 #[serde(try_from = "u8", into = "u8")]
+#[repr(transparent)]
 pub struct RoomCoordinate(u8);
 
 impl RoomCoordinate {
@@ -110,6 +111,12 @@ impl RoomCoordinate {
         RoomCoordinate::new(self.0.wrapping_add_signed(rhs)).ok()
     }
 
+    pub fn checked_add_offset(self, rhs: RoomOffset) -> Option<RoomCoordinate> {
+        self.assume_size_constraint();
+        rhs.assume_bounds_constraint();
+        RoomCoordinate::new(self.0.wrapping_add_signed(rhs.0)).ok()
+    }
+
     /// Get the coordinate adjusted by a certain value, saturating at the edges
     /// of the room if the result would be outside of the valid range.
     ///
@@ -137,11 +144,74 @@ impl RoomCoordinate {
             RoomCoordinate::new(res.min(ROOM_SIZE - 1)).unwrap_throw()
         }
     }
+
+    pub fn saturating_add_offset(self, rhs: RoomOffset) -> Self {
+        self.assume_size_constraint();
+        rhs.assume_bounds_constraint();
+        let result = (self.0 as i8 + rhs.0).clamp(0, ROOM_SIZE_I8 - 1);
+        RoomCoordinate::new(result as u8).unwrap_throw()
+    }
+
+    pub fn overflowing_add(self, rhs: i8) -> (RoomCoordinate, bool) {
+        self.assume_size_constraint();
+        let raw = self.0 as i16 + rhs as i16;
+        if raw >= ROOM_SIZE as i16 {
+            (
+                RoomCoordinate::new((raw % ROOM_SIZE as i16) as u8).unwrap_throw(),
+                true,
+            )
+        } else if raw < 0 {
+            (
+                RoomCoordinate::new(((raw + 150) % ROOM_SIZE as i16) as u8).unwrap_throw(),
+                true,
+            )
+        } else {
+            (RoomCoordinate::new(raw as u8).unwrap_throw(), false)
+        }
+    }
+
+    pub fn overflowing_add_offset(self, rhs: RoomOffset) -> (RoomCoordinate, bool) {
+        self.assume_size_constraint();
+        rhs.assume_bounds_constraint();
+        let raw = self.0 as i8 + rhs.0;
+        if raw >= ROOM_SIZE_I8 {
+            (
+                RoomCoordinate::new((raw - ROOM_SIZE_I8) as u8).unwrap_throw(),
+                true,
+            )
+        } else if raw < 0 {
+            (
+                RoomCoordinate::new((raw + ROOM_SIZE_I8) as u8).unwrap_throw(),
+                true,
+            )
+        } else {
+            (RoomCoordinate::new(raw as u8).unwrap_throw(), false)
+        }
+    }
+
+    pub fn wrapping_add(self, rhs: i8) -> Self {
+        self.overflowing_add(rhs).0
+    }
+
+    pub fn wrapping_add_offset(self, rhs: RoomOffset) -> Self {
+        self.overflowing_add_offset(rhs).0
+    }
+
+    pub unsafe fn unchecked_add(self, rhs: i8) -> Self {
+        self.assume_size_constraint();
+        Self::unchecked_new((self.0 as i8).unchecked_add(rhs) as u8)
+    }
+
+    pub unsafe fn unchecked_add_offset(self, rhs: RoomOffset) -> Self {
+        self.assume_size_constraint();
+        rhs.assume_bounds_constraint();
+        Self::unchecked_new((self.0 as i8).unchecked_add(rhs.0) as u8)
+    }
 }
 
 impl fmt::Display for RoomCoordinate {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
+        self.0.fmt(f)
     }
 }
 
@@ -156,6 +226,12 @@ impl TryFrom<u8> for RoomCoordinate {
 
     fn try_from(coord: u8) -> Result<Self, Self::Error> {
         RoomCoordinate::new(coord)
+    }
+}
+
+impl AsRef<u8> for RoomCoordinate {
+    fn as_ref(&self) -> &u8 {
+        &self.0
     }
 }
 
@@ -194,6 +270,127 @@ impl<T> IndexMut<RoomCoordinate> for [T; ROOM_AREA] {
         let this =
             unsafe { &mut *(self as *mut [T; ROOM_AREA] as *mut [[T; ROOM_USIZE]; ROOM_USIZE]) };
         &mut this[index]
+    }
+}
+
+impl Sub for RoomCoordinate {
+    type Output = RoomOffset;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self.assume_size_constraint();
+        rhs.assume_size_constraint();
+        RoomOffset::new(self.0 as i8 - rhs.0 as i8).unwrap_throw()
+    }
+}
+
+const ROOM_SIZE_I8: i8 = {
+    // If this fails, we need to rework the arithmetic code
+    debug_assert!(2 * ROOM_SIZE <= i8::MAX as u8);
+    ROOM_SIZE as i8
+};
+
+/// An offset between two coordinates in a room. Restricted to the open range (-ROOM_SIZE, ROOM_SIZE). This bound can be used in safety constraints
+#[derive(
+    Debug, Hash, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize,
+)]
+#[serde(try_from = "i8", into = "i8")]
+#[repr(transparent)]
+pub struct RoomOffset(i8);
+
+impl RoomOffset {
+    pub const fn new(offset: i8) -> Option<Self> {
+        if -ROOM_SIZE_I8 < offset && offset < ROOM_SIZE_I8 {
+            Some(Self(offset))
+        } else {
+            None
+        }
+    }
+
+    pub unsafe fn unchecked_new(offset: i8) -> Self {
+        debug_assert!(
+            -ROOM_SIZE_I8 < offset && offset < ROOM_SIZE_I8,
+            "Out of bounds unchecked offset: {offset}"
+        );
+        Self(offset)
+    }
+
+    pub fn assume_bounds_constraint(self) {
+        unsafe {
+            assert_unchecked(-ROOM_SIZE_I8 < self.0 && self.0 < ROOM_SIZE_I8);
+        }
+    }
+
+    pub fn checked_add(self, rhs: Self) -> Option<Self> {
+        self.assume_bounds_constraint();
+        rhs.assume_bounds_constraint();
+        Self::new(self.0 + rhs.0)
+    }
+
+    pub fn saturating_add(self, rhs: Self) -> Self {
+        self.assume_bounds_constraint();
+        rhs.assume_bounds_constraint();
+        Self::new((self.0 + rhs.0).clamp(-ROOM_SIZE_I8 + 1, ROOM_SIZE_I8 - 1)).unwrap_throw()
+    }
+
+    pub fn overflowing_add(self, rhs: Self) -> (Self, bool) {
+        self.assume_bounds_constraint();
+        rhs.assume_bounds_constraint();
+        let raw = self.0 + rhs.0;
+        if raw <= -ROOM_SIZE_I8 {
+            (Self::new(raw + ROOM_SIZE_I8).unwrap_throw(), true)
+        } else if raw >= ROOM_SIZE_I8 {
+            (Self::new(raw - ROOM_SIZE_I8).unwrap_throw(), true)
+        } else {
+            (Self::new(raw).unwrap_throw(), false)
+        }
+    }
+
+    pub fn wrapping_add(self, rhs: Self) -> Self {
+        self.overflowing_add(rhs).0
+    }
+
+    pub unsafe fn unchecked_add(self, rhs: Self) -> Self {
+        self.assume_bounds_constraint();
+        rhs.assume_bounds_constraint();
+        Self::unchecked_new(self.0.unchecked_add(rhs.0))
+    }
+}
+
+impl From<RoomOffset> for i8 {
+    fn from(offset: RoomOffset) -> i8 {
+        offset.0
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct OffsetOutOfBoundsError(pub i8);
+
+impl std::fmt::Display for OffsetOutOfBoundsError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Out of bounds offset: {}", self.0)
+    }
+}
+
+impl TryFrom<i8> for RoomOffset {
+    type Error = OffsetOutOfBoundsError;
+
+    fn try_from(offset: i8) -> Result<Self, Self::Error> {
+        Self::new(offset).ok_or(OffsetOutOfBoundsError(offset))
+    }
+}
+
+impl AsRef<i8> for RoomOffset {
+    fn as_ref(&self) -> &i8 {
+        &self.0
+    }
+}
+
+impl Neg for RoomOffset {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        self.assume_bounds_constraint();
+        Self::new(-self.0).unwrap_throw()
     }
 }
 
