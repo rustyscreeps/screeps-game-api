@@ -260,7 +260,10 @@ mod test {
 
         for i in 0..ROOM_SIZE {
             let coord = RoomCoordinate::new(i).unwrap();
-            assert!(base[coord].iter().copied().all(|val| val == i as u16 * ROOM_SIZE as u16));
+            assert!(base[coord]
+                .iter()
+                .copied()
+                .all(|val| val == i as u16 * ROOM_SIZE as u16);
             for j in 0..ROOM_USIZE {
                 base[coord][j] += j as u16;
             }
