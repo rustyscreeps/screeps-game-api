@@ -239,8 +239,9 @@ mod test {
             base[coord] += 1;
         }
         base.iter()
+            .copied()
             .zip(1..51)
-            .for_each(|(&actual, expected)| assert_eq!(actual, expected));
+            .for_each(|(actual, expected)| assert_eq!(actual, expected));
     }
 
     #[test]
@@ -254,7 +255,7 @@ mod test {
 
         for i in 0..ROOM_SIZE {
             let coord = RoomCoordinate::new(i).unwrap();
-            assert_eq!(base[coord], [i; 50]);
+            assert!(base[coord].iter().copied().all(|val| val == i));
             base[coord][0] += 1;
         }
 
