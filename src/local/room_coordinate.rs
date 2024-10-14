@@ -263,7 +263,7 @@ mod test {
             assert!(base[coord]
                 .iter()
                 .copied()
-                .all(|val| val == i as u16 * ROOM_SIZE as u16);
+                .all(|val| val == i as u16 * ROOM_SIZE as u16));
             for j in 0..ROOM_USIZE {
                 base[coord][j] += j as u16;
             }
