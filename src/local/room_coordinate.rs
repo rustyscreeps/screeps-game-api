@@ -246,21 +246,24 @@ mod test {
 
     #[test]
     fn index_room_area() {
-        let mut base: Box<[u8; ROOM_AREA]> = Box::new([0; ROOM_AREA]);
+        let mut base: Box<[u16; ROOM_AREA]> = Box::new([0; ROOM_AREA]);
         for i in 0..ROOM_USIZE {
             for j in 0..ROOM_USIZE {
-                base[i * ROOM_USIZE + j] = i as u8;
+                base[i * ROOM_USIZE + j] = i as u16 * 50;
             }
         }
 
         for i in 0..ROOM_SIZE {
             let coord = RoomCoordinate::new(i).unwrap();
-            assert!(base[coord].iter().copied().all(|val| val == i));
-            base[coord][0] += 1;
+            assert!(base[coord].iter().copied().all(|val| val == i as u16 * 50));
+            for j in 0..ROOM_USIZE {
+                base[coord][j] += j as u16;
+            }
         }
 
-        for i in 0..ROOM_SIZE {
-            assert_eq!(base[i as usize * 50], i + 1);
-        }
+        assert_eq!(
+            (0..ROOM_AREA as u16).collect::<Vec<u16>>().as_slice(),
+            base.as_slice()
+        );
     }
 }
