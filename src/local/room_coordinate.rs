@@ -64,7 +64,7 @@ impl RoomCoordinate {
     /// Provides a hint to the compiler that the contained `u8` is smaller than
     /// `ROOM_SIZE`. Allows for better optimized safe code that uses this
     /// property.
-    pub fn assume_size_constraint(self) {
+    pub fn assume_bounds_constraint(self) {
         debug_assert!(self.0 < ROOM_SIZE);
         // SAFETY: It is only safe to construct `RoomCoordinate` when self.0 <
         // ROOM_SIZE.
@@ -100,7 +100,7 @@ impl RoomCoordinate {
     /// assert_eq!(forty_nine.checked_add(1), None);
     /// ```
     pub fn checked_add(self, rhs: i8) -> Option<RoomCoordinate> {
-        self.assume_size_constraint();
+        self.assume_bounds_constraint();
         // Why this works, assuming ROOM_SIZE < i8::MAX + 1 == 128 and ignoring the
         // test:
         //   - if rhs < 0: the smallest value this can produce is -128, which casted to
@@ -112,7 +112,7 @@ impl RoomCoordinate {
     }
 
     pub fn checked_add_offset(self, rhs: RoomOffset) -> Option<RoomCoordinate> {
-        self.assume_size_constraint();
+        self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
         RoomCoordinate::new(self.0.wrapping_add_signed(rhs.0)).ok()
     }
@@ -135,7 +135,7 @@ impl RoomCoordinate {
     /// assert_eq!(forty_nine.saturating_add(i8::MIN), zero);
     /// ```
     pub fn saturating_add(self, rhs: i8) -> RoomCoordinate {
-        self.assume_size_constraint();
+        self.assume_bounds_constraint();
         let (res, overflow) = self.0.overflowing_add_signed(rhs);
         if overflow {
             RoomCoordinate::MIN
@@ -146,14 +146,14 @@ impl RoomCoordinate {
     }
 
     pub fn saturating_add_offset(self, rhs: RoomOffset) -> Self {
-        self.assume_size_constraint();
+        self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
         let result = (self.0 as i8 + rhs.0).clamp(0, ROOM_SIZE_I8 - 1);
         RoomCoordinate::new(result as u8).unwrap_throw()
     }
 
     pub fn overflowing_add(self, rhs: i8) -> (RoomCoordinate, bool) {
-        self.assume_size_constraint();
+        self.assume_bounds_constraint();
         let raw = self.0 as i16 + rhs as i16;
         if raw >= ROOM_SIZE as i16 {
             (
@@ -171,7 +171,7 @@ impl RoomCoordinate {
     }
 
     pub fn overflowing_add_offset(self, rhs: RoomOffset) -> (RoomCoordinate, bool) {
-        self.assume_size_constraint();
+        self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
         let raw = self.0 as i8 + rhs.0;
         if raw >= ROOM_SIZE_I8 {
@@ -198,12 +198,12 @@ impl RoomCoordinate {
     }
 
     pub unsafe fn unchecked_add(self, rhs: i8) -> Self {
-        self.assume_size_constraint();
+        self.assume_bounds_constraint();
         Self::unchecked_new((self.0 as i8).unchecked_add(rhs) as u8)
     }
 
     pub unsafe fn unchecked_add_offset(self, rhs: RoomOffset) -> Self {
-        self.assume_size_constraint();
+        self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
         Self::unchecked_new((self.0 as i8).unchecked_add(rhs.0) as u8)
     }
@@ -239,14 +239,14 @@ impl<T> Index<RoomCoordinate> for [T; ROOM_USIZE] {
     type Output = T;
 
     fn index(&self, index: RoomCoordinate) -> &Self::Output {
-        index.assume_size_constraint();
+        index.assume_bounds_constraint();
         &self[index.0 as usize]
     }
 }
 
 impl<T> IndexMut<RoomCoordinate> for [T; ROOM_USIZE] {
     fn index_mut(&mut self, index: RoomCoordinate) -> &mut Self::Output {
-        index.assume_size_constraint();
+        index.assume_bounds_constraint();
         &mut self[index.0 as usize]
     }
 }
@@ -277,8 +277,8 @@ impl Sub for RoomCoordinate {
     type Output = RoomOffset;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        self.assume_size_constraint();
-        rhs.assume_size_constraint();
+        self.assume_bounds_constraint();
+        rhs.assume_bounds_constraint();
         RoomOffset::new(self.0 as i8 - rhs.0 as i8).unwrap_throw()
     }
 }
