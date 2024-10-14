@@ -31,6 +31,9 @@ impl Error for OutOfBoundsError {}
 pub struct RoomCoordinate(u8);
 
 impl RoomCoordinate {
+    pub const MAX: Self = Self(ROOM_SIZE - 1);
+    pub const MIN: Self = Self(0);
+
     /// Create a `RoomCoordinate` from a `u8`, returning an error if the
     /// coordinate is not in the valid room size range
     #[inline]
@@ -126,9 +129,13 @@ impl RoomCoordinate {
     /// ```
     pub fn saturating_add(self, rhs: i8) -> RoomCoordinate {
         self.assume_size_constraint();
-        let result = self.0.saturating_add_signed(rhs).min(ROOM_SIZE - 1);
-        // Optimizer will see the return is always Ok
-        RoomCoordinate::new(result).unwrap_throw()
+        let (res, overflow) = self.0.overflowing_add_signed(rhs);
+        if overflow {
+            RoomCoordinate::MIN
+        } else {
+            // Optimizer will see the return is always Ok
+            RoomCoordinate::new(res.min(ROOM_SIZE - 1)).unwrap_throw()
+        }
     }
 }
 
