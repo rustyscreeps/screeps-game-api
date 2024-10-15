@@ -1,6 +1,6 @@
 use std::{
     error::Error,
-    fmt::{self, Display},
+    fmt,
     hint::assert_unchecked,
     ops::{Index, IndexMut, Neg, Sub},
 };
@@ -111,6 +111,7 @@ impl RoomCoordinate {
         RoomCoordinate::new(self.0.wrapping_add_signed(rhs)).ok()
     }
 
+    /// [`checked_add`](Self::checked_add) that accepts a [`RoomOffset`].
     pub fn checked_add_offset(self, rhs: RoomOffset) -> Option<RoomCoordinate> {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
@@ -145,6 +146,7 @@ impl RoomCoordinate {
         }
     }
 
+    /// [`saturating_add`](Self::saturating_add) that accepts a [`RoomOffset`].
     pub fn saturating_add_offset(self, rhs: RoomOffset) -> Self {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
@@ -152,6 +154,31 @@ impl RoomCoordinate {
         RoomCoordinate::new(result as u8).unwrap_throw()
     }
 
+    /// Get the coordinate adjusted by a certain value, wrapping around ta the
+    /// edges of the room if the result would be outside of the valid range.
+    /// Returns a [`bool`] indicating whether there was wrapping.
+    ///
+    /// Can be used to e.g. implement addition for
+    /// [`Position`](crate::Position)s.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomCoordinate;
+    ///
+    /// assert_eq!(
+    ///     RoomCoordinate::MIN.overflowing_add(1),
+    ///     (RoomCoordinate::new(1).unwrap(), false)
+    /// );
+    /// assert_eq!(
+    ///     RoomCoordinate::MIN.overflowing_add(-1),
+    ///     (RoomCoordinate::MAX, true)
+    /// );
+    /// assert_eq!(
+    ///     RoomCoordinate::MAX.overflowing_add(1),
+    ///     (RoomCoordinate::MIN, true)
+    /// );
+    /// ```
     pub fn overflowing_add(self, rhs: i8) -> (RoomCoordinate, bool) {
         self.assume_bounds_constraint();
         let raw = self.0 as i16 + rhs as i16;
@@ -170,6 +197,8 @@ impl RoomCoordinate {
         }
     }
 
+    /// [`overflowing_add`](Self::overflowing_add) that accepts a
+    /// [`RoomOffset`].
     pub fn overflowing_add_offset(self, rhs: RoomOffset) -> (RoomCoordinate, bool) {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
@@ -189,10 +218,26 @@ impl RoomCoordinate {
         }
     }
 
+    /// Get the coordinate adjusted by a certain value, wrapping around ta the
+    /// edges of the room if the result would be outside of the valid range.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomCoordinate;
+    ///
+    /// assert_eq!(
+    ///     RoomCoordinate::MIN.wrapping_add(1),
+    ///     RoomCoordinate::new(1).unwrap()
+    /// );
+    /// assert_eq!(RoomCoordinate::MIN.wrapping_add(-1), RoomCoordinate::MAX);
+    /// assert_eq!(RoomCoordinate::MAX.wrapping_add(1), RoomCoordinate::MIN);
+    /// ```
     pub fn wrapping_add(self, rhs: i8) -> Self {
         self.overflowing_add(rhs).0
     }
 
+    /// [`wrapping_add`](Self::wrapping_add) that accepts a [`RoomOffset`].
     pub fn wrapping_add_offset(self, rhs: RoomOffset) -> Self {
         self.overflowing_add_offset(rhs).0
     }
@@ -289,7 +334,9 @@ const ROOM_SIZE_I8: i8 = {
     ROOM_SIZE as i8
 };
 
-/// An offset between two coordinates in a room. Restricted to the open range (-ROOM_SIZE, ROOM_SIZE). This bound can be used in safety constraints
+/// An offset between two coordinates in a room. Restricted to the open range
+/// (-[`ROOM_SIZE`], [`ROOM_SIZE`]). This bound can be used in safety
+/// constraints.
 #[derive(
     Debug, Hash, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize,
 )]
@@ -354,6 +401,11 @@ impl RoomOffset {
         rhs.assume_bounds_constraint();
         Self::unchecked_new(self.0.unchecked_add(rhs.0))
     }
+
+    pub fn abs(self) -> u8 {
+        self.assume_bounds_constraint();
+        self.0.abs() as u8
+    }
 }
 
 impl From<RoomOffset> for i8 {
@@ -365,7 +417,7 @@ impl From<RoomOffset> for i8 {
 #[derive(Debug, Clone, Copy)]
 pub struct OffsetOutOfBoundsError(pub i8);
 
-impl std::fmt::Display for OffsetOutOfBoundsError {
+impl fmt::Display for OffsetOutOfBoundsError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Out of bounds offset: {}", self.0)
     }
