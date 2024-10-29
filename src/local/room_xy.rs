@@ -1,9 +1,13 @@
-use std::{cmp::Ordering, fmt};
+use std::{
+    cmp::Ordering,
+    fmt,
+    ops::{Index, IndexMut},
+};
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 use super::room_coordinate::{OutOfBoundsError, RoomCoordinate};
-use crate::constants::{Direction, ROOM_AREA, ROOM_SIZE};
+use crate::constants::{Direction, ROOM_AREA, ROOM_USIZE};
 
 mod approximate_offsets;
 mod extra_math;
@@ -16,7 +20,7 @@ mod game_math;
 /// [`LocalCostMatrix`]: crate::local::LocalCostMatrix
 #[inline]
 pub const fn xy_to_linear_index(xy: RoomXY) -> usize {
-    xy.x.u8() as usize * ROOM_SIZE as usize + xy.y.u8() as usize
+    xy.x.u8() as usize * ROOM_USIZE + xy.y.u8() as usize
 }
 
 /// Converts a linear index from the internal representation of a [`CostMatrix`]
@@ -30,8 +34,8 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
     assert!(idx < ROOM_AREA, "Out of bounds index: {idx}");
     // SAFETY: bounds checking above ensures both are within range.
     RoomXY {
-        x: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_SIZE as usize)) as u8) },
-        y: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_SIZE as usize)) as u8) },
+        x: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_USIZE)) as u8) },
+        y: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_USIZE)) as u8) },
     }
 }
 
@@ -42,7 +46,7 @@ pub fn linear_index_to_xy(idx: usize) -> RoomXY {
 /// [`LocalRoomTerrain`]: crate::local::LocalRoomTerrain
 #[inline]
 pub const fn xy_to_terrain_index(xy: RoomXY) -> usize {
-    xy.y.u8() as usize * ROOM_SIZE as usize + xy.x.u8() as usize
+    xy.y.u8() as usize * ROOM_USIZE + xy.x.u8() as usize
 }
 
 /// Converts a terrain index from the internal representation of a
@@ -56,8 +60,8 @@ pub fn terrain_index_to_xy(idx: usize) -> RoomXY {
     assert!(idx < ROOM_AREA, "Out of bounds index: {idx}");
     // SAFETY: bounds checking above ensures both are within range.
     RoomXY {
-        x: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_SIZE as usize)) as u8) },
-        y: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_SIZE as usize)) as u8) },
+        x: unsafe { RoomCoordinate::unchecked_new((idx % (ROOM_USIZE)) as u8) },
+        y: unsafe { RoomCoordinate::unchecked_new((idx / (ROOM_USIZE)) as u8) },
     }
 }
 
@@ -86,8 +90,8 @@ impl RoomXY {
     /// the range of valid values.
     ///
     /// # Safety
-    /// Calling this method with `x >= ROOM_SIZE` or `y >= ROOM_SIZE` can result
-    /// in undefined behaviour when the resulting `RoomXY` is used.
+    /// Calling this method with `x >= ROOM_SIZE` or `y >= ROOM_SIZE` can
+    /// result in undefined behaviour when the resulting `RoomXY` is used.
     #[inline]
     pub unsafe fn unchecked_new(x: u8, y: u8) -> Self {
         RoomXY {
@@ -120,14 +124,8 @@ impl RoomXY {
     /// assert_eq!(forty_nine.checked_add((1, 1)), None);
     /// ```
     pub fn checked_add(self, rhs: (i8, i8)) -> Option<RoomXY> {
-        let x = match self.x.checked_add(rhs.0) {
-            Some(x) => x,
-            None => return None,
-        };
-        let y = match self.y.checked_add(rhs.1) {
-            Some(y) => y,
-            None => return None,
-        };
+        let x = self.x.checked_add(rhs.0)?;
+        let y = self.y.checked_add(rhs.1)?;
         Some(RoomXY { x, y })
     }
 
@@ -338,9 +336,127 @@ impl<'de> Deserialize<'de> for RoomXY {
             RoomXY::try_from(xy).map_err(|err: OutOfBoundsError| {
                 de::Error::invalid_value(
                     de::Unexpected::Unsigned(err.0 as u64),
-                    &format!("a non-negative integer less-than {ROOM_SIZE}").as_str(),
+                    &format!("a non-negative integer less-than {ROOM_USIZE}").as_str(),
                 )
             })
         }
+    }
+}
+
+/// A wrapper struct indicating that the inner array should be indexed X major,
+/// i.e. ```
+/// use screeps::{
+///     constants::ROOM_USIZE,
+///     local::{XMajor, XY},
+/// };
+///
+/// let mut x_major = XMajor([[0_u8; ROOM_USIZE]; ROOM_USIZE]);
+/// x_major.0[10][0] = 1;
+/// let xy = RoomXY::checked_new(10, 0).unwrap();
+/// assert_eq!(x_major[xy], 1);
+/// ```
+#[repr(transparent)]
+pub struct XMajor<T>(pub [[T; ROOM_USIZE]; ROOM_USIZE]);
+
+impl<T> XMajor<T> {
+    pub fn from_ref(arr: &[[T; ROOM_USIZE]; ROOM_USIZE]) -> &Self {
+        // SAFETY: XMajor is a repr(transparent) wrapper around [[T; ROOM_USIZE];
+        // ROOM_USIZE], so casting references of one to the other is safe.
+        unsafe { &*(arr as *const [[T; ROOM_USIZE]; ROOM_USIZE] as *const Self) }
+    }
+
+    pub fn from_flat_ref(arr: &[T; ROOM_AREA]) -> &Self {
+        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is identical
+        // in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
+        Self::from_ref(unsafe {
+            &*(arr as *const [T; ROOM_AREA] as *const [[T; ROOM_USIZE]; ROOM_USIZE])
+        })
+    }
+
+    pub fn from_mut(arr: &mut [[T; ROOM_USIZE]; ROOM_USIZE]) -> &mut Self {
+        // SAFETY: XMajor is a repr(transparent) wrapper around [[T; ROOM_USIZE];
+        // ROOM_USIZE], so casting references of one to the other is safe.
+        unsafe { &mut *(arr as *mut [[T; ROOM_USIZE]; ROOM_USIZE] as *mut Self) }
+    }
+
+    pub fn from_flat_mut(arr: &mut [T; ROOM_AREA]) -> &mut Self {
+        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is identical
+        // in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
+        Self::from_mut(unsafe {
+            &mut *(arr as *mut [T; ROOM_AREA] as *mut [[T; ROOM_USIZE]; ROOM_USIZE])
+        })
+    }
+}
+
+impl<T> Index<RoomXY> for XMajor<T> {
+    type Output = T;
+
+    fn index(&self, index: RoomXY) -> &Self::Output {
+        &self.0[index.x][index.y]
+    }
+}
+
+impl<T> IndexMut<RoomXY> for XMajor<T> {
+    fn index_mut(&mut self, index: RoomXY) -> &mut Self::Output {
+        &mut self.0[index.x][index.y]
+    }
+}
+
+/// A wrapper struct indicating that the inner array should be indexed Y major,
+/// i.e. ```
+/// use screeps::{
+///     constants::ROOM_USIZE,
+///     local::{YMajor, XY},
+/// };
+///
+/// let mut y_major = YMajor([[0_u8; ROOM_USIZE]; ROOM_USIZE]);
+/// y_major.0[0][10] = 1;
+/// let xy = RoomXY::checked_new(10, 0).unwrap();
+/// assert_eq!(y_major[xy], 1);
+/// ```
+#[repr(transparent)]
+pub struct YMajor<T>(pub [[T; ROOM_USIZE]; ROOM_USIZE]);
+
+impl<T> YMajor<T> {
+    pub fn from_ref(arr: &[[T; ROOM_USIZE]; ROOM_USIZE]) -> &Self {
+        // SAFETY: XMajor is a repr(transparent) wrapper around [[T; ROOM_USIZE];
+        // ROOM_USIZE], so casting references of one to the other is safe.
+        unsafe { &*(arr as *const [[T; ROOM_USIZE]; ROOM_USIZE] as *const Self) }
+    }
+
+    pub fn from_flat_ref(arr: &[T; ROOM_AREA]) -> &Self {
+        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is identical
+        // in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
+        Self::from_ref(unsafe {
+            &*(arr as *const [T; ROOM_AREA] as *const [[T; ROOM_USIZE]; ROOM_USIZE])
+        })
+    }
+
+    pub fn from_mut(arr: &mut [[T; ROOM_USIZE]; ROOM_USIZE]) -> &mut Self {
+        // SAFETY: XMajor is a repr(transparent) wrapper around [[T; ROOM_USIZE];
+        // ROOM_USIZE], so casting references of one to the other is safe.
+        unsafe { &mut *(arr as *mut [[T; ROOM_USIZE]; ROOM_USIZE] as *mut Self) }
+    }
+
+    pub fn from_flat_mut(arr: &mut [T; ROOM_AREA]) -> &mut Self {
+        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is identical
+        // in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
+        Self::from_mut(unsafe {
+            &mut *(arr as *mut [T; ROOM_AREA] as *mut [[T; ROOM_USIZE]; ROOM_USIZE])
+        })
+    }
+}
+
+impl<T> Index<RoomXY> for YMajor<T> {
+    type Output = T;
+
+    fn index(&self, index: RoomXY) -> &Self::Output {
+        &self.0[index.y][index.x]
+    }
+}
+
+impl<T> IndexMut<RoomXY> for YMajor<T> {
+    fn index_mut(&mut self, index: RoomXY) -> &mut Self::Output {
+        &mut self.0[index.y][index.x]
     }
 }

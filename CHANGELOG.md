@@ -11,6 +11,11 @@ Unreleased
 
 - Add `s7_score_cycle_at_tick` seasonal constant function to reflect the reversed score cycle in
   season 7
+- Add indexing implementations for `RoomCoordinate` and `RoomXY` as well as `XMajor` / `YMajor`
+  wrapper types to control which indexing approach is used; switch to using these for
+  `LocalCostMatrix` and `LocalRoomTerrain`
+- Add `RoomOffset` type representing a difference between coordinates and associated functions
+  for manipulating `RoomCoordinate` and `RoomXY`
 
 0.22.0 (2024-08-27)
 ===================

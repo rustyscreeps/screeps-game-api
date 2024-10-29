@@ -548,7 +548,7 @@ mod serde {
 
     struct RoomNameVisitor;
 
-    impl<'de> Visitor<'de> for RoomNameVisitor {
+    impl Visitor<'_> for RoomNameVisitor {
         type Value = RoomName;
 
         fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
