@@ -370,6 +370,10 @@ impl RoomOffset {
         }
     }
 
+    fn saturating_new(offset: i8) -> Self {
+        Self(offset.clamp(Self::MIN.0, Self::MAX.0))
+    }
+
     /// Create a `RoomOffset` from an `i8`, without checking whether it's in the
     /// range of valid values.
     ///
@@ -565,6 +569,8 @@ impl Neg for RoomOffset {
 #[cfg(feature = "nightly")]
 impl std::iter::Step for RoomCoordinate {
     fn steps_between(start: &Self, end: &Self) -> Option<usize> {
+        start.assume_bounds_constraint();
+        end.assume_bounds_constraint();
         end.0.checked_sub(start.0).map(|x| x as usize)
     }
 
@@ -608,6 +614,66 @@ impl std::iter::Step for RoomCoordinate {
         start.unchecked_add(-(count as i8))
     }
 }
+
+#[cfg(feature = "nightly")]
+unsafe impl std::iter::TrustedStep for RoomCoordinate {}
+
+#[cfg(feature = "nightly")]
+impl std::iter::Step for RoomOffset {
+    fn steps_between(start: &Self, end: &Self) -> Option<usize> {
+        start.assume_bounds_constraint();
+        end.assume_bounds_constraint();
+        let res = end.0 - start.0;
+        res.try_into().ok()
+    }
+
+    fn forward_checked(start: Self, count: usize) -> Option<Self> {
+        start.assume_bounds_constraint();
+        i8::try_from(count)
+            .ok()
+            .and_then(|count| self.0.checked_add(count))
+            .and_then(Self::new)
+    }
+
+    fn backward_checked(start: Self, count: usize) -> Option<Self> {
+        start.assume_bounds_constraint();
+        i8::try_from(count)
+            .ok()
+            .and_then(|count| start.0.checked_sub(count))
+            .and_then(Self::new)
+    }
+
+    fn forward(start: Self, count: usize) -> Self {
+        if cfg!(debug_assertions) {
+            self.forward_checked(count).unwrap_throw()
+        } else {
+            start.assume_bounds_constraint();
+            Self::saturating_new(start.0.saturating_add(count.min(2 * ROOM_USIZE) as i8))
+        }
+    }
+
+    fn backward(start: Self, count: usize) -> Self {
+        if cfg!(debug_assertions) {
+            self.backward_checked(count).unwrap_throw()
+        } else {
+            start.assume_bounds_constraint();
+            Self::saturating_new(start.0.saturating_sub(count.min(2 * ROOM_USIZE) as i8))
+        }
+    }
+
+    unsafe fn forward_unchecked(start: Self, count: usize) -> Self {
+        start.assume_bounds_constraint();
+        Self::unchecked_new(start.0.unchecked_add(count as i8))
+    }
+
+    unsafe fn backward_unchecked(start: Self, count: usize) -> Self {
+        start.assume_bounds_constraint();
+        Self::unchecked_new(start.0.unchecked_sub(count as i8))
+    }
+}
+
+#[cfg(feature = "nightly")]
+unsafe impl std::iter::TrustedStep for RoomOffset {}
 
 #[cfg(test)]
 mod test {
