@@ -463,13 +463,14 @@ impl RoomOffset {
     /// );
     /// ```
     pub fn overflowing_add(self, rhs: Self) -> (Self, bool) {
+        const RANGE_WIDTH: i8 = 2 * ROOM_SIZE_I8 - 1;
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
         let raw = self.0 + rhs.0;
         if raw <= -ROOM_SIZE_I8 {
-            (Self::new(raw + ROOM_SIZE_I8).unwrap_throw(), true)
+            (Self::new(raw + RANGE_WIDTH).unwrap_throw(), true)
         } else if raw >= ROOM_SIZE_I8 {
-            (Self::new(raw - ROOM_SIZE_I8).unwrap_throw(), true)
+            (Self::new(raw - RANGE_WIDTH).unwrap_throw(), true)
         } else {
             (Self::new(raw).unwrap_throw(), false)
         }
