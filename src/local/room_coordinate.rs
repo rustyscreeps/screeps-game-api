@@ -511,7 +511,7 @@ impl RoomOffset {
     ///
     /// Can be used for distance computations, e.g.
     /// ```
-    /// use screeps::local::{RoomXY, RoomOffset};
+    /// use screeps::local::{RoomOffset, RoomXY};
     ///
     /// fn get_movement_distance(a: RoomXY, b: RoomXY) -> u8 {
     ///     (a.x - b.x).abs().max((a.y - b.y).abs())
