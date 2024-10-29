@@ -242,11 +242,23 @@ impl RoomCoordinate {
         self.overflowing_add_offset(rhs).0
     }
 
+    /// Get the coordinate adjusted by a certain value.
+    ///
+    /// # Safety
+    ///
+    /// After adding rhs to the integer coordinate of self, the result must lie
+    /// within `[0, ROOM_SIZE)`.
     pub unsafe fn unchecked_add(self, rhs: i8) -> Self {
         self.assume_bounds_constraint();
         Self::unchecked_new((self.0 as i8).unchecked_add(rhs) as u8)
     }
 
+    /// [`unchecked_add`](Self::unchecked_add) that accepts a [`RoomOffset`].
+    ///
+    /// # Safety
+    ///
+    /// The result of adding the integer coordinate of self and the integer
+    /// offset in `rhs` must lie within `[0, ROOM_SIZE)`.
     pub unsafe fn unchecked_add_offset(self, rhs: RoomOffset) -> Self {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
@@ -345,14 +357,25 @@ const ROOM_SIZE_I8: i8 = {
 pub struct RoomOffset(i8);
 
 impl RoomOffset {
-    pub const fn new(offset: i8) -> Option<Self> {
+    pub const MAX: Self = Self(ROOM_SIZE_I8 - 1);
+    pub const MIN: Self = Self(1 - ROOM_SIZE_I8);
+
+    /// Create a `RoomOffset` from an `i8`, returning an error if it's not
+    /// within the valid range.
+    pub const fn new(offset: i8) -> Result<Self, OffsetOutOfBoundsError> {
         if -ROOM_SIZE_I8 < offset && offset < ROOM_SIZE_I8 {
-            Some(Self(offset))
+            Ok(Self(offset))
         } else {
-            None
+            Err(OffsetOutOfBoundsError(offset))
         }
     }
 
+    /// Create a `RoomOffset` from an `i8`, without checking whether it's in the
+    /// range of valid values.
+    ///
+    /// # Safety
+    /// Calling this method with `offset.abs() >= ROOM_SIZE_I8` can result in
+    /// undefined behaviour when the resulting `RoomOffset` is used.
     pub unsafe fn unchecked_new(offset: i8) -> Self {
         debug_assert!(
             -ROOM_SIZE_I8 < offset && offset < ROOM_SIZE_I8,
@@ -361,24 +384,84 @@ impl RoomOffset {
         Self(offset)
     }
 
+    /// Provides a hint to the compiler that the contained `i8` is within
+    /// `(-ROOM_SIZE_I8, ROOM_SIZE_I8)`. Allows for better optimized safe code
+    /// that uses this property.
     pub fn assume_bounds_constraint(self) {
+        debug_assert!(-ROOM_SIZE_I8 < self.0 && self.0 < ROOM_SIZE_I8);
+        // SAFETY: It is only safe to construct `RoomOffset` when `-ROOM_SIZE_I8 <
+        // self.0 < ROOM_SIZE_I8`.
         unsafe {
             assert_unchecked(-ROOM_SIZE_I8 < self.0 && self.0 < ROOM_SIZE_I8);
         }
     }
 
+    /// Add two offsets together, returning `None` if the result would be
+    /// outside the valid range.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomOffset;
+    ///
+    /// let zero = RoomOffset::new(0).unwrap();
+    /// let one = RoomOffset::new(1).unwrap();
+    ///
+    /// assert_eq!(RoomOffset::MIN.checked_add(RoomOffset::MAX), Some(zero));
+    /// assert_eq!(RoomOffset::MAX.checked_add(one), None);
+    /// assert_eq!(RoomOffset::MIN.checked_add(-one), None);
+    /// ```
     pub fn checked_add(self, rhs: Self) -> Option<Self> {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
-        Self::new(self.0 + rhs.0)
+        Self::new(self.0 + rhs.0).ok()
     }
 
+    /// Add two offsets together, saturating at the boundaries of the valid
+    /// range if the result would be outside.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomOffset;
+    ///
+    /// let zero = RoomOffset::new(0).unwrap();
+    /// let one = RoomOffset::new(1).unwrap();
+    ///
+    /// assert_eq!(RoomOffset::MIN.saturating_add(RoomOffset::MAX), zero);
+    /// assert_eq!(RoomOffset::MAX.saturating_add(one), RoomOffset::MAX);
+    /// assert_eq!(RoomOffset::MIN.saturating_add(-one), RoomOffset::MIN);
+    /// ```
     pub fn saturating_add(self, rhs: Self) -> Self {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
         Self::new((self.0 + rhs.0).clamp(-ROOM_SIZE_I8 + 1, ROOM_SIZE_I8 - 1)).unwrap_throw()
     }
 
+    /// Add two offsets together, wrapping around at the ends of the valid
+    /// range. Returns a [`bool`] indicating whether there was wrapping.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomOffset;
+    ///
+    /// let zero = RoomOffset::new(0).unwrap();
+    /// let one = RoomOffset::new(1).unwrap();
+    ///
+    /// assert_eq!(
+    ///     RoomOffset::MAX.overflowing_add(one),
+    ///     (RoomOffset::MIN, true)
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MIN.overflowing_add(-one),
+    ///     (RoomOffset::MAX, true)
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MIN.overflowing_add(RoomOffset::MAX),
+    ///     (zero, false)
+    /// );
+    /// ```
     pub fn overflowing_add(self, rhs: Self) -> (Self, bool) {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
@@ -392,19 +475,51 @@ impl RoomOffset {
         }
     }
 
+    /// Add two offsets together, wrapping around at the ends of the valid
+    /// range.
+    ///
+    /// Example usage:
+    ///
+    /// ```
+    /// use screeps::local::RoomOffset;
+    ///
+    /// let zero = RoomOffset::new(0).unwrap();
+    /// let one = RoomOffset::new(1).unwrap();
+    ///
+    /// assert_eq!(RoomOffset::MAX.wrapping_add(one), RoomOffset::MIN);
+    /// assert_eq!(RoomOffset::MIN.wrapping_add(-one), RoomOffset::MAX);
+    /// assert_eq!(RoomOffset::MIN.wrapping_add(RoomOffset::MAX), zero);
+    /// ```
     pub fn wrapping_add(self, rhs: Self) -> Self {
         self.overflowing_add(rhs).0
     }
 
+    /// Add two offsets together, without checking that the result is in the
+    /// valid range.
+    ///
+    /// # Safety
+    ///
+    /// The result of adding the two offsets as integers must lie within
+    /// `(-ROOM_SIZE_I8, ROOM_SIZE_I8)`.
     pub unsafe fn unchecked_add(self, rhs: Self) -> Self {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
         Self::unchecked_new(self.0.unchecked_add(rhs.0))
     }
 
+    /// Get the absolute value of the offset.
+    ///
+    /// Can be used for distance computations, e.g.
+    /// ```
+    /// use screeps::local::{RoomCoordinate, RoomOffset};
+    ///
+    /// fn get_movement_distance(a: RoomXY, b: RoomXY) -> u8 {
+    ///     (a.x - b.x).abs().max((a.y - b.y).abs())
+    /// }
+    /// ```
     pub fn abs(self) -> u8 {
         self.assume_bounds_constraint();
-        self.0.abs() as u8
+        self.0.unsigned_abs()
     }
 }
 
@@ -427,7 +542,7 @@ impl TryFrom<i8> for RoomOffset {
     type Error = OffsetOutOfBoundsError;
 
     fn try_from(offset: i8) -> Result<Self, Self::Error> {
-        Self::new(offset).ok_or(OffsetOutOfBoundsError(offset))
+        Self::new(offset)
     }
 }
 
