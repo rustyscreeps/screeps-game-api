@@ -562,6 +562,53 @@ impl Neg for RoomOffset {
     }
 }
 
+#[cfg(feature = "nightly")]
+impl std::iter::Step for RoomCoordinate {
+    fn steps_between(start: &Self, end: &Self) -> Option<usize> {
+        end.0.checked_sub(start.0).map(|x| x as usize)
+    }
+
+    fn forward_checked(start: Self, count: usize) -> Option<Self> {
+        if count < ROOM_USIZE {
+            start.checked_add(count as i8)
+        } else {
+            None
+        }
+    }
+
+    fn backward_checked(start: Self, count: usize) -> Option<Self> {
+        if count < ROOM_USIZE {
+            start.checked_add(-(count as i8))
+        } else {
+            None
+        }
+    }
+
+    fn forward(start: Self, count: usize) -> Self {
+        if cfg!(debug_assertions) {
+            self.forward_checked(count).unwrap_throw()
+        } else {
+            self.saturating_add(count.min(ROOM_USIZE) as i8)
+        }
+    }
+
+    fn backward(start: Self, count: usize) -> Self {
+        if cfg!(debug_assertions) {
+            self.backward_checked(count).unwrap_throw()
+        } else {
+            self.saturating_add(-(count.min(ROOM_USIZE) as i8))
+        }
+    }
+
+    unsafe fn forward_unchecked(start: Self, count: usize) -> Self {
+        start.unchecked_add(count as i8)
+    }
+
+    unsafe fn backward_unchecked(start: Self, count: usize) -> Self {
+        start.unchecked_add(-(count as i8))
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
