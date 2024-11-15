@@ -340,6 +340,18 @@ impl Sub for RoomCoordinate {
     }
 }
 
+impl std::cmp::PartialOrd<u8> for RoomCoordinate {
+    fn partial_cmp(&self, other: &u8) -> Option<std::cmp::Ordering> {
+        Some(self.0.cmp(other))
+    }
+}
+
+impl std::cmp::PartialEq<u8> for RoomCoordinate {
+    fn eq(&self, other: &u8) -> bool {
+        self.0 == *other
+    }
+}
+
 const ROOM_SIZE_I8: i8 = {
     // If this fails, we need to rework the arithmetic code
     debug_assert!(2 * ROOM_SIZE <= i8::MAX as u8);
@@ -439,7 +451,7 @@ impl RoomOffset {
     pub fn saturating_add(self, rhs: Self) -> Self {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
-        Self::new((self.0 + rhs.0).clamp(-ROOM_SIZE_I8 + 1, ROOM_SIZE_I8 - 1)).unwrap_throw()
+        Self::saturating_new(self.0 + rhs.0)
     }
 
     /// Add two offsets together, wrapping around at the ends of the valid
@@ -528,6 +540,12 @@ impl RoomOffset {
     }
 }
 
+impl fmt::Display for RoomOffset {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
 impl From<RoomOffset> for i8 {
     fn from(offset: RoomOffset) -> i8 {
         offset.0
@@ -563,6 +581,18 @@ impl Neg for RoomOffset {
     fn neg(self) -> Self::Output {
         self.assume_bounds_constraint();
         Self::new(-self.0).unwrap_throw()
+    }
+}
+
+impl std::cmp::PartialOrd<i8> for RoomOffset {
+    fn partial_cmp(&self, other: &i8) -> Option<std::cmp::Ordering> {
+        Some(self.0.cmp(other))
+    }
+}
+
+impl std::cmp::PartialEq<i8> for RoomOffset {
+    fn eq(&self, other: &i8) -> bool {
+        self.0 == *other
     }
 }
 

@@ -3,7 +3,7 @@
 
 use std::ops::{Add, Sub};
 
-use super::RoomXY;
+use super::{RoomOffsetXY, RoomXY, XY};
 use crate::constants::Direction;
 
 impl RoomXY {
@@ -89,7 +89,7 @@ impl Add<Direction> for RoomXY {
     #[inline]
     #[track_caller]
     fn add(self, direction: Direction) -> Self {
-        self.checked_add_direction(direction).unwrap()
+        self.checked_add_offset(direction.into()).unwrap()
     }
 }
 
@@ -138,32 +138,7 @@ impl Sub<Direction> for RoomXY {
     /// ```
     #[inline]
     fn sub(self, direction: Direction) -> Self {
-        self.checked_add_direction(-direction).unwrap()
-    }
-}
-
-impl Sub<RoomXY> for RoomXY {
-    type Output = (i8, i8);
-
-    /// Subtracts the other position from this one, extracting the
-    /// difference as the output.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use screeps::RoomXY;
-    ///
-    /// let pos1 = RoomXY::checked_new(40, 40).unwrap();
-    /// let pos2 = RoomXY::checked_new(0, 20).unwrap();
-    /// assert_eq!(pos1 - pos2, (40, 20));
-    ///
-    /// let pos3 = RoomXY::checked_new(45, 45).unwrap();
-    /// assert_eq!(pos1 - pos3, (-5, -5));
-    /// ```
-    #[inline]
-    fn sub(self, other: RoomXY) -> (i8, i8) {
-        let dx = self.x.u8() as i8 - other.x.u8() as i8;
-        let dy = self.y.u8() as i8 - other.y.u8() as i8;
-        (dx, dy)
+        self.checked_add_offset(-RoomOffsetXY::from(direction))
+            .unwrap()
     }
 }

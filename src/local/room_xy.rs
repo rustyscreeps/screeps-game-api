@@ -1,12 +1,16 @@
 use std::{
     cmp::Ordering,
     fmt,
-    ops::{Index, IndexMut},
+    ops::{Index, IndexMut, Sub},
 };
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
+use wasm_bindgen::UnwrapThrowExt;
 
-use super::room_coordinate::{OutOfBoundsError, RoomCoordinate};
+use super::{
+    room_coordinate::{OutOfBoundsError, RoomCoordinate, RoomOffset},
+    OffsetOutOfBoundsError,
+};
 use crate::constants::{Direction, ROOM_AREA, ROOM_USIZE};
 
 mod approximate_offsets;
@@ -65,27 +69,37 @@ pub fn terrain_index_to_xy(idx: usize) -> RoomXY {
     }
 }
 
-/// An X/Y pair representing a given coordinate relative to any room.
+/// A generic x-y pair of values.
 #[derive(Debug, Default, Hash, Clone, Copy, PartialEq, Eq)]
-pub struct RoomXY {
-    pub x: RoomCoordinate,
-    pub y: RoomCoordinate,
+pub struct XY<T> {
+    pub x: T,
+    pub y: T,
+}
+
+/// An X/Y pair representing a given coordinate relative to any room.
+pub type RoomXY = XY<RoomCoordinate>;
+
+/// An X/Y pair representing a given offset relative to any room.
+pub type RoomOffsetXY = XY<RoomOffset>;
+
+impl<T> XY<T> {
+    /// Create a new `XY<T>` from a pair of `T`s.
+    #[inline]
+    pub fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+
+    /// Try to create a new `XY` from a pair of convertable values.
+    #[inline]
+    pub fn checked_new<U>(x: U, y: U) -> Result<Self, <Self as TryFrom<(U, U)>>::Error>
+    where
+        Self: TryFrom<(U, U)>,
+    {
+        Self::try_from((x, y))
+    }
 }
 
 impl RoomXY {
-    /// Create a new `RoomXY` from a pair of `RoomCoordinate`.
-    #[inline]
-    pub fn new(x: RoomCoordinate, y: RoomCoordinate) -> Self {
-        RoomXY { x, y }
-    }
-
-    /// Create a new `RoomXY` from a pair of `u8`, checking that they're in
-    /// the range of valid values.
-    #[inline]
-    pub fn checked_new(x: u8, y: u8) -> Result<RoomXY, OutOfBoundsError> {
-        RoomXY::try_from((x, y))
-    }
-
     /// Create a `RoomXY` from a pair of `u8`, without checking whether it's in
     /// the range of valid values.
     ///
@@ -129,6 +143,12 @@ impl RoomXY {
         Some(RoomXY { x, y })
     }
 
+    pub fn checked_add_offset(self, rhs: RoomOffsetXY) -> Option<Self> {
+        let x = self.x.checked_add_offset(rhs.x)?;
+        let y = self.y.checked_add_offset(rhs.y)?;
+        Some(Self { x, y })
+    }
+
     /// Get the coordinate adjusted by a certain value, saturating at the edges
     /// of the room if the result would be outside the valid room area.
     ///
@@ -154,48 +174,48 @@ impl RoomXY {
         RoomXY { x, y }
     }
 
-    /// Get the neighbor of a given `RoomXY` in the given direction, returning
-    /// `None` if the result is outside the valid room area.
-    ///
-    /// Example usage:
-    ///
-    /// ```
-    /// use screeps::{constants::Direction::*, local::RoomXY};
-    ///
-    /// let zero = unsafe { RoomXY::unchecked_new(0, 0) };
-    /// let one = unsafe { RoomXY::unchecked_new(1, 1) };
-    /// let forty_nine = unsafe { RoomXY::unchecked_new(49, 49) };
-    ///
-    /// assert_eq!(zero.checked_add_direction(BottomRight), Some(one));
-    /// assert_eq!(zero.checked_add_direction(TopLeft), None);
-    /// assert_eq!(one.checked_add_direction(TopLeft), Some(zero));
-    /// assert_eq!(forty_nine.checked_add_direction(BottomRight), None);
-    /// ```
-    pub fn checked_add_direction(self, rhs: Direction) -> Option<RoomXY> {
-        let (dx, dy) = rhs.into();
-        self.checked_add((dx as i8, dy as i8))
+    pub fn saturating_add_offset(self, rhs: RoomOffsetXY) -> Self {
+        let x = self.x.saturating_add_offset(rhs.x);
+        let y = self.y.saturating_add_offset(rhs.y);
+        Self { x, y }
     }
 
-    /// Get the neighbor of a given `RoomXY` in the given direction, saturating
-    /// at the edges if the result is outside the valid room area.
-    ///
-    /// Example usage:
-    ///
-    /// ```
-    /// use screeps::{constants::Direction::*, local::RoomXY};
-    ///
-    /// let zero = unsafe { RoomXY::unchecked_new(0, 0) };
-    /// let one = unsafe { RoomXY::unchecked_new(1, 1) };
-    /// let forty_nine = unsafe { RoomXY::unchecked_new(49, 49) };
-    ///
-    /// assert_eq!(zero.saturating_add_direction(BottomRight), one);
-    /// assert_eq!(zero.saturating_add_direction(TopLeft), zero);
-    /// assert_eq!(one.saturating_add_direction(TopLeft), zero);
-    /// assert_eq!(forty_nine.saturating_add_direction(BottomRight), forty_nine);
-    /// ```
-    pub fn saturating_add_direction(self, rhs: Direction) -> RoomXY {
-        let (dx, dy) = rhs.into();
-        self.saturating_add((dx as i8, dy as i8))
+    pub fn overflowing_add(self, rhs: (i8, i8)) -> (Self, (bool, bool)) {
+        let (x, x_overflow) = self.x.overflowing_add(rhs.0);
+        let (y, y_overflow) = self.y.overflowing_add(rhs.1);
+        (Self { x, y }, (x_overflow, y_overflow))
+    }
+
+    pub fn overflowing_add_offset(self, rhs: RoomOffsetXY) -> (Self, XY<bool>) {
+        let (x, x_overflow) = self.x.overflowing_add_offset(rhs.x);
+        let (y, y_overflow) = self.y.overflowing_add_offset(rhs.y);
+        (
+            Self { x, y },
+            XY {
+                x: x_overflow,
+                y: y_overflow,
+            },
+        )
+    }
+
+    pub fn wrapping_add(self, rhs: (i8, i8)) -> Self {
+        self.overflowing_add(rhs).0
+    }
+
+    pub fn wrapping_add_offset(self, rhs: RoomOffsetXY) -> Self {
+        self.overflowing_add_offset(rhs).0
+    }
+
+    pub unsafe fn unchecked_add(self, rhs: (i8, i8)) -> Self {
+        let x = self.x.unchecked_add(rhs.0);
+        let y = self.y.unchecked_add(rhs.1);
+        Self { x, y }
+    }
+
+    pub unsafe fn unchecked_add_offset(self, rhs: RoomOffsetXY) -> Self {
+        let x = self.x.unchecked_add_offset(rhs.x);
+        let y = self.y.unchecked_add_offset(rhs.y);
+        Self { x, y }
     }
 
     /// Get all the valid neighbors of a given `RoomXY`.
@@ -237,7 +257,7 @@ impl RoomXY {
     /// ```
     pub fn neighbors(self) -> Vec<RoomXY> {
         Direction::iter()
-            .filter_map(|dir| self.checked_add_direction(*dir))
+            .filter_map(|&dir| self.checked_add_offset(dir.into()))
             .collect()
     }
 }
@@ -261,50 +281,147 @@ impl fmt::Display for RoomXY {
     }
 }
 
-impl From<RoomXY> for (u8, u8) {
-    fn from(xy: RoomXY) -> (u8, u8) {
-        (xy.x.u8(), xy.y.u8())
+impl RoomOffsetXY {
+    #[inline]
+    pub unsafe fn unchecked_new(x: i8, y: i8) -> Self {
+        Self {
+            x: RoomOffset::unchecked_new(x),
+            y: RoomOffset::unchecked_new(y),
+        }
+    }
+
+    pub fn manhattan_distance(self) -> u8 {
+        self.x.abs() + self.y.abs()
+    }
+
+    pub fn chebyshev_distance(self) -> u8 {
+        self.x.abs().max(self.y.abs())
+    }
+}
+
+impl std::ops::Neg for RoomOffsetXY {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+}
+
+impl fmt::Display for RoomOffsetXY {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+impl<T, U> From<XY<T>> for (U, U)
+where
+    U: From<T>,
+{
+    fn from(XY { x, y }: XY<T>) -> Self {
+        (x.into(), y.into())
+    }
+}
+
+impl<T, U> From<(U, U)> for XY<T>
+where
+    T: From<U>,
+{
+    fn from((x, y): (U, U)) -> Self {
+        Self {
+            x: x.into(),
+            y: y.into(),
+        }
+    }
+}
+
+impl<A, B> Sub<XY<B>> for XY<A>
+where
+    A: Sub<B>,
+{
+    type Output = XY<A::Output>;
+
+    /// Implements subtraction between [`XY<T>`] values when the contained types can be subtracted from each other as scalars.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use screeps::{RoomXY, XY, RoomOffsetXY};
+    ///
+    /// assert_eq!(XY {x: 5, y: 4} - XY {x: 1, y: 1}, XY {x: 4, y: 3});
+    /// let pos1 = RoomXY::checked_new(40, 40).unwrap();
+    /// let pos2 = RoomXY::checked_new(0, 20).unwrap();
+    /// assert_eq!(pos1 - pos2, RoomOffsetXY::checked_new(40, 20).unwrap());
+    ///
+    /// let pos3 = RoomXY::checked_new(45, 45).unwrap();
+    /// assert_eq!(pos1 - pos3, RoomOffsetXY::checked_new(-5, -5).unwrap());
+    /// ```
+    fn sub(self, rhs: XY<B>) -> XY<A::Output> {
+        XY {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
     }
 }
 
 impl TryFrom<(u8, u8)> for RoomXY {
     type Error = OutOfBoundsError;
 
-    fn try_from(xy: (u8, u8)) -> Result<RoomXY, OutOfBoundsError> {
-        Ok(RoomXY {
-            x: RoomCoordinate::try_from(xy.0)?,
-            y: RoomCoordinate::try_from(xy.1)?,
+    fn try_from((x, y): (u8, u8)) -> Result<Self, Self::Error> {
+        Ok(Self {
+            x: x.try_into()?,
+            y: y.try_into()?,
         })
     }
 }
 
-impl From<(RoomCoordinate, RoomCoordinate)> for RoomXY {
-    fn from(xy: (RoomCoordinate, RoomCoordinate)) -> RoomXY {
-        RoomXY { x: xy.0, y: xy.1 }
+impl TryFrom<(i8, i8)> for RoomOffsetXY {
+    type Error = OffsetOutOfBoundsError;
+
+    fn try_from((x, y): (i8, i8)) -> Result<Self, Self::Error> {
+        Ok(Self {
+            x: x.try_into()?,
+            y: y.try_into()?,
+        })
     }
 }
 
-impl From<RoomXY> for (RoomCoordinate, RoomCoordinate) {
-    fn from(xy: RoomXY) -> (RoomCoordinate, RoomCoordinate) {
-        (xy.x, xy.y)
+impl From<Direction> for RoomOffsetXY {
+    fn from(value: Direction) -> Self {
+        use Direction::*;
+        let y = match value {
+            Top | TopLeft | TopRight => RoomOffset::new(-1),
+            Right | Left => RoomOffset::new(0),
+            Bottom | BottomLeft | BottomRight => RoomOffset::new(1),
+        }
+        .unwrap_throw();
+        let x = match value {
+            Left | TopLeft | BottomLeft => RoomOffset::new(-1),
+            Top | Bottom => RoomOffset::new(0),
+            Right | TopRight | BottomRight => RoomOffset::new(1),
+        }
+        .unwrap_throw();
+        Self { x, y }
     }
 }
 
 #[derive(Serialize, Deserialize)]
-struct ReadableXY {
-    x: RoomCoordinate,
-    y: RoomCoordinate,
+struct ReadableXY<T> {
+    x: T,
+    y: T,
 }
 
-impl From<ReadableXY> for RoomXY {
-    fn from(ReadableXY { x, y }: ReadableXY) -> RoomXY {
-        RoomXY { x, y }
+impl<T> From<ReadableXY<T>> for XY<T> {
+    fn from(ReadableXY { x, y }: ReadableXY<T>) -> XY<T> {
+        Self { x, y }
     }
 }
 
-impl From<RoomXY> for ReadableXY {
-    fn from(RoomXY { x, y }: RoomXY) -> ReadableXY {
-        ReadableXY { x, y }
+impl<T> From<XY<T>> for ReadableXY<T> {
+    fn from(XY { x, y }: XY<T>) -> Self {
+        Self { x, y }
     }
 }
 
@@ -314,7 +431,7 @@ impl Serialize for RoomXY {
         S: Serializer,
     {
         if serializer.is_human_readable() {
-            ReadableXY::from(*self).serialize(serializer)
+            ReadableXY::<RoomCoordinate>::from(*self).serialize(serializer)
         } else {
             let xy: (u8, u8) = (*self).into();
             let packed: u16 = ((xy.0 as u16) << 8) | (xy.1 as u16);
@@ -329,7 +446,7 @@ impl<'de> Deserialize<'de> for RoomXY {
         D: Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            ReadableXY::deserialize(deserializer).map(Into::into)
+            ReadableXY::<RoomCoordinate>::deserialize(deserializer).map(Into::into)
         } else {
             let packed = u16::deserialize(deserializer)?;
             let xy = (((packed >> 8) & 0xFF) as u8, (packed & 0xFF) as u8);
@@ -337,6 +454,44 @@ impl<'de> Deserialize<'de> for RoomXY {
                 de::Error::invalid_value(
                     de::Unexpected::Unsigned(err.0 as u64),
                     &format!("a non-negative integer less-than {ROOM_USIZE}").as_str(),
+                )
+            })
+        }
+    }
+}
+
+impl Serialize for RoomOffsetXY {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        if serializer.is_human_readable() {
+            ReadableXY::<RoomOffset>::from(*self).serialize(serializer)
+        } else {
+            let xy: (i8, i8) = (*self).into();
+            let packed: u16 = ((xy.0 as u8 as u16) << 8) | (xy.1 as u8 as u16);
+            packed.serialize(serializer)
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for RoomOffsetXY {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            ReadableXY::<RoomOffset>::deserialize(deserializer).map(Into::into)
+        } else {
+            let packed = u16::deserialize(deserializer)?;
+            let xy = (
+                ((packed >> 8) & 0xFF) as u8 as i8,
+                (packed & 0xFF) as u8 as i8,
+            );
+            RoomOffsetXY::try_from(xy).map_err(|err| {
+                de::Error::invalid_value(
+                    de::Unexpected::Signed(err.0 as i64),
+                    &format!("an integer with absolute value less-than {ROOM_USIZE}").as_str(),
                 )
             })
         }
