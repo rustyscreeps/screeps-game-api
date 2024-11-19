@@ -370,7 +370,10 @@ pub struct RoomOffset(i8);
 
 impl RoomOffset {
     pub const MAX: Self = Self(ROOM_SIZE_I8 - 1);
-    pub const MIN: Self = Self(1 - ROOM_SIZE_I8);
+    pub const MIN: Self = Self(-(ROOM_SIZE_I8 - 1));
+    pub const PLUS_ONE: Self = Self(1);
+    pub const MINUS_ONE: Self = Self(-1);
+    pub const ZERO: Self = Self(0);
 
     /// Create a `RoomOffset` from an `i8`, returning an error if it's not
     /// within the valid range.
@@ -420,12 +423,12 @@ impl RoomOffset {
     /// ```
     /// use screeps::local::RoomOffset;
     ///
-    /// let zero = RoomOffset::new(0).unwrap();
-    /// let one = RoomOffset::new(1).unwrap();
-    ///
-    /// assert_eq!(RoomOffset::MIN.checked_add(RoomOffset::MAX), Some(zero));
-    /// assert_eq!(RoomOffset::MAX.checked_add(one), None);
-    /// assert_eq!(RoomOffset::MIN.checked_add(-one), None);
+    /// assert_eq!(
+    ///     RoomOffset::MIN.checked_add(RoomOffset::MAX),
+    ///     Some(RoomOffset::ZERO)
+    /// );
+    /// assert_eq!(RoomOffset::MAX.checked_add(RoomOffset::PLUS_ONE), None);
+    /// assert_eq!(RoomOffset::MIN.checked_add(RoomOffset::MINUS_ONE), None);
     /// ```
     pub fn checked_add(self, rhs: Self) -> Option<Self> {
         self.assume_bounds_constraint();
@@ -441,12 +444,18 @@ impl RoomOffset {
     /// ```
     /// use screeps::local::RoomOffset;
     ///
-    /// let zero = RoomOffset::new(0).unwrap();
-    /// let one = RoomOffset::new(1).unwrap();
-    ///
-    /// assert_eq!(RoomOffset::MIN.saturating_add(RoomOffset::MAX), zero);
-    /// assert_eq!(RoomOffset::MAX.saturating_add(one), RoomOffset::MAX);
-    /// assert_eq!(RoomOffset::MIN.saturating_add(-one), RoomOffset::MIN);
+    /// assert_eq!(
+    ///     RoomOffset::MIN.saturating_add(RoomOffset::MAX),
+    ///     RoomOffset::ZERO
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MAX.saturating_add(RoomOffset::PLUS_ONE),
+    ///     RoomOffset::MAX
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MIN.saturating_add(RoomOffset::MINUS_ONE),
+    ///     RoomOffset::MIN
+    /// );
     /// ```
     pub fn saturating_add(self, rhs: Self) -> Self {
         self.assume_bounds_constraint();
@@ -462,20 +471,17 @@ impl RoomOffset {
     /// ```
     /// use screeps::local::RoomOffset;
     ///
-    /// let zero = RoomOffset::new(0).unwrap();
-    /// let one = RoomOffset::new(1).unwrap();
-    ///
     /// assert_eq!(
-    ///     RoomOffset::MAX.overflowing_add(one),
+    ///     RoomOffset::MAX.overflowing_add(RoomOffset::PLUS_ONE),
     ///     (RoomOffset::MIN, true)
     /// );
     /// assert_eq!(
-    ///     RoomOffset::MIN.overflowing_add(-one),
+    ///     RoomOffset::MIN.overflowing_add(RoomOffset::MINUS_ONE),
     ///     (RoomOffset::MAX, true)
     /// );
     /// assert_eq!(
     ///     RoomOffset::MIN.overflowing_add(RoomOffset::MAX),
-    ///     (zero, false)
+    ///     (RoomOffset::ZERO, false)
     /// );
     /// ```
     pub fn overflowing_add(self, rhs: Self) -> (Self, bool) {
@@ -500,12 +506,18 @@ impl RoomOffset {
     /// ```
     /// use screeps::local::RoomOffset;
     ///
-    /// let zero = RoomOffset::new(0).unwrap();
-    /// let one = RoomOffset::new(1).unwrap();
-    ///
-    /// assert_eq!(RoomOffset::MAX.wrapping_add(one), RoomOffset::MIN);
-    /// assert_eq!(RoomOffset::MIN.wrapping_add(-one), RoomOffset::MAX);
-    /// assert_eq!(RoomOffset::MIN.wrapping_add(RoomOffset::MAX), zero);
+    /// assert_eq!(
+    ///     RoomOffset::MAX.wrapping_add(RoomOffset::PLUS_ONE),
+    ///     RoomOffset::MIN
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MIN.wrapping_add(RoomOffset::MINUS_ONE),
+    ///     RoomOffset::MAX
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MIN.wrapping_add(RoomOffset::MAX),
+    ///     RoomOffset::ZERO
+    /// );
     /// ```
     pub fn wrapping_add(self, rhs: Self) -> Self {
         self.overflowing_add(rhs).0

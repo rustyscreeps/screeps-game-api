@@ -131,8 +131,7 @@ impl RoomXY {
     /// ```
     #[inline]
     pub fn is_near_to(self, target: RoomXY) -> bool {
-        (u8::from(self.x) as i32 - u8::from(target.x) as i32).abs() <= 1
-            && (u8::from(self.y) as i32 - u8::from(target.y) as i32).abs() <= 1
+        self.in_range_to(target, 1)
     }
 }
 

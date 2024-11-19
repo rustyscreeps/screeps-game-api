@@ -5,7 +5,6 @@ use std::{
 };
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-use wasm_bindgen::UnwrapThrowExt;
 
 use super::{
     room_coordinate::{OutOfBoundsError, RoomCoordinate, RoomOffset},
@@ -297,6 +296,46 @@ impl RoomOffsetXY {
     pub fn chebyshev_distance(self) -> u8 {
         self.x.abs().max(self.y.abs())
     }
+
+    pub fn checked_add(self, rhs: Self) -> Option<Self> {
+        Some(Self {
+            x: self.x.checked_add(rhs.x)?,
+            y: self.y.checked_add(rhs.y)?,
+        })
+    }
+
+    pub fn saturating_add(self, rhs: Self) -> Self {
+        Self {
+            x: self.x.saturating_add(rhs.x),
+            y: self.y.saturating_add(rhs.y),
+        }
+    }
+
+    pub fn overflowing_add(self, rhs: Self) -> (Self, XY<bool>) {
+        let (x, x_overflow) = self.x.overflowing_add(rhs.x);
+        let (y, y_overflow) = self.y.overflowing_add(rhs.y);
+        (
+            Self { x, y },
+            XY {
+                x: x_overflow,
+                y: y_overflow,
+            },
+        )
+    }
+
+    pub fn wrapping_add(self, rhs: Self) -> Self {
+        Self {
+            x: self.x.wrapping_add(rhs.x),
+            y: self.y.wrapping_add(rhs.y),
+        }
+    }
+
+    pub unsafe fn unchecked_add(self, rhs: Self) -> Self {
+        Self {
+            x: self.x.unchecked_add(rhs.x),
+            y: self.y.unchecked_add(rhs.y),
+        }
+    }
 }
 
 impl std::ops::Neg for RoomOffsetXY {
@@ -343,14 +382,15 @@ where
 {
     type Output = XY<A::Output>;
 
-    /// Implements subtraction between [`XY<T>`] values when the contained types can be subtracted from each other as scalars.
+    /// Implements subtraction between [`XY<T>`] values when the contained types
+    /// can be subtracted from each other as scalars.
     ///
     /// # Example
     ///
     /// ```
     /// # use screeps::{RoomXY, XY, RoomOffsetXY};
     ///
-    /// assert_eq!(XY {x: 5, y: 4} - XY {x: 1, y: 1}, XY {x: 4, y: 3});
+    /// assert_eq!(XY { x: 5, y: 4 } - XY { x: 1, y: 1 }, XY { x: 4, y: 3 });
     /// let pos1 = RoomXY::checked_new(40, 40).unwrap();
     /// let pos2 = RoomXY::checked_new(0, 20).unwrap();
     /// assert_eq!(pos1 - pos2, RoomOffsetXY::checked_new(40, 20).unwrap());
@@ -392,17 +432,15 @@ impl From<Direction> for RoomOffsetXY {
     fn from(value: Direction) -> Self {
         use Direction::*;
         let y = match value {
-            Top | TopLeft | TopRight => RoomOffset::new(-1),
-            Right | Left => RoomOffset::new(0),
-            Bottom | BottomLeft | BottomRight => RoomOffset::new(1),
-        }
-        .unwrap_throw();
+            Top | TopLeft | TopRight => RoomOffset::MINUS_ONE,
+            Right | Left => RoomOffset::ZERO,
+            Bottom | BottomLeft | BottomRight => RoomOffset::PLUS_ONE,
+        };
         let x = match value {
-            Left | TopLeft | BottomLeft => RoomOffset::new(-1),
-            Top | Bottom => RoomOffset::new(0),
-            Right | TopRight | BottomRight => RoomOffset::new(1),
-        }
-        .unwrap_throw();
+            Left | TopLeft | BottomLeft => RoomOffset::MINUS_ONE,
+            Top | Bottom => RoomOffset::ZERO,
+            Right | TopRight | BottomRight => RoomOffset::PLUS_ONE,
+        };
         Self { x, y }
     }
 }

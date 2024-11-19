@@ -3,7 +3,7 @@
 
 use std::ops::{Add, Sub};
 
-use super::{RoomOffsetXY, RoomXY, XY};
+use super::{RoomOffsetXY, RoomXY};
 use crate::constants::Direction;
 
 impl RoomXY {
@@ -39,7 +39,7 @@ impl RoomXY {
     #[inline]
     #[track_caller]
     pub fn offset(&mut self, x: i8, y: i8) {
-        *self = *self + (x, y);
+        *self = self.checked_add((x, y)).unwrap();
     }
 }
 
