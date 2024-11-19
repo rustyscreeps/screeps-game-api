@@ -634,17 +634,17 @@ impl std::iter::Step for RoomCoordinate {
 
     fn forward(start: Self, count: usize) -> Self {
         if cfg!(debug_assertions) {
-            self.forward_checked(count).unwrap_throw()
+            start.forward_checked(count).unwrap_throw()
         } else {
-            self.saturating_add(count.min(ROOM_USIZE) as i8)
+            start.saturating_add(count.min(ROOM_USIZE) as i8)
         }
     }
 
     fn backward(start: Self, count: usize) -> Self {
         if cfg!(debug_assertions) {
-            self.backward_checked(count).unwrap_throw()
+            start.backward_checked(count).unwrap_throw()
         } else {
-            self.saturating_add(-(count.min(ROOM_USIZE) as i8))
+            start.saturating_add(-(count.min(ROOM_USIZE) as i8))
         }
     }
 
@@ -673,21 +673,21 @@ impl std::iter::Step for RoomOffset {
         start.assume_bounds_constraint();
         i8::try_from(count)
             .ok()
-            .and_then(|count| self.0.checked_add(count))
-            .and_then(Self::new)
+            .and_then(|count| Self::new(count).ok())
+            .and_then(|offset| start.checked_add(offset))
     }
 
     fn backward_checked(start: Self, count: usize) -> Option<Self> {
         start.assume_bounds_constraint();
         i8::try_from(count)
             .ok()
-            .and_then(|count| start.0.checked_sub(count))
-            .and_then(Self::new)
+            .and_then(|count| Self::new(count).ok())
+            .and_then(|offset| start.checked_add(-offset))
     }
 
     fn forward(start: Self, count: usize) -> Self {
         if cfg!(debug_assertions) {
-            self.forward_checked(count).unwrap_throw()
+            start.forward_checked(count).unwrap_throw()
         } else {
             start.assume_bounds_constraint();
             Self::saturating_new(start.0.saturating_add(count.min(2 * ROOM_USIZE) as i8))
@@ -696,7 +696,7 @@ impl std::iter::Step for RoomOffset {
 
     fn backward(start: Self, count: usize) -> Self {
         if cfg!(debug_assertions) {
-            self.backward_checked(count).unwrap_throw()
+            start.backward_checked(count).unwrap_throw()
         } else {
             start.assume_bounds_constraint();
             Self::saturating_new(start.0.saturating_sub(count.min(2 * ROOM_USIZE) as i8))
