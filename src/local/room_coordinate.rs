@@ -634,7 +634,7 @@ impl std::iter::Step for RoomCoordinate {
 
     fn forward(start: Self, count: usize) -> Self {
         if cfg!(debug_assertions) {
-            start.forward_checked(count).unwrap_throw()
+            RoomCoordinate::forward_checked(start, count).unwrap_throw()
         } else {
             start.saturating_add(count.min(ROOM_USIZE) as i8)
         }
@@ -642,7 +642,7 @@ impl std::iter::Step for RoomCoordinate {
 
     fn backward(start: Self, count: usize) -> Self {
         if cfg!(debug_assertions) {
-            start.backward_checked(count).unwrap_throw()
+            RoomCoordinate::backward_checked(start, count).unwrap_throw()
         } else {
             start.saturating_add(-(count.min(ROOM_USIZE) as i8))
         }
@@ -687,7 +687,7 @@ impl std::iter::Step for RoomOffset {
 
     fn forward(start: Self, count: usize) -> Self {
         if cfg!(debug_assertions) {
-            start.forward_checked(count).unwrap_throw()
+            RoomOffset::forward_checked(start, count).unwrap_throw()
         } else {
             start.assume_bounds_constraint();
             Self::saturating_new(start.0.saturating_add(count.min(2 * ROOM_USIZE) as i8))
@@ -696,7 +696,7 @@ impl std::iter::Step for RoomOffset {
 
     fn backward(start: Self, count: usize) -> Self {
         if cfg!(debug_assertions) {
-            start.backward_checked(count).unwrap_throw()
+            RoomOffset::backward_checked(start, count).unwrap_throw()
         } else {
             start.assume_bounds_constraint();
             Self::saturating_new(start.0.saturating_sub(count.min(2 * ROOM_USIZE) as i8))
