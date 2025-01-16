@@ -67,13 +67,14 @@ pub mod extra;
 pub mod find;
 pub mod look;
 mod numbers;
+mod part;
 mod recipes;
 pub mod seasonal;
 mod small_enums;
 mod types;
 
 pub use self::{
-    extra::*, find::FindConstant, look::LookConstant, numbers::*, recipes::FactoryRecipe,
+    extra::*, find::FindConstant, look::LookConstant, numbers::*, part::*, recipes::FactoryRecipe,
     small_enums::*, types::*,
 };
 
@@ -95,7 +96,7 @@ pub mod creep {
             MAX_CREEP_SIZE, RANGED_HEAL_POWER, REPAIR_COST, REPAIR_POWER, SPAWN_RENEW_RATIO,
             UPGRADE_CONTROLLER_POWER,
         },
-        small_enums::Part,
+        part::Part,
     };
 }
 
