@@ -2,6 +2,8 @@
 //! shared traits.
 //!
 //! [`enum_dispatch`]: enum_dispatch::enum_dispatch
+pub mod action_error_codes;
+
 use enum_dispatch::enum_dispatch;
 use wasm_bindgen::{JsCast, JsValue};
 
