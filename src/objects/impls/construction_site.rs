@@ -3,6 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{ErrorCode, StructureType},
+    enums::action_error_codes::construction_site::*,
     objects::{Owner, RoomObject},
     prelude::*,
 };
@@ -80,8 +81,8 @@ impl ConstructionSite {
     /// Remove the [`ConstructionSite`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#ConstructionSite.remove)
-    pub fn remove(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.remove_internal())
+    pub fn remove(&self) -> Result<(), ConstructionSiteRemoveErrorCode> {
+        ConstructionSiteRemoveErrorCode::result_from_i8(self.remove_internal())
     }
 }
 
