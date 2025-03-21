@@ -322,7 +322,10 @@ impl Position {
     pub fn xy(self) -> RoomXY {
         // SAFETY: packed always contains a valid pair
         unsafe {
-            RoomXY::unchecked_new(((self.packed >> 8) & 0xFF) as u8, (self.packed & 0xFF) as u8)
+            RoomXY::unchecked_new(
+                ((self.packed >> 8) & 0xFF) as u8,
+                (self.packed & 0xFF) as u8,
+            )
         }
     }
 

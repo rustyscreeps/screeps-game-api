@@ -2,9 +2,7 @@ use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::StructureType,
-    enums::action_error_codes::structure::*,
-    objects::RoomObject,
+    constants::StructureType, enums::action_error_codes::structure::*, objects::RoomObject,
     prelude::*,
 };
 
