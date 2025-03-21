@@ -2,7 +2,7 @@ use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ErrorCode,
+    enums::action_error_codes::structure_observer::*,
     local::RoomName,
     objects::{OwnedStructure, RoomObject, Structure},
     prelude::*,
@@ -18,19 +18,19 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type StructureObserver;
 
-    /// Set the [`StructureObserver`] to provide vision of a target room next
-    /// tick.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#StructureObserver.observeRoom)
     #[wasm_bindgen(method, js_name = observeRoom)]
     fn observe_room_internal(this: &StructureObserver, target: &JsString) -> i8;
 }
 
 impl StructureObserver {
-    pub fn observe_room(&self, target: RoomName) -> Result<(), ErrorCode> {
+    /// Set the [`StructureObserver`] to provide vision of a target room next
+    /// tick.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureObserver.observeRoom)
+    pub fn observe_room(&self, target: RoomName) -> Result<(), ObserveRoomErrorCode> {
         let target = target.into();
 
-        ErrorCode::result_from_i8(self.observe_room_internal(&target))
+        ObserveRoomErrorCode::result_from_i8(self.observe_room_internal(&target))
     }
 }
 
