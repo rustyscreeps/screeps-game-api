@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [StructureLab::boost_creep](crate::StructureLab::boost_creep).
+/// Error codes used by
+/// [StructureLab::boost_creep](crate::StructureLab::boost_creep).
 ///
 /// Screeps API Docs: [StructureLab.boostCreep](https://docs.screeps.com/api/#StructureLab.boostCreep).
 ///
@@ -30,11 +30,11 @@ impl FromReturnCode for BoostCreepErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -56,11 +56,17 @@ impl fmt::Display for BoostCreepErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             BoostCreepErrorCode::NotOwner => "you are not the owner of this lab",
-            BoostCreepErrorCode::NotFound => "the mineral containing in the lab cannot boost any of the creep's body parts",
-            BoostCreepErrorCode::NotEnoughResources => "the lab does not have enough energy or minerals",
+            BoostCreepErrorCode::NotFound => {
+                "the mineral containing in the lab cannot boost any of the creep's body parts"
+            }
+            BoostCreepErrorCode::NotEnoughResources => {
+                "the lab does not have enough energy or minerals"
+            }
             BoostCreepErrorCode::InvalidTarget => "the targets is not valid creep object",
             BoostCreepErrorCode::NotInRange => "the targets are too far away",
-            BoostCreepErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            BoostCreepErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)
@@ -69,7 +75,8 @@ impl fmt::Display for BoostCreepErrorCode {
 
 impl Error for BoostCreepErrorCode {}
 
-/// Error codes used by [StructureLab::reverse_reaction](crate::StructureLab::reverse_reaction).
+/// Error codes used by
+/// [StructureLab::reverse_reaction](crate::StructureLab::reverse_reaction).
 ///
 /// Screeps API Docs: [StructureLab.reverseReaction](https://docs.screeps.com/api/#StructureLab.reverseReaction).
 ///
@@ -94,11 +101,11 @@ impl FromReturnCode for ReverseReactionErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -122,13 +129,19 @@ impl fmt::Display for ReverseReactionErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             ReverseReactionErrorCode::NotOwner => "you are not the owner of this lab",
-            ReverseReactionErrorCode::NotEnoughResources => "the source lab do not have enough resources",
+            ReverseReactionErrorCode::NotEnoughResources => {
+                "the source lab do not have enough resources"
+            }
             ReverseReactionErrorCode::InvalidTarget => "the targets are not valid lab objects",
             ReverseReactionErrorCode::Full => "one of targets cannot receive any more resource",
             ReverseReactionErrorCode::NotInRange => "the targets are too far away",
-            ReverseReactionErrorCode::InvalidArgs => "the reaction cannot be reversed into this resources",
+            ReverseReactionErrorCode::InvalidArgs => {
+                "the reaction cannot be reversed into this resources"
+            }
             ReverseReactionErrorCode::Tired => "the lab is still cooling down",
-            ReverseReactionErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            ReverseReactionErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)
@@ -137,7 +150,8 @@ impl fmt::Display for ReverseReactionErrorCode {
 
 impl Error for ReverseReactionErrorCode {}
 
-/// Error codes used by [StructureLab::run_reaction](crate::StructureLab::run_reaction).
+/// Error codes used by
+/// [StructureLab::run_reaction](crate::StructureLab::run_reaction).
 ///
 /// Screeps API Docs: [StructureLab.runReaction](https://docs.screeps.com/api/#StructureLab.runReaction).
 ///
@@ -162,11 +176,11 @@ impl FromReturnCode for RunReactionErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -190,13 +204,17 @@ impl fmt::Display for RunReactionErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             RunReactionErrorCode::NotOwner => "you are not the owner of this lab",
-            RunReactionErrorCode::NotEnoughResources => "the source lab do not have enough resources",
+            RunReactionErrorCode::NotEnoughResources => {
+                "the source lab do not have enough resources"
+            }
             RunReactionErrorCode::InvalidTarget => "the targets are not valid lab objects",
             RunReactionErrorCode::Full => "the target cannot receive any more resource",
             RunReactionErrorCode::NotInRange => "the targets are too far away",
             RunReactionErrorCode::InvalidArgs => "the reaction cannot be run using this resources",
             RunReactionErrorCode::Tired => "the lab is still cooling down",
-            RunReactionErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            RunReactionErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)
@@ -205,7 +223,8 @@ impl fmt::Display for RunReactionErrorCode {
 
 impl Error for RunReactionErrorCode {}
 
-/// Error codes used by [StructureLab::unboost_creep](crate::StructureLab::unboost_creep).
+/// Error codes used by
+/// [StructureLab::unboost_creep](crate::StructureLab::unboost_creep).
 ///
 /// Screeps API Docs: [StructureLab.unboostCreep](https://docs.screeps.com/api/#StructureLab.unboostCreep).
 ///
@@ -228,11 +247,11 @@ impl FromReturnCode for UnboostCreepErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -253,12 +272,16 @@ impl FromReturnCode for UnboostCreepErrorCode {
 impl fmt::Display for UnboostCreepErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            UnboostCreepErrorCode::NotOwner => "you are not the owner of this lab, or the target creep",
+            UnboostCreepErrorCode::NotOwner => {
+                "you are not the owner of this lab, or the target creep"
+            }
             UnboostCreepErrorCode::NotFound => "the target has no boosted parts",
             UnboostCreepErrorCode::InvalidTarget => "the target is not a valid creep object",
             UnboostCreepErrorCode::NotInRange => "the target is too far away",
             UnboostCreepErrorCode::Tired => "the lab is still cooling down",
-            UnboostCreepErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            UnboostCreepErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)

@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [game::cpu::set_shard_limits](crate::game::cpu::set_shard_limits).
+/// Error codes used by
+/// [game::cpu::set_shard_limits](crate::game::cpu::set_shard_limits).
 ///
 /// Screeps API Docs: [Game.cpu.setShardLimits](https://docs.screeps.com/api/#Game.cpu.setShardLimits).
 #[cfg(feature = "mmo")]
@@ -25,11 +25,11 @@ impl FromReturnCode for SetShardLimitsErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -47,7 +47,9 @@ impl fmt::Display for SetShardLimitsErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             SetShardLimitsErrorCode::Busy => "12-hours cooldown period is not over yet",
-            SetShardLimitsErrorCode::InvalidArgs => "the argument is not a valid shard limits object",
+            SetShardLimitsErrorCode::InvalidArgs => {
+                "the argument is not a valid shard limits object"
+            }
         };
 
         write!(f, "{}", msg)
@@ -73,11 +75,11 @@ impl FromReturnCode for UnlockErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -94,7 +96,9 @@ impl FromReturnCode for UnlockErrorCode {
 impl fmt::Display for UnlockErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            UnlockErrorCode::NotEnoughResources => "your account does not have enough cpuunlock resource",
+            UnlockErrorCode::NotEnoughResources => {
+                "your account does not have enough cpuunlock resource"
+            }
             UnlockErrorCode::Full => "your cpu is unlocked with a subscription",
         };
 
@@ -104,7 +108,8 @@ impl fmt::Display for UnlockErrorCode {
 
 impl Error for UnlockErrorCode {}
 
-/// Error codes used by [game::cpu::generate_pixel](crate::game::cpu::generate_pixel).
+/// Error codes used by
+/// [game::cpu::generate_pixel](crate::game::cpu::generate_pixel).
 ///
 /// Screeps API Docs: [Game.cpu.generatePixel](https://docs.screeps.com/api/#Game.cpu.generatePixel).
 #[derive(
@@ -120,11 +125,11 @@ impl FromReturnCode for GeneratePixelErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 

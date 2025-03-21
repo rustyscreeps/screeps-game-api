@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [game::market::cancel_order](crate::game::market::cancel_order).
+/// Error codes used by
+/// [game::market::cancel_order](crate::game::market::cancel_order).
 ///
 /// Screeps API Docs: [Game.market.cancelOrder](https://docs.screeps.com/api/#Game.market.cancelOrder).
 ///
@@ -25,11 +25,11 @@ impl FromReturnCode for MarketCancelOrderErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -54,7 +54,8 @@ impl fmt::Display for MarketCancelOrderErrorCode {
 
 impl Error for MarketCancelOrderErrorCode {}
 
-/// Error codes used by [game::market::change_order_price](crate::game::market::change_order_price).
+/// Error codes used by
+/// [game::market::change_order_price](crate::game::market::change_order_price).
 ///
 /// Screeps API Docs: [Game.market.changeOrderPrice](https://docs.screeps.com/api/#Game.market.changeOrderPrice).
 ///
@@ -74,11 +75,11 @@ impl FromReturnCode for ChangeOrderPriceErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -96,8 +97,12 @@ impl FromReturnCode for ChangeOrderPriceErrorCode {
 impl fmt::Display for ChangeOrderPriceErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            ChangeOrderPriceErrorCode::NotOwner => "you are not the owner of the room's terminal or there is no terminal",
-            ChangeOrderPriceErrorCode::NotEnoughResources => "you don't have enough credits to pay a fee",
+            ChangeOrderPriceErrorCode::NotOwner => {
+                "you are not the owner of the room's terminal or there is no terminal"
+            }
+            ChangeOrderPriceErrorCode::NotEnoughResources => {
+                "you don't have enough credits to pay a fee"
+            }
             ChangeOrderPriceErrorCode::InvalidArgs => "the arguments provided are invalid",
         };
 
@@ -107,7 +112,8 @@ impl fmt::Display for ChangeOrderPriceErrorCode {
 
 impl Error for ChangeOrderPriceErrorCode {}
 
-/// Error codes used by [game::market::create_order](crate::game::market::create_order).
+/// Error codes used by
+/// [game::market::create_order](crate::game::market::create_order).
 ///
 /// Screeps API Docs: [Game.market.createOrder](https://docs.screeps.com/api/#Game.market.createOrder).
 ///
@@ -128,11 +134,11 @@ impl FromReturnCode for CreateOrderErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -151,8 +157,12 @@ impl FromReturnCode for CreateOrderErrorCode {
 impl fmt::Display for CreateOrderErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            CreateOrderErrorCode::NotOwner => "you are not the owner of the room's terminal or there is no terminal",
-            CreateOrderErrorCode::NotEnoughResources => "you don't have enough credits to pay a fee",
+            CreateOrderErrorCode::NotOwner => {
+                "you are not the owner of the room's terminal or there is no terminal"
+            }
+            CreateOrderErrorCode::NotEnoughResources => {
+                "you don't have enough credits to pay a fee"
+            }
             CreateOrderErrorCode::Full => "you cannot create more than 50 orders",
             CreateOrderErrorCode::InvalidArgs => "the arguments provided are invalid",
         };
@@ -185,11 +195,11 @@ impl FromReturnCode for DealErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -222,7 +232,8 @@ impl fmt::Display for DealErrorCode {
 
 impl Error for DealErrorCode {}
 
-/// Error codes used by [game::market::extend_order](crate::game::market::extend_order).
+/// Error codes used by
+/// [game::market::extend_order](crate::game::market::extend_order).
 ///
 /// Screeps API Docs: [Game.market.extendOrder](https://docs.screeps.com/api/#Game.market.extendOrder).
 ///
@@ -241,11 +252,11 @@ impl FromReturnCode for ExtendOrderErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -262,7 +273,9 @@ impl FromReturnCode for ExtendOrderErrorCode {
 impl fmt::Display for ExtendOrderErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            ExtendOrderErrorCode::NotEnoughResources => "you don't have enough credits to pay a fee",
+            ExtendOrderErrorCode::NotEnoughResources => {
+                "you don't have enough credits to pay a fee"
+            }
             ExtendOrderErrorCode::InvalidArgs => "the arguments provided are invalid",
         };
 

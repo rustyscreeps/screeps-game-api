@@ -3,10 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{Direction, Part},
-    enums::action_error_codes::{
-        spawning::*,
-        structure_spawn::*,
-    },
+    enums::action_error_codes::{spawning::*, structure_spawn::*},
     objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };

@@ -228,9 +228,7 @@ impl RoomPosition {
         name: Option<&JsString>,
     ) -> Result<(), RoomPositionCreateConstructionSiteErrorCode> {
         match Self::create_construction_site_internal(self, ty, name) {
-            Ok(result) => {
-                RoomPositionCreateConstructionSiteErrorCode::result_from_i8(result)
-            },
+            Ok(result) => RoomPositionCreateConstructionSiteErrorCode::result_from_i8(result),
             Err(_) => {
                 // js code threw an exception; this happens when the room is not visible
                 Err(RoomPositionCreateConstructionSiteErrorCode::NotInRange)

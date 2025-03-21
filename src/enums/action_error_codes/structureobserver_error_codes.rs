@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [StructureObserver::observe_room](crate::StructureObserver::observe_room).
+/// Error codes used by
+/// [StructureObserver::observe_room](crate::StructureObserver::observe_room).
 ///
 /// Screeps API Docs: [StructureObserver.observeRoom](https://docs.screeps.com/api/#StructureObserver.observeRoom).
 ///
@@ -28,11 +28,11 @@ impl FromReturnCode for ObserveRoomErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -54,7 +54,9 @@ impl fmt::Display for ObserveRoomErrorCode {
             ObserveRoomErrorCode::NotOwner => "you are not the owner of this structure",
             ObserveRoomErrorCode::NotInRange => "room roomname is not in observing range",
             ObserveRoomErrorCode::InvalidArgs => "roomname argument is not a valid room name value",
-            ObserveRoomErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            ObserveRoomErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)

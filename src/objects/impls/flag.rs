@@ -72,7 +72,11 @@ impl Flag {
     /// Set the color (and optionally, the secondary color) of the flag.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Flag.setColor)
-    pub fn set_color(&self, color: Color, secondary_color: Option<Color>) -> Result<(), SetColorErrorCode> {
+    pub fn set_color(
+        &self,
+        color: Color,
+        secondary_color: Option<Color>,
+    ) -> Result<(), SetColorErrorCode> {
         SetColorErrorCode::result_from_i8(self.set_color_internal(color, secondary_color))
     }
 

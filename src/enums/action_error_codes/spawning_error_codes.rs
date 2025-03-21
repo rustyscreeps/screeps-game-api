@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -25,11 +24,11 @@ impl FromReturnCode for CancelErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -54,7 +53,8 @@ impl fmt::Display for CancelErrorCode {
 
 impl Error for CancelErrorCode {}
 
-/// Error codes used by [Spawning::set_directions](crate::Spawning::set_directions).
+/// Error codes used by
+/// [Spawning::set_directions](crate::Spawning::set_directions).
 ///
 /// Screeps API Docs: [Spawning.setDirections](https://docs.screeps.com/api/#StructureSpawn.Spawning.setDirections).
 ///
@@ -73,11 +73,11 @@ impl FromReturnCode for SetDirectionsErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 

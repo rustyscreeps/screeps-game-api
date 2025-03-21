@@ -80,8 +80,13 @@ impl Structure {
     /// attacked.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.notifyWhenAttacked)
-    pub fn notify_when_attacked(&self, val: bool) -> Result<(), StructureNotifyWhenAttackedErrorCode> {
-        StructureNotifyWhenAttackedErrorCode::result_from_i8(self.notify_when_attacked_internal(val))
+    pub fn notify_when_attacked(
+        &self,
+        val: bool,
+    ) -> Result<(), StructureNotifyWhenAttackedErrorCode> {
+        StructureNotifyWhenAttackedErrorCode::result_from_i8(
+            self.notify_when_attacked_internal(val),
+        )
     }
 }
 

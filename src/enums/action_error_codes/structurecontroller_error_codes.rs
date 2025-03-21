@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,9 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [StructureController::activate_safe_mode](crate::StructureController::activate_safe_mode).
+/// Error codes used by
+/// [StructureController::activate_safe_mode](crate::StructureController::activate_safe_mode).
+///
 ///
 /// Screeps API Docs: [StructureController.activateSafeMode](https://docs.screeps.com/api/#StructureController.activateSafeMode).
 ///
@@ -28,11 +29,11 @@ impl FromReturnCode for ActivateSafeModeErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -63,7 +64,8 @@ impl fmt::Display for ActivateSafeModeErrorCode {
 
 impl Error for ActivateSafeModeErrorCode {}
 
-/// Error codes used by [StructureController::unclaim](crate::StructureController::unclaim).
+/// Error codes used by
+/// [StructureController::unclaim](crate::StructureController::unclaim).
 ///
 /// Screeps API Docs: [StructureController.unclaim](https://docs.screeps.com/api/#StructureController.unclaim).
 ///
@@ -81,11 +83,11 @@ impl FromReturnCode for UnclaimErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 

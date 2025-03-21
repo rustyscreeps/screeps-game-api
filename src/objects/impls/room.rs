@@ -227,7 +227,9 @@ impl Room {
         ty: StructureType,
         name: Option<&JsString>,
     ) -> Result<(), RoomCreateConstructionSiteErrorCode> {
-        RoomCreateConstructionSiteErrorCode::result_from_i8(self.create_construction_site_internal(x, y, ty, name))
+        RoomCreateConstructionSiteErrorCode::result_from_i8(
+            self.create_construction_site_internal(x, y, ty, name),
+        )
     }
 
     /// Creates a [`Flag`] at given coordinates within this room. The name of
@@ -278,7 +280,8 @@ impl Room {
     pub fn find_exit_to(&self, room: RoomName) -> Result<ExitDirection, FindExitToErrorCode> {
         let result = self.find_exit_to_internal(&room.into());
         if result >= 0 {
-            Ok(ExitDirection::from_i8(result).expect("expect find exit return to be a valid exit constant"))
+            Ok(ExitDirection::from_i8(result)
+                .expect("expect find exit return to be a valid exit constant"))
         } else {
             // The exit direction results should have been caught by the other branch,
             // therefore this should always be an error and never actually panic

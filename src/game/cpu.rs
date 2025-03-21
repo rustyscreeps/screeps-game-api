@@ -4,10 +4,7 @@
 use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "mmo")]
-use crate::{
-    enums::action_error_codes::game::cpu::*,
-    prelude::*,
-};
+use crate::{enums::action_error_codes::game::cpu::*, prelude::*};
 #[cfg(feature = "mmo")]
 use js_sys::{JsString, Object};
 

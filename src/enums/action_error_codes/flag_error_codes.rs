@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -12,9 +11,7 @@ use crate::FromReturnCode;
 /// Screeps API Docs: [Flag.remove](https://docs.screeps.com/api/#Flag.remove).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/flags.js#L57)
-#[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive,
-)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive)]
 pub enum FlagRemoveErrorCode {}
 
 impl FromReturnCode for FlagRemoveErrorCode {
@@ -22,11 +19,11 @@ impl FromReturnCode for FlagRemoveErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -64,11 +61,11 @@ impl FromReturnCode for SetColorErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -84,7 +81,9 @@ impl FromReturnCode for SetColorErrorCode {
 impl fmt::Display for SetColorErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            SetColorErrorCode::InvalidArgs => "color or secondarycolor is not a valid color constant",
+            SetColorErrorCode::InvalidArgs => {
+                "color or secondarycolor is not a valid color constant"
+            }
         };
 
         write!(f, "{}", msg)
@@ -111,11 +110,11 @@ impl FromReturnCode for SetPositionErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 

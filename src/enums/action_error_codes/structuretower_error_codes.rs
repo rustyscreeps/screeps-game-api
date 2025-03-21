@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -28,11 +27,11 @@ impl FromReturnCode for TowerAttackErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -54,7 +53,9 @@ impl fmt::Display for TowerAttackErrorCode {
             TowerAttackErrorCode::NotOwner => "you are not the owner of this structure",
             TowerAttackErrorCode::NotEnoughEnergy => "the tower does not have enough energy",
             TowerAttackErrorCode::InvalidTarget => "the target is not a valid attackable object",
-            TowerAttackErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            TowerAttackErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)
@@ -84,11 +85,11 @@ impl FromReturnCode for TowerHealErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -110,7 +111,9 @@ impl fmt::Display for TowerHealErrorCode {
             TowerHealErrorCode::NotOwner => "you are not the owner of this structure",
             TowerHealErrorCode::NotEnoughEnergy => "the tower does not have enough energy",
             TowerHealErrorCode::InvalidTarget => "the target is not a valid creep object",
-            TowerHealErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            TowerHealErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)
@@ -140,11 +143,11 @@ impl FromReturnCode for TowerRepairErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -166,7 +169,9 @@ impl fmt::Display for TowerRepairErrorCode {
             TowerRepairErrorCode::NotOwner => "you are not the owner of this structure",
             TowerRepairErrorCode::NotEnoughEnergy => "the tower does not have enough energy",
             TowerRepairErrorCode::InvalidTarget => "the target is not a valid repairable object",
-            TowerRepairErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            TowerRepairErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)

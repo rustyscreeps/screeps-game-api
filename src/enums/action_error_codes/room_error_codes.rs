@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [Room::create_construction_site](crate::Room::create_construction_site).
+/// Error codes used by
+/// [Room::create_construction_site](crate::Room::create_construction_site).
 ///
 /// Screeps API Docs: [Room.createConstructionSite](https://docs.screeps.com/api/#Room.createConstructionSite).
 ///
@@ -29,11 +29,11 @@ impl FromReturnCode for RoomCreateConstructionSiteErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -86,11 +86,11 @@ impl FromReturnCode for RoomCreateFlagErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -108,8 +108,12 @@ impl fmt::Display for RoomCreateFlagErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             RoomCreateFlagErrorCode::NameExists => "there is a flag with the same name already",
-            RoomCreateFlagErrorCode::Full => "you have too many flags. the maximum number of flags per player is 10000",
-            RoomCreateFlagErrorCode::InvalidArgs => "the location or the name or the color constant is incorrect",
+            RoomCreateFlagErrorCode::Full => {
+                "you have too many flags. the maximum number of flags per player is 10000"
+            }
+            RoomCreateFlagErrorCode::InvalidArgs => {
+                "the location or the name or the color constant is incorrect"
+            }
         };
 
         write!(f, "{}", msg)
@@ -137,11 +141,11 @@ impl FromReturnCode for FindExitToErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 

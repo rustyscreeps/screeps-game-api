@@ -126,7 +126,10 @@ pub fn cancel_order(order_id: &JsString) -> Result<(), MarketCancelOrderErrorCod
 /// [Screeps documentation](https://docs.screeps.com/api/#Game.market.changeOrderPrice)
 ///
 /// [`MARKET_FEE`]: crate::constants::MARKET_FEE
-pub fn change_order_price(order_id: &JsString, new_price: f64) -> Result<(), ChangeOrderPriceErrorCode> {
+pub fn change_order_price(
+    order_id: &JsString,
+    new_price: f64,
+) -> Result<(), ChangeOrderPriceErrorCode> {
     ChangeOrderPriceErrorCode::result_from_i8(Market::change_order_price(order_id, new_price))
 }
 

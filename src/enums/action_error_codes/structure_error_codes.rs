@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -27,11 +26,11 @@ impl FromReturnCode for DestroyErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -49,7 +48,9 @@ impl FromReturnCode for DestroyErrorCode {
 impl fmt::Display for DestroyErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            DestroyErrorCode::NotOwner => "you are not the owner of this structure, and it's not in your room",
+            DestroyErrorCode::NotOwner => {
+                "you are not the owner of this structure, and it's not in your room"
+            }
             DestroyErrorCode::Busy => "hostile creeps are in the room",
             DestroyErrorCode::InvalidTarget => "room property invalid",
         };
@@ -60,7 +61,8 @@ impl fmt::Display for DestroyErrorCode {
 
 impl Error for DestroyErrorCode {}
 
-/// Error codes used by [Structure::notify_when_attacked](crate::Structure::notify_when_attacked).
+/// Error codes used by
+/// [Structure::notify_when_attacked](crate::Structure::notify_when_attacked).
 ///
 /// Screeps API Docs: [Structure.notifyWhenAttacked](https://docs.screeps.com/api/#Structure.notifyWhenAttacked).
 ///
@@ -80,11 +82,11 @@ impl FromReturnCode for StructureNotifyWhenAttackedErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -102,9 +104,13 @@ impl FromReturnCode for StructureNotifyWhenAttackedErrorCode {
 impl fmt::Display for StructureNotifyWhenAttackedErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            StructureNotifyWhenAttackedErrorCode::NotOwner => "you are not the owner of this structure",
+            StructureNotifyWhenAttackedErrorCode::NotOwner => {
+                "you are not the owner of this structure"
+            }
             StructureNotifyWhenAttackedErrorCode::InvalidTarget => "room property invalid",
-            StructureNotifyWhenAttackedErrorCode::InvalidArgs => "enable argument is not a boolean value",
+            StructureNotifyWhenAttackedErrorCode::InvalidArgs => {
+                "enable argument is not a boolean value"
+            }
         };
 
         write!(f, "{}", msg)

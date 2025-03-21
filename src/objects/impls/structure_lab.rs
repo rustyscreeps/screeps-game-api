@@ -89,7 +89,11 @@ impl StructureLab {
     /// into a new compound in this lab.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.runReaction)
-    pub fn run_reaction(&self, lab1: &StructureLab, lab2: &StructureLab) -> Result<(), RunReactionErrorCode> {
+    pub fn run_reaction(
+        &self,
+        lab1: &StructureLab,
+        lab2: &StructureLab,
+    ) -> Result<(), RunReactionErrorCode> {
         RunReactionErrorCode::result_from_i8(self.run_reaction_internal(lab1, lab2))
     }
 

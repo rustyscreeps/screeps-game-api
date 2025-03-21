@@ -9,8 +9,10 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::*,
-    enums::*,
-    enums::action_error_codes::{DestroyErrorCode, StructureNotifyWhenAttackedErrorCode},
+    enums::{
+        action_error_codes::{DestroyErrorCode, StructureNotifyWhenAttackedErrorCode},
+        *,
+    },
     local::{ObjectId, Position, RawObjectId, RoomName, RoomXY},
     objects::*,
     pathfinder::SingleRoomCostResult,

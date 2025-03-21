@@ -11,8 +11,8 @@ mod powercreep_error_codes;
 mod room_error_codes;
 mod roomposition_error_codes;
 mod spawning_error_codes;
-mod structurecontroller_error_codes;
 mod structure_error_codes;
+mod structurecontroller_error_codes;
 mod structurefactory_error_codes;
 mod structurelab_error_codes;
 mod structurelink_error_codes;
@@ -30,21 +30,20 @@ pub mod construction_site {
 
 pub mod creep {
     pub use super::creep_error_codes::{
-        CreepAttackErrorCode, AttackControllerErrorCode, BuildErrorCode,
-        CreepCancelOrderErrorCode, ClaimControllerErrorCode, DismantleErrorCode,
-        CreepDropErrorCode, GenerateSafeModeErrorCode, HarvestErrorCode,
-        CreepHealErrorCode, CreepMoveErrorCode, CreepMoveByPathErrorCode,
-        CreepMoveToErrorCode, CreepNotifyWhenAttackedErrorCode, CreepPickupErrorCode,
-        PullErrorCode, RangedAttackErrorCode, RangedHealErrorCode,
-        RangedMassAttackErrorCode, CreepRepairErrorCode, ReserveControllerErrorCode,
-        CreepSayErrorCode, SignControllerErrorCode, CreepSuicideErrorCode,
-        CreepTransferErrorCode, UpgradeControllerErrorCode, CreepWithdrawErrorCode,
+        AttackControllerErrorCode, BuildErrorCode, ClaimControllerErrorCode, CreepAttackErrorCode,
+        CreepCancelOrderErrorCode, CreepDropErrorCode, CreepHealErrorCode,
+        CreepMoveByPathErrorCode, CreepMoveErrorCode, CreepMoveToErrorCode,
+        CreepNotifyWhenAttackedErrorCode, CreepPickupErrorCode, CreepRepairErrorCode,
+        CreepSayErrorCode, CreepSuicideErrorCode, CreepTransferErrorCode, CreepWithdrawErrorCode,
+        DismantleErrorCode, GenerateSafeModeErrorCode, HarvestErrorCode, PullErrorCode,
+        RangedAttackErrorCode, RangedHealErrorCode, RangedMassAttackErrorCode,
+        ReserveControllerErrorCode, SignControllerErrorCode, UpgradeControllerErrorCode,
     };
 }
 
 pub mod flag {
     pub use super::flag_error_codes::{
-        FlagRemoveErrorCode, SetColorErrorCode, SetPositionErrorCode
+        FlagRemoveErrorCode, SetColorErrorCode, SetPositionErrorCode,
     };
 }
 
@@ -57,43 +56,40 @@ pub mod game {
     #[cfg(feature = "mmo")]
     pub mod cpu {
         pub use super::game_cpu_error_codes::{
-            SetShardLimitsErrorCode, UnlockErrorCode, GeneratePixelErrorCode
+            GeneratePixelErrorCode, SetShardLimitsErrorCode, UnlockErrorCode,
         };
     }
 
     pub mod map {
-        pub use super::game_map_error_codes::{
-            FindExitErrorCode, FindRouteErrorCode
-        };
+        pub use super::game_map_error_codes::{FindExitErrorCode, FindRouteErrorCode};
     }
 
     pub mod market {
         pub use super::game_market_error_codes::{
-            MarketCancelOrderErrorCode, ChangeOrderPriceErrorCode, CreateOrderErrorCode,
-            DealErrorCode, ExtendOrderErrorCode,
+            ChangeOrderPriceErrorCode, CreateOrderErrorCode, DealErrorCode, ExtendOrderErrorCode,
+            MarketCancelOrderErrorCode,
         };
     }
 }
 
 pub mod powercreep {
     pub use super::powercreep_error_codes::{
-        PowerCreepCreateErrorCode, PowerCreepCancelOrderErrorCode, DeleteErrorCode,
-        PowerCreepDropErrorCode, EnableRoomErrorCode, PowerCreepMoveErrorCode,
-        PowerCreepMoveByPathErrorCode, PowerCreepMoveToErrorCode,
-        PowerCreepNotifyWhenAttackedErrorCode, PowerCreepPickupErrorCode, RenameErrorCode,
-        RenewErrorCode, PowerCreepSayErrorCode, SpawnErrorCode, PowerCreepSuicideErrorCode,
-        PowerCreepTransferErrorCode, UpgradeErrorCode, UsePowerErrorCode,
-        PowerCreepWithdrawErrorCode,
+        DeleteErrorCode, EnableRoomErrorCode, PowerCreepCancelOrderErrorCode,
+        PowerCreepCreateErrorCode, PowerCreepDropErrorCode, PowerCreepMoveByPathErrorCode,
+        PowerCreepMoveErrorCode, PowerCreepMoveToErrorCode, PowerCreepNotifyWhenAttackedErrorCode,
+        PowerCreepPickupErrorCode, PowerCreepSayErrorCode, PowerCreepSuicideErrorCode,
+        PowerCreepTransferErrorCode, PowerCreepWithdrawErrorCode, RenameErrorCode, RenewErrorCode,
+        SpawnErrorCode, UpgradeErrorCode, UsePowerErrorCode,
     };
 }
 
 pub mod room {
     pub use super::room_error_codes::{
-        RoomCreateConstructionSiteErrorCode, RoomCreateFlagErrorCode, FindExitToErrorCode,
+        FindExitToErrorCode, RoomCreateConstructionSiteErrorCode, RoomCreateFlagErrorCode,
     };
 }
 
-pub mod room_position{
+pub mod room_position {
     pub use super::roomposition_error_codes::{
         RoomPositionCreateConstructionSiteErrorCode, RoomPositionCreateFlagErrorCode,
     };
@@ -104,7 +100,9 @@ pub mod spawning {
 }
 
 pub mod structure {
-    pub use super::structure_error_codes::{DestroyErrorCode, StructureNotifyWhenAttackedErrorCode};
+    pub use super::structure_error_codes::{
+        DestroyErrorCode, StructureNotifyWhenAttackedErrorCode,
+    };
 }
 
 pub mod structure_controller {
@@ -117,8 +115,7 @@ pub mod structure_factory {
 
 pub mod structure_lab {
     pub use super::structurelab_error_codes::{
-        BoostCreepErrorCode, ReverseReactionErrorCode, RunReactionErrorCode,
-        UnboostCreepErrorCode,
+        BoostCreepErrorCode, ReverseReactionErrorCode, RunReactionErrorCode, UnboostCreepErrorCode,
     };
 }
 
@@ -144,7 +141,7 @@ pub mod structure_rampart {
 
 pub mod structure_spawn {
     pub use super::structurespawn_error_codes::{
-        SpawnCreepErrorCode, RecycleCreepErrorCode, RenewCreepErrorCode,
+        RecycleCreepErrorCode, RenewCreepErrorCode, SpawnCreepErrorCode,
     };
 }
 
@@ -159,24 +156,8 @@ pub mod structure_tower {
 }
 
 pub use self::{
-    construction_site::*,
-    creep::*,
-    flag::*,
-    game::*,
-    powercreep::*,
-    room::*,
-    room_position::*,
-    spawning::*,
-    structure::*,
-    structure_controller::*,
-    structure_factory::*,
-    structure_lab::*,
-    structure_link::*,
-    structure_nuker::*,
-    structure_observer::*,
-    structure_powerspawn::*,
-    structure_rampart::*,
-    structure_spawn::*,
-    structure_terminal::*,
-    structure_tower::*,
+    construction_site::*, creep::*, flag::*, game::*, powercreep::*, room::*, room_position::*,
+    spawning::*, structure::*, structure_controller::*, structure_factory::*, structure_lab::*,
+    structure_link::*, structure_nuker::*, structure_observer::*, structure_powerspawn::*,
+    structure_rampart::*, structure_spawn::*, structure_terminal::*, structure_tower::*,
 };

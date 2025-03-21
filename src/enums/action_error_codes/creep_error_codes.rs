@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -29,11 +28,11 @@ impl FromReturnCode for CreepAttackErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -57,7 +56,9 @@ impl fmt::Display for CreepAttackErrorCode {
             CreepAttackErrorCode::Busy => "the creep is still being spawned",
             CreepAttackErrorCode::InvalidTarget => "the target is not a valid attackable object",
             CreepAttackErrorCode::NotInRange => "the target is too far away",
-            CreepAttackErrorCode::NoBodypart => "there are no attack body parts in this creep’s body",
+            CreepAttackErrorCode::NoBodypart => {
+                "there are no attack body parts in this creep’s body"
+            }
         };
 
         write!(f, "{}", msg)
@@ -66,7 +67,8 @@ impl fmt::Display for CreepAttackErrorCode {
 
 impl Error for CreepAttackErrorCode {}
 
-/// Error codes used by [Creep::attack_controller](crate::Creep::attack_controller).
+/// Error codes used by
+/// [Creep::attack_controller](crate::Creep::attack_controller).
 ///
 /// Screeps API Docs: [Creep.attackController](https://docs.screeps.com/api/#Creep.attackController).
 ///
@@ -89,11 +91,11 @@ impl FromReturnCode for AttackControllerErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -116,10 +118,16 @@ impl fmt::Display for AttackControllerErrorCode {
         let msg: &'static str = match self {
             AttackControllerErrorCode::NotOwner => "you are not the owner of this creep",
             AttackControllerErrorCode::Busy => "the creep is still being spawned",
-            AttackControllerErrorCode::InvalidTarget => "the target is not a valid owned or reserved controller object",
+            AttackControllerErrorCode::InvalidTarget => {
+                "the target is not a valid owned or reserved controller object"
+            }
             AttackControllerErrorCode::NotInRange => "the target is too far away",
-            AttackControllerErrorCode::Tired => "you have to wait until the next attack is possible",
-            AttackControllerErrorCode::NoBodypart => "there are not enough claim body parts in this creep’s body",
+            AttackControllerErrorCode::Tired => {
+                "you have to wait until the next attack is possible"
+            }
+            AttackControllerErrorCode::NoBodypart => {
+                "there are not enough claim body parts in this creep’s body"
+            }
         };
 
         write!(f, "{}", msg)
@@ -151,11 +159,11 @@ impl FromReturnCode for BuildErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -208,11 +216,11 @@ impl FromReturnCode for CreepCancelOrderErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -237,7 +245,8 @@ impl fmt::Display for CreepCancelOrderErrorCode {
 
 impl Error for CreepCancelOrderErrorCode {}
 
-/// Error codes used by [Creep::claim_controller](crate::Creep::claim_controller).
+/// Error codes used by
+/// [Creep::claim_controller](crate::Creep::claim_controller).
 ///
 /// Screeps API Docs: [Creep.claimController](https://docs.screeps.com/api/#Creep.claimController).
 ///
@@ -261,11 +270,11 @@ impl FromReturnCode for ClaimControllerErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -289,10 +298,16 @@ impl fmt::Display for ClaimControllerErrorCode {
         let msg: &'static str = match self {
             ClaimControllerErrorCode::NotOwner => "you are not the owner of this creep",
             ClaimControllerErrorCode::Busy => "the creep is still being spawned",
-            ClaimControllerErrorCode::InvalidTarget => "the target is not a valid neutral controller object",
-            ClaimControllerErrorCode::Full => "you cannot claim more than 3 rooms in the novice area",
+            ClaimControllerErrorCode::InvalidTarget => {
+                "the target is not a valid neutral controller object"
+            }
+            ClaimControllerErrorCode::Full => {
+                "you cannot claim more than 3 rooms in the novice area"
+            }
             ClaimControllerErrorCode::NotInRange => "the target is too far away",
-            ClaimControllerErrorCode::NoBodypart => "there are no claim body parts in this creep’s body",
+            ClaimControllerErrorCode::NoBodypart => {
+                "there are no claim body parts in this creep’s body"
+            }
             ClaimControllerErrorCode::GclNotEnough => "your global control level is not enough",
         };
 
@@ -324,11 +339,11 @@ impl FromReturnCode for DismantleErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -382,11 +397,11 @@ impl FromReturnCode for CreepDropErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -407,8 +422,12 @@ impl fmt::Display for CreepDropErrorCode {
         let msg: &'static str = match self {
             CreepDropErrorCode::NotOwner => "you are not the owner of this creep",
             CreepDropErrorCode::Busy => "the creep is still being spawned",
-            CreepDropErrorCode::NotEnoughResources => "the creep does not have the given amount of resources",
-            CreepDropErrorCode::InvalidArgs => "the resourcetype is not a valid resource_* constants",
+            CreepDropErrorCode::NotEnoughResources => {
+                "the creep does not have the given amount of resources"
+            }
+            CreepDropErrorCode::InvalidArgs => {
+                "the resourcetype is not a valid resource_* constants"
+            }
         };
 
         write!(f, "{}", msg)
@@ -417,7 +436,8 @@ impl fmt::Display for CreepDropErrorCode {
 
 impl Error for CreepDropErrorCode {}
 
-/// Error codes used by [Creep::generate_safe_mode](crate::Creep::generate_safe_mode).
+/// Error codes used by
+/// [Creep::generate_safe_mode](crate::Creep::generate_safe_mode).
 ///
 /// Screeps API Docs: [Creep.generateSafeMode](https://docs.screeps.com/api/#Creep.generateSafeMode).
 ///
@@ -439,11 +459,11 @@ impl FromReturnCode for GenerateSafeModeErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -465,8 +485,12 @@ impl fmt::Display for GenerateSafeModeErrorCode {
         let msg: &'static str = match self {
             GenerateSafeModeErrorCode::NotOwner => "you are not the owner of this creep",
             GenerateSafeModeErrorCode::Busy => "the creep is still being spawned",
-            GenerateSafeModeErrorCode::NotEnoughResources => "the creep does not have enough ghodium",
-            GenerateSafeModeErrorCode::InvalidTarget => "the target is not a valid controller object",
+            GenerateSafeModeErrorCode::NotEnoughResources => {
+                "the creep does not have enough ghodium"
+            }
+            GenerateSafeModeErrorCode::InvalidTarget => {
+                "the target is not a valid controller object"
+            }
             GenerateSafeModeErrorCode::NotInRange => "the target is too far away",
         };
 
@@ -502,11 +526,11 @@ impl FromReturnCode for HarvestErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -569,11 +593,11 @@ impl FromReturnCode for CreepHealErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -629,11 +653,11 @@ impl FromReturnCode for CreepMoveErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -691,11 +715,11 @@ impl FromReturnCode for CreepMoveByPathErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -718,10 +742,14 @@ impl fmt::Display for CreepMoveByPathErrorCode {
         let msg: &'static str = match self {
             CreepMoveByPathErrorCode::NotOwner => "you are not the owner of this creep",
             CreepMoveByPathErrorCode::Busy => "the creep is still being spawned",
-            CreepMoveByPathErrorCode::NotFound => "the specified path doesn't match the creep's location",
+            CreepMoveByPathErrorCode::NotFound => {
+                "the specified path doesn't match the creep's location"
+            }
             CreepMoveByPathErrorCode::InvalidArgs => "path is not a valid path array",
             CreepMoveByPathErrorCode::Tired => "the fatigue indicator of the creep is non-zero",
-            CreepMoveByPathErrorCode::NoBodypart => "there are no move body parts in this creep’s body",
+            CreepMoveByPathErrorCode::NoBodypart => {
+                "there are no move body parts in this creep’s body"
+            }
         };
 
         write!(f, "{}", msg)
@@ -754,11 +782,11 @@ impl FromReturnCode for CreepMoveToErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -795,7 +823,8 @@ impl fmt::Display for CreepMoveToErrorCode {
 
 impl Error for CreepMoveToErrorCode {}
 
-/// Error codes used by [Creep::notify_when_attacked](crate::Creep::notify_when_attacked).
+/// Error codes used by
+/// [Creep::notify_when_attacked](crate::Creep::notify_when_attacked).
 ///
 /// Screeps API Docs: [Creep.notifyWhenAttacked](https://docs.screeps.com/api/#Creep.notifyWhenAttacked).
 ///
@@ -815,11 +844,11 @@ impl FromReturnCode for CreepNotifyWhenAttackedErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -839,7 +868,9 @@ impl fmt::Display for CreepNotifyWhenAttackedErrorCode {
         let msg: &'static str = match self {
             CreepNotifyWhenAttackedErrorCode::NotOwner => "you are not the owner of this creep",
             CreepNotifyWhenAttackedErrorCode::Busy => "the creep is still being spawned",
-            CreepNotifyWhenAttackedErrorCode::InvalidArgs => "enable argument is not a boolean value",
+            CreepNotifyWhenAttackedErrorCode::InvalidArgs => {
+                "enable argument is not a boolean value"
+            }
         };
 
         write!(f, "{}", msg)
@@ -870,11 +901,11 @@ impl FromReturnCode for CreepPickupErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -928,11 +959,11 @@ impl FromReturnCode for PullErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -985,11 +1016,11 @@ impl FromReturnCode for RangedAttackErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1013,7 +1044,9 @@ impl fmt::Display for RangedAttackErrorCode {
             RangedAttackErrorCode::Busy => "the creep is still being spawned",
             RangedAttackErrorCode::InvalidTarget => "the target is not a valid attackable object",
             RangedAttackErrorCode::NotInRange => "the target is too far away",
-            RangedAttackErrorCode::NoBodypart => "there are no ranged_attack body parts in this creep’s body",
+            RangedAttackErrorCode::NoBodypart => {
+                "there are no ranged_attack body parts in this creep’s body"
+            }
         };
 
         write!(f, "{}", msg)
@@ -1044,11 +1077,11 @@ impl FromReturnCode for RangedHealErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1081,7 +1114,8 @@ impl fmt::Display for RangedHealErrorCode {
 
 impl Error for RangedHealErrorCode {}
 
-/// Error codes used by [Creep::ranged_mass_attack](crate::Creep::ranged_mass_attack).
+/// Error codes used by
+/// [Creep::ranged_mass_attack](crate::Creep::ranged_mass_attack).
 ///
 /// Screeps API Docs: [Creep.rangedMassAttack](https://docs.screeps.com/api/#Creep.rangedMassAttack).
 ///
@@ -1101,11 +1135,11 @@ impl FromReturnCode for RangedMassAttackErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1125,7 +1159,9 @@ impl fmt::Display for RangedMassAttackErrorCode {
         let msg: &'static str = match self {
             RangedMassAttackErrorCode::NotOwner => "you are not the owner of this creep",
             RangedMassAttackErrorCode::Busy => "the creep is still being spawned",
-            RangedMassAttackErrorCode::NoBodypart => "there are no ranged_attack body parts in this creep’s body",
+            RangedMassAttackErrorCode::NoBodypart => {
+                "there are no ranged_attack body parts in this creep’s body"
+            }
         };
 
         write!(f, "{}", msg)
@@ -1157,11 +1193,11 @@ impl FromReturnCode for CreepRepairErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1196,7 +1232,8 @@ impl fmt::Display for CreepRepairErrorCode {
 
 impl Error for CreepRepairErrorCode {}
 
-/// Error codes used by [Creep::reserve_controller](crate::Creep::reserve_controller).
+/// Error codes used by
+/// [Creep::reserve_controller](crate::Creep::reserve_controller).
 ///
 /// Screeps API Docs: [Creep.reserveController](https://docs.screeps.com/api/#Creep.reserveController).
 ///
@@ -1218,11 +1255,11 @@ impl FromReturnCode for ReserveControllerErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1244,9 +1281,13 @@ impl fmt::Display for ReserveControllerErrorCode {
         let msg: &'static str = match self {
             ReserveControllerErrorCode::NotOwner => "you are not the owner of this creep",
             ReserveControllerErrorCode::Busy => "the creep is still being spawned",
-            ReserveControllerErrorCode::InvalidTarget => "the target is not a valid neutral controller object",
+            ReserveControllerErrorCode::InvalidTarget => {
+                "the target is not a valid neutral controller object"
+            }
             ReserveControllerErrorCode::NotInRange => "the target is too far away",
-            ReserveControllerErrorCode::NoBodypart => "there are no claim body parts in this creep’s body",
+            ReserveControllerErrorCode::NoBodypart => {
+                "there are no claim body parts in this creep’s body"
+            }
         };
 
         write!(f, "{}", msg)
@@ -1274,11 +1315,11 @@ impl FromReturnCode for CreepSayErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1325,11 +1366,11 @@ impl FromReturnCode for SignControllerErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1377,11 +1418,11 @@ impl FromReturnCode for CreepSuicideErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1432,11 +1473,11 @@ impl FromReturnCode for CreepTransferErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1473,7 +1514,8 @@ impl fmt::Display for CreepTransferErrorCode {
 
 impl Error for CreepTransferErrorCode {}
 
-/// Error codes used by [Creep::upgrade_controller](crate::Creep::upgrade_controller).
+/// Error codes used by
+/// [Creep::upgrade_controller](crate::Creep::upgrade_controller).
 ///
 /// Screeps API Docs: [Creep.upgradeController](https://docs.screeps.com/api/#Creep.upgradeController).
 ///
@@ -1496,11 +1538,11 @@ impl FromReturnCode for UpgradeControllerErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1559,11 +1601,11 @@ impl FromReturnCode for CreepWithdrawErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 

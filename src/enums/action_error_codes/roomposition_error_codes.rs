@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,9 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [RoomPosition::create_construction_site](crate::RoomPosition::create_construction_site).
+/// Error codes used by
+/// [RoomPosition::create_construction_site](crate::RoomPosition::create_construction_site).
+///
 ///
 /// Screeps API Docs: [RoomPosition.createConstructionSite](https://docs.screeps.com/api/#RoomPosition.createConstructionSite).
 ///
@@ -30,11 +31,11 @@ impl FromReturnCode for RoomPositionCreateConstructionSiteErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -42,11 +43,17 @@ impl FromReturnCode for RoomPositionCreateConstructionSiteErrorCode {
         match val {
             0 => Some(Ok(())),
             -1 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::NotOwner)),
-            -7 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::InvalidTarget)),
+            -7 => Some(Err(
+                RoomPositionCreateConstructionSiteErrorCode::InvalidTarget,
+            )),
             -8 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::Full)),
             -9 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::NotInRange)),
-            -10 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::InvalidArgs)),
-            -14 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::RclNotEnough)),
+            -10 => Some(Err(
+                RoomPositionCreateConstructionSiteErrorCode::InvalidArgs,
+            )),
+            -14 => Some(Err(
+                RoomPositionCreateConstructionSiteErrorCode::RclNotEnough,
+            )),
             _ => None,
         }
     }
@@ -69,7 +76,8 @@ impl fmt::Display for RoomPositionCreateConstructionSiteErrorCode {
 
 impl Error for RoomPositionCreateConstructionSiteErrorCode {}
 
-/// Error codes used by [RoomPosition::create_flag](crate::RoomPosition::create_flag).
+/// Error codes used by
+/// [RoomPosition::create_flag](crate::RoomPosition::create_flag).
 ///
 /// Screeps API Docs: [RoomPosition.createFlag](https://docs.screeps.com/api/#RoomPosition.createFlag).
 ///
@@ -90,11 +98,11 @@ impl FromReturnCode for RoomPositionCreateFlagErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -112,10 +120,16 @@ impl FromReturnCode for RoomPositionCreateFlagErrorCode {
 impl fmt::Display for RoomPositionCreateFlagErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            RoomPositionCreateFlagErrorCode::NameExists => "there is a flag with the same name already",
-            RoomPositionCreateFlagErrorCode::Full => "you have too many flags. the maximum number of flags per player is 10000",
+            RoomPositionCreateFlagErrorCode::NameExists => {
+                "there is a flag with the same name already"
+            }
+            RoomPositionCreateFlagErrorCode::Full => {
+                "you have too many flags. the maximum number of flags per player is 10000"
+            }
             RoomPositionCreateFlagErrorCode::NotInRange => "room not visible",
-            RoomPositionCreateFlagErrorCode::InvalidArgs => "the location or the color constant is incorrect",
+            RoomPositionCreateFlagErrorCode::InvalidArgs => {
+                "the location or the color constant is incorrect"
+            }
         };
 
         write!(f, "{}", msg)

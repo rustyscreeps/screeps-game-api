@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [StructureFactory::produce](crate::StructureFactory::produce).
+/// Error codes used by
+/// [StructureFactory::produce](crate::StructureFactory::produce).
 ///
 /// Screeps API Docs: [StructureFactory.produce](https://docs.screeps.com/api/#StructureFactory.produce).
 ///
@@ -32,11 +32,11 @@ impl FromReturnCode for ProduceErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -60,13 +60,21 @@ impl fmt::Display for ProduceErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             ProduceErrorCode::NotOwner => "you are not the owner of this structure",
-            ProduceErrorCode::Busy => "the factory is not operated by the pwr_operate_factory power",
-            ProduceErrorCode::NotEnoughResources => "the structure does not have the required amount of resources",
-            ProduceErrorCode::InvalidTarget => "the factory cannot produce the commodity of this level",
+            ProduceErrorCode::Busy => {
+                "the factory is not operated by the pwr_operate_factory power"
+            }
+            ProduceErrorCode::NotEnoughResources => {
+                "the structure does not have the required amount of resources"
+            }
+            ProduceErrorCode::InvalidTarget => {
+                "the factory cannot produce the commodity of this level"
+            }
             ProduceErrorCode::Full => "the factory cannot contain the produce",
             ProduceErrorCode::InvalidArgs => "the arguments provided are incorrect",
             ProduceErrorCode::Tired => "the factory is still cooling down",
-            ProduceErrorCode::RclNotEnough => "your room controller level is insufficient to use the factory",
+            ProduceErrorCode::RclNotEnough => {
+                "your room controller level is insufficient to use the factory"
+            }
         };
 
         write!(f, "{}", msg)

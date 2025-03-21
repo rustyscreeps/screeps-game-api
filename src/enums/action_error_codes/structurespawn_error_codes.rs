@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [StructureSpawn::spawn_creep](crate::StructureSpawn::spawn_creep).
+/// Error codes used by
+/// [StructureSpawn::spawn_creep](crate::StructureSpawn::spawn_creep).
 ///
 /// Screeps API Docs: [StructureSpawn.spawnCreep](https://docs.screeps.com/api/#StructureSpawn.spawnCreep).
 ///
@@ -30,11 +30,11 @@ impl FromReturnCode for SpawnCreepErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -69,7 +69,8 @@ impl fmt::Display for SpawnCreepErrorCode {
 
 impl Error for SpawnCreepErrorCode {}
 
-/// Error codes used by [StructureSpawn::recycle_creep](crate::StructureSpawn::recycle_creep).
+/// Error codes used by
+/// [StructureSpawn::recycle_creep](crate::StructureSpawn::recycle_creep).
 ///
 /// Screeps API Docs: [StructureSpawn.recycleCreep](https://docs.screeps.com/api/#StructureSpawn.recycleCreep).
 ///
@@ -90,11 +91,11 @@ impl FromReturnCode for RecycleCreepErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -113,10 +114,14 @@ impl FromReturnCode for RecycleCreepErrorCode {
 impl fmt::Display for RecycleCreepErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            RecycleCreepErrorCode::NotOwner => "you are not the owner of this spawn or the target creep",
+            RecycleCreepErrorCode::NotOwner => {
+                "you are not the owner of this spawn or the target creep"
+            }
             RecycleCreepErrorCode::InvalidTarget => "the specified target object is not a creep",
             RecycleCreepErrorCode::NotInRange => "the target creep is too far away",
-            RecycleCreepErrorCode::RclNotEnough => "your room controller level is insufficient to use this spawn",
+            RecycleCreepErrorCode::RclNotEnough => {
+                "your room controller level is insufficient to use this spawn"
+            }
         };
 
         write!(f, "{}", msg)
@@ -125,7 +130,8 @@ impl fmt::Display for RecycleCreepErrorCode {
 
 impl Error for RecycleCreepErrorCode {}
 
-/// Error codes used by [StructureSpawn::renew_creep](crate::StructureSpawn::renew_creep).
+/// Error codes used by
+/// [StructureSpawn::renew_creep](crate::StructureSpawn::renew_creep).
 ///
 /// Screeps API Docs: [StructureSpawn.renewCreep](https://docs.screeps.com/api/#StructureSpawn.renewCreep).
 ///
@@ -149,11 +155,11 @@ impl FromReturnCode for RenewCreepErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -178,10 +184,14 @@ impl fmt::Display for RenewCreepErrorCode {
             RenewCreepErrorCode::NotOwner => "you are not the owner of the spawn, or the creep",
             RenewCreepErrorCode::Busy => "the spawn is spawning another creep",
             RenewCreepErrorCode::NotEnoughEnergy => "the spawn does not have enough energy",
-            RenewCreepErrorCode::InvalidTarget => "the specified target object is not a creep, or the creep has claim body part",
+            RenewCreepErrorCode::InvalidTarget => {
+                "the specified target object is not a creep, or the creep has claim body part"
+            }
             RenewCreepErrorCode::Full => "the target creep's time to live timer is full",
             RenewCreepErrorCode::NotInRange => "the target creep is too far away",
-            RenewCreepErrorCode::RclNotEnough => "your room controller level is insufficient to use this spawn",
+            RenewCreepErrorCode::RclNotEnough => {
+                "your room controller level is insufficient to use this spawn"
+            }
         };
 
         write!(f, "{}", msg)

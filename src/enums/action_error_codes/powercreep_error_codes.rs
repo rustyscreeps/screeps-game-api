@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -27,11 +26,11 @@ impl FromReturnCode for PowerCreepCreateErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -60,7 +59,8 @@ impl fmt::Display for PowerCreepCreateErrorCode {
 
 impl Error for PowerCreepCreateErrorCode {}
 
-/// Error codes used by [PowerCreep::cancel_order](crate::PowerCreep::cancel_order).
+/// Error codes used by
+/// [PowerCreep::cancel_order](crate::PowerCreep::cancel_order).
 ///
 /// Screeps API Docs: [PowerCreep.cancelOrder](https://docs.screeps.com/api/#PowerCreep.cancelOrder).
 ///
@@ -80,11 +80,11 @@ impl FromReturnCode for PowerCreepCancelOrderErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -104,7 +104,9 @@ impl fmt::Display for PowerCreepCancelOrderErrorCode {
         let msg: &'static str = match self {
             PowerCreepCancelOrderErrorCode::NotOwner => "you are not the owner of the creep",
             PowerCreepCancelOrderErrorCode::Busy => "the power creep is not spawned in the world",
-            PowerCreepCancelOrderErrorCode::NotFound => "the order with the specified name is not found",
+            PowerCreepCancelOrderErrorCode::NotFound => {
+                "the order with the specified name is not found"
+            }
         };
 
         write!(f, "{}", msg)
@@ -113,7 +115,8 @@ impl fmt::Display for PowerCreepCancelOrderErrorCode {
 
 impl Error for PowerCreepCancelOrderErrorCode {}
 
-/// Error codes used by [AccountPowerCreep::delete](crate::AccountPowerCreep::delete).
+/// Error codes used by
+/// [AccountPowerCreep::delete](crate::AccountPowerCreep::delete).
 ///
 /// Screeps API Docs: [PowerCreep.delete](https://docs.screeps.com/api/#PowerCreep.delete).
 ///
@@ -132,11 +135,11 @@ impl FromReturnCode for DeleteErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -184,11 +187,11 @@ impl FromReturnCode for PowerCreepDropErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -209,8 +212,12 @@ impl fmt::Display for PowerCreepDropErrorCode {
         let msg: &'static str = match self {
             PowerCreepDropErrorCode::NotOwner => "you are not the owner of this creep",
             PowerCreepDropErrorCode::Busy => "the power creep is not spawned in the world",
-            PowerCreepDropErrorCode::NotEnoughResources => "the creep does not have the given amount of energy",
-            PowerCreepDropErrorCode::InvalidArgs => "the resourcetype is not a valid resource_* constants",
+            PowerCreepDropErrorCode::NotEnoughResources => {
+                "the creep does not have the given amount of energy"
+            }
+            PowerCreepDropErrorCode::InvalidArgs => {
+                "the resourcetype is not a valid resource_* constants"
+            }
         };
 
         write!(f, "{}", msg)
@@ -219,7 +226,8 @@ impl fmt::Display for PowerCreepDropErrorCode {
 
 impl Error for PowerCreepDropErrorCode {}
 
-/// Error codes used by [PowerCreep::enable_room](crate::PowerCreep::enable_room).
+/// Error codes used by
+/// [PowerCreep::enable_room](crate::PowerCreep::enable_room).
 ///
 /// Screeps API Docs: [PowerCreep.enableRoom](https://docs.screeps.com/api/#PowerCreep.enableRoom).
 ///
@@ -240,11 +248,11 @@ impl FromReturnCode for EnableRoomErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -297,11 +305,11 @@ impl FromReturnCode for PowerCreepMoveErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -334,7 +342,8 @@ impl fmt::Display for PowerCreepMoveErrorCode {
 
 impl Error for PowerCreepMoveErrorCode {}
 
-/// Error codes used by [PowerCreep::move_by_path](crate::PowerCreep::move_by_path).
+/// Error codes used by
+/// [PowerCreep::move_by_path](crate::PowerCreep::move_by_path).
 ///
 /// Screeps API Docs: [PowerCreep.moveByPath](https://docs.screeps.com/api/#PowerCreep.moveByPath).
 ///
@@ -356,11 +365,11 @@ impl FromReturnCode for PowerCreepMoveByPathErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -382,9 +391,13 @@ impl fmt::Display for PowerCreepMoveByPathErrorCode {
         let msg: &'static str = match self {
             PowerCreepMoveByPathErrorCode::NotOwner => "you are not the owner of this creep",
             PowerCreepMoveByPathErrorCode::Busy => "the power creep is not spawned in the world",
-            PowerCreepMoveByPathErrorCode::NotFound => "the specified path doesn't match the creep's location",
+            PowerCreepMoveByPathErrorCode::NotFound => {
+                "the specified path doesn't match the creep's location"
+            }
             PowerCreepMoveByPathErrorCode::InvalidArgs => "path is not a valid path array",
-            PowerCreepMoveByPathErrorCode::Tired => "the fatigue indicator of the creep is non-zero",
+            PowerCreepMoveByPathErrorCode::Tired => {
+                "the fatigue indicator of the creep is non-zero"
+            }
         };
 
         write!(f, "{}", msg)
@@ -416,11 +429,11 @@ impl FromReturnCode for PowerCreepMoveToErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -455,7 +468,8 @@ impl fmt::Display for PowerCreepMoveToErrorCode {
 
 impl Error for PowerCreepMoveToErrorCode {}
 
-/// Error codes used by [PowerCreep::notify_when_attacked](crate::PowerCreep::notify_when_attacked).
+/// Error codes used by
+/// [PowerCreep::notify_when_attacked](crate::PowerCreep::notify_when_attacked).
 ///
 /// Screeps API Docs: [PowerCreep.notifyWhenAttacked](https://docs.screeps.com/api/#PowerCreep.notifyWhenAttacked).
 ///
@@ -475,11 +489,11 @@ impl FromReturnCode for PowerCreepNotifyWhenAttackedErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -497,9 +511,15 @@ impl FromReturnCode for PowerCreepNotifyWhenAttackedErrorCode {
 impl fmt::Display for PowerCreepNotifyWhenAttackedErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
-            PowerCreepNotifyWhenAttackedErrorCode::NotOwner => "you are not the owner of this creep",
-            PowerCreepNotifyWhenAttackedErrorCode::Busy => "the power creep is not spawned in the world",
-            PowerCreepNotifyWhenAttackedErrorCode::InvalidArgs => "enable argument is not a boolean value",
+            PowerCreepNotifyWhenAttackedErrorCode::NotOwner => {
+                "you are not the owner of this creep"
+            }
+            PowerCreepNotifyWhenAttackedErrorCode::Busy => {
+                "the power creep is not spawned in the world"
+            }
+            PowerCreepNotifyWhenAttackedErrorCode::InvalidArgs => {
+                "enable argument is not a boolean value"
+            }
         };
 
         write!(f, "{}", msg)
@@ -530,11 +550,11 @@ impl FromReturnCode for PowerCreepPickupErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -556,7 +576,9 @@ impl fmt::Display for PowerCreepPickupErrorCode {
         let msg: &'static str = match self {
             PowerCreepPickupErrorCode::NotOwner => "you are not the owner of this creep",
             PowerCreepPickupErrorCode::Busy => "the power creep is not spawned in the world",
-            PowerCreepPickupErrorCode::InvalidTarget => "the target is not a valid object to pick up",
+            PowerCreepPickupErrorCode::InvalidTarget => {
+                "the target is not a valid object to pick up"
+            }
             PowerCreepPickupErrorCode::Full => "the creep cannot receive any more resource",
             PowerCreepPickupErrorCode::NotInRange => "the target is too far away",
         };
@@ -567,7 +589,8 @@ impl fmt::Display for PowerCreepPickupErrorCode {
 
 impl Error for PowerCreepPickupErrorCode {}
 
-/// Error codes used by [AccountPowerCreep::rename](crate::AccountPowerCreep::rename).
+/// Error codes used by
+/// [AccountPowerCreep::rename](crate::AccountPowerCreep::rename).
 ///
 /// Screeps API Docs: [PowerCreep.rename](https://docs.screeps.com/api/#PowerCreep.rename).
 ///
@@ -588,11 +611,11 @@ impl FromReturnCode for RenameErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -644,11 +667,11 @@ impl FromReturnCode for RenewErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -698,11 +721,11 @@ impl FromReturnCode for PowerCreepSayErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -729,7 +752,8 @@ impl fmt::Display for PowerCreepSayErrorCode {
 
 impl Error for PowerCreepSayErrorCode {}
 
-/// Error codes used by [AccountPowerCreep::spawn](crate::AccountPowerCreep::spawn).
+/// Error codes used by
+/// [AccountPowerCreep::spawn](crate::AccountPowerCreep::spawn).
 ///
 /// Screeps API Docs: [PowerCreep.spawn](https://docs.screeps.com/api/#PowerCreep.spawn).
 ///
@@ -751,11 +775,11 @@ impl FromReturnCode for SpawnErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -807,11 +831,11 @@ impl FromReturnCode for PowerCreepSuicideErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -862,11 +886,11 @@ impl FromReturnCode for PowerCreepTransferErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -903,7 +927,8 @@ impl fmt::Display for PowerCreepTransferErrorCode {
 
 impl Error for PowerCreepTransferErrorCode {}
 
-/// Error codes used by [AccountPowerCreep::upgrade](crate::AccountPowerCreep::upgrade).
+/// Error codes used by
+/// [AccountPowerCreep::upgrade](crate::AccountPowerCreep::upgrade).
 ///
 /// Screeps API Docs: [PowerCreep.upgrade](https://docs.screeps.com/api/#PowerCreep.upgrade).
 ///
@@ -924,11 +949,11 @@ impl FromReturnCode for UpgradeErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -985,11 +1010,11 @@ impl FromReturnCode for UsePowerErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -1015,7 +1040,9 @@ impl fmt::Display for UsePowerErrorCode {
         let msg: &'static str = match self {
             UsePowerErrorCode::NotOwner => "you are not the owner of the creep",
             UsePowerErrorCode::Busy => "the creep is not spawned in the world",
-            UsePowerErrorCode::NotEnoughResources => "the creep doesn't have enough resources to use the power",
+            UsePowerErrorCode::NotEnoughResources => {
+                "the creep doesn't have enough resources to use the power"
+            }
             UsePowerErrorCode::InvalidTarget => "the specified target is not valid",
             UsePowerErrorCode::Full => "the target has the same active effect of a higher level",
             UsePowerErrorCode::NotInRange => "the specified target is too far away",
@@ -1054,11 +1081,11 @@ impl FromReturnCode for PowerCreepWithdrawErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 

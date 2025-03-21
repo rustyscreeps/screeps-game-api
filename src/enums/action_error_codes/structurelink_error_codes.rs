@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [StructureLink::transfer_energy](crate::StructureLink::transfer_energy).
+/// Error codes used by
+/// [StructureLink::transfer_energy](crate::StructureLink::transfer_energy).
 ///
 /// Screeps API Docs: [StructureLink.transferEnergy](https://docs.screeps.com/api/#StructureLink.transferEnergy).
 ///
@@ -32,11 +32,11 @@ impl FromReturnCode for TransferEnergyErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -60,13 +60,19 @@ impl fmt::Display for TransferEnergyErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             TransferEnergyErrorCode::NotOwner => "you are not the owner of this link",
-            TransferEnergyErrorCode::NotEnoughEnergy => "the structure does not have the given amount of energy",
-            TransferEnergyErrorCode::InvalidTarget => "the target is not a valid structurelink object",
+            TransferEnergyErrorCode::NotEnoughEnergy => {
+                "the structure does not have the given amount of energy"
+            }
+            TransferEnergyErrorCode::InvalidTarget => {
+                "the target is not a valid structurelink object"
+            }
             TransferEnergyErrorCode::Full => "the target cannot receive any more energy",
             TransferEnergyErrorCode::NotInRange => "the target is too far away",
             TransferEnergyErrorCode::InvalidArgs => "the energy amount is incorrect",
             TransferEnergyErrorCode::Tired => "the link is still cooling down",
-            TransferEnergyErrorCode::RclNotEnough => "room controller level insufficient to use this link",
+            TransferEnergyErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this link"
+            }
         };
 
         write!(f, "{}", msg)

@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [StructureNuker::launch_nuke](crate::StructureNuker::launch_nuke).
+/// Error codes used by
+/// [StructureNuker::launch_nuke](crate::StructureNuker::launch_nuke).
 ///
 /// Screeps API Docs: [StructureNuker.launchNuke](https://docs.screeps.com/api/#StructureNuker.launchNuke).
 ///
@@ -31,11 +31,11 @@ impl FromReturnCode for LaunchNukeErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -58,12 +58,18 @@ impl fmt::Display for LaunchNukeErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             LaunchNukeErrorCode::NotOwner => "you are not the owner of this structure",
-            LaunchNukeErrorCode::NotEnoughResources => "the structure does not have enough energy and/or ghodium",
-            LaunchNukeErrorCode::InvalidTarget => "the nuke can't be launched to the specified roomposition (see start areas)",
+            LaunchNukeErrorCode::NotEnoughResources => {
+                "the structure does not have enough energy and/or ghodium"
+            }
+            LaunchNukeErrorCode::InvalidTarget => {
+                "the nuke can't be launched to the specified roomposition (see start areas)"
+            }
             LaunchNukeErrorCode::NotInRange => "the target room is out of range",
             LaunchNukeErrorCode::InvalidArgs => "the target is not a valid roomposition",
             LaunchNukeErrorCode::Tired => "this structure is still cooling down",
-            LaunchNukeErrorCode::RclNotEnough => "room controller level insufficient to use this structure",
+            LaunchNukeErrorCode::RclNotEnough => {
+                "room controller level insufficient to use this structure"
+            }
         };
 
         write!(f, "{}", msg)

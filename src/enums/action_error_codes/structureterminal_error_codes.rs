@@ -1,5 +1,4 @@
-use std::fmt;
-use std::error::Error;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -7,7 +6,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
 
-/// Error codes used by [StructureTerminal::send](crate::StructureTerminal::send).
+/// Error codes used by
+/// [StructureTerminal::send](crate::StructureTerminal::send).
 ///
 /// Screeps API Docs: [StructureTerminal.send](https://docs.screeps.com/api/#StructureTerminal.send).
 ///
@@ -29,11 +29,11 @@ impl FromReturnCode for SendErrorCode {
 
     fn result_from_i8(val: i8) -> Result<(), Self::Error> {
         let maybe_result = Self::try_result_from_i8(val);
-        #[cfg(feature="unsafe-return-conversion")]
+        #[cfg(feature = "unsafe-return-conversion")]
         unsafe {
             maybe_result.unwrap_unchecked()
         }
-        #[cfg(not(feature="unsafe-return-conversion"))]
+        #[cfg(not(feature = "unsafe-return-conversion"))]
         maybe_result.unwrap()
     }
 
@@ -54,10 +54,14 @@ impl fmt::Display for SendErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
             SendErrorCode::NotOwner => "you are not the owner of this structure",
-            SendErrorCode::NotEnoughResources => "the structure does not have the required amount of resources",
+            SendErrorCode::NotEnoughResources => {
+                "the structure does not have the required amount of resources"
+            }
             SendErrorCode::InvalidArgs => "the arguments provided are incorrect",
             SendErrorCode::Tired => "the terminal is still cooling down",
-            SendErrorCode::RclNotEnough => "your room controller level is insufficient to use this terminal",
+            SendErrorCode::RclNotEnough => {
+                "your room controller level is insufficient to use this terminal"
+            }
         };
 
         write!(f, "{}", msg)

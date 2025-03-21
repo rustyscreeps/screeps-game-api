@@ -8,8 +8,7 @@ use crate::{
         Color, ErrorCode, FindConstant, StructureType,
     },
     enums::action_error_codes::{
-        RoomPositionCreateConstructionSiteErrorCode,
-        RoomPositionCreateFlagErrorCode,
+        RoomPositionCreateConstructionSiteErrorCode, RoomPositionCreateFlagErrorCode,
     },
     local::{RoomCoordinate, RoomName},
     objects::{CostMatrix, FindPathOptions, Path, RoomPosition},
