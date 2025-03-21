@@ -2,8 +2,11 @@ use js_sys::{Array, JsString, Object};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{Direction, ErrorCode, Part},
-    enums::action_error_codes::spawning::*,
+    constants::{Direction, Part},
+    enums::action_error_codes::{
+        spawning::*,
+        structure_spawn::*,
+    },
     objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -79,10 +82,10 @@ impl StructureSpawn {
     /// about how to replace Memory and/or delete RawMemory._parsed
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.spawnCreep)
-    pub fn spawn_creep(&self, body: &[Part], name: &str) -> Result<(), ErrorCode> {
+    pub fn spawn_creep(&self, body: &[Part], name: &str) -> Result<(), SpawnCreepErrorCode> {
         let body = body.iter().cloned().map(JsValue::from).collect();
 
-        ErrorCode::result_from_i8(Self::spawn_creep_internal(self, &body, name, None))
+        SpawnCreepErrorCode::result_from_i8(Self::spawn_creep_internal(self, &body, name, None))
     }
 
     /// Create a new creep with the specified body part [`Array`], name
@@ -99,7 +102,7 @@ impl StructureSpawn {
         body: &[Part],
         name: &str,
         opts: &SpawnOptions,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<(), SpawnCreepErrorCode> {
         let body = body.iter().cloned().map(JsValue::from).collect();
 
         let js_opts = ObjectExt::unchecked_from_js(JsValue::from(Object::new()));
@@ -120,7 +123,7 @@ impl StructureSpawn {
             ObjectExt::set(&js_opts, "directions", array);
         }
 
-        ErrorCode::result_from_i8(Self::spawn_creep_internal(
+        SpawnCreepErrorCode::result_from_i8(Self::spawn_creep_internal(
             self,
             &body,
             name,
@@ -133,16 +136,16 @@ impl StructureSpawn {
     /// while spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.recycleCreep)
-    pub fn recycle_creep(&self, creep: &Creep) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.recycle_creep_internal(creep))
+    pub fn recycle_creep(&self, creep: &Creep) -> Result<(), RecycleCreepErrorCode> {
+        RecycleCreepErrorCode::result_from_i8(self.recycle_creep_internal(creep))
     }
 
     /// Renew a [`Creep`] in melee range, removing all boosts adding to its TTL.
     /// Cannot be used while spawning.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.renewCreep)
-    pub fn renew_creep(&self, creep: &Creep) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.renew_creep_internal(creep))
+    pub fn renew_creep(&self, creep: &Creep) -> Result<(), RenewCreepErrorCode> {
+        RenewCreepErrorCode::result_from_i8(self.renew_creep_internal(creep))
     }
 }
 
