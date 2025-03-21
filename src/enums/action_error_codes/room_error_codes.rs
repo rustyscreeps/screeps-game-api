@@ -130,10 +130,6 @@ impl Error for RoomCreateFlagErrorCode {}
 pub enum FindExitToErrorCode {
     NoPath = -2,
     InvalidArgs = -10,
-    FindExitTop = 1,
-    FindExitRight = 3,
-    FindExitBottom = 5,
-    FindExitLeft = 7,
 }
 
 impl FromReturnCode for FindExitToErrorCode {
@@ -153,10 +149,6 @@ impl FromReturnCode for FindExitToErrorCode {
         match val {
             -2 => Some(Err(FindExitToErrorCode::NoPath)),
             -10 => Some(Err(FindExitToErrorCode::InvalidArgs)),
-            1 => Some(Err(FindExitToErrorCode::FindExitTop)),
-            3 => Some(Err(FindExitToErrorCode::FindExitRight)),
-            5 => Some(Err(FindExitToErrorCode::FindExitBottom)),
-            7 => Some(Err(FindExitToErrorCode::FindExitLeft)),
             _ => None,
         }
     }
@@ -167,10 +159,6 @@ impl fmt::Display for FindExitToErrorCode {
         let msg: &'static str = match self {
             FindExitToErrorCode::NoPath => "path can not be found",
             FindExitToErrorCode::InvalidArgs => "the location is incorrect",
-            FindExitToErrorCode::FindExitTop => "exit top",
-            FindExitToErrorCode::FindExitRight => "exit right",
-            FindExitToErrorCode::FindExitBottom => "exit bottom",
-            FindExitToErrorCode::FindExitLeft => "exit left",
         };
 
         write!(f, "{}", msg)
