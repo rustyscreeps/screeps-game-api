@@ -2,7 +2,7 @@ use js_sys::Date;
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ErrorCode,
+    enums::action_error_codes::structure_controller::*,
     objects::{OwnedStructure, RoomObject, Structure},
     prelude::*,
 };
@@ -110,15 +110,15 @@ impl StructureController {
     /// room for 20,000 ticks
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.activateSafeMode)
-    pub fn activate_safe_mode(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.activate_safe_mode_internal())
+    pub fn activate_safe_mode(&self) -> Result<(), ActivateSafeModeErrorCode> {
+        ActivateSafeModeErrorCode::result_from_i8(self.activate_safe_mode_internal())
     }
 
     /// Relinquish ownership of the controller and its room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureController.unclaim)
-    pub fn unclaim(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.unclaim_internal())
+    pub fn unclaim(&self) -> Result<(), UnclaimErrorCode> {
+        UnclaimErrorCode::result_from_i8(self.unclaim_internal())
     }
 }
 
