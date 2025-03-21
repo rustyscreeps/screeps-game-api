@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ErrorCode,
+    enums::action_error_codes::structure_powerspawn::*,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -40,8 +40,8 @@ impl StructurePowerSpawn {
     /// [Screeps documentation](https://docs.screeps.com/api/#StructurePowerSpawn.processPower)
     ///
     /// [`POWER_SPAWN_ENERGY_RATIO`]: crate::constants::POWER_SPAWN_ENERGY_RATIO
-    pub fn process_power(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.process_power_internal())
+    pub fn process_power(&self) -> Result<(), ProcessPowerErrorCode> {
+        ProcessPowerErrorCode::result_from_i8(self.process_power_internal())
     }
 }
 
