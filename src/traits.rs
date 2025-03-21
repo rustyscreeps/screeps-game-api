@@ -10,6 +10,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     constants::*,
     enums::*,
+    enums::action_error_codes::{DestroyErrorCode, StructureNotifyWhenAttackedErrorCode},
     local::{ObjectId, Position, RawObjectId, RoomName, RoomXY},
     objects::*,
     pathfinder::SingleRoomCostResult,
@@ -302,11 +303,11 @@ pub trait SharedCreepProperties {
 pub trait StructureProperties {
     fn structure_type(&self) -> StructureType;
 
-    fn destroy(&self) -> Result<(), ErrorCode>;
+    fn destroy(&self) -> Result<(), DestroyErrorCode>;
 
     fn is_active(&self) -> bool;
 
-    fn notify_when_attacked(&self, val: bool) -> Result<(), ErrorCode>;
+    fn notify_when_attacked(&self, val: bool) -> Result<(), StructureNotifyWhenAttackedErrorCode>;
 }
 
 /// Trait for all wrappers over Screeps JavaScript objects which can be the

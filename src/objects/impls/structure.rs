@@ -3,6 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{ErrorCode, StructureType},
+    enums::action_error_codes::structure::*,
     objects::RoomObject,
     prelude::*,
 };
@@ -45,12 +46,8 @@ extern "C" {
     #[wasm_bindgen(method, js_name = isActive)]
     pub fn is_active(this: &Structure) -> bool;
 
-    /// Set whether a notification email should be sent when the structure is
-    /// attacked.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.notifyWhenAttacked)
     #[wasm_bindgen(method, js_name = notifyWhenAttacked)]
-    pub fn notify_when_attacked(this: &Structure, val: bool) -> i8;
+    fn notify_when_attacked_internal(this: &Structure, val: bool) -> i8;
 }
 
 impl Structure {
@@ -75,8 +72,16 @@ impl Structure {
     /// Destroy the structure, if possible.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Structure.destroy)
-    pub fn destroy(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.destroy_internal())
+    pub fn destroy(&self) -> Result<(), DestroyErrorCode> {
+        DestroyErrorCode::result_from_i8(self.destroy_internal())
+    }
+
+    /// Set whether a notification email should be sent when the structure is
+    /// attacked.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Structure.notifyWhenAttacked)
+    pub fn notify_when_attacked(&self, val: bool) -> Result<(), StructureNotifyWhenAttackedErrorCode> {
+        StructureNotifyWhenAttackedErrorCode::result_from_i8(self.notify_when_attacked_internal(val))
     }
 }
 
@@ -110,7 +115,7 @@ where
         Structure::structure_type(self.as_ref())
     }
 
-    fn destroy(&self) -> Result<(), ErrorCode> {
+    fn destroy(&self) -> Result<(), DestroyErrorCode> {
         Structure::destroy(self.as_ref())
     }
 
@@ -118,7 +123,7 @@ where
         Structure::is_active(self.as_ref())
     }
 
-    fn notify_when_attacked(&self, val: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(Structure::notify_when_attacked(self.as_ref(), val))
+    fn notify_when_attacked(&self, val: bool) -> Result<(), StructureNotifyWhenAttackedErrorCode> {
+        Structure::notify_when_attacked(self.as_ref(), val)
     }
 }
