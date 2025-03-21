@@ -3,6 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{Direction, ErrorCode, Part},
+    enums::action_error_codes::spawning::*,
     objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -270,15 +271,15 @@ impl Spawning {
     /// Cancel spawning this creep, without refunding any energy.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.cancel)
-    pub fn cancel(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.cancel_internal())
+    pub fn cancel(&self) -> Result<(), CancelErrorCode> {
+        CancelErrorCode::result_from_i8(self.cancel_internal())
     }
 
     /// Change allowed directions for the creep to leave the spawn once it's
     /// ready.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureSpawn.Spawning.setDirections)
-    pub fn set_directions(&self, directions: &Array) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.set_directions_internal(directions))
+    pub fn set_directions(&self, directions: &Array) -> Result<(), SetDirectionsErrorCode> {
+        SetDirectionsErrorCode::result_from_i8(self.set_directions_internal(directions))
     }
 }
