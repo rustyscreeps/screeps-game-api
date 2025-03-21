@@ -284,7 +284,7 @@ impl Position {
 
     #[inline]
     pub fn from_packed(packed: u32) -> Self {
-        let x = packed >> 8 & 0xFF;
+        let x = (packed >> 8) & 0xFF;
         let y = packed & 0xFF;
         assert!(x < ROOM_SIZE as u32, "out of bounds x: {x}");
         assert!(y < ROOM_SIZE as u32, "out of bounds y: {y}");
@@ -307,7 +307,7 @@ impl Position {
     #[inline]
     pub fn x(self) -> RoomCoordinate {
         // SAFETY: packed always contains a valid x coordinate
-        unsafe { RoomCoordinate::unchecked_new((self.packed >> 8 & 0xFF) as u8) }
+        unsafe { RoomCoordinate::unchecked_new(((self.packed >> 8) & 0xFF) as u8) }
     }
 
     /// Gets this position's in-room y coordinate.
@@ -322,7 +322,7 @@ impl Position {
     pub fn xy(self) -> RoomXY {
         // SAFETY: packed always contains a valid pair
         unsafe {
-            RoomXY::unchecked_new((self.packed >> 8 & 0xFF) as u8, (self.packed & 0xFF) as u8)
+            RoomXY::unchecked_new(((self.packed >> 8) & 0xFF) as u8, (self.packed & 0xFF) as u8)
         }
     }
 

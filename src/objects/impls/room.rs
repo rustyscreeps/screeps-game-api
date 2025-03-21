@@ -11,7 +11,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{
-        find::*, look::*, Color, Direction, ErrorCode, ExitDirection, PowerType, ResourceType,
+        find::*, look::*, Color, Direction, ExitDirection, PowerType, ResourceType,
         StructureType,
     },
     enums::action_error_codes::room::*,
