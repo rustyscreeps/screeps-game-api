@@ -2,7 +2,8 @@ use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{ErrorCode, ResourceType},
+    constants::ResourceType,
+    enums::action_error_codes::structure_terminal::*,
     local::RoomName,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
@@ -52,11 +53,11 @@ impl StructureTerminal {
         amount: u32,
         destination: RoomName,
         description: Option<&str>,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<(), SendErrorCode> {
         let desination = destination.into();
         let description = description.map(JsString::from);
 
-        ErrorCode::result_from_i8(self.send_internal(
+        SendErrorCode::result_from_i8(self.send_internal(
             resource_type,
             amount,
             &desination,
