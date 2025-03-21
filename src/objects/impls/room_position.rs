@@ -4,6 +4,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{find::*, look::*, Color, Direction, ErrorCode, StructureType},
+    enums::action_error_codes::room_position::*,
     local::{Position, RoomCoordinate, RoomName},
     objects::{CostMatrix, FindPathOptions, Path},
     pathfinder::RoomCostResult,
@@ -68,12 +69,12 @@ extern "C" {
     #[wasm_bindgen(method, setter = __packedPos)]
     pub fn set_packed(this: &RoomPosition, val: u32);
 
-    #[wasm_bindgen(method, js_name = createConstructionSite)]
+    #[wasm_bindgen(method, catch, js_name = createConstructionSite)]
     fn create_construction_site_internal(
         this: &RoomPosition,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> i8;
+    ) -> Result<i8, JsValue>;
 
     #[wasm_bindgen(method, catch, js_name = createFlag)]
     fn create_flag_internal(
@@ -225,8 +226,16 @@ impl RoomPosition {
         &self,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(Self::create_construction_site_internal(self, ty, name))
+    ) -> Result<(), RoomPositionCreateConstructionSiteErrorCode> {
+        match Self::create_construction_site_internal(self, ty, name) {
+            Ok(result) => {
+                RoomPositionCreateConstructionSiteErrorCode::result_from_i8(result)
+            },
+            Err(_) => {
+                // js code threw an exception; this happens when the room is not visible
+                Err(RoomPositionCreateConstructionSiteErrorCode::NotInRange)
+            }
+        }
     }
 
     /// Creates a [`Flag`] at this position. If successful, returns the name of
@@ -240,13 +249,13 @@ impl RoomPosition {
         name: Option<&JsString>,
         color: Option<Color>,
         secondary_color: Option<Color>,
-    ) -> Result<JsString, ErrorCode> {
+    ) -> Result<JsString, RoomPositionCreateFlagErrorCode> {
         match self.create_flag_internal(name, color, secondary_color) {
             Ok(result) => {
                 if result.is_string() {
                     Ok(result.unchecked_into())
                 } else {
-                    Err(ErrorCode::from_f64(
+                    Err(RoomPositionCreateFlagErrorCode::from_f64(
                         result
                             .as_f64()
                             .expect("expected non-string flag return to be a number"),
@@ -255,8 +264,8 @@ impl RoomPosition {
                 }
             }
             Err(_) => {
-                // js code threw an exception; we're going to assume it's a non-visible room.
-                Err(ErrorCode::NotInRange)
+                // js code threw an exception; this only happens for a non-visible room.
+                Err(RoomPositionCreateFlagErrorCode::NotInRange)
             }
         }
     }

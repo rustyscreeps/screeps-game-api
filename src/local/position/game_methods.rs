@@ -7,6 +7,10 @@ use crate::{
         look::{LookConstant, LookResult},
         Color, ErrorCode, FindConstant, StructureType,
     },
+    enums::action_error_codes::{
+        RoomPositionCreateConstructionSiteErrorCode,
+        RoomPositionCreateFlagErrorCode,
+    },
     local::{RoomCoordinate, RoomName},
     objects::{CostMatrix, FindPathOptions, Path, RoomPosition},
     pathfinder::RoomCostResult,
@@ -28,7 +32,7 @@ impl Position {
         self,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<(), RoomPositionCreateConstructionSiteErrorCode> {
         RoomPosition::from(self).create_construction_site(ty, name)
     }
 
@@ -44,7 +48,7 @@ impl Position {
         name: Option<&JsString>,
         color: Option<Color>,
         secondary_color: Option<Color>,
-    ) -> Result<JsString, ErrorCode> {
+    ) -> Result<JsString, RoomPositionCreateFlagErrorCode> {
         RoomPosition::from(self).create_flag(name, color, secondary_color)
     }
 

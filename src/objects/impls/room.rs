@@ -278,9 +278,11 @@ impl Room {
     pub fn find_exit_to(&self, room: RoomName) -> Result<ExitDirection, FindExitToErrorCode> {
         let result = self.find_exit_to_internal(&room.into());
         if result >= 0 {
-            Ok(ExitDirection::from_i8(result))
+            Ok(ExitDirection::from_i8(result).expect("expect find exit return to be a valid exit constant"))
         } else {
-            FindExitToErrorCode::result_from_i8(result)
+            // The exit direction results should have been caught by the other branch,
+            // therefore this should always be an error and never actually panic
+            Err(FindExitToErrorCode::result_from_i8(result).unwrap_err())
         }
     }
 

@@ -20,6 +20,7 @@ pub enum RoomPositionCreateConstructionSiteErrorCode {
     NotOwner = -1,
     InvalidTarget = -7,
     Full = -8,
+    NotInRange = -9,
     InvalidArgs = -10,
     RclNotEnough = -14,
 }
@@ -43,6 +44,7 @@ impl FromReturnCode for RoomPositionCreateConstructionSiteErrorCode {
             -1 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::NotOwner)),
             -7 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::InvalidTarget)),
             -8 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::Full)),
+            -9 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::NotInRange)),
             -10 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::InvalidArgs)),
             -14 => Some(Err(RoomPositionCreateConstructionSiteErrorCode::RclNotEnough)),
             _ => None,
@@ -56,6 +58,7 @@ impl fmt::Display for RoomPositionCreateConstructionSiteErrorCode {
             RoomPositionCreateConstructionSiteErrorCode::NotOwner => "the room is claimed or reserved by a hostile player",
             RoomPositionCreateConstructionSiteErrorCode::InvalidTarget => "the structure cannot be placed at the specified location",
             RoomPositionCreateConstructionSiteErrorCode::Full => "you have too many construction sites. the maximum number of construction sites per player is 100",
+            RoomPositionCreateConstructionSiteErrorCode::NotInRange => "room not visible",
             RoomPositionCreateConstructionSiteErrorCode::InvalidArgs => "the location is incorrect",
             RoomPositionCreateConstructionSiteErrorCode::RclNotEnough => "room controller level insufficient. learn more",
         };
@@ -78,6 +81,7 @@ impl Error for RoomPositionCreateConstructionSiteErrorCode {}
 pub enum RoomPositionCreateFlagErrorCode {
     NameExists = -3,
     Full = -8,
+    NotInRange = -9,
     InvalidArgs = -10,
 }
 
@@ -98,6 +102,7 @@ impl FromReturnCode for RoomPositionCreateFlagErrorCode {
         match val {
             -3 => Some(Err(RoomPositionCreateFlagErrorCode::NameExists)),
             -8 => Some(Err(RoomPositionCreateFlagErrorCode::Full)),
+            -9 => Some(Err(RoomPositionCreateFlagErrorCode::NotInRange)),
             -10 => Some(Err(RoomPositionCreateFlagErrorCode::InvalidArgs)),
             _ => None,
         }
@@ -109,6 +114,7 @@ impl fmt::Display for RoomPositionCreateFlagErrorCode {
         let msg: &'static str = match self {
             RoomPositionCreateFlagErrorCode::NameExists => "there is a flag with the same name already",
             RoomPositionCreateFlagErrorCode::Full => "you have too many flags. the maximum number of flags per player is 10000",
+            RoomPositionCreateFlagErrorCode::NotInRange => "room not visible",
             RoomPositionCreateFlagErrorCode::InvalidArgs => "the location or the color constant is incorrect",
         };
 
