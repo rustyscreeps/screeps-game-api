@@ -19,10 +19,6 @@ use crate::FromReturnCode;
 pub enum FindExitErrorCode {
     NoPath = -2,
     InvalidArgs = -10,
-    FindExitTop = 1,
-    FindExitRight = 3,
-    FindExitBottom = 5,
-    FindExitLeft = 7,
 }
 
 impl FromReturnCode for FindExitErrorCode {
@@ -42,10 +38,6 @@ impl FromReturnCode for FindExitErrorCode {
         match val {
             -2 => Some(Err(FindExitErrorCode::NoPath)),
             -10 => Some(Err(FindExitErrorCode::InvalidArgs)),
-            1 => Some(Err(FindExitErrorCode::FindExitTop)),
-            3 => Some(Err(FindExitErrorCode::FindExitRight)),
-            5 => Some(Err(FindExitErrorCode::FindExitBottom)),
-            7 => Some(Err(FindExitErrorCode::FindExitLeft)),
             _ => None,
         }
     }
@@ -56,10 +48,6 @@ impl fmt::Display for FindExitErrorCode {
         let msg: &'static str = match self {
             FindExitErrorCode::NoPath => "path can not be found",
             FindExitErrorCode::InvalidArgs => "the location is incorrect",
-            FindExitErrorCode::FindExitTop => "exit top",
-            FindExitErrorCode::FindExitRight => "exit right",
-            FindExitErrorCode::FindExitBottom => "exit bottom",
-            FindExitErrorCode::FindExitLeft => "exit left",
         };
 
         write!(f, "{}", msg)

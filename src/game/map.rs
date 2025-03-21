@@ -8,7 +8,8 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{Direction, ErrorCode, ExitDirection},
+    constants::{Direction, ExitDirection},
+    enums::action_error_codes::game::map::*,
     local::RoomName,
     objects::RoomTerrain,
     prelude::*,
@@ -277,7 +278,7 @@ pub fn find_route<F>(
     from: RoomName,
     to: RoomName,
     options: Option<FindRouteOptions<F>>,
-) -> Result<Vec<RouteStep>, ErrorCode>
+) -> Result<Vec<RouteStep>, FindRouteErrorCode>
 where
     F: FnMut(RoomName, RoomName) -> f64,
 {
@@ -302,7 +303,7 @@ where
     } else {
         // SAFETY: can never be a 0 return from the find_route API function
         Err(unsafe {
-            ErrorCode::try_result_from_jsvalue(&result)
+            FindRouteErrorCode::try_result_from_jsvalue(&result)
                 .expect("expected return code for pathing failure")
                 .unwrap_err_unchecked()
         })
@@ -318,7 +319,7 @@ pub fn find_exit<F>(
     from: RoomName,
     to: RoomName,
     options: Option<FindRouteOptions<F>>,
-) -> Result<ExitDirection, ErrorCode>
+) -> Result<ExitDirection, FindExitErrorCode>
 where
     F: FnMut(RoomName, RoomName) -> f64,
 {
@@ -336,6 +337,6 @@ where
     } else {
         // SAFETY: can never be an `Ok()` return from `result_from_i8` because
         // non-negative values are handled by the first branch above
-        Err(unsafe { ErrorCode::result_from_i8(result).unwrap_err_unchecked() })
+        Err(unsafe { FindExitErrorCode::result_from_i8(result).unwrap_err_unchecked() })
     }
 }
