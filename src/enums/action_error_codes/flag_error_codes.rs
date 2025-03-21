@@ -1,7 +1,6 @@
 use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
@@ -36,7 +35,7 @@ impl FromReturnCode for FlagRemoveErrorCode {
 }
 
 impl fmt::Display for FlagRemoveErrorCode {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
         unimplemented!()
     }
 }

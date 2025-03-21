@@ -1,7 +1,6 @@
 use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::FromReturnCode;
