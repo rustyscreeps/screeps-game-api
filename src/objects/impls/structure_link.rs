@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ErrorCode,
+    enums::action_error_codes::structure_link::*,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -51,8 +51,8 @@ impl StructureLink {
         &self,
         target: &StructureLink,
         amount: Option<u32>,
-    ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.transfer_energy_internal(target, amount))
+    ) -> Result<(), TransferEnergyErrorCode> {
+        TransferEnergyErrorCode::result_from_i8(self.transfer_energy_internal(target, amount))
     }
 }
 
