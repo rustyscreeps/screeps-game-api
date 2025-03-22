@@ -17,9 +17,8 @@ use crate::{
         },
         *,
     },
-    local::{ObjectId, Position, RawObjectId, RoomName, RoomXY},
+    local::{ObjectId, Position, RawObjectId, RoomXY},
     objects::*,
-    pathfinder::SingleRoomCostResult,
     prelude::*,
 };
 
