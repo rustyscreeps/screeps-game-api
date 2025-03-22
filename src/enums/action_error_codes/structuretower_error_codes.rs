@@ -3,11 +3,11 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by [StructureTower::attack](crate::StructureTower::attack).
 ///
-/// Screeps API Docs: [StructureTower.attack](https://docs.screeps.com/api/#StructureTower.attack).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureTower.attack).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L766)
 #[derive(
@@ -63,9 +63,23 @@ impl fmt::Display for TowerAttackErrorCode {
 
 impl Error for TowerAttackErrorCode {}
 
+impl From<TowerAttackErrorCode> for ErrorCode {
+    fn from(value: TowerAttackErrorCode) -> Self {
+        // Safety: TowerAttackErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: TowerAttackErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [StructureTower::heal](crate::StructureTower::heal).
 ///
-/// Screeps API Docs: [StructureTower.heal](https://docs.screeps.com/api/#StructureTower.heal).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureTower.heal).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L786)
 #[derive(
@@ -121,9 +135,23 @@ impl fmt::Display for TowerHealErrorCode {
 
 impl Error for TowerHealErrorCode {}
 
+impl From<TowerHealErrorCode> for ErrorCode {
+    fn from(value: TowerHealErrorCode) -> Self {
+        // Safety: TowerHealErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: TowerHealErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [StructureTower::repair](crate::StructureTower::repair).
 ///
-/// Screeps API Docs: [StructureTower.repair](https://docs.screeps.com/api/#StructureTower.repair).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureTower.repair).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L806)
 #[derive(
@@ -178,3 +206,17 @@ impl fmt::Display for TowerRepairErrorCode {
 }
 
 impl Error for TowerRepairErrorCode {}
+
+impl From<TowerRepairErrorCode> for ErrorCode {
+    fn from(value: TowerRepairErrorCode) -> Self {
+        // Safety: TowerRepairErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: TowerRepairErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

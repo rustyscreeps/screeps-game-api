@@ -3,12 +3,12 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [Room::create_construction_site](crate::Room::create_construction_site).
 ///
-/// Screeps API Docs: [Room.createConstructionSite](https://docs.screeps.com/api/#Room.createConstructionSite).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Room.createConstructionSite).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/rooms.js#L1029)
 #[derive(
@@ -65,9 +65,23 @@ impl fmt::Display for RoomCreateConstructionSiteErrorCode {
 
 impl Error for RoomCreateConstructionSiteErrorCode {}
 
+impl From<RoomCreateConstructionSiteErrorCode> for ErrorCode {
+    fn from(value: RoomCreateConstructionSiteErrorCode) -> Self {
+        // Safety: RoomCreateConstructionSiteErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RoomCreateConstructionSiteErrorCode discriminants are always error
+        // code values, and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [Room::create_flag](crate::Room::create_flag).
 ///
-/// Screeps API Docs: [Room.createFlag](https://docs.screeps.com/api/#Room.createFlag).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Room.createFlag).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/rooms.js#L978)
 #[derive(
@@ -121,9 +135,23 @@ impl fmt::Display for RoomCreateFlagErrorCode {
 
 impl Error for RoomCreateFlagErrorCode {}
 
+impl From<RoomCreateFlagErrorCode> for ErrorCode {
+    fn from(value: RoomCreateFlagErrorCode) -> Self {
+        // Safety: RoomCreateFlagErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RoomCreateFlagErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [Room::find_exit_to](crate::Room::find_exit_to).
 ///
-/// Screeps API Docs: [Room.findExitTo](https://docs.screeps.com/api/#Room.findExitTo).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Room.findExitTo).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/rooms.js#L1130)
 #[derive(
@@ -169,3 +197,17 @@ impl fmt::Display for FindExitToErrorCode {
 }
 
 impl Error for FindExitToErrorCode {}
+
+impl From<FindExitToErrorCode> for ErrorCode {
+    fn from(value: FindExitToErrorCode) -> Self {
+        // Safety: FindExitToErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: FindExitToErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

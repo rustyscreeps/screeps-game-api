@@ -3,13 +3,13 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [StructurePowerSpawn::process_power](crate::StructurePowerSpawn::process_power).
 ///
 ///
-/// Screeps API Docs: [StructurePowerSpawn.processPower](https://docs.screeps.com/api/#StructurePowerSpawn.processPower).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructurePowerSpawn.processPower).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L613)
 #[derive(
@@ -63,3 +63,17 @@ impl fmt::Display for ProcessPowerErrorCode {
 }
 
 impl Error for ProcessPowerErrorCode {}
+
+impl From<ProcessPowerErrorCode> for ErrorCode {
+    fn from(value: ProcessPowerErrorCode) -> Self {
+        // Safety: ProcessPowerErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ProcessPowerErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

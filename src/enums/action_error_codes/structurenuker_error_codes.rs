@@ -3,12 +3,12 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [StructureNuker::launch_nuke](crate::StructureNuker::launch_nuke).
 ///
-/// Screeps API Docs: [StructureNuker.launchNuke](https://docs.screeps.com/api/#StructureNuker.launchNuke).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureNuker.launchNuke).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L1356)
 #[derive(
@@ -76,3 +76,17 @@ impl fmt::Display for LaunchNukeErrorCode {
 }
 
 impl Error for LaunchNukeErrorCode {}
+
+impl From<LaunchNukeErrorCode> for ErrorCode {
+    fn from(value: LaunchNukeErrorCode) -> Self {
+        // Safety: LaunchNukeErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: LaunchNukeErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

@@ -3,12 +3,12 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [StructureSpawn::spawn_creep](crate::StructureSpawn::spawn_creep).
 ///
-/// Screeps API Docs: [StructureSpawn.spawnCreep](https://docs.screeps.com/api/#StructureSpawn.spawnCreep).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureSpawn.spawnCreep).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L1063)
 #[derive(
@@ -68,10 +68,24 @@ impl fmt::Display for SpawnCreepErrorCode {
 
 impl Error for SpawnCreepErrorCode {}
 
+impl From<SpawnCreepErrorCode> for ErrorCode {
+    fn from(value: SpawnCreepErrorCode) -> Self {
+        // Safety: SpawnCreepErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SpawnCreepErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [StructureSpawn::recycle_creep](crate::StructureSpawn::recycle_creep).
 ///
-/// Screeps API Docs: [StructureSpawn.recycleCreep](https://docs.screeps.com/api/#StructureSpawn.recycleCreep).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureSpawn.recycleCreep).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L1269)
 #[derive(
@@ -129,10 +143,24 @@ impl fmt::Display for RecycleCreepErrorCode {
 
 impl Error for RecycleCreepErrorCode {}
 
+impl From<RecycleCreepErrorCode> for ErrorCode {
+    fn from(value: RecycleCreepErrorCode) -> Self {
+        // Safety: RecycleCreepErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RecycleCreepErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [StructureSpawn::renew_creep](crate::StructureSpawn::renew_creep).
 ///
-/// Screeps API Docs: [StructureSpawn.renewCreep](https://docs.screeps.com/api/#StructureSpawn.renewCreep).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureSpawn.renewCreep).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L1237)
 #[derive(
@@ -198,3 +226,17 @@ impl fmt::Display for RenewCreepErrorCode {
 }
 
 impl Error for RenewCreepErrorCode {}
+
+impl From<RenewCreepErrorCode> for ErrorCode {
+    fn from(value: RenewCreepErrorCode) -> Self {
+        // Safety: RenewCreepErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RenewCreepErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

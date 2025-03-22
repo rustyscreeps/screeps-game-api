@@ -3,13 +3,13 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [RoomPosition::create_construction_site](crate::RoomPosition::create_construction_site).
 ///
 ///
-/// Screeps API Docs: [RoomPosition.createConstructionSite](https://docs.screeps.com/api/#RoomPosition.createConstructionSite).
+/// [Screeps API Docs](https://docs.screeps.com/api/#RoomPosition.createConstructionSite).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/rooms.js#L1630)
 #[derive(
@@ -75,10 +75,24 @@ impl fmt::Display for RoomPositionCreateConstructionSiteErrorCode {
 
 impl Error for RoomPositionCreateConstructionSiteErrorCode {}
 
+impl From<RoomPositionCreateConstructionSiteErrorCode> for ErrorCode {
+    fn from(value: RoomPositionCreateConstructionSiteErrorCode) -> Self {
+        // Safety: RoomPositionCreateConstructionSiteErrorCode is repr(i8), so we can
+        // cast it to get the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RoomPositionCreateConstructionSiteErrorCode discriminants are always
+        // error code values, and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [RoomPosition::create_flag](crate::RoomPosition::create_flag).
 ///
-/// Screeps API Docs: [RoomPosition.createFlag](https://docs.screeps.com/api/#RoomPosition.createFlag).
+/// [Screeps API Docs](https://docs.screeps.com/api/#RoomPosition.createFlag).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/rooms.js#L1622)
 #[derive(
@@ -136,3 +150,17 @@ impl fmt::Display for RoomPositionCreateFlagErrorCode {
 }
 
 impl Error for RoomPositionCreateFlagErrorCode {}
+
+impl From<RoomPositionCreateFlagErrorCode> for ErrorCode {
+    fn from(value: RoomPositionCreateFlagErrorCode) -> Self {
+        // Safety: RoomPositionCreateFlagErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RoomPositionCreateFlagErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an `Err` variant, so
+        // we can always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

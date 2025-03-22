@@ -3,12 +3,12 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [StructureLab::boost_creep](crate::StructureLab::boost_creep).
 ///
-/// Screeps API Docs: [StructureLab.boostCreep](https://docs.screeps.com/api/#StructureLab.boostCreep).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureLab.boostCreep).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L412)
 #[derive(
@@ -74,10 +74,24 @@ impl fmt::Display for BoostCreepErrorCode {
 
 impl Error for BoostCreepErrorCode {}
 
+impl From<BoostCreepErrorCode> for ErrorCode {
+    fn from(value: BoostCreepErrorCode) -> Self {
+        // Safety: BoostCreepErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: BoostCreepErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [StructureLab::reverse_reaction](crate::StructureLab::reverse_reaction).
 ///
-/// Screeps API Docs: [StructureLab.reverseReaction](https://docs.screeps.com/api/#StructureLab.reverseReaction).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureLab.reverseReaction).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L360)
 #[derive(
@@ -149,10 +163,24 @@ impl fmt::Display for ReverseReactionErrorCode {
 
 impl Error for ReverseReactionErrorCode {}
 
+impl From<ReverseReactionErrorCode> for ErrorCode {
+    fn from(value: ReverseReactionErrorCode) -> Self {
+        // Safety: ReverseReactionErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ReverseReactionErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [StructureLab::run_reaction](crate::StructureLab::run_reaction).
 ///
-/// Screeps API Docs: [StructureLab.runReaction](https://docs.screeps.com/api/#StructureLab.runReaction).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureLab.runReaction).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L317)
 #[derive(
@@ -222,10 +250,24 @@ impl fmt::Display for RunReactionErrorCode {
 
 impl Error for RunReactionErrorCode {}
 
+impl From<RunReactionErrorCode> for ErrorCode {
+    fn from(value: RunReactionErrorCode) -> Self {
+        // Safety: RunReactionErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RunReactionErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [StructureLab::unboost_creep](crate::StructureLab::unboost_creep).
 ///
-/// Screeps API Docs: [StructureLab.unboostCreep](https://docs.screeps.com/api/#StructureLab.unboostCreep).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureLab.unboostCreep).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L443)
 #[derive(
@@ -288,3 +330,17 @@ impl fmt::Display for UnboostCreepErrorCode {
 }
 
 impl Error for UnboostCreepErrorCode {}
+
+impl From<UnboostCreepErrorCode> for ErrorCode {
+    fn from(value: UnboostCreepErrorCode) -> Self {
+        // Safety: UnboostCreepErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: UnboostCreepErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

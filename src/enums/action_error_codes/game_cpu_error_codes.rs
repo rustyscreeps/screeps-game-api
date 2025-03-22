@@ -3,12 +3,12 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [game::cpu::set_shard_limits](crate::game::cpu::set_shard_limits).
 ///
-/// Screeps API Docs: [Game.cpu.setShardLimits](https://docs.screeps.com/api/#Game.cpu.setShardLimits).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.cpu.setShardLimits).
 #[cfg(feature = "mmo")]
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
@@ -57,9 +57,23 @@ impl fmt::Display for SetShardLimitsErrorCode {
 
 impl Error for SetShardLimitsErrorCode {}
 
+impl From<SetShardLimitsErrorCode> for ErrorCode {
+    fn from(value: SetShardLimitsErrorCode) -> Self {
+        // Safety: SetShardLimitsErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SetShardLimitsErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [game::cpu::unlock](crate::game::cpu::unlock).
 ///
-/// Screeps API Docs: [Game.cpu.unlock](https://docs.screeps.com/api/#Game.cpu.unlock).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.cpu.unlock).
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
 )]
@@ -107,10 +121,24 @@ impl fmt::Display for UnlockErrorCode {
 
 impl Error for UnlockErrorCode {}
 
+impl From<UnlockErrorCode> for ErrorCode {
+    fn from(value: UnlockErrorCode) -> Self {
+        // Safety: UnlockErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: UnlockErrorCode discriminants are always error code values, and thus
+        // the Result returned here will always be an `Err` variant, so we can always
+        // extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [game::cpu::generate_pixel](crate::game::cpu::generate_pixel).
 ///
-/// Screeps API Docs: [Game.cpu.generatePixel](https://docs.screeps.com/api/#Game.cpu.generatePixel).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.cpu.generatePixel).
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
 )]
@@ -152,3 +180,17 @@ impl fmt::Display for GeneratePixelErrorCode {
 }
 
 impl Error for GeneratePixelErrorCode {}
+
+impl From<GeneratePixelErrorCode> for ErrorCode {
+    fn from(value: GeneratePixelErrorCode) -> Self {
+        // Safety: GeneratePixelErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: GeneratePixelErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

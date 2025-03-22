@@ -3,12 +3,12 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [game::market::cancel_order](crate::game::market::cancel_order).
 ///
-/// Screeps API Docs: [Game.market.cancelOrder](https://docs.screeps.com/api/#Game.market.cancelOrder).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.market.cancelOrder).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/market.js#L100)
 #[derive(
@@ -53,10 +53,24 @@ impl fmt::Display for MarketCancelOrderErrorCode {
 
 impl Error for MarketCancelOrderErrorCode {}
 
+impl From<MarketCancelOrderErrorCode> for ErrorCode {
+    fn from(value: MarketCancelOrderErrorCode) -> Self {
+        // Safety: MarketCancelOrderErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: MarketCancelOrderErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an `Err` variant, so
+        // we can always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [game::market::change_order_price](crate::game::market::change_order_price).
 ///
-/// Screeps API Docs: [Game.market.changeOrderPrice](https://docs.screeps.com/api/#Game.market.changeOrderPrice).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.market.changeOrderPrice).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/market.js#L155)
 #[derive(
@@ -111,10 +125,24 @@ impl fmt::Display for ChangeOrderPriceErrorCode {
 
 impl Error for ChangeOrderPriceErrorCode {}
 
+impl From<ChangeOrderPriceErrorCode> for ErrorCode {
+    fn from(value: ChangeOrderPriceErrorCode) -> Self {
+        // Safety: ChangeOrderPriceErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ChangeOrderPriceErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [game::market::create_order](crate::game::market::create_order).
 ///
-/// Screeps API Docs: [Game.market.createOrder](https://docs.screeps.com/api/#Game.market.createOrder).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.market.createOrder).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/market.js#L68)
 #[derive(
@@ -172,9 +200,23 @@ impl fmt::Display for CreateOrderErrorCode {
 
 impl Error for CreateOrderErrorCode {}
 
+impl From<CreateOrderErrorCode> for ErrorCode {
+    fn from(value: CreateOrderErrorCode) -> Self {
+        // Safety: CreateOrderErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreateOrderErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [game::market::deal](crate::game::market::deal).
 ///
-/// Screeps API Docs: [Game.market.deal](https://docs.screeps.com/api/#Game.market.deal).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.market.deal).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/market.js#L108)
 #[derive(
@@ -231,10 +273,23 @@ impl fmt::Display for DealErrorCode {
 
 impl Error for DealErrorCode {}
 
+impl From<DealErrorCode> for ErrorCode {
+    fn from(value: DealErrorCode) -> Self {
+        // Safety: DealErrorCode is repr(i8), so we can cast it to get the discriminant
+        // value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: DealErrorCode discriminants are always error code values, and thus
+        // the Result returned here will always be an `Err` variant, so we can always
+        // extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [game::market::extend_order](crate::game::market::extend_order).
 ///
-/// Screeps API Docs: [Game.market.extendOrder](https://docs.screeps.com/api/#Game.market.extendOrder).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.market.extendOrder).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/market.js#L174)
 #[derive(
@@ -283,3 +338,17 @@ impl fmt::Display for ExtendOrderErrorCode {
 }
 
 impl Error for ExtendOrderErrorCode {}
+
+impl From<ExtendOrderErrorCode> for ErrorCode {
+    fn from(value: ExtendOrderErrorCode) -> Self {
+        // Safety: ExtendOrderErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ExtendOrderErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

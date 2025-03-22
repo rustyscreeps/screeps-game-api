@@ -3,11 +3,11 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by [Flag::remove](crate::Flag::remove).
 ///
-/// Screeps API Docs: [Flag.remove](https://docs.screeps.com/api/#Flag.remove).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Flag.remove).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/flags.js#L57)
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive)]
@@ -35,8 +35,10 @@ impl FromReturnCode for FlagRemoveErrorCode {
 }
 
 impl fmt::Display for FlagRemoveErrorCode {
-    fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        unimplemented!()
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg: &'static str = "Zero-variant enum";
+
+        write!(f, "{}", msg)
     }
 }
 
@@ -44,7 +46,7 @@ impl Error for FlagRemoveErrorCode {}
 
 /// Error codes used by [Flag::set_color](crate::Flag::set_color).
 ///
-/// Screeps API Docs: [Flag.setColor](https://docs.screeps.com/api/#Flag.setColor).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Flag.setColor).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/flags.js#L76)
 #[derive(
@@ -91,9 +93,23 @@ impl fmt::Display for SetColorErrorCode {
 
 impl Error for SetColorErrorCode {}
 
+impl From<SetColorErrorCode> for ErrorCode {
+    fn from(value: SetColorErrorCode) -> Self {
+        // Safety: SetColorErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SetColorErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [Flag::set_position](crate::Flag::set_position).
 ///
-/// Screeps API Docs: [Flag.setPosition](https://docs.screeps.com/api/#Flag.setPosition).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Flag.setPosition).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/flags.js#L63)
 #[derive(
@@ -137,3 +153,17 @@ impl fmt::Display for SetPositionErrorCode {
 }
 
 impl Error for SetPositionErrorCode {}
+
+impl From<SetPositionErrorCode> for ErrorCode {
+    fn from(value: SetPositionErrorCode) -> Self {
+        // Safety: SetPositionErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SetPositionErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

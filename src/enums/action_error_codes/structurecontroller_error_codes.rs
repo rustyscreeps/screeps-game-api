@@ -3,13 +3,13 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
 /// [StructureController::activate_safe_mode](crate::StructureController::activate_safe_mode).
 ///
 ///
-/// Screeps API Docs: [StructureController.activateSafeMode](https://docs.screeps.com/api/#StructureController.activateSafeMode).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureController.activateSafeMode).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L211)
 #[derive(
@@ -63,10 +63,24 @@ impl fmt::Display for ActivateSafeModeErrorCode {
 
 impl Error for ActivateSafeModeErrorCode {}
 
+impl From<ActivateSafeModeErrorCode> for ErrorCode {
+    fn from(value: ActivateSafeModeErrorCode) -> Self {
+        // Safety: ActivateSafeModeErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ActivateSafeModeErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by
 /// [StructureController::unclaim](crate::StructureController::unclaim).
 ///
-/// Screeps API Docs: [StructureController.unclaim](https://docs.screeps.com/api/#StructureController.unclaim).
+/// [Screeps API Docs](https://docs.screeps.com/api/#StructureController.unclaim).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/structures.js#L201)
 #[derive(
@@ -110,3 +124,17 @@ impl fmt::Display for UnclaimErrorCode {
 }
 
 impl Error for UnclaimErrorCode {}
+
+impl From<UnclaimErrorCode> for ErrorCode {
+    fn from(value: UnclaimErrorCode) -> Self {
+        // Safety: UnclaimErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: UnclaimErrorCode discriminants are always error code values, and thus
+        // the Result returned here will always be an `Err` variant, so we can always
+        // extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}

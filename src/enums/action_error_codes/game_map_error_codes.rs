@@ -3,11 +3,11 @@ use std::{error::Error, fmt};
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::FromReturnCode;
+use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by [game::map::find_exit](crate::game::map::find_exit).
 ///
-/// Screeps API Docs: [Game.map.findExit](https://docs.screeps.com/api/#Game.map.findExit).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.map.findExit).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/map.js#L188)
 #[derive(
@@ -54,9 +54,23 @@ impl fmt::Display for FindExitErrorCode {
 
 impl Error for FindExitErrorCode {}
 
+impl From<FindExitErrorCode> for ErrorCode {
+    fn from(value: FindExitErrorCode) -> Self {
+        // Safety: FindExitErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: FindExitErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [game::map::find_route](crate::game::map::find_route).
 ///
-/// Screeps API Docs: [Game.map.findRoute](https://docs.screeps.com/api/#Game.map.findRoute).
+/// [Screeps API Docs](https://docs.screeps.com/api/#Game.map.findRoute).
 ///
 /// [Screeps Engine Source Code](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/game/map.js#L69)
 #[derive(
@@ -99,3 +113,17 @@ impl fmt::Display for FindRouteErrorCode {
 }
 
 impl Error for FindRouteErrorCode {}
+
+impl From<FindRouteErrorCode> for ErrorCode {
+    fn from(value: FindRouteErrorCode) -> Self {
+        // Safety: FindRouteErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: FindRouteErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
