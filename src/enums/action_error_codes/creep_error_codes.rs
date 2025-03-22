@@ -919,7 +919,7 @@ impl From<CreepMoveByPathErrorCode> for ErrorCode {
     }
 }
 
-/// Error codes used by [Creep::move_to](crate::Creep::move_to).
+/// Error codes used by [Creep::move_to<T>](crate::Creep::move_to<T>).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.moveTo).
 ///

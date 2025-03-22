@@ -10,7 +10,11 @@ use wasm_bindgen::prelude::*;
 use crate::{
     constants::*,
     enums::{
-        action_error_codes::{DestroyErrorCode, StructureNotifyWhenAttackedErrorCode},
+        action_error_codes::{
+            DestroyErrorCode, DropErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode,
+            SayErrorCode, StructureNotifyWhenAttackedErrorCode, SuicideErrorCode,
+            TransferErrorCode, WithdrawErrorCode,
+        },
         *,
     },
     local::{ObjectId, Position, RawObjectId, RoomName, RoomXY},
@@ -233,7 +237,7 @@ pub trait SharedCreepProperties {
     fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode>;
 
     /// Drop a resource on the ground from the creep's [`Store`].
-    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode>;
+    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), DropErrorCode>;
 
     /// Move one square in the specified direction.
     fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode>;
@@ -266,18 +270,18 @@ pub trait SharedCreepProperties {
         F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult;
 
     /// Whether to send an email notification when this creep is attacked.
-    fn notify_when_attacked(&self, enabled: bool) -> Result<(), ErrorCode>;
+    fn notify_when_attacked(&self, enabled: bool) -> Result<(), NotifyWhenAttackedErrorCode>;
 
     /// Pick up a [`Resource`] in melee range (or at the same position as the
     /// creep).
-    fn pickup(&self, target: &Resource) -> Result<(), ErrorCode>;
+    fn pickup(&self, target: &Resource) -> Result<(), PickupErrorCode>;
 
     /// Display a string in a bubble above the creep next tick. 10 character
     /// limit.
-    fn say(&self, message: &str, public: bool) -> Result<(), ErrorCode>;
+    fn say(&self, message: &str, public: bool) -> Result<(), SayErrorCode>;
 
     /// Immediately kill the creep.
-    fn suicide(&self) -> Result<(), ErrorCode>;
+    fn suicide(&self) -> Result<(), SuicideErrorCode>;
 
     /// Transfer a resource from the creep's store to [`Structure`],
     /// [`PowerCreep`], or another [`Creep`].
@@ -286,7 +290,7 @@ pub trait SharedCreepProperties {
         target: &T,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> Result<(), ErrorCode>
+    ) -> Result<(), TransferErrorCode>
     where
         T: Transferable + ?Sized;
 
@@ -296,7 +300,7 @@ pub trait SharedCreepProperties {
         target: &T,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> Result<(), ErrorCode>
+    ) -> Result<(), WithdrawErrorCode>
     where
         T: Withdrawable + ?Sized;
 }

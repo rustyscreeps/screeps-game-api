@@ -5,6 +5,10 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{Direction, ErrorCode, PowerCreepClass, PowerType, ResourceType},
+    enums::action_error_codes::{
+        DropErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode, SayErrorCode,
+        SuicideErrorCode, TransferErrorCode, WithdrawErrorCode,
+    },
     local::RoomName,
     objects::{
         CostMatrix, MoveToOptions, Owner, Resource, RoomObject, RoomPosition, Store,
@@ -245,8 +249,8 @@ impl PowerCreep {
     /// Drop a resource on the ground from the power creep's [`Store`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.drop)
-    pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.drop_internal(ty, amount))
+    pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), DropErrorCode> {
+        DropErrorCode::result_from_i8(self.drop_internal(ty, amount))
     }
 
     /// Enable powers to be used in this room on a [`StructureController`] in
@@ -275,16 +279,16 @@ impl PowerCreep {
     /// Whether to send an email notification when this power creep is attacked.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.notifyWhenAttacked)
-    pub fn notify_when_attacked(&self, enabled: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.notify_when_attacked_internal(enabled))
+    pub fn notify_when_attacked(&self, enabled: bool) -> Result<(), NotifyWhenAttackedErrorCode> {
+        NotifyWhenAttackedErrorCode::result_from_i8(self.notify_when_attacked_internal(enabled))
     }
 
     /// Pick up a [`Resource`] in melee range (or at the same position as the
     /// creep).
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.pickup)
-    pub fn pickup(&self, target: &Resource) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.pickup_internal(target))
+    pub fn pickup(&self, target: &Resource) -> Result<(), PickupErrorCode> {
+        PickupErrorCode::result_from_i8(self.pickup_internal(target))
     }
 
     /// Renew the power creep's TTL using a [`StructurePowerSpawn`] or
@@ -301,15 +305,15 @@ impl PowerCreep {
     /// character limit.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.say)
-    pub fn say(&self, message: &str, public: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.say_internal(message, public))
+    pub fn say(&self, message: &str, public: bool) -> Result<(), SayErrorCode> {
+        SayErrorCode::result_from_i8(self.say_internal(message, public))
     }
 
     /// Immediately kill the power creep.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.suicide)
-    pub fn suicide(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.suicide_internal())
+    pub fn suicide(&self) -> Result<(), SuicideErrorCode> {
+        SuicideErrorCode::result_from_i8(self.suicide_internal())
     }
 
     /// Use one of the power creep's powers.
@@ -387,7 +391,7 @@ impl SharedCreepProperties for PowerCreep {
         self.cancel_order(target)
     }
 
-    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode> {
+    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), DropErrorCode> {
         self.drop(ty, amount)
     }
 
@@ -427,20 +431,20 @@ impl SharedCreepProperties for PowerCreep {
         }
     }
 
-    fn notify_when_attacked(&self, enabled: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.notify_when_attacked_internal(enabled))
+    fn notify_when_attacked(&self, enabled: bool) -> Result<(), NotifyWhenAttackedErrorCode> {
+        NotifyWhenAttackedErrorCode::result_from_i8(self.notify_when_attacked_internal(enabled))
     }
 
-    fn pickup(&self, target: &Resource) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.pickup_internal(target))
+    fn pickup(&self, target: &Resource) -> Result<(), PickupErrorCode> {
+        PickupErrorCode::result_from_i8(self.pickup_internal(target))
     }
 
-    fn say(&self, message: &str, public: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.say_internal(message, public))
+    fn say(&self, message: &str, public: bool) -> Result<(), SayErrorCode> {
+        SayErrorCode::result_from_i8(self.say_internal(message, public))
     }
 
-    fn suicide(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.suicide_internal())
+    fn suicide(&self) -> Result<(), SuicideErrorCode> {
+        SuicideErrorCode::result_from_i8(self.suicide_internal())
     }
 
     fn transfer<T>(
@@ -448,11 +452,11 @@ impl SharedCreepProperties for PowerCreep {
         target: &T,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> Result<(), ErrorCode>
+    ) -> Result<(), TransferErrorCode>
     where
         T: Transferable + ?Sized,
     {
-        ErrorCode::result_from_i8(self.transfer_internal(target.as_ref(), ty, amount))
+        TransferErrorCode::result_from_i8(self.transfer_internal(target.as_ref(), ty, amount))
     }
 
     fn withdraw<T>(
@@ -460,11 +464,11 @@ impl SharedCreepProperties for PowerCreep {
         target: &T,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> Result<(), ErrorCode>
+    ) -> Result<(), WithdrawErrorCode>
     where
         T: Withdrawable + ?Sized,
     {
-        ErrorCode::result_from_i8(self.withdraw_internal(target.as_ref(), ty, amount))
+        WithdrawErrorCode::result_from_i8(self.withdraw_internal(target.as_ref(), ty, amount))
     }
 }
 

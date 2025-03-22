@@ -3,6 +3,10 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{Direction, ErrorCode, Part, ResourceType},
+    enums::action_error_codes::{
+        DropErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode, SayErrorCode,
+        SuicideErrorCode, TransferErrorCode, WithdrawErrorCode,
+    },
     objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
     },
@@ -335,8 +339,8 @@ impl Creep {
     /// Drop a resource on the ground from the creep's [`Store`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.drop)
-    pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.drop_internal(ty, amount))
+    pub fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), DropErrorCode> {
+        DropErrorCode::result_from_i8(self.drop_internal(ty, amount))
     }
 
     /// Consume [`ResourceType::Ghodium`] (in the amount of [`SAFE_MODE_COST`])
@@ -409,16 +413,16 @@ impl Creep {
     /// Whether to send an email notification when this creep is attacked.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.notifyWhenAttacked)
-    pub fn notify_when_attacked(&self, enabled: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.notify_when_attacked_internal(enabled))
+    pub fn notify_when_attacked(&self, enabled: bool) -> Result<(), NotifyWhenAttackedErrorCode> {
+        NotifyWhenAttackedErrorCode::result_from_i8(self.notify_when_attacked_internal(enabled))
     }
 
     /// Pick up a [`Resource`] in melee range (or at the same position as the
     /// creep).
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.pickup)
-    pub fn pickup(&self, target: &Resource) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.pickup_internal(target))
+    pub fn pickup(&self, target: &Resource) -> Result<(), PickupErrorCode> {
+        PickupErrorCode::result_from_i8(self.pickup_internal(target))
     }
 
     /// Help another creep to move by pulling, if the second creep accepts.
@@ -479,8 +483,8 @@ impl Creep {
     /// limit.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.say)
-    pub fn say(&self, message: &str, public: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.say_internal(message, public))
+    pub fn say(&self, message: &str, public: bool) -> Result<(), SayErrorCode> {
+        SayErrorCode::result_from_i8(self.say_internal(message, public))
     }
 
     /// Add (or remove, using an empty string) a sign to a
@@ -500,8 +504,8 @@ impl Creep {
     /// Actions taken by the creep earlier in the tick may be cancelled.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.suicide)
-    pub fn suicide(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.suicide_internal())
+    pub fn suicide(&self) -> Result<(), SuicideErrorCode> {
+        SuicideErrorCode::result_from_i8(self.suicide_internal())
     }
 
     /// Upgrade a [`StructureController`] in range 3 using carried energy and
@@ -586,7 +590,7 @@ impl SharedCreepProperties for Creep {
         self.cancel_order(target)
     }
 
-    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), ErrorCode> {
+    fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), DropErrorCode> {
         self.drop(ty, amount)
     }
 
@@ -626,19 +630,19 @@ impl SharedCreepProperties for Creep {
         }
     }
 
-    fn notify_when_attacked(&self, enabled: bool) -> Result<(), ErrorCode> {
+    fn notify_when_attacked(&self, enabled: bool) -> Result<(), NotifyWhenAttackedErrorCode> {
         self.notify_when_attacked(enabled)
     }
 
-    fn pickup(&self, target: &Resource) -> Result<(), ErrorCode> {
+    fn pickup(&self, target: &Resource) -> Result<(), PickupErrorCode> {
         self.pickup(target)
     }
 
-    fn say(&self, message: &str, public: bool) -> Result<(), ErrorCode> {
+    fn say(&self, message: &str, public: bool) -> Result<(), SayErrorCode> {
         self.say(message, public)
     }
 
-    fn suicide(&self) -> Result<(), ErrorCode> {
+    fn suicide(&self) -> Result<(), SuicideErrorCode> {
         self.suicide()
     }
 
@@ -647,11 +651,11 @@ impl SharedCreepProperties for Creep {
         target: &T,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> Result<(), ErrorCode>
+    ) -> Result<(), TransferErrorCode>
     where
         T: Transferable + ?Sized,
     {
-        ErrorCode::result_from_i8(self.transfer_internal(target.as_ref(), ty, amount))
+        TransferErrorCode::result_from_i8(self.transfer_internal(target.as_ref(), ty, amount))
     }
 
     fn withdraw<T>(
@@ -659,11 +663,11 @@ impl SharedCreepProperties for Creep {
         target: &T,
         ty: ResourceType,
         amount: Option<u32>,
-    ) -> Result<(), ErrorCode>
+    ) -> Result<(), WithdrawErrorCode>
     where
         T: Withdrawable + ?Sized,
     {
-        ErrorCode::result_from_i8(self.withdraw_internal(target.as_ref(), ty, amount))
+        WithdrawErrorCode::result_from_i8(self.withdraw_internal(target.as_ref(), ty, amount))
     }
 }
 

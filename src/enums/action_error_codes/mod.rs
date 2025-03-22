@@ -161,7 +161,8 @@ pub mod structure_tower {
 
 pub use self::{
     construction_site::*, creep::*, flag::*, game::*, powercreep::*, room::*, room_position::*,
-    spawning::*, structure::*, structure_controller::*, structure_factory::*, structure_lab::*,
-    structure_link::*, structure_nuker::*, structure_observer::*, structure_powerspawn::*,
-    structure_rampart::*, structure_spawn::*, structure_terminal::*, structure_tower::*,
+    shared::*, spawning::*, structure::*, structure_controller::*, structure_factory::*,
+    structure_lab::*, structure_link::*, structure_nuker::*, structure_observer::*,
+    structure_powerspawn::*, structure_rampart::*, structure_spawn::*, structure_terminal::*,
+    structure_tower::*,
 };
