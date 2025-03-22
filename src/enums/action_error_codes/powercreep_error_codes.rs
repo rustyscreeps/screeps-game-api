@@ -432,7 +432,7 @@ impl From<PowerCreepMoveByPathErrorCode> for ErrorCode {
     }
 }
 
-/// Error codes used by [PowerCreep::move_to](crate::PowerCreep::move_to).
+/// Error codes used by [PowerCreep::move_to](crate::PowerCreep#method.move_to).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#PowerCreep.moveTo).
 ///

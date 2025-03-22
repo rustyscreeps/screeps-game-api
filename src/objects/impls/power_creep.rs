@@ -4,12 +4,13 @@ use js_sys::{JsString, Object};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{Direction, ErrorCode, PowerCreepClass, PowerType, ResourceType},
+    constants::{Direction, PowerCreepClass, PowerType, ResourceType},
     enums::action_error_codes::{
-        DropErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode,
-        PowerCreepCancelOrderErrorCode, PowerCreepMoveByPathErrorCode,
-        PowerCreepMoveDirectionErrorCode, PowerCreepMoveToErrorCode, SayErrorCode,
-        SuicideErrorCode, TransferErrorCode, WithdrawErrorCode,
+        DeleteErrorCode, DropErrorCode, EnableRoomErrorCode, NotifyWhenAttackedErrorCode,
+        PickupErrorCode, PowerCreepCancelOrderErrorCode, PowerCreepCreateErrorCode,
+        PowerCreepMoveByPathErrorCode, PowerCreepMoveDirectionErrorCode, PowerCreepMoveToErrorCode,
+        RenameErrorCode, RenewErrorCode, SayErrorCode, SpawnErrorCode, SuicideErrorCode,
+        TransferErrorCode, UpgradeErrorCode, UsePowerErrorCode, WithdrawErrorCode,
     },
     local::RoomName,
     objects::{
@@ -138,8 +139,11 @@ impl PowerCreep {
     /// initially be spawned.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.create)
-    pub fn create(name: &JsString, class: PowerCreepClass) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(Self::create_internal(name, class))
+    pub fn create(
+        name: &JsString,
+        class: PowerCreepClass,
+    ) -> Result<(), PowerCreepCreateErrorCode> {
+        PowerCreepCreateErrorCode::result_from_i8(Self::create_internal(name, class))
     }
 
     /// Retrieve this power creep's [`PowerCreepClass`].
@@ -259,8 +263,8 @@ impl PowerCreep {
     /// melee range. You do not need to own the controller.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.enableRoom)
-    pub fn enable_room(&self, target: &StructureController) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.enable_room_internal(target))
+    pub fn enable_room(&self, target: &StructureController) -> Result<(), EnableRoomErrorCode> {
+        EnableRoomErrorCode::result_from_i8(self.enable_room_internal(target))
     }
 
     /// Move one square in the specified direction.
@@ -302,8 +306,8 @@ impl PowerCreep {
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.renew)
     ///
     /// [`StructurePowerBank`]: crate::objects::StructurePowerBank
-    pub fn renew(&self, target: &RoomObject) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.renew_internal(target))
+    pub fn renew(&self, target: &RoomObject) -> Result<(), RenewErrorCode> {
+        RenewErrorCode::result_from_i8(self.renew_internal(target))
     }
 
     /// Display a string in a bubble above the power creep next tick. 10
@@ -328,8 +332,8 @@ impl PowerCreep {
         &self,
         power: PowerType,
         target: Option<&RoomObject>,
-    ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.use_power_internal(power, target))
+    ) -> Result<(), UsePowerErrorCode> {
+        UsePowerErrorCode::result_from_i8(self.use_power_internal(power, target))
     }
 
     /// Move the power creep toward the specified goal, either a
@@ -602,30 +606,30 @@ impl AccountPowerCreep {
     /// cancelled with `true` for the cancel paramater.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.delete)
-    pub fn delete(&self, cancel: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.delete_internal(cancel))
+    pub fn delete(&self, cancel: bool) -> Result<(), DeleteErrorCode> {
+        DeleteErrorCode::result_from_i8(self.delete_internal(cancel))
     }
 
     /// Change the name of the power creep. Must not be spawned.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.rename)
-    pub fn rename(&self, name: &JsString) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.rename_internal(name))
+    pub fn rename(&self, name: &JsString) -> Result<(), RenameErrorCode> {
+        RenameErrorCode::result_from_i8(self.rename_internal(name))
     }
 
     /// Spawn the power creep at a [`StructurePowerSpawn`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.spawn)
-    pub fn spawn(&self, target: &StructurePowerSpawn) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.spawn_internal(target))
+    pub fn spawn(&self, target: &StructurePowerSpawn) -> Result<(), SpawnErrorCode> {
+        SpawnErrorCode::result_from_i8(self.spawn_internal(target))
     }
 
     /// Upgrade this power creep, consuming one available GPL and adding a new
     /// level to one of its powers.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.upgrade)
-    pub fn upgrade(&self, power: PowerType) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.upgrade_internal(power))
+    pub fn upgrade(&self, power: PowerType) -> Result<(), UpgradeErrorCode> {
+        UpgradeErrorCode::result_from_i8(self.upgrade_internal(power))
     }
 }
 
