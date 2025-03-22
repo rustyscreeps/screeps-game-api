@@ -60,9 +60,7 @@ impl From<CancelErrorCode> for ErrorCode {
         // Safety: CancelErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -125,8 +123,6 @@ impl From<SetDirectionsErrorCode> for ErrorCode {
         // Safety: SetDirectionsErrorCode discriminants are always error code values,
         // and thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }

@@ -19,6 +19,7 @@ pub enum SetShardLimitsErrorCode {
     InvalidArgs = -10,
 }
 
+#[cfg(feature = "mmo")]
 impl FromReturnCode for SetShardLimitsErrorCode {
     type Error = Self;
 
@@ -42,6 +43,7 @@ impl FromReturnCode for SetShardLimitsErrorCode {
     }
 }
 
+#[cfg(feature = "mmo")]
 impl fmt::Display for SetShardLimitsErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg: &'static str = match self {
@@ -55,8 +57,10 @@ impl fmt::Display for SetShardLimitsErrorCode {
     }
 }
 
+#[cfg(feature = "mmo")]
 impl Error for SetShardLimitsErrorCode {}
 
+#[cfg(feature = "mmo")]
 impl From<SetShardLimitsErrorCode> for ErrorCode {
     fn from(value: SetShardLimitsErrorCode) -> Self {
         // Safety: SetShardLimitsErrorCode is repr(i8), so we can cast it to get the
@@ -65,9 +69,7 @@ impl From<SetShardLimitsErrorCode> for ErrorCode {
         // Safety: SetShardLimitsErrorCode discriminants are always error code values,
         // and thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -129,9 +131,7 @@ impl From<UnlockErrorCode> for ErrorCode {
         // Safety: UnlockErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -189,8 +189,6 @@ impl From<GeneratePixelErrorCode> for ErrorCode {
         // Safety: GeneratePixelErrorCode discriminants are always error code values,
         // and thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }

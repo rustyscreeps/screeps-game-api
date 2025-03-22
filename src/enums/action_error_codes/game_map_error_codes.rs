@@ -62,9 +62,7 @@ impl From<FindExitErrorCode> for ErrorCode {
         // Safety: FindExitErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -122,8 +120,6 @@ impl From<FindRouteErrorCode> for ErrorCode {
         // Safety: FindRouteErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }

@@ -71,9 +71,7 @@ impl From<DropErrorCode> for ErrorCode {
         // Safety: DropErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -140,9 +138,7 @@ impl From<NotifyWhenAttackedErrorCode> for ErrorCode {
         // Safety: NotifyWhenAttackedErrorCode discriminants are always error code
         // values, and thus the Result returned here will always be an `Err` variant, so
         // we can always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -214,9 +210,7 @@ impl From<PickupErrorCode> for ErrorCode {
         // Safety: PickupErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -278,9 +272,7 @@ impl From<SayErrorCode> for ErrorCode {
         // Safety: SayErrorCode discriminants are always error code values, and thus the
         // Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -343,9 +335,7 @@ impl From<SuicideErrorCode> for ErrorCode {
         // Safety: SuicideErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -423,9 +413,7 @@ impl From<TransferErrorCode> for ErrorCode {
         // Safety: TransferErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -503,8 +491,6 @@ impl From<WithdrawErrorCode> for ErrorCode {
         // Safety: WithdrawErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }

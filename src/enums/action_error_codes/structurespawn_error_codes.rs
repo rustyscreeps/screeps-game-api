@@ -76,9 +76,7 @@ impl From<SpawnCreepErrorCode> for ErrorCode {
         // Safety: SpawnCreepErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -151,9 +149,7 @@ impl From<RecycleCreepErrorCode> for ErrorCode {
         // Safety: RecycleCreepErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -235,8 +231,6 @@ impl From<RenewCreepErrorCode> for ErrorCode {
         // Safety: RenewCreepErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }

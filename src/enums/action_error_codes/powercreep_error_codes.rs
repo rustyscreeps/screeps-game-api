@@ -66,9 +66,7 @@ impl From<PowerCreepCreateErrorCode> for ErrorCode {
         // Safety: PowerCreepCreateErrorCode discriminants are always error code values,
         // and thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -136,9 +134,7 @@ impl From<PowerCreepCancelOrderErrorCode> for ErrorCode {
         // Safety: PowerCreepCancelOrderErrorCode discriminants are always error code
         // values, and thus the Result returned here will always be an `Err` variant, so
         // we can always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -201,9 +197,7 @@ impl From<DeleteErrorCode> for ErrorCode {
         // Safety: DeleteErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -272,9 +266,7 @@ impl From<EnableRoomErrorCode> for ErrorCode {
         // Safety: EnableRoomErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -348,9 +340,7 @@ impl From<PowerCreepMoveDirectionErrorCode> for ErrorCode {
         // Safety: PowerCreepMoveDirectionErrorCode discriminants are always error code
         // values, and thus the Result returned here will always be an `Err` variant, so
         // we can always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -426,9 +416,7 @@ impl From<PowerCreepMoveByPathErrorCode> for ErrorCode {
         // Safety: PowerCreepMoveByPathErrorCode discriminants are always error code
         // values, and thus the Result returned here will always be an `Err` variant, so
         // we can always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -502,9 +490,7 @@ impl From<PowerCreepMoveToErrorCode> for ErrorCode {
         // Safety: PowerCreepMoveToErrorCode discriminants are always error code values,
         // and thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -573,9 +559,7 @@ impl From<RenameErrorCode> for ErrorCode {
         // Safety: RenameErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -642,9 +626,7 @@ impl From<RenewErrorCode> for ErrorCode {
         // Safety: RenewErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -715,9 +697,7 @@ impl From<SpawnErrorCode> for ErrorCode {
         // Safety: SpawnErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -786,9 +766,7 @@ impl From<UpgradeErrorCode> for ErrorCode {
         // Safety: UpgradeErrorCode discriminants are always error code values, and thus
         // the Result returned here will always be an `Err` variant, so we can always
         // extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
 
@@ -873,8 +851,6 @@ impl From<UsePowerErrorCode> for ErrorCode {
         // Safety: UsePowerErrorCode discriminants are always error code values, and
         // thus the Result returned here will always be an `Err` variant, so we can
         // always extract the error without panicking
-        Self::result_from_i8(value as i8)
-            .unwrap_err()
-            .expect("expect enum discriminant to be an error code")
+        Self::result_from_i8(value as i8).unwrap_err()
     }
 }
