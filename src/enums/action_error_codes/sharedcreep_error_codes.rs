@@ -1,15 +1,12 @@
-use std::error::Error;
-use std::fmt;
+use std::{error::Error, fmt};
 
 use num_derive::FromPrimitive;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::{
-    FromReturnCode,
-    constants::ErrorCode,
-};
+use crate::{constants::ErrorCode, FromReturnCode};
 
-/// Error codes used by [SharedCreepProperties::drop](crate::SharedCreepProperties::drop).
+/// Error codes used by
+/// [SharedCreepProperties::drop](crate::SharedCreepProperties::drop).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.drop).
 ///
@@ -52,11 +49,12 @@ impl FromReturnCode for DropErrorCode {
 
 impl fmt::Display for DropErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        
         let msg: &'static str = match self {
             DropErrorCode::NotOwner => "you are not the owner of this creep",
             DropErrorCode::Busy => "the creep is still being spawned",
-            DropErrorCode::NotEnoughResources => "the creep does not have the given amount of resources",
+            DropErrorCode::NotEnoughResources => {
+                "the creep does not have the given amount of resources"
+            }
             DropErrorCode::InvalidArgs => "the resourcetype is not a valid resource_* constants",
         };
 
@@ -68,16 +66,20 @@ impl Error for DropErrorCode {}
 
 impl From<DropErrorCode> for ErrorCode {
     fn from(value: DropErrorCode) -> Self {
-        // Safety: DropErrorCode is repr(i8), so we can cast it to get the discriminant value, which will match the raw return code value that ErrorCode expects.
-        //   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: DropErrorCode discriminants are always error code values, and thus the Result returned here will always be an `Err` variant, so we can always extract the error without panicking
+        // Safety: DropErrorCode is repr(i8), so we can cast it to get the discriminant
+        // value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: DropErrorCode discriminants are always error code values, and thus
+        // the Result returned here will always be an `Err` variant, so we can always
+        // extract the error without panicking
         Self::result_from_i8(value as i8)
             .unwrap_err()
             .expect("expect enum discriminant to be an error code")
     }
 }
 
-/// Error codes used by [SharedCreepProperties::notify_when_attacked](crate::SharedCreepProperties::notify_when_attacked).
+/// Error codes used by
+/// [SharedCreepProperties::notify_when_attacked](crate::SharedCreepProperties::notify_when_attacked).
+///
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.notifyWhenAttacked).
 ///
@@ -118,7 +120,6 @@ impl FromReturnCode for NotifyWhenAttackedErrorCode {
 
 impl fmt::Display for NotifyWhenAttackedErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        
         let msg: &'static str = match self {
             NotifyWhenAttackedErrorCode::NotOwner => "you are not the owner of this creep",
             NotifyWhenAttackedErrorCode::Busy => "the creep is still being spawned",
@@ -133,16 +134,20 @@ impl Error for NotifyWhenAttackedErrorCode {}
 
 impl From<NotifyWhenAttackedErrorCode> for ErrorCode {
     fn from(value: NotifyWhenAttackedErrorCode) -> Self {
-        // Safety: NotifyWhenAttackedErrorCode is repr(i8), so we can cast it to get the discriminant value, which will match the raw return code value that ErrorCode expects.
-        //   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: NotifyWhenAttackedErrorCode discriminants are always error code values, and thus the Result returned here will always be an `Err` variant, so we can always extract the error without panicking
+        // Safety: NotifyWhenAttackedErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: NotifyWhenAttackedErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an `Err` variant, so
+        // we can always extract the error without panicking
         Self::result_from_i8(value as i8)
             .unwrap_err()
             .expect("expect enum discriminant to be an error code")
     }
 }
 
-/// Error codes used by [SharedCreepProperties::pickup](crate::SharedCreepProperties::pickup).
+/// Error codes used by
+/// [SharedCreepProperties::pickup](crate::SharedCreepProperties::pickup).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.pickup).
 ///
@@ -187,7 +192,6 @@ impl FromReturnCode for PickupErrorCode {
 
 impl fmt::Display for PickupErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        
         let msg: &'static str = match self {
             PickupErrorCode::NotOwner => "you are not the owner of this creep",
             PickupErrorCode::Busy => "the creep is still being spawned",
@@ -204,16 +208,20 @@ impl Error for PickupErrorCode {}
 
 impl From<PickupErrorCode> for ErrorCode {
     fn from(value: PickupErrorCode) -> Self {
-        // Safety: PickupErrorCode is repr(i8), so we can cast it to get the discriminant value, which will match the raw return code value that ErrorCode expects.
-        //   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: PickupErrorCode discriminants are always error code values, and thus the Result returned here will always be an `Err` variant, so we can always extract the error without panicking
+        // Safety: PickupErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: PickupErrorCode discriminants are always error code values, and thus
+        // the Result returned here will always be an `Err` variant, so we can always
+        // extract the error without panicking
         Self::result_from_i8(value as i8)
             .unwrap_err()
             .expect("expect enum discriminant to be an error code")
     }
 }
 
-/// Error codes used by [SharedCreepProperties::say](crate::SharedCreepProperties::say).
+/// Error codes used by
+/// [SharedCreepProperties::say](crate::SharedCreepProperties::say).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.say).
 ///
@@ -252,7 +260,6 @@ impl FromReturnCode for SayErrorCode {
 
 impl fmt::Display for SayErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        
         let msg: &'static str = match self {
             SayErrorCode::NotOwner => "you are not the owner of this creep",
             SayErrorCode::Busy => "the creep is still being spawned",
@@ -266,16 +273,19 @@ impl Error for SayErrorCode {}
 
 impl From<SayErrorCode> for ErrorCode {
     fn from(value: SayErrorCode) -> Self {
-        // Safety: SayErrorCode is repr(i8), so we can cast it to get the discriminant value, which will match the raw return code value that ErrorCode expects.
-        //   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: SayErrorCode discriminants are always error code values, and thus the Result returned here will always be an `Err` variant, so we can always extract the error without panicking
+        // Safety: SayErrorCode is repr(i8), so we can cast it to get the discriminant
+        // value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SayErrorCode discriminants are always error code values, and thus the
+        // Result returned here will always be an `Err` variant, so we can always
+        // extract the error without panicking
         Self::result_from_i8(value as i8)
             .unwrap_err()
             .expect("expect enum discriminant to be an error code")
     }
 }
 
-/// Error codes used by [SharedCreepProperties::suicide](crate::SharedCreepProperties::suicide).
+/// Error codes used by
+/// [SharedCreepProperties::suicide](crate::SharedCreepProperties::suicide).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.suicide).
 ///
@@ -314,7 +324,6 @@ impl FromReturnCode for SuicideErrorCode {
 
 impl fmt::Display for SuicideErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        
         let msg: &'static str = match self {
             SuicideErrorCode::NotOwner => "you are not the owner of this creep",
             SuicideErrorCode::Busy => "the creep is still being spawned",
@@ -328,16 +337,20 @@ impl Error for SuicideErrorCode {}
 
 impl From<SuicideErrorCode> for ErrorCode {
     fn from(value: SuicideErrorCode) -> Self {
-        // Safety: SuicideErrorCode is repr(i8), so we can cast it to get the discriminant value, which will match the raw return code value that ErrorCode expects.
-        //   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: SuicideErrorCode discriminants are always error code values, and thus the Result returned here will always be an `Err` variant, so we can always extract the error without panicking
+        // Safety: SuicideErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SuicideErrorCode discriminants are always error code values, and thus
+        // the Result returned here will always be an `Err` variant, so we can always
+        // extract the error without panicking
         Self::result_from_i8(value as i8)
             .unwrap_err()
             .expect("expect enum discriminant to be an error code")
     }
 }
 
-/// Error codes used by [SharedCreepProperties::transfer](crate::SharedCreepProperties::transfer).
+/// Error codes used by
+/// [SharedCreepProperties::transfer](crate::SharedCreepProperties::transfer).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.transfer).
 ///
@@ -386,7 +399,6 @@ impl FromReturnCode for TransferErrorCode {
 
 impl fmt::Display for TransferErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        
         let msg: &'static str = match self {
             TransferErrorCode::NotOwner => "you are not the owner of this creep",
             TransferErrorCode::Busy => "the creep is still being spawned",
@@ -405,16 +417,20 @@ impl Error for TransferErrorCode {}
 
 impl From<TransferErrorCode> for ErrorCode {
     fn from(value: TransferErrorCode) -> Self {
-        // Safety: TransferErrorCode is repr(i8), so we can cast it to get the discriminant value, which will match the raw return code value that ErrorCode expects.
-        //   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: TransferErrorCode discriminants are always error code values, and thus the Result returned here will always be an `Err` variant, so we can always extract the error without panicking
+        // Safety: TransferErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: TransferErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
         Self::result_from_i8(value as i8)
             .unwrap_err()
             .expect("expect enum discriminant to be an error code")
     }
 }
 
-/// Error codes used by [SharedCreepProperties::withdraw](crate::SharedCreepProperties::withdraw).
+/// Error codes used by
+/// [SharedCreepProperties::withdraw](crate::SharedCreepProperties::withdraw).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.withdraw).
 ///
@@ -463,7 +479,6 @@ impl FromReturnCode for WithdrawErrorCode {
 
 impl fmt::Display for WithdrawErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        
         let msg: &'static str = match self {
             WithdrawErrorCode::NotOwner => "you are not the owner of this creep, or there is a hostile rampart on top of the target",
             WithdrawErrorCode::Busy => "the creep is still being spawned",
@@ -482,9 +497,12 @@ impl Error for WithdrawErrorCode {}
 
 impl From<WithdrawErrorCode> for ErrorCode {
     fn from(value: WithdrawErrorCode) -> Self {
-        // Safety: WithdrawErrorCode is repr(i8), so we can cast it to get the discriminant value, which will match the raw return code value that ErrorCode expects.
-        //   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: WithdrawErrorCode discriminants are always error code values, and thus the Result returned here will always be an `Err` variant, so we can always extract the error without panicking
+        // Safety: WithdrawErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: WithdrawErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err` variant, so we can
+        // always extract the error without panicking
         Self::result_from_i8(value as i8)
             .unwrap_err()
             .expect("expect enum discriminant to be an error code")

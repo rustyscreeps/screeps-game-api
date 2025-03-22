@@ -10,6 +10,7 @@ mod game_market_error_codes;
 mod powercreep_error_codes;
 mod room_error_codes;
 mod roomposition_error_codes;
+mod sharedcreep_error_codes;
 mod spawning_error_codes;
 mod structure_error_codes;
 mod structurecontroller_error_codes;
@@ -31,12 +32,10 @@ pub mod construction_site {
 pub mod creep {
     pub use super::creep_error_codes::{
         AttackControllerErrorCode, BuildErrorCode, ClaimControllerErrorCode, CreepAttackErrorCode,
-        CreepCancelOrderErrorCode, CreepDropErrorCode, CreepHealErrorCode,
-        CreepMoveByPathErrorCode, CreepMoveErrorCode, CreepMoveToErrorCode,
-        CreepNotifyWhenAttackedErrorCode, CreepPickupErrorCode, CreepRepairErrorCode,
-        CreepSayErrorCode, CreepSuicideErrorCode, CreepTransferErrorCode, CreepWithdrawErrorCode,
-        DismantleErrorCode, GenerateSafeModeErrorCode, HarvestErrorCode, PullErrorCode,
-        RangedAttackErrorCode, RangedHealErrorCode, RangedMassAttackErrorCode,
+        CreepCancelOrderErrorCode, CreepHealErrorCode, CreepMoveByPathErrorCode,
+        CreepMoveDirectionErrorCode, CreepMovePulledByErrorCode, CreepMoveToErrorCode,
+        CreepRepairErrorCode, DismantleErrorCode, GenerateSafeModeErrorCode, HarvestErrorCode,
+        PullErrorCode, RangedAttackErrorCode, RangedHealErrorCode, RangedMassAttackErrorCode,
         ReserveControllerErrorCode, SignControllerErrorCode, UpgradeControllerErrorCode,
     };
 }
@@ -75,11 +74,9 @@ pub mod game {
 pub mod powercreep {
     pub use super::powercreep_error_codes::{
         DeleteErrorCode, EnableRoomErrorCode, PowerCreepCancelOrderErrorCode,
-        PowerCreepCreateErrorCode, PowerCreepDropErrorCode, PowerCreepMoveByPathErrorCode,
-        PowerCreepMoveErrorCode, PowerCreepMoveToErrorCode, PowerCreepNotifyWhenAttackedErrorCode,
-        PowerCreepPickupErrorCode, PowerCreepSayErrorCode, PowerCreepSuicideErrorCode,
-        PowerCreepTransferErrorCode, PowerCreepWithdrawErrorCode, RenameErrorCode, RenewErrorCode,
-        SpawnErrorCode, UpgradeErrorCode, UsePowerErrorCode,
+        PowerCreepCreateErrorCode, PowerCreepMoveByPathErrorCode, PowerCreepMoveDirectionErrorCode,
+        PowerCreepMoveToErrorCode, RenameErrorCode, RenewErrorCode, SpawnErrorCode,
+        UpgradeErrorCode, UsePowerErrorCode,
     };
 }
 
@@ -92,6 +89,13 @@ pub mod room {
 pub mod room_position {
     pub use super::roomposition_error_codes::{
         RoomPositionCreateConstructionSiteErrorCode, RoomPositionCreateFlagErrorCode,
+    };
+}
+
+pub mod shared {
+    pub use super::sharedcreep_error_codes::{
+        DropErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode, SayErrorCode,
+        SuicideErrorCode, TransferErrorCode, WithdrawErrorCode,
     };
 }
 
