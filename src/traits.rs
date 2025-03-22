@@ -231,43 +231,8 @@ pub trait SharedCreepProperties {
     /// The number of ticks the creep has left to live.
     fn ticks_to_live(&self) -> Option<u32>;
 
-    /// Cancel an a successfully called creep function from earlier in the tick,
-    /// with a [`JsString`] that must contain the JS version of the function
-    /// name.
-    fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode>;
-
     /// Drop a resource on the ground from the creep's [`Store`].
     fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), DropErrorCode>;
-
-    /// Move one square in the specified direction.
-    fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode>;
-
-    /// Move the creep along a previously determined path returned from a
-    /// pathfinding function, in array or serialized string form.
-    fn move_by_path(&self, path: &JsValue) -> Result<(), ErrorCode>;
-
-    /// Move the creep toward the specified goal, either a [`RoomPosition`] or
-    /// [`RoomObject`]. Note that using this function will store data in
-    /// `Memory.creeps[creep_name]` and enable the default serialization
-    /// behavior of the `Memory` object, which may hamper attempts to directly
-    /// use `RawMemory`.
-    fn move_to<T>(&self, target: T) -> Result<(), ErrorCode>
-    where
-        T: HasPosition;
-
-    /// Move the creep toward the specified goal, either a [`RoomPosition`] or
-    /// [`RoomObject`]. Note that using this function will store data in
-    /// `Memory.creeps[creep_name]` and enable the default serialization
-    /// behavior of the `Memory` object, which may hamper attempts to directly
-    /// use `RawMemory`.
-    fn move_to_with_options<T, F>(
-        &self,
-        target: T,
-        options: Option<MoveToOptions<F>>,
-    ) -> Result<(), ErrorCode>
-    where
-        T: HasPosition,
-        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult;
 
     /// Whether to send an email notification when this creep is attacked.
     fn notify_when_attacked(&self, enabled: bool) -> Result<(), NotifyWhenAttackedErrorCode>;

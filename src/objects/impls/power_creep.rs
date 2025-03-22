@@ -6,7 +6,9 @@ use wasm_bindgen::prelude::*;
 use crate::{
     constants::{Direction, ErrorCode, PowerCreepClass, PowerType, ResourceType},
     enums::action_error_codes::{
-        DropErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode, SayErrorCode,
+        DropErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode,
+        PowerCreepCancelOrderErrorCode, PowerCreepMoveByPathErrorCode,
+        PowerCreepMoveDirectionErrorCode, PowerCreepMoveToErrorCode, SayErrorCode,
         SuicideErrorCode, TransferErrorCode, WithdrawErrorCode,
     },
     local::RoomName,
@@ -242,8 +244,8 @@ impl PowerCreep {
     /// function name.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.cancelOrder)
-    pub fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.cancel_order_internal(target))
+    pub fn cancel_order(&self, target: &JsString) -> Result<(), PowerCreepCancelOrderErrorCode> {
+        PowerCreepCancelOrderErrorCode::result_from_i8(self.cancel_order_internal(target))
     }
 
     /// Drop a resource on the ground from the power creep's [`Store`].
@@ -264,16 +266,19 @@ impl PowerCreep {
     /// Move one square in the specified direction.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.move)
-    pub fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.move_direction_internal(direction))
+    pub fn move_direction(
+        &self,
+        direction: Direction,
+    ) -> Result<(), PowerCreepMoveDirectionErrorCode> {
+        PowerCreepMoveDirectionErrorCode::result_from_i8(self.move_direction_internal(direction))
     }
 
     /// Move the power creep along a previously determined path returned from a
     /// pathfinding function, in array or serialized string form.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveByPath)
-    pub fn move_by_path(&self, path: &JsValue) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.move_by_path_internal(path))
+    pub fn move_by_path(&self, path: &JsValue) -> Result<(), PowerCreepMoveByPathErrorCode> {
+        PowerCreepMoveByPathErrorCode::result_from_i8(self.move_by_path_internal(path))
     }
 
     /// Whether to send an email notification when this power creep is attacked.
@@ -325,6 +330,54 @@ impl PowerCreep {
         target: Option<&RoomObject>,
     ) -> Result<(), ErrorCode> {
         ErrorCode::result_from_i8(self.use_power_internal(power, target))
+    }
+
+    /// Move the power creep toward the specified goal, either a
+    /// [`RoomPosition`] or [`RoomObject`]. Note that using this function
+    /// will store data in `Memory.creeps[creep_name]` and enable the
+    /// default serialization behavior of the `Memory` object, which may
+    /// hamper attempts to directly use `RawMemory`.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveTo)
+    pub fn move_to<T>(&self, target: T) -> Result<(), PowerCreepMoveToErrorCode>
+    where
+        T: HasPosition,
+    {
+        let target: RoomPosition = target.pos().into();
+        PowerCreepMoveToErrorCode::result_from_i8(
+            self.move_to_internal(&target, &JsValue::UNDEFINED),
+        )
+    }
+
+    /// Move the power creep toward the specified goal, either a
+    /// [`RoomPosition`] or [`RoomObject`]. Note that using this function
+    /// will store data in `Memory.creeps[creep_name]` and enable the
+    /// default serialization behavior of the `Memory` object, which may
+    /// hamper attempts to directly use `RawMemory`.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#PowerCreep.moveTo)
+    pub fn move_to_with_options<T, F>(
+        &self,
+        target: T,
+        options: Option<MoveToOptions<F>>,
+    ) -> Result<(), PowerCreepMoveToErrorCode>
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
+    {
+        let target: RoomPosition = target.pos().into();
+
+        if let Some(options) = options {
+            options.into_js_options(|js_options| {
+                PowerCreepMoveToErrorCode::result_from_i8(
+                    self.move_to_internal(&target, js_options),
+                )
+            })
+        } else {
+            PowerCreepMoveToErrorCode::result_from_i8(
+                self.move_to_internal(&target, &JsValue::UNDEFINED),
+            )
+        }
     }
 }
 
@@ -387,48 +440,8 @@ impl SharedCreepProperties for PowerCreep {
         self.ticks_to_live()
     }
 
-    fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode> {
-        self.cancel_order(target)
-    }
-
     fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), DropErrorCode> {
         self.drop(ty, amount)
-    }
-
-    fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode> {
-        self.move_direction(direction)
-    }
-
-    fn move_by_path(&self, path: &JsValue) -> Result<(), ErrorCode> {
-        self.move_by_path(path)
-    }
-
-    fn move_to<T>(&self, target: T) -> Result<(), ErrorCode>
-    where
-        T: HasPosition,
-    {
-        let target: RoomPosition = target.pos().into();
-        ErrorCode::result_from_i8(self.move_to_internal(&target, &JsValue::UNDEFINED))
-    }
-
-    fn move_to_with_options<T, F>(
-        &self,
-        target: T,
-        options: Option<MoveToOptions<F>>,
-    ) -> Result<(), ErrorCode>
-    where
-        T: HasPosition,
-        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
-    {
-        let target: RoomPosition = target.pos().into();
-
-        if let Some(options) = options {
-            options.into_js_options(|js_options| {
-                ErrorCode::result_from_i8(self.move_to_internal(&target, js_options))
-            })
-        } else {
-            ErrorCode::result_from_i8(self.move_to_internal(&target, &JsValue::UNDEFINED))
-        }
     }
 
     fn notify_when_attacked(&self, enabled: bool) -> Result<(), NotifyWhenAttackedErrorCode> {

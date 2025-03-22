@@ -4,8 +4,10 @@ use wasm_bindgen::prelude::*;
 use crate::{
     constants::{Direction, ErrorCode, Part, ResourceType},
     enums::action_error_codes::{
-        DropErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode, SayErrorCode,
-        SuicideErrorCode, TransferErrorCode, WithdrawErrorCode,
+        CreepCancelOrderErrorCode, CreepMoveByPathErrorCode, CreepMoveDirectionErrorCode,
+        CreepMovePulledByErrorCode, CreepMoveToErrorCode, DropErrorCode,
+        NotifyWhenAttackedErrorCode, PickupErrorCode, SayErrorCode, SuicideErrorCode,
+        TransferErrorCode, WithdrawErrorCode,
     },
     objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
@@ -292,13 +294,13 @@ impl Creep {
         ErrorCode::result_from_i8(self.build_internal(target))
     }
 
-    /// Cancel an a successfully called creep function from earlier in the tick,
+    /// Cancel a successfully called creep function from earlier in the tick,
     /// with a [`JsString`] that must contain the JS version of the function
     /// name.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.cancelOrder)
-    pub fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.cancel_order_internal(target))
+    pub fn cancel_order(&self, target: &JsString) -> Result<(), CreepCancelOrderErrorCode> {
+        CreepCancelOrderErrorCode::result_from_i8(self.cancel_order_internal(target))
     }
 
     /// Claim an unowned [`StructureController`] in melee range as your own
@@ -391,23 +393,23 @@ impl Creep {
     /// Move one square in the specified direction.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.move)
-    pub fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.move_direction_internal(direction))
+    pub fn move_direction(&self, direction: Direction) -> Result<(), CreepMoveDirectionErrorCode> {
+        CreepMoveDirectionErrorCode::result_from_i8(self.move_direction_internal(direction))
     }
 
     /// Accept an attempt by another creep to pull this one.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.move)
-    pub fn move_pulled_by(&self, target: &Creep) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.move_pulled_by_internal(target))
+    pub fn move_pulled_by(&self, target: &Creep) -> Result<(), CreepMovePulledByErrorCode> {
+        CreepMovePulledByErrorCode::result_from_i8(self.move_pulled_by_internal(target))
     }
 
     /// Move the creep along a previously determined path returned from a
     /// pathfinding function, in array or serialized string form.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.moveByPath)
-    pub fn move_by_path(&self, path: &JsValue) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.move_by_path_internal(path))
+    pub fn move_by_path(&self, path: &JsValue) -> Result<(), CreepMoveByPathErrorCode> {
+        CreepMoveByPathErrorCode::result_from_i8(self.move_by_path_internal(path))
     }
 
     /// Whether to send an email notification when this creep is attacked.
@@ -515,6 +517,50 @@ impl Creep {
     pub fn upgrade_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
         ErrorCode::result_from_i8(self.upgrade_controller_internal(target))
     }
+
+    /// Move the creep toward the specified goal, either a [`RoomPosition`] or
+    /// [`RoomObject`]. Note that using this function will store data in
+    /// `Memory.creeps[creep_name]` and enable the default serialization
+    /// behavior of the `Memory` object, which may hamper attempts to directly
+    /// use `RawMemory`.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.moveTo)
+    pub fn move_to<T>(&self, target: T) -> Result<(), CreepMoveToErrorCode>
+    where
+        T: HasPosition,
+    {
+        let target: RoomPosition = target.pos().into();
+        CreepMoveToErrorCode::result_from_i8(self.move_to_internal(&target, &JsValue::UNDEFINED))
+    }
+
+    /// Move the creep toward the specified goal, either a [`RoomPosition`] or
+    /// [`RoomObject`]. Note that using this function will store data in
+    /// `Memory.creeps[creep_name]` and enable the default serialization
+    /// behavior of the `Memory` object, which may hamper attempts to directly
+    /// use `RawMemory`.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#Creep.moveTo)
+    pub fn move_to_with_options<T, F>(
+        &self,
+        target: T,
+        options: Option<MoveToOptions<F>>,
+    ) -> Result<(), CreepMoveToErrorCode>
+    where
+        T: HasPosition,
+        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
+    {
+        let target: RoomPosition = target.pos().into();
+
+        if let Some(options) = options {
+            options.into_js_options(|js_options| {
+                CreepMoveToErrorCode::result_from_i8(self.move_to_internal(&target, js_options))
+            })
+        } else {
+            CreepMoveToErrorCode::result_from_i8(
+                self.move_to_internal(&target, &JsValue::UNDEFINED),
+            )
+        }
+    }
 }
 
 impl JsCollectionFromValue for Creep {
@@ -586,48 +632,8 @@ impl SharedCreepProperties for Creep {
         self.ticks_to_live()
     }
 
-    fn cancel_order(&self, target: &JsString) -> Result<(), ErrorCode> {
-        self.cancel_order(target)
-    }
-
     fn drop(&self, ty: ResourceType, amount: Option<u32>) -> Result<(), DropErrorCode> {
         self.drop(ty, amount)
-    }
-
-    fn move_direction(&self, direction: Direction) -> Result<(), ErrorCode> {
-        self.move_direction(direction)
-    }
-
-    fn move_by_path(&self, path: &JsValue) -> Result<(), ErrorCode> {
-        self.move_by_path(path)
-    }
-
-    fn move_to<T>(&self, target: T) -> Result<(), ErrorCode>
-    where
-        T: HasPosition,
-    {
-        let target: RoomPosition = target.pos().into();
-        ErrorCode::result_from_i8(self.move_to_internal(&target, &JsValue::UNDEFINED))
-    }
-
-    fn move_to_with_options<T, F>(
-        &self,
-        target: T,
-        options: Option<MoveToOptions<F>>,
-    ) -> Result<(), ErrorCode>
-    where
-        T: HasPosition,
-        F: FnMut(RoomName, CostMatrix) -> SingleRoomCostResult,
-    {
-        let target: RoomPosition = target.pos().into();
-
-        if let Some(options) = options {
-            options.into_js_options(|js_options| {
-                ErrorCode::result_from_i8(self.move_to_internal(&target, js_options))
-            })
-        } else {
-            ErrorCode::result_from_i8(self.move_to_internal(&target, &JsValue::UNDEFINED))
-        }
     }
 
     fn notify_when_attacked(&self, enabled: bool) -> Result<(), NotifyWhenAttackedErrorCode> {
