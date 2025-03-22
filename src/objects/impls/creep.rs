@@ -2,12 +2,16 @@ use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{Direction, ErrorCode, Part, ResourceType},
+    constants::{Direction, Part, ResourceType},
     enums::action_error_codes::{
-        CreepCancelOrderErrorCode, CreepMoveByPathErrorCode, CreepMoveDirectionErrorCode,
-        CreepMovePulledByErrorCode, CreepMoveToErrorCode, DropErrorCode,
-        NotifyWhenAttackedErrorCode, PickupErrorCode, SayErrorCode, SuicideErrorCode,
-        TransferErrorCode, WithdrawErrorCode,
+        AttackControllerErrorCode, BuildErrorCode, ClaimControllerErrorCode, CreepAttackErrorCode,
+        CreepCancelOrderErrorCode, CreepHealErrorCode, CreepMoveByPathErrorCode,
+        CreepMoveDirectionErrorCode, CreepMovePulledByErrorCode, CreepMoveToErrorCode,
+        CreepRepairErrorCode, DismantleErrorCode, DropErrorCode, GenerateSafeModeErrorCode,
+        HarvestErrorCode, NotifyWhenAttackedErrorCode, PickupErrorCode, PullErrorCode,
+        RangedAttackErrorCode, RangedHealErrorCode, RangedMassAttackErrorCode,
+        ReserveControllerErrorCode, SayErrorCode, SignControllerErrorCode, SuicideErrorCode,
+        TransferErrorCode, UpgradeControllerErrorCode, WithdrawErrorCode,
     },
     objects::{
         ConstructionSite, Owner, Resource, RoomObject, Store, Structure, StructureController,
@@ -19,6 +23,9 @@ use crate::{
 
 #[cfg(feature = "seasonal-season-5")]
 use crate::objects::Reactor;
+
+#[cfg(feature = "seasonal-season-5")]
+use crate::enums::action_error_codes::CreepClaimReactorErrorCode;
 
 #[wasm_bindgen]
 extern "C" {
@@ -271,27 +278,30 @@ impl Creep {
     /// Attack a target in melee range using a creep's attack parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.attack)
-    pub fn attack<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn attack<T>(&self, target: &T) -> Result<(), CreepAttackErrorCode>
     where
         T: ?Sized + Attackable,
     {
-        ErrorCode::result_from_i8(self.attack_internal(target.as_ref()))
+        CreepAttackErrorCode::result_from_i8(self.attack_internal(target.as_ref()))
     }
 
     /// Attack a [`StructureController`] in melee range using a creep's claim
     /// parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.attackController)
-    pub fn attack_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.attack_controller_internal(target))
+    pub fn attack_controller(
+        &self,
+        target: &StructureController,
+    ) -> Result<(), AttackControllerErrorCode> {
+        AttackControllerErrorCode::result_from_i8(self.attack_controller_internal(target))
     }
 
     /// Use a creep's work parts to consume carried energy, putting it toward
     /// progress in a [`ConstructionSite`] in range 3.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.build)
-    pub fn build(&self, target: &ConstructionSite) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.build_internal(target))
+    pub fn build(&self, target: &ConstructionSite) -> Result<(), BuildErrorCode> {
+        BuildErrorCode::result_from_i8(self.build_internal(target))
     }
 
     /// Cancel a successfully called creep function from earlier in the tick,
@@ -307,8 +317,11 @@ impl Creep {
     /// using a creep's claim parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.claimController)
-    pub fn claim_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.claim_controller_internal(target))
+    pub fn claim_controller(
+        &self,
+        target: &StructureController,
+    ) -> Result<(), ClaimControllerErrorCode> {
+        ClaimControllerErrorCode::result_from_i8(self.claim_controller_internal(target))
     }
 
     /// Claim a [`Reactor`] in melee range as your own using a creep's claim
@@ -316,8 +329,8 @@ impl Creep {
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Creep.claimReactor)
     #[cfg(feature = "seasonal-season-5")]
-    pub fn claim_reactor(&self, target: &Reactor) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.claim_reactor_internal(target))
+    pub fn claim_reactor(&self, target: &Reactor) -> Result<(), CreepClaimReactorErrorCode> {
+        CreepClaimReactorErrorCode::result_from_i8(self.claim_reactor_internal(target))
     }
 
     /// Dismantle a [`Structure`] in melee range, removing [`DISMANTLE_POWER`]
@@ -331,11 +344,11 @@ impl Creep {
     ///
     /// [`DISMANTLE_POWER`]: crate::constants::DISMANTLE_POWER
     /// [`StructureType::construction_cost`]: crate::constants::StructureType::construction_cost
-    pub fn dismantle<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn dismantle<T>(&self, target: &T) -> Result<(), DismantleErrorCode>
     where
         T: ?Sized + Dismantleable,
     {
-        ErrorCode::result_from_i8(self.dismantle_internal(target.as_ref()))
+        DismantleErrorCode::result_from_i8(self.dismantle_internal(target.as_ref()))
     }
 
     /// Drop a resource on the ground from the creep's [`Store`].
@@ -352,8 +365,11 @@ impl Creep {
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.generateSafeMode)
     ///
     /// [`SAFE_MODE_COST`]: crate::constants::SAFE_MODE_COST
-    pub fn generate_safe_mode(&self, target: &StructureController) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.generate_safe_mode_internal(target))
+    pub fn generate_safe_mode(
+        &self,
+        target: &StructureController,
+    ) -> Result<(), GenerateSafeModeErrorCode> {
+        GenerateSafeModeErrorCode::result_from_i8(self.generate_safe_mode_internal(target))
     }
 
     /// Get the number of parts of the given type the creep has in its body,
@@ -371,11 +387,11 @@ impl Creep {
     /// [`Source`]: crate::objects::Source
     /// [`Mineral`]: crate::objects::Mineral
     /// [`Deposit`]: crate::objects::Deposit
-    pub fn harvest<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn harvest<T>(&self, target: &T) -> Result<(), HarvestErrorCode>
     where
         T: ?Sized + Harvestable,
     {
-        ErrorCode::result_from_i8(self.harvest_internal(target.as_ref()))
+        HarvestErrorCode::result_from_i8(self.harvest_internal(target.as_ref()))
     }
 
     /// Heal a [`Creep`] or [`PowerCreep`] in melee range, including itself.
@@ -383,11 +399,11 @@ impl Creep {
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.heal)
     ///
     /// [`PowerCreep`]: crate::objects::PowerCreep
-    pub fn heal<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn heal<T>(&self, target: &T) -> Result<(), CreepHealErrorCode>
     where
         T: ?Sized + Healable,
     {
-        ErrorCode::result_from_i8(self.heal_internal(target.as_ref()))
+        CreepHealErrorCode::result_from_i8(self.heal_internal(target.as_ref()))
     }
 
     /// Move one square in the specified direction.
@@ -430,55 +446,58 @@ impl Creep {
     /// Help another creep to move by pulling, if the second creep accepts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.pull)
-    pub fn pull(&self, target: &Creep) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.pull_internal(target))
+    pub fn pull(&self, target: &Creep) -> Result<(), PullErrorCode> {
+        PullErrorCode::result_from_i8(self.pull_internal(target))
     }
 
     /// Attack a target in range 3 using a creep's ranged attack parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedAttack)
-    pub fn ranged_attack<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn ranged_attack<T>(&self, target: &T) -> Result<(), RangedAttackErrorCode>
     where
         T: ?Sized + Attackable,
     {
-        ErrorCode::result_from_i8(self.ranged_attack_internal(target.as_ref()))
+        RangedAttackErrorCode::result_from_i8(self.ranged_attack_internal(target.as_ref()))
     }
 
     /// Heal a target in range 3 using a creep's heal parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedHeal)
-    pub fn ranged_heal<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn ranged_heal<T>(&self, target: &T) -> Result<(), RangedHealErrorCode>
     where
         T: ?Sized + Healable,
     {
-        ErrorCode::result_from_i8(self.ranged_heal_internal(target.as_ref()))
+        RangedHealErrorCode::result_from_i8(self.ranged_heal_internal(target.as_ref()))
     }
 
     /// Attack all enemy targets in range using a creep's ranged attack parts,
     /// with lower damage depending on range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.rangedMassAttack)
-    pub fn ranged_mass_attack(&self) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.ranged_mass_attack_internal())
+    pub fn ranged_mass_attack(&self) -> Result<(), RangedMassAttackErrorCode> {
+        RangedMassAttackErrorCode::result_from_i8(self.ranged_mass_attack_internal())
     }
 
     /// Repair a target in range 3 using carried energy and the creep's work
     /// parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.repair)
-    pub fn repair<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn repair<T>(&self, target: &T) -> Result<(), CreepRepairErrorCode>
     where
         T: ?Sized + Repairable,
     {
-        ErrorCode::result_from_i8(self.repair_internal(target.as_ref()))
+        CreepRepairErrorCode::result_from_i8(self.repair_internal(target.as_ref()))
     }
 
     /// Reserve an unowned [`StructureController`] in melee range using a
     /// creep's claim parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.reserveController)
-    pub fn reserve_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.reserve_controller_internal(target))
+    pub fn reserve_controller(
+        &self,
+        target: &StructureController,
+    ) -> Result<(), ReserveControllerErrorCode> {
+        ReserveControllerErrorCode::result_from_i8(self.reserve_controller_internal(target))
     }
 
     /// Display a string in a bubble above the creep next tick. 10 character
@@ -497,8 +516,8 @@ impl Creep {
         &self,
         target: &StructureController,
         text: &str,
-    ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.sign_controller_internal(target, text))
+    ) -> Result<(), SignControllerErrorCode> {
+        SignControllerErrorCode::result_from_i8(self.sign_controller_internal(target, text))
     }
 
     /// Immediately kill the creep.
@@ -514,8 +533,11 @@ impl Creep {
     /// the creep's work parts.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Creep.upgradeController)
-    pub fn upgrade_controller(&self, target: &StructureController) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.upgrade_controller_internal(target))
+    pub fn upgrade_controller(
+        &self,
+        target: &StructureController,
+    ) -> Result<(), UpgradeControllerErrorCode> {
+        UpgradeControllerErrorCode::result_from_i8(self.upgrade_controller_internal(target))
     }
 
     /// Move the creep toward the specified goal, either a [`RoomPosition`] or

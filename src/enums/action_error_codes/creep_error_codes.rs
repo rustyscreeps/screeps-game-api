@@ -5,6 +5,82 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{constants::ErrorCode, FromReturnCode};
 
+/// Error codes used by [Creep::claim_reactor](crate::Creep::claim_reactor).
+///
+/// [Screeps API Docs](https://docs-season.screeps.com/api/#Creep.claimReactor).
+///
+/// [Screeps Engine Source Code](https://github.com/screeps/mod-season5/blob/master/src/creep.claimReactor.js#L14)
+#[cfg(feature = "seasonal-season-5")]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
+)]
+#[repr(i8)]
+pub enum CreepClaimReactorErrorCode {
+    NotOwner = -1,
+    Busy = -4,
+    InvalidTarget = -7,
+    NotInRange = -9,
+    NoBodypart = -12,
+}
+
+impl FromReturnCode for CreepClaimReactorErrorCode {
+    type Error = Self;
+
+    fn result_from_i8(val: i8) -> Result<(), Self::Error> {
+        let maybe_result = Self::try_result_from_i8(val);
+        #[cfg(feature = "unsafe-return-conversion")]
+        unsafe {
+            maybe_result.unwrap_unchecked()
+        }
+        #[cfg(not(feature = "unsafe-return-conversion"))]
+        maybe_result.unwrap()
+    }
+
+    fn try_result_from_i8(val: i8) -> Option<Result<(), Self::Error>> {
+        match val {
+            0 => Some(Ok(())),
+            -1 => Some(Err(CreepClaimReactorErrorCode::NotOwner)),
+            -4 => Some(Err(CreepClaimReactorErrorCode::Busy)),
+            -7 => Some(Err(CreepClaimReactorErrorCode::InvalidTarget)),
+            -9 => Some(Err(CreepClaimReactorErrorCode::NotInRange)),
+            -12 => Some(Err(CreepClaimReactorErrorCode::NoBodypart)),
+            _ => None,
+        }
+    }
+}
+
+impl fmt::Display for CreepClaimReactorErrorCode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg: &'static str = match self {
+            CreepClaimReactorErrorCode::NotOwner => "you are not the owner of this creep",
+            CreepClaimReactorErrorCode::Busy => "the creep is still being spawned",
+            CreepClaimReactorErrorCode::InvalidTarget => "the target is not a reactor",
+            CreepClaimReactorErrorCode::NotInRange => "the target is too far away",
+            CreepClaimReactorErrorCode::NoBodypart => {
+                "there are no claim body parts in this creep’s body"
+            }
+        };
+
+        write!(f, "{}", msg)
+    }
+}
+
+impl Error for CreepClaimReactorErrorCode {}
+
+impl From<CreepClaimReactorErrorCode> for ErrorCode {
+    fn from(value: CreepClaimReactorErrorCode) -> Self {
+        // Safety: CreepClaimReactorErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode
+        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepClaimReactorErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an `Err` variant, so
+        // we can always extract the error without panicking
+        Self::result_from_i8(value as i8)
+            .unwrap_err()
+            .expect("expect enum discriminant to be an error code")
+    }
+}
+
 /// Error codes used by [Creep::attack](crate::Creep::attack).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.attack).
@@ -919,7 +995,7 @@ impl From<CreepMoveByPathErrorCode> for ErrorCode {
     }
 }
 
-/// Error codes used by [Creep::move_to<T>](crate::Creep::move_to<T>).
+/// Error codes used by [Creep::move_to](crate::Creep#method.move_to).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Creep.moveTo).
 ///

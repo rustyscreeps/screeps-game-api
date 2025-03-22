@@ -38,6 +38,9 @@ pub mod creep {
         PullErrorCode, RangedAttackErrorCode, RangedHealErrorCode, RangedMassAttackErrorCode,
         ReserveControllerErrorCode, SignControllerErrorCode, UpgradeControllerErrorCode,
     };
+
+    #[cfg(feature = "seasonal-season-5")]
+    pub use super::creep_error_codes::CreepClaimReactorErrorCode;
 }
 
 pub mod flag {
