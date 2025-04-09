@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.23.0 (2025-04-09)
+===================
+
 ### Breaking:
 
 - Replace all `ErrorCode` returns with new error code enums that include only the possible return
