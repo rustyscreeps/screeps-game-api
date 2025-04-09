@@ -1,7 +1,8 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{ErrorCode, ResourceType},
+    constants::ResourceType,
+    enums::action_error_codes::structure_factory::*,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -38,16 +39,16 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &StructureFactory) -> Store;
 
-    /// Produce a commodity in the factory.
-    ///
-    /// [Screeps documentation](https://docs.screeps.com/api/#StructureFactory.produce)
     #[wasm_bindgen(method, js_name = produce)]
     fn produce_internal(this: &StructureFactory, ty: ResourceType) -> i8;
 }
 
 impl StructureFactory {
-    pub fn produce(&self, ty: ResourceType) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.produce_internal(ty))
+    /// Produce a commodity in the factory.
+    ///
+    /// [Screeps documentation](https://docs.screeps.com/api/#StructureFactory.produce)
+    pub fn produce(&self, ty: ResourceType) -> Result<(), ProduceErrorCode> {
+        ProduceErrorCode::result_from_i8(self.produce_internal(ty))
     }
 }
 

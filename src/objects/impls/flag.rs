@@ -3,6 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::Color,
+    enums::action_error_codes::flag::*,
     objects::{RoomObject, RoomPosition},
     prelude::*,
 };
@@ -50,23 +51,41 @@ extern "C" {
     #[wasm_bindgen(method, getter = name)]
     pub fn name_jsstring(this: &Flag) -> JsString;
 
+    #[wasm_bindgen(method, js_name = remove)]
+    fn remove_internal(this: &Flag) -> i8;
+
+    #[wasm_bindgen(method, js_name = setColor)]
+    fn set_color_internal(this: &Flag, color: Color, secondary_color: Option<Color>) -> i8;
+
+    #[wasm_bindgen(method, js_name = setPosition)]
+    fn set_position_internal(this: &Flag, pos: RoomPosition) -> i8;
+}
+
+impl Flag {
     /// Remove the flag.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Flag.remove)
-    #[wasm_bindgen(method)]
-    pub fn remove(this: &Flag);
+    pub fn remove(&self) -> Result<(), FlagRemoveErrorCode> {
+        FlagRemoveErrorCode::result_from_i8(self.remove_internal())
+    }
 
     /// Set the color (and optionally, the secondary color) of the flag.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Flag.setColor)
-    #[wasm_bindgen(method, js_name = setColor)]
-    pub fn set_color(this: &Flag, color: Color, secondary_color: Option<Color>);
+    pub fn set_color(
+        &self,
+        color: Color,
+        secondary_color: Option<Color>,
+    ) -> Result<(), SetColorErrorCode> {
+        SetColorErrorCode::result_from_i8(self.set_color_internal(color, secondary_color))
+    }
 
     /// Set the position of the flag
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Flag.setPosition)
-    #[wasm_bindgen(method, js_name = setPosition)]
-    pub fn set_position(this: &Flag, pos: RoomPosition);
+    pub fn set_position(&self, pos: RoomPosition) -> Result<(), SetPositionErrorCode> {
+        SetPositionErrorCode::result_from_i8(self.set_position_internal(pos))
+    }
 }
 
 impl JsCollectionFromValue for Flag {

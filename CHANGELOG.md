@@ -3,6 +3,8 @@ Unreleased
 
 ### Breaking:
 
+- Replace all `ErrorCode` returns with new error code enums that include only the possible return
+  values for a given called function, allowing for exhaustive matching when handling errors
 - Change return type of `Structure::destroy` from `i8` to `Result<(), ErrorCode>`
 - Change inner u8 of `RoomCoordinate` to private
 - Use `f64` instead of `u64` to work around bindgen expecting `BigInt` return values

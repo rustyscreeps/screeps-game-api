@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ErrorCode,
+    enums::action_error_codes::structure_tower::*,
     objects::{OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -41,11 +41,11 @@ impl StructureTower {
     ///
     /// [`Creep`]: crate::objects::Creep
     /// [`PowerCreep`]: crate::objects::PowerCreep
-    pub fn attack<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn attack<T>(&self, target: &T) -> Result<(), TowerAttackErrorCode>
     where
         T: ?Sized + Attackable,
     {
-        ErrorCode::result_from_i8(self.attack_internal(target.as_ref()))
+        TowerAttackErrorCode::result_from_i8(self.attack_internal(target.as_ref()))
     }
 
     /// Heal a [`Creep`] or [`PowerCreep`] in the room, adding hit points
@@ -55,22 +55,22 @@ impl StructureTower {
     ///
     /// [`Creep`]: crate::objects::Creep
     /// [`PowerCreep`]: crate::objects::PowerCreep
-    pub fn heal<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn heal<T>(&self, target: &T) -> Result<(), TowerHealErrorCode>
     where
         T: ?Sized + Healable,
     {
-        ErrorCode::result_from_i8(self.heal_internal(target.as_ref()))
+        TowerHealErrorCode::result_from_i8(self.heal_internal(target.as_ref()))
     }
 
     /// Repair a [`Structure`] in the room, adding hit points depending on
     /// range.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureTower.repair)
-    pub fn repair<T>(&self, target: &T) -> Result<(), ErrorCode>
+    pub fn repair<T>(&self, target: &T) -> Result<(), TowerRepairErrorCode>
     where
         T: ?Sized + Repairable,
     {
-        ErrorCode::result_from_i8(self.repair_internal(target.as_ref()))
+        TowerRepairErrorCode::result_from_i8(self.repair_internal(target.as_ref()))
     }
 }
 

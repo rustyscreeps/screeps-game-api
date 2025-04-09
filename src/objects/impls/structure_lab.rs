@@ -1,7 +1,8 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::{ErrorCode, ResourceType},
+    constants::ResourceType,
+    enums::action_error_codes::structure_lab::*,
     objects::{Creep, OwnedStructure, RoomObject, Store, Structure},
     prelude::*,
 };
@@ -68,8 +69,8 @@ impl StructureLab {
         &self,
         creep: &Creep,
         body_part_count: Option<u32>,
-    ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.boost_creep_internal(creep, body_part_count))
+    ) -> Result<(), BoostCreepErrorCode> {
+        BoostCreepErrorCode::result_from_i8(self.boost_creep_internal(creep, body_part_count))
     }
 
     /// Reverse a reaction, splitting the compound in this [`StructureLab`] into
@@ -80,16 +81,20 @@ impl StructureLab {
         &self,
         lab1: &StructureLab,
         lab2: &StructureLab,
-    ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.reverse_reaction_internal(lab1, lab2))
+    ) -> Result<(), ReverseReactionErrorCode> {
+        ReverseReactionErrorCode::result_from_i8(self.reverse_reaction_internal(lab1, lab2))
     }
 
     /// Run a reaction, combining components from two other [`StructureLab`]s
     /// into a new compound in this lab.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.runReaction)
-    pub fn run_reaction(&self, lab1: &StructureLab, lab2: &StructureLab) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.run_reaction_internal(lab1, lab2))
+    pub fn run_reaction(
+        &self,
+        lab1: &StructureLab,
+        lab2: &StructureLab,
+    ) -> Result<(), RunReactionErrorCode> {
+        RunReactionErrorCode::result_from_i8(self.run_reaction_internal(lab1, lab2))
     }
 
     /// Unboost a [`Creep`], removing all boosts from its body and dropping
@@ -99,8 +104,8 @@ impl StructureLab {
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureLab.unboostCreep)
     ///
     /// [`LAB_UNBOOST_MINERAL`]: crate::constants::LAB_UNBOOST_MINERAL
-    pub fn unboost_creep(&self, creep: &Creep) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.unboost_creep_internal(creep))
+    pub fn unboost_creep(&self, creep: &Creep) -> Result<(), UnboostCreepErrorCode> {
+        UnboostCreepErrorCode::result_from_i8(self.unboost_creep_internal(creep))
     }
 }
 

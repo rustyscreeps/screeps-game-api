@@ -122,7 +122,7 @@ impl FromStr for RawObjectId {
             return Err(RawObjectIdParseError::value_too_large(u128_id));
         }
 
-        Ok(Self::from(u128_id << 32 | pad_length))
+        Ok(Self::from((u128_id << 32) | pad_length))
     }
 }
 

@@ -4,7 +4,7 @@
 use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "mmo")]
-use crate::{constants::ErrorCode, prelude::*};
+use crate::{enums::action_error_codes::game::cpu::*, prelude::*};
 #[cfg(feature = "mmo")]
 use js_sys::{JsString, Object};
 
@@ -137,8 +137,8 @@ pub fn halt() {
 ///
 /// [`CPU_SET_SHARD_LIMITS_COOLDOWN`]: crate::constants::CPU_SET_SHARD_LIMITS_COOLDOWN
 #[cfg(feature = "mmo")]
-pub fn set_shard_limits(limits: &Object) -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8(Cpu::set_shard_limits(limits))
+pub fn set_shard_limits(limits: &Object) -> Result<(), SetShardLimitsErrorCode> {
+    SetShardLimitsErrorCode::result_from_i8(Cpu::set_shard_limits(limits))
 }
 
 /// Consume a [`CpuUnlock`] to unlock your full CPU for 24 hours.
@@ -147,8 +147,8 @@ pub fn set_shard_limits(limits: &Object) -> Result<(), ErrorCode> {
 ///
 /// [`CpuUnlock`]: crate::constants::IntershardResourceType::CpuUnlock
 #[cfg(feature = "mmo")]
-pub fn unlock() -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8(Cpu::unlock())
+pub fn unlock() -> Result<(), UnlockErrorCode> {
+    UnlockErrorCode::result_from_i8(Cpu::unlock())
 }
 
 /// Generate a [`Pixel`], consuming [`PIXEL_CPU_COST`] CPU from your bucket.
@@ -158,8 +158,8 @@ pub fn unlock() -> Result<(), ErrorCode> {
 /// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
 #[cfg(feature = "mmo")]
-pub fn generate_pixel() -> Result<(), ErrorCode> {
-    ErrorCode::result_from_i8(Cpu::generate_pixel())
+pub fn generate_pixel() -> Result<(), GeneratePixelErrorCode> {
+    GeneratePixelErrorCode::result_from_i8(Cpu::generate_pixel())
 }
 
 #[wasm_bindgen]

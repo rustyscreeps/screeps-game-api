@@ -11,9 +11,9 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     constants::{
-        find::*, look::*, Color, Direction, ErrorCode, ExitDirection, PowerType, ResourceType,
-        StructureType,
+        find::*, look::*, Color, Direction, ExitDirection, PowerType, ResourceType, StructureType,
     },
+    enums::action_error_codes::room::*,
     local::{LodashFilter, RoomName},
     objects::*,
     pathfinder::RoomCostResult,
@@ -106,7 +106,7 @@ extern "C" {
     fn find_internal(this: &Room, ty: Find, options: Option<&FindOptions>) -> Array;
 
     #[wasm_bindgen(final, method, js_name = findExitTo)]
-    fn find_exit_to_internal(this: &Room, room: &JsString) -> ExitDirection;
+    fn find_exit_to_internal(this: &Room, room: &JsString) -> i8;
 
     #[wasm_bindgen(final, method, js_name = findPath)]
     fn find_path_internal(
@@ -225,8 +225,10 @@ impl Room {
         y: u8,
         ty: StructureType,
         name: Option<&JsString>,
-    ) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.create_construction_site_internal(x, y, ty, name))
+    ) -> Result<(), RoomCreateConstructionSiteErrorCode> {
+        RoomCreateConstructionSiteErrorCode::result_from_i8(
+            self.create_construction_site_internal(x, y, ty, name),
+        )
     }
 
     /// Creates a [`Flag`] at given coordinates within this room. The name of
@@ -240,12 +242,12 @@ impl Room {
         name: Option<&JsString>,
         color: Option<Color>,
         secondary_color: Option<Color>,
-    ) -> Result<JsString, ErrorCode> {
+    ) -> Result<JsString, RoomCreateFlagErrorCode> {
         let result = self.create_flag_internal(x, y, name, color, secondary_color);
         if result.is_string() {
             Ok(result.unchecked_into())
         } else {
-            Err(ErrorCode::from_f64(
+            Err(RoomCreateFlagErrorCode::from_f64(
                 result
                     .as_f64()
                     .expect("expected non-string flag return to be a number"),
@@ -274,8 +276,16 @@ impl Room {
     /// Find an exit from the current room which leads to a target room.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room.findExitTo)
-    pub fn find_exit_to(&self, room: RoomName) -> ExitDirection {
-        self.find_exit_to_internal(&room.into())
+    pub fn find_exit_to(&self, room: RoomName) -> Result<ExitDirection, FindExitToErrorCode> {
+        let result = self.find_exit_to_internal(&room.into());
+        if result >= 0 {
+            Ok(ExitDirection::from_i8(result)
+                .expect("expect find exit return to be a valid exit constant"))
+        } else {
+            // The exit direction results should have been caught by the other branch,
+            // therefore this should always be an error and never actually panic
+            Err(FindExitToErrorCode::result_from_i8(result).unwrap_err())
+        }
     }
 
     /// Find a path within the room from one position to another.

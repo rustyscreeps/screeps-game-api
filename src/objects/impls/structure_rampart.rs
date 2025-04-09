@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ErrorCode,
+    enums::action_error_codes::structure_rampart::*,
     objects::{OwnedStructure, RoomObject, Structure},
     prelude::*,
 };
@@ -42,8 +42,8 @@ impl StructureRampart {
     /// walk on it.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureRampart.setPublic)
-    pub fn set_public(&self, public: bool) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.set_public_internal(public))
+    pub fn set_public(&self, public: bool) -> Result<(), SetPublicErrorCode> {
+        SetPublicErrorCode::result_from_i8(self.set_public_internal(public))
     }
 }
 

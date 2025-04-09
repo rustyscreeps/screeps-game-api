@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    constants::ErrorCode,
+    enums::action_error_codes::structure_nuker::*,
     objects::{OwnedStructure, RoomObject, RoomPosition, Store, Structure},
     prelude::*,
 };
@@ -40,8 +40,8 @@ impl StructureNuker {
     /// Launch a nuke at a target [`RoomPosition`].
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#StructureNuker.launchNuke)
-    pub fn launch_nuke(&self, target: &RoomPosition) -> Result<(), ErrorCode> {
-        ErrorCode::result_from_i8(self.launch_nuke_internal(target))
+    pub fn launch_nuke(&self, target: &RoomPosition) -> Result<(), LaunchNukeErrorCode> {
+        LaunchNukeErrorCode::result_from_i8(self.launch_nuke_internal(target))
     }
 }
 
