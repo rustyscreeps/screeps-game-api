@@ -108,7 +108,6 @@ pub mod season_1 {
 
     /// Calculates the state of the score cycle for season 1
     pub const fn score_cycle_at_tick(tick: u32) -> ScoreCycleState {
-        #[allow(clippy::match_overlapping_arm)]
         match tick % SCORE_CYCLE_DURATION {
             // the bonus/crisis periods are exclusive of their boundaries
             // https://github.com/screeps/mod-season1/blob/7ca3c7ddb47bf9dfbdfb4e72b666a3159fde8780/src/scoreContainer.roomObject.js#L77-L81
@@ -125,7 +124,6 @@ pub mod season_1 {
     /// Calculates the state of the score cycle for season 7, which reverses the
     /// crisis/bonus order
     pub const fn s7_score_cycle_at_tick(tick: u32) -> ScoreCycleState {
-        #[allow(clippy::match_overlapping_arm)]
         match tick % SCORE_CYCLE_DURATION {
             // the bonus/crisis periods are exclusive of their boundaries
             // https://github.com/screeps/mod-season1/blob/7ca3c7ddb47bf9dfbdfb4e72b666a3159fde8780/src/scoreContainer.roomObject.js#L77-L81
