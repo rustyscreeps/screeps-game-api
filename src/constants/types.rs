@@ -184,6 +184,38 @@ impl StructureType {
         };
         Some(hits)
     }
+
+    /// Translates the `OBSTACLE_OBJECT_TYPES` constant, returning true for
+    /// structure types that are obstacles
+    #[inline]
+    pub const fn is_obstacle(self) -> bool {
+        use self::StructureType::*;
+
+        match self {
+            Spawn => true,
+            Extension => true,
+            Road => false,
+            Wall => true,
+            Rampart => false,
+            KeeperLair => false,
+            Portal => false,
+            Controller => true,
+            Link => true,
+            Storage => true,
+            Tower => true,
+            Observer => true,
+            PowerBank => true,
+            PowerSpawn => true,
+            Extractor => false,
+            Lab => true,
+            Terminal => true,
+            Container => false,
+            Nuker => true,
+            Factory => true,
+            InvaderCore => true,
+            _ => false,
+        }
+    }
 }
 
 /// Translates `SUBSCRIPTION_TOKEN` and `INTERSHARD_RESOURCES` constants.
