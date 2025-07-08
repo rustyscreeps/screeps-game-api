@@ -640,7 +640,7 @@ where
         // passed in, now unified as &Fn
         //
 
-        let callback_type_erased: &mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) =
+        let callback_type_erased: &mut dyn FnMut(RoomName, CostMatrix) -> JsValue =
             &mut owned_callback;
 
         // Overwrite lifetime of reference so it can be passed to javascript.
@@ -650,7 +650,7 @@ where
         // above the current scope but otherwise unknown" is not a valid lifetime.
         //
 
-        let callback_lifetime_erased: &'static mut (dyn FnMut(RoomName, CostMatrix) -> JsValue) =
+        let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, CostMatrix) -> JsValue =
             unsafe { std::mem::transmute(callback_type_erased) };
 
         let boxed_callback = Box::new(move |room: JsString, cost_matrix: CostMatrix| -> JsValue {
