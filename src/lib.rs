@@ -94,6 +94,8 @@
 
 // #![warn(clippy::missing_const_for_fn)]
 
+// temporary - TODO remove and fix these if it's made permanent in the current form
+#![allow(clippy::uninlined_format_args)]
 // disable deprecation warnings - TODO need to figure out how to get wasm_bindgen's new thread_local
 // attribute working
 #![allow(deprecated)]

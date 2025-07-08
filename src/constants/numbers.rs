@@ -9,7 +9,7 @@ use super::types::{ResourceType, StructureType};
 
 // LOOK_* defined in `look.rs`
 
-// OBSTACLE_OBJECT_TYPES not yet implemented
+// OBSTACLE_OBJECT_TYPES defined in `types.rs`
 
 // BODYPART_COST defined in `small_enums.rs`
 

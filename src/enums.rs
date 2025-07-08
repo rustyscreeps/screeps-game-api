@@ -7,7 +7,11 @@ pub mod action_error_codes;
 use enum_dispatch::enum_dispatch;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::{objects::*, prelude::*, ResourceType, RESOURCES_ALL};
+use crate::{
+    constants::{ResourceType, StructureType, RESOURCES_ALL},
+    objects::*,
+    prelude::*,
+};
 
 #[enum_dispatch(Attackable)]
 pub enum AttackableObject {
@@ -344,6 +348,36 @@ pub enum StructureObject {
     StructureTerminal,
     StructureTower,
     StructureWall,
+}
+
+impl StructureObject {
+    pub fn structure_type(&self) -> StructureType {
+        use StructureObject::*;
+
+        match self {
+            StructureContainer(_) => StructureType::Container,
+            StructureController(_) => StructureType::Controller,
+            StructureExtension(_) => StructureType::Extension,
+            StructureExtractor(_) => StructureType::Extractor,
+            StructureFactory(_) => StructureType::Factory,
+            StructureInvaderCore(_) => StructureType::InvaderCore,
+            StructureKeeperLair(_) => StructureType::KeeperLair,
+            StructureLab(_) => StructureType::Lab,
+            StructureLink(_) => StructureType::Link,
+            StructureNuker(_) => StructureType::Nuker,
+            StructureObserver(_) => StructureType::Observer,
+            StructurePortal(_) => StructureType::Portal,
+            StructurePowerBank(_) => StructureType::PowerBank,
+            StructurePowerSpawn(_) => StructureType::PowerSpawn,
+            StructureRampart(_) => StructureType::Rampart,
+            StructureRoad(_) => StructureType::Road,
+            StructureSpawn(_) => StructureType::Spawn,
+            StructureStorage(_) => StructureType::Storage,
+            StructureTerminal(_) => StructureType::Terminal,
+            StructureTower(_) => StructureType::Tower,
+            StructureWall(_) => StructureType::Wall,
+        }
+    }
 }
 
 #[enum_dispatch(Transferable)]
