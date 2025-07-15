@@ -90,6 +90,7 @@ impl From<RoomTerrain> for LocalRoomTerrain {
     }
 }
 
+#[cfg(test)]
 mod test {
     use super::*;
     use crate::constants::{ROOM_AREA, ROOM_SIZE};
