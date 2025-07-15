@@ -47,7 +47,8 @@ impl LocalRoomTerrain {
         Self { bits }
     }
 
-    /// Gets a slice of the underlying bytes that comprise the room's terrain data.
+    /// Gets a slice of the underlying bytes that comprise the room's terrain
+    /// data.
     ///
     /// The bytes are in row-major order - that is they start at the top left,
     /// then move to the top right, and then start at the left of the next row.
@@ -98,16 +99,17 @@ mod test {
         // Initialize terrain to be all plains
         let mut raw_terrain_data = Box::new([0; ROOM_AREA]);
 
-        // Adjust (1, 0) to be a swamp; in row-major order this is the second element (index 1) in the
-        // array; in column-major order this is the 51st element (index 50) in the array.
+        // Adjust (1, 0) to be a swamp; in row-major order this is the second element
+        // (index 1) in the array; in column-major order this is the 51st
+        // element (index 50) in the array.
         raw_terrain_data[1] = 2; // Terrain::Swamp has the numeric representation 2
 
         // Construct the local terrain object
         let terrain = LocalRoomTerrain::new_from_bits(raw_terrain_data);
 
-        // Pull the terrain for location (1, 0); if it comes out as a Swamp, then we know the
-        // get_xy function pulls data in row-major order; if it comes out as a Plain, then we know
-        // that it pulls in column-major order.
+        // Pull the terrain for location (1, 0); if it comes out as a Swamp, then we
+        // know the get_xy function pulls data in row-major order; if it comes
+        // out as a Plain, then we know that it pulls in column-major order.
         let xy = unsafe { RoomXY::unchecked_new(1, 0) };
         let tile_type = terrain.get_xy(xy);
         assert_eq!(Terrain::Swamp, tile_type);
@@ -134,7 +136,8 @@ mod test {
         // Build the new terrain from the copied bits
         let new_terrain = LocalRoomTerrain::new_from_bits(Box::new(bits));
 
-        // Iterate over all room positions and verify that they match in both terrain objects
+        // Iterate over all room positions and verify that they match in both terrain
+        // objects
         for x in 0..ROOM_SIZE {
             for y in 0..ROOM_SIZE {
                 // Safety: x and y are both explicitly restricted to room size
