@@ -6,6 +6,7 @@ Unreleased
 - Add `StructureObject::structure_type` function to return the associated `StructureType`
 - Implement `OBSTACLE_OBJECT_TYPES` constant for structures by adding `StructureType::is_obstacle`
   function
+- Add `LocalRoomTerrain::get_bits` function to return the underlying byte array.
 
 0.23.0 (2025-04-09)
 ===================
