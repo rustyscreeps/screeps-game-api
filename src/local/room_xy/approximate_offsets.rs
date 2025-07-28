@@ -1,7 +1,7 @@
 //! Methods related to approximating in-room positions
 //! between other in-room positions.
 
-use super::RoomXY;
+use super::{RoomOffsetXY, RoomXY};
 
 impl RoomXY {
     /// Calculates an approximate midpoint between this point and the target.
@@ -50,14 +50,17 @@ impl RoomXY {
     /// );
     /// ```
     pub fn towards(self, target: RoomXY, distance_towards_target: i8) -> RoomXY {
-        let (offset_x, offset_y) = target - self;
-        let total_distance = offset_x.abs().max(offset_y.abs());
+        let RoomOffsetXY {
+            x: offset_x,
+            y: offset_y,
+        } = target - self;
+        let total_distance = offset_x.abs().max(offset_y.abs()) as i8;
         if distance_towards_target > total_distance {
             return target;
         }
 
-        let new_offset_x = (offset_x * distance_towards_target) / total_distance;
-        let new_offset_y = (offset_y * distance_towards_target) / total_distance;
+        let new_offset_x = (i8::from(offset_x) * distance_towards_target) / total_distance;
+        let new_offset_y = (i8::from(offset_y) * distance_towards_target) / total_distance;
 
         self + (new_offset_x, new_offset_y)
     }
@@ -178,7 +181,7 @@ impl RoomXY {
     /// );
     /// ```
     pub fn midpoint_between(self, target: RoomXY) -> RoomXY {
-        let (offset_x, offset_y) = self - target;
+        let (offset_x, offset_y) = <(i8, i8)>::from(self - target);
 
         let new_offset_x = offset_x / 2;
         let new_offset_y = offset_y / 2;

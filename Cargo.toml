@@ -66,3 +66,5 @@ sim = []
 # Enable unsafe conversions of return codes with undefined behavior when values
 # aren't in the expected range
 unsafe-return-conversion = []
+
+nightly = []
