@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+### Bugfixes:
+
+- Fix incorrect return type on `Effect::ticks_remaining`
+
 ### Additions:
 
 - Add `StructureObject::structure_type` function to return the associated `StructureType`

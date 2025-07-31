@@ -55,7 +55,7 @@ extern "C" {
     pub fn level(this: &Effect) -> Option<u8>;
 
     #[wasm_bindgen(method, getter = ticksRemaining)]
-    pub fn ticks_remaining(this: &Effect) -> EffectType;
+    pub fn ticks_remaining(this: &Effect) -> u32;
 }
 
 impl<T> HasPosition for T
