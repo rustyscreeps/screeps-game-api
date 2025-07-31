@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.23.1 (2025-07-31)
+===================
+
 ### Bugfixes:
 
 - Fix incorrect return type on `Effect::ticks_remaining`
