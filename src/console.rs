@@ -35,4 +35,16 @@ extern "C" {
     /// visuals.
     #[wasm_bindgen(js_namespace = console, js_name = clearVisual)]
     pub fn clear_visual(target: Option<&JsString>);
+
+    /// Log a string to the console without HTML escaping.
+    ///
+    /// WARNING: this function allows script injection HTML/JS contents that
+    /// will be executed by a connected game client! USE WITH CARE!
+    /// Dangerous if logging untrusted inputs from other players, such as creep
+    /// names, spawn names, controller signs, transaction descriptions, etc.
+    ///
+    /// Should ***only*** be used when intentionally logging HTML content which
+    /// you'd like to be evaluated by a connected client.
+    #[wasm_bindgen(js_namespace = console, js_name = logUnsafe)]
+    pub fn log_unsafe(string: &JsValue);
 }
