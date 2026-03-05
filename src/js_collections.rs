@@ -42,7 +42,7 @@ where
     K: JsCollectionFromValue,
 {
     pub fn keys(&self) -> impl Iterator<Item = K> {
-        let array = Object::keys(self.map.unchecked_ref());
+        let array = Object::keys::<K>(self.map.unchecked_ref());
 
         OwnedArrayIter::new(array)
     }
