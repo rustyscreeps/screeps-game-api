@@ -1,10 +1,17 @@
 Unreleased
 ==========
 
+0.23.2 (2026-03-12)
+===================
+
 ### Additions:
 
- - Add function for unsafe console logging, `console::log_unsafe`, to allow intentionally logging
-   HTML data to be evaluated by a connected client
+- Add function for unsafe console logging, `console::log_unsafe`, to allow intentionally logging
+  HTML data to be evaluated by a connected client
+
+### Misc:
+
+- Update required version of wasm-bindgen to 0.2.112 due to type changes for `Object::keys`
 
 0.23.1 (2025-07-31)
 ===================
