@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.23.2 (2026-03-12)
+===================
+
 ### Additions:
 
  - Add function for unsafe console logging, `console::log_unsafe`, to allow intentionally logging
