@@ -11,8 +11,8 @@ jobs:
         with:
           components: clippy, rustfmt
       - run: cargo fmt --all -- --check
-      - run: cargo clippy --all-features -- -D warnings
-      - run: cargo test --all-features
+      - run: cargo clippy --features mmo,seasonal-season-1,seasonal-season-2,seasonal-season-5,sim,unsafe-return-conversion -- -D warnings
+      - run: cargo test --features mmo,seasonal-season-1,seasonal-season-2,seasonal-season-5,sim,unsafe-return-conversion
   nightly:
     runs-on: ubuntu-latest
     steps:

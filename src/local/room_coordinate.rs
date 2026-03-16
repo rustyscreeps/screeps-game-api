@@ -340,6 +340,18 @@ impl Sub for RoomCoordinate {
     }
 }
 
+impl std::cmp::PartialOrd<u8> for RoomCoordinate {
+    fn partial_cmp(&self, other: &u8) -> Option<std::cmp::Ordering> {
+        Some(self.0.cmp(other))
+    }
+}
+
+impl std::cmp::PartialEq<u8> for RoomCoordinate {
+    fn eq(&self, other: &u8) -> bool {
+        self.0 == *other
+    }
+}
+
 const ROOM_SIZE_I8: i8 = {
     // If this fails, we need to rework the arithmetic code
     debug_assert!(2 * ROOM_SIZE <= i8::MAX as u8);
@@ -358,7 +370,10 @@ pub struct RoomOffset(i8);
 
 impl RoomOffset {
     pub const MAX: Self = Self(ROOM_SIZE_I8 - 1);
-    pub const MIN: Self = Self(1 - ROOM_SIZE_I8);
+    pub const MIN: Self = Self(-(ROOM_SIZE_I8 - 1));
+    pub const PLUS_ONE: Self = Self(1);
+    pub const MINUS_ONE: Self = Self(-1);
+    pub const ZERO: Self = Self(0);
 
     /// Create a `RoomOffset` from an `i8`, returning an error if it's not
     /// within the valid range.
@@ -368,6 +383,10 @@ impl RoomOffset {
         } else {
             Err(OffsetOutOfBoundsError(offset))
         }
+    }
+
+    fn saturating_new(offset: i8) -> Self {
+        Self(offset.clamp(Self::MIN.0, Self::MAX.0))
     }
 
     /// Create a `RoomOffset` from an `i8`, without checking whether it's in the
@@ -404,12 +423,12 @@ impl RoomOffset {
     /// ```
     /// use screeps::local::RoomOffset;
     ///
-    /// let zero = RoomOffset::new(0).unwrap();
-    /// let one = RoomOffset::new(1).unwrap();
-    ///
-    /// assert_eq!(RoomOffset::MIN.checked_add(RoomOffset::MAX), Some(zero));
-    /// assert_eq!(RoomOffset::MAX.checked_add(one), None);
-    /// assert_eq!(RoomOffset::MIN.checked_add(-one), None);
+    /// assert_eq!(
+    ///     RoomOffset::MIN.checked_add(RoomOffset::MAX),
+    ///     Some(RoomOffset::ZERO)
+    /// );
+    /// assert_eq!(RoomOffset::MAX.checked_add(RoomOffset::PLUS_ONE), None);
+    /// assert_eq!(RoomOffset::MIN.checked_add(RoomOffset::MINUS_ONE), None);
     /// ```
     pub fn checked_add(self, rhs: Self) -> Option<Self> {
         self.assume_bounds_constraint();
@@ -425,17 +444,23 @@ impl RoomOffset {
     /// ```
     /// use screeps::local::RoomOffset;
     ///
-    /// let zero = RoomOffset::new(0).unwrap();
-    /// let one = RoomOffset::new(1).unwrap();
-    ///
-    /// assert_eq!(RoomOffset::MIN.saturating_add(RoomOffset::MAX), zero);
-    /// assert_eq!(RoomOffset::MAX.saturating_add(one), RoomOffset::MAX);
-    /// assert_eq!(RoomOffset::MIN.saturating_add(-one), RoomOffset::MIN);
+    /// assert_eq!(
+    ///     RoomOffset::MIN.saturating_add(RoomOffset::MAX),
+    ///     RoomOffset::ZERO
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MAX.saturating_add(RoomOffset::PLUS_ONE),
+    ///     RoomOffset::MAX
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MIN.saturating_add(RoomOffset::MINUS_ONE),
+    ///     RoomOffset::MIN
+    /// );
     /// ```
     pub fn saturating_add(self, rhs: Self) -> Self {
         self.assume_bounds_constraint();
         rhs.assume_bounds_constraint();
-        Self::new((self.0 + rhs.0).clamp(-ROOM_SIZE_I8 + 1, ROOM_SIZE_I8 - 1)).unwrap_throw()
+        Self::saturating_new(self.0 + rhs.0)
     }
 
     /// Add two offsets together, wrapping around at the ends of the valid
@@ -446,20 +471,17 @@ impl RoomOffset {
     /// ```
     /// use screeps::local::RoomOffset;
     ///
-    /// let zero = RoomOffset::new(0).unwrap();
-    /// let one = RoomOffset::new(1).unwrap();
-    ///
     /// assert_eq!(
-    ///     RoomOffset::MAX.overflowing_add(one),
+    ///     RoomOffset::MAX.overflowing_add(RoomOffset::PLUS_ONE),
     ///     (RoomOffset::MIN, true)
     /// );
     /// assert_eq!(
-    ///     RoomOffset::MIN.overflowing_add(-one),
+    ///     RoomOffset::MIN.overflowing_add(RoomOffset::MINUS_ONE),
     ///     (RoomOffset::MAX, true)
     /// );
     /// assert_eq!(
     ///     RoomOffset::MIN.overflowing_add(RoomOffset::MAX),
-    ///     (zero, false)
+    ///     (RoomOffset::ZERO, false)
     /// );
     /// ```
     pub fn overflowing_add(self, rhs: Self) -> (Self, bool) {
@@ -484,12 +506,18 @@ impl RoomOffset {
     /// ```
     /// use screeps::local::RoomOffset;
     ///
-    /// let zero = RoomOffset::new(0).unwrap();
-    /// let one = RoomOffset::new(1).unwrap();
-    ///
-    /// assert_eq!(RoomOffset::MAX.wrapping_add(one), RoomOffset::MIN);
-    /// assert_eq!(RoomOffset::MIN.wrapping_add(-one), RoomOffset::MAX);
-    /// assert_eq!(RoomOffset::MIN.wrapping_add(RoomOffset::MAX), zero);
+    /// assert_eq!(
+    ///     RoomOffset::MAX.wrapping_add(RoomOffset::PLUS_ONE),
+    ///     RoomOffset::MIN
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MIN.wrapping_add(RoomOffset::MINUS_ONE),
+    ///     RoomOffset::MAX
+    /// );
+    /// assert_eq!(
+    ///     RoomOffset::MIN.wrapping_add(RoomOffset::MAX),
+    ///     RoomOffset::ZERO
+    /// );
     /// ```
     pub fn wrapping_add(self, rhs: Self) -> Self {
         self.overflowing_add(rhs).0
@@ -521,6 +549,12 @@ impl RoomOffset {
     pub fn abs(self) -> u8 {
         self.assume_bounds_constraint();
         self.0.unsigned_abs()
+    }
+}
+
+impl fmt::Display for RoomOffset {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.0.fmt(f)
     }
 }
 
@@ -561,6 +595,127 @@ impl Neg for RoomOffset {
         Self::new(-self.0).unwrap_throw()
     }
 }
+
+impl std::cmp::PartialOrd<i8> for RoomOffset {
+    fn partial_cmp(&self, other: &i8) -> Option<std::cmp::Ordering> {
+        Some(self.0.cmp(other))
+    }
+}
+
+impl std::cmp::PartialEq<i8> for RoomOffset {
+    fn eq(&self, other: &i8) -> bool {
+        self.0 == *other
+    }
+}
+
+#[cfg(feature = "nightly")]
+impl std::iter::Step for RoomCoordinate {
+    fn steps_between(start: &Self, end: &Self) -> Option<usize> {
+        start.assume_bounds_constraint();
+        end.assume_bounds_constraint();
+        end.0.checked_sub(start.0).map(|x| x as usize)
+    }
+
+    fn forward_checked(start: Self, count: usize) -> Option<Self> {
+        if count < ROOM_USIZE {
+            start.checked_add(count as i8)
+        } else {
+            None
+        }
+    }
+
+    fn backward_checked(start: Self, count: usize) -> Option<Self> {
+        if count < ROOM_USIZE {
+            start.checked_add(-(count as i8))
+        } else {
+            None
+        }
+    }
+
+    fn forward(start: Self, count: usize) -> Self {
+        if cfg!(debug_assertions) {
+            RoomCoordinate::forward_checked(start, count).unwrap_throw()
+        } else {
+            start.saturating_add(count.min(ROOM_USIZE) as i8)
+        }
+    }
+
+    fn backward(start: Self, count: usize) -> Self {
+        if cfg!(debug_assertions) {
+            RoomCoordinate::backward_checked(start, count).unwrap_throw()
+        } else {
+            start.saturating_add(-(count.min(ROOM_USIZE) as i8))
+        }
+    }
+
+    unsafe fn forward_unchecked(start: Self, count: usize) -> Self {
+        start.unchecked_add(count as i8)
+    }
+
+    unsafe fn backward_unchecked(start: Self, count: usize) -> Self {
+        start.unchecked_add(-(count as i8))
+    }
+}
+
+#[cfg(feature = "nightly")]
+unsafe impl std::iter::TrustedStep for RoomCoordinate {}
+
+#[cfg(feature = "nightly")]
+impl std::iter::Step for RoomOffset {
+    fn steps_between(start: &Self, end: &Self) -> Option<usize> {
+        start.assume_bounds_constraint();
+        end.assume_bounds_constraint();
+        let res = end.0 - start.0;
+        res.try_into().ok()
+    }
+
+    fn forward_checked(start: Self, count: usize) -> Option<Self> {
+        start.assume_bounds_constraint();
+        i8::try_from(count)
+            .ok()
+            .and_then(|count| Self::new(count).ok())
+            .and_then(|offset| start.checked_add(offset))
+    }
+
+    fn backward_checked(start: Self, count: usize) -> Option<Self> {
+        start.assume_bounds_constraint();
+        i8::try_from(count)
+            .ok()
+            .and_then(|count| Self::new(count).ok())
+            .and_then(|offset| start.checked_add(-offset))
+    }
+
+    fn forward(start: Self, count: usize) -> Self {
+        if cfg!(debug_assertions) {
+            RoomOffset::forward_checked(start, count).unwrap_throw()
+        } else {
+            start.assume_bounds_constraint();
+            Self::saturating_new(start.0.saturating_add(count.min(2 * ROOM_USIZE) as i8))
+        }
+    }
+
+    fn backward(start: Self, count: usize) -> Self {
+        if cfg!(debug_assertions) {
+            RoomOffset::backward_checked(start, count).unwrap_throw()
+        } else {
+            start.assume_bounds_constraint();
+            Self::saturating_new(start.0.saturating_sub(count.min(2 * ROOM_USIZE) as i8))
+        }
+    }
+
+    unsafe fn forward_unchecked(start: Self, count: usize) -> Self {
+        start.assume_bounds_constraint();
+        Self::unchecked_new(start.0.unchecked_add(count as i8))
+    }
+
+    unsafe fn backward_unchecked(start: Self, count: usize) -> Self {
+        start.assume_bounds_constraint();
+        Self::unchecked_new(start.0.unchecked_sub(count as i8))
+    }
+}
+
+#[cfg(feature = "nightly")]
+unsafe impl std::iter::TrustedStep for RoomOffset {}
 
 #[cfg(test)]
 mod test {

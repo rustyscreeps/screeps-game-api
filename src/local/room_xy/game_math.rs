@@ -1,9 +1,8 @@
 //! Utilities for doing math on [`RoomXY`]s which are present in the
 //! JavaScript API.
-
 use crate::constants::Direction;
 
-use super::RoomXY;
+use super::{RoomOffsetXY, RoomXY};
 
 impl RoomXY {
     /// Gets linear direction to the specified position.
@@ -14,7 +13,7 @@ impl RoomXY {
     /// if the target has a slightly different `x` coordinate.
     pub fn get_direction_to(self, target: RoomXY) -> Option<Direction> {
         // Logic copied from https://github.com/screeps/engine/blob/020ba168a1fde9a8072f9f1c329d5c0be8b440d7/src/utils.js#L73-L107
-        let (dx, dy) = target - self;
+        let RoomOffsetXY { x: dx, y: dy } = target - self;
         if dx.abs() > dy.abs() * 2 {
             if dx > 0 {
                 Some(Direction::Right)
@@ -59,8 +58,7 @@ impl RoomXY {
     #[doc(alias = "distance")]
     #[inline]
     pub fn get_range_to(self, target: RoomXY) -> u8 {
-        let (dx, dy) = self - target;
-        dx.unsigned_abs().max(dy.unsigned_abs())
+        (self - target).chebyshev_distance()
     }
 
     /// Checks whether this position is in the given range of another position.
@@ -133,8 +131,7 @@ impl RoomXY {
     /// ```
     #[inline]
     pub fn is_near_to(self, target: RoomXY) -> bool {
-        (u8::from(self.x) as i32 - u8::from(target.x) as i32).abs() <= 1
-            && (u8::from(self.y) as i32 - u8::from(target.y) as i32).abs() <= 1
+        self.in_range_to(target, 1)
     }
 }
 
