@@ -16,6 +16,8 @@ extern "C" {
     /// memory.
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#Room-Terrain)
+    ///
+    /// [`LocalRoomTerrain`]: crate::local::LocalRoomTerrain
     #[wasm_bindgen(js_namespace = Room, js_name = Terrain)]
     pub type RoomTerrain;
 

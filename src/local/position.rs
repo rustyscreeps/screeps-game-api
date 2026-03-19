@@ -193,7 +193,7 @@ mod world_utils;
 /// from above.
 ///
 /// [`bincode`]: https://github.com/servo/bincode
-/// [`RoomObject::pos`]: crate::RoomObject::pos
+/// [`HasPosition::pos`]: crate::HasPosition::pos
 /// [`BTreeMap`]: std::collections::BTreeMap
 /// [`serde::Serialize`]: ::serde::Serialize
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
