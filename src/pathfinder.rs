@@ -41,8 +41,7 @@ extern "C" {
 
 #[wasm_bindgen]
 extern "C" {
-    /// Object that represents a set of options for a call to
-    /// [`PathFinder::search`].
+    /// Object that represents a set of options for a call to [`search`].
     #[wasm_bindgen]
     pub type JsSearchOptions;
 
@@ -103,7 +102,7 @@ impl Default for JsSearchOptions {
 
 #[wasm_bindgen]
 extern "C" {
-    /// An object representing the results of a [`PathFinder::search`].
+    /// An object representing the results of a [`search`].
     #[wasm_bindgen]
     pub type SearchResults;
 

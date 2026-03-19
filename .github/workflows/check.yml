@@ -23,3 +23,6 @@ jobs:
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-features -- -D warnings
       - run: cargo test --all-features
+      # verify the docs build works using the same options used by the docs.rs build,
+      # to surface any issues there before release
+      - run: cargo doc --all-features --no-deps --config 'build.rustdocflags = ["--cfg", "docsrs", "-D", "warnings"]'

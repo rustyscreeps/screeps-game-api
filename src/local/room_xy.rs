@@ -344,10 +344,11 @@ impl<'de> Deserialize<'de> for RoomXY {
 }
 
 /// A wrapper struct indicating that the inner array should be indexed X major,
-/// i.e. ```
+/// i.e.
+/// ```
 /// use screeps::{
 ///     constants::ROOM_USIZE,
-///     local::{XMajor, XY},
+///     local::{RoomXY, XMajor},
 /// };
 ///
 /// let mut x_major = XMajor([[0_u8; ROOM_USIZE]; ROOM_USIZE]);
@@ -403,10 +404,11 @@ impl<T> IndexMut<RoomXY> for XMajor<T> {
 }
 
 /// A wrapper struct indicating that the inner array should be indexed Y major,
-/// i.e. ```
+/// i.e.
+/// ```
 /// use screeps::{
 ///     constants::ROOM_USIZE,
-///     local::{YMajor, XY},
+///     local::{RoomXY, YMajor},
 /// };
 ///
 /// let mut y_major = YMajor([[0_u8; ROOM_USIZE]; ROOM_USIZE]);
