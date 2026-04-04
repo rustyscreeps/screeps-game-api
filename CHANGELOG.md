@@ -1,6 +1,13 @@
 Unreleased
 ==========
 
+0.23.3 (2026-04-04)
+===================
+
+### Misc:
+
+- Replace doc_auto_cfg build option to fix build of docs
+
 0.23.2 (2026-03-12)
 ===================
 
