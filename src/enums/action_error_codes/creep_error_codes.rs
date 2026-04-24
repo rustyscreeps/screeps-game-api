@@ -387,6 +387,7 @@ pub enum ClaimControllerErrorCode {
     NotInRange = -9,
     NoBodypart = -12,
     GclNotEnough = -15,
+    AccessDenied = -16,
 }
 
 impl FromReturnCode for ClaimControllerErrorCode {
@@ -412,6 +413,7 @@ impl FromReturnCode for ClaimControllerErrorCode {
             -9 => Some(Err(ClaimControllerErrorCode::NotInRange)),
             -12 => Some(Err(ClaimControllerErrorCode::NoBodypart)),
             -15 => Some(Err(ClaimControllerErrorCode::GclNotEnough)),
+            -16 => Some(Err(ClaimControllerErrorCode::AccessDenied)),
             _ => None,
         }
     }
@@ -433,6 +435,9 @@ impl fmt::Display for ClaimControllerErrorCode {
                 "there are no claim body parts in this creep’s body"
             }
             ClaimControllerErrorCode::GclNotEnough => "your global control level is not enough",
+            ClaimControllerErrorCode::AccessDenied => {
+                "you do not have access to this restricted shard"
+            }
         };
 
         write!(f, "{}", msg)
@@ -1419,6 +1424,7 @@ pub enum ReserveControllerErrorCode {
     InvalidTarget = -7,
     NotInRange = -9,
     NoBodypart = -12,
+    AccessDenied = -16,
 }
 
 impl FromReturnCode for ReserveControllerErrorCode {
@@ -1442,6 +1448,7 @@ impl FromReturnCode for ReserveControllerErrorCode {
             -7 => Some(Err(ReserveControllerErrorCode::InvalidTarget)),
             -9 => Some(Err(ReserveControllerErrorCode::NotInRange)),
             -12 => Some(Err(ReserveControllerErrorCode::NoBodypart)),
+            -16 => Some(Err(ReserveControllerErrorCode::AccessDenied)),
             _ => None,
         }
     }
@@ -1458,6 +1465,9 @@ impl fmt::Display for ReserveControllerErrorCode {
             ReserveControllerErrorCode::NotInRange => "the target is too far away",
             ReserveControllerErrorCode::NoBodypart => {
                 "there are no claim body parts in this creep’s body"
+            }
+            ReserveControllerErrorCode::AccessDenied => {
+                "you do not have access to this restricted shard"
             }
         };
 
@@ -1561,6 +1571,7 @@ pub enum UpgradeControllerErrorCode {
     InvalidTarget = -7,
     NotInRange = -9,
     NoBodypart = -12,
+    AccessDenied = -16,
 }
 
 impl FromReturnCode for UpgradeControllerErrorCode {
@@ -1585,6 +1596,7 @@ impl FromReturnCode for UpgradeControllerErrorCode {
             -7 => Some(Err(UpgradeControllerErrorCode::InvalidTarget)),
             -9 => Some(Err(UpgradeControllerErrorCode::NotInRange)),
             -12 => Some(Err(UpgradeControllerErrorCode::NoBodypart)),
+            -16 => Some(Err(UpgradeControllerErrorCode::AccessDenied)),
             _ => None,
         }
     }
@@ -1599,6 +1611,7 @@ impl fmt::Display for UpgradeControllerErrorCode {
             UpgradeControllerErrorCode::InvalidTarget => "the target is not a valid controller object, or the controller upgrading is blocked",
             UpgradeControllerErrorCode::NotInRange => "the target is too far away",
             UpgradeControllerErrorCode::NoBodypart => "there are no work body parts in this creep’s body",
+            UpgradeControllerErrorCode::AccessDenied => "you do not have access to this restricted shard",
         };
 
         write!(f, "{}", msg)
