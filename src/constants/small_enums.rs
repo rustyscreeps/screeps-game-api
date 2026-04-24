@@ -38,6 +38,7 @@ pub enum ErrorCode {
     NoBodypart = -12,
     RclNotEnough = -14,
     GclNotEnough = -15,
+    AccessDenied = -16,
 }
 
 impl FromReturnCode for ErrorCode {
@@ -60,6 +61,7 @@ impl FromReturnCode for ErrorCode {
             -12 => Err(ErrorCode::NoBodypart),
             -14 => Err(ErrorCode::RclNotEnough),
             -15 => Err(ErrorCode::GclNotEnough),
+            -16 => Err(ErrorCode::AccessDenied),
             // SAFETY: Return codes must always be one of the values already covered
             #[cfg(feature = "unsafe-return-conversion")]
             _ => unsafe { std::hint::unreachable_unchecked() },
@@ -85,6 +87,7 @@ impl FromReturnCode for ErrorCode {
             -12 => Some(Err(ErrorCode::NoBodypart)),
             -14 => Some(Err(ErrorCode::RclNotEnough)),
             -15 => Some(Err(ErrorCode::GclNotEnough)),
+            -16 => Some(Err(ErrorCode::AccessDenied)),
             _ => None,
         }
     }
