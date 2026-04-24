@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+### Additions:
+
+- Add new error code `AccessDenied` to `ClaimControllerErrorCode`, `ReserveControllerErrorCode`,
+  and `UpgradeControllerErrorCode` enums.
+
 0.23.3 (2026-04-04)
 ===================
 
