@@ -6,7 +6,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::{constants::ErrorCode, FromReturnCode};
 
 /// Error codes used by
-/// [game::cpu::unlock](crate::game::shard::activate_access).
+/// [game::shard::activate_access](crate::game::shard::activate_access).
 ///
 /// [Screeps API Docs](https://docs.screeps.com/api/#Game.shard.activateAccess).
 #[derive(
