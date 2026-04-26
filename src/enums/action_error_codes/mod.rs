@@ -7,6 +7,8 @@ mod flag_error_codes;
 mod game_cpu_error_codes;
 mod game_map_error_codes;
 mod game_market_error_codes;
+#[cfg(feature = "mmo")]
+mod game_shard_error_codes;
 mod powercreep_error_codes;
 mod room_error_codes;
 mod roomposition_error_codes;
@@ -53,7 +55,7 @@ pub mod game {
     use super::{game_map_error_codes, game_market_error_codes};
 
     #[cfg(feature = "mmo")]
-    use super::game_cpu_error_codes;
+    use super::{game_cpu_error_codes, game_shard_error_codes};
 
     #[cfg(feature = "mmo")]
     pub mod cpu {
@@ -71,6 +73,11 @@ pub mod game {
             ChangeOrderPriceErrorCode, CreateOrderErrorCode, DealErrorCode, ExtendOrderErrorCode,
             MarketCancelOrderErrorCode,
         };
+    }
+
+    #[cfg(feature = "mmo")]
+    pub mod shard {
+        pub use super::game_shard_error_codes::ActivateAccessErrorCode;
     }
 }
 

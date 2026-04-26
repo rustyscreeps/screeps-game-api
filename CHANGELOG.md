@@ -5,6 +5,8 @@ Unreleased
 
 - Add new error code `AccessDenied` to `ClaimControllerErrorCode`, `ReserveControllerErrorCode`,
   and `UpgradeControllerErrorCode` enums.
+- Add new functions for shard access - `game::shard::access`, `game::shard::access_time`, and
+  `game::shard::activate_access`, in addition to related error types.
 
 0.23.3 (2026-04-04)
 ===================
