@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.23.4 (2026-04-26)
+===================
+
 ### Additions:
 
 - Add new error code `AccessDenied` to `ClaimControllerErrorCode`, `ReserveControllerErrorCode`,
