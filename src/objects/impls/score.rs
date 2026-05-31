@@ -1,10 +1,7 @@
 use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
-use crate::{
-    objects::RoomObject,
-    prelude::*,
-};
+use crate::{objects::RoomObject, prelude::*};
 
 #[wasm_bindgen]
 extern "C" {
