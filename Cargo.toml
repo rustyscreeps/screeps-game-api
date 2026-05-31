@@ -60,6 +60,9 @@ seasonal-season-2 = []
 # Seasonal server, season 5 - enable thorium resource and reactor structure
 seasonal-season-5 = []
 
+# Seasonal server, season 10 - enable score object
+seasonal-season-10 = []
+
 # enable compatibility with the sim environment for positions
 sim = []
 

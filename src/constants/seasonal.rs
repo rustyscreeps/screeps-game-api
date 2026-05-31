@@ -348,3 +348,24 @@ pub mod season_5 {
         }
     }
 }
+
+// season 6/8 no new constants; season 7 constants integrated into season 1
+// since it was a tweaked re-run season 9 skipped to let season 10 coincide with
+// 10th anniversary of game's launch
+
+/// Constants for Screeps seasonal, season 10
+///
+/// These constants are relevant to the mechanics in seasonal, season 10.
+#[cfg(feature = "seasonal-season-10")]
+pub mod season_10 {
+    /// The percentage chance that a given room will have a [`Score`] spawned in
+    /// it every [`SCORE_SPAWN_INTERVAL_TICKS`] ticks.
+    ///
+    /// [`Score`]: crate::objects::Score
+    pub const SCORE_SPAWN_CHANCE: f32 = 0.01;
+    /// The number of ticks between chances to spawn a [`Score`] in rooms at
+    /// random.
+    ///
+    /// [`Score`]: crate::objects::Score
+    pub const SCORE_SPAWN_INTERVAL_TICKS: u32 = 250;
+}
