@@ -51,6 +51,8 @@ pub enum Look {
     SymbolDecoders = "symbolDecoder",
     //#[cfg(feature = "seasonal-season-5")]
     Reactors = "reactor",
+    //#[cfg(feature = "seasonal-season-10")]
+    Score = "score",
 }
 
 //TODO: wiarchbe: Add back in calculated doc.
@@ -120,6 +122,11 @@ typesafe_look_constants! {
 #[cfg(feature = "seasonal-season-5")]
 typesafe_look_constants! {
     pub struct REACTORS = (Look::Reactors, Reactor, Into::into);
+}
+
+#[cfg(feature = "seasonal-season-10")]
+typesafe_look_constants! {
+    pub struct SCORE = (Look::Score, Score, Into::into);
 }
 
 #[derive(Debug)]

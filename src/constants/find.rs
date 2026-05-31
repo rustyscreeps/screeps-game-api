@@ -79,6 +79,8 @@ pub enum Find {
     SymbolDecoders = 10022,
     //#[cfg(feature = "seasonal-season-5")]
     Reactors = 10051,
+    //#[cfg(feature = "seasonal-season-10")]
+    Score = 10031,
 }
 
 /// Trait representing things which can be used in the 'find' function.
@@ -140,6 +142,8 @@ pub enum RoomObject {
     SymbolDecoders = 10022,
     #[cfg(feature = "seasonal-season-5")]
     Reactors = 10051,
+    #[cfg(feature = "seasonal-season-10")]
+    Score = 10031,
 }
 
 impl From<RoomObject> for Find {
@@ -178,6 +182,8 @@ impl From<RoomObject> for Find {
             RoomObject::SymbolDecoders => Find::SymbolDecoders,
             #[cfg(feature = "seasonal-season-5")]
             RoomObject::Reactors => Find::Reactors,
+            #[cfg(feature = "seasonal-season-5")]
+            RoomObject::Score => Find::Score,
         }
     }
 }
@@ -330,4 +336,9 @@ typesafe_find_constants! {
 #[cfg(feature = "seasonal-season-5")]
 typesafe_find_constants! {
     pub struct REACTORS = (Find::Reactors, Reactor, Into::into);
+}
+
+#[cfg(feature = "seasonal-season-5")]
+typesafe_find_constants! {
+    pub struct SCORE = (Find::Score, Score, Into::into);
 }
