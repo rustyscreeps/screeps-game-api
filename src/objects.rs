@@ -62,6 +62,9 @@ mod room_objects {
 
     #[cfg(feature = "seasonal-season-5")]
     pub use super::impls::Reactor;
+
+    #[cfg(feature = "seasonal-season-10")]
+    pub use super::impls::Score;
 }
 
 /// Object wrappers allowing drawing of shapes in rooms or on the map in the

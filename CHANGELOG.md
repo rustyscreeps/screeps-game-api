@@ -1,15 +1,19 @@
 Unreleased
 ==========
 
+### Additions:
+
+- Add `Score` object used for season 10, enabled by new crate feature `seasonal-season-10`
+
 0.23.4 (2026-04-26)
 ===================
 
 ### Additions:
 
 - Add new error code `AccessDenied` to `ClaimControllerErrorCode`, `ReserveControllerErrorCode`,
-  and `UpgradeControllerErrorCode` enums.
+  and `UpgradeControllerErrorCode` enums
 - Add new functions for shard access - `game::shard::access`, `game::shard::access_time`, and
-  `game::shard::activate_access`, in addition to related error types.
+  `game::shard::activate_access`, in addition to related error types
 
 0.23.3 (2026-04-04)
 ===================

@@ -55,6 +55,9 @@ mod symbol_decoder;
 #[cfg(feature = "seasonal-season-5")]
 mod reactor;
 
+#[cfg(feature = "seasonal-season-10")]
+mod score;
+
 pub use self::{
     construction_site::ConstructionSite,
     cost_matrix::CostMatrix,
@@ -119,3 +122,6 @@ pub use self::{symbol_container::SymbolContainer, symbol_decoder::SymbolDecoder}
 
 #[cfg(feature = "seasonal-season-5")]
 pub use self::reactor::Reactor;
+
+#[cfg(feature = "seasonal-season-10")]
+pub use self::score::Score;
