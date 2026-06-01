@@ -182,7 +182,7 @@ impl From<RoomObject> for Find {
             RoomObject::SymbolDecoders => Find::SymbolDecoders,
             #[cfg(feature = "seasonal-season-5")]
             RoomObject::Reactors => Find::Reactors,
-            #[cfg(feature = "seasonal-season-5")]
+            #[cfg(feature = "seasonal-season-10")]
             RoomObject::Score => Find::Score,
         }
     }
@@ -338,7 +338,7 @@ typesafe_find_constants! {
     pub struct REACTORS = (Find::Reactors, Reactor, Into::into);
 }
 
-#[cfg(feature = "seasonal-season-5")]
+#[cfg(feature = "seasonal-season-10")]
 typesafe_find_constants! {
     pub struct SCORE = (Find::Score, Score, Into::into);
 }
