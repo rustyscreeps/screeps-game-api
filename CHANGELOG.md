@@ -1,6 +1,9 @@
 Unreleased
 ==========
 
+0.23.5 (2026-06-03)
+===================
+
 ### Additions:
 
 - Add `Score` object used for season 10, enabled by new crate feature `seasonal-season-10`, as well
