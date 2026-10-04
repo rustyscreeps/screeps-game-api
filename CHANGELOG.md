@@ -1,6 +1,8 @@
 Unreleased
 ==========
 
+- Change `PowerEvent::target_id` from `String` to `Option<String>`; it's unset for PWR_GENERATE_OPS
+
 0.23.5 (2026-06-03)
 ===================
 
