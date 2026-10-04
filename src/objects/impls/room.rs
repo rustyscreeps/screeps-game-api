@@ -969,6 +969,10 @@ pub struct TransferEvent {
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PowerEvent {
-    pub target_id: String,
+    /// `None` for a power with no target - `PWR_GENERATE_OPS` - which the
+    /// engine logs with the key left out; a required field here would fail
+    /// the whole log's parse.
+    #[serde(default)]
+    pub target_id: Option<String>,
     pub power: PowerType,
 }
