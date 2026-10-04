@@ -276,8 +276,8 @@ pub mod season_5 {
     ///
     /// [`Thorium`]: crate::constants::ResourceType::Thorium
     /// [`Reactor`]: crate::objects::Reactor
-    // no official constant for this currently, but providing as 'extra' constant
-    // for consistency with prior seasons
+    // no official constant for this currently, but providing as 'extra'
+    // constant for consistency with prior seasons
     pub const REACTOR_THORIUM_CAPACITY: u32 = 1_000;
 
     impl Density {

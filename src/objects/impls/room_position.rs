@@ -230,7 +230,8 @@ impl RoomPosition {
         match Self::create_construction_site_internal(self, ty, name) {
             Ok(result) => RoomPositionCreateConstructionSiteErrorCode::result_from_i8(result),
             Err(_) => {
-                // js code threw an exception; this happens when the room is not visible
+                // js code threw an exception; this happens when the room is not
+                // visible
                 Err(RoomPositionCreateConstructionSiteErrorCode::NotInRange)
             }
         }
@@ -262,7 +263,8 @@ impl RoomPosition {
                 }
             }
             Err(_) => {
-                // js code threw an exception; this only happens for a non-visible room.
+                // js code threw an exception; this only happens for a
+                // non-visible room.
                 Err(RoomPositionCreateFlagErrorCode::NotInRange)
             }
         }

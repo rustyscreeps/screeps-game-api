@@ -282,8 +282,9 @@ impl Room {
             Ok(ExitDirection::from_i8(result)
                 .expect("expect find exit return to be a valid exit constant"))
         } else {
-            // The exit direction results should have been caught by the other branch,
-            // therefore this should always be an error and never actually panic
+            // The exit direction results should have been caught by the other
+            // branch, therefore this should always be an error and
+            // never actually panic
             Err(FindExitToErrorCode::result_from_i8(result).unwrap_err())
         }
     }
@@ -636,8 +637,8 @@ where
         };
 
         //
-        // Type erased and boxed callback: no longer a type specific to the closure
-        // passed in, now unified as &Fn
+        // Type erased and boxed callback: no longer a type specific to the
+        // closure passed in, now unified as &Fn
         //
 
         let callback_type_erased: &mut dyn FnMut(RoomName, CostMatrix) -> JsValue =
@@ -646,8 +647,9 @@ where
         // Overwrite lifetime of reference so it can be passed to javascript.
         // It's now pretending to be static data. This should be entirely safe
         // because we control the only use of it and it remains valid during the
-        // pathfinder callback. This transmute is necessary because "some lifetime
-        // above the current scope but otherwise unknown" is not a valid lifetime.
+        // pathfinder callback. This transmute is necessary because "some
+        // lifetime above the current scope but otherwise unknown" is
+        // not a valid lifetime.
         //
 
         let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, CostMatrix) -> JsValue =
@@ -826,7 +828,8 @@ impl<'de> Deserialize<'de> for Event {
                         }
                     }
                 } else {
-                    // These events do not contain a data field, currently only AttackController
+                    // These events do not contain a data field, currently only
+                    // AttackController
                     match event_id {
                         3 => Some(EventType::AttackController),
                         _ => None,

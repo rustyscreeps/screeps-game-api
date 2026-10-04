@@ -15,9 +15,9 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type OwnedStructure;
 
-    // For controllers (possibly other structures?) user can be set to null, even
-    // though it's meant to always be owned. This internal method is used to map
-    // that case to false.
+    // For controllers (possibly other structures?) user can be set to null,
+    // even though it's meant to always be owned. This internal method is
+    // used to map that case to false.
     #[wasm_bindgen(method, getter = my)]
     fn my_internal(this: &OwnedStructure) -> Option<bool>;
 
@@ -35,8 +35,9 @@ impl OwnedStructure {
     ///
     /// [Screeps documentation](https://docs.screeps.com/api/#OwnedStructure.my)
     pub fn my(&self) -> bool {
-        // If there is no user assigned, like in unowned controllers, `my` returns
-        // undefined. That should be `false`, since that's not owned by the caller.
+        // If there is no user assigned, like in unowned controllers, `my`
+        // returns undefined. That should be `false`, since that's not
+        // owned by the caller.
         self.my_internal().unwrap_or(false)
     }
 }

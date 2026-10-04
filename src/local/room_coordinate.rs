@@ -101,13 +101,14 @@ impl RoomCoordinate {
     /// ```
     pub fn checked_add(self, rhs: i8) -> Option<RoomCoordinate> {
         self.assume_bounds_constraint();
-        // Why this works, assuming ROOM_SIZE < i8::MAX + 1 == 128 and ignoring the
-        // test:
-        //   - if rhs < 0: the smallest value this can produce is -128, which casted to
-        //     u8 is 128. The closer rhs is to 0, the larger the cast sum is. So if
-        //     ROOM_SIZE <= i8::MAX, any underflow will fail the x < ROOM_SIZE check.
-        //   - if rhs > 0: as long as self.0 <= i8::MAX, self.0 + rhs <= 2 * i8::MAX <
-        //     256, so there isn't unsigned overflow.
+        // Why this works, assuming ROOM_SIZE < i8::MAX + 1 == 128 and ignoring
+        // the test:
+        //   - if rhs < 0: the smallest value this can produce is -128, which
+        //     casted to u8 is 128. The closer rhs is to 0, the larger the cast
+        //     sum is. So if ROOM_SIZE <= i8::MAX, any underflow will fail the x
+        //     < ROOM_SIZE check.
+        //   - if rhs > 0: as long as self.0 <= i8::MAX, self.0 + rhs <= 2 *
+        //     i8::MAX < 256, so there isn't unsigned overflow.
         RoomCoordinate::new(self.0.wrapping_add_signed(rhs)).ok()
     }
 
@@ -312,8 +313,8 @@ impl<T> Index<RoomCoordinate> for [T; ROOM_AREA] {
     type Output = [T; ROOM_USIZE];
 
     fn index(&self, index: RoomCoordinate) -> &Self::Output {
-        // SAFETY: ROOM_USIZE * ROOM_USIZE = ROOM_AREA, so [T; ROOM_AREA] and [[T;
-        // ROOM_USIZE]; ROOM_USIZE] have the same layout.
+        // SAFETY: ROOM_USIZE * ROOM_USIZE = ROOM_AREA, so [T; ROOM_AREA] and
+        // [[T; ROOM_USIZE]; ROOM_USIZE] have the same layout.
         let this =
             unsafe { &*(self as *const [T; ROOM_AREA] as *const [[T; ROOM_USIZE]; ROOM_USIZE]) };
         &this[index]
@@ -322,8 +323,8 @@ impl<T> Index<RoomCoordinate> for [T; ROOM_AREA] {
 
 impl<T> IndexMut<RoomCoordinate> for [T; ROOM_AREA] {
     fn index_mut(&mut self, index: RoomCoordinate) -> &mut Self::Output {
-        // SAFETY: ROOM_USIZE * ROOM_USIZE = ROOM_AREA, so [T; ROOM_AREA] and [[T;
-        // ROOM_USIZE]; ROOM_USIZE] have the same layout.
+        // SAFETY: ROOM_USIZE * ROOM_USIZE = ROOM_AREA, so [T; ROOM_AREA] and
+        // [[T; ROOM_USIZE]; ROOM_USIZE] have the same layout.
         let this =
             unsafe { &mut *(self as *mut [T; ROOM_AREA] as *mut [[T; ROOM_USIZE]; ROOM_USIZE]) };
         &mut this[index]
@@ -389,8 +390,8 @@ impl RoomOffset {
     /// that uses this property.
     pub fn assume_bounds_constraint(self) {
         debug_assert!(-ROOM_SIZE_I8 < self.0 && self.0 < ROOM_SIZE_I8);
-        // SAFETY: It is only safe to construct `RoomOffset` when `-ROOM_SIZE_I8 <
-        // self.0 < ROOM_SIZE_I8`.
+        // SAFETY: It is only safe to construct `RoomOffset` when `-ROOM_SIZE_I8
+        // < self.0 < ROOM_SIZE_I8`.
         unsafe {
             assert_unchecked(-ROOM_SIZE_I8 < self.0 && self.0 < ROOM_SIZE_I8);
         }

@@ -66,11 +66,11 @@ impl Error for DropErrorCode {}
 
 impl From<DropErrorCode> for ErrorCode {
     fn from(value: DropErrorCode) -> Self {
-        // Safety: DropErrorCode is repr(i8), so we can cast it to get the discriminant
-        // value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: DropErrorCode discriminants are always error code values, and thus
-        // the Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // Safety: DropErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: DropErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -132,12 +132,13 @@ impl Error for NotifyWhenAttackedErrorCode {}
 
 impl From<NotifyWhenAttackedErrorCode> for ErrorCode {
     fn from(value: NotifyWhenAttackedErrorCode) -> Self {
-        // Safety: NotifyWhenAttackedErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: NotifyWhenAttackedErrorCode discriminants are always error code
-        // values, and thus the Result returned here will always be an `Err` variant, so
-        // we can always extract the error without panicking
+        // Safety: NotifyWhenAttackedErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: NotifyWhenAttackedErrorCode discriminants are always error
+        // code values, and thus the Result returned here will always be
+        // an `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -205,11 +206,11 @@ impl Error for PickupErrorCode {}
 impl From<PickupErrorCode> for ErrorCode {
     fn from(value: PickupErrorCode) -> Self {
         // Safety: PickupErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: PickupErrorCode discriminants are always error code values, and thus
-        // the Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: PickupErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -267,11 +268,11 @@ impl Error for SayErrorCode {}
 
 impl From<SayErrorCode> for ErrorCode {
     fn from(value: SayErrorCode) -> Self {
-        // Safety: SayErrorCode is repr(i8), so we can cast it to get the discriminant
-        // value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: SayErrorCode discriminants are always error code values, and thus the
-        // Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // Safety: SayErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SayErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -330,11 +331,11 @@ impl Error for SuicideErrorCode {}
 impl From<SuicideErrorCode> for ErrorCode {
     fn from(value: SuicideErrorCode) -> Self {
         // Safety: SuicideErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: SuicideErrorCode discriminants are always error code values, and thus
-        // the Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SuicideErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -408,11 +409,11 @@ impl Error for TransferErrorCode {}
 impl From<TransferErrorCode> for ErrorCode {
     fn from(value: TransferErrorCode) -> Self {
         // Safety: TransferErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: TransferErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: TransferErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -486,11 +487,11 @@ impl Error for WithdrawErrorCode {}
 impl From<WithdrawErrorCode> for ErrorCode {
     fn from(value: WithdrawErrorCode) -> Self {
         // Safety: WithdrawErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: WithdrawErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: WithdrawErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }

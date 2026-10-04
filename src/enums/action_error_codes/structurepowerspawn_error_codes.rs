@@ -66,12 +66,13 @@ impl Error for ProcessPowerErrorCode {}
 
 impl From<ProcessPowerErrorCode> for ErrorCode {
     fn from(value: ProcessPowerErrorCode) -> Self {
-        // Safety: ProcessPowerErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: ProcessPowerErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: ProcessPowerErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ProcessPowerErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }

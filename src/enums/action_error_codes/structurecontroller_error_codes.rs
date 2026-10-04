@@ -65,12 +65,13 @@ impl Error for ActivateSafeModeErrorCode {}
 
 impl From<ActivateSafeModeErrorCode> for ErrorCode {
     fn from(value: ActivateSafeModeErrorCode) -> Self {
-        // Safety: ActivateSafeModeErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: ActivateSafeModeErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: ActivateSafeModeErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ActivateSafeModeErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -126,11 +127,11 @@ impl Error for UnclaimErrorCode {}
 impl From<UnclaimErrorCode> for ErrorCode {
     fn from(value: UnclaimErrorCode) -> Self {
         // Safety: UnclaimErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: UnclaimErrorCode discriminants are always error code values, and thus
-        // the Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: UnclaimErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }

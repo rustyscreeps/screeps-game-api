@@ -73,12 +73,13 @@ impl Error for CreepClaimReactorErrorCode {}
 #[cfg(feature = "seasonal-season-5")]
 impl From<CreepClaimReactorErrorCode> for ErrorCode {
     fn from(value: CreepClaimReactorErrorCode) -> Self {
-        // Safety: CreepClaimReactorErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepClaimReactorErrorCode discriminants are always error code
-        // values, and thus the Result returned here will always be an `Err` variant, so
-        // we can always extract the error without panicking
+        // Safety: CreepClaimReactorErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepClaimReactorErrorCode discriminants are always error
+        // code values, and thus the Result returned here will always be
+        // an `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -146,12 +147,13 @@ impl Error for CreepAttackErrorCode {}
 
 impl From<CreepAttackErrorCode> for ErrorCode {
     fn from(value: CreepAttackErrorCode) -> Self {
-        // Safety: CreepAttackErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepAttackErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: CreepAttackErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepAttackErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -227,12 +229,13 @@ impl Error for AttackControllerErrorCode {}
 
 impl From<AttackControllerErrorCode> for ErrorCode {
     fn from(value: AttackControllerErrorCode) -> Self {
-        // Safety: AttackControllerErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: AttackControllerErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: AttackControllerErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: AttackControllerErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -301,11 +304,11 @@ impl Error for BuildErrorCode {}
 
 impl From<BuildErrorCode> for ErrorCode {
     fn from(value: BuildErrorCode) -> Self {
-        // Safety: BuildErrorCode is repr(i8), so we can cast it to get the discriminant
-        // value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: BuildErrorCode discriminants are always error code values, and thus
-        // the Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // Safety: BuildErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: BuildErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -359,12 +362,13 @@ impl Error for CreepCancelOrderErrorCode {}
 
 impl From<CreepCancelOrderErrorCode> for ErrorCode {
     fn from(value: CreepCancelOrderErrorCode) -> Self {
-        // Safety: CreepCancelOrderErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepCancelOrderErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: CreepCancelOrderErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepCancelOrderErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -448,12 +452,13 @@ impl Error for ClaimControllerErrorCode {}
 
 impl From<ClaimControllerErrorCode> for ErrorCode {
     fn from(value: ClaimControllerErrorCode) -> Self {
-        // Safety: ClaimControllerErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: ClaimControllerErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: ClaimControllerErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ClaimControllerErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -520,11 +525,12 @@ impl Error for DismantleErrorCode {}
 impl From<DismantleErrorCode> for ErrorCode {
     fn from(value: DismantleErrorCode) -> Self {
         // Safety: DismantleErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: DismantleErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: DismantleErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -595,12 +601,13 @@ impl Error for GenerateSafeModeErrorCode {}
 
 impl From<GenerateSafeModeErrorCode> for ErrorCode {
     fn from(value: GenerateSafeModeErrorCode) -> Self {
-        // Safety: GenerateSafeModeErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: GenerateSafeModeErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: GenerateSafeModeErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: GenerateSafeModeErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -679,11 +686,11 @@ impl Error for HarvestErrorCode {}
 impl From<HarvestErrorCode> for ErrorCode {
     fn from(value: HarvestErrorCode) -> Self {
         // Safety: HarvestErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: HarvestErrorCode discriminants are always error code values, and thus
-        // the Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: HarvestErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -750,11 +757,12 @@ impl Error for CreepHealErrorCode {}
 impl From<CreepHealErrorCode> for ErrorCode {
     fn from(value: CreepHealErrorCode) -> Self {
         // Safety: CreepHealErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepHealErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepHealErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -822,12 +830,13 @@ impl Error for CreepMoveDirectionErrorCode {}
 
 impl From<CreepMoveDirectionErrorCode> for ErrorCode {
     fn from(value: CreepMoveDirectionErrorCode) -> Self {
-        // Safety: CreepMoveDirectionErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepMoveDirectionErrorCode discriminants are always error code
-        // values, and thus the Result returned here will always be an `Err` variant, so
-        // we can always extract the error without panicking
+        // Safety: CreepMoveDirectionErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepMoveDirectionErrorCode discriminants are always error
+        // code values, and thus the Result returned here will always be
+        // an `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -890,12 +899,13 @@ impl Error for CreepMovePulledByErrorCode {}
 
 impl From<CreepMovePulledByErrorCode> for ErrorCode {
     fn from(value: CreepMovePulledByErrorCode) -> Self {
-        // Safety: CreepMovePulledByErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepMovePulledByErrorCode discriminants are always error code
-        // values, and thus the Result returned here will always be an `Err` variant, so
-        // we can always extract the error without panicking
+        // Safety: CreepMovePulledByErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepMovePulledByErrorCode discriminants are always error
+        // code values, and thus the Result returned here will always be
+        // an `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -968,12 +978,13 @@ impl Error for CreepMoveByPathErrorCode {}
 
 impl From<CreepMoveByPathErrorCode> for ErrorCode {
     fn from(value: CreepMoveByPathErrorCode) -> Self {
-        // Safety: CreepMoveByPathErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepMoveByPathErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: CreepMoveByPathErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepMoveByPathErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1045,12 +1056,13 @@ impl Error for CreepMoveToErrorCode {}
 
 impl From<CreepMoveToErrorCode> for ErrorCode {
     fn from(value: CreepMoveToErrorCode) -> Self {
-        // Safety: CreepMoveToErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepMoveToErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: CreepMoveToErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepMoveToErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1113,11 +1125,11 @@ impl Error for PullErrorCode {}
 
 impl From<PullErrorCode> for ErrorCode {
     fn from(value: PullErrorCode) -> Self {
-        // Safety: PullErrorCode is repr(i8), so we can cast it to get the discriminant
-        // value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: PullErrorCode discriminants are always error code values, and thus
-        // the Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // Safety: PullErrorCode is repr(i8), so we can cast it to get the
+        // discriminant value, which will match the raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: PullErrorCode discriminants are always error code values, and
+        // thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1185,12 +1197,13 @@ impl Error for RangedAttackErrorCode {}
 
 impl From<RangedAttackErrorCode> for ErrorCode {
     fn from(value: RangedAttackErrorCode) -> Self {
-        // Safety: RangedAttackErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: RangedAttackErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: RangedAttackErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RangedAttackErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1257,11 +1270,12 @@ impl Error for RangedHealErrorCode {}
 impl From<RangedHealErrorCode> for ErrorCode {
     fn from(value: RangedHealErrorCode) -> Self {
         // Safety: RangedHealErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: RangedHealErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RangedHealErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1324,12 +1338,13 @@ impl Error for RangedMassAttackErrorCode {}
 
 impl From<RangedMassAttackErrorCode> for ErrorCode {
     fn from(value: RangedMassAttackErrorCode) -> Self {
-        // Safety: RangedMassAttackErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: RangedMassAttackErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: RangedMassAttackErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RangedMassAttackErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1398,12 +1413,13 @@ impl Error for CreepRepairErrorCode {}
 
 impl From<CreepRepairErrorCode> for ErrorCode {
     fn from(value: CreepRepairErrorCode) -> Self {
-        // Safety: CreepRepairErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: CreepRepairErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: CreepRepairErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: CreepRepairErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1479,12 +1495,13 @@ impl Error for ReserveControllerErrorCode {}
 
 impl From<ReserveControllerErrorCode> for ErrorCode {
     fn from(value: ReserveControllerErrorCode) -> Self {
-        // Safety: ReserveControllerErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: ReserveControllerErrorCode discriminants are always error code
-        // values, and thus the Result returned here will always be an `Err` variant, so
-        // we can always extract the error without panicking
+        // Safety: ReserveControllerErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ReserveControllerErrorCode discriminants are always error
+        // code values, and thus the Result returned here will always be
+        // an `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1544,12 +1561,13 @@ impl Error for SignControllerErrorCode {}
 
 impl From<SignControllerErrorCode> for ErrorCode {
     fn from(value: SignControllerErrorCode) -> Self {
-        // Safety: SignControllerErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: SignControllerErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: SignControllerErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: SignControllerErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -1622,12 +1640,13 @@ impl Error for UpgradeControllerErrorCode {}
 
 impl From<UpgradeControllerErrorCode> for ErrorCode {
     fn from(value: UpgradeControllerErrorCode) -> Self {
-        // Safety: UpgradeControllerErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: UpgradeControllerErrorCode discriminants are always error code
-        // values, and thus the Result returned here will always be an `Err` variant, so
-        // we can always extract the error without panicking
+        // Safety: UpgradeControllerErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: UpgradeControllerErrorCode discriminants are always error
+        // code values, and thus the Result returned here will always be
+        // an `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }

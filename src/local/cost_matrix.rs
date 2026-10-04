@@ -63,16 +63,16 @@ impl LocalCostMatrix {
     }
 
     // # Notes
-    // This method does no bounds checking for the passed-in `RoomXY`, you may use
-    // `RoomXY::unchecked_new` to skip all bounds checking.
+    // This method does no bounds checking for the passed-in `RoomXY`, you may
+    // use `RoomXY::unchecked_new` to skip all bounds checking.
     #[inline]
     pub fn set(&mut self, xy: RoomXY, val: u8) {
         self[xy] = val;
     }
 
     // # Notes
-    // This method does no bounds checking for the passed-in `RoomXY`, you may use
-    // `RoomXY::unchecked_new` to skip all bounds checking.
+    // This method does no bounds checking for the passed-in `RoomXY`, you may
+    // use `RoomXY::unchecked_new` to skip all bounds checking.
     #[inline]
     pub fn get(&self, xy: RoomXY) -> u8 {
         self[xy]

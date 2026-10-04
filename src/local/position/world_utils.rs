@@ -67,8 +67,8 @@ impl Position {
         y: i32,
     ) -> Result<Self, WorldPositionOutOfBoundsError> {
         if VALID_WORLD_POSITIONS.contains(&x) && VALID_WORLD_POSITIONS.contains(&y) {
-            // We do the `HALF_WORLD_SIZE` transition here first so that the division and
-            // modulo operations work correctly.
+            // We do the `HALF_WORLD_SIZE` transition here first so that the
+            // division and modulo operations work correctly.
             let pos_x = (x + HALF_WORLD_SIZE * 50) as u32;
             let pos_y = (y + HALF_WORLD_SIZE * 50) as u32;
             let room_x = pos_x / 50;
@@ -128,8 +128,8 @@ mod test {
     fn checked_world_coords() {
         // this tests:
         // - the 16 rooms around the center of the world
-        // - the 16 rooms around each corner of the max world size (12 of them are out
-        //   of bounds)
+        // - the 16 rooms around each corner of the max world size (12 of them
+        //   are out of bounds)
 
         const ROOM_RANGE: Range<i32> = -((ROOM_SIZE as i32) * 2)..((ROOM_SIZE as i32) * 2);
         for x in ROOM_RANGE {
@@ -196,10 +196,11 @@ mod test {
     #[test]
     fn exhaustive_checked_world_coords() {
         use crate::local::VALID_WORLD_POSITIONS;
-        // Test that the entire input space returns `Some` or `None` as expected.
-        // If this test completes in release mode, it means that the compiler is able to
-        // prove enough to optimize it away. If the test stops being instant,
-        // something went wrong with the implementation or the compiler (probably the
+        // Test that the entire input space returns `Some` or `None` as
+        // expected. If this test completes in release mode, it means
+        // that the compiler is able to prove enough to optimize it
+        // away. If the test stops being instant, something went wrong
+        // with the implementation or the compiler (probably the
         // implementation).
         for x in i32::MIN..=i32::MAX {
             for y in i32::MIN..=i32::MAX {
