@@ -114,8 +114,8 @@ impl FromStr for RawObjectId {
         // get the actual integer value of the id, which we'll store in the most
         // significant 96 bits of the u128
         let u128_id = u128::from_str_radix(s, 16)?;
-        // and the length, which we know can't be greater than 24 without going over
-        // MAX_PACKED_VAL
+        // and the length, which we know can't be greater than 24 without going
+        // over MAX_PACKED_VAL
         let pad_length = s.len() as u128;
 
         if u128_id > MAX_PACKED_VAL || pad_length > 24 {

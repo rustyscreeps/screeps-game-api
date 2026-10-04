@@ -292,8 +292,8 @@ impl MapTextStyle {
     /// // Even though this is the default, it's possible to unset the background color.
     /// let unset = MapTextStyle::default().background_color(None);
     /// ```
-    // This only takes `&str` to avoid issues where passing `None` fails to infer a
-    // type.
+    // This only takes `&str` to avoid issues where passing `None` fails to
+    // infer a type.
     pub fn background_color(mut self, val: Option<&str>) -> Self {
         self.background_color = val.map(String::from);
         self

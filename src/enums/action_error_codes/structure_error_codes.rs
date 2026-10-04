@@ -63,11 +63,11 @@ impl Error for DestroyErrorCode {}
 impl From<DestroyErrorCode> for ErrorCode {
     fn from(value: DestroyErrorCode) -> Self {
         // Safety: DestroyErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: DestroyErrorCode discriminants are always error code values, and thus
-        // the Result returned here will always be an `Err` variant, so we can always
-        // extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: DestroyErrorCode discriminants are always error code values,
+        // and thus the Result returned here will always be an `Err`
+        // variant, so we can always extract the error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -132,12 +132,13 @@ impl Error for StructureNotifyWhenAttackedErrorCode {}
 
 impl From<StructureNotifyWhenAttackedErrorCode> for ErrorCode {
     fn from(value: StructureNotifyWhenAttackedErrorCode) -> Self {
-        // Safety: StructureNotifyWhenAttackedErrorCode is repr(i8), so we can cast it
-        // to get the discriminant value, which will match the raw return code value
-        // that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: StructureNotifyWhenAttackedErrorCode discriminants are always error
-        // code values, and thus the Result returned here will always be an `Err`
-        // variant, so we can always extract the error without panicking
+        // Safety: StructureNotifyWhenAttackedErrorCode is repr(i8), so we can
+        // cast it to get the discriminant value, which will match the
+        // raw return code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: StructureNotifyWhenAttackedErrorCode discriminants are always
+        // error code values, and thus the Result returned here will
+        // always be an `Err` variant, so we can always extract the
+        // error without panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }

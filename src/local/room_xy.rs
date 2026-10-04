@@ -361,28 +361,30 @@ pub struct XMajor<T>(pub [[T; ROOM_USIZE]; ROOM_USIZE]);
 
 impl<T> XMajor<T> {
     pub fn from_ref(arr: &[[T; ROOM_USIZE]; ROOM_USIZE]) -> &Self {
-        // SAFETY: XMajor is a repr(transparent) wrapper around [[T; ROOM_USIZE];
-        // ROOM_USIZE], so casting references of one to the other is safe.
+        // SAFETY: XMajor is a repr(transparent) wrapper around [[T;
+        // ROOM_USIZE]; ROOM_USIZE], so casting references of one to the
+        // other is safe.
         unsafe { &*(arr as *const [[T; ROOM_USIZE]; ROOM_USIZE] as *const Self) }
     }
 
     pub fn from_flat_ref(arr: &[T; ROOM_AREA]) -> &Self {
-        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is identical
-        // in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
+        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is
+        // identical in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
         Self::from_ref(unsafe {
             &*(arr as *const [T; ROOM_AREA] as *const [[T; ROOM_USIZE]; ROOM_USIZE])
         })
     }
 
     pub fn from_mut(arr: &mut [[T; ROOM_USIZE]; ROOM_USIZE]) -> &mut Self {
-        // SAFETY: XMajor is a repr(transparent) wrapper around [[T; ROOM_USIZE];
-        // ROOM_USIZE], so casting references of one to the other is safe.
+        // SAFETY: XMajor is a repr(transparent) wrapper around [[T;
+        // ROOM_USIZE]; ROOM_USIZE], so casting references of one to the
+        // other is safe.
         unsafe { &mut *(arr as *mut [[T; ROOM_USIZE]; ROOM_USIZE] as *mut Self) }
     }
 
     pub fn from_flat_mut(arr: &mut [T; ROOM_AREA]) -> &mut Self {
-        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is identical
-        // in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
+        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is
+        // identical in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
         Self::from_mut(unsafe {
             &mut *(arr as *mut [T; ROOM_AREA] as *mut [[T; ROOM_USIZE]; ROOM_USIZE])
         })
@@ -421,28 +423,30 @@ pub struct YMajor<T>(pub [[T; ROOM_USIZE]; ROOM_USIZE]);
 
 impl<T> YMajor<T> {
     pub fn from_ref(arr: &[[T; ROOM_USIZE]; ROOM_USIZE]) -> &Self {
-        // SAFETY: XMajor is a repr(transparent) wrapper around [[T; ROOM_USIZE];
-        // ROOM_USIZE], so casting references of one to the other is safe.
+        // SAFETY: XMajor is a repr(transparent) wrapper around [[T;
+        // ROOM_USIZE]; ROOM_USIZE], so casting references of one to the
+        // other is safe.
         unsafe { &*(arr as *const [[T; ROOM_USIZE]; ROOM_USIZE] as *const Self) }
     }
 
     pub fn from_flat_ref(arr: &[T; ROOM_AREA]) -> &Self {
-        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is identical
-        // in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
+        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is
+        // identical in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
         Self::from_ref(unsafe {
             &*(arr as *const [T; ROOM_AREA] as *const [[T; ROOM_USIZE]; ROOM_USIZE])
         })
     }
 
     pub fn from_mut(arr: &mut [[T; ROOM_USIZE]; ROOM_USIZE]) -> &mut Self {
-        // SAFETY: XMajor is a repr(transparent) wrapper around [[T; ROOM_USIZE];
-        // ROOM_USIZE], so casting references of one to the other is safe.
+        // SAFETY: XMajor is a repr(transparent) wrapper around [[T;
+        // ROOM_USIZE]; ROOM_USIZE], so casting references of one to the
+        // other is safe.
         unsafe { &mut *(arr as *mut [[T; ROOM_USIZE]; ROOM_USIZE] as *mut Self) }
     }
 
     pub fn from_flat_mut(arr: &mut [T; ROOM_AREA]) -> &mut Self {
-        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is identical
-        // in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
+        // SAFETY: ROOM_AREA = ROOM_USIZE * ROOM_USIZE, so [T; ROOM_AREA] is
+        // identical in data layout to [[T; ROOM_USIZE]; ROOM_USIZE].
         Self::from_mut(unsafe {
             &mut *(arr as *mut [T; ROOM_AREA] as *mut [[T; ROOM_USIZE]; ROOM_USIZE])
         })

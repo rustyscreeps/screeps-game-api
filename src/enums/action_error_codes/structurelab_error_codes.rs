@@ -77,11 +77,12 @@ impl Error for BoostCreepErrorCode {}
 impl From<BoostCreepErrorCode> for ErrorCode {
     fn from(value: BoostCreepErrorCode) -> Self {
         // Safety: BoostCreepErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: BoostCreepErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // discriminant value, which will match the raw return code value that
+        // ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: BoostCreepErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -163,12 +164,13 @@ impl Error for ReverseReactionErrorCode {}
 
 impl From<ReverseReactionErrorCode> for ErrorCode {
     fn from(value: ReverseReactionErrorCode) -> Self {
-        // Safety: ReverseReactionErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: ReverseReactionErrorCode discriminants are always error code values,
-        // and thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: ReverseReactionErrorCode is repr(i8), so we can cast it to
+        // get the discriminant value, which will match the raw return
+        // code value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: ReverseReactionErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -248,12 +250,13 @@ impl Error for RunReactionErrorCode {}
 
 impl From<RunReactionErrorCode> for ErrorCode {
     fn from(value: RunReactionErrorCode) -> Self {
-        // Safety: RunReactionErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: RunReactionErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: RunReactionErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: RunReactionErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }
@@ -327,12 +330,13 @@ impl Error for UnboostCreepErrorCode {}
 
 impl From<UnboostCreepErrorCode> for ErrorCode {
     fn from(value: UnboostCreepErrorCode) -> Self {
-        // Safety: UnboostCreepErrorCode is repr(i8), so we can cast it to get the
-        // discriminant value, which will match the raw return code value that ErrorCode
-        // expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
-        // Safety: UnboostCreepErrorCode discriminants are always error code values, and
-        // thus the Result returned here will always be an `Err` variant, so we can
-        // always extract the error without panicking
+        // Safety: UnboostCreepErrorCode is repr(i8), so we can cast it to get
+        // the discriminant value, which will match the raw return code
+        // value that ErrorCode expects.   Ref: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.coercion.intro
+        // Safety: UnboostCreepErrorCode discriminants are always error code
+        // values, and thus the Result returned here will always be an
+        // `Err` variant, so we can always extract the error without
+        // panicking
         Self::result_from_i8(value as i8).unwrap_err()
     }
 }

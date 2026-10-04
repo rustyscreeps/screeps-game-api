@@ -36,9 +36,9 @@ extern "C" {
     #[wasm_bindgen(method, getter)]
     pub fn store(this: &Reactor) -> Store;
 
-    // owner and my are on OwnedStructure and we'd usually inherit them, but since
-    // it inherits Structure, and Reactor is not a Structure, implementing these
-    // directly.
+    // owner and my are on OwnedStructure and we'd usually inherit them, but
+    // since it inherits Structure, and Reactor is not a Structure,
+    // implementing these directly.
     /// Whether this reactor is owned by the player.
     ///
     /// [Screeps documentation](https://docs-season.screeps.com/api/#Reactor.my)

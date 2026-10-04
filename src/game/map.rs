@@ -185,8 +185,8 @@ where
         };
 
         //
-        // Type erased and boxed callback: no longer a type specific to the closure
-        // passed in, now unified as &Fn
+        // Type erased and boxed callback: no longer a type specific to the
+        // closure passed in, now unified as &Fn
         //
 
         let callback_type_erased: &mut dyn FnMut(RoomName, RoomName) -> f64 = &mut owned_callback;
@@ -194,8 +194,9 @@ where
         // Overwrite lifetime of reference so it can be passed to javascript.
         // It's now pretending to be static data. This should be entirely safe
         // because we control the only use of it and it remains valid during the
-        // pathfinder callback. This transmute is necessary because "some lifetime
-        // above the current scope but otherwise unknown" is not a valid lifetime.
+        // pathfinder callback. This transmute is necessary because "some
+        // lifetime above the current scope but otherwise unknown" is
+        // not a valid lifetime.
         //
 
         let callback_lifetime_erased: &'static mut dyn FnMut(RoomName, RoomName) -> f64 =
