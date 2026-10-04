@@ -24,8 +24,8 @@ extern "C" {
     #[wasm_bindgen(method, setter = visualizePathStyle)]
     pub fn visualize_path_style(this: &JsMoveToOptions, style: &JsValue);
 
-    // todo this is wrong, the additional options are supposed to be added to the
-    // same object
+    // todo this is wrong, the additional options are supposed to be added to
+    // the same object
     #[wasm_bindgen(method, setter = heuristicWeight)]
     pub fn find_path_options(this: &JsMoveToOptions, options: &JsValue);
 }

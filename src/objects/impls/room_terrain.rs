@@ -30,11 +30,13 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn get(this: &RoomTerrain, x: u8, y: u8) -> Terrain;
 
-    // when called without a destination array, can't fail - no error code possible
+    // when called without a destination array, can't fail - no error code
+    // possible
     #[wasm_bindgen(method, js_name = getRawBuffer)]
     fn get_raw_buffer_internal(this: &RoomTerrain) -> Uint8Array;
 
-    // and when called with a destination, it can only ever return a return code int
+    // and when called with a destination, it can only ever return a return code
+    // int
     #[wasm_bindgen(method, js_name = getRawBuffer)]
     fn get_raw_buffer_to_array_internal(this: &RoomTerrain, destination: &Uint8Array) -> JsValue;
 }
@@ -66,8 +68,8 @@ impl RoomTerrain {
     pub fn get_raw_buffer_to_array(&self, destination: &Uint8Array) -> Result<(), ErrorCode> {
         let val = self.get_raw_buffer_to_array_internal(destination);
 
-        // val is integer if error; if object it's another reference to the Uint8Array;
-        // function was successful in that case
+        // val is integer if error; if object it's another reference to the
+        // Uint8Array; function was successful in that case
         match val.as_f64() {
             Some(n) => ErrorCode::result_from_i8(n as i8),
             None => Ok(()),

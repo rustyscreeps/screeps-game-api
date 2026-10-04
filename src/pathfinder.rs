@@ -217,9 +217,9 @@ where
 
         // SAFETY
         //
-        // self.callback is valid during the whole lifetime of the as_js_options call,
-        // and this Box is dropped before the call finishes without the contents
-        // being held on to by JS.
+        // self.callback is valid during the whole lifetime of the as_js_options
+        // call, and this Box is dropped before the call finishes
+        // without the contents being held on to by JS.
         let boxed_callback_lifetime_erased: Box<dyn 'static + FnMut(JsString) -> JsValue> =
             unsafe { std::mem::transmute(boxed_callback) };
 

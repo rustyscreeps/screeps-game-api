@@ -253,8 +253,8 @@ extern "C" {
     fn construction_site(this: &JsLookResult) -> ConstructionSite;
     #[wasm_bindgen(method, getter)]
     fn nuke(this: &JsLookResult) -> Nuke;
-    // note that this one is a string representing a terrain constant, and must be
-    // converted
+    // note that this one is a string representing a terrain constant, and must
+    // be converted
     #[wasm_bindgen(method, getter)]
     fn terrain(this: &JsLookResult) -> String;
     #[wasm_bindgen(method, getter)]

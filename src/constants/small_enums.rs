@@ -444,9 +444,9 @@ pub enum Terrain {
 }
 
 impl Terrain {
-    // the strings here do not match the terrain mask constants, appearing nowhere
-    // but look results. assuming it's a plain if it's anything invalid is probably
-    // not the best approach but for now it's something
+    // the strings here do not match the terrain mask constants, appearing
+    // nowhere but look results. assuming it's a plain if it's anything
+    // invalid is probably not the best approach but for now it's something
     pub fn from_look_constant_str(terrain_look_str: &str) -> Self {
         match terrain_look_str {
             "wall" => Terrain::Wall,
