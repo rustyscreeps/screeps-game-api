@@ -30,7 +30,7 @@ extern "C" {
     #[derive(Clone, Debug)]
     pub type PowerCreep;
 
-    #[wasm_bindgen(static_method_of = PowerCreep)]
+    #[wasm_bindgen(static_method_of = PowerCreep, js_name = create)]
     fn create_internal(name: &JsString, class: PowerCreepClass) -> i8;
 
     #[wasm_bindgen(method, getter = className)]
@@ -501,6 +501,9 @@ extern "C" {
     #[wasm_bindgen(method, getter = id)]
     fn id_internal(this: &AccountPowerCreep) -> Option<JsString>;
 
+    #[wasm_bindgen(method, getter = pos)]
+    fn pos_internal(this: &AccountPowerCreep) -> Option<RoomPosition>;
+
     #[wasm_bindgen(method, getter = className)]
     fn class_internal(this: &AccountPowerCreep) -> PowerCreepClass;
 
@@ -654,8 +657,11 @@ impl TryFrom<AccountPowerCreep> for PowerCreep {
     type Error = PowerCreepNotSpawned;
 
     fn try_from(account_power_creep: AccountPowerCreep) -> Result<Self, Self::Error> {
+        // An unspawned power creep carries an object id, just not one that
+        // resolves into a game object - checking if there's a position
+        // is the way to go instead.
         account_power_creep
-            .id_internal()
+            .pos_internal()
             .map(|_| account_power_creep.unchecked_into())
             .ok_or(PowerCreepNotSpawned {})
     }
