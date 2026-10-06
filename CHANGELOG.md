@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+### Additions:
+
+- Add `Density::s11_thorium_amount` when seasonal-season-5 feature is enabled with the rebalanced
+  lower density amounts being used in season 11.
+
 ### Bugfixes:
 
 - Fix incorrect binding function used for `PowerCreep::create`

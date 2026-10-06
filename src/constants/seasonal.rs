@@ -281,8 +281,8 @@ pub mod season_5 {
     pub const REACTOR_THORIUM_CAPACITY: u32 = 1_000;
 
     impl Density {
-        /// Amount of [`Thorium`] generated for each density
-        /// level, replacing the amounts from [`Density::amount`].
+        /// Amount of [`Thorium`] generated for each density level in season 5,
+        /// replacing the amounts from [`Density::amount`].
         ///
         /// [`Thorium`]: crate::constants::ResourceType::Thorium
         #[inline]
@@ -292,6 +292,20 @@ pub mod season_5 {
                 Density::Moderate => 22_000,
                 Density::High => 45_000,
                 Density::Ultra => 67_000,
+            }
+        }
+
+        /// Amount of [`Thorium`] generated for each density level in season 11,
+        /// replacing the amounts from [`Density::amount`].
+        ///
+        /// [`Thorium`]: crate::constants::ResourceType::Thorium
+        #[inline]
+        pub const fn s11_thorium_amount(self) -> u32 {
+            match self {
+                Density::Low => 3_000,
+                Density::Moderate => 10_000,
+                Density::High => 22_000,
+                Density::Ultra => 45_000,
             }
         }
     }
