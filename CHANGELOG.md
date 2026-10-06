@@ -1,6 +1,12 @@
 Unreleased
 ==========
 
+### Bugfixes:
+
+- Fix incorrect binding function used for `PowerCreep::create`
+- Check position instead of id in `AccountPowerCreep::try_from`, as non-spawned Power Creeps still
+  have an id
+
 ### Breaking:
 
 - Change `PowerEvent::target_id` from `String` to `Option<String>`; it's unset for PWR_GENERATE_OPS
